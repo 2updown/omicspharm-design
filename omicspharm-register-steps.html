@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>분석 의뢰 등록 · OmicsPharm</title>
+<style>
+  :root{
+    --teal:#1a9e7f; --teal-d:#12876c; --teal-l:#eef7f4; --teal-line:#cfe6dd;
+    --ink:#1f2b28; --ink-2:#53625e; --ink-3:#8b9894;
+    --line:#e4ebe8; --soft:#f7faf9; --dark:#1b2027;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#fbfdfc;color:var(--ink);
+    font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+    font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+  /* nav */
+  .nav{max-width:1180px;margin:22px auto 0;padding:0 24px}
+  .navbar{display:flex;align-items:center;gap:34px;background:#fff;border:1px solid var(--line);
+    border-radius:44px;padding:12px 18px 12px 28px;box-shadow:0 2px 14px rgba(26,158,127,.06)}
+  .logo{font-size:19px;font-weight:700;letter-spacing:-.02em}
+  .logo span{color:var(--teal)}
+  .navbar a{color:var(--ink-2);text-decoration:none;font-size:14px;white-space:nowrap}
+  .navspace{margin-left:auto}
+  .navbtn{display:flex;background:var(--teal);color:#fff;border-radius:30px;font-size:13.5px;overflow:hidden}
+  .navbtn span{padding:9px 16px}
+  .navbtn span+span{border-left:1px solid rgba(255,255,255,.35)}
+  .lang{border:1px solid var(--teal-line);color:var(--teal-d);border-radius:30px;padding:8px 14px;font-size:13px}
+
+  .wrap{max-width:900px;margin:0 auto;padding:46px 24px 90px}
+  .pagehead{margin-bottom:30px}
+  .pagehead h1{font-size:25px;margin:0 0 6px;letter-spacing:-.02em}
+  .pagehead p{margin:0;color:var(--ink-3);font-size:14px}
+
+  /* stepper */
+  .stepper{display:flex;margin-bottom:34px}
+  .st{flex:1;display:flex;flex-direction:column;align-items:center;gap:9px;position:relative;
+    cursor:pointer;background:none;border:none;font:inherit;padding:0}
+  .st::before,.st::after{content:"";position:absolute;top:15px;height:2px;background:var(--line)}
+  .st::before{left:0;right:50%}
+  .st::after{left:50%;right:0}
+  .st:first-child::before,.st:last-child::after{display:none}
+  .st .n{width:32px;height:32px;border-radius:50%;background:#fff;border:2px solid var(--line);
+    display:grid;place-items:center;font-size:13px;font-weight:600;color:var(--ink-3);
+    position:relative;z-index:1;transition:.18s}
+  .st .t{font-size:12.5px;color:var(--ink-3);white-space:nowrap}
+  .st.done .n{background:var(--teal-l);border-color:var(--teal);color:var(--teal-d)}
+  .st.done .t{color:var(--ink-2)}
+  .st.done::before,.st.done::after{background:var(--teal-line)}
+  .st.on .n{background:var(--teal);border-color:var(--teal);color:#fff;box-shadow:0 0 0 5px rgba(26,158,127,.13)}
+  .st.on .t{color:var(--teal-d);font-weight:600}
+  .st.on::before{background:var(--teal-line)}
+
+  /* card */
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:34px 36px 38px}
+  .card h2{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
+  .card .sub{color:var(--ink-3);font-size:13.5px;margin:0 0 26px}
+
+  .step{display:none}
+  .step.on{display:block}
+
+  .field{padding:20px 0;border-top:1px solid var(--line)}
+  .field:first-of-type{border-top:none;padding-top:4px}
+  .flabel{font-weight:600;font-size:14px;margin-bottom:4px}
+  .flabel .req{color:#c0392b;margin-left:3px}
+  .fhelp{color:var(--ink-3);font-size:12.5px;margin:0 0 12px}
+
+  input[type=text],input[type=number],input[type=date],select,textarea{
+    font:inherit;font-size:14px;color:var(--ink);background:#fff;border:1px solid var(--line);
+    border-radius:8px;padding:11px 13px;width:100%;max-width:420px}
+  textarea{max-width:100%;min-height:104px;resize:vertical;line-height:1.7}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--teal);
+    box-shadow:0 0 0 3px rgba(26,158,127,.12)}
+  input:disabled{background:var(--soft);color:var(--ink-2)}
+  .narrow{max-width:150px}.mid{max-width:260px}
+  .inline{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+
+  /* 유효성 */
+  .errbox{display:none;background:#fdf3f2;border:1px solid #f0cdc9;border-radius:10px;
+    padding:16px 18px;margin-bottom:24px}
+  .errbox.on{display:block}
+  .eh{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+  .eh b{font-size:14px;color:#a4332a}
+  .eh span{font-size:12.5px;color:#b9645c}
+  .errbox ul{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+  .errbox li button{font:inherit;font-size:12.5px;background:#fff;border:1px solid #f0cdc9;
+    color:#a4332a;border-radius:20px;padding:5px 13px;cursor:pointer}
+  .errbox li button:hover{background:#fbe9e7}
+
+  .field.invalid{background:#fdf7f6;border-radius:8px;padding-left:14px;padding-right:14px;
+    box-shadow:inset 3px 0 0 #d9534f}
+  .field.invalid > .flabel{color:#a4332a}
+  .emsg{display:none;font-size:12.5px;color:#a4332a;margin-top:9px}
+  .field.invalid .emsg{display:block}
+  .st.err .n{border-color:#e2b3ae;color:#a4332a;background:#fdf3f2}
+
+  .pagehead{display:flex;align-items:flex-start;gap:16px}
+  .listbtn{margin-left:auto;font:inherit;font-size:13.5px;color:var(--teal-d);background:#fff;
+    border:1px solid var(--teal-line);border-radius:8px;padding:10px 16px;cursor:pointer;
+    display:flex;align-items:center;gap:8px;flex:none}
+  .listbtn b{background:var(--teal-l);border-radius:20px;padding:1px 8px;font-size:12px}
+
+  /* 모달 */
+  .modal{display:none;position:fixed;inset:0;background:rgba(20,32,28,.42);z-index:60;
+    align-items:center;justify-content:center;padding:24px}
+  .modal.on{display:flex}
+  .mbox{background:#fff;border-radius:14px;width:100%;max-width:560px;max-height:80vh;
+    display:flex;flex-direction:column;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.18)}
+  .mhead{display:flex;align-items:center;padding:20px 22px 16px;border-bottom:1px solid var(--line)}
+  .mhead h3{margin:0;font-size:16px}
+  .mhead button{margin-left:auto;background:none;border:none;font-size:22px;color:var(--ink-3);
+    cursor:pointer;line-height:1;padding:0 4px}
+  .mbody{overflow:auto;padding:8px 12px}
+  .drow{display:flex;align-items:center;gap:12px;padding:15px 10px;border-bottom:1px solid var(--line)}
+  .drow:last-child{border-bottom:none}
+  .drow .info{min-width:0}
+  .drow .nm{font-size:14px;font-weight:600;margin-bottom:3px;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis}
+  .drow .meta{font-size:12.5px;color:var(--ink-3)}
+  .drow .act{margin-left:auto;display:flex;gap:6px;flex:none}
+  .drow .act button{font:inherit;font-size:12.5px;border-radius:7px;padding:8px 13px;cursor:pointer}
+  .drow .go{background:var(--teal);border:1px solid var(--teal);color:#fff;font-weight:600}
+  .drow .del{background:#fff;border:1px solid var(--line);color:var(--ink-3)}
+  .mempty{padding:40px 10px;text-align:center;color:var(--ink-3);font-size:13.5px}
+  .mfoot{display:flex;align-items:center;gap:12px;padding:16px 22px;border-top:1px solid var(--line);
+    background:var(--soft);font-size:12.5px;color:var(--ink-3)}
+  .mfoot button{margin-left:auto;font:inherit;font-size:13px;background:#fff;border:1px solid var(--line);
+    border-radius:7px;padding:9px 16px;cursor:pointer;color:var(--ink-2)}
+
+  /* 임시저장 */
+  .draft{display:none;align-items:center;gap:16px;background:#fff;border:1px solid var(--teal-line);
+    border-left:4px solid var(--teal);border-radius:10px;padding:15px 18px;margin-bottom:22px}
+  .draft.on{display:flex}
+  .draft b{font-size:14px;font-weight:600}
+  .draft span{display:block;font-size:12.5px;color:var(--ink-3);margin-top:2px}
+  .dbtns{margin-left:auto;display:flex;gap:8px;flex:none}
+  .dbtns button{font:inherit;font-size:13px;border-radius:7px;padding:9px 16px;cursor:pointer}
+  #draftLoad{background:var(--teal);border:1px solid var(--teal);color:#fff;font-weight:600}
+  #draftDrop{background:#fff;border:1px solid var(--line);color:var(--ink-2)}
+
+  .toast{position:fixed;left:50%;bottom:36px;transform:translate(-50%,14px);opacity:0;
+    background:var(--ink);color:#fff;font-size:13.5px;padding:12px 22px;border-radius:24px;
+    pointer-events:none;transition:.22s;z-index:50}
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+
+  /* 의뢰자 정보 */
+  .who{background:var(--soft);border:1px solid var(--line);border-radius:11px;
+    padding:18px 20px 16px;margin-bottom:28px}
+  .whohead{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+  .whohead span{font-weight:600;font-size:13.5px}
+  .whohead a{font-size:12.5px;color:var(--teal-d);text-decoration:none;
+    border-bottom:1px solid var(--teal-line)}
+  .whogrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .whogrid div{font-size:14px;display:flex;align-items:baseline;gap:10px}
+  .whogrid span{font-size:12.5px;color:var(--ink-3);min-width:44px}
+  @media (max-width:600px){.whogrid{grid-template-columns:1fr}}
+
+  /* service cards */
+  .svc{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .svc label{border:1px solid var(--line);border-radius:11px;padding:18px 18px 16px;cursor:pointer;
+    display:block;transition:.15s;background:#fff}
+  .svc label:hover{border-color:var(--teal-line);background:var(--soft)}
+  .svc input{position:absolute;opacity:0;pointer-events:none}
+  .svc .nm{font-weight:600;font-size:14.5px;margin-bottom:3px}
+  .svc .ds{font-size:12.5px;color:var(--ink-3);line-height:1.5}
+  .svc label:has(input:checked){border-color:var(--teal);background:var(--teal-l);
+    box-shadow:0 0 0 1px var(--teal)}
+  .svc label:has(input:checked) .nm{color:var(--teal-d)}
+
+  /* choice chips */
+  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  .opts label{border:1px solid var(--line);border-radius:22px;padding:8px 16px;cursor:pointer;
+    font-size:13.5px;color:var(--ink-2);background:#fff;transition:.15s}
+  .opts label:hover{border-color:var(--teal-line)}
+  .opts input{position:absolute;opacity:0;pointer-events:none}
+  .opts label:has(input:checked){background:var(--teal-l);border-color:var(--teal);color:var(--teal-d);font-weight:600}
+
+  /* list items */
+  .items{border-top:2px solid var(--teal)}
+  .items label{display:flex;gap:11px;align-items:flex-start;padding:13px 4px;
+    border-bottom:1px solid var(--line);cursor:pointer;font-size:13.5px}
+  .items label:hover{background:var(--soft)}
+  .items input{margin-top:3px;accent-color:var(--teal);flex:none}
+  .items .d{display:block;color:var(--ink-3);font-size:12.5px;margin-top:2px}
+
+  .cond{display:none;margin-top:14px;padding:18px 20px;background:var(--soft);
+    border-left:3px solid var(--teal);border-radius:0 8px 8px 0}
+  .cond.on{display:block}
+  .cond .ct{font-size:13px;font-weight:600;margin-bottom:12px;color:var(--teal-d)}
+  .cond .field{padding:14px 0;border-top:1px solid var(--line)}
+  .cond .field:first-of-type{border-top:none;padding-top:0}
+
+  table.grp{border-collapse:collapse;width:100%;max-width:520px;margin-top:10px}
+  table.grp th,table.grp td{border:1px solid var(--line);padding:8px 10px;font-size:13px;text-align:left}
+  table.grp th{background:var(--teal-l);font-weight:600;width:96px}
+  table.grp input{padding:7px 9px;border-radius:6px}
+
+  .note{font-size:12.5px;color:var(--ink-3);margin:9px 0 0}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .tagx{background:var(--teal-l);color:var(--teal-d);border:1px solid var(--teal-line);
+    border-radius:20px;padding:4px 12px;font-size:12.5px}
+
+  /* review */
+  .rev{border-top:2px solid var(--teal)}
+  .rev .r{display:grid;grid-template-columns:200px 1fr;border-bottom:1px solid var(--line)}
+  .rev .r > div{padding:12px 16px;font-size:13.5px}
+  .rev .r > div:first-child{background:var(--teal-l);font-weight:500}
+  .revhead{display:flex;align-items:center;justify-content:space-between;margin:26px 0 10px}
+  .revhead h3{font-size:14.5px;margin:0}
+  .revhead button{font:inherit;font-size:12.5px;color:var(--teal-d);background:none;
+    border:1px solid var(--teal-line);border-radius:6px;padding:5px 12px;cursor:pointer}
+
+  /* footer bar */
+  .bar{display:flex;align-items:center;gap:10px;margin-top:26px}
+  .bar .left{margin-right:auto}
+  button.b{font:inherit;font-size:14.5px;font-weight:600;border-radius:9px;padding:14px 34px;
+    cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink-2)}
+  button.b.primary{background:var(--teal);border-color:var(--teal);color:#fff}
+  button.b:disabled{opacity:.45;cursor:not-allowed}
+  .ghosttxt{font:inherit;font-size:13.5px;color:var(--ink-3);background:none;border:none;cursor:pointer;
+    text-decoration:underline;text-underline-offset:3px}
+
+  footer{background:var(--dark);color:#c4ccc9;padding:48px 24px 36px;font-size:13px}
+  .fin{max-width:1180px;margin:0 auto}
+  .flogo{font-size:19px;font-weight:700;color:#fff;margin-bottom:22px}
+  .copy{border-top:1px solid #2c333b;margin-top:22px;padding-top:18px;color:#7c858c;font-size:12.5px}
+
+  @media (max-width:760px){
+    .svc{grid-template-columns:1fr 1fr}
+    .st .t{display:none}
+    .rev .r{grid-template-columns:1fr}
+    .card{padding:24px 20px 28px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="navbar">
+    <div class="logo">Omics<span>Pharm</span></div>
+    <a href="#">프로젝트 등록</a><a href="#">프로젝트 찾기</a>
+    <a href="#">이용 가이드</a><a href="#">상담하기</a>
+    <div class="navspace"></div>
+    <div class="navbtn"><span>마이페이지</span><span>로그아웃</span></div>
+    <div class="lang">KO</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="draft" id="draftBar">
+    <div>
+      <b>작성 중인 의뢰서가 있습니다</b>
+      <span id="draftWhen"></span>
+    </div>
+    <div class="dbtns">
+      <button type="button" id="draftLoad">이어서 작성</button>
+      <button type="button" id="draftDrop">새로 작성</button>
+    </div>
+  </div>
+
+  <div class="pagehead">
+    <div>
+      <h1>분석 의뢰 등록</h1>
+      <p>4단계로 나누어 입력합니다. 작성 중인 내용은 임시저장됩니다.</p>
+    </div>
+    <button type="button" id="openList" class="listbtn">저장된 의뢰서 <b id="draftCount">0</b></button>
+  </div>
+
+  <div class="stepper" id="stepper">
+    <button class="st on" data-go="1"><span class="n">1</span><span class="t">의뢰 정보</span></button>
+    <button class="st" data-go="2"><span class="n">2</span><span class="t">분석 상세</span></button>
+    <button class="st" data-go="3"><span class="n">3</span><span class="t">시료 정보</span></button>
+    <button class="st" data-go="4"><span class="n">4</span><span class="t">요구사항</span></button>
+  </div>
+
+  <div class="card">
+
+    <div class="errbox" id="errBox">
+      <div class="eh"><b>입력하지 않은 필수 항목이 있습니다</b><span id="errCount"></span></div>
+      <ul id="errList"></ul>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step on" data-step="1">
+      <div class="who">
+        <div class="whohead">
+          <span>의뢰자 정보</span>
+          <a href="#">마이페이지에서 수정</a>
+        </div>
+        <div class="whogrid">
+          <div><span>담당자</span>홍길동</div>
+          <div><span>소속</span>○○연구소</div>
+          <div><span>연락처</span>010-0000-0000</div>
+        </div>
+        <p class="note" style="margin-top:10px">위 정보로 의뢰가 등록됩니다. 다르면 마이페이지에서 먼저 수정해 주세요.</p>
+      </div>
+
+      <h2>의뢰 정보</h2>
+      <p class="sub">분석 서비스를 고르고 의뢰 제목과 연구 목적을 작성해 주세요. 이후 단계에서 분석 항목을 고를 때 기준이 됩니다.</p>
+
+      <div class="field">
+        <div class="flabel">분석 서비스<span class="req">*</span></div>
+        <p class="fhelp">한 프로젝트에 하나의 분석 서비스만 등록할 수 있습니다. 여러 분석이 필요하면 프로젝트를 나눠 등록해 주세요.</p>
+        <div class="svc">
+        <label><input type="radio" name="svc" value="prot">
+          <span class="nm">단백체 분석</span><span class="ds">Untargeted · Targeted · PTM</span></label>
+        <label><input type="radio" name="svc" value="olink">
+          <span class="nm">Olink 분석</span><span class="ds">Target 48 · 96 · Explore</span></label>
+        <label><input type="radio" name="svc" value="meta">
+          <span class="nm">대사체 분석</span><span class="ds">Untargeted · Targeted</span></label>
+        <label><input type="radio" name="svc" value="geno">
+          <span class="nm">유전체 분석</span><span class="ds">WGS · WES · Panel</span></label>
+        <label><input type="radio" name="svc" value="trans">
+          <span class="nm">전사체 분석</span><span class="ds">mRNA-seq · Small RNA-seq</span></label>
+        <label><input type="radio" name="svc" value="biop">
+          <span class="nm">바이오의약품·ADC</span><span class="ds">특성분석 · ADC</span></label>
+        <label><input type="radio" name="svc" value="etc">
+          <span class="nm">기타 분석</span><span class="ds">담당 매니저가 검토 후 연락</span></label>
+      </div>
+        <p class="note">어떤 서비스인지 모르겠다면 기타 분석으로 등록해 주세요. 담당 매니저가 내용을 확인하고 연락드립니다.</p>
+      </div>
+
+      <div class="field">
+        <div class="flabel">의뢰명<span class="req">*</span></div>
+        <input type="text" id="reqName" style="max-width:100%" placeholder="예: 만성 염증질환 환자 혈청의 단백체 비교 분석">
+      </div>
+
+      <div class="field">
+        <div class="flabel">연구 내용 및 목적<span class="req">*</span></div>
+        <p class="fhelp">무엇을 비교·확인하려는지 구체적으로 적어주실수록 적합한 기관을 찾기 쉽습니다.</p>
+        <textarea placeholder="정확한 분석 서비스 매칭을 위해 연구 목적, 시료 종류 및 비교 조건, 분석을 통해 확인하고자 하는 내용을 구체적으로 작성해 주세요."></textarea>
+      </div>
+
+      <div class="field">
+        <div class="flabel">공개 여부<span class="req">*</span></div>
+        <div class="opts">
+          <label><input type="radio" name="sec">일반 공개</label>
+          <label><input type="radio" name="sec">후보 선정 후 공개</label>
+          <label><input type="radio" name="sec">NDA 체결 후 공개</label>
+          <label><input type="radio" name="sec">비공개로 업로드</label>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step" data-step="2">
+      <h2>분석 상세 내용</h2>
+      <p class="sub">단백체 분석에서 수행할 항목을 선택해 주세요.</p>
+
+      <div class="field">
+        <div class="flabel">분석 유형<span class="req">*</span></div>
+        <p class="fhelp">복수 선택할 수 있습니다. 선택한 유형의 세부 항목만 아래에 나타납니다.</p>
+        <div class="opts">
+          <label><input type="checkbox" class="aty" data-t="untg">Untargeted</label>
+          <label><input type="checkbox" class="aty" data-t="tgt">Targeted</label>
+          <label><input type="checkbox" class="aty" data-t="ptm">PTM</label>
+        </div>
+      </div>
+
+      <div class="field cond" id="g-untg" style="border-top:1px solid var(--line);background:none;border-left:none;border-radius:0;padding:20px 0">
+        <div class="flabel">Untargeted protein analysis</div>
+        <div class="items" style="margin-top:10px">
+          <label><input type="checkbox">정성분석<span class="d">단백질 리스트 및 GO analysis를 제공해 드립니다.</span></label>
+          <label><input type="checkbox">정량분석<span class="d">heatmap, volcano plot, foldchange 값을 제공합니다.</span></label>
+          <label><input type="checkbox">통계처리<span class="d">동일 그룹의 시료가 3개 이상 필요합니다.</span></label>
+        </div>
+      </div>
+
+      <div class="field cond" id="g-tgt" style="border-top:1px solid var(--line);background:none;border-left:none;border-radius:0;padding:20px 0">
+        <div class="flabel">Targeted protein analysis</div>
+        <div class="field" style="border-top:none;padding-top:14px">
+          <div class="flabel" data-tags="1">Target protein name<span class="req">*</span></div>
+          <p class="fhelp">입력 후 Enter를 누르면 여러 개 등록됩니다.</p>
+          <input type="text" id="tgtIn" placeholder="예: IL-6">
+          <div class="tags" id="tgtTags"></div>
+        </div>
+        <div class="field">
+          <div class="flabel">표적 펩타이드 보유 유무<span class="req">*</span></div>
+          <div class="opts">
+            <label><input type="radio" name="tpep">보유</label>
+            <label><input type="radio" name="tpep">미보유</label>
+          </div>
+          <input type="text" placeholder="아미노산 서열 (선택)" style="margin-top:10px">
+        </div>
+        <div class="field">
+          <div class="flabel">정량 방식<span class="req">*</span></div>
+          <p class="fhelp">상대정량은 시료 간 상대적인 양을 비교하고, 절대정량은 표준물질로 실제 농도를 산출합니다.</p>
+          <div class="opts">
+            <label><input type="radio" name="tq">상대정량</label>
+            <label><input type="radio" name="tq" id="absq">절대정량</label>
+          </div>
+          <div class="cond" id="g-abs">
+            <div class="ct">절대정량 관련 정보</div>
+            <div class="field">
+              <div class="flabel">내부표준물질 준비 여부<span class="req">*</span></div>
+              <div class="opts">
+                <label><input type="radio" name="tisd">보유·제공 가능</label>
+                <label><input type="radio" name="tisd">미보유</label>
+                <label><input type="radio" name="tisd">미사용</label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="flabel">검량선용 표준물질 보유<span class="req">*</span></div>
+              <div class="opts">
+                <label><input type="radio" name="tstd">보유·제공 가능</label>
+                <label><input type="radio" name="tstd">미보유</label>
+                <label><input type="radio" name="tstd">확인 필요</label>
+              </div>
+            </div>
+            <p class="note">표준물질을 제공하지 못하는 경우 별도의 합성 또는 구매 비용이 추가될 수 있습니다.</p>
+          </div>
+        </div>
+        <div class="field">
+          <div class="flabel">분석법 준비 상태<span class="req">*</span></div>
+          <div class="opts">
+            <label><input type="radio" name="mth">기존 분석법 적용</label>
+            <label><input type="radio" name="mth">신규 분석법 개발 요청</label>
+            <label><input type="radio" name="mth">사전 협의 필요</label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="flabel">시료 내 예상 농도</div>
+          <div class="inline"><input type="number" class="narrow" placeholder="">
+            <select class="narrow"><option>ng/mL</option><option>μg/mL</option><option>μM</option><option>nM</option></select></div>
+        </div>
+      </div>
+
+      <div class="field cond" id="g-ptm" style="border-top:1px solid var(--line);background:none;border-left:none;border-radius:0;padding:20px 0">
+        <div class="flabel">PTM</div>
+        <div class="items" style="margin-top:10px">
+          <label><input type="checkbox">Acetylation<span class="d">아세틸화 부위 및 정도 확인</span></label>
+          <label><input type="checkbox">Methylation<span class="d">메틸화 부위 및 정도 확인</span></label>
+          <label><input type="checkbox">Phosphorylation<span class="d">인산화 부위 및 정도 확인</span></label>
+          <label><input type="checkbox">Glycosylation<span class="d">당화 부위 및 정도 확인</span></label>
+          <label><input type="checkbox">기타</label>
+        </div>
+      </div>
+
+      <p class="note" id="atyEmpty">분석 유형을 선택하면 세부 항목이 나타납니다.</p>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step" data-step="3">
+      <h2>시료 정보</h2>
+      <p class="sub">보내실 시료의 종류와 수량을 알려주세요. 견적과 기관 매칭에 사용됩니다.</p>
+
+      <div class="field">
+        <div class="flabel">Source · 생물종<span class="req">*</span></div>
+        <div class="opts">
+          <label><input type="checkbox">Human</label>
+          <label><input type="checkbox">Mouse</label>
+          <label><input type="checkbox">Rat</label>
+          <label><input type="checkbox">기타</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="flabel">시료 종류<span class="req">*</span></div>
+        <div class="opts">
+          <label><input type="checkbox">조직</label><label><input type="checkbox">세포</label>
+          <label><input type="checkbox" id="spcSer">혈청</label><label><input type="checkbox">혈장</label>
+          <label><input type="checkbox">전혈</label><label><input type="checkbox">CSF</label>
+          <label><input type="checkbox">CM</label><label><input type="checkbox">EV</label>
+          <label><input type="checkbox">정제 단백질</label><label><input type="checkbox">기타</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="flabel">총 시료 수<span class="req">*</span></div>
+        <div class="inline"><input type="number" class="narrow" id="totalN" placeholder="0"><span>개</span></div>
+      </div>
+
+      <div class="field">
+        <div class="flabel">분석 그룹<span class="req">*</span></div>
+        <p class="fhelp">그룹을 나누면 통계 비교가 가능합니다. 대조군은 1개 이상 필요합니다.</p>
+        <div class="opts">
+          <label><input type="radio" name="grpUse" value="n" checked>그룹 없음</label>
+          <label><input type="radio" name="grpUse" value="y">그룹 있음</label>
+        </div>
+        <div id="grpWrap" style="display:none">
+          <table class="grp"><thead><tr><th>구분</th><th>그룹명</th><th style="width:96px">시료 수</th><th style="width:96px"></th></tr></thead><tbody id="grpBody"></tbody></table>
+          <button type="button" id="addC" class="ghosttxt" style="margin-top:10px;color:var(--teal-d)">+ 대조군 추가</button>
+          <p class="note" id="grpMsg"></p>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="flabel">시료량</div>
+        <p class="fhelp">시료 1개 기준입니다. 시료 종류를 선택하면 기준 단위가 자동으로 지정됩니다.</p>
+        <div class="inline"><input type="number" class="narrow" placeholder="">
+          <select class="narrow" id="unit"><option>μL</option><option>mL</option><option>μg</option><option>mg</option><option>ng</option><option>cells</option><option>particles</option></select></div>
+      </div>
+
+      <div class="field">
+        <div class="flabel">보관상태<span class="req">*</span></div>
+        <div class="opts">
+          <label><input type="radio" name="stor">냉장</label>
+          <label><input type="radio" name="stor">냉동 (-20℃)</label>
+          <label><input type="radio" name="stor">초저온 (-80℃)</label>
+          <label><input type="radio" name="stor">동결건조</label>
+          <label><input type="radio" name="stor">기타</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step" data-step="4">
+      <h2>요구사항</h2>
+      <p class="sub">일정과 예산, 받고 싶은 결과물을 알려주세요. 마지막으로 입력 내용을 확인하고 제출합니다.</p>
+
+      <div class="field">
+        <div class="flabel">희망완료일<span class="req">*</span></div>
+        <input type="date" class="mid">
+      </div>
+
+      <div class="field">
+        <div class="flabel">일정 협의 가능 여부<span class="req">*</span></div>
+        <p class="fhelp">협의가 가능하면 기간이 조금 더 걸리는 기관도 후보로 추천해 드립니다.</p>
+        <div class="opts">
+          <label><input type="radio" name="nego">가능</label>
+          <label><input type="radio" name="nego">불가능</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="flabel" data-both="1">모집기한<span class="req">*</span></div>
+        <p class="fhelp">기본값은 작성일부터 2주입니다.</p>
+        <div class="inline"><input type="date" class="narrow" id="rFrom"><span>~</span><input type="date" class="narrow" id="rTo"></div>
+      </div>
+
+      <div class="field">
+        <div class="flabel">예상금액<span class="req">*</span></div>
+        <div class="opts">
+          <label><input type="radio" name="bud">500만원 미만</label>
+          <label><input type="radio" name="bud">500만~1,000만원</label>
+          <label><input type="radio" name="bud">1,000만원 이상</label>
+          <label><input type="radio" name="bud">미정</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="flabel">희망 산출물<span class="req">*</span></div>
+        <div class="opts">
+          <label><input type="checkbox">Raw data</label><label><input type="checkbox">결과표</label>
+          <label><input type="checkbox">결과 이미지</label><label><input type="checkbox">국문 보고서</label>
+          <label><input type="checkbox">영문 보고서</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="flabel">산출물 용도<span class="req">*</span></div>
+        <p class="fhelp">용도에 따라 요구되는 문서 수준이 달라 기관 추천에 반영됩니다.</p>
+        <div class="opts">
+          <label><input type="radio" name="purp">규제기관 제출용</label>
+          <label><input type="radio" name="purp">논문 학술용</label>
+          <label><input type="radio" name="purp">내부 연구용</label>
+          <label><input type="radio" name="purp">기타</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="flabel">요청 기술</div>
+        <p class="fhelp">희망하는 방식이 있으면 선택해 주세요. 없으면 비워두셔도 됩니다.</p>
+        <div style="font-size:13px;color:var(--ink-2);margin:12px 0 7px">시료 전처리 기술</div>
+        <div class="opts">
+          <label><input type="checkbox">TMT</label><label><input type="checkbox">SILAC</label>
+          <label><input type="checkbox">iTRAQ</label><label><input type="checkbox">Label-free</label>
+        </div>
+        <div style="font-size:13px;color:var(--ink-2);margin:16px 0 7px">분석 기술</div>
+        <div class="opts">
+          <label><input type="checkbox">DDA</label><label><input type="checkbox">DIA</label>
+          <label><input type="checkbox">MRM</label><label><input type="checkbox">PRM</label>
+        </div>
+        <div style="font-size:13px;color:var(--ink-2);margin:16px 0 7px">희망 장비</div>
+        <div class="opts">
+          <label><input type="checkbox">Orbitrap</label><label><input type="checkbox">Q-TOF</label>
+          <label><input type="checkbox">Triple Quadrupole</label>
+        </div>
+      </div>
+
+
+      <div class="field">
+        <div class="flabel">추가 요청사항 및 후속 연구계획</div>
+        <textarea placeholder="추후 대사체 결과를 추가하여 Multi-omics data 분석을 진행하거나, 확인된 후보 물질에 대한 타겟 분석을 진행하고 싶습니다."></textarea>
+      </div>
+
+      <div class="revhead"><h3>입력 내용 확인</h3></div>
+      <div class="rev">
+        <div class="r"><div>분석 서비스</div><div id="rvSvc">단백체 분석</div></div>
+        <div class="r"><div>분석 유형</div><div id="rvAty">미선택</div></div>
+        <div class="r"><div>시료</div><div id="rvSpc">미입력</div></div>
+        <div class="r"><div>일정</div><div id="rvDate">미입력</div></div>
+      </div>
+      <p class="note">제출하면 담당 매니저가 검토한 뒤 적합한 분석기관 후보를 안내해 드립니다.</p>
+    </div>
+
+    <div class="bar">
+      <button class="ghosttxt left" type="button" id="saveBtn">임시저장</button>
+      <button class="b" id="prev" type="button" disabled>이전</button>
+      <button class="b primary" id="next" type="button">다음</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="listModal">
+  <div class="mbox">
+    <div class="mhead">
+      <h3>저장된 의뢰서</h3>
+      <button type="button" id="closeList" aria-label="닫기">×</button>
+    </div>
+    <div class="mbody" id="draftList"></div>
+    <div class="mfoot">
+      <span>작성 중인 의뢰서는 30일간 보관됩니다.</span>
+      <button type="button" id="newDraft">새 의뢰서 작성</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+  <div class="fin">
+    <div class="flogo">OmicsPharm</div>
+    <div>CellKey AI Co., Ltd. · 사업자 등록번호 695-87-01297</div>
+    <div class="copy">Copyright © 2026 CellKey AI Co., Ltd. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var cur=1, MAX=4;
+  var steps=document.querySelectorAll('.step'), sts=document.querySelectorAll('.st');
+  var prev=document.getElementById('prev'), next=document.getElementById('next');
+
+  function svcChosen(){return !!document.querySelector('input[name="svc"]:checked');}
+  function render(){
+    steps.forEach(function(s){s.classList.toggle('on', +s.dataset.step===cur)});
+    sts.forEach(function(b,i){
+      b.classList.toggle('on', i+1===cur);
+      b.classList.toggle('done', i+1<cur);
+    });
+    prev.disabled = cur===1;
+    next.textContent = cur===MAX ? '분석 의뢰 제출' : '다음';
+    next.disabled = false;
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(cur===5) fillReview();
+  }
+  /* ===== 필수값 검사 ===== */
+  function visible(el){
+    var n=el;
+    while(n && !n.classList.contains('card')){
+      if(n.classList.contains('step')){ n=n.parentNode; continue; }
+      if(n.style && n.style.display==='none') return false;
+      if(n.classList.contains('cond') && !n.classList.contains('on')) return false;
+      n=n.parentNode;
+    }
+    return true;
+  }
+  function reqFields(){
+    return [].slice.call(document.querySelectorAll('.card .field')).filter(function(f){
+      var lb=f.querySelector(':scope > .flabel');
+      return lb && lb.querySelector('.req') && visible(f);
+    });
+  }
+  function labelOf(f){
+    return f.querySelector(':scope > .flabel').textContent.replace('*','').trim();
+  }
+  function filled(f){
+    var lb=f.querySelector(':scope > .flabel');
+    if(lb.dataset.tags) return TAGS.get().length>0;
+    var radios=f.querySelectorAll(':scope > .opts input[type=radio], :scope > .opts input[type=checkbox]');
+    if(radios.length) return [].some.call(radios,function(i){return i.checked});
+    var items=f.querySelectorAll(':scope > .items input[type=checkbox]');
+    if(items.length) return [].some.call(items,function(i){return i.checked});
+    var texts=[].slice.call(f.querySelectorAll('input[type=text],input[type=number],input[type=date],textarea'))
+      .filter(function(el){return !el.disabled && !el.closest('#grpBody') && !el.closest('.cond');});
+    if(!texts.length) return true;
+    if(lb.dataset.both) return texts.every(function(el){return el.value.trim()!=='';});
+    return texts.some(function(el){return el.value.trim()!=='';});
+  }
+  function stepOf(f){ return +f.closest('.step').dataset.step; }
+
+  function validate(){
+    var miss=[];
+    if(!svcChosen()) miss.push({step:1,label:'분석 서비스',el:document.querySelector('.step[data-step="1"] .svc').closest('.field')});
+    reqFields().forEach(function(f){
+      if(!filled(f)) miss.push({step:stepOf(f),label:labelOf(f),el:f});
+    });
+    return miss;
+  }
+  function clearMarks(){
+    document.querySelectorAll('.field.invalid').forEach(function(f){f.classList.remove('invalid')});
+    document.querySelectorAll('.st.err').forEach(function(b){b.classList.remove('err')});
+    document.getElementById('errBox').classList.remove('on');
+  }
+  function showErrors(miss, stepOnly){
+    clearMarks();
+    var box=document.getElementById('errBox'), ul=document.getElementById('errList');
+    box.querySelector('.eh b').textContent = stepOnly
+      ? '이 단계에서 입력하지 않은 항목이 있습니다'
+      : '입력하지 않은 필수 항목이 있습니다';
+    document.getElementById('errCount').textContent=miss.length+'개 항목';
+    ul.innerHTML=miss.map(function(m,i){
+      return '<li><button type="button" data-i="'+i+'">'+(stepOnly?'':m.step+'단계 · ')+m.label+'</button></li>';
+    }).join('');
+    ul.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click',function(){
+        var m=miss[+b.dataset.i];
+        cur=m.step; render();
+        setTimeout(function(){
+          if(!m.el) return;
+          if(m.el.classList.contains('field')) m.el.classList.add('invalid');
+          m.el.scrollIntoView({behavior:'smooth',block:'center'});
+          var f=m.el.querySelector('input:not([disabled]),textarea,select');
+          if(f) f.focus({preventScroll:true});
+        },60);
+      });
+    });
+    miss.forEach(function(m){
+      if(m.el && m.el.classList.contains('field')) m.el.classList.add('invalid');
+      var st=document.querySelectorAll('.st')[m.step-1];
+      if(st) st.classList.add('err');
+    });
+    box.classList.add('on');
+    cur=miss[0].step; render();
+    setTimeout(function(){ box.scrollIntoView({behavior:'smooth',block:'center'}); },80);
+  }
+  document.querySelector('.card').addEventListener('change',function(e){
+    var f=e.target.closest('.field');
+    if(f) f.classList.remove('invalid');
+  });
+  document.querySelector('.card').addEventListener('input',function(e){
+    var f=e.target.closest('.field');
+    if(f) f.classList.remove('invalid');
+  });
+
+  function validateStep(n){
+    return validate().filter(function(m){return m.step===n;});
+  }
+  next.addEventListener('click',function(){
+    var miss = (cur===MAX) ? validate() : validateStep(cur);
+    if(miss.length){ showErrors(miss, cur!==MAX); return; }
+    clearMarks();
+    if(cur===MAX){ toast('분석 의뢰가 제출되었습니다'); return; }
+    cur++; render();
+  });
+  prev.addEventListener('click',function(){ if(cur>1){cur--;render();} });
+  sts.forEach(function(b){b.addEventListener('click',function(){
+    var g=+b.dataset.go;
+    if(g<=cur){ clearMarks(); cur=g; render(); return; }   // 뒤로 이동은 자유
+    for(var n=cur;n<g;n++){                                 // 앞으로는 중간 단계 검사
+      var miss=validateStep(n);
+      if(miss.length){ cur=n; showErrors(miss,true); return; }
+    }
+    clearMarks(); cur=g; render();
+  })});
+
+
+  // 분석 유형 조건부
+  var map={untg:'g-untg',tgt:'g-tgt',ptm:'g-ptm'};
+  function syncAty(){
+    var any=false;
+    document.querySelectorAll('.aty').forEach(function(i){
+      var el=document.getElementById(map[i.dataset.t]);
+      el.classList.toggle('on', i.checked);
+      el.style.display = i.checked ? 'block' : 'none';
+      if(i.checked) any=true;
+    });
+    document.getElementById('atyEmpty').style.display = any ? 'none':'block';
+  }
+  document.querySelectorAll('.aty').forEach(function(i){i.addEventListener('change',syncAty)});
+  syncAty();
+
+  // 절대정량 조건부
+  function syncAbs(){
+    document.getElementById('g-abs').classList.toggle('on', document.getElementById('absq').checked);
+  }
+  document.querySelectorAll('input[name="tq"]').forEach(function(i){i.addEventListener('change',syncAbs)});
+
+  // 타겟 태그 입력
+  var TAGS=null;
+  (function(){
+    var inp=document.getElementById('tgtIn'), box=document.getElementById('tgtTags'), list=[], composing=false;
+    TAGS={get:function(){return list.slice()},set:function(v){list=v.slice();draw();}};
+    inp.addEventListener('compositionstart',function(){composing=true});
+    inp.addEventListener('compositionend',function(){composing=false});
+    function draw(){ box.innerHTML=list.map(function(v){return '<span class="tagx">'+v+'</span>'}).join(''); }
+    inp.addEventListener('keydown',function(e){
+      if(e.isComposing||e.keyCode===229||composing) return;
+      if(e.key!=='Enter') return;
+      e.preventDefault();
+      var v=inp.value.trim(); if(!v) return;
+      v.split(/[,;]/).map(function(x){return x.trim()}).filter(Boolean).forEach(function(x){
+        if(list.indexOf(x)<0) list.push(x);
+      });
+      inp.value=''; draw();
+    });
+  })();
+
+  // 분석 그룹
+  var GRP=null;
+  (function(){
+    var wrap=document.getElementById('grpWrap'), tb=document.getElementById('grpBody'),
+        msg=document.getElementById('grpMsg'), total=document.getElementById('totalN');
+    var seq=0;
+    function renumber(){
+      var c=0,t=0,cs=null;
+      tb.querySelectorAll('tr').forEach(function(tr){
+        if(tr.dataset.set!==cs){cs=tr.dataset.set;t=0;}
+        var n = tr.dataset.kind==='대조군' ? (++c) : (++t);
+        tr.querySelector('td').textContent = tr.dataset.kind+n;
+      });
+    }
+    function check(){
+      var s=0; tb.querySelectorAll('input[type=number]').forEach(function(i){s+=parseInt(i.value||0,10)});
+      var t=parseInt(total.value||0,10);
+      if(!t||!s){msg.textContent='';return;}
+      msg.textContent = s===t ? '그룹 합계 '+s+'개 — 총 시료 수와 일치합니다.'
+        : '그룹 합계 '+s+'개가 총 시료 수 '+t+'개와 다릅니다. 그대로 진행하셔도 됩니다.';
+    }
+    function row(sid,kind,name,after){
+      var tr=document.createElement('tr');
+      tr.dataset.set=sid; tr.dataset.kind=kind;
+      tr.innerHTML='<td></td><td><input type="text" value="'+(name||'')+'" placeholder="그룹명"></td>'+
+        '<td><input type="number" min="0" placeholder="0"></td><td>'+
+        (kind==='대조군'?'<button type="button" class="ghosttxt addT" style="font-size:12px;color:var(--teal-d)">+ 비교군</button>':'')+'</td>';
+      if(after) after.after(tr); else tb.appendChild(tr);
+      tr.querySelector('input[type=number]').addEventListener('input',check);
+      var a=tr.querySelector('.addT');
+      if(a) a.addEventListener('click',function(){
+        var rows=tb.querySelectorAll('tr[data-set="'+sid+'"]');
+        row(sid,'비교군','',rows[rows.length-1]); renumber(); check();
+      });
+      renumber();
+    }
+    document.querySelectorAll('input[name="grpUse"]').forEach(function(r){
+      r.addEventListener('change',function(){
+        var on=r.value==='y'&&r.checked;
+        wrap.style.display=on?'block':'none';
+        if(on&&!tb.querySelectorAll('tr').length){
+          var sid='s'+(++seq); row(sid,'대조군','Control'); row(sid,'비교군','Treatment'); check();
+        }
+      });
+    });
+    document.getElementById('addC').addEventListener('click',function(){
+      var sid='s'+(++seq); row(sid,'대조군',''); check();
+    });
+    total.addEventListener('input',check);
+    GRP={
+      get:function(){
+        return [].map.call(tb.querySelectorAll('tr'),function(tr){
+          var i=tr.querySelectorAll('input');
+          return {set:tr.dataset.set,kind:tr.dataset.kind,name:i[0].value,n:i[1].value};
+        });
+      },
+      set:function(rows){
+        tb.innerHTML=''; seq=0;
+        if(!rows||!rows.length) return;
+        var seen={};
+        rows.forEach(function(r){
+          if(!seen[r.set]){seen[r.set]=1; seq++;}
+          row(r.set,r.kind,r.name);
+          var tr=tb.lastElementChild, i=tr.querySelectorAll('input');
+          i[1].value=r.n;
+        });
+        renumber(); check();
+      }
+    };
+  })();
+
+  // 시료 종류 → 단위
+  document.getElementById('spcSer').addEventListener('change',function(){
+    if(this.checked) document.getElementById('unit').value='μL';
+  });
+
+  // 모집기한 기본값
+  (function(){
+    function f(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+    var a=new Date(), b=new Date(); b.setDate(b.getDate()+14);
+    document.getElementById('rFrom').value=f(a);
+    document.getElementById('rTo').value=f(b);
+  })();
+
+  function fillReview(){
+    var aty=[];
+    document.querySelectorAll('.aty').forEach(function(i){if(i.checked) aty.push(i.parentNode.textContent.trim())});
+    document.getElementById('rvAty').textContent = aty.length?aty.join(', '):'미선택';
+    var spc=[];
+    document.querySelectorAll('.step[data-step="3"] .opts input:checked').forEach(function(i){
+      spc.push(i.parentNode.textContent.trim());
+    });
+    document.getElementById('rvSpc').textContent = spc.length?spc.join(', '):'미입력';
+    var n=document.getElementById('totalN').value;
+    document.getElementById('rvDate').textContent = n? ('총 '+n+'개 시료') : '미입력';
+    var s=document.querySelector('input[name="svc"]:checked');
+    if(s) document.getElementById('rvSvc').textContent = s.parentNode.querySelector('.nm').textContent;
+  }
+
+  /* ===== 임시저장 · 불러오기 ===== */
+  var KEY='omicspharm:drafts';
+  var MEM={};
+  var STORE={
+    get:async function(k){
+      if(window.storage&&window.storage.get){
+        try{var r=await window.storage.get(k); return r&&r.value?JSON.parse(r.value):null;}catch(e){return null;}
+      }
+      return MEM[k]||null;
+    },
+    set:async function(k,v){
+      if(window.storage&&window.storage.set){
+        try{await window.storage.set(k,JSON.stringify(v)); return true;}catch(e){}
+      }
+      MEM[k]=v; return true;
+    }
+  };
+  async function all(){ return (await STORE.get(KEY))||[]; }
+  async function saveAll(list){ await STORE.set(KEY,list); }
+
+  var curId=null;
+
+  function fields(){
+    return [].slice.call(document.querySelectorAll('.card input, .card select, .card textarea'))
+      .filter(function(el){ return !el.closest('#grpBody'); });
+  }
+  function svcLabel(){
+    var s=document.querySelector('input[name="svc"]:checked');
+    return s ? s.parentNode.querySelector('.nm').textContent : '서비스 미선택';
+  }
+  function collect(){
+    var vals=fields().map(function(el){
+      return (el.type==='checkbox'||el.type==='radio') ? (el.checked?1:0) : el.value;
+    });
+    var nm=(document.getElementById('reqName').value||'').trim();
+    return {id:curId, title: nm || svcLabel()+' 의뢰서', svc:svcLabel(),
+            step:cur, vals:vals, tags:TAGS.get(), groups:GRP.get(), at:Date.now()};
+  }
+  function apply(d){
+    var f=fields();
+    (d.vals||[]).forEach(function(v,i){
+      var el=f[i]; if(!el) return;
+      if(el.type==='checkbox'||el.type==='radio') el.checked=!!v; else el.value=v;
+    });
+    TAGS.set(d.tags||[]);
+    syncAty(); syncAbs();
+    var gy=document.querySelector('input[name="grpUse"][value="y"]');
+    document.getElementById('grpWrap').style.display = (gy&&gy.checked)?'block':'none';
+    GRP.set(d.groups||[]);
+    curId=d.id;
+    cur=d.step||1; render();
+  }
+  function reset(){
+    fields().forEach(function(el){
+      if(el.type==='checkbox'||el.type==='radio') el.checked=false;
+      else if(el.type==='date'||el.disabled){ /* 유지 */ }
+      else el.value='';
+    });
+    var gn=document.querySelector('input[name="grpUse"][value="n"]');
+    if(gn) gn.checked=true;
+    document.getElementById('grpWrap').style.display='none';
+    GRP.set([]); TAGS.set([]);
+    syncAty(); syncAbs();
+    curId=null; cur=1; render();
+  }
+
+  var toastEl=document.getElementById('toast'), toastT=null;
+  function toast(msg){
+    toastEl.textContent=msg; toastEl.classList.add('on');
+    clearTimeout(toastT); toastT=setTimeout(function(){toastEl.classList.remove('on');},2200);
+  }
+  function when(ts){
+    var d=new Date(ts), h=d.getHours(), m=('0'+d.getMinutes()).slice(-2);
+    return (d.getMonth()+1)+'월 '+d.getDate()+'일 '+(h<12?'오전':'오후')+' '+(h%12||12)+':'+m;
+  }
+
+  // 저장
+  document.getElementById('saveBtn').addEventListener('click',async function(){
+    var list=await all(), d=collect();
+    if(!d.id){ d.id='d'+Date.now(); curId=d.id; }
+    var k=list.findIndex(function(x){return x.id===d.id});
+    if(k>-1) list[k]=d; else list.unshift(d);
+    await saveAll(list);
+    await refresh();
+    toast('임시저장되었습니다 · '+when(d.at));
+  });
+
+  // 목록
+  var modal=document.getElementById('listModal');
+  function openModal(){ modal.classList.add('on'); }
+  function closeModal(){ modal.classList.remove('on'); }
+  document.getElementById('openList').addEventListener('click',openModal);
+  document.getElementById('closeList').addEventListener('click',closeModal);
+  modal.addEventListener('click',function(e){ if(e.target===modal) closeModal(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeModal(); });
+  document.getElementById('newDraft').addEventListener('click',function(){
+    reset(); closeModal(); toast('새 의뢰서를 시작합니다');
+  });
+
+  async function drawList(){
+    var list=await all(), box=document.getElementById('draftList');
+    if(!list.length){
+      box.innerHTML='<div class="mempty">저장된 의뢰서가 없습니다.<br>작성 중에 임시저장을 누르면 여기에 보관됩니다.</div>';
+      return;
+    }
+    box.innerHTML=list.map(function(d){
+      return '<div class="drow" data-id="'+d.id+'">'+
+        '<div class="info"><div class="nm">'+d.title+'</div>'+
+        '<div class="meta">'+d.svc+' · '+d.step+'단계까지 작성 · '+when(d.at)+'</div></div>'+
+        '<div class="act"><button type="button" class="go">이어서 작성</button>'+
+        '<button type="button" class="del">삭제</button></div></div>';
+    }).join('');
+    box.querySelectorAll('.go').forEach(function(b){
+      b.addEventListener('click',async function(){
+        var id=b.closest('.drow').dataset.id;
+        var d=(await all()).find(function(x){return x.id===id});
+        if(d){ apply(d); closeModal(); toast('작성 중이던 내용을 불러왔습니다'); }
+      });
+    });
+    box.querySelectorAll('.del').forEach(function(b){
+      b.addEventListener('click',async function(){
+        var id=b.closest('.drow').dataset.id;
+        var list=(await all()).filter(function(x){return x.id!==id});
+        await saveAll(list);
+        if(curId===id) curId=null;
+        await refresh(); drawList();
+      });
+    });
+  }
+
+  // 상단 띠 (가장 최근 1건)
+  var bar=document.getElementById('draftBar');
+  async function refresh(){
+    var list=await all();
+    document.getElementById('draftCount').textContent=list.length;
+    await drawList();
+    var latest=list.slice().sort(function(a,b){return b.at-a.at})[0];
+    if(latest && latest.id!==curId){
+      document.getElementById('draftWhen').textContent=
+        latest.title+' · '+latest.step+'단계까지 작성 · '+when(latest.at)+' 저장';
+      bar.classList.add('on');
+      bar.dataset.id=latest.id;
+    } else bar.classList.remove('on');
+  }
+  document.getElementById('draftLoad').addEventListener('click',async function(){
+    var d=(await all()).find(function(x){return x.id===bar.dataset.id});
+    if(d){ apply(d); toast('작성 중이던 내용을 불러왔습니다'); }
+    await refresh();
+  });
+  document.getElementById('draftDrop').addEventListener('click',function(){
+    bar.classList.remove('on');
+  });
+
+  refresh();
+  reqFields().concat([].slice.call(document.querySelectorAll('.card .field'))).forEach(function(f){
+    var lb=f.querySelector(':scope > .flabel');
+    if(!lb || !lb.querySelector('.req') || f.querySelector(':scope > .emsg')) return;
+    var m=document.createElement('p'); m.className='emsg';
+    m.textContent='필수 입력 항목입니다.';
+    f.appendChild(m);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
