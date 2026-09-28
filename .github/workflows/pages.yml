@@ -4,7 +4,6 @@ name: Deploy wireframes to Pages
 on:
   push:
     branches: [main]
-    paths-ignore: ["README.md"]
   workflow_dispatch:
 
 permissions:
