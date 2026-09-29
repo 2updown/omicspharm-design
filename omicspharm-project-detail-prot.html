@@ -4,9 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
-<!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20260929f">
-<script src="assets/common/site.js?v=20260929f"></script>
+<!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
+<link rel="stylesheet" href="assets/common/site.css?v=20260929g">
+<script src="assets/common/site.js?v=20260929g"></script>
+<script src="assets/common/projects-data.js?v=20260929g"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -68,24 +69,6 @@
   .grp .head span { background:var(--gray-100); font-weight:500; }
   .note { padding:24px; border-radius:8px; background:var(--bg-green); font-size:16px; line-height:22px; }
 
-  /* 프로젝트 문의 */
-  #inquiry { gap:24px; } /* .sec(gap 12)보다 우선: 카드 간격 24 */
-  .inq-head { display:flex; gap:8px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; color:#1f2b28; }
-  .inq-head b { font-weight:600; color:var(--orange-600); }
-  .inq-empty { margin-top:-8px; font-size:16px; line-height:22px; color:var(--gray-600); text-align:center; }
-  .inq-list { display:flex; flex-direction:column; }
-  .inq-list[hidden], .inq-empty[hidden] { display:none; }
-  .inq-list li { list-style:none; padding:12px 0; border-bottom:1px solid var(--gray-200); font-size:14px; line-height:20px; }
-  .inq-list li small { display:block; margin-top:4px; font-size:12px; color:var(--gray-500); }
-  .inq-input { display:flex; align-items:center; gap:8px; height:48px; padding:0 16px; background:#fff; border:1px solid var(--gray-300); border-radius:8px; font-size:14px; line-height:20px; color:var(--gray-400); }
-  .inq-input a { color:var(--teal-600); font-weight:500; }
-  .inq-input input { flex:1; min-width:0; border:0; outline:0; background:none; color:#000; }
-  .inq-input input::placeholder { color:var(--gray-400); }
-  .inq-input:focus-within { border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
-  .inq-input button { height:32px; padding:0 12px; border-radius:8px; background:var(--teal-600); color:#fff; font-weight:500; }
-  .inq-input button:hover { background:var(--teal-700); }
-  .infobox { display:flex; gap:8px; padding:16px 12px; border:1px solid var(--blue-200); border-radius:8px; background:var(--blue-50); font-size:14px; line-height:20px; color:var(--blue-700); }
-  .infobox img { width:20px; height:20px; flex:none; }
 
   /* 오른쪽 */
   .aside { width:343px; flex:none; display:flex; flex-direction:column; gap:24px; position:sticky; top:94px; }
@@ -97,6 +80,9 @@
   .panel.nav a { display:flex; align-items:center; gap:2px; height:48px; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-500); }
   .panel.nav a:hover { color:#000; }
   .panel.nav img { width:20px; height:20px; }
+  .panel.nav a.off { color:var(--gray-300); pointer-events:none; }
+  .panel.nav a.off img { opacity:.35; }
+  .badge.closed { background:var(--gray-600); color:#fff; }
   .panel.nav .vl { align-self:stretch; border-left:1px solid var(--gray-200); }
 
   @media (max-width:1180px) { .body { padding-left:24px; padding-right:24px; } }
@@ -128,21 +114,21 @@
     <article class="card">
       <div class="topbar">
         <a class="back" href="projects.html"><img src="assets/detail/ic-caret-left.svg" alt="">목록으로 돌아가기</a>
-        <div class="reginfo"><span>등록일 2026.09.17</span><span>·</span><span>프로젝트 번호 PRJ-2026-0001</span></div>
+        <div class="reginfo"><span>등록일 <span data-f="reg">2026.09.17</span></span><span>·</span><span>프로젝트 번호 <span data-f="no">PRJ-2026-0001</span></span></div>
       </div>
       <div class="titles">
-        <div class="badges"><span class="badge tag">단백체 분석</span><span class="badge open">모집중</span></div>
+        <div class="badges"><span class="badge tag" data-f="cat">단백체 분석</span><span class="badge open" data-f="status">모집중</span></div>
         <div class="title-row">
-          <h1>만성 염증질환 환자 혈청의 비표적 단백체 비교 및 IL-6 절대정량</h1>
+          <h1 data-f="title">만성 염증질환 환자 혈청의 비표적 단백체 비교 및 IL-6 절대정량</h1>
           <button type="button" class="heart" aria-pressed="false" aria-label="관심 프로젝트에 추가"></button>
         </div>
       </div>
       <div class="summary">
-        <div><img src="assets/find/ic-user.svg" alt="">*****(user01)</div>
-        <div><img src="assets/find/ic-calendar.svg" alt=""><em>모집 기한</em><span>2026.12.31 ~ 2027.03.01<span class="dday">・D-14</span></span></div>
-        <div><img src="assets/find/ic-flask.svg" alt=""><em>샘플</em>24개</div>
-        <div><img src="assets/find/ic-timer.svg" alt=""><em>희망완료일</em>2026.11.20</div>
-        <div><img src="assets/detail/ic-currency-krw.svg" alt=""><em>희망가격</em>500만~1,000만원</div>
+        <div><img src="assets/find/ic-user.svg" alt=""><span data-f="owner">*****(user01)</span></div>
+        <div><img src="assets/find/ic-calendar.svg" alt=""><em>모집 기한</em><span><span data-f="period">2026.12.31 ~ 2027.03.01</span><span class="dday" data-f="dday">・D-14</span></span></div>
+        <div><img src="assets/find/ic-flask.svg" alt=""><em>샘플</em><span data-f="samples">24개</span></div>
+        <div><img src="assets/find/ic-timer.svg" alt=""><em>희망완료일</em><span data-f="due">2026.11.20</span></div>
+        <div><img src="assets/detail/ic-currency-krw.svg" alt=""><em>희망가격</em><span data-f="price">500만~1,000만원</span></div>
       </div>
 
       <nav class="tabs" id="tabs" aria-label="상세 항목">
@@ -152,7 +138,6 @@
         <a href="#require">요구 사항</a>
         <a href="#output">산출물</a>
         <a href="#extra">추가 요청사항</a>
-        <a href="#inquiry">문의사항</a>
       </nav>
 
       <div class="sections">
@@ -166,7 +151,7 @@
           <dl class="kv">
             <div><dt>Taxonomy (Source)</dt><dd>Human</dd></div>
             <div><dt>시료 종류</dt><dd>혈청</dd></div>
-            <div><dt>총 시료 수</dt><dd>24개</dd></div>
+            <div><dt>총 시료 수</dt><dd data-f="samples">24개</dd></div>
             <div><dt>시료량</dt><dd>100 μL&nbsp; (시료 1개 기준)</dd></div>
             <div><dt>보관상태</dt><dd>초저온 (-80℃)</dd></div>
           </dl>
@@ -183,7 +168,7 @@
         </section>
 
         <section class="sec" id="service">
-          <h2>분석 서비스 : 단백체 분석</h2>
+          <h2>분석 서비스 : <span data-f="cat">단백체 분석</span></h2>
           <dl class="kv">
             <div><dt>분석 유형</dt><dd>Untargeted protein analysis, Targeted protein analysis</dd></div>
             <div><dt>Untargeted protein analysis</dt><dd>· 정성분석<br>· 정량분석<br>· 통계처리 (p-value, volcano plot 등)</dd></div>
@@ -207,9 +192,9 @@
           <h2>요구사항</h2>
           <dl class="kv">
             <div><dt>분석 희망국가</dt><dd>대한민국</dd></div>
-            <div><dt>희망완료일</dt><dd>2026-11-20</dd></div>
+            <div><dt>희망완료일</dt><dd data-f="dueDash">2026-11-20</dd></div>
             <div><dt>일정 협의 가능 여부</dt><dd>가능</dd></div>
-            <div><dt>예상금액</dt><dd>500만 ~ 1,000만원</dd></div>
+            <div><dt>예상금액</dt><dd data-f="priceSp">500만 ~ 1,000만원</dd></div>
             <div><dt>시료 전처리 기술</dt><dd>TMT</dd></div>
             <div><dt>분석 기술</dt><dd>DIA, PRM</dd></div>
             <div><dt>희망 장비</dt><dd>Orbitrap</dd></div>
@@ -231,13 +216,6 @@
       </div>
     </article>
 
-    <section class="card sec" id="inquiry">
-      <div class="inq-head">프로젝트 문의 <b id="inqCount">0</b></div>
-      <p class="inq-empty" id="inqEmpty">프로젝트 문의가 없습니다.</p>
-      <ul class="inq-list" id="inqList" hidden></ul>
-      <div id="inqBox"></div>
-    </section>
-    <div class="infobox"><img src="assets/detail/ic-info-circle.svg" alt="">문의할 내용이 있으신가요? AI가 문의사항을 도와드립니다.</div>
   </div>
 
   <aside class="aside">
@@ -246,9 +224,9 @@
       <a class="btn-filled" href="#" data-soon="견적 문의">문의하기</a>
     </div>
     <div class="panel nav">
-      <a href="#" data-soon="이전 게시글"><img src="assets/detail/ic-caret-left-20.svg" alt="">이전 게시글</a>
+      <a href="#" id="prevP"><img src="assets/detail/ic-caret-left-20.svg" alt="">이전 게시글</a>
       <span class="vl"></span>
-      <a href="#" data-soon="다음 게시글">다음 게시글<img src="assets/detail/ic-caret-right-20.svg" alt=""></a>
+      <a href="#" id="nextP">다음 게시글<img src="assets/detail/ic-caret-right-20.svg" alt=""></a>
     </div>
   </aside>
 </div></main>
@@ -258,6 +236,30 @@
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
+
+  // ?id= 프로젝트 불러오기 (id 0 = Figma 예시 프로젝트). 비공개 프로젝트는 볼 수 없음
+  var P = OP_PROJECTS.DATA, id = parseInt(new URLSearchParams(location.search).get('id'), 10);
+  var x = P[isNaN(id) ? 0 : id] || P[0];
+  if (x.priv) { OP.flash('비공개 프로젝트는 볼 수 없습니다.'); location.replace('projects.html'); return; }
+  var won = function (n) { return n.toLocaleString('ko-KR') + '만'; };
+  var lo = x.id === 0 ? 500 : Math.max(50, Math.round(x.price * 0.7 / 50) * 50), hi = x.id === 0 ? 1000 : Math.round(x.price * 1.3 / 50) * 50;
+  var F = {
+    reg: x.reg, no: 'PRJ-2026-' + String(x.id + 1).padStart(4, '0'), cat: x.cat, title: x.title, owner: x.owner,
+    status: x.open ? '모집중' : '모집마감', period: x.from + ' ~ ' + x.to, dday: x.open ? '・D-' + x.days : '・마감',
+    samples: x.samples + '개', due: x.due, dueDash: x.due.replace(/\./g, '-'), price: won(lo) + '~' + won(hi) + '원', priceSp: won(lo) + ' ~ ' + won(hi) + '원'
+  };
+  document.querySelectorAll('[data-f]').forEach(function (el) { el.textContent = F[el.dataset.f]; });
+  $('[data-f="status"]').className = 'badge ' + (x.open ? 'open' : 'closed');
+  document.title = x.title + ' · OmicsPharm';
+
+  // 이전·다음 프로젝트: 프로젝트 찾기 기본 정렬(최신 등록 순)과 같은 순서, 공개 프로젝트만
+  var dt = OP_PROJECTS.date;
+  var list = P.filter(function (p) { return !p.priv; }).sort(function (a, b) { return (dt(b.reg) - dt(a.reg)) || (a.id - b.id); }), k = list.indexOf(x);
+  [['#prevP', list[k - 1]], ['#nextP', list[k + 1]]].forEach(function (pair) {
+    var a = $(pair[0]), t = pair[1];
+    if (t) { a.href = OP_PROJECTS.url(t); a.title = t.title; } else { a.classList.add('off'); a.setAttribute('aria-disabled', 'true'); }
+  });
+
   // 관심 프로젝트 토글
   $('.heart').addEventListener('click', function () {
     var on = this.getAttribute('aria-pressed') !== 'true';
@@ -277,23 +279,6 @@
     setOn(cur);
   }, { passive: true });
 
-  // 프로젝트 문의: 로그인 전에는 안내, 로그인 후에는 작성 (데모 — 이 브라우저에만 표시)
-  var s = OP.session(), n = 0;
-  var box = $('#inqBox');
-  if (!s) {
-    box.outerHTML = '<div class="inq-input"><span>프로젝트 문의를 작성하려면 <a href="login.html?next=omicspharm-project-detail-prot.html">로그인</a> 해주세요.</span></div>';
-  } else {
-    box.outerHTML = '<form class="inq-input" id="inqForm"><input id="inqText" placeholder="프로젝트에 대해 궁금한 점을 남겨주세요." aria-label="문의 내용"><button type="submit">등록</button></form>';
-    $('#inqForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      var t = $('#inqText').value.trim(); if (!t) return;
-      var li = document.createElement('li'); li.textContent = t;
-      var sm = document.createElement('small'); sm.textContent = s.email.replace(/^(.{2}).*(@.*)$/, '$1***$2') + ' · 방금 전';
-      li.appendChild(sm); $('#inqList').appendChild(li);
-      $('#inqList').hidden = false; $('#inqEmpty').hidden = true; $('#inqCount').textContent = ++n;
-      $('#inqText').value = '';
-    });
-  }
 })();
 </script>
 </body>

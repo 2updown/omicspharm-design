@@ -227,6 +227,9 @@
     var m = null; try { m = sessionStorage.getItem('op.flash'); sessionStorage.removeItem('op.flash'); } catch (e) {}
     if (m) OP.toast(m);
   }
-  function init() { render(); showFlash(); }
+  // GNB 배경: 맨 위에서는 반투명, 조금이라도 내리면 흰색
+  function syncGnb() { var g = document.querySelector('.op-gnb'); if (g) g.classList.toggle('is-scrolled', window.scrollY > 0); }
+  window.addEventListener('scroll', syncGnb, { passive: true });
+  function init() { render(); syncGnb(); showFlash(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
