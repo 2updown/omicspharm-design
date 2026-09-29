@@ -43,6 +43,18 @@
       el.classList.add('show');
       clearTimeout(el._t);
       el._t = setTimeout(function () { el.classList.remove('show'); }, 1800);
+    },
+    // 페이지를 옮긴 뒤 띄울 토스트
+    flash: function (msg) { try { sessionStorage.setItem('op.flash', msg); } catch (e) {} },
+    CLIENT_ONLY_MSG: '의뢰자(클라이언트)만 프로젝트를 등록할 수 있습니다.',
+    // 클라이언트 전용 화면 진입 판단: 'ok' | 'login' | 'deny'
+    clientGate: function () { var s = OP.session(); return !s ? 'login' : s.role === 'client' ? 'ok' : 'deny'; },
+    // 클라이언트 전용 페이지 맨 위에서 호출: 조건이 안 되면 로그인 또는 메인으로 돌려보낸다
+    requireClient: function () {
+      var g = OP.clientGate(), here = location.pathname.split('/').pop() || 'index.html';
+      if (g === 'login') { location.replace('login.html?next=' + encodeURIComponent(here)); return false; }
+      if (g === 'deny') { OP.flash(OP.CLIENT_ONLY_MSG); location.replace('index.html'); return false; }
+      return true;
     }
   };
 
@@ -54,10 +66,10 @@
     var on = function (k) { return active === k ? ' class="on"' : ''; };
     var menu =
       '<nav class="op-gnb-menu">' +
-        '<a href="omicspharm-register.html"' + on('register') + '>프로젝트 의뢰</a>' +
+        '<a href="omicspharm-register.html" data-client-only' + on('register') + '>프로젝트 의뢰</a>' +
         '<a href="#" data-soon="프로젝트 찾기"' + on('find') + '>프로젝트 찾기</a>' +
         '<a href="#" data-soon="커뮤니티">커뮤니티 ' + caret + '</a>' +
-        '<a href="index.html#analysis">서비스 소개 ' + caret + '</a>' +
+        '<a href="#" data-soon="서비스 소개">서비스 소개 ' + caret + '</a>' +
         '<a href="#" data-soon="고객지원">고객지원 ' + caret + '</a>' +
       '</nav>';
     var cta = s
@@ -117,6 +129,13 @@
   document.addEventListener('click', function (e) {
     var soon = e.target.closest('[data-soon]');
     if (soon) { e.preventDefault(); OP.toast("'" + soon.getAttribute('data-soon') + "' 화면은 준비 중입니다."); return; }
+    // 프로젝트 등록(의뢰)은 클라이언트만: 비로그인 → 로그인 화면, 파트너·관리자 → 안내
+    var co = e.target.closest('[data-client-only]');
+    if (co) {
+      var g = OP.clientGate();
+      if (g === 'login') { e.preventDefault(); location.href = 'login.html?next=' + encodeURIComponent(co.getAttribute('href')); return; }
+      if (g === 'deny') { e.preventDefault(); OP.toast(OP.CLIENT_ONLY_MSG); return; }
+    }
     if (e.target.closest('[data-op-logout]')) { OP.logout(); location.href = 'index.html'; return; }
     var user = e.target.closest('.op-user');
     document.querySelectorAll('.op-user.open').forEach(function (u) { if (u !== user) u.classList.remove('open'); });
@@ -126,5 +145,10 @@
     if (e.key === 'Escape') document.querySelectorAll('.op-user.open').forEach(function (u) { u.classList.remove('open'); });
   });
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render); else render();
+  function showFlash() {
+    var m = null; try { m = sessionStorage.getItem('op.flash'); sessionStorage.removeItem('op.flash'); } catch (e) {}
+    if (m) OP.toast(m);
+  }
+  function init() { render(); showFlash(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

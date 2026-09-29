@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OmicsPharm</title>
 <!-- Figma: [OmicsPharm] Renewal / 03_디자인(작업중) / 1440_시안1 (180:5300) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20260929b">
-<script src="assets/common/site.js?v=20260929b"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20260929c">
+<script src="assets/common/site.js?v=20260929c"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --teal-900:#004f4a;
@@ -49,8 +49,12 @@
   /* ── Social proof (180:5311) ── */
   .proof { background:var(--white); padding:53px 0; display:flex; flex-direction:column; align-items:center; gap:41px; overflow:hidden; }
   .proof > p { font-size:18px; font-weight:500; line-height:1.4; letter-spacing:-.18px; color:var(--dark-green); text-align:center; }
-  .marquee { display:flex; gap:15px; animation:marquee 10.1636s linear infinite; }
-  @keyframes marquee { from { transform:translateX(-200px); } to { transform:translateX(0); } }
+  /* 로고 흐름: Figma(180:5314)의 방향·속도(200px / 10.16s, 오른쪽으로)를 유지하며 끊김 없이 반복.
+     같은 로고 묶음을 두 번 이어 붙이고 한 묶음 폭(-50%)만큼 이동한 뒤 처음으로 돌아간다. */
+  .marquee { display:flex; gap:15px; width:max-content; animation:marquee 116.8s linear infinite; }
+  .marquee-set { display:flex; gap:15px; padding-right:15px; }
+  @keyframes marquee { from { transform:translateX(-50%); } to { transform:translateX(0); } }
+  @media (prefers-reduced-motion:reduce) { .marquee { animation:none; } }
   .client { position:relative; width:194px; height:46px; flex-shrink:0; overflow:hidden; }
   .client.h47 { height:47px; }
   .client .p { position:absolute; }
@@ -201,7 +205,7 @@
       <p>AI Agent 기반 오믹스 마켓플레이스에서 혁신적 오믹스 분석을 경험해보세요.</p>
     </div>
     <div class="hero-btns">
-      <a class="btn-primary" href="omicspharm-register.html">프로젝트 등록</a>
+      <a class="btn-primary" href="omicspharm-register.html" data-client-only>프로젝트 등록</a>
       <a class="btn-tertiary" href="#" data-soon="문의하기">문의하기</a>
     </div>
   </div>
@@ -209,7 +213,8 @@
 
 <section class="proof" aria-label="협력 기관">
   <p>Connecting organizations across research, analysis, and innovation.</p>
-  <div class="marquee">
+  <div class="marquee" style="gap:0">
+    <div class="marquee-set">
     <div class="client" title="LG화학"><div class="p" style="inset:22.86% 18.61% 21.43% 18.84%"><img src="assets/main/client-lgchem.svg" alt="LG화학"></div></div>
     <div class="client" title="Pharma Food International"><div class="ctr" style="top:15.71%;bottom:15.71%;aspect-ratio:752/307"><img src="assets/main/client-pharmafood.png" alt="Pharma Food International"></div></div>
     <div class="client" title="University of Iowa"><div class="ctr" style="top:5.71%;bottom:4.29%;aspect-ratio:574/366;margin-left:.5px"><img src="assets/main/client-iowa-1.png" alt="University of Iowa"></div></div>
@@ -248,6 +253,48 @@
         <div class="p" style="inset:17.48% 0 21.74% 32.28%"><img src="assets/main/client-kist-1.svg" alt="한국과학기술연구원"></div>
         <div class="p" style="inset:0 74.18% 0 0"><img src="assets/main/client-kist-2.svg" alt=""></div>
       </div>
+    </div>
+    </div>
+    <div class="marquee-set" aria-hidden="true">
+    <div class="client" data-title="LG화학"><div class="p" style="inset:22.86% 18.61% 21.43% 18.84%"><img src="assets/main/client-lgchem.svg" alt="" data-alt="LG화학"></div></div>
+    <div class="client" data-title="Pharma Food International"><div class="ctr" style="top:15.71%;bottom:15.71%;aspect-ratio:752/307"><img src="assets/main/client-pharmafood.png" alt="" data-alt="Pharma Food International"></div></div>
+    <div class="client" data-title="University of Iowa"><div class="ctr" style="top:5.71%;bottom:4.29%;aspect-ratio:574/366;margin-left:.5px"><img src="assets/main/client-iowa-1.png" alt="" data-alt="University of Iowa"></div></div>
+    <div class="client" data-title="University of Iowa"><div class="ctr" style="top:7.14%;bottom:5.71%;aspect-ratio:1365/491;margin-left:.5px"><img src="assets/main/client-iowa-2.png" alt="" data-alt="University of Iowa"></div></div>
+    <div class="client h47" data-title="Harvard"><div class="ctr" style="top:20%;bottom:18.57%;aspect-ratio:960/264"><img src="assets/main/client-harvard.png" alt="" data-alt="Harvard"></div></div>
+    <div class="client h47" data-title="Alteogen"><div class="p" style="inset:32.86% 14.38%;-webkit-mask:url(assets/main/client-alteogen-mask.svg) 0 0/100% 100% no-repeat;mask:url(assets/main/client-alteogen-mask.svg) 0 0/100% 100% no-repeat"><img src="assets/main/client-alteogen.svg" alt="" data-alt="Alteogen"></div></div>
+    <div class="client h47" data-title="국립암센터">
+      <div class="p" style="inset:27.8% 39.61% 41.41% 26.37%"><img src="assets/main/client-ncc-1.svg" alt="" data-alt="국립암센터"></div>
+      <div class="p" style="inset:67.38% 39.19% 23.54% 26.42%"><img src="assets/main/client-ncc-2.svg" alt="" data-alt=""></div>
+      <div class="p" style="inset:22.86% 26.22% 23.64% 62.33%"><img src="assets/main/client-ncc-3.svg" alt="" data-alt=""></div>
+    </div>
+    <div class="client h47" data-title="한국기초과학지원연구원">
+      <div class="p" style="inset:34.98% 68.87% 33.92% 17.47%"><img src="assets/main/client-kbsi-1.svg" alt="" data-alt="한국기초과학지원연구원"></div>
+      <div class="p" style="inset:34.29% 17.3% 47.72% 33.62%"><img src="assets/main/client-kbsi-2.svg" alt="" data-alt=""></div>
+      <div class="p" style="inset:57.31% 17.24% 33.09% 33.74%"><img src="assets/main/client-kbsi-3.svg" alt="" data-alt=""></div>
+    </div>
+    <div class="client" data-title="유한양행">
+      <div class="p" style="inset:21.43% 21.58% 22.86% 21.92%;overflow:hidden">
+        <div class="p" style="inset:18.51% 0 18.57% 84.9%"><img src="assets/main/client-yuhan-1.svg" alt="" data-alt="유한양행"></div>
+        <div class="p" style="inset:20.54% 17.74% 18.51% 65.64%"><img src="assets/main/client-yuhan-2.svg" alt="" data-alt=""></div>
+        <div class="p" style="inset:19.62% 36.06% 20.05% 47.12%"><img src="assets/main/client-yuhan-3.svg" alt="" data-alt=""></div>
+        <div class="p" style="inset:20.05% 55.49% 20.04% 29.19%"><img src="assets/main/client-yuhan-4.svg" alt="" data-alt=""></div>
+        <div class="p" style="inset:0 74.08% 0 0"><img src="assets/main/client-yuhan-5.svg" alt="" data-alt=""></div>
+        <div class="p" style="inset:4.11% 75.05% 4.07% .96%"><img src="assets/main/client-yuhan-6.svg" alt="" data-alt=""></div>
+      </div>
+    </div>
+    <div class="client" data-title="삼성서울병원"><div class="p" style="inset:28.57% 17.12% 30% 16.78%"><img src="assets/main/client-samsung.svg" alt="" data-alt="삼성서울병원"></div></div>
+    <div class="client" data-title="서울대학교병원">
+      <div class="p" style="inset:37.14% 18.15% 35.71% 18.49%;overflow:hidden">
+        <div class="p" style="inset:11.09% 0 .71% 43.14%"><img src="assets/main/client-snuh-1.svg" alt="" data-alt="서울대학교병원"></div>
+        <div class="p" style="inset:0 60.91% -.02% 0"><img src="assets/main/client-snuh-2.svg" alt="" data-alt=""></div>
+      </div>
+    </div>
+    <div class="client" data-title="한국과학기술연구원">
+      <div class="p" style="inset:22.86% 22.6%;overflow:hidden">
+        <div class="p" style="inset:17.48% 0 21.74% 32.28%"><img src="assets/main/client-kist-1.svg" alt="" data-alt="한국과학기술연구원"></div>
+        <div class="p" style="inset:0 74.18% 0 0"><img src="assets/main/client-kist-2.svg" alt="" data-alt=""></div>
+      </div>
+    </div>
     </div>
   </div>
 </section>
@@ -326,7 +373,7 @@
     <img src="assets/main/cta-bg.png" alt="">
     <h2>오믹스 분석이 필요하신가요?</h2>
     <p>유전체, 전사체, 단백체, 대사체 등 다양한 분석 의뢰를 지원하고,<br>견적부터 프로젝트 관리까지 전문 컨설턴트가 함께합니다.</p>
-    <a class="btn-action" href="omicspharm-register.html">프로젝트 의뢰하기 <span class="ic" style="--src:url(assets/main/ic-arrow-right.svg)"></span></a>
+    <a class="btn-action" href="omicspharm-register.html" data-client-only>프로젝트 의뢰하기 <span class="ic" style="--src:url(assets/main/ic-arrow-right.svg)"></span></a>
   </div>
 </section>
 
