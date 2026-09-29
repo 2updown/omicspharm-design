@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>문의하기 · OmicsPharm</title>
 <!-- 문의하기 (Figma 시안 없음 — 04_Resource/Component 토큰·컴포넌트로 구성)
-     ?type=quote|project|partner|service|etc  문의 유형 미리 선택 / ?ref=제목 또는 의뢰번호  관련 프로젝트 표시 -->
+     ?type=quote|project|service|partner|data|etc  문의 유형 미리 선택(분석 견적일 때만 관련 분석 서비스 노출) / ?ref=제목 또는 의뢰번호  관련 프로젝트 표시 -->
 <link rel="stylesheet" href="assets/common/site.css?v=20260929m">
 <script src="assets/common/site.js?v=20260929m"></script>
 <style>
@@ -22,13 +22,12 @@
   [hidden] { display:none !important; }
 
   .page-head { padding:32px 60px; }
-  .page-head .in, .body .in { max-width:1320px; margin:0 auto; }
+  .page-head .in, .body .in { max-width:880px; margin:0 auto; }
   .page-head h1 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; }
   .page-head p { margin-top:12px; font-size:16px; line-height:22px; }
   .body { padding:20px 60px 60px; }
-  .body .in { display:flex; gap:24px; align-items:flex-start; }
 
-  .card { flex:1; min-width:0; display:flex; flex-direction:column; gap:32px; padding:32px; background:#fff; border:1px solid var(--gray-200); border-radius:16px; }
+  .card { min-width:0; display:flex; flex-direction:column; gap:32px; padding:32px; background:#fff; border:1px solid var(--gray-200); border-radius:16px; }
   .group { display:flex; flex-direction:column; gap:20px; }
   .group > h2 { display:flex; align-items:center; gap:8px; padding-bottom:12px; border-bottom:2px solid #000; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
   .group > h2 .num { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:50%; background:var(--teal-600); color:#fff; font-size:13px; font-weight:600; }
@@ -43,25 +42,17 @@
   .opt { margin-left:4px; font-size:12px; font-weight:400; color:var(--gray-400); }
   .input, .select, .textarea { width:100%; background:#fff; border:1px solid var(--gray-300); border-radius:8px; font-size:16px; line-height:22px; }
   .input, .select { height:48px; padding:0 16px; }
+  .select:invalid, .select option[value=""] { color:var(--gray-400); }
+  .select option { color:#000; }
   .select { appearance:none; -webkit-appearance:none; padding-right:40px; background:#fff url(assets/find/ic-chevron-down.svg) right 16px center/16px no-repeat; cursor:pointer; }
   .textarea { min-height:200px; padding:12px 16px; resize:vertical; }
   .input::placeholder, .textarea::placeholder { color:var(--gray-400); }
   .input:focus, .select:focus, .textarea:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
   .input[readonly] { background:var(--gray-100); color:var(--gray-600); }
   .help { display:flex; justify-content:space-between; gap:12px; font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
-  .field.error .input, .field.error .select, .field.error .textarea, .field.error .types { border-color:var(--red-600); }
+  .field.error .input, .field.error .select, .field.error .textarea { border-color:var(--red-600); }
   .field .msg { font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--red-600); }
 
-  /* 문의 유형 (button_outline / filled L48) */
-  .types { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; border-radius:8px; }
-  .types label { position:relative; display:flex; flex-direction:column; gap:2px; padding:12px 16px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; cursor:pointer; transition:border-color .15s, background .15s; }
-  .types label:hover { background:var(--gray-50); }
-  .types input { position:absolute; opacity:0; pointer-events:none; }
-  .types b { font-size:16px; font-weight:500; line-height:22px; }
-  .types span { font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
-  .types label:has(input:checked) { border-color:var(--teal-600); background:var(--teal-50); box-shadow:0 0 0 1px var(--teal-600) inset; }
-  .types label:has(input:checked) b { color:var(--teal-600); }
-  .types label:has(input:focus-visible) { outline:2px solid var(--teal-600); outline-offset:2px; }
   .ref { display:flex; align-items:center; gap:8px; padding:12px 16px; border:1px solid var(--gray-200); border-radius:8px; background:var(--gray-50); font-size:14px; line-height:20px; }
   .ref em { font-style:normal; color:var(--gray-500); white-space:nowrap; }
   .ref b { font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -105,26 +96,6 @@
   .done dt { width:140px; flex:none; padding:12px 16px; background:var(--gray-100); font-weight:500; }
   .done dd { flex:1; padding:12px 16px; word-break:break-all; }
 
-  /* 오른쪽 안내 */
-  .aside { width:378px; flex:none; display:flex; flex-direction:column; gap:24px; position:sticky; top:94px; }
-  .panel { display:flex; flex-direction:column; gap:16px; padding:24px; background:#fff; border:1px solid var(--gray-200); border-radius:16px; box-shadow:0 0 1px rgba(0,0,0,.04), 0 4px 4px rgba(0,0,0,.08); }
-  .panel h3 { font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
-  .panel p { font-size:14px; line-height:20px; color:var(--gray-600); }
-  .mail { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:12px 16px; border-radius:8px; background:var(--bg-green); font-size:16px; font-weight:500; line-height:22px; }
-  .mail a { color:var(--teal-600); }
-  .mail button { font-size:13px; font-weight:500; color:var(--gray-500); }
-  .mail button:hover { color:#000; }
-  .steps { display:flex; flex-direction:column; gap:12px; list-style:none; counter-reset:s; }
-  .steps li { position:relative; padding-left:32px; font-size:14px; line-height:20px; color:var(--gray-700); counter-increment:s; }
-  .steps li::before { content:counter(s); position:absolute; left:0; top:-1px; width:22px; height:22px; border:1px solid var(--teal-600); border-radius:50%; color:var(--teal-600); font-size:12px; font-weight:600; line-height:20px; text-align:center; }
-  .steps b { display:block; color:#000; font-weight:600; }
-  .addr { display:flex; flex-direction:column; gap:12px; font-size:14px; line-height:20px; }
-  .addr b { display:block; font-weight:600; }
-  .addr span { color:var(--gray-600); }
-  .links { display:flex; gap:8px; }
-  .links a { flex:1; display:flex; align-items:center; justify-content:center; height:48px; border:1px solid var(--gray-300); border-radius:8px; font-size:16px; font-weight:500; color:var(--gray-500); }
-  .links a:hover { background:var(--gray-50); }
-
   /* 개인정보 모달 */
   .dim { position:fixed; inset:0; z-index:80; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(0,0,0,.5); }
   .modal { width:560px; max-width:100%; max-height:min(632px, calc(100vh - 32px)); display:flex; flex-direction:column; gap:16px; padding:24px; background:#fff; border-radius:12px; box-shadow:0 0 2px #00000029, 0 16px 24px #00000029; }
@@ -138,15 +109,11 @@
 
   @media (max-width:1180px) { .page-head, .body { padding-left:24px; padding-right:24px; } }
   @media (max-width:960px) {
-    .body .in { flex-direction:column; }
-    .aside { width:100%; position:static; }
-    .types { grid-template-columns:repeat(2, 1fr); }
   }
   @media (max-width:640px) {
     .page-head, .body { padding-left:16px; padding-right:16px; }
     .card { padding:20px 16px; }
     .row2 { grid-template-columns:1fr; }
-    .types { grid-template-columns:1fr; }
     .agree { flex-direction:column; align-items:flex-start; }
     .actions .btn { flex:1; }
   }
@@ -167,21 +134,22 @@
     <section class="group">
       <h2><span class="num">1</span>문의 유형</h2>
       <div class="field" id="f-type">
-        <span class="label">어떤 내용이 궁금하신가요?<span class="req">*</span></span>
-        <div class="types" role="radiogroup" aria-label="문의 유형">
-          <label><input type="radio" name="type" value="quote"><b>분석 견적</b><span>비용·일정·가능 여부 확인</span></label>
-          <label><input type="radio" name="type" value="project"><b>의뢰 프로젝트</b><span>등록한 의뢰·진행 상황 관련</span></label>
-          <label><input type="radio" name="type" value="service"><b>서비스 이용</b><span>회원가입·계정·이용 방법</span></label>
-          <label><input type="radio" name="type" value="partner"><b>분석 파트너 제휴</b><span>분석기관 입점·협업 제안</span></label>
-          <label><input type="radio" name="type" value="data"><b>분석 결과·데이터</b><span>보고서·산출물·AI 분석</span></label>
-          <label><input type="radio" name="type" value="etc"><b>기타</b><span>그 밖의 문의</span></label>
-        </div>
+        <label for="type">문의 유형<span class="req">*</span></label>
+        <select class="select" id="type" required>
+          <option value="" disabled selected hidden>문의 유형을 선택해주세요</option>
+          <option value="quote">분석 견적</option>
+          <option value="project">의뢰 프로젝트</option>
+          <option value="service">서비스 이용</option>
+          <option value="partner">분석 파트너 제휴</option>
+          <option value="data">분석 결과·데이터</option>
+          <option value="etc">기타</option>
+        </select>
       </div>
       <div class="ref" id="ref" hidden><em>관련 프로젝트</em><b id="refText"></b><button type="button" id="refClear">연결 해제</button></div>
-      <div class="field">
+      <div class="field" id="f-svc" hidden>
         <label for="svc">관련 분석 서비스<span class="opt">선택</span></label>
         <select class="select" id="svc">
-          <option value="">선택 안 함</option>
+          <option value="">선택해주세요</option>
           <option>단백체 분석</option><option>Olink 분석</option><option>대사체 분석</option><option>유전체 분석</option>
           <option>전사체 분석</option><option>바이오의약품·ADC</option><option>기타 분석</option>
         </select>
@@ -242,32 +210,6 @@
     </div>
   </section>
 
-  <aside class="aside">
-    <div class="panel">
-      <h3>이메일 문의</h3>
-      <p>폼 대신 이메일로도 문의하실 수 있습니다.</p>
-      <div class="mail"><a href="mailto:contact@omicspharm.com">contact@omicspharm.com</a><button type="button" id="copyMail">복사</button></div>
-    </div>
-    <div class="panel">
-      <h3>답변 절차</h3>
-      <ol class="steps">
-        <li><b>문의 접수</b>작성하신 내용이 담당 매니저에게 전달됩니다.</li>
-        <li><b>내용 확인</b>분석 가능 여부·견적이 필요한 경우 분석 파트너와 함께 검토합니다.</li>
-        <li><b>이메일 답변</b>입력하신 이메일로 답변을 보내드립니다.</li>
-      </ol>
-    </div>
-    <div class="panel">
-      <h3>오시는 길</h3>
-      <div class="addr">
-        <div><b>본사</b><span>28160 충북 청주시 흥덕구 오송읍 오송생명1로 194-41, 408호(기업연구관2)</span></div>
-        <div><b>BIO R&amp;D CENTER</b><span>06571 서울특별시 서초구 서초대로 67 성령빌딩 8층</span></div>
-      </div>
-    </div>
-    <div class="links">
-      <a href="#" data-soon="FAQ">자주 묻는 질문</a>
-      <a href="#" data-soon="이용방법">이용방법</a>
-    </div>
-  </aside>
 </div></main>
 
 <div data-op-footer></div>
@@ -301,8 +243,13 @@
   }
 
   // 다른 화면에서 넘어온 값: 문의 유형·관련 프로젝트·서비스
-  var t = P.get('type'); if (t) { var r = $('input[name="type"][value="' + t + '"]'); if (r) r.checked = true; }
+  // 분석 견적일 때만 관련 분석 서비스 표시
+  var type = $('#type');
+  function syncType() { $('#f-svc').hidden = type.value !== 'quote'; }
+  var t = P.get('type'); if (t && type.querySelector('option[value="' + t + '"]')) type.value = t;
+  type.addEventListener('change', function () { setErr('f-type', ''); syncType(); });
   if (P.get('ref')) { $('#refText').textContent = P.get('ref'); $('#ref').hidden = false; if (!$('#title').value) $('#title').value = '[' + P.get('ref') + '] 문의'; }
+  syncType();
   if (P.get('svc')) { $$('#svc option').forEach(function (o) { if (o.textContent === P.get('svc')) o.selected = true; }); }
   $('#refClear').addEventListener('click', function () { $('#ref').hidden = true; P.delete('ref'); });
 
@@ -320,12 +267,6 @@
     $('#fileBox').classList.toggle('has', !!f); $('#fileClear').hidden = !f;
   });
   $('#fileClear').addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); file.value = ''; file.dispatchEvent(new Event('change')); });
-
-  // 이메일 복사
-  $('#copyMail').addEventListener('click', function () {
-    (navigator.clipboard ? navigator.clipboard.writeText('contact@omicspharm.com') : Promise.reject()).then(
-      function () { OP.toast('이메일 주소를 복사했습니다.'); }, function () { OP.toast('contact@omicspharm.com'); });
-  });
 
   // 개인정보 처리방침 모달 (assets/policy/privacy.html)
   var dim = $('#privacy'), loaded = false;
@@ -349,14 +290,13 @@
   [['name', 'f-name'], ['org', 'f-org'], ['email', 'f-email'], ['title', 'f-title'], ['body', 'f-body']].forEach(function (p) {
     document.getElementById(p[0]).addEventListener('input', function () { setErr(p[1], ''); });
   });
-  $$('input[name="type"]').forEach(function (r) { r.addEventListener('change', function () { setErr('f-type', ''); }); });
   $('#agree').addEventListener('change', function () { setErr('f-agree', ''); });
 
   $('#form').addEventListener('submit', function (e) {
     e.preventDefault();
     var bad = [];
     var chk = function (ok, id, msg) { setErr(id, ok ? '' : msg); if (!ok) bad.push(id); };
-    chk(!!$('input[name="type"]:checked'), 'f-type', '문의 유형을 선택해주세요.');
+    chk(!!type.value, 'f-type', '문의 유형을 선택해주세요.');
     chk($('#name').value.trim(), 'f-name', '이름을 입력해주세요.');
     chk($('#org').value.trim(), 'f-org', '소속을 입력해주세요.');
     var em = $('#email').value.trim();
@@ -367,8 +307,8 @@
     if (bad.length) { document.getElementById(bad[0]).scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
 
     // 데모: 이 브라우저에만 저장 (추후 마이페이지 문의내역에서 사용)
-    var typeLabel = $('input[name="type"]:checked').parentNode.querySelector('b').textContent;
-    var item = { id: 'Q-' + Date.now().toString(36).toUpperCase(), at: Date.now(), type: typeLabel, svc: $('#svc').value, ref: P.get('ref') || '',
+    var typeLabel = type.options[type.selectedIndex].textContent;
+    var item = { id: 'Q-' + Date.now().toString(36).toUpperCase(), at: Date.now(), type: typeLabel, svc: type.value === 'quote' ? $('#svc').value : '', ref: P.get('ref') || '',
       name: $('#name').value.trim(), org: $('#org').value.trim(), email: em, phone: $('#phone').value.trim(), title: $('#title').value.trim(), body: body.value.trim(),
       file: file.files[0] ? file.files[0].name : '' };
     try { var L = JSON.parse(localStorage.getItem('op.inquiries') || '[]'); L.unshift(item); localStorage.setItem('op.inquiries', JSON.stringify(L.slice(0, 50))); } catch (err) {}
