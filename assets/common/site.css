@@ -27,7 +27,7 @@
 .op-gnb-menu img { width:16px; height:16px; }
 /* 메가메뉴 (dropdown_item 342:28061) */
 .op-dd { position:relative; height:100%; display:flex; align-items:center; }
-.op-dd-btn { display:flex; align-items:center; gap:8px; height:70px; font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; }
+.op-gnb .op-dd-btn { display:flex; align-items:center; gap:8px; height:70px; font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; } /* .op-gnb button의 font:inherit보다 우선 */
 .op-dd-btn img { transition:transform .15s; }
 .op-dd.open .op-dd-btn, .op-dd-btn:hover { color:var(--op-teal-600); }
 .op-dd.open .op-dd-btn img { transform:rotate(180deg); }
@@ -35,11 +35,11 @@
   display:none; flex-direction:column; z-index:60; }
 .op-dd-menu::before { content:""; position:absolute; left:0; right:0; top:-8px; height:8px; } /* 버튼과 메뉴 사이 틈에서 hover가 끊기지 않게 */
 .op-dd.open .op-dd-menu { display:flex; }
-.op-dd-menu a { display:flex; align-items:center; height:48px; padding:0 8px; border-radius:4px; font-size:14px; font-weight:500; line-height:20px; color:#000; white-space:nowrap; }
+.op-dd-menu a { display:flex; align-items:center; height:48px; padding:0 8px; border-radius:4px; font-size:16px; font-weight:500; line-height:22px; color:#000; white-space:nowrap; } /* GNB 메뉴와 같은 16px Medium */
 .op-dd-menu a:hover { background:var(--op-gray-100); }
 .op-dd-menu a:active { background:var(--op-gray-200); }
 .op-dd-menu a.on { background:var(--op-gray-100); color:var(--op-teal-600); }
-.op-lang .op-dd-btn { height:auto; }
+.op-gnb .op-lang .op-dd-btn { height:auto; }
 .op-lang .op-dd-btn img { transform:none !important; }
 .op-lang .op-dd-menu { min-width:79px; left:50%; transform:translateX(-50%); top:calc(100% + 31px); }
 .op-lang .op-dd-menu::before { top:-31px; height:31px; }
