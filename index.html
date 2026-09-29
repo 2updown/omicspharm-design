@@ -3,43 +3,71 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OmicsPharm 와이어프레임</title>
+<title>OmicsPharm 프로토타입</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
-  :root { --bg:#f7f9f9; --card:#fff; --text:#15292b; --muted:#5f7375; --line:#dfe7e8; --accent:#0f8b8d; }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg:#0f1718; --card:#172224; --text:#e6eeee; --muted:#93a5a7; --line:#26363a; --accent:#3cc3c5; }
-  }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",sans-serif; }
-  main { max-width:760px; margin:0 auto; padding:48px 16px; }
-  h1 { font-size:26px; margin:0 0 6px; }
-  p.sub { color:var(--muted); margin:0 0 32px; }
-  h2 { font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:32px 0 10px; }
-  ul { list-style:none; margin:0; padding:0; border:1px solid var(--line); border-radius:12px; background:var(--card); overflow:hidden; }
-  li + li { border-top:1px solid var(--line); }
-  a { display:flex; justify-content:space-between; gap:12px; padding:14px 18px; color:inherit; text-decoration:none; }
-  a:hover { background:color-mix(in srgb, var(--accent) 8%, transparent); }
-  a span:last-child { color:var(--muted); font-size:13px; white-space:nowrap; }
-  .tag { color:var(--accent); font-weight:600; }
+  /* 색·글꼴·그림자: Figma 04_Resource/Component 토큰 */
+  :root { --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
+    --gray-200:#e5e5e5; --gray-300:#d4d4d4; --gray-400:#a3a3a3; --gray-500:#737373; --gray-600:#525252; --gray-700:#404040;
+    --shadow2:0 4px 8px #00000014, 0 0 2px #0000000a; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { min-height:100vh; background:var(--bg-green); color:#000; font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column; }
+  a { color:inherit; text-decoration:none; }
+  main { flex:1; width:100%; max-width:1080px; margin:0 auto; padding:96px 16px 64px; display:flex; flex-direction:column; align-items:center; }
+  .logo { width:219px; height:23px; }
+  h1 { margin-top:40px; font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; text-align:center; }
+  .lead { margin-top:16px; font-size:18px; line-height:24px; letter-spacing:-.18px; color:var(--gray-700); text-align:center; }
+  .roles { margin-top:56px; width:100%; display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .role { display:flex; flex-direction:column; gap:16px; padding:28px 24px 24px; background:#fff; border:1px solid var(--gray-200); border-radius:12px; transition:border-color .15s, box-shadow .15s; }
+  .role:hover { border-color:var(--teal-500); box-shadow:var(--shadow2); }
+  .role .tag { align-self:flex-start; padding:2px 8px; border-radius:8px; border:1px solid var(--teal-600); color:var(--teal-600); font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; }
+  .role h2 { font-size:24px; font-weight:600; line-height:32px; }
+  .role p { font-size:16px; line-height:22px; color:var(--gray-600); flex:1; }
+  .role .go { display:flex; align-items:center; justify-content:center; height:48px; border-radius:8px; background:var(--teal-600); color:#fff; font-size:16px; font-weight:500; line-height:22px; }
+  .role:hover .go { background:var(--teal-700); }
+  .role.soon:hover { border-color:var(--gray-200); box-shadow:none; }
+  .role.soon .tag { border-color:var(--gray-300); color:var(--gray-500); }
+  .role.soon .go { background:#ebebeb; color:#c2c2c2; }
+  .role .extra { flex:0; font-size:14px; line-height:20px; color:var(--gray-500); }
+  .role .extra a { color:var(--teal-600); font-weight:500; }
+  .role .extra a:hover { color:var(--teal-700); text-decoration:underline; }
+  .refs { margin-top:40px; font-size:14px; line-height:20px; color:var(--gray-500); text-align:center; }
+  .refs a { color:var(--gray-700); text-decoration:underline; text-underline-offset:3px; }
+  .refs a:hover { color:var(--teal-600); }
+  footer { padding:24px 16px; text-align:center; font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-400); }
+  @media (max-width:760px) { main { padding-top:64px; } h1 { font-size:28px; line-height:38px; } .roles { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
 <main>
-  <h1>OmicsPharm 와이어프레임</h1>
-  <p class="sub">리뉴얼 기획용 화면 모음</p>
+  <img class="logo" src="assets/main/logo.svg" alt="OmicsPharm">
+  <h1>OmicsPharm 리뉴얼 프로토타입</h1>
+  <p class="lead">둘러볼 계정을 선택하세요. 로그인 없이 해당 계정 화면으로 바로 이동합니다.</p>
 
-  <h2>디자인</h2>
-  <ul>
-    <li><a href="omicspharm-register.html"><span>프로젝트 의뢰</span><span>9월 28일</span></a></li>
-    <li><a href="omicspharm-partner-signup.html"><span>분석파트너 회원가입</span><span>9월 21일</span></a></li>
-    <li><a href="omicspharm-project-detail-prot.html"><span>단백체 분석 프로젝트 상세</span><span>9월 15일</span></a></li>
-  </ul>
+  <div class="roles">
+    <a class="role" href="client-main.html">
+      <span class="tag">Client</span>
+      <h2>클라이언트</h2>
+      <p>분석을 의뢰하는 연구자·기관 계정입니다. 메인에서 프로젝트 의뢰, 프로젝트 상세로 이동할 수 있습니다.</p>
+      <span class="go">클라이언트로 보기</span>
+    </a>
+    <div class="role soon" aria-disabled="true">
+      <span class="tag">Partner</span>
+      <h2>분석파트너</h2>
+      <p>분석을 수행하는 파트너 기관 계정입니다. 파트너 메인 화면은 준비 중입니다.</p>
+      <p class="extra">지금 볼 수 있는 화면: <a href="omicspharm-partner-signup.html">분석파트너 회원가입</a></p>
+      <span class="go">준비 중</span>
+    </div>
+    <div class="role soon" aria-disabled="true">
+      <span class="tag">Admin</span>
+      <h2>관리자 (셀키)</h2>
+      <p>프로젝트와 파트너를 운영·관리하는 셀키 관리자 계정입니다. 화면은 준비 중입니다.</p>
+      <span class="go">준비 중</span>
+    </div>
+  </div>
 
-  <h2>와이어프레임</h2>
-  <ul>
-    <li><a href="omicspharm-wireframe-v5.html"><span><span class="tag">v5</span> 분석의뢰 등록 와이어프레임</span><span>9월 9일</span></a></li>
-  </ul>
+  <p class="refs">참고 자료 · <a href="omicspharm-wireframe-v5.html">분석의뢰 등록 와이어프레임 v5</a></p>
 </main>
+<footer>화면의 담당자·연락처 등은 모두 가상 값입니다.</footer>
 </body>
 </html>
