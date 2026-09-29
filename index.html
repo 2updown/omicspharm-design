@@ -49,10 +49,9 @@
   /* ── Social proof (180:5311) ── */
   .proof { background:var(--white); padding:53px 0; display:flex; flex-direction:column; align-items:center; gap:41px; overflow:hidden; }
   .proof > p { font-size:18px; font-weight:500; line-height:1.4; letter-spacing:-.18px; color:var(--dark-green); text-align:center; }
-  /* 로고 흐름: Figma(180:5314)의 방향(오른쪽)과 속도(200px / 10.16s ≈ 19.7px/s)를 유지하며 끊김 없이 반복.
-     같은 로고 묶음을 두 번 이어 붙이고 한 묶음 폭(-50%)만큼 이동한 뒤 처음으로 돌아간다.
-     한 묶음 2508px ÷ 19.7px/s ≈ 127.4s */
-  .marquee { display:flex; gap:15px; width:max-content; animation:marquee 127.4s linear infinite; }
+  /* 로고 흐름: 같은 로고 묶음을 두 번 이어 붙이고 한 묶음 폭(-50%)만큼 오른쪽으로 이동한 뒤 처음으로 돌아가 끊김 없이 반복.
+     왼쪽 정렬해야 두 묶음이 화면을 꽉 채운다. 음수 delay로 처음부터 흐르는 중간 상태에서 시작. */
+  .marquee { align-self:flex-start; display:flex; width:max-content; animation:marquee 45s linear -20s infinite; }
   .marquee-set { display:flex; gap:15px; padding-right:15px; }
   @keyframes marquee { from { transform:translateX(-50%); } to { transform:translateX(0); } }
   @media (prefers-reduced-motion:reduce) { .marquee { animation:none; } }
@@ -101,7 +100,8 @@
   .feat-tab:not(.on):hover { color:var(--gray-500); }
   .feat-view { position:relative; width:1075px; height:399.02px; border-radius:16px; }
   .feat-view .screen { position:absolute; top:2px; left:2px; right:2px; height:395.02px; border-radius:25px; background:var(--teal-900); overflow:hidden; }
-  .feat-view .screen img { position:absolute; width:888px; height:421px; left:calc(50% + .5px); top:calc(50% + 3.99px); transform:translate(-50%,-50%); }
+  .feat-view .screen img { position:absolute; width:888px; height:421px; left:calc(50% + .5px); top:calc(50% + 3.99px); transform:translate(-50%,-50%); transition:opacity .25s; }
+  .feat-view .screen img.fade { opacity:0; }
 
   /* ── Recent projects (214:5466) ── */
   .projects { display:flex; flex-direction:column; align-items:center; gap:24px; }
@@ -110,7 +110,18 @@
   .proj-head .pager { align-self:stretch; }
   .pager { display:flex; align-items:flex-end; gap:12px; font-size:16px; font-weight:500; line-height:1.571; color:var(--gray-700); }
   .pager .on { color:var(--teal-600); }
-  .pager a:hover { color:var(--teal-600); }
+  .pager button { font:inherit; color:inherit; background:none; border:0; padding:0; cursor:pointer; }
+  .pager a:hover, .pager button:hover { color:var(--teal-600); }
+  .proj-viewport { position:relative; width:var(--wrap); max-width:100%; overflow:hidden; }
+  .proj-viewport .proj-grid { width:100%; }
+  .proj-grid.enter-right { animation:projInRight .45s cubic-bezier(.22,.61,.36,1) both; }
+  .proj-grid.enter-left  { animation:projInLeft .45s cubic-bezier(.22,.61,.36,1) both; }
+  .proj-grid.leave-left  { position:absolute; inset:0 auto auto 0; animation:projOutLeft .45s cubic-bezier(.22,.61,.36,1) both; }
+  .proj-grid.leave-right { position:absolute; inset:0 auto auto 0; animation:projOutRight .45s cubic-bezier(.22,.61,.36,1) both; }
+  @keyframes projInRight  { from { transform:translateX(100%); } to { transform:none; } }
+  @keyframes projInLeft   { from { transform:translateX(-100%); } to { transform:none; } }
+  @keyframes projOutLeft  { from { transform:none; } to { transform:translateX(-100%); } }
+  @keyframes projOutRight { from { transform:none; } to { transform:translateX(100%); } }
   .proj-grid { width:var(--wrap); max-width:100%; display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
   .pcard { display:flex; flex-direction:column; gap:16px; padding:3px 3px 15px; background:var(--white); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; transition:border-color .15s, box-shadow .15s; }
   .pcard .top { display:flex; flex-direction:column; gap:12px; padding:16px 12px; border-radius:8px; background:linear-gradient(99.06deg, #f6f9f8 10.77%, #f8fffd 100.96%); }
@@ -120,7 +131,8 @@
   .pcard h3 { height:56px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; }
   .pcard .meta { display:flex; align-items:center; gap:8px; padding:0 12px; font-size:14px; line-height:20px; }
   .pcard .meta .date { flex:1; color:#9b9b9b; }
-  .pcard:hover { border-color:var(--teal-500); box-shadow:var(--shadow2); }
+  .pcard:not(.private):hover { border-color:var(--teal-500); box-shadow:var(--shadow2); }
+  .pcard.private { cursor:default; }
   .pcard:not(.private):hover .top { background:linear-gradient(99.06deg, #f6f9f8 0%, #dcf6ee 100%); }
   .badge { display:inline-flex; align-items:center; justify-content:center; padding:2px 8px; border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; white-space:nowrap; }
   .badge.outline { border:1px solid var(--teal-600); color:var(--teal-600); }
@@ -130,7 +142,7 @@
   /* ── 분석 서비스 소개 (962:12481) ── */
   .analysis { display:flex; flex-direction:column; align-items:center; gap:24px; }
   .an-head { width:var(--wrap); max-width:100%; display:flex; align-items:flex-end; justify-content:space-between; }
-  .an-head h2 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; }
+  .an-head h2 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; }
   .an-head p { margin-top:12px; font-size:18px; line-height:24px; letter-spacing:-.18px; color:var(--gray-700); }
   .btn-action { display:inline-flex; align-items:center; justify-content:center; gap:4px; height:56px; min-width:78px; border:1px solid var(--teal-600); border-radius:99px; background:var(--white); color:var(--teal-600); font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; }
   .btn-action .ic { width:20px; height:20px; }
@@ -214,7 +226,7 @@
 
 <section class="proof" aria-label="협력 기관">
   <p>Connecting organizations across research, analysis, and innovation.</p>
-  <div class="marquee" style="gap:0">
+  <div class="marquee">
     <div class="marquee-set">
     <div class="client" title="LG화학"><div class="p" style="inset:22.86% 18.61% 21.43% 18.84%"><img src="assets/main/client-lgchem.svg" alt="LG화학"></div></div>
     <div class="client" title="Pharma Food International"><div class="ctr" style="top:15.71%;bottom:15.71%;aspect-ratio:752/307"><img src="assets/main/client-pharmafood.png" alt="Pharma Food International"></div></div>
@@ -324,31 +336,22 @@
   <div class="feat-box">
     <div class="feat-in">
       <div class="feat-tabs" role="tablist">
-        <button class="feat-tab" role="tab"><span class="t"><span class="ic" style="--src:url(assets/main/ic-list-magnifying-glass.svg)"></span>프로젝트 의뢰</span><span class="d">다양한 오믹스 분석 의뢰를 등록하고<br>프로젝트 목적, 일정, 조건에 맞는 상담을<br>시작할 수 있습니다.</span></button>
-        <button class="feat-tab" role="tab"><span class="t"><span class="ic" style="--src:url(assets/main/ic-folders.svg)"></span>프로젝트 관리</span><span class="d">견적부터 일정, 시료, 산출물까지<br>분석 프로젝트의 전 과정을 한 곳에서<br>관리합니다.</span></button>
-        <button class="feat-tab on" role="tab"><span class="t"><span class="ic" style="--src:url(assets/main/ic-sparkle.svg)"></span>AI 파트너 매칭</span><span class="d">프로젝트의 분석 분야와 요구사항을<br>바탕으로 적합한 분석 파트너를<br>AI로 빠르게 추천합니다.</span></button>
-        <button class="feat-tab" role="tab"><span class="t"><span class="ic" style="--src:url(assets/main/ic-file.svg)"></span>AI 보고서 작성</span><span class="d">분석 결과를 기반으로 핵심 내용을<br>정리해 명확하고 구조화된 보고서 작성을<br>지원합니다.</span></button>
+        <button class="feat-tab" role="tab" data-img="assets/main/features/feature-request.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-list-magnifying-glass.svg)"></span>프로젝트 의뢰</span><span class="d">다양한 오믹스 분석 의뢰를 등록하고<br>프로젝트 목적, 일정, 조건에 맞는 상담을<br>시작할 수 있습니다.</span></button>
+        <button class="feat-tab" role="tab" data-img="assets/main/features/feature-manage.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-folders.svg)"></span>프로젝트 관리</span><span class="d">견적부터 일정, 시료, 산출물까지<br>분석 프로젝트의 전 과정을 한 곳에서<br>관리합니다.</span></button>
+        <button class="feat-tab on" role="tab" data-img="assets/main/features/feature-matching.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-sparkle.svg)"></span>AI 파트너 매칭</span><span class="d">프로젝트의 분석 분야와 요구사항을<br>바탕으로 적합한 분석 파트너를<br>AI로 빠르게 추천합니다.</span></button>
+        <button class="feat-tab" role="tab" data-img="assets/main/features/feature-report.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-file.svg)"></span>AI 보고서 작성</span><span class="d">분석 결과를 기반으로 핵심 내용을<br>정리해 명확하고 구조화된 보고서 작성을<br>지원합니다.</span></button>
       </div>
-      <div class="feat-view"><div class="screen"><img src="assets/main/features-mockup.png" alt="기능 화면 예시"></div></div>
+      <div class="feat-view"><div class="screen"><img id="featImg" src="assets/main/features/feature-matching.svg" alt="AI 파트너 매칭 화면 예시"></div></div>
     </div>
   </div>
 </section>
 
 <section class="sec projects" id="projects">
   <div class="proj-head">
-    <h2>Recent Projects</h2>
-    <div class="pager"><a class="on" href="#">1</a><a href="#">2</a><a href="#" data-soon="프로젝트 찾기">전체보기</a></div>
+    <h2>최근 프로젝트</h2>
+    <div class="pager"><button type="button" class="on" data-page="0" aria-label="1페이지">1</button><button type="button" data-page="1" aria-label="2페이지">2</button><a href="#" data-soon="프로젝트 찾기">전체보기</a></div>
   </div>
-  <div class="proj-grid">
-    <a class="pcard" href="omicspharm-project-detail-prot.html"><div class="top"><span class="badge outline" style="align-self:flex-start">단백체 분석</span><h3>ADC 표준품(In-house standard) 특성 및 품질 분석</h3></div><div class="meta"><span>모집기한</span><span class="date">2026.07.30 ~ 2026.08.07</span><span class="badge open">모집중</span></div></a>
-    <a class="pcard" href="omicspharm-project-detail-prot.html"><div class="top"><span class="badge outline" style="align-self:flex-start">단백체 분석</span><h3>LC/MS proteomics (apoptosis analysis)</h3></div><div class="meta"><span>모집기한</span><span class="date">2026.07.30 ~ 2026.08.07</span><span class="badge open">모집중</span></div></a>
-    <a class="pcard" href="omicspharm-project-detail-prot.html"><div class="top"><span class="badge outline" style="align-self:flex-start">단백체 분석</span><h3>Mouse IgG1 기반 항체 glycan profile 및mouse IgG1 기반</h3></div><div class="meta"><span>모집기한</span><span class="date">2026.07.30 ~ 2026.08.07</span><span class="badge open">모집중</span></div></a>
-    <a class="pcard" href="omicspharm-project-detail-prot.html"><div class="top"><span class="badge outline" style="align-self:flex-start">단백체 분석</span><h3>신장에 low dose cisplatin을 반복 처리해 발현 단백질 분석</h3></div><div class="meta"><span>모집기한</span><span class="date">2026.07.30 ~ 2026.08.07</span><span class="badge open">모집중</span></div></a>
-    <a class="pcard" href="omicspharm-project-detail-prot.html"><div class="top"><span class="badge outline" style="align-self:flex-start">단백체 분석</span><h3>Mouse tissue RNA-seq 및 pathway 분석</h3></div><div class="meta"><span>모집기한</span><span class="date">2026.07.30 ~ 2026.08.07</span><span class="badge open">모집중</span></div></a>
-    <a class="pcard private" href="omicspharm-project-detail-prot.html"><div class="top"><div class="row1"><span class="badge outline">단백체 분석</span><img class="lock" src="assets/main/ic-lock-key.svg" alt="비공개"></div><h3>Proteome 분석</h3></div><div class="meta"><span>모집기한</span><span class="date">2026.07.30 ~ 2026.08.07</span><span class="badge closed">모집마감</span></div></a>
-    <a class="pcard" href="omicspharm-project-detail-prot.html"><div class="top"><span class="badge outline" style="align-self:flex-start">단백체 분석</span><h3>Target peptide 정량분석</h3></div><div class="meta"><span>모집기한</span><span class="date">2026.07.30 ~ 2026.08.07</span><span class="badge closed">모집마감</span></div></a>
-    <a class="pcard" href="omicspharm-project-detail-prot.html"><div class="top"><span class="badge outline" style="align-self:flex-start">단백체 분석</span><h3>세포내 타겟단백질 정량분석</h3></div><div class="meta"><span>모집기한</span><span class="date">2026.07.30 ~ 2026.08.07</span><span class="badge open">모집중</span></div></a>
-  </div>
+  <div class="proj-viewport" id="projView"></div>
 </section>
 
 <section class="sec analysis" id="analysis">
@@ -385,8 +388,58 @@
 
 <script>
   // Feature 탭 전환 (내용 미정 — 활성 표시만 이동)
+  // 최근 프로젝트: 8개씩 2페이지. 2페이지 제목은 임의로 만든 예시.
+  const PROJECTS = [
+    ['단백체 분석', 'ADC 표준품(In-house standard) 특성 및 품질 분석', '2026.07.30 ~ 2026.08.07', 'open'],
+    ['단백체 분석', 'LC/MS proteomics (apoptosis analysis)', '2026.07.30 ~ 2026.08.07', 'open'],
+    ['단백체 분석', 'Mouse IgG1 기반 항체 glycan profile 및mouse IgG1 기반', '2026.07.30 ~ 2026.08.07', 'open'],
+    ['단백체 분석', '신장에 low dose cisplatin을 반복 처리해 발현 단백질 분석', '2026.07.30 ~ 2026.08.07', 'open'],
+    ['단백체 분석', 'Mouse tissue RNA-seq 및 pathway 분석', '2026.07.30 ~ 2026.08.07', 'open'],
+    ['단백체 분석', 'Proteome 분석', '2026.07.30 ~ 2026.08.07', 'closed', true],
+    ['단백체 분석', 'Target peptide 정량분석', '2026.07.30 ~ 2026.08.07', 'closed'],
+    ['단백체 분석', '세포내 타겟단백질 정량분석', '2026.07.30 ~ 2026.08.07', 'open'],
+    ['유전체 분석', '종양 조직 WES 기반 체세포 변이 분석', '2026.09.01 ~ 2026.09.15', 'open'],
+    ['대사체 분석', '혈장 표적 대사체 정량 (아미노산·지방산 패널)', '2026.08.25 ~ 2026.09.10', 'open'],
+    ['전사체 분석', 'Single-cell RNA-seq 기반 면역세포 아형 분석', '2026.08.20 ~ 2026.09.05', 'open'],
+    ['단백체 분석', 'Olink Target 96 염증 패널 바이오마커 분석', '2026.08.18 ~ 2026.09.01', 'open'],
+    ['바이오의약품·ADC', 'ADC 약물-항체 결합비(DAR) 분석', '2026.08.10 ~ 2026.08.24', 'closed', true],
+    ['단백체 분석', '인산화 단백체(Phosphoproteomics) 신호전달 경로 분석', '2026.08.05 ~ 2026.08.19', 'closed'],
+    ['대사체 분석', '세포 배양액 비표적 대사체 프로파일링', '2026.08.01 ~ 2026.08.15', 'open'],
+    ['전사체 분석', '마우스 간 조직 bulk RNA-seq 및 DEG 분석', '2026.07.28 ~ 2026.08.11', 'open'],
+  ];
+  const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  function card([tag, title, date, status, isPrivate]) {
+    const badge = status === 'open' ? '<span class="badge open">모집중</span>' : '<span class="badge closed">모집마감</span>';
+    const top = isPrivate
+      ? `<div class="top"><div class="row1"><span class="badge outline">${esc(tag)}</span><img class="lock" src="assets/main/ic-lock-key.svg" alt="비공개"></div><h3>${esc(title)}</h3></div>`
+      : `<div class="top"><span class="badge outline" style="align-self:flex-start">${esc(tag)}</span><h3>${esc(title)}</h3></div>`;
+    const meta = `<div class="meta"><span>모집기한</span><span class="date">${date}</span>${badge}</div>`;
+    // 비공개 프로젝트는 hover·이동 없음
+    return isPrivate ? `<div class="pcard private">${top}${meta}</div>` : `<a class="pcard" href="omicspharm-project-detail-prot.html">${top}${meta}</a>`;
+  }
+  const projView = document.getElementById('projView');
+  let page = 0;
+  function grid(p) { const g = document.createElement('div'); g.className = 'proj-grid'; g.innerHTML = PROJECTS.slice(p * 8, p * 8 + 8).map(card).join(''); return g; }
+  projView.appendChild(grid(0));
+  document.querySelectorAll('.pager [data-page]').forEach(b => b.addEventListener('click', () => {
+    const next = +b.dataset.page;
+    if (next === page) return;
+    const forward = next > page, old = projView.querySelector('.proj-grid:not(.leave-left):not(.leave-right)'), g = grid(next);
+    old.className = 'proj-grid ' + (forward ? 'leave-left' : 'leave-right');
+    g.classList.add(forward ? 'enter-right' : 'enter-left');
+    projView.appendChild(g);
+    setTimeout(() => old.remove(), 460);
+    page = next;
+    document.querySelectorAll('.pager [data-page]').forEach(x => x.classList.toggle('on', +x.dataset.page === page));
+  }));
+
+  // Feature 탭: 활성 표시 이동 + 기능별 이미지로 교체 (이미지는 임시)
+  const featImg = document.getElementById('featImg');
   document.querySelectorAll('.feat-tab').forEach(tab => tab.addEventListener('click', () => {
     document.querySelectorAll('.feat-tab').forEach(t => t.classList.toggle('on', t === tab));
+    if (featImg.getAttribute('src') === tab.dataset.img) return;
+    featImg.classList.add('fade');
+    setTimeout(() => { featImg.src = tab.dataset.img; featImg.alt = tab.querySelector('.t').textContent + ' 화면 예시'; featImg.classList.remove('fade'); }, 200);
   }));
 </script>
 </body>
