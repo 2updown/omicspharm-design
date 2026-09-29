@@ -7,9 +7,9 @@
   var ACC_KEY = 'op.accounts', SES_KEY = 'op.session';
   var DEMO_PW = 'Demo@1234';
   var SEED = {
-    'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true },
-    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true },
-    'admin@omicspharm.test':   { role: 'admin',   pw: DEMO_PW, profileDone: true }
+    'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true, name: '홍길동', org: '○○연구소' },
+    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '○○분석센터' },
+    'admin@omicspharm.test':   { role: 'admin',   pw: DEMO_PW, profileDone: true, name: '관리자', org: 'OmicsPharm' }
   };
   var ROLE_LABEL = { client: '클라이언트', partner: '분석파트너', admin: '관리자 (셀키)' };
 
@@ -65,11 +65,13 @@
     service:   { label: '서비스 소개', items: ['분석 서비스 소개', '이용방법'] },
     support:   { label: '고객지원', items: ['문의하기', 'FAQ'] }
   };
+  var PAGES = { '문의하기': 'contact.html' };
+  function link(t) { return PAGES[t] ? 'href="' + PAGES[t] + '"' : 'href="#" data-soon="' + t + '"'; }
   function dropdown(key) {
     var m = MENUS[key];
     return '<div class="op-dd" data-dd="' + key + '">' +
       '<button type="button" class="op-dd-btn" aria-haspopup="menu" aria-expanded="false">' + m.label + ' <img src="' + A + 'ic-caret-down.svg" alt=""></button>' +
-      '<div class="op-dd-menu" role="menu">' + m.items.map(function (t) { return '<a href="#" role="menuitem" data-soon="' + t + '">' + t + '</a>'; }).join('') + '</div>' +
+      '<div class="op-dd-menu" role="menu">' + m.items.map(function (t) { return '<a role="menuitem" ' + link(t) + '>' + t + '</a>'; }).join('') + '</div>' +
     '</div>';
   }
   var LANG =
@@ -84,7 +86,7 @@
       var m = MENUS[k];
       return '<div class="op-dr-group">' +
         '<button type="button" class="op-dr-toggle" aria-expanded="false">' + m.label + '<img src="' + A + 'ic-caret-down.svg" alt=""></button>' +
-        '<div class="op-dr-sub">' + m.items.map(function (t) { return '<a href="#" data-soon="' + t + '">' + t + '</a>'; }).join('') + '</div>' +
+        '<div class="op-dr-sub">' + m.items.map(function (t) { return '<a ' + link(t) + '>' + t + '</a>'; }).join('') + '</div>' +
       '</div>';
     }).join('');
     var account = s

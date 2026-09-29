@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20260929l">
-<script src="assets/common/site.js?v=20260929l"></script>
-<script src="assets/common/projects-data.js?v=20260929l"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20260929m">
+<script src="assets/common/site.js?v=20260929m"></script>
+<script src="assets/common/projects-data.js?v=20260929m"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -237,7 +237,7 @@
   <aside class="aside">
     <div class="panel">
       <h3>내 프로젝트의<br>견적이 궁금하다면?</h3>
-      <a class="btn-filled" href="#" data-soon="견적 문의">문의하기</a>
+      <a class="btn-filled" href="contact.html?type=quote">문의하기</a>
     </div>
     <div class="panel nav">
       <a href="#" id="prevP"><img src="assets/detail/ic-caret-left-20.svg" alt="">이전 게시글</a>
@@ -281,7 +281,7 @@
   if (x.open) {
     $('#ctaSub').textContent = '모집기한 ' + x.to + '까지 · 담당 매니저가 확인 후 연락드립니다';
     if (!OP.session()) cta.href = 'login.html?next=' + encodeURIComponent('omicspharm-project-detail-prot.html?id=' + x.id);
-    else cta.setAttribute('data-soon', '프로젝트 문의');
+    else cta.href = 'contact.html?type=project&ref=' + encodeURIComponent(x.title);
   } else {
     $('#ctaSub').textContent = '모집이 마감된 프로젝트입니다';
     cta.textContent = '모집 마감'; cta.classList.add('off'); cta.setAttribute('aria-disabled', 'true');
