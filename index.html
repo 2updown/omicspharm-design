@@ -32,7 +32,9 @@
 
 
   /* ── Hero (180:5301) ── */
-  .hero { position:relative; height:683px; margin-top:-70px; display:flex; justify-content:center; padding-top:235px; background:var(--white); overflow:hidden; }
+  /* 1440 기준 683px(가로의 47.43%). 넓은 화면에서는 같은 비율로 높아지고(최대 960px), 늘어난 만큼 문구도 가운데로 내려간다 */
+  .hero { --hero-h:clamp(683px, 47.43vw, 960px); position:relative; height:var(--hero-h); margin-top:-70px; display:flex; justify-content:center;
+    padding-top:calc(235px + (var(--hero-h) - 683px) / 2); background:var(--white); overflow:hidden; }
   .hero-bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; }
   .hero-in { position:relative; }
   .hero-in { z-index:1; display:flex; flex-direction:column; align-items:center; gap:48px; }
