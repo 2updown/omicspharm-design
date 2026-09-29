@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20260929g">
-<script src="assets/common/site.js?v=20260929g"></script>
-<script src="assets/common/projects-data.js?v=20260929g"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20260929h">
+<script src="assets/common/site.js?v=20260929h"></script>
+<script src="assets/common/projects-data.js?v=20260929h"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -42,12 +42,14 @@
   .heart[aria-pressed="true"] { background:var(--orange-600); }
   .summary { display:flex; flex-direction:column; gap:8px; padding:24px; border:1px solid var(--gray-200); border-radius:8px; }
   .summary div { display:flex; align-items:center; gap:8px; font-size:14px; line-height:20px; }
-  .summary img { width:20px; height:20px; }
+  .summary img { width:20px; height:20px; filter:brightness(0); } /* 아이콘 색 검정으로 통일 */
   .summary em { font-style:normal; color:var(--gray-500); }
   .summary .dday { color:var(--orange-600); }
 
   /* 탭 */
-  .tabs { display:flex; overflow-x:auto; scrollbar-width:none; }
+  /* 탭은 스크롤해도 GNB 바로 아래에 고정 */
+  .tabs { display:flex; overflow-x:auto; scrollbar-width:none; position:sticky; top:70px; z-index:10; background:#fff; margin:0 -24px; padding:0 24px; }
+  .tabs.stuck { box-shadow:0 1px 0 var(--gray-200); }
   .tabs::-webkit-scrollbar { display:none; }
   .tabs a { flex:none; display:flex; align-items:center; height:48px; padding:0 16px; border-bottom:2px solid transparent; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-400); white-space:nowrap; }
   .tabs a:hover { color:var(--gray-600); }
@@ -55,7 +57,7 @@
 
   /* 본문 섹션 */
   .sections { display:flex; flex-direction:column; gap:36px; }
-  .sec { display:flex; flex-direction:column; gap:12px; scroll-margin-top:94px; }
+  .sec { display:flex; flex-direction:column; gap:12px; scroll-margin-top:142px; } /* GNB 70 + 탭 48 + 여백 24 */
   .sec h2 { font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
   .sec p.text { font-size:16px; line-height:22px; }
   .kv, .grp { border-top:2px solid #000; }
@@ -94,6 +96,7 @@
   @media (max-width:640px) {
     .body { padding-left:16px; padding-right:16px; }
     .card { padding:16px; }
+    .tabs { margin:0 -16px; padding:0 16px; }
     .topbar { flex-direction:column; align-items:flex-start; }
     .reginfo { flex-wrap:wrap; white-space:normal; }
     .title-row h1 { font-size:20px; line-height:28px; }
@@ -273,7 +276,8 @@
   function setOn(i) { tabs.forEach(function (a, k) { a.classList.toggle('on', k === i); }); }
   tabs.forEach(function (a, i) { a.addEventListener('click', function (e) { e.preventDefault(); secs[i].scrollIntoView({ behavior: 'smooth', block: 'start' }); setOn(i); }); });
   window.addEventListener('scroll', function () {
-    var y = 110, cur = 0;
+    var y = 150, cur = 0;
+    var tb = document.getElementById('tabs'); tb.classList.toggle('stuck', tb.getBoundingClientRect().top <= 70.5);
     secs.forEach(function (s, i) { if (s.getBoundingClientRect().top <= y) cur = i; });
     if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) cur = secs.length - 1;
     setOn(cur);

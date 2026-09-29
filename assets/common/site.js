@@ -165,9 +165,18 @@
     '</div></div>';
   }
 
+  var FLOAT =
+    '<div class="op-float">' +
+      '<button type="button" class="op-top" aria-label="맨 위로"><img src="' + A + 'ic-arrow-up.svg" alt=""></button>' +
+      '<a class="op-chat" href="#" data-soon="상담 챗봇" aria-label="상담 챗봇"><img src="' + A + 'fab.svg" alt=""></a>' +
+    '</div>';
+
   function render() {
     document.querySelectorAll('[data-op-gnb]').forEach(function (el) { el.outerHTML = gnb(el.getAttribute('data-op-gnb')); });
+    var hasFooter = !!document.querySelector('[data-op-footer]');
     document.querySelectorAll('[data-op-footer]').forEach(function (el) { el.outerHTML = footer(); });
+    // 헤더·푸터가 있는 일반 페이지에만 맨 위로 + 챗봇 버튼 (로그인·회원가입 풀페이지 제외)
+    if (hasFooter && !document.querySelector('.op-float')) document.body.insertAdjacentHTML('beforeend', FLOAT);
   }
 
   document.addEventListener('click', function (e) {
@@ -182,6 +191,7 @@
     }
     if (e.target.closest('[data-op-logout]')) { OP.logout(); location.href = 'index.html'; return; }
     if (e.target.closest('[data-lang="ko"]')) { e.preventDefault(); closeDropdowns(); return; }
+    if (e.target.closest('.op-top')) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
     if (e.target.closest('.op-burger')) { setDrawer(document.getElementById('opDrawer').hidden); return; }
     var tg = e.target.closest('.op-dr-toggle');
     if (tg) { var g = tg.parentNode, o = !g.classList.contains('open'); g.classList.toggle('open', o); tg.setAttribute('aria-expanded', o ? 'true' : 'false'); return; }
@@ -228,7 +238,10 @@
     if (m) OP.toast(m);
   }
   // GNB 배경: 맨 위에서는 반투명, 조금이라도 내리면 흰색
-  function syncGnb() { var g = document.querySelector('.op-gnb'); if (g) g.classList.toggle('is-scrolled', window.scrollY > 0); }
+  function syncGnb() {
+    var g = document.querySelector('.op-gnb'); if (g) g.classList.toggle('is-scrolled', window.scrollY > 0);
+    var t = document.querySelector('.op-top'); if (t) t.classList.toggle('show', window.scrollY > 400); // 어느 정도 내려야 맨 위로 버튼 표시
+  }
   window.addEventListener('scroll', syncGnb, { passive: true });
   function init() { render(); syncGnb(); showFlash(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();

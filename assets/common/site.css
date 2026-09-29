@@ -40,10 +40,10 @@
 .op-dd-menu a { display:flex; align-items:center; height:48px; padding:0 8px; border-radius:4px; font-size:16px; font-weight:500; line-height:22px; color:#000; white-space:nowrap; } /* GNB 메뉴와 같은 16px Medium */
 .op-dd-menu a:hover { background:var(--op-gray-100); }
 .op-dd-menu a:active { background:var(--op-gray-200); }
-.op-dd-menu a.on { background:var(--op-gray-100); color:var(--op-teal-600); }
+.op-dd-menu a.on { color:var(--op-teal-600); } /* 선택 표시는 글자색만 — 배경은 hover일 때만 */
 .op-gnb .op-lang .op-dd-btn { height:auto; }
 .op-lang .op-dd-btn img { transform:none !important; }
-.op-lang .op-dd-menu { min-width:79px; left:50%; transform:translateX(-50%); top:calc(100% + 31px); }
+.op-lang .op-dd-menu { left:-1px; top:calc(100% + 31px); } /* 다른 메가메뉴와 같은 폭·정렬 */
 .op-lang .op-dd-menu::before { top:-31px; height:31px; }
 .op-gnb-cta { display:flex; align-items:center; justify-content:flex-end; gap:24px; }
 .op-gnb.is-login .op-gnb-cta { width:202px; }
@@ -123,6 +123,24 @@
 .op-f-line { height:0; box-shadow:0 0 0 .5px var(--op-gray-300); }
 .op-f-bottom { display:flex; align-items:center; justify-content:space-between; height:25px; font-size:12px; line-height:18px; letter-spacing:-.12px; }
 .op-f-bottom nav { display:flex; gap:24px; }
+
+/* ── 오른쪽 아래 플로팅: 맨 위로 + 챗봇(상담) 자리 ── */
+.op-float { position:fixed; right:40px; bottom:40px; z-index:45; display:flex; flex-direction:column; align-items:center; gap:12px; }
+.op-float a, .op-float button { font:inherit; border:0; background:none; padding:0; cursor:pointer; }
+.op-top { width:48px; height:48px; border-radius:50%; background:#fff !important; border:1px solid var(--op-gray-200) !important; box-shadow:var(--op-shadow2);
+  display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; transform:translateY(8px); transition:opacity .2s, transform .2s, visibility .2s; }
+.op-top.show { opacity:1; visibility:visible; transform:none; }
+.op-top:hover { background:var(--op-gray-50) !important; }
+.op-top img { width:24px; height:24px; }
+.op-chat { display:block; width:84px; height:84px; border-radius:50%; } /* Figma FAB (1088:33719). 챗봇 기능이 정해지면 교체 */
+.op-chat img { display:block; width:84px; height:84px; }
+.op-chat:hover { filter:brightness(.92); }
+.op-drawer-open .op-float { display:none; }
+@media (max-width:760px) {
+  .op-float { right:16px; bottom:16px; gap:8px; }
+  .op-chat, .op-chat img { width:64px; height:64px; }
+  .op-top { width:44px; height:44px; }
+}
 
 /* ── Toast ── */
 .op-toast { position:fixed; left:50%; bottom:40px; transform:translate(-50%, 20px); opacity:0; pointer-events:none; z-index:100; padding:12px 20px;
