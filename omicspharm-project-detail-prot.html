@@ -87,7 +87,16 @@
   .badge.closed { background:var(--gray-600); color:#fff; }
   .panel.nav .vl { align-self:stretch; border-left:1px solid var(--gray-200); }
 
-  @media (max-width:1180px) { .body { padding-left:24px; padding-right:24px; } }
+  /* 하단 고정 문의 바 (이전 상세 페이지 CTA를 Figma 토큰으로 재구성). 푸터 위에서 멈춤 */
+  .cta-bar { position:sticky; bottom:0; z-index:30; padding:12px 60px; background:rgba(255,255,255,.94); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); border-top:1px solid var(--gray-200); }
+  .cta-bar .in { max-width:1320px; margin:0 auto; display:flex; align-items:center; gap:20px; }
+  .cta-bar b { display:block; font-size:16px; font-weight:600; line-height:22px; }
+  .cta-bar span { display:block; margin-top:2px; font-size:14px; line-height:20px; color:var(--gray-500); }
+  .cta-bar .btn-filled { margin-left:auto; min-width:160px; padding:0 24px; }
+  .cta-bar .btn-filled.off { background:var(--gray-200); color:var(--gray-400); pointer-events:none; }
+  body.has-cta-bar .op-float { bottom:112px; } /* 플로팅 버튼이 문의 바에 가리지 않게 */
+
+  @media (max-width:1180px) { .body, .cta-bar { padding-left:24px; padding-right:24px; } }
   @media (max-width:960px) {
     .body .in { flex-direction:column; }
     .aside { width:100%; position:static; }
@@ -96,6 +105,10 @@
   @media (max-width:640px) {
     .body { padding-left:16px; padding-right:16px; }
     .card { padding:16px; }
+    .cta-bar { padding:10px 16px; }
+    .cta-bar .txt { display:none; }
+    .cta-bar .btn-filled { margin-left:0; width:100%; }
+    body.has-cta-bar .op-float { bottom:84px; }
     .tabs { margin:0 -16px; padding:0 16px; }
     .topbar { flex-direction:column; align-items:flex-start; }
     .reginfo { flex-wrap:wrap; white-space:normal; }
@@ -234,6 +247,13 @@
   </aside>
 </div></main>
 
+<div class="cta-bar" id="ctaBar">
+  <div class="in">
+    <div class="txt"><b>이 프로젝트에 참여하시겠어요?</b><span id="ctaSub">모집기한 2026.10.13까지 · 담당 매니저가 확인 후 연락드립니다</span></div>
+    <a class="btn-filled" id="ctaBtn" href="#">문의하기</a>
+  </div>
+</div>
+
 <div data-op-footer></div>
 
 <script>
@@ -254,6 +274,18 @@
   document.querySelectorAll('[data-f]').forEach(function (el) { el.textContent = F[el.dataset.f]; });
   $('[data-f="status"]').className = 'badge ' + (x.open ? 'open' : 'closed');
   document.title = x.title + ' · OmicsPharm';
+
+  // 하단 문의 바: 모집 중이면 문의, 마감이면 비활성. 로그인 전에는 로그인 화면으로
+  document.body.classList.add('has-cta-bar');
+  var cta = $('#ctaBtn');
+  if (x.open) {
+    $('#ctaSub').textContent = '모집기한 ' + x.to + '까지 · 담당 매니저가 확인 후 연락드립니다';
+    if (!OP.session()) cta.href = 'login.html?next=' + encodeURIComponent('omicspharm-project-detail-prot.html?id=' + x.id);
+    else cta.setAttribute('data-soon', '프로젝트 문의');
+  } else {
+    $('#ctaSub').textContent = '모집이 마감된 프로젝트입니다';
+    cta.textContent = '모집 마감'; cta.classList.add('off'); cta.setAttribute('aria-disabled', 'true');
+  }
 
   // 이전·다음 프로젝트: 프로젝트 찾기 기본 정렬(최신 등록 순)과 같은 순서, 공개 프로젝트만
   var dt = OP_PROJECTS.date;
