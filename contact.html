@@ -41,7 +41,6 @@
   .opt { margin-left:4px; font-size:12px; font-weight:400; color:var(--gray-400); }
   .input, .select, .textarea { width:100%; background:#fff; border:1px solid var(--gray-300); border-radius:8px; font-size:14px; line-height:20px; }
   .input, .select { height:40px; padding:0 16px; }
-  .w-m { max-width:400px; }
   .select:invalid, .select option[value=""] { color:var(--gray-400); }
   .select option { color:#000; }
   .select { appearance:none; -webkit-appearance:none; padding-right:36px; background:#fff url(assets/find/ic-chevron-down.svg) right 12px center/16px no-repeat; cursor:pointer; }
@@ -102,7 +101,6 @@
     .card { padding:20px 16px; }
     .field { grid-template-columns:1fr; }
     .flabel { padding:10px 12px; }
-    .w-m { max-width:none; }
     .actions .btn { flex:1; }
   }
 </style>
@@ -122,7 +120,7 @@
       <h2>문의 유형</h2>
       <div class="tbl">
         <div class="field" id="f-type"><label class="flabel" for="type">문의 유형<span class="req">*</span></label><div class="fbody">
-          <select class="select w-m" id="type" required>
+          <select class="select" id="type" required>
             <option value="" disabled selected hidden>문의 유형을 선택해주세요</option>
             <option value="quote">분석 견적</option>
             <option value="project">의뢰 프로젝트</option>
@@ -133,7 +131,7 @@
           </select>
         </div></div>
         <div class="field" id="f-svc" hidden><label class="flabel" for="svc">관련 분석 서비스</label><div class="fbody">
-          <select class="select w-m" id="svc">
+          <select class="select" id="svc">
             <option value="">선택해주세요</option>
             <option>단백체 분석</option><option>Olink 분석</option><option>대사체 분석</option><option>유전체 분석</option>
             <option>전사체 분석</option><option>바이오의약품·ADC</option><option>기타 분석</option>
@@ -146,10 +144,10 @@
     <section class="group">
       <h2>연락처 정보</h2>
       <div class="tbl">
-        <div class="field" id="f-name"><label class="flabel" for="name">이름<span class="req">*</span></label><div class="fbody"><input class="input w-m" id="name" autocomplete="name" placeholder="이름을 입력해주세요"></div></div>
-        <div class="field" id="f-org"><label class="flabel" for="org">소속(기관·회사)<span class="req">*</span></label><div class="fbody"><input class="input w-m" id="org" autocomplete="organization" placeholder="예) ○○대학교, ○○제약"></div></div>
-        <div class="field" id="f-email"><label class="flabel" for="email">이메일<span class="req">*</span></label><div class="fbody"><input class="input w-m" id="email" type="email" autocomplete="email" placeholder="email@domain.com"></div></div>
-        <div class="field" id="f-phone"><label class="flabel" for="phone">연락처</label><div class="fbody"><input class="input w-m" id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000"></div></div>
+        <div class="field" id="f-name"><label class="flabel" for="name">이름<span class="req">*</span></label><div class="fbody"><input class="input" id="name" autocomplete="name" placeholder="이름을 입력해주세요"></div></div>
+        <div class="field" id="f-org"><label class="flabel" for="org">소속(기관·회사)<span class="req">*</span></label><div class="fbody"><input class="input" id="org" autocomplete="organization" placeholder="예) ○○대학교, ○○제약"></div></div>
+        <div class="field" id="f-email"><label class="flabel" for="email">이메일<span class="req">*</span></label><div class="fbody"><input class="input" id="email" type="email" autocomplete="email" placeholder="email@domain.com"></div></div>
+        <div class="field" id="f-phone"><label class="flabel" for="phone">연락처</label><div class="fbody"><input class="input" id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000"></div></div>
       </div>
       <p class="note">답변은 입력하신 이메일로 보내드립니다.</p>
     </section>
