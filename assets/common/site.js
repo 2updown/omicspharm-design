@@ -59,7 +59,24 @@
   };
 
   var A = 'assets/main/';
-  var caret = '<img src="' + A + 'ic-caret-down.svg" alt="">';
+  // 메가메뉴 (Figma 메가메뉴 1303:74974 · Header State=menu1 1029:13726). 하위 화면은 아직 없어 누르면 준비 중 안내.
+  var MENUS = {
+    community: { label: '커뮤니티', items: ['공지사항', 'Insight'] },
+    service:   { label: '서비스 소개', items: ['분석 서비스 소개', '이용방법'] },
+    support:   { label: '고객지원', items: ['문의하기', 'FAQ'] }
+  };
+  function dropdown(key) {
+    var m = MENUS[key];
+    return '<div class="op-dd" data-dd="' + key + '">' +
+      '<button type="button" class="op-dd-btn" aria-haspopup="menu" aria-expanded="false">' + m.label + ' <img src="' + A + 'ic-caret-down.svg" alt=""></button>' +
+      '<div class="op-dd-menu" role="menu">' + m.items.map(function (t) { return '<a href="#" role="menuitem" data-soon="' + t + '">' + t + '</a>'; }).join('') + '</div>' +
+    '</div>';
+  }
+  var LANG =
+    '<div class="op-dd op-lang" data-dd="lang">' +
+      '<button type="button" class="op-dd-btn" aria-haspopup="menu" aria-expanded="false" aria-label="언어 선택"><img class="op-ic24" src="' + A + 'ic-globe.svg" alt=""></button>' +
+      '<div class="op-dd-menu" role="menu"><a href="#" role="menuitem" class="on" data-lang="ko">KOR</a><a href="#" role="menuitem" data-soon="영문(ENG)">ENG</a></div>' +
+    '</div>';
 
   function gnb(active) {
     var s = OP.session();
@@ -67,14 +84,12 @@
     var menu =
       '<nav class="op-gnb-menu">' +
         '<a href="omicspharm-register.html" data-client-only' + on('register') + '>프로젝트 의뢰</a>' +
-        '<a href="#" data-soon="프로젝트 찾기"' + on('find') + '>프로젝트 찾기</a>' +
-        '<a href="#" data-soon="커뮤니티">커뮤니티 ' + caret + '</a>' +
-        '<a href="#" data-soon="서비스 소개">서비스 소개 ' + caret + '</a>' +
-        '<a href="#" data-soon="고객지원">고객지원 ' + caret + '</a>' +
+        '<a href="projects.html"' + on('find') + '>프로젝트 찾기</a>' +
+        dropdown('community') + dropdown('service') + dropdown('support') +
       '</nav>';
     var cta = s
       ? '<div class="op-gnb-cta">' +
-          '<img class="op-ic24 op-globe" src="' + A + 'ic-globe.svg" alt="언어 선택">' +
+          LANG +
           '<a class="op-bell" href="#" data-soon="알림" aria-label="알림"><img class="op-ic24" src="' + A + 'ic-bell.svg" alt=""></a>' +
           '<div class="op-user">' +
             '<button type="button" aria-haspopup="menu" aria-label="내 계정"><img src="' + A + 'user-icon.svg" alt=""></button>' +
@@ -86,7 +101,7 @@
           '</div>' +
         '</div>'
       : '<div class="op-gnb-cta">' +
-          '<img class="op-ic24 op-globe" src="' + A + 'ic-globe.svg" alt="언어 선택">' +
+          LANG +
           '<a class="op-gnb-login" href="login.html">로그인</a>' +
           '<a class="op-gnb-join" href="signup.html">가입하기</a>' +
         '</div>';
@@ -137,12 +152,33 @@
       if (g === 'deny') { e.preventDefault(); OP.toast(OP.CLIENT_ONLY_MSG); return; }
     }
     if (e.target.closest('[data-op-logout]')) { OP.logout(); location.href = 'index.html'; return; }
+    if (e.target.closest('[data-lang="ko"]')) { e.preventDefault(); closeDropdowns(); return; }
+    var ddBtn = e.target.closest('.op-dd-btn');
+    if (ddBtn) { var dd = ddBtn.parentNode, open = !dd.classList.contains('open'); closeDropdowns(); setDropdown(dd, open); }
+    else if (!e.target.closest('.op-dd-menu')) closeDropdowns();
     var user = e.target.closest('.op-user');
     document.querySelectorAll('.op-user.open').forEach(function (u) { if (u !== user) u.classList.remove('open'); });
     if (user && e.target.closest('.op-user > button')) user.classList.toggle('open');
   });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') document.querySelectorAll('.op-user.open').forEach(function (u) { u.classList.remove('open'); });
+    if (e.key === 'Escape') { document.querySelectorAll('.op-user.open').forEach(function (u) { u.classList.remove('open'); }); closeDropdowns(); }
+  });
+
+  function setDropdown(dd, open) {
+    dd.classList.toggle('open', open);
+    dd.querySelector('.op-dd-btn').setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  function closeDropdowns() { document.querySelectorAll('.op-dd.open').forEach(function (d) { setDropdown(d, false); }); }
+  // 마우스를 올리면 열리고, 벗어나면 닫힌다 (터치 기기는 클릭으로)
+  document.addEventListener('mouseover', function (e) {
+    var dd = e.target.closest && e.target.closest('.op-dd');
+    if (!dd || dd.classList.contains('open') || !window.matchMedia('(hover:hover)').matches) return;
+    closeDropdowns(); setDropdown(dd, true);
+  });
+  document.addEventListener('mouseout', function (e) {
+    var dd = e.target.closest && e.target.closest('.op-dd');
+    if (!dd || dd.contains(e.relatedTarget) || !window.matchMedia('(hover:hover)').matches) return;
+    setDropdown(dd, false);
   });
 
   function showFlash() {

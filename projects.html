@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>프로젝트 찾기 · OmicsPharm</title>
+<!-- Figma: Find Projects1-list (993:12559) · Find Projects1-grid (996:13677)
+     카드: Project-list (974:7938) · Project-card Type=card (147:1266) -->
+<link rel="stylesheet" href="assets/common/site.css?v=20260929d">
+<script src="assets/common/site.js?v=20260929d"></script>
+<style>
+  :root {
+    --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
+    --gray-50:#fafafa; --gray-100:#f5f5f5; --gray-200:#e5e5e5; --gray-300:#d4d4d4; --gray-400:#a3a3a3; --gray-500:#737373; --gray-600:#525252; --gray-700:#404040;
+    --orange-600:#fd4900; --shadow2:0 4px 8px #00000014, 0 0 2px #0000000a;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--gray-50); color:#000; font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; }
+  button, input, select { font:inherit; color:inherit; }
+  button { background:none; border:0; cursor:pointer; }
+  [hidden] { display:none !important; }
+
+  .page-head { padding:32px 60px; }
+  .page-head .in, .find .in { max-width:1320px; margin:0 auto; }
+  .page-head h1 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; }
+  .page-head p { margin-top:12px; font-size:16px; line-height:22px; }
+
+  .find { padding:20px 60px 20px; }
+  .find .in { display:flex; gap:24px; align-items:flex-start; }
+
+  /* ── 왼쪽 필터 ── */
+  .side { width:343px; flex:none; display:flex; flex-direction:column; gap:24px; position:sticky; top:94px; }
+  .panel { display:flex; flex-direction:column; gap:24px; padding:24px; background:#fff; border:1px solid var(--gray-200); border-radius:16px; }
+  .panel.cta { box-shadow:0 0 1px rgba(0,0,0,.04), 0 4px 4px rgba(0,0,0,.08); }
+  .divider { height:0; border-top:1px solid var(--gray-200); }
+  .seg { display:flex; border:1px solid var(--gray-300); border-radius:8px; overflow:hidden; }
+  .seg button { flex:1; height:40px; padding:0 10px; background:#fff; font-size:14px; font-weight:500; line-height:20px; }
+  .seg button:hover { background:var(--gray-50); }
+  .seg button.on { background:var(--teal-600); color:#fff; }
+  .group h3 { font-size:16px; font-weight:500; line-height:22px; margin-bottom:12px; }
+  .checks { display:flex; flex-wrap:wrap; gap:12px; }
+  .check { display:inline-flex; align-items:center; gap:8px; font-size:14px; line-height:20px; cursor:pointer; user-select:none; position:relative; }
+  .check input { position:absolute; opacity:0; width:0; height:0; }
+  .check i { width:20px; height:20px; flex:none; background:url(assets/auth/checkbox-off.svg) center/contain no-repeat; }
+  .check input:checked + i { background-image:url(assets/auth/checkbox-on.svg); }
+  .check input:checked ~ span { font-weight:500; }
+  .check input:focus-visible + i { outline:2px solid var(--teal-600); outline-offset:2px; border-radius:4px; }
+  .range-head { display:flex; justify-content:space-between; align-items:flex-start; }
+  .range-head b { font-size:16px; font-weight:500; line-height:22px; }
+  .range-head span { font-size:14px; font-weight:500; line-height:20px; color:var(--gray-500); }
+  .range { position:relative; height:24px; margin:4px 10px 0; }
+  .range .track { position:absolute; left:0; right:0; top:9px; height:6px; border-radius:999px; background:var(--teal-50); }
+  .range .fill { position:absolute; top:9px; height:6px; border-radius:10px; background:var(--teal-600); }
+  .range input { position:absolute; left:-10px; width:calc(100% + 20px); top:0; height:24px; margin:0; background:none; pointer-events:none; -webkit-appearance:none; appearance:none; }
+  .range input::-webkit-slider-thumb { -webkit-appearance:none; pointer-events:auto; width:20px; height:20px; border-radius:50%; background:#fff; border:1.5px solid var(--teal-500); box-shadow:0 2px 4px rgba(0,0,0,.12); cursor:grab; }
+  .range input::-moz-range-thumb { pointer-events:auto; width:20px; height:20px; border-radius:50%; background:#fff; border:1.5px solid var(--teal-500); box-shadow:0 2px 4px rgba(0,0,0,.12); cursor:grab; }
+  .range input::-webkit-slider-runnable-track { background:none; }
+  .range input:focus-visible::-webkit-slider-thumb { box-shadow:0 0 0 3px #00786e33; }
+  .range-foot { display:flex; justify-content:space-between; margin-top:4px; font-size:12px; font-weight:500; line-height:16px; color:var(--gray-400); }
+  .reset { align-self:flex-start; display:inline-flex; align-items:center; gap:2px; height:36px; min-width:64px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; background:var(--gray-50); font-size:14px; font-weight:500; line-height:20px; color:var(--gray-600); }
+  .reset:hover { background:var(--gray-100); }
+  .reset img { width:16px; height:16px; }
+  .cta .t { display:flex; flex-direction:column; gap:12px; }
+  .cta .t b { display:flex; align-items:center; gap:8px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
+  .cta .t b img { width:24px; height:24px; }
+  .cta .t p { font-size:14px; line-height:20px; }
+  .btn-filled { display:flex; align-items:center; justify-content:center; gap:4px; height:48px; padding:0 16px; border-radius:8px; background:var(--teal-600); color:#fff; font-size:16px; font-weight:500; line-height:22px; }
+  .btn-filled:hover { background:var(--teal-700); }
+  .btn-filled img { width:20px; height:20px; }
+
+  /* ── 오른쪽 목록 ── */
+  .main { flex:1; min-width:0; display:flex; flex-direction:column; gap:24px; padding-bottom:24px; }
+  .search { display:flex; align-items:center; gap:4px; height:40px; padding:0 16px; background:#fff; border:1px solid var(--gray-300); border-radius:8px; }
+  .search:focus-within { border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+  .search input { flex:1; min-width:0; border:0; outline:0; background:none; font-size:14px; line-height:20px; }
+  .search input::placeholder { color:var(--gray-400); }
+  .search img { width:20px; height:20px; }
+  .results { display:flex; flex-direction:column; gap:8px; }
+  .toolbar { display:flex; align-items:center; justify-content:space-between; height:40px; }
+  .toolbar .total { font-size:16px; font-weight:500; line-height:22px; color:#1b1d1f; }
+  .tools { display:flex; align-items:center; gap:12px; height:100%; }
+  .tools .vline { width:0; height:100%; border-left:1px solid var(--gray-200); }
+  .tip-wrap { position:relative; }
+  .tip { position:absolute; left:50%; bottom:calc(100% + 10px); transform:translateX(-50%); padding:8px 12px; border-radius:6px; background:#101113; color:var(--gray-300);
+    font-size:12px; line-height:18px; letter-spacing:-.12px; white-space:nowrap; display:none; z-index:5; }
+  .tip::after { content:""; position:absolute; left:50%; top:100%; transform:translateX(-50%); border:7px solid transparent; border-bottom:0; border-top-color:#101113; }
+  .tip-wrap:hover .tip, .tip-wrap:focus-within .tip { display:block; }
+  .select { position:relative; }
+  .select select { height:40px; padding:0 40px 0 16px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font-size:14px; line-height:20px; appearance:none; -webkit-appearance:none; cursor:pointer; }
+  .select::after { content:""; position:absolute; right:16px; top:12px; width:16px; height:16px; background:url(assets/find/ic-chevron-down.svg) center/contain no-repeat; pointer-events:none; }
+  .select select:focus-visible { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+  .views { display:flex; gap:4px; }
+  .views button { width:40px; height:40px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+  .views button:hover { background:var(--gray-50); }
+  .views button.on { background:var(--gray-100); }
+  .views img { width:20px; height:20px; }
+
+  .list { display:flex; flex-direction:column; gap:12px; }
+  .grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; }
+  .badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; white-space:nowrap; }
+  .badge.tag { border:1px solid var(--teal-600); color:var(--teal-600); }
+  .badge.open { background:var(--orange-600); color:#fff; }
+  .badge.closed { background:var(--gray-600); color:#fff; }
+  .badges { display:flex; gap:8px; align-items:center; }
+  .lock { width:22px; height:22px; }
+
+  /* 목록형 카드 (Project-list Type=card) */
+  .lcard { display:flex; flex-direction:column; gap:16px; padding:16px 12px; background:#fff; border:1px solid var(--gray-200); border-radius:12px; transition:border-color .15s, box-shadow .15s; }
+  a.lcard:hover { border-color:var(--teal-500); box-shadow:var(--shadow2); }
+  .lcard .head { display:flex; flex-direction:column; gap:16px; padding-bottom:12px; border-bottom:1px solid var(--gray-200); }
+  .lcard.private .head { padding-bottom:0; border-bottom:0; }
+  .lcard .row1 { display:flex; align-items:center; justify-content:space-between; }
+  .lcard .dday { font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
+  .lcard h3 { font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+  .lcard .info { display:flex; flex-direction:column; gap:10px; }
+  .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
+  .meta > span { display:inline-flex; align-items:center; gap:8px; white-space:nowrap; }
+  .meta > span + span::before { content:""; width:0; height:14px; border-left:1px solid var(--gray-300); margin-right:4px; }
+  .meta em { font-style:normal; color:var(--gray-500); }
+  .meta img { width:20px; height:20px; }
+  .lcard .reg { font-size:12px; line-height:18px; letter-spacing:-.12px; color:#9b9b9b; }
+  .lcard.private .reg { font-size:14px; line-height:20px; }
+
+  /* 그리드형 카드 (Project-card Type=card) */
+  .gcard { display:flex; flex-direction:column; gap:16px; padding:4px 4px 16px; background:#fff; border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; transition:border-color .15s, box-shadow .15s; }
+  a.gcard:hover { border-color:var(--teal-500); box-shadow:var(--shadow2); }
+  .gcard .top { display:flex; flex-direction:column; gap:12px; padding:16px 12px; border-bottom:1px solid var(--gray-200); }
+  .gcard.private .top { border-bottom:0; border-radius:8px; background:linear-gradient(99.06deg, #f6f9f8 10.77%, #eff2f1 100.96%); }
+  .gcard .row1 { display:flex; align-items:center; justify-content:space-between; }
+  .gcard h3 { height:56px; font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+  .gcard .rows { display:flex; flex-direction:column; gap:4px; padding:0 12px; font-size:14px; line-height:20px; }
+  .gcard .rows div { display:flex; gap:8px; }
+  .gcard .rows em { font-style:normal; color:var(--gray-500); white-space:nowrap; }
+  .gcard .reg { font-size:12px; line-height:18px; letter-spacing:-.12px; color:#9b9b9b; }
+
+  .empty { padding:80px 0; text-align:center; color:var(--gray-500); font-size:16px; line-height:22px; background:#fff; border:1px solid var(--gray-200); border-radius:12px; }
+
+  /* 페이지네이션 */
+  .pager { display:flex; justify-content:center; gap:4px; }
+  .pager button { width:40px; height:40px; padding:8px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:500; line-height:22px; color:#a8a29e; }
+  .pager button:hover:not(:disabled):not(.on) { background:var(--gray-50); color:var(--gray-700); }
+  .pager button.on { background:var(--teal-600); border-color:var(--teal-600); color:#fff; }
+  .pager button:disabled { opacity:.4; cursor:default; }
+  .pager img { width:20px; height:20px; }
+
+  @media (max-width:1180px) {
+    .page-head, .find { padding-left:24px; padding-right:24px; }
+    .grid { grid-template-columns:repeat(2, 1fr); }
+  }
+  @media (max-width:900px) {
+    .find .in { flex-direction:column; }
+    .side { width:100%; position:static; }
+  }
+  @media (max-width:640px) {
+    .page-head, .find { padding-left:16px; padding-right:16px; }
+    .toolbar { height:auto; flex-direction:column; align-items:flex-start; gap:12px; }
+    .tools { flex-wrap:wrap; }
+    .grid { grid-template-columns:1fr; }
+    .pager { flex-wrap:wrap; }
+  }
+</style>
+</head>
+<body>
+<div data-op-gnb="find"></div>
+
+<section class="page-head"><div class="in">
+  <h1>프로젝트 찾기</h1>
+  <p>OmicsPharm에서는 합리적인 견적으로 여러 프로젝트를 지원합니다.</p>
+</div></section>
+
+<section class="find"><div class="in">
+  <aside class="side">
+    <div class="panel">
+      <div class="seg" role="group" aria-label="모집 상태">
+        <button type="button" class="on" data-status="all">전체</button>
+        <button type="button" data-status="open">모집중</button>
+        <button type="button" data-status="closed">모집마감</button>
+      </div>
+      <div class="divider"></div>
+      <div class="group">
+        <h3>카테고리</h3>
+        <div class="checks" id="cats"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="group">
+        <div class="range-head"><b>예상금액</b><span id="rangeLabel"></span></div>
+        <div class="range">
+          <div class="track"></div><div class="fill" id="rangeFill"></div>
+          <input type="range" id="minP" min="0" max="1000" step="50" value="0" aria-label="최소 예상금액">
+          <input type="range" id="maxP" min="0" max="1000" step="50" value="1000" aria-label="최대 예상금액">
+        </div>
+        <div class="range-foot"><span>0</span><span>1000만원 이상</span></div>
+      </div>
+      <button type="button" class="reset" id="reset"><img src="assets/find/ic-arrow-clockwise.svg" alt="">필터 초기화</button>
+    </div>
+    <div class="panel cta">
+      <div class="t">
+        <b><img src="assets/find/ic-magnifying-glass.svg" alt="">프로젝트 등록이 필요하신가요?</b>
+        <p>원하는 분석을 의뢰하고 최적의 파트너를 만나보세요.</p>
+      </div>
+      <a class="btn-filled" href="omicspharm-register.html" data-client-only>프로젝트 의뢰 <img src="assets/find/ic-arrow-right-white.svg" alt=""></a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <label class="search"><input id="q" type="search" placeholder="프로젝트 제목, 키워드, 연구분야 등을 검색해보세요." aria-label="프로젝트 검색"><img src="assets/find/ic-search.svg" alt=""></label>
+    <div class="results">
+      <div class="toolbar">
+        <span class="total" id="total"></span>
+        <div class="tools">
+          <label class="check tip-wrap"><input type="checkbox" id="hidePrivate"><i></i><span>비공개 프로젝트 제외</span><span class="tip">비공개로 등록된 프로젝트를 검색 결과에서 제외합니다.</span></label>
+          <div class="select"><select id="sort" aria-label="정렬">
+            <option value="new">최신 등록 순</option>
+            <option value="deadline">마감 임박 순</option>
+            <option value="samples">샘플 많은 순</option>
+          </select></div>
+          <span class="vline"></span>
+          <div class="views" role="group" aria-label="보기 방식">
+            <button type="button" class="on" data-view="list" aria-label="목록형으로 보기"><img src="assets/find/ic-list-bullets.svg" alt=""></button>
+            <button type="button" data-view="grid" aria-label="그리드형으로 보기"><img src="assets/find/ic-squares-four.svg" alt=""></button>
+          </div>
+        </div>
+      </div>
+      <div id="items"></div>
+    </div>
+    <nav class="pager" id="pager" aria-label="페이지"></nav>
+  </div>
+</div></section>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var $$ = function (s) { return [].slice.call(document.querySelectorAll(s)); };
+  var CATS = ['단백체 분석', '대사체 분석', '유전체 분석', '전사체 분석', 'Olink 분석', '바이오의약품·ADC', '기타 분석'];
+  var TODAY = new Date(); TODAY.setHours(0, 0, 0, 0);
+
+  // 예시 데이터 (제목·수치는 임의). [카테고리, 제목, 샘플 수, 예상금액(만원), 희망완료일, 모집 시작, 모집 종료, 등록일, 비공개]
+  var RAW = [
+    [0, 'ADC 표준품(In-house standard) 특성 및 품질 분석', 24, 450, '2026.11.20', '2026.09.20', '2026.10.31', '2026.09.20'],
+    [0, 'LC/MS proteomics (apoptosis analysis)', 18, 380, '2026.12.10', '2026.09.18', '2026.10.20', '2026.09.18'],
+    [0, 'Mouse IgG1 기반 항체 glycan profile 분석', 12, 520, '2026.12.05', '2026.09.17', '2026.10.15', '2026.09.17'],
+    [0, '신장에 low dose cisplatin을 반복 처리해 발현 단백질 분석', 30, 610, '2027.01.15', '2026.09.15', '2026.10.25', '2026.09.15'],
+    [3, 'Mouse tissue RNA-seq 및 pathway 분석', 16, 280, '2026.12.20', '2026.09.14', '2026.10.12', '2026.09.14'],
+    [0, 'Proteome 분석', 24, 400, '2026.11.30', '2026.09.12', '2026.10.10', '2026.09.12', true],
+    [0, 'Target peptide 정량분석', 10, 220, '2026.10.30', '2026.08.20', '2026.09.20', '2026.08.20'],
+    [0, '세포내 타겟단백질 정량분석', 8, 180, '2026.11.10', '2026.09.10', '2026.10.08', '2026.09.10'],
+    [2, '종양 조직 WES 기반 체세포 변이 분석', 40, 900, '2027.02.28', '2026.09.09', '2026.10.30', '2026.09.09'],
+    [1, '혈장 표적 대사체 정량 (아미노산·지방산 패널)', 60, 350, '2026.12.15', '2026.09.08', '2026.10.18', '2026.09.08'],
+    [3, 'Single-cell RNA-seq 기반 면역세포 아형 분석', 6, 1200, '2027.03.10', '2026.09.07', '2026.10.22', '2026.09.07'],
+    [4, 'Olink Target 96 염증 패널 바이오마커 분석', 96, 750, '2026.12.31', '2026.09.06', '2026.10.16', '2026.09.06'],
+    [5, 'ADC 약물-항체 결합비(DAR) 분석', 6, 480, '2026.11.25', '2026.08.10', '2026.09.24', '2026.08.10', true],
+    [0, '인산화 단백체(Phosphoproteomics) 신호전달 경로 분석', 20, 680, '2026.12.30', '2026.08.05', '2026.09.19', '2026.08.05'],
+    [1, '세포 배양액 비표적 대사체 프로파일링', 24, 300, '2026.12.01', '2026.09.05', '2026.10.14', '2026.09.05'],
+    [3, '마우스 간 조직 bulk RNA-seq 및 DEG 분석', 12, 260, '2026.11.28', '2026.09.04', '2026.10.09', '2026.09.04'],
+    [2, '희귀질환 가족 WGS 트리오 분석', 9, 820, '2027.02.10', '2026.09.03', '2026.10.28', '2026.09.03'],
+    [5, '바이오시밀러 항체 전하 변이체 분석', 5, 560, '2026.12.18', '2026.09.02', '2026.10.19', '2026.09.02'],
+    [0, '혈청 엑소좀(EV) 단백체 비교 분석', 32, 590, '2027.01.20', '2026.09.01', '2026.10.21', '2026.09.01', true],
+    [1, '장내 미생물 대사산물(SCFA) 정량 분석', 48, 240, '2026.11.30', '2026.08.30', '2026.09.28', '2026.08.30'],
+    [6, '식물 추출물 유효성분 LC-MS 프로파일링', 15, 150, '2026.11.05', '2026.08.28', '2026.09.25', '2026.08.28'],
+    [4, 'Olink Explore 3072 혈장 단백체 스크리닝', 120, 1500, '2027.03.31', '2026.08.27', '2026.10.27', '2026.08.27'],
+    [3, '오가노이드 약물 처리 전후 전사체 비교', 18, 420, '2026.12.22', '2026.08.26', '2026.10.06', '2026.08.26'],
+    [0, 'TMT 기반 뇌 조직 정량 단백체 분석', 16, 700, '2027.01.08', '2026.08.25', '2026.10.05', '2026.08.25'],
+    [2, '암 환자 cfDNA 저빈도 변이 검출', 50, 980, '2027.02.20', '2026.08.22', '2026.09.30', '2026.08.22'],
+    [5, 'ADC 링커-페이로드 안정성(혈장) 평가', 8, 640, '2026.12.12', '2026.08.20', '2026.09.22', '2026.08.20', true],
+    [1, '소변 비표적 대사체 바이오마커 탐색', 80, 460, '2027.01.12', '2026.08.18', '2026.10.02', '2026.08.18'],
+    [6, '미생물 16S rRNA 메타지놈 분석', 36, 200, '2026.11.15', '2026.08.15', '2026.09.26', '2026.08.15'],
+    [0, '항체 에피토프 매핑 HDX-MS 분석', 4, 850, '2027.01.30', '2026.08.12', '2026.09.23', '2026.08.12'],
+    [3, '공간 전사체(Visium) 종양 미세환경 분석', 4, 1100, '2027.03.15', '2026.08.10', '2026.09.21', '2026.08.10'],
+    [4, 'Olink Target 48 사이토카인 패널 분석', 48, 330, '2026.11.18', '2026.08.08', '2026.09.18', '2026.08.08'],
+    [0, '당단백질 N-glycan 부위 특이적 분석', 10, 530, '2026.12.08', '2026.08.05', '2026.09.17', '2026.08.05'],
+    [2, '마우스 모델 CRISPR 편집 효율 앰플리콘 시퀀싱', 24, 170, '2026.10.30', '2026.08.02', '2026.09.15', '2026.08.02'],
+    [1, '지질체(Lipidomics) 혈청 프로파일링', 40, 510, '2026.12.26', '2026.07.30', '2026.09.12', '2026.07.30'],
+    [5, '항체 응집체(SEC-MALS) 특성 분석', 6, 290, '2026.11.08', '2026.07.28', '2026.09.10', '2026.07.28']
+  ];
+  var ID = ['lab01', 'bio02', 'res03', 'omx04', 'cli05'];
+  var DATA = RAW.map(function (r, i) {
+    return { cat: CATS[r[0]], title: r[1], samples: r[2], price: r[3], due: r[4], from: r[5], to: r[6], reg: r[7], priv: !!r[8], owner: '*****(' + ID[i % ID.length] + ')' };
+  });
+  function d(s) { var p = s.split('.'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  DATA.forEach(function (x) {
+    x.days = Math.round((d(x.to) - TODAY) / 864e5);
+    x.open = x.days >= 0;
+  });
+
+  var state = { status: 'all', cats: [], min: 0, max: 1000, q: '', hidePrivate: false, sort: 'new', view: 'list', page: 1 };
+  var PER = { list: 10, grid: 12 };
+
+  // 카테고리 체크박스
+  $('#cats').innerHTML = CATS.map(function (c) { return '<label class="check"><input type="checkbox" value="' + c + '"><i></i><span>' + c + '</span></label>'; }).join('');
+
+  function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+  function status(x) { return x.open ? '<span class="badge open">모집중</span>' : '<span class="badge closed">모집마감</span>'; }
+  function dday(x) { return x.open ? '종료 D-' + String(x.days).padStart(2, '0') : '모집 종료'; }
+
+  function listCard(x) {
+    var badges = '<div class="badges"><span class="badge tag">' + esc(x.cat) + '</span>' + status(x) + '</div>';
+    if (x.priv) {
+      return '<div class="lcard private"><div class="head"><div class="row1">' + badges + '<img class="lock" src="assets/main/ic-lock-key.svg" alt="비공개"></div><h3>' + esc(x.title) + '</h3></div>' +
+        '<div class="info"><div class="meta">' +
+          '<span><img src="assets/find/ic-user.svg" alt="">비공개</span>' +
+          '<span><img src="assets/find/ic-flask.svg" alt=""><em>샘플</em>비공개</span>' +
+          '<span><img src="assets/find/ic-timer.svg" alt=""><em>희망완료일</em>비공개</span>' +
+          '<span><img src="assets/find/ic-calendar.svg" alt=""><em>모집 기한</em>비공개</span>' +
+        '</div><p class="reg">등록일 ' + x.reg + '</p></div></div>';
+    }
+    return '<a class="lcard" href="omicspharm-project-detail-prot.html"><div class="head"><div class="row1">' + badges + '<span class="dday">' + dday(x) + '</span></div><h3>' + esc(x.title) + '</h3></div>' +
+      '<div class="info"><div class="meta">' +
+        '<span>' + x.owner + '</span>' +
+        '<span><em>샘플</em>' + x.samples + '개</span>' +
+        '<span><em>희망완료일</em>' + x.due + '</span>' +
+        '<span><em>모집 기한</em>' + x.from + ' ~ ' + x.to + '</span>' +
+      '</div><p class="reg">등록일 ' + x.reg + '</p></div></a>';
+  }
+  function gridCard(x) {
+    var p = x.priv;
+    var rows = '<div><em>샘플</em>' + (p ? '비공개' : x.samples + '개') + '</div>' +
+      '<div><em>희망완료일</em>' + (p ? '비공개' : x.due) + '</div>' +
+      '<div><em>모집 기한</em>' + (p ? '비공개' : x.from + ' ~ ' + x.to) + '</div>' +
+      '<p class="reg">등록일 ' + x.reg + '</p>';
+    var top = '<div class="top"><div class="row1"><div class="badges"><span class="badge tag">' + esc(x.cat) + '</span>' + status(x) + '</div>' + (p ? '<img class="lock" src="assets/main/ic-lock-key.svg" alt="비공개">' : '') + '</div><h3>' + esc(x.title) + '</h3></div>';
+    return p ? '<div class="gcard private">' + top + '<div class="rows">' + rows + '</div></div>'
+             : '<a class="gcard" href="omicspharm-project-detail-prot.html">' + top + '<div class="rows">' + rows + '</div></a>';
+  }
+
+  function filtered() {
+    var q = state.q.trim().toLowerCase();
+    var out = DATA.filter(function (x) {
+      if (state.status === 'open' && !x.open) return false;
+      if (state.status === 'closed' && x.open) return false;
+      if (state.cats.length && state.cats.indexOf(x.cat) < 0) return false;
+      if (x.price < state.min || (state.max < 1000 && x.price > state.max)) return false;
+      if (state.hidePrivate && x.priv) return false;
+      if (q && (x.title + ' ' + x.cat).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+    var by = {
+      new: function (a, b) { return d(b.reg) - d(a.reg); },
+      deadline: function (a, b) { return (a.open === b.open) ? (a.open ? a.days - b.days : b.days - a.days) : (a.open ? -1 : 1); },
+      samples: function (a, b) { return b.samples - a.samples; }
+    }[state.sort];
+    return out.sort(by);
+  }
+
+  function renderRange() {
+    var lo = +$('#minP').value, hi = +$('#maxP').value;
+    $('#rangeFill').style.left = (lo / 10) + '%';
+    $('#rangeFill').style.width = ((hi - lo) / 10) + '%';
+    $('#rangeLabel').textContent = (lo === 0 && hi === 1000) ? '전체' : lo + '-' + (hi === 1000 ? '1000만원 이상' : hi + '만원');
+  }
+
+  function render() {
+    var all = filtered(), per = PER[state.view], pages = Math.max(1, Math.ceil(all.length / per));
+    if (state.page > pages) state.page = pages;
+    var slice = all.slice((state.page - 1) * per, state.page * per);
+    $('#total').textContent = '총 ' + all.length + '개';
+    var box = $('#items');
+    box.className = state.view === 'list' ? 'list' : 'grid';
+    box.innerHTML = slice.length ? slice.map(state.view === 'list' ? listCard : gridCard).join('') : '<div class="empty">조건에 맞는 프로젝트가 없습니다.</div>';
+    // 페이지네이션 (최대 5개 번호)
+    var start = Math.max(1, Math.min(state.page - 2, pages - 4)), end = Math.min(pages, start + 4), html = '';
+    var btn = function (p, inner, label, dis) { return '<button type="button" data-p="' + p + '" aria-label="' + label + '"' + (dis ? ' disabled' : '') + '>' + inner + '</button>'; };
+    html += btn(1, '<img src="assets/find/ic-caret-double-left.svg" alt="">', '첫 페이지', state.page === 1);
+    html += btn(state.page - 1, '<img src="assets/find/ic-caret-left.svg" alt="">', '이전 페이지', state.page === 1);
+    for (var p = start; p <= end; p++) html += '<button type="button" data-p="' + p + '"' + (p === state.page ? ' class="on" aria-current="page"' : '') + '>' + p + '</button>';
+    html += btn(state.page + 1, '<img src="assets/find/ic-caret-right.svg" alt="">', '다음 페이지', state.page === pages);
+    html += btn(pages, '<img src="assets/find/ic-caret-double-right.svg" alt="">', '마지막 페이지', state.page === pages);
+    $('#pager').innerHTML = html;
+  }
+  function update(patch) { Object.assign(state, patch, patch.page ? {} : { page: 1 }); render(); }
+
+  $$('.seg button').forEach(function (b) { b.addEventListener('click', function () { $$('.seg button').forEach(function (x) { x.classList.toggle('on', x === b); }); update({ status: b.dataset.status }); }); });
+  $('#cats').addEventListener('change', function () { update({ cats: $$('#cats input:checked').map(function (i) { return i.value; }) }); });
+  ['#minP', '#maxP'].forEach(function (s) {
+    $(s).addEventListener('input', function () {
+      var lo = $('#minP'), hi = $('#maxP');
+      if (+lo.value > +hi.value) { if (this === lo) hi.value = lo.value; else lo.value = hi.value; }
+      renderRange(); update({ min: +lo.value, max: +hi.value });
+    });
+  });
+  $('#q').addEventListener('input', function () { update({ q: this.value }); });
+  $('#hidePrivate').addEventListener('change', function () { update({ hidePrivate: this.checked }); });
+  $('#sort').addEventListener('change', function () { update({ sort: this.value }); });
+  $$('.views button').forEach(function (b) { b.addEventListener('click', function () { $$('.views button').forEach(function (x) { x.classList.toggle('on', x === b); }); update({ view: b.dataset.view }); }); });
+  $('#pager').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b || b.disabled) return;
+    update({ page: +b.dataset.p });
+    $('.results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  $('#reset').addEventListener('click', function () {
+    $$('.seg button').forEach(function (x, i) { x.classList.toggle('on', i === 0); });
+    $$('#cats input').forEach(function (i) { i.checked = false; });
+    $('#minP').value = 0; $('#maxP').value = 1000; renderRange();
+    $('#q').value = ''; $('#hidePrivate').checked = false; $('#sort').value = 'new';
+    update({ status: 'all', cats: [], min: 0, max: 1000, q: '', hidePrivate: false, sort: 'new' });
+  });
+
+  renderRange(); render();
+})();
+</script>
+</body>
+</html>
