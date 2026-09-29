@@ -22,40 +22,42 @@
   [hidden] { display:none !important; }
 
   .page-head { padding:32px 60px; text-align:center; }
-  .page-head .in, .body .in { max-width:880px; margin:0 auto; }
+  .page-head .in, .body .in { max-width:1320px; margin:0 auto; }
   .page-head h1 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; }
   .page-head p { margin-top:12px; font-size:16px; line-height:22px; }
   .body { padding:20px 60px 60px; }
 
-  .card { min-width:0; display:flex; flex-direction:column; gap:32px; padding:32px; background:#fff; border:1px solid var(--gray-200); border-radius:16px; }
-  .group { display:flex; flex-direction:column; gap:20px; }
-  .group > h2 { display:flex; align-items:center; gap:8px; padding-bottom:12px; border-bottom:2px solid #000; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
+  .card { min-width:0; display:flex; flex-direction:column; gap:32px; padding:24px; background:#fff; border:1px solid var(--gray-200); border-radius:16px; }
+  .group > h2 { margin:0 0 12px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
+  .group > .note { margin:8px 0 0; font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
 
-  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-  .field { display:flex; flex-direction:column; gap:8px; min-width:0; }
-  .field > label, .field > .label { display:flex; align-items:center; gap:2px; font-size:14px; font-weight:500; line-height:20px; }
-  .req { color:var(--red-600); font-size:12px; font-weight:400; }
+  /* 표 형태 (프로젝트 의뢰 폼과 동일: 라벨 270px · 회색 배경) */
+  .tbl { border-top:2px solid #000; }
+  .field { display:grid; grid-template-columns:270px minmax(0,1fr); border-bottom:1px solid var(--gray-200); }
+  .flabel { display:flex; align-items:center; gap:2px; padding:12px 18px; background:var(--gray-100); font-size:14px; font-weight:500; line-height:20px; }
+  .fbody { display:flex; flex-direction:column; justify-content:center; gap:8px; min-width:0; padding:6px 12px; }
+  .fbody.pad { padding:12px; }
+  .req { color:var(--red-600); font-weight:400; }
   .opt { margin-left:4px; font-size:12px; font-weight:400; color:var(--gray-400); }
-  .input, .select, .textarea { width:100%; background:#fff; border:1px solid var(--gray-300); border-radius:8px; font-size:16px; line-height:22px; }
-  .input, .select { height:48px; padding:0 16px; }
+  .input, .select, .textarea { width:100%; background:#fff; border:1px solid var(--gray-300); border-radius:8px; font-size:14px; line-height:20px; }
+  .input, .select { height:40px; padding:0 16px; }
+  .w-m { max-width:400px; }
   .select:invalid, .select option[value=""] { color:var(--gray-400); }
   .select option { color:#000; }
-  .select { appearance:none; -webkit-appearance:none; padding-right:40px; background:#fff url(assets/find/ic-chevron-down.svg) right 16px center/16px no-repeat; cursor:pointer; }
-  .textarea { min-height:200px; padding:12px 16px; resize:vertical; }
+  .select { appearance:none; -webkit-appearance:none; padding-right:36px; background:#fff url(assets/find/ic-chevron-down.svg) right 12px center/16px no-repeat; cursor:pointer; }
+  .textarea { min-height:200px; padding:10px 16px; resize:vertical; }
   .input::placeholder, .textarea::placeholder { color:var(--gray-400); }
   .input:focus, .select:focus, .textarea:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
-  .input[readonly] { background:var(--gray-100); color:var(--gray-600); }
   .help { display:flex; justify-content:space-between; gap:12px; font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
   .field.error .input, .field.error .select, .field.error .textarea { border-color:var(--red-600); }
   .field .msg { font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--red-600); }
 
-  .ref { display:flex; align-items:center; gap:8px; padding:12px 16px; border:1px solid var(--gray-200); border-radius:8px; background:var(--gray-50); font-size:14px; line-height:20px; }
-  .ref em { font-style:normal; color:var(--gray-500); white-space:nowrap; }
+  .ref { display:flex; align-items:center; gap:8px; min-height:40px; font-size:14px; line-height:20px; }
   .ref b { font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .ref button { margin-left:auto; font-size:13px; color:var(--gray-500); }
 
   /* 첨부 */
-  .file { display:flex; align-items:center; gap:8px; height:48px; padding:0 16px; background:#fff; border:1px dashed var(--gray-300); border-radius:8px; cursor:pointer; font-size:16px; line-height:22px; color:var(--gray-400); }
+  .file { display:flex; align-items:center; gap:8px; height:40px; padding:0 16px; background:#fff; border:1px dashed var(--gray-300); border-radius:8px; cursor:pointer; font-size:14px; line-height:20px; color:var(--gray-400); }
   .file:hover { border-color:var(--gray-400); }
   .file.has { border-style:solid; color:#000; }
   .file img { width:20px; height:20px; }
@@ -64,10 +66,10 @@
   .file input { display:none; }
 
   /* 동의 */
-  .agree-box { max-height:160px; overflow:auto; padding:16px; border:1px solid var(--gray-200); border-radius:8px; background:var(--gray-50); font-size:14px; line-height:22px; color:var(--gray-600); word-break:keep-all; }
+  .agree-box { max-height:140px; overflow:auto; padding:16px; border:1px solid var(--gray-200); border-radius:8px; background:var(--gray-50); font-size:13px; line-height:20px; color:var(--gray-600); word-break:keep-all; }
   .agree-box ol { padding-left:20px; }
   .agree-box p { margin-top:8px; }
-  .check { display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:500; line-height:20px; cursor:pointer; }
+  .check { align-self:flex-start; display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:500; line-height:20px; cursor:pointer; }
   .check input { position:absolute; opacity:0; width:0; height:0; }
   .check i { width:20px; height:20px; flex:none; background:url(assets/auth/checkbox-off.svg) center/contain no-repeat; }
   .check input:checked + i { background-image:url(assets/auth/checkbox-on.svg); }
@@ -98,7 +100,9 @@
   @media (max-width:640px) {
     .page-head, .body { padding-left:16px; padding-right:16px; }
     .card { padding:20px 16px; }
-    .row2 { grid-template-columns:1fr; }
+    .field { grid-template-columns:1fr; }
+    .flabel { padding:10px 12px; }
+    .w-m { max-width:none; }
     .actions .btn { flex:1; }
   }
 </style>
@@ -116,68 +120,62 @@
 
     <section class="group">
       <h2>문의 유형</h2>
-      <div class="field" id="f-type">
-        <label for="type">문의 유형<span class="req">*</span></label>
-        <select class="select" id="type" required>
-          <option value="" disabled selected hidden>문의 유형을 선택해주세요</option>
-          <option value="quote">분석 견적</option>
-          <option value="project">의뢰 프로젝트</option>
-          <option value="service">서비스 이용</option>
-          <option value="partner">분석 파트너 제휴</option>
-          <option value="data">분석 결과·데이터</option>
-          <option value="etc">기타</option>
-        </select>
-      </div>
-      <div class="ref" id="ref" hidden><em>관련 프로젝트</em><b id="refText"></b><button type="button" id="refClear">연결 해제</button></div>
-      <div class="field" id="f-svc" hidden>
-        <label for="svc">관련 분석 서비스<span class="opt">선택</span></label>
-        <select class="select" id="svc">
-          <option value="">선택해주세요</option>
-          <option>단백체 분석</option><option>Olink 분석</option><option>대사체 분석</option><option>유전체 분석</option>
-          <option>전사체 분석</option><option>바이오의약품·ADC</option><option>기타 분석</option>
-        </select>
+      <div class="tbl">
+        <div class="field" id="f-type"><label class="flabel" for="type">문의 유형<span class="req">*</span></label><div class="fbody">
+          <select class="select w-m" id="type" required>
+            <option value="" disabled selected hidden>문의 유형을 선택해주세요</option>
+            <option value="quote">분석 견적</option>
+            <option value="project">의뢰 프로젝트</option>
+            <option value="service">서비스 이용</option>
+            <option value="partner">분석 파트너 제휴</option>
+            <option value="data">분석 결과·데이터</option>
+            <option value="etc">기타</option>
+          </select>
+        </div></div>
+        <div class="field" id="f-svc" hidden><label class="flabel" for="svc">관련 분석 서비스</label><div class="fbody">
+          <select class="select w-m" id="svc">
+            <option value="">선택해주세요</option>
+            <option>단백체 분석</option><option>Olink 분석</option><option>대사체 분석</option><option>유전체 분석</option>
+            <option>전사체 분석</option><option>바이오의약품·ADC</option><option>기타 분석</option>
+          </select>
+        </div></div>
+        <div class="field" id="ref" hidden><div class="flabel">관련 프로젝트</div><div class="fbody"><div class="ref"><b id="refText"></b><button type="button" id="refClear">연결 해제</button></div></div></div>
       </div>
     </section>
 
     <section class="group">
       <h2>연락처 정보</h2>
-      <div class="row2">
-        <div class="field" id="f-name"><label for="name">이름<span class="req">*</span></label><input class="input" id="name" autocomplete="name" placeholder="이름을 입력해주세요"></div>
-        <div class="field" id="f-org"><label for="org">소속(기관·회사)<span class="req">*</span></label><input class="input" id="org" autocomplete="organization" placeholder="예) ○○대학교, ○○제약"></div>
+      <div class="tbl">
+        <div class="field" id="f-name"><label class="flabel" for="name">이름<span class="req">*</span></label><div class="fbody"><input class="input w-m" id="name" autocomplete="name" placeholder="이름을 입력해주세요"></div></div>
+        <div class="field" id="f-org"><label class="flabel" for="org">소속(기관·회사)<span class="req">*</span></label><div class="fbody"><input class="input w-m" id="org" autocomplete="organization" placeholder="예) ○○대학교, ○○제약"></div></div>
+        <div class="field" id="f-email"><label class="flabel" for="email">이메일<span class="req">*</span></label><div class="fbody"><input class="input w-m" id="email" type="email" autocomplete="email" placeholder="email@domain.com"></div></div>
+        <div class="field" id="f-phone"><label class="flabel" for="phone">연락처</label><div class="fbody"><input class="input w-m" id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000"></div></div>
       </div>
-      <div class="row2">
-        <div class="field" id="f-email"><label for="email">이메일<span class="req">*</span></label><input class="input" id="email" type="email" autocomplete="email" placeholder="email@domain.com"></div>
-        <div class="field" id="f-phone"><label for="phone">연락처<span class="opt">선택</span></label><input class="input" id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000"></div>
-      </div>
-      <p class="help">답변은 입력하신 이메일로 보내드립니다.</p>
+      <p class="note">답변은 입력하신 이메일로 보내드립니다.</p>
     </section>
 
     <section class="group">
       <h2>문의 내용</h2>
-      <div class="field" id="f-title"><label for="title">제목<span class="req">*</span></label><input class="input" id="title" maxlength="100" placeholder="문의 제목을 입력해주세요"></div>
-      <div class="field" id="f-body">
-        <label for="body">내용<span class="req">*</span></label>
-        <textarea class="textarea" id="body" maxlength="2000" placeholder="정확한 답변을 위해 분석 목적, 시료 종류와 수량, 희망 일정 등을 함께 적어주세요."></textarea>
-        <p class="help"><span>개인정보(주민등록번호 등)는 입력하지 마세요.</span><span id="count">0 / 2000</span></p>
-      </div>
-      <div class="field">
-        <span class="label">첨부파일<span class="opt">선택</span></span>
-        <label class="file" id="fileBox"><img src="assets/auth/ic-paperclip.svg" alt=""><span id="fileName">파일 선택 (최대 1개, 30MB)</span><button type="button" id="fileClear" hidden>삭제</button><input type="file" id="file"></label>
-      </div>
-    </section>
-
-    <section class="group">
-      <div class="field" id="f-agree">
-        <span class="label">개인정보 수집 및 이용 동의<span class="req">*</span></span>
-        <div class="agree-box" tabindex="0">
-          <ol>
-            <li>수집 이용 목적 : 문의 고객과의 상담을 위한 경로 확보</li>
-            <li>수집 항목(선택) : 성명(필수·익명 가능), 회사명, 이메일</li>
-            <li>보유 및 이용 기간 : 당사는 개인 정보 수집 및 이용목적이 달성된 후에는 예외 없이 그리고 지체 없이 해당 정보를 파기합니다.</li>
-          </ol>
-          <p>※ 귀하께서는 본 선택항목의 수집에 대해 거부하실 수 있습니다.</p>
-        </div>
-        <label class="check"><input type="checkbox" id="agree"><i></i><span>위의 개인정보 수집 및 사용에 동의합니다.</span></label>
+      <div class="tbl">
+        <div class="field" id="f-title"><label class="flabel" for="title">제목<span class="req">*</span></label><div class="fbody"><input class="input" id="title" maxlength="100" placeholder="문의 제목을 입력해주세요"></div></div>
+        <div class="field" id="f-body"><label class="flabel" for="body">내용<span class="req">*</span></label><div class="fbody pad">
+          <textarea class="textarea" id="body" maxlength="2000" placeholder="정확한 답변을 위해 분석 목적, 시료 종류와 수량, 희망 일정 등을 함께 적어주세요."></textarea>
+          <p class="help"><span>개인정보(주민등록번호 등)는 입력하지 마세요.</span><span id="count">0 / 2000</span></p>
+        </div></div>
+        <div class="field"><div class="flabel">첨부파일</div><div class="fbody">
+          <label class="file" id="fileBox"><img src="assets/auth/ic-paperclip.svg" alt=""><span id="fileName">파일 선택 (최대 1개, 30MB)</span><button type="button" id="fileClear" hidden>삭제</button><input type="file" id="file"></label>
+        </div></div>
+        <div class="field" id="f-agree"><div class="flabel">개인정보 수집 및 이용 동의<span class="req">*</span></div><div class="fbody pad">
+          <div class="agree-box" tabindex="0">
+            <ol>
+              <li>수집 이용 목적 : 문의 고객과의 상담을 위한 경로 확보</li>
+              <li>수집 항목(선택) : 성명(필수·익명 가능), 회사명, 이메일</li>
+              <li>보유 및 이용 기간 : 당사는 개인 정보 수집 및 이용목적이 달성된 후에는 예외 없이 그리고 지체 없이 해당 정보를 파기합니다.</li>
+            </ol>
+            <p>※ 귀하께서는 본 선택항목의 수집에 대해 거부하실 수 있습니다.</p>
+          </div>
+          <label class="check"><input type="checkbox" id="agree"><i></i><span>위의 개인정보 수집 및 사용에 동의합니다.</span></label>
+        </div></div>
       </div>
     </section>
 
@@ -249,7 +247,8 @@
   // 검증
   function setErr(id, msg) {
     var f = document.getElementById(id); f.classList.toggle('error', !!msg);
-    var m = f.querySelector('.msg'); if (!m && msg) { m = document.createElement('p'); m.className = 'msg'; f.appendChild(m); }
+    var box = f.querySelector('.fbody') || f;
+    var m = box.querySelector('.msg'); if (!m && msg) { m = document.createElement('p'); m.className = 'msg'; box.appendChild(m); }
     if (m) { m.textContent = msg || ''; m.hidden = !msg; }
   }
   [['name', 'f-name'], ['org', 'f-org'], ['email', 'f-email'], ['title', 'f-title'], ['body', 'f-body']].forEach(function (p) {
