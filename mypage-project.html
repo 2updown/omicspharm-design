@@ -83,6 +83,23 @@
   .kv dd { flex:1; min-width:0; padding:12px 18px; white-space:pre-line; word-break:break-word; }
   .note { padding:24px; border-radius:8px; background:var(--bg-green); font-size:16px; line-height:22px; white-space:pre-line; }
 
+  /* 프로젝트 관리 목록: 프로젝트 찾기 목록형 카드(Project-list Type=card)와 동일 */
+  .list-head { display:flex; align-items:center; justify-content:space-between; }
+  .list-head .total { font-size:16px; font-weight:500; line-height:22px; color:#1b1d1f; }
+  .list { display:flex; flex-direction:column; gap:12px; }
+  .lcard { display:flex; flex-direction:column; gap:16px; padding:16px 12px; background:#fff; border:1px solid var(--gray-200); border-radius:12px; transition:border-color .15s, box-shadow .15s; }
+  .lcard:hover { border-color:#00bba6; box-shadow:0 4px 8px #00000014, 0 0 2px #0000000a; }
+  .lcard .head { display:flex; flex-direction:column; gap:16px; padding-bottom:12px; border-bottom:1px solid var(--gray-200); }
+  .lcard .row1 { display:flex; align-items:center; justify-content:space-between; }
+  .lcard .dday { font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
+  .lcard h3 { font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+  .lcard .info { display:flex; flex-direction:column; gap:10px; }
+  .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
+  .meta > span { display:inline-flex; align-items:center; gap:8px; white-space:nowrap; }
+  .meta > span + span::before { content:""; width:0; height:14px; border-left:1px solid var(--gray-300); margin-right:4px; }
+  .meta em { font-style:normal; color:var(--gray-500); }
+  .lcard .reg { font-size:12px; line-height:18px; letter-spacing:-.12px; color:#9b9b9b; }
+
   .empty { padding:80px 24px; text-align:center; }
   .empty b { display:block; font-size:18px; font-weight:600; line-height:24px; }
   .empty p { margin-top:8px; font-size:14px; line-height:20px; color:var(--gray-500); }
@@ -178,24 +195,45 @@
   var list = [];
   try { list = JSON.parse(localStorage.getItem('op.submitted') || '[]'); } catch (e) {}
   var id = new URLSearchParams(location.search).get('id');
-  var d = list.filter(function (x) { return x.id === id; })[0] || list[0];
+  var d = id ? list.filter(function (x) { return x.id === id; })[0] : null;
+  var dot = function (v) { return v ? v.replace(/-/g, '.') : '-'; };
+  var ymd = function (t) { var x = new Date(t); return x.getFullYear() + '.' + ('0' + (x.getMonth() + 1)).slice(-2) + '.' + ('0' + x.getDate()).slice(-2); };
+  if (list[0] && list[0].org) $('#meOrg').textContent = list[0].org;
 
+  // ?id 없으면 프로젝트 관리 목록 (최근 제출 순)
+  if (!id && list.length) {
+    var card = function (x) {
+      var days = x.to ? Math.round((new Date(x.to) - new Date(new Date().toDateString())) / 864e5) : null;
+      return '<a class="lcard" href="mypage-project.html?id=' + encodeURIComponent(x.id) + '"><div class="head">' +
+        '<div class="row1"><div class="badges"><span class="badge tag">' + esc(x.svc) + '</span><span class="badge state">의뢰접수</span></div>' +
+          (days === null ? '' : '<span class="dday">' + (days >= 0 ? '모집 종료 D-' + String(days).padStart(2, '0') : '모집 종료') + '</span>') + '</div>' +
+        '<h3>' + esc(x.title) + '</h3></div>' +
+        '<div class="info"><div class="meta">' +
+          '<span>' + esc((x.org || '-') + (x.manager ? '(' + x.manager + ')' : '')) + '</span>' +
+          '<span><em>샘플</em>' + (x.samples ? esc(x.samples) + '개' : '-') + '</span>' +
+          '<span><em>희망완료일</em>' + dot(x.due) + '</span>' +
+          '<span><em>모집 기한</em>' + (x.from || x.to ? dot(x.from) + ' ~ ' + dot(x.to) : '-') + '</span>' +
+        '</div><p class="reg">등록일 ' + ymd(x.at) + ' · 의뢰번호 ' + esc(x.id) + '</p></div></a>';
+    };
+    $('.toprow').hidden = true; // 탭·문의하기는 프로젝트 상세에서만
+    $('#project').outerHTML = '<div class="list-head"><span class="total">총 ' + list.length + '개</span></div><div class="list">' + list.map(card).join('') + '</div>';
+    return;
+  }
+
+  if (id && !d && list.length) { location.replace('mypage-project.html'); return; } // 없는 의뢰번호면 목록으로
   if (!d) {
     $('#project').innerHTML = '<div class="empty"><b>제출한 프로젝트가 없습니다</b><p>분석 의뢰를 제출하면 여기에서 진행상황과 내용을 확인할 수 있습니다.</p>' +
       '<a href="omicspharm-register.html" data-client-only>프로젝트 의뢰하기</a></div>';
     return;
   }
   if (d.org) $('#meOrg').textContent = d.org;
-
-  var dot = function (v) { return v ? v.replace(/-/g, '.') : '-'; };
-  var ymd = function (t) { var x = new Date(t); return x.getFullYear() + '.' + ('0' + (x.getMonth() + 1)).slice(-2) + '.' + ('0' + x.getDate()).slice(-2); };
   var closed = d.to && new Date(d.to) < new Date(new Date().toDateString());
 
   var html =
     '<div class="phead">' +
       '<div class="prow"><div class="badges"><span class="badge tag">' + esc(d.svc) + '</span><span class="badge state">의뢰접수</span></div>' +
         '<span class="reg">등록일 ' + ymd(d.at) + ' · 의뢰번호 ' + esc(d.id) + '</span></div>' +
-      '<div class="prow"><h2 class="ptitle"><a href="#" data-soon="프로젝트 목록" aria-label="프로젝트 목록"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(d.title) + '</h2>' +
+      '<div class="prow"><h2 class="ptitle"><a href="mypage-project.html" aria-label="프로젝트 목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(d.title) + '</h2>' +
         (d.from || d.to ? '<div class="period"><b>모집기한</b><span>' + dot(d.from) + ' ~ ' + dot(d.to) + '</span><em>' + (closed ? '모집마감' : '모집중') + '</em></div>' : '') + '</div>' +
     '</div>' +
     '<div class="summary">' +
