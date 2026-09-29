@@ -61,7 +61,8 @@
     <div class="center-msg">
       <h1>Check your email</h1>
       <p>인증 메일이 <b class="sent-to"></b> (으)로 전송되었습니다.<br>받으신 이메일에서 인증 버튼을 클릭한 후 이어서 진행해주세요.</p>
-      <a class="btn-action" id="toLogin" href="login.html">로그인 하기</a>
+      <!-- Figma 버튼명은 '로그인 하기'. 프로토타입은 실제 메일 인증이 없어 바로 기본정보 입력으로 이어진다 -->
+      <button type="button" class="btn-action" id="continueBtn">이어서 진행하기</button>
     </div>
     <div class="resend"><b>이메일을 확인할 수 없나요? 스팸 편지함 확인 또는</b><a href="#" id="resend">이메일 다시 보내기</a></div>
   </main>
@@ -244,7 +245,6 @@
     OP.saveAccount(v, { role: type, pw: pw.value, profileDone: false });
     try { sessionStorage.setItem(PENDING, v); } catch (e2) {}
     $('.sent-to').textContent = v;
-    $('#toLogin').href = 'login.html?email=' + encodeURIComponent(v);
     show('email');
   });
 
@@ -259,6 +259,12 @@
   $('#modalAgree').addEventListener('click', function () { $('.agree[data-term="' + openTerm + '"]').checked = true; syncAccount(); closeModal(); });
 
   /* ── 2. 이메일 ── */
+  // 메일 인증을 마친 것으로 보고 로그인 상태로 기본정보 입력을 이어간다
+  $('#continueBtn').addEventListener('click', function () {
+    var v = null; try { v = sessionStorage.getItem(PENDING); } catch (e) {}
+    if (v) OP.login(v);
+    show('info');
+  });
   $('#resend').addEventListener('click', function (e) { e.preventDefault(); OP.toast('인증 메일을 다시 보냈습니다. (데모)'); });
 
   /* ── 3. 기본정보 ── */
