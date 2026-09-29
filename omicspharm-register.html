@@ -466,6 +466,19 @@
   .lnk{color:var(--teal);font-size:14px;font-weight:500}
   .tag{border-color:var(--teal);background:var(--teal-bg);color:var(--teal);border-radius:8px}
 
+  /* 서비스별 2단계 */
+  .svcnone{margin:0;padding:48px 16px;border:1px dashed var(--n300);border-radius:8px;text-align:center;font-size:14px;color:var(--n500)}
+  .svcblk.on{display:block}
+  .opts .etcin{width:220px;height:40px;margin-left:-4px}
+  .opts .etcin:disabled{background:var(--n100)}
+  .items input[type=radio]{border-radius:50%;background:#fff;border:1.5px solid var(--n300)}
+  .items input[type=radio]:checked{border:0;background:var(--teal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.2l2.6 2.6L14 7.4' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/20px no-repeat}
+  .fbody > .sl{margin:8px 0 0;font-size:13px;font-weight:600;line-height:20px;color:var(--n500)}
+  .fbody > .sl:first-child{margin-top:4px}
+  .fbody > .items + .opts{padding-top:0}
+  .svcblk[data-svc="biop"] .items{display:grid;grid-template-columns:1fr 1fr;column-gap:24px} /* 분석항목 26개: 2열 */
+  @media (max-width:980px){.svcblk[data-svc="biop"] .items{grid-template-columns:1fr}}
+
   /* 하단 버튼 (이전 · 다음) */
   .bar{justify-content:flex-end;gap:8px;margin-top:16px;padding-top:16px;border-top:0}
   .bar .btn{height:48px;min-width:84px;padding:0 16px;font-size:16px;line-height:22px}
@@ -610,6 +623,8 @@
 
     <!-- ② 분석 상세 -->
     <div class="step" data-step="2">
+      <p class="svcnone svcblk cond on" data-svc="">1단계에서 분석 서비스를 먼저 선택해 주세요.</p>
+      <div class="svcblk cond" data-svc="prot">
       <div class="sec">
         <h2>분석 서비스 : <span id="svcTitle">단백체 분석</span></h2>
         <div class="tbl">
@@ -678,6 +693,64 @@
             <input type="text" id="ptmEtcIn" placeholder="PTM 종류 직접입력" style="display:none;margin-top:10px;max-width:320px"></div></div>
         </div>
       </div>
+      </div>
+
+      <div class="svcblk cond" data-svc="olink">
+      <div class="sec">
+        <h2>분석 서비스 : Olink 분석</h2>
+        <div class="tbl"><div class="field" data-req="any"><div class="flabel">서비스 유형<span class="req">*</span></div><div class="fbody"><div class="items"><label><input type="radio" name="i1">Target 48<span class="d">48개 단백질 패널</span></label><label><input type="radio" name="i1">Target 96<span class="d">96개 단백질 패널</span></label><label><input type="radio" name="i1">Explore<span class="d">대규모 단백질 패널 (수천 종)</span></label></div></div></div><div class="field" data-req="any"><div class="flabel">관심 패널 · 연구 분야<span class="req">*</span></div><div class="fbody"><div class="items"><label><input type="checkbox" name="i2">Inflammation<span class="d">염증 관련 단백질 패널</span></label><label><input type="checkbox" name="i2">Oncology<span class="d">종양 관련 단백질 패널</span></label><label><input type="checkbox" name="i2">Cardiometabolic<span class="d">심혈관·대사 질환 관련 단백질 패널</span></label><label><input type="checkbox" name="i2">Neurology<span class="d">신경계 질환 관련 단백질 패널</span></label><label><input type="checkbox" name="i2">Immuno-Oncology<span class="d">면역항암 관련 단백질 패널</span></label></div><div class="opts"><label class="etc"><input type="checkbox" name="o3" data-etc>기타</label><input type="text" class="etcin" placeholder="패널 직접 입력"></div></div></div><div class="field" data-req="choice"><div class="flabel">분석 목적<span class="req">*</span></div><div class="fbody"><div class="opts"><label><input type="checkbox" name="o4">단백질 발현 비교</label><label><input type="checkbox" name="o4">바이오마커 탐색</label><label><input type="checkbox" name="o4">치료반응 평가</label><label><input type="checkbox" name="o4">기전 연구</label><label class="etc"><input type="checkbox" name="o4" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div><div class="field" data-req="choice"><div class="flabel">요청 분석 내용<span class="req">*</span></div><div class="fbody"><div class="opts"><label><input type="checkbox" name="o5">NPX 데이터</label><label><input type="checkbox" name="o5">QC 결과</label><label><input type="checkbox" name="o5">그룹 간 통계분석</label><label><input type="checkbox" name="o5">시각화</label><label><input type="checkbox" name="o5">바이오마커 후보</label><label><input type="checkbox" name="o5">Network·Pathway 분석</label><label class="etc"><input type="checkbox" name="o5" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div><div class="field"><div class="flabel">통계 분석 범위</div><div class="fbody"><div class="opts"><label><input type="checkbox" name="o6">GO analysis</label><label><input type="checkbox" name="o6">PCA analysis</label><label><input type="checkbox" name="o6">Network analysis</label><label><input type="checkbox" name="o6">Pathway analysis</label><label><input type="checkbox" name="o6">군 간 유의성 검정 (p-value, volcano)</label><label><input type="checkbox" name="o6">Clustering·Heatmap</label></div></div></div></div>
+      </div>
+      </div>
+
+      <div class="svcblk cond" data-svc="meta">
+      <div class="sec">
+        <h2>분석 서비스 : 대사체 분석</h2>
+        <div class="tbl"><div class="field" data-req="choice"><div class="flabel">분석 유형<span class="req">*</span></div><div class="fbody"><div class="opts"><label><input type="checkbox" data-show="#m-untg">Untargeted</label><label><input type="checkbox" data-show="#m-tgt">Targeted</label></div></div></div><div class="field" data-req="any"><div class="flabel">측정 모드<span class="req">*</span></div><div class="fbody"><div class="items"><label><input type="radio" name="i7">Positive<span class="d">양이온 모드 측정</span></label><label><input type="radio" name="i7">Negative<span class="d">음이온 모드 측정</span></label><label><input type="radio" name="i7">Both<span class="d">양이온·음이온 모드 모두 측정</span></label></div></div></div><div class="field" data-req="choice"><div class="flabel">분석 목적<span class="req">*</span></div><div class="fbody"><div class="opts"><label><input type="checkbox" name="o8">Profiling</label><label><input type="checkbox" name="o8">그룹간 비교</label><label><input type="checkbox" name="o8">Biomarker discovery</label><label class="etc"><input type="checkbox" name="o8" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div></div>
+      </div>
+
+      <div class="sec cond" id="m-untg">
+        <h2>Untargeted</h2>
+        <div class="tbl"><div class="field" data-req="any"><div class="flabel">분석항목<span class="req">*</span></div><div class="fbody"><div class="items"><label><input type="checkbox" name="i9">정성분석<span class="d">대사체 리스트를 제공해 드립니다.</span></label><label><input type="checkbox" name="i9">정량분석<span class="d">heatmap, volcano plot, foldchange 값을 제공합니다.</span></label><label><input type="checkbox" name="i9">통계처리 (p-value, volcano plot 등)<span class="d">동일 그룹의 시료가 3개 이상 필요합니다.</span></label></div></div></div></div>
+      </div>
+
+      <div class="sec cond" id="m-tgt">
+        <h2>Targeted</h2>
+        <div class="tbl"><div class="field" data-req="text"><div class="flabel">Target metabolite name<span class="req">*</span></div><div class="fbody"><input type="text" data-v placeholder="예) Glutamine, Lactate (쉼표로 구분)"></div></div><div class="field" data-req="choice"><div class="flabel">정량 방식<span class="req">*</span></div><div class="fbody"><div class="opts"><label><input type="radio" name="o10">상대정량</label><label><input type="radio" name="o10">절대정량</label></div><p class="fhelp">절대정량은 표준물질로 실제 농도를 산출합니다.</p></div></div><div class="field"><div class="flabel">표준물질 보유</div><div class="fbody"><div class="opts"><label><input type="radio" name="o11">보유·제공 가능</label><label><input type="radio" name="o11">미보유</label><label><input type="radio" name="o11">확인 필요</label></div></div></div><div class="field"><div class="flabel">시료 내 예상 농도</div><div class="fbody"><div class="inline"><input type="number" class="w-s"><select class="w-s"><option>ng/mL</option><option>μg/mL</option><option>μM</option><option>nM</option></select></div></div></div></div>
+      </div>
+      </div>
+
+      <div class="svcblk cond" data-svc="geno">
+      <div class="sec">
+        <h2>분석 서비스 : 유전체 분석</h2>
+        <div class="tbl"><div class="field" data-req="any"><div class="flabel">분석 종류<span class="req">*</span></div><div class="fbody"><div class="items"><label><input type="checkbox" name="i12">WGS (Whole Genome Sequencing)<span class="d">전장 유전체 분석(30× 또는 90×), 변이 전체 탐지 목적</span></label><label><input type="checkbox" name="i12">WES (Whole Exome Sequencing)<span class="d">코딩 영역(Exon) 기반 변이 분석, 희귀질환·암 패널 분석에 적합</span></label><label><input type="checkbox" name="i12">Targeted Gene Panel<span class="d">선정된 유전자 패널 기반 변이 분석 (예: 암 패널, 희귀질환 패널)</span></label><label><input type="checkbox" name="i12">Low-pass WGS / CNV sequencing<span class="d">저커버리지 WGS 기반 Copy number variation 분석</span></label></div></div></div><div class="field"><div class="flabel">Library · 시퀀싱 옵션</div><div class="fbody"><div class="items"><label><input type="checkbox" name="i13">DNA Library preparation<span class="d">샘플 품질 QC 후 Library 제작</span></label><label><input type="checkbox" name="i13">PCR-free Library<span class="d">Bias 최소화, 고품질 분석 목적</span></label><label><input type="checkbox" name="i13">Paired-end sequencing (PE150 등)<span class="d">Illumina PE 기반 표준 시퀀싱 방식</span></label><label><input type="checkbox" name="i13">Long-read sequencing (PacBio / Oxford Nanopore)<span class="d">구조변이·길이가 긴 영역 분석 (선택 사항)</span></label></div></div></div><div class="field" data-req="choice"><div class="flabel">분석 목적<span class="req">*</span></div><div class="fbody"><div class="opts"><label><input type="checkbox" name="o14">유전변이 탐색</label><label><input type="checkbox" name="o14">질환 관련 변이 확인</label><label><input type="checkbox" name="o14">CNV 분석</label><label><input type="checkbox" name="o14">구조변이 분석</label><label class="etc"><input type="checkbox" name="o14" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div><div class="field" data-req="choice"><div class="flabel">요청 분석 내용<span class="req">*</span></div><div class="fbody"><div class="opts"><label><input type="checkbox" name="o15">Alignment</label><label><input type="checkbox" name="o15">SNV·INDEL</label><label><input type="checkbox" name="o15">CNV</label><label><input type="checkbox" name="o15">SV</label><label><input type="checkbox" name="o15">Variant annotation</label><label><input type="checkbox" name="o15">Filtering Options</label><label class="etc"><input type="checkbox" name="o15" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div><div class="field"><div class="flabel">Reference genome</div><div class="fbody"><div class="opts"><label><input type="radio" name="o16">GRCh38</label><label><input type="radio" name="o16">GRCh37</label><label><input type="radio" name="o16">GRCm39</label><label class="etc"><input type="radio" name="o16" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div><div class="field" data-req="choice"><div class="flabel">핵산 추출 상태<span class="req">*</span></div><div class="fbody"><div class="opts"><label><input type="radio" name="o17">미추출 시료</label><label><input type="radio" name="o17">추출 DNA</label></div></div></div><div class="field"><div class="flabel">Coverage · Read depth</div><div class="fbody"><div class="inline"><input type="number" class="w-s" placeholder="30"><span>×</span></div></div></div></div>
+      </div>
+      </div>
+
+      <div class="svcblk cond" data-svc="trans">
+      <div class="sec">
+        <h2>분석 서비스 : 전사체 분석</h2>
+        <div class="tbl"><div class="field" data-req="any"><div class="flabel">RNA 분석 종류<span class="req">*</span></div><div class="fbody"><div class="items"><label><input type="checkbox" name="i18">RNA-seq (mRNA profiling)<span class="d">전사체 기반 유전자 발현량 분석</span></label><label><input type="checkbox" name="i18">Small RNA-seq (miRNA 등)<span class="d">miRNA, siRNA, piRNA 등 200 nt 이하 small RNA 발현 분석</span></label><label><input type="checkbox" name="i18">Transcript isoform 분석<span class="d">long-read 이용 시 정확도 향상</span></label><label><input type="checkbox" name="i18">Single-cell RNA-seq<span class="d">단일 세포 단위 전사체 발현 분석</span></label></div></div></div><div class="field" data-req="choice"><div class="flabel">분석 목적<span class="req">*</span></div><div class="fbody"><div class="opts"><label><input type="checkbox" name="o19">유전자 발현 분석</label><label><input type="checkbox" name="o19">그룹 간 발현 비교</label><label><input type="checkbox" name="o19">바이오마커 탐색</label><label><input type="checkbox" name="o19">전사체 구조 분석</label><label class="etc"><input type="checkbox" name="o19" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div><div class="field" data-req="choice"><div class="flabel">요청 분석 내용<span class="req">*</span></div><div class="fbody"><div class="opts"><label><input type="checkbox" name="o20">발현 정량</label><label><input type="checkbox" name="o20">DEG 분석</label><label><input type="checkbox" name="o20">Functional annotation</label><label><input type="checkbox" name="o20">GO·Pathway 분석</label><label><input type="checkbox" name="o20">시각화</label><label class="etc"><input type="checkbox" name="o20" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div><div class="field"><div class="flabel">Reference genome</div><div class="fbody"><div class="opts"><label><input type="radio" name="o21">GRCh38</label><label><input type="radio" name="o21">GRCh37</label><label><input type="radio" name="o21">GRCm39</label><label class="etc"><input type="radio" name="o21" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div><div class="field" data-req="choice"><div class="flabel">핵산 추출 상태<span class="req">*</span></div><div class="fbody"><div class="opts"><label><input type="radio" name="o22">미추출 시료</label><label><input type="radio" name="o22">추출 RNA</label></div></div></div><div class="field"><div class="flabel">Library 유형</div><div class="fbody"><div class="opts"><label><input type="radio" name="o23">Stranded</label><label><input type="radio" name="o23">Unstranded</label></div></div></div><div class="field"><div class="flabel">시퀀싱 방식</div><div class="fbody"><div class="opts"><label><input type="radio" name="o24">Single-end</label><label><input type="radio" name="o24">Paired-end</label><label><input type="radio" name="o24">Long-read</label></div></div></div></div>
+      </div>
+      </div>
+
+      <div class="svcblk cond" data-svc="biop">
+      <div class="sec">
+        <h2>분석 서비스 : 바이오의약품·ADC</h2>
+        <div class="tbl"><div class="field" data-req="any"><div class="flabel">분석항목<span class="req">*</span></div><div class="fbody"><div class="sl">Identification / Sequence</div><div class="items"><label><input type="checkbox" name="i25">Intact Mass<span class="d">항체 및 ADC의 전체 분자량 확인</span></label><label><input type="checkbox" name="i25">Peptide mapping fingerprinting<span class="d">단백질의 아미노산 서열 및 변형 확인</span></label><label><input type="checkbox" name="i25">Full length sequencing<span class="d">항체의 전체 서열 확인</span></label><label><input type="checkbox" name="i25">N/C terminal determination<span class="d">단백질 N말단 및 C말단의 서열 확인</span></label><label><input type="checkbox" name="i25">Amino acid composition<span class="d">단백질의 아미노산 조성 분석</span></label><label><input type="checkbox" name="i25">Extinction Coefficient<span class="d">단백질의 광학적 흡광도 계수 측정</span></label></div><div class="sl">Modification</div><div class="items"><label><input type="checkbox" name="i26">Modification (Oxidation, deamidation)<span class="d">산화 및 탈아미드화 같은 화학적 변형 확인</span></label><label><input type="checkbox" name="i26">Disulfide bond<span class="d">이황화 결합 위치와 상태 확인</span></label><label><input type="checkbox" name="i26">Free thiol<span class="d">Free thiol 그룹 존재 여부 확인</span></label></div><div class="sl">Glycan</div><div class="items"><label><input type="checkbox" name="i27">Monosaccharide composition<span class="d">단당류 구성 분석</span></label><label><input type="checkbox" name="i27">Sialic acid composition<span class="d">시알산의 조성 및 함량 분석</span></label><label><input type="checkbox" name="i27">N-linked glycan profile<span class="d">N-연결 당구조 분석</span></label><label><input type="checkbox" name="i27">O-linked glycan profile<span class="d">O-연결 당구조 분석</span></label><label><input type="checkbox" name="i27">N-Glycosylation site<span class="d">N-당화 위치 분석</span></label><label><input type="checkbox" name="i27">O-Glycosylation site<span class="d">O-당화 위치 분석</span></label></div><div class="sl">Structure / Aggregation</div><div class="items"><label><input type="checkbox" name="i28">UV absorbance<span class="d">자외선 흡광도 분석</span></label><label><input type="checkbox" name="i28">Fluorescence<span class="d">형광 특성 분석</span></label><label><input type="checkbox" name="i28">Circular dichroism<span class="d">단백질의 이차 구조 분석</span></label><label><input type="checkbox" name="i28">Differential Scanning Calorimetry<span class="d">단백질 열 안정성 분석</span></label><label><input type="checkbox" name="i28">FT-IR<span class="d">단백질의 구조 분석</span></label><label><input type="checkbox" name="i28">Dynamic Light Scattering<span class="d">입자 크기 및 분포 분석</span></label><label><input type="checkbox" name="i28">SEC-UPLC<span class="d">단백질의 분자량 분포 확인</span></label></div><div class="sl">ADC</div><div class="items"><label><input type="checkbox" name="i29" data-show="#b-adc">DAR<span class="d">약물 대 항체 비율 분석</span></label><label><input type="checkbox" name="i29" data-show="#b-adc">Drug conjugated site<span class="d">항체와 연결된 drug(linker+payload) 위치 분석</span></label><label><input type="checkbox" name="i29" data-show="#b-adc">Conjugated drug<span class="d">결합된 약물 확인</span></label><label><input type="checkbox" name="i29" data-show="#b-adc">Free payload<span class="d">비결합 약물의 존재 확인</span></label></div></div></div><div class="field" data-req="choice"><div class="flabel">분석 목적<span class="req">*</span></div><div class="fbody"><div class="opts"><label><input type="checkbox" name="o30">특성 확인</label><label><input type="checkbox" name="o30">시료 간 비교</label><label><input type="checkbox" name="o30">안정성 평가</label><label><input type="checkbox" name="o30">공정 비교</label><label class="etc"><input type="checkbox" name="o30" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div><div class="field" data-req="choice"><div class="flabel">분자 유형<span class="req">*</span></div><div class="fbody"><div class="opts"><label><input type="radio" name="o31">단백질</label><label><input type="radio" name="o31">항체</label><label><input type="radio" name="o31">이중항체</label><label><input type="radio" name="o31">융합단백질</label><label><input type="radio" name="o31">ADC</label><label class="etc"><input type="radio" name="o31" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div><div class="field"><div class="flabel">예상 분자량</div><div class="fbody"><div class="inline"><input type="number" class="w-s"><select class="w-s"><option>kDa</option><option>Da</option></select></div></div></div><div class="field"><div class="flabel">시료 농도</div><div class="fbody"><div class="inline"><input type="number" class="w-s"><select class="w-s"><option>mg/mL</option><option>μg/μL</option></select></div></div></div><div class="field"><div class="flabel">Buffer · 첨가제</div><div class="fbody"><input type="text" placeholder="예) PBS pH 7.4, 0.02% Tween 20"></div></div><div class="field"><div class="flabel">아미노산 서열</div><div class="fbody"><textarea placeholder="알고 있는 경우 입력해 주세요." style="min-height:70px"></textarea></div></div></div>
+      </div>
+
+      <div class="sec cond" id="b-adc">
+        <h2>ADC 상세 정보</h2>
+        <div class="tbl"><div class="field"><div class="flabel">Linker 종류 및 분자량</div><div class="fbody"><input type="text" placeholder="선택 입력"></div></div><div class="field"><div class="flabel">Payload</div><div class="fbody"><input type="text" placeholder="선택 입력"></div></div><div class="field"><div class="flabel">예상 DAR</div><div class="fbody"><input type="text" placeholder="예) 4"></div></div><div class="field"><div class="flabel">결합 방식</div><div class="fbody"><div class="opts"><label><input type="radio" name="o32">Cysteine</label><label><input type="radio" name="o32">Lysine</label><label><input type="radio" name="o32">Site-specific</label><label class="etc"><input type="radio" name="o32" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div><div class="field"><div class="flabel">결합부위 정보</div><div class="fbody"><input type="text" placeholder="선택 입력"></div></div></div>
+      </div>
+      </div>
+
+      <div class="svcblk cond" data-svc="etc">
+      <div class="sec">
+        <h2>분석 서비스 : 기타 분석</h2>
+        <div class="tbl"><div class="field" data-req="text"><div class="flabel">요청 내용<span class="req">*</span></div><div class="fbody"><textarea data-v placeholder="원하시는 분석 내용과 목적을 자유롭게 작성해 주세요. 담당 매니저가 확인 후 적합한 분석 방법을 안내해 드립니다." style="min-height:140px"></textarea></div></div><div class="field"><div class="flabel">희망 분석 방법</div><div class="fbody"><input type="text" placeholder="알고 있는 경우 입력해 주세요 (선택)"></div></div></div>
+      </div>
+      </div>
     </div>
 
     <!-- ③ 시료 정보 -->
@@ -686,14 +759,18 @@
         <h2>시료 정보</h2>
         <div class="tbl">
           <div class="field" data-req="choice"><div class="flabel">Taxonomy (Source)<span class="req">*</span></div><div class="fbody">
-            <div class="opts"><label><input type="checkbox">Human</label><label><input type="checkbox">Mouse</label><label><input type="checkbox">Rat</label><label><input type="checkbox">기타</label></div></div></div>
+            <div class="opts"><label><input type="checkbox">Human</label><label><input type="checkbox">Mouse</label><label><input type="checkbox">Rat</label><label class="etc"><input type="checkbox" data-etc>기타</label><input type="text" class="etcin" placeholder="생물종 직접 입력"></div></div></div>
           <div class="field" data-req="choice"><div class="flabel">시료 종류<span class="req">*</span></div><div class="fbody">
             <div class="opts" id="spcOpts">
               <label><input type="checkbox" data-u="mg">조직</label><label><input type="checkbox" data-u="cells">세포</label>
               <label><input type="checkbox" data-u="μL">혈청</label><label><input type="checkbox" data-u="μL">혈장</label>
               <label><input type="checkbox" data-u="mL">전혈</label><label><input type="checkbox" data-u="μL">CSF</label>
               <label><input type="checkbox" data-u="mL">CM</label><label><input type="checkbox" data-u="particles">EV</label>
-              <label><input type="checkbox" data-u="μg">정제 단백질</label><label><input type="checkbox">기타</label>
+              <label><input type="checkbox" data-u="μg">정제 단백질</label>
+              <label><input type="checkbox" data-u="μg">Cell lysate</label><label><input type="checkbox" data-u="μg">Tissue lysate</label>
+              <label><input type="checkbox" data-u="mg">IgG 계열 항체</label><label><input type="checkbox" data-u="mg">Fc-Fusion Protein</label><label><input type="checkbox" data-u="μg">기타 단백질</label>
+              <label><input type="checkbox" data-u="ng">추출 DNA</label><label><input type="checkbox" data-u="ng">추출 RNA</label>
+              <label class="etc"><input type="checkbox" data-etc>기타</label><input type="text" class="etcin" placeholder="시료 종류 직접 입력">
             </div></div></div>
           <div class="field" data-req="text"><div class="flabel">총 시료 수<span class="req">*</span></div><div class="fbody">
             <div class="inline"><input type="number" class="w-s" id="totalN" data-v><span>개</span></div></div></div>
@@ -706,7 +783,7 @@
               <p class="smpnote">권장 기준이며, 미달해도 의뢰할 수 있습니다.</p>
             </div></div></div>
           <div class="field" data-req="choice"><div class="flabel">보관상태<span class="req">*</span></div><div class="fbody">
-            <div class="opts"><label><input type="radio" name="stor">냉장</label><label><input type="radio" name="stor">냉동 (-20℃)</label><label><input type="radio" name="stor">초저온 (-80℃)</label><label><input type="radio" name="stor">동결건조</label><label><input type="radio" name="stor">기타</label></div></div></div>
+            <div class="opts"><label><input type="radio" name="stor">냉장</label><label><input type="radio" name="stor">냉동 (-20℃)</label><label><input type="radio" name="stor">초저온 (-80℃)</label><label><input type="radio" name="stor">동결건조</label><label class="etc"><input type="radio" name="stor" data-etc>기타</label><input type="text" class="etcin" placeholder="보관상태 직접 입력"></div></div></div>
         </div>
       </div>
 
@@ -741,11 +818,11 @@
           <div class="field" data-req="choice"><div class="flabel">예상금액<span class="req">*</span></div><div class="fbody">
             <div class="opts"><label><input type="radio" name="bud">500만원 미만</label><label><input type="radio" name="bud">500만~1,000만원</label><label><input type="radio" name="bud">1,000만원 이상</label><label><input type="radio" name="bud">미정</label></div></div></div>
           <div class="field"><div class="flabel">시료 전처리 기술</div><div class="fbody">
-            <div class="opts"><label><input type="checkbox">TMT</label><label><input type="checkbox">SILAC</label><label><input type="checkbox">iTRAQ</label><label><input type="checkbox">Label-free</label></div></div></div>
+            <div class="opts"><label><input type="checkbox">TMT</label><label><input type="checkbox">SILAC</label><label><input type="checkbox">iTRAQ</label><label><input type="checkbox">Label-free</label><label class="etc"><input type="checkbox" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div>
           <div class="field"><div class="flabel">분석 기술</div><div class="fbody">
-            <div class="opts"><label><input type="checkbox">DDA</label><label><input type="checkbox">DIA</label><label><input type="checkbox">MRM</label><label><input type="checkbox">PRM</label></div></div></div>
+            <div class="opts"><label><input type="checkbox">DDA</label><label><input type="checkbox">DIA</label><label><input type="checkbox">MRM</label><label><input type="checkbox">PRM</label><label class="etc"><input type="checkbox" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div>
           <div class="field"><div class="flabel">희망 장비</div><div class="fbody">
-            <div class="opts"><label><input type="checkbox">Orbitrap</label><label><input type="checkbox">Q-TOF</label><label><input type="checkbox">Triple Quadrupole</label></div></div></div>
+            <div class="opts"><label><input type="checkbox">Orbitrap</label><label><input type="checkbox">Q-TOF</label><label><input type="checkbox">Triple Quadrupole</label><label><input type="checkbox">GC-MS</label><label><input type="checkbox">Illumina</label><label><input type="checkbox">PacBio</label><label><input type="checkbox">Oxford Nanopore</label><label class="etc"><input type="checkbox" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div>
         </div>
       </div>
 
@@ -880,7 +957,26 @@
   }
   document.addEventListener('change',function(e){
     if(e.target.matches('.aty, input[name="tq"]')) syncCond();
+    if(e.target.matches('input[data-show], input[type=radio]')) syncShow();
+    if(e.target.matches('input[name="svc"]')) syncSvc();
+    if(e.target.closest('.opts')) syncEtc();
   });
+  // 선택한 분석 서비스의 2단계 항목만 표시
+  function syncSvc(){
+    var k=($('input[name="svc"]:checked')||{}).value||'';
+    $$('.svcblk').forEach(function(b){ b.classList.toggle('on', b.dataset.svc===k); });
+  }
+  // data-show: 연결된 체크 중 하나라도 켜지면 해당 하위 섹션 표시 (대사체 Untargeted/Targeted, ADC 상세)
+  function syncShow(){
+    var map={};
+    $$('input[data-show]').forEach(function(i){ var t=i.dataset.show; map[t]=map[t]||i.checked; });
+    Object.keys(map).forEach(function(t){ var el=$(t); if(el) el.classList.toggle('on',map[t]); });
+  }
+  // '기타' 선택 시 옆 직접 입력칸 활성화
+  function syncEtc(){
+    $$('.opts .etc').forEach(function(l){ var inp=l.nextElementSibling; if(inp && inp.classList.contains('etcin')){ var on=l.querySelector('input').checked; inp.disabled=!on; if(!on) inp.value=''; } });
+  }
+  syncSvc(); syncShow(); syncEtc();
 
   /* ── 서비스 제목 ── */
   function svcName(){var s=$('input[name="svc"]:checked'); return s?(s.dataset.name||s.parentNode.querySelector('b').textContent):'';}
@@ -983,6 +1079,7 @@
     if(t==='verify') return VERIFIED;
     if(t==='tags') return TAGS.get().length>0 || $('#tgtIn').value.trim()!=='';
     if(t==='text') return $$('[data-v]',b).every(function(i){return i.value.trim()!==''});
+    if(t==='any') return $$('input',b).some(function(i){return i.checked});  // 여러 목록 중 하나 이상 선택
     // choice: 직접 opts + 보이는 하위 opts 각각
     var groups=$$('.opts',b).filter(function(o){return visible(o)});
     if(!groups.length) return true;
@@ -1064,7 +1161,8 @@
   function review(){
     $('#rvSvc').textContent = svcName()||'-';
     $('#rvName').textContent = $('#reqName').value||'-';
-    $('#rvAty').textContent = $$('.aty:checked').map(function(i){return i.parentNode.textContent.trim()}).join(', ')||'-';
+    var blk=$('.svcblk.on[data-svc]'), f1=blk&&$('.field',blk);
+    $('#rvAty').textContent = f1 ? ($$('input:checked',f1).map(function(i){var c=i.closest('label').cloneNode(true); $$('.d',c).forEach(function(d){d.remove()}); return c.textContent.trim()}).join(', ')||'-') : '-';
     var sp=$$('#spcOpts input:checked').map(function(i){return i.parentNode.textContent.trim()});
     var n=$('#totalN').value;
     $('#rvSpc').textContent = (sp.join(', ')||'-') + (n?' · '+n+'개':'');
@@ -1086,10 +1184,11 @@
     $$('input[type=checkbox]:checked, input[type=radio]:checked', f).forEach(function(i){
       if(i.classList.contains('aty')){ out.push(subTxt(i.parentNode)); return; }
       var l=i.closest('label'); if(!l) return;
+      if(i.hasAttribute('data-etc')){ var ei=l.nextElementSibling; out.push(ei && ei.classList.contains('etcin') && ei.value.trim() ? '기타('+ei.value.trim()+')' : '기타'); return; }
       var c=l.cloneNode(true); $$('.d', c).forEach(function(d){ d.remove(); }); out.push(subTxt(c));
     });
     $$('input[type=text]:not(:disabled), input[type=number], input[type=date], textarea', f).forEach(function(i){
-      if(i.id==='tgtIn' || i.style.display==='none' || !i.value.trim()) return; out.push(i.value.trim());  // 다른 단계는 숨겨져 있으니 offsetParent로 거르지 않음
+      if(i.id==='tgtIn' || i.classList.contains('etcin') || i.style.display==='none' || !i.value.trim()) return; out.push(i.value.trim());  // 다른 단계는 숨겨져 있으니 offsetParent로 거르지 않음
     });
     var dates=$$('input[type=date]', f).map(function(i){ return i.value; }).filter(Boolean);
     if(dates.length===2) return dates.join(' ~ ');
@@ -1102,11 +1201,11 @@
     $$('.step').forEach(function(st){
       if(+st.dataset.step===1) return;                       // 1단계는 요약 정보로 따로 저장
       $$('.sec', st).forEach(function(sec){
-        if(sec.classList.contains('rev') || (sec.classList.contains('cond') && !sec.classList.contains('on'))) return;
+        if(sec.classList.contains('rev') || !visible(sec)) return;   // 숨겨진 서비스·조건부 섹션 제외
         var h=sec.querySelector('h2'); if(!h) return;
         var title=subTxt(h).replace(/\*$/,'').trim(), rows=[];
         $$('.field', sec).forEach(function(f){
-          if(f.classList.contains('cond') && !f.classList.contains('on')) return;
+          if(!visible(f)) return;
           var lb=f.querySelector('.flabel'); if(!lb) return;
           var v=subFieldValue(f); if(v) rows.push([subTxt(lb).replace(/\*$/,'').trim(), v]);
         });
@@ -1281,7 +1380,7 @@
   }
   function apply(d){
     var f=fields(); (d.vals||[]).forEach(function(v,i){var el=f[i]; if(!el)return; if(el.type==='checkbox'||el.type==='radio') el.checked=!!v; else el.value=v});
-    TAGS.set(d.tags); syncCond();
+    TAGS.set(d.tags); syncCond(); syncSvc(); syncShow(); syncEtc();
     var gy=$('input[name="grpUse"][value="y"]'); $('#grpWrap').style.display=gy.checked?'block':'none'; GRP.set(d.groups);
     drawSmp();
     curId=d.id; for(var i=1;i<=d.step;i++) visited[i]=true; cur=d.step||1; dirty=false; clearErr(); render();
@@ -1304,7 +1403,7 @@
   modal.onclick=function(e){ if(e.target===modal) modal.classList.remove('on') };
   function resetForm(){
     fields().forEach(function(el){ if(el.type==='checkbox'||el.type==='radio') el.checked=false; else if(el.type!=='date') el.value='' });
-    $('input[name="grpUse"][value="n"]').checked=true; $('#grpWrap').style.display='none'; GRP.set([]); TAGS.set([]); syncCond();
+    $('input[name="grpUse"][value="n"]').checked=true; $('#grpWrap').style.display='none'; GRP.set([]); TAGS.set([]); syncCond(); syncSvc(); syncShow(); syncEtc();
     curId=null; visited={1:true}; cur=1; clearErr(); render(); modal.classList.remove('on');
     $('#savedLine').textContent='임시저장 전'; dirty=false; toast('새 의뢰서를 시작합니다');
   }
