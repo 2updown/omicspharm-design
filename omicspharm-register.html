@@ -1246,9 +1246,11 @@
     $('#savedLine').textContent='임시저장 전'; dirty=false; toast('새 의뢰서를 시작합니다');
   }
 
+  // 목록으로 돌아가기 → 프로젝트 찾기 (Figma 프로토타입). 저장 안 한 내용이 있으면 확인 모달(1181:56862) 먼저
   $('.crumb .back').onclick=function(){
-    if(dirty) confirmBox('작성을 취소하시겠습니까?','지금 나가면 저장되지 않은 내용이 사라집니다.','나가기',function(){ toast('목록으로 이동합니다') });
-    else toast('목록으로 이동합니다');
+    var go=function(){ location.href='projects.html' };
+    if(dirty) confirmBox('작성을 취소하시겠습니까?','지금 나가면 저장되지 않은 내용이 사라집니다.','삭제',go);
+    else go();
   };
   var pick=null;
   function syncPick(){
