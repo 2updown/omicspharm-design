@@ -368,6 +368,161 @@
     .tabs{overflow-x:auto}
   }
 </style>
+<style id="figma-1222-69195">
+  /* ===== Figma 프로젝트 등록 (1222:69195 · 1169:52925 · 1191:61314 · 1240:71462 · 1250:73600) 재스타일 =====
+     입력 로직은 그대로 두고 화면만 Figma 규격으로 덮어쓴다 */
+  body{background:#fafafa;font-size:14px;line-height:20px}
+  .page{max-width:1320px;padding:20px 0 60px;grid-template-columns:minmax(0,918px) 378px;gap:24px;justify-content:center}
+  @media (max-width:1440px){.page{margin:0 60px}}
+  .card{border:1px solid var(--n200);border-radius:16px;padding:24px}
+  .scard{border:1px solid var(--n200);border-radius:16px;padding:24px;box-shadow:0 0 1px rgba(0,0,0,.04),0 4px 4px rgba(0,0,0,.08);display:flex;flex-direction:column;gap:24px}
+  .side{top:94px;gap:24px}
+
+  /* 상단 */
+  .crumb{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:48px;margin:0 0 24px}
+  .crumb .back{justify-self:start;display:inline-flex;align-items:center;gap:8px;padding:0;margin:0;font-size:14px;line-height:20px;color:#000}
+  .crumb .back img{width:16px;height:16px}
+  .crumb .back:hover{color:var(--teal)}
+  .ptitle{margin:0;color:#000;font-size:24px;font-weight:600;line-height:32px;letter-spacing:-.24px;text-align:center}
+  .crumb .tb{justify-self:end;height:48px;padding:0 16px;border-color:var(--n300);font-size:16px;line-height:22px;color:var(--n500)}
+  .crumb .tb:hover{background:var(--n100)}
+
+  /* 섹션 · 표 */
+  .sec{margin-bottom:24px}
+  h2{font-size:18px;font-weight:600;line-height:24px;letter-spacing:-.18px;margin:0 0 12px}
+  .slabel{margin:0 0 8px;font-size:14px;font-weight:500;line-height:20px}
+  .slabel .req,.flabel .req{color:var(--red);margin-left:2px;font-weight:400}
+  .tbl{border-top:2px solid #000}
+  .field{grid-template-columns:270px minmax(0,1fr);border-bottom:1px solid var(--n200)}
+  .flabel{background:var(--n100);padding:12px 18px;font-size:14px;font-weight:500;line-height:20px;display:flex;align-items:center}
+  .fbody{padding:6px 12px;display:flex;flex-direction:column;justify-content:center;gap:8px}
+  .fbody > .opts, .fbody > .items{padding:6px 0}
+  .fhelp{margin:0;font-size:12px;line-height:18px;letter-spacing:-.12px;color:var(--n500)}
+  .fhelp:last-child{margin:0}
+  .tnote{margin:8px 0 0;font-size:12px;line-height:18px;letter-spacing:-.12px;color:var(--n500)}
+
+  /* 입력 (text-field M 40) */
+  input[type=text],input[type=number],input[type=date],select{height:40px;padding:0 16px;font-size:14px;line-height:20px;border-color:var(--n300)}
+  textarea{padding:10px 16px;font-size:14px;line-height:20px;min-height:110px;border-color:var(--n300)}
+  input::placeholder,textarea::placeholder{color:var(--n400)}
+  input:focus,select:focus,textarea:focus{border-color:var(--teal-h);box-shadow:0 0 0 3px #00786e33}
+  input:disabled{background:var(--n100);color:var(--n400);border-color:var(--n300)}
+  select{appearance:none;-webkit-appearance:none;padding-right:36px;background:#fff url(assets/find/ic-chevron-down.svg) right 12px center/16px no-repeat;cursor:pointer}
+
+  /* 체크박스 · 라디오 (checkbox_item S20) */
+  .opts{column-gap:12px;row-gap:12px;padding:0}
+  .opts label{gap:8px;font-size:14px;line-height:20px}
+  .opts label:has(input:checked){font-weight:400}
+  .opts input, .items input{appearance:none;-webkit-appearance:none;width:20px;height:20px;margin:0;flex:none;cursor:pointer;
+    background:url(assets/auth/checkbox-off.svg) center/contain no-repeat}
+  .opts input:checked, .items input:checked{background-image:url(assets/auth/checkbox-on.svg)}
+  .opts input[type=radio]{border-radius:50%;background:#fff;border:1.5px solid var(--n300)}
+  .opts input[type=radio]:checked{border:0;background:var(--teal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.2l2.6 2.6L14 7.4' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/20px no-repeat}
+  .opts input:focus-visible, .items input:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  .opts label:hover{color:inherit}
+
+  /* 분석 항목 체크 목록 */
+  .items label{gap:8px;padding:6px 0;border-bottom:0;font-size:14px;line-height:20px;flex-wrap:wrap}
+  .items input{margin-top:0}
+  .items .d{flex-basis:100%;margin:0 0 0 28px;font-size:12px;line-height:18px;letter-spacing:-.12px;color:var(--n500)}
+
+  /* 분석 서비스 선택 (button_filled / outline XL 56) */
+  .svcfield{border:0}
+  .svc{grid-template-columns:repeat(5,161px);gap:8px}
+  .svc label{display:flex;align-items:center;justify-content:center;height:56px;padding:0 12px;white-space:nowrap;border:1px solid var(--n300);border-radius:8px;background:#fff}
+  .svc label:hover{background:var(--n50,#fafafa);border-color:var(--n300)}
+  .svc b{margin:0;font-size:16px;font-weight:500;line-height:22px;color:var(--n500)}
+  .svc label:has(input:checked){background:var(--teal);border-color:var(--teal);box-shadow:none}
+  .svc label:has(input:checked) b{color:#fff}
+
+  /* 권장 샘플 요구량 표 */
+  .smptbl{border-top:2px solid #000;font-size:14px;line-height:20px}
+  .smptbl th{background:var(--n100);font-weight:500;color:#000;padding:12px 18px;border-bottom:1px solid var(--n200)}
+  .smptbl td{padding:8px 18px;border-bottom:1px solid var(--n200)}
+  .smptbl td.svccell{background:#fff;font-weight:400}
+  .smpnote{margin:12px 0 0;font-size:12px;line-height:18px;letter-spacing:-.12px;color:var(--red)}
+  .smptbl.mini{max-width:none;border-top:2px solid #000}
+
+  /* 연락처 인증 */
+  .phrow{gap:8px}
+  .phrow input{max-width:none}
+  .vbadge{display:none}
+  .vbadge.ok{display:inline-flex;align-items:center;height:40px;padding:0 16px;border-radius:8px;background:var(--n500);color:#fff;font-size:16px;font-weight:500;line-height:22px;white-space:nowrap}
+  .vbtn{height:40px;padding:0 16px;font-size:16px;line-height:22px;border-color:var(--teal);color:var(--teal)}
+  .vbadge.ok + .vbtn{border-color:var(--n300);color:var(--n500)}
+  .vbadge.ok + .vbtn:hover{background:var(--n100)}
+
+  /* 절대정량 하위 선택 박스 */
+  .sub{background:var(--n50,#fafafa);border:1px solid var(--n200);border-radius:8px;padding:12px 16px;margin-top:4px}
+  .sub .sl{font-size:14px;font-weight:500;line-height:20px;margin:0 0 8px}
+  .sub .sl + .opts{margin-bottom:12px}
+
+  .rev .field{grid-template-columns:270px 1fr}
+  .rev .fbody{padding:12px 18px;font-size:14px}
+  /* 분석 그룹 · 태그 */
+  table.grp{font-size:14px;margin-top:8px}
+  table.grp th{background:var(--n100);border-top:2px solid #000;border-bottom:1px solid var(--n200);padding:12px 18px}
+  table.grp td{padding:8px 18px;border-bottom:1px solid var(--n200)}
+  .lnk{color:var(--teal);font-size:14px;font-weight:500}
+  .tag{border-color:var(--teal);background:var(--teal-bg);color:var(--teal);border-radius:8px}
+
+  /* 하단 버튼 (이전 · 다음) */
+  .bar{justify-content:flex-end;gap:8px;margin-top:16px;padding-top:16px;border-top:0}
+  .bar .btn{height:48px;min-width:84px;padding:0 16px;font-size:16px;line-height:22px}
+  .bar #prev:disabled{display:none}
+  .btn.pri{min-width:84px}
+
+  /* 사이드 · 작성 진행 상황 (Vertical stepper with status) */
+  .sh{margin:0 !important;font-size:18px;font-weight:600;line-height:24px;letter-spacing:-.18px}
+  .steps{margin:0}
+  .st{gap:16px;padding:0 0 20px;margin:0;border-radius:0;background:none !important;align-items:flex-start}
+  .st:last-child{padding-bottom:0}
+  .st:hover b{color:var(--teal)}
+  .st:not(:last-child)::after{left:15.25px;top:32px;bottom:0;width:1.5px;background:var(--n400)}
+  .st.done:not(:last-child)::after{background:var(--teal)}
+  .st .n{width:32px;height:32px;border:1px solid var(--n400);font-size:16px;font-weight:500;color:var(--n400)}
+  .st b{font-size:16px;font-weight:700;line-height:22px;color:#000;padding-top:5px}
+  .st .cnt{display:none}
+  .st.on .n{border-color:var(--teal);color:var(--teal);background:#fff}
+  .st.on b{color:#000;font-weight:700}
+  .st.done .n{background:var(--teal);border-color:var(--teal);color:transparent;font-size:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M11 16.4l3.4 3.4L21.4 12.6' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center}
+  .st.done b{color:#000}
+  .draftrow{font-size:18px;line-height:24px;letter-spacing:-.18px;color:#000}
+  .draftrow b{font-size:18px;font-weight:600}
+  .sbtn.ghost{height:48px;padding:0 16px;border:1px solid var(--n300);border-radius:8px;font-size:16px;font-weight:500;line-height:22px;color:var(--n500)}
+  .sbtn.ghost:hover{background:var(--n100)}
+
+  /* 모달 (Figma modal 1201:62178 · 1181:56862) */
+  .modal{background:rgba(0,0,0,.85)}
+  .mbox{max-width:701px;border:0;border-radius:12px;padding:24px;gap:16px}
+  .mhead{padding:0;border:0}
+  .mhead h3{font-size:24px;font-weight:600;line-height:32px;letter-spacing:-.24px}
+  .mbody{padding:0}
+  .dtbl{font-size:14px;border-top:2px solid #000}
+  .dtbl th{background:var(--n100);color:#000;font-weight:500;border-top:0;padding:12px 18px}
+  .dtbl td{padding:10px 18px}
+  .dtbl tbody tr.sel{background:#f6faf9}
+  .mnote{margin:-4px 0 0;font-size:12px;line-height:18px;letter-spacing:-.12px;color:var(--n500)}
+  .mfoot{padding:0}
+  .mfoot button{height:40px}
+  .cbox{max-width:512px;border:0;border-radius:12px;padding:24px}
+  .cbox h3{font-size:18px;font-weight:600;line-height:24px}
+  .cbox > p{font-size:16px;line-height:22px;color:var(--n600,#525252)}
+
+  @media (max-width:1180px){.page{margin:0 24px}.svc{grid-template-columns:repeat(4,1fr)}}
+  @media (max-width:980px){
+    .page{grid-template-columns:1fr}
+    .crumb{grid-template-columns:auto 1fr auto;gap:8px}
+    .ptitle{font-size:20px;line-height:28px}
+    .field{grid-template-columns:1fr}
+    .flabel{padding:10px 14px}
+    .svc{grid-template-columns:repeat(2,1fr)}
+    .st:not(:last-child)::after{display:none}
+    .st{padding:0}
+  }
+  @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
+</style>
 <link rel="stylesheet" href="assets/common/site.css?v=20260929k">
 <script src="assets/common/site.js?v=20260929k"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
@@ -382,19 +537,12 @@
 <main>
   <div class="card">
     <div class="crumb">
-      <button type="button" class="back">
-        <svg width="7" height="12" viewBox="0 0 7 12"><path d="M6 1L1 6l5 5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
-        목록으로 돌아가기
-      </button>
-      <span class="demo">검토용 · 필수값 없이 단계 이동 가능</span>
-      <div class="topbtns">
-        <span id="savedLine">임시저장 전</span>
-        <button type="button" class="tb" id="saveBtn">임시저장</button>
-      </div>
+      <button type="button" class="back"><img src="assets/detail/ic-caret-left.svg" alt="">목록으로 돌아가기</button>
+      <h1 class="ptitle">분석 의뢰 등록</h1>
+      <button type="button" class="tb" id="saveBtn">임시저장</button>
     </div>
-    <p class="eyebrow">분석 의뢰 등록 · <b id="stepNo">1</b>/4 단계</p>
-    <h1 id="stepTitle">의뢰 정보</h1>
-    <p class="lead" id="stepLead">분석 서비스를 고르고 의뢰 제목과 연구 목적을 작성해 주세요.</p>
+    <!-- 단계 안내·저장 시각: 스크립트가 갱신하지만 Figma 화면에는 없어 숨김 -->
+    <div class="sr-keep" hidden><span id="savedLine">임시저장 전</span><b id="stepNo">1</b><span id="stepTitle">기본 정보</span><span id="stepLead"></span></div>
 
 
     <div class="errbox" id="errBox"><b id="errHead">입력하지 않은 필수 항목이 있습니다</b><ul id="errList"></ul></div>
@@ -405,43 +553,41 @@
         <h2>의뢰자 정보</h2>
         <div class="tbl">
           <div class="field"><div class="flabel">담당자</div><div class="fbody"><input type="text" value="홍길동" disabled></div></div>
-          <div class="field"><div class="flabel">소속</div><div class="fbody"><input type="text" value="○○연구소" disabled>
-            <p class="fhelp">담당자와 소속은 회원 정보가 자동 입력됩니다. 변경은 마이페이지에서 가능합니다.</p></div></div>
+          <div class="field"><div class="flabel">소속</div><div class="fbody"><input type="text" value="○○연구소" disabled></div></div>
           <div class="field" id="phoneField" data-req="verify"><div class="flabel">연락처<span class="req">*</span></div><div class="fbody">
             <div class="phrow">
-              <input type="text" id="phoneVal" value="" placeholder="휴대폰 인증 후 자동 입력됩니다" disabled>
+              <input type="text" id="phoneVal" value="" placeholder="휴대폰 인증 후 자동 입력됩니다." disabled>
               <span class="vbadge" id="vBadge">미인증</span>
               <button type="button" class="vbtn" id="verifyBtn">인증하기</button>
             </div>
-            <p class="fhelp" id="phoneHelp">담당 매니저 연락을 위해 휴대폰 인증이 필요합니다. 한 번 인증하면 다음 의뢰부터 자동으로 입력됩니다.</p></div></div>
+            <p class="fhelp" id="phoneHelp" hidden>담당 매니저 연락을 위해 휴대폰 인증이 필요합니다.</p></div></div>
         </div>
+        <p class="tnote">회원 정보가 자동 입력됩니다. 변경은 마이페이지에서 가능합니다.</p>
       </div>
 
 
       <div class="sec">
-        <h2>분석 서비스 선택 <span class="req">*</span></h2>
-        <p class="fhelp" style="margin:-4px 0 12px">한 프로젝트에 하나의 서비스만 등록할 수 있습니다.</p>
+        <p class="slabel">분석 서비스 선택<span class="req">*</span></p>
         <div class="field svcfield" data-req="svc" data-label="분석 서비스 선택"><div class="fbody" style="padding:0">
             <div class="svc">
-              <label><input type="radio" name="svc" value="prot"><b>단백체 분석</b><span>Untargeted · Targeted</span></label>
-              <label><input type="radio" name="svc" value="olink"><b>Olink 분석</b><span>Target 48 · 96</span></label>
-              <label><input type="radio" name="svc" value="meta"><b>대사체 분석</b><span>Untargeted · Targeted</span></label>
-              <label><input type="radio" name="svc" value="geno"><b>유전체 분석</b><span>WGS · WES</span></label>
-              <label><input type="radio" name="svc" value="trans"><b>전사체 분석</b><span>mRNA-seq</span></label>
-              <label><input type="radio" name="svc" value="biop"><b>바이오의약품·ADC</b><span>특성분석 · ADC</span></label>
-              <label><input type="radio" name="svc" value="etc"><b>기타 분석</b><span>매니저 검토</span></label>
+              <label><input type="radio" name="svc" value="prot" data-name="단백체 분석"><b>단백체</b></label>
+              <label><input type="radio" name="svc" value="olink" data-name="Olink 분석"><b>Olink</b></label>
+              <label><input type="radio" name="svc" value="meta" data-name="대사체 분석"><b>대사체</b></label>
+              <label><input type="radio" name="svc" value="geno" data-name="유전체 분석"><b>유전체</b></label>
+              <label><input type="radio" name="svc" value="trans" data-name="전사체 분석"><b>전사체</b></label>
+              <label><input type="radio" name="svc" value="biop" data-name="바이오의약품·ADC"><b>바이오의약품·ADC</b></label>
+              <label><input type="radio" name="svc" value="etc" data-name="기타 분석"><b>기타</b></label>
             </div>
         </div></div>
       </div>
 
       <div class="sec" id="smpSec" style="display:none">
-        <h2>권장 샘플 요구량</h2>
+        <p class="slabel">권장 샘플 요구량</p>
         <table class="smptbl">
           <thead><tr><th style="width:200px">분석 분야</th><th style="width:230px">시료 종류</th><th>권장 요구량</th></tr></thead>
           <tbody id="smpBody"></tbody>
         </table>
-        <p class="smpnote">샘플 요구량은 일반적인 권장 기준이며, 실제 요구량은 분석 조건 및 시료 상태에 따라 달라질 수 있습니다.
-          요구량에 미치지 못해도 의뢰할 수 있으며, 매니저가 확인 후 안내해 드립니다.</p>
+        <p class="smpnote">샘플 요구량은 일반적인 권장 기준이며, 실제 요구량은 분석 조건 및 시료 상태에 따라 달라질 수 있습니다.</p>
       </div>
 
       <div class="sec">
@@ -451,12 +597,12 @@
             <input type="text" id="reqName" data-v placeholder="예) 만성 염증질환 환자 혈청의 단백체 비교 분석"></div></div>
           <div class="field" data-req="text"><div class="flabel">연구 내용 및 목적<span class="req">*</span></div><div class="fbody">
             <textarea data-v placeholder="정확한 분석 서비스 매칭을 위해 연구 목적, 시료 종류 및 비교 조건, 분석을 통해 확인하고자 하는 내용을 구체적으로 작성해 주세요."></textarea></div></div>
-          <div class="field" data-req="choice"><div class="flabel">공개 여부<span class="req">*</span></div><div class="fbody">
+          <div class="field" data-req="choice"><div class="flabel">공개여부<span class="req">*</span></div><div class="fbody">
             <div class="opts">
               <label><input type="radio" name="sec">일반 공개</label>
               <label><input type="radio" name="sec">후보 선정 후 공개</label>
               <label><input type="radio" name="sec">NDA 체결 후 공개</label>
-              <label><input type="radio" name="sec">비공개로 업로드</label>
+              <label><input type="radio" name="sec">비공개</label>
             </div></div></div>
         </div>
       </div>
@@ -473,29 +619,24 @@
               <label><input type="checkbox" class="aty" data-t="tgt">Targeted</label>
               <label><input type="checkbox" class="aty" data-t="ptm">PTM</label>
             </div>
-            <p class="fhelp">복수 선택할 수 있습니다. 선택한 유형의 세부 항목이 아래에 나타납니다.</p></div></div>
+</div></div>
+        </div>
+      </div>
 
-          <div class="field cond" id="g-untg"><div class="flabel">Untargeted protein analysis</div><div class="fbody">
+      <div class="sec cond" id="g-untg">
+        <h2>Untargeted</h2>
+        <div class="tbl">
+          <div class="field"><div class="flabel">분석항목<span class="req">*</span></div><div class="fbody">
             <div class="items">
               <label><input type="checkbox">정성분석<span class="d">단백질 리스트 및 GO analysis를 제공해 드립니다.</span></label>
               <label><input type="checkbox">정량분석<span class="d">heatmap, volcano plot, foldchange 값을 제공합니다.</span></label>
               <label><input type="checkbox">통계처리 (p-value, volcano plot 등)<span class="d">동일 그룹의 시료가 3개 이상 필요합니다.</span></label>
             </div></div></div>
-
-          <div class="field cond" id="g-ptm"><div class="flabel">PTM</div><div class="fbody">
-            <div class="items">
-              <label><input type="checkbox">Acetylation<span class="d">아세틸화 부위 및 정도 확인</span></label>
-              <label><input type="checkbox">Methylation<span class="d">메틸화 부위 및 정도 확인</span></label>
-              <label><input type="checkbox">Phosphorylation<span class="d">인산화 부위 및 정도 확인</span></label>
-              <label><input type="checkbox">Glycosylation<span class="d">당화 부위 및 정도 확인</span></label>
-              <label><input type="checkbox" id="ptmEtc">기타</label>
-            </div>
-            <input type="text" id="ptmEtcIn" placeholder="PTM 종류 직접입력" style="display:none;margin-top:10px;max-width:320px"></div></div>
         </div>
       </div>
 
       <div class="sec cond" id="g-tgt">
-        <h2>Targeted protein analysis</h2>
+        <h2>Targeted</h2>
         <div class="tbl">
           <div class="field" data-req="tags"><div class="flabel">Target protein name<span class="req">*</span></div><div class="fbody">
             <input type="text" id="tgtIn" placeholder="예) IL-6">
@@ -521,6 +662,20 @@
             <p class="fhelp">알고 계신 경우에만 입력해 주세요. 분석법 설계에 참고합니다.</p></div></div>
           <div class="field"><div class="flabel">Matrix · 전처리 상태</div><div class="fbody">
             <textarea placeholder="예) 혈청 원액, 침전 제거 후 동결 보관 / 별도 전처리 없음" style="min-height:70px"></textarea></div></div>
+        </div>
+      </div>
+      <div class="sec cond" id="g-ptm">
+        <h2>PTM</h2>
+        <div class="tbl">
+          <div class="field"><div class="flabel">분석항목<span class="req">*</span></div><div class="fbody">
+            <div class="items">
+              <label><input type="checkbox">Acetylation<span class="d">아세틸화 부위 및 정도 확인</span></label>
+              <label><input type="checkbox">Methylation<span class="d">메틸화 부위 및 정도 확인</span></label>
+              <label><input type="checkbox">Phosphorylation<span class="d">인산화 부위 및 정도 확인</span></label>
+              <label><input type="checkbox">Glycosylation<span class="d">당화 부위 및 정도 확인</span></label>
+              <label><input type="checkbox" id="ptmEtc">기타</label>
+            </div>
+            <input type="text" id="ptmEtcIn" placeholder="PTM 종류 직접입력" style="display:none;margin-top:10px;max-width:320px"></div></div>
         </div>
       </div>
     </div>
@@ -632,12 +787,12 @@
   <div class="scard">
     <p class="sh" style="margin-bottom:12px">작성 진행 상황</p>
     <ul class="steps" id="steps">
-      <li class="st on" data-go="1"><i class="n">1</i><div><b>의뢰 정보</b><span class="cnt"></span></div></li>
+      <li class="st on" data-go="1"><i class="n">1</i><div><b>기본 정보</b><span class="cnt"></span></div></li>
       <li class="st" data-go="2"><i class="n">2</i><div><b>분석 상세</b><span class="cnt"></span></div></li>
       <li class="st" data-go="3"><i class="n">3</i><div><b>시료 정보</b><span class="cnt"></span></div></li>
       <li class="st" data-go="4"><i class="n">4</i><div><b>요구사항</b><span class="cnt"></span></div></li>
     </ul>
-    <div class="ptot">
+    <div class="ptot" hidden>
       <div class="ptxt">필수 항목 <b id="pTotal">0</b>개 중 <b id="pDone" class="t">0</b>개 입력</div>
       <div class="pbar"><i id="pBar"></i></div>
       <div class="ppct"><span>항목을 선택하면 필요한 입력이 추가될 수 있습니다</span><b id="pPct">0%</b></div>
@@ -645,15 +800,11 @@
   </div>
 
   <div class="scard">
-    <div class="draftrow"><span>저장된 의뢰서</span><b id="draftCount">0건</b></div>
-    <p class="savedat" id="savedAt">작성 중인 의뢰서를 임시저장하면 여기서 다시 불러올 수 있습니다.</p>
-    <button class="sbtn ghost" id="openList" type="button" style="margin-top:12px">불러오기</button>
+    <div class="draftrow"><span>임시 저장된 의뢰서</span><b id="draftCount">0건</b></div>
+    <p class="savedat" id="savedAt" hidden></p>
+    <button class="sbtn ghost" id="openList" type="button">불러오기</button>
   </div>
 
-  <div class="scard">
-    <p class="sh">작성이 어렵다면<br>매니저와 상의해 보세요</p>
-    <button class="sbtn" type="button">문의하기</button>
-  </div>
 </aside>
 </div>
 
@@ -669,6 +820,7 @@
     </table>
     <div class="mempty" id="draftEmpty" style="display:none">저장된 의뢰서가 없습니다.<br>작성 중 임시저장을 누르면 여기에 보관됩니다.</div>
   </div>
+  <p class="mnote">작성 중인 의뢰서는 30일간 보관됩니다.</p>
   <div class="mfoot">
     <button type="button" class="mdel" id="delDraft" disabled>삭제</button>
     <button type="button" class="mload" id="loadDraft" disabled>의뢰서 불러오기</button>
@@ -731,7 +883,7 @@
   });
 
   /* ── 서비스 제목 ── */
-  function svcName(){var s=$('input[name="svc"]:checked'); return s?s.parentNode.querySelector('b').textContent:'';}
+  function svcName(){var s=$('input[name="svc"]:checked'); return s?(s.dataset.name||s.parentNode.querySelector('b').textContent):'';}
 
   /* ── 타겟 태그 ── */
   var TAGS=(function(){
@@ -947,7 +1099,7 @@
   var pModal=$('#phoneModal');
   function markPhone(){
     $('#phoneVal').value=PHONE;
-    $('#vBadge').textContent=VERIFIED?'인증완료':'미인증';
+    $('#vBadge').textContent=VERIFIED?'인증 완료':'미인증';
     $('#vBadge').classList.toggle('ok',VERIFIED);
     $('#verifyBtn').textContent=VERIFIED?'번호 변경':'인증하기';
     $('#phoneHelp').textContent = VERIFIED
