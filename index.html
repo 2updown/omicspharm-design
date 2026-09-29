@@ -49,8 +49,9 @@
   /* ── Social proof (180:5311) ── */
   .proof { background:var(--white); padding:53px 0; display:flex; flex-direction:column; align-items:center; gap:41px; overflow:hidden; }
   .proof > p { font-size:18px; font-weight:500; line-height:1.4; letter-spacing:-.18px; color:var(--dark-green); text-align:center; }
-  /* 로고 흐름: Figma(180:5314)의 방향·속도(200px / 10.16s ≈ 19.7px/s, 오른쪽으로). 한 묶음 2508px ÷ 19.7 = 127.4s를 유지하며 끊김 없이 반복.
-     같은 로고 묶음을 두 번 이어 붙이고 한 묶음 폭(-50%)만큼 이동한 뒤 처음으로 돌아간다. */
+  /* 로고 흐름: Figma(180:5314)의 방향(오른쪽)과 속도(200px / 10.16s ≈ 19.7px/s)를 유지하며 끊김 없이 반복.
+     같은 로고 묶음을 두 번 이어 붙이고 한 묶음 폭(-50%)만큼 이동한 뒤 처음으로 돌아간다.
+     한 묶음 2508px ÷ 19.7px/s ≈ 127.4s */
   .marquee { display:flex; gap:15px; width:max-content; animation:marquee 127.4s linear infinite; }
   .marquee-set { display:flex; gap:15px; padding-right:15px; }
   @keyframes marquee { from { transform:translateX(-50%); } to { transform:translateX(0); } }
