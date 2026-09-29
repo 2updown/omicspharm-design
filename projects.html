@@ -6,7 +6,8 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png">
 <title>프로젝트 찾기 · OmicsPharm</title>
 <!-- Figma: Find Projects1-list (993:12559) · Find Projects1-grid (996:13677)
-     카드: Project-list (974:7938) · Project-card Type=card (147:1266) -->
+     카드: Project-list (974:7938) · Project-card Type=card (147:1266)
+     목록형 B안: Find Projects2-list (831:3469) — 오른쪽을 흰 박스 하나로 묶고 행을 구분선으로 나열. 기존 목록형(A안)은 ?list=a 로 비교 -->
 <link rel="stylesheet" href="assets/common/site.css?v=20260929m">
 <script src="assets/common/site.js?v=20260929m"></script>
 <script src="assets/common/projects-data.js?v=20260929m"></script>
@@ -136,6 +137,27 @@
   .gcard .rows em { font-style:normal; color:var(--gray-500); white-space:nowrap; }
   .gcard .reg { font-size:12px; line-height:18px; letter-spacing:-.12px; color:#9b9b9b; }
 
+  /* 목록형 B안 (831:3469): 검색·툴바·목록·페이지를 흰 박스 하나로 */
+  .main.boxed { gap:24px; padding:24px 0; background:#fff; border:1px solid var(--gray-200); border-radius:16px; margin-bottom:24px; }
+  .main.boxed .search { margin:0 24px; }
+  .main.boxed .toolbar { padding:0 24px; }
+  .main.boxed .list { gap:0; }
+  .main.boxed .empty { border:0; border-top:1px solid var(--gray-300); border-radius:0; }
+  .lrow { display:flex; flex-direction:column; gap:16px; padding:16px 24px; border-top:1px solid var(--gray-300); background:#fff; transition:background .15s; }
+  a.lrow:hover { background:var(--gray-50); }
+  a.lrow:hover h3 { color:var(--teal-700); }
+  .lrow .row1 { display:flex; align-items:center; justify-content:space-between; }
+  .lrow .dday { font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
+  .lrow .lock { width:20px; height:20px; }
+  .lrow h3 { font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .lrow .top { display:flex; flex-direction:column; gap:16px; }
+  .lrow .info { display:flex; flex-direction:column; gap:10px; }
+  .lmeta { display:flex; flex-wrap:wrap; align-items:center; gap:4px 12px; font-size:16px; font-weight:500; line-height:22px; }
+  .lmeta > span { display:inline-flex; align-items:center; white-space:nowrap; }
+  .lmeta > span + span::before { content:""; align-self:stretch; width:0; margin-right:12px; border-left:1px solid var(--gray-300); }
+  .lmeta em { margin-right:4px; font-style:normal; font-weight:400; }
+  .lrow .reg { font-size:12px; line-height:18px; letter-spacing:-.12px; color:#9b9b9b; }
+
   .empty { padding:80px 0; text-align:center; color:var(--gray-500); font-size:16px; line-height:22px; background:#fff; border:1px solid var(--gray-200); border-radius:12px; }
 
   /* 페이지네이션 */
@@ -160,6 +182,16 @@
     .tools { flex-wrap:wrap; }
     .grid { grid-template-columns:1fr; }
     .pager { flex-wrap:wrap; }
+    .main.boxed { padding:16px 0; }
+    .main.boxed .search { margin:0 16px; }
+    .main.boxed .toolbar { padding:0 16px; }
+    .lrow { padding:16px; gap:12px; }
+    .lrow h3 { font-size:18px; line-height:26px; white-space:normal; word-break:keep-all; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+    .lmeta { font-size:14px; line-height:20px; column-gap:10px; }
+    .lmeta > span + span::before { margin-right:10px; }
+    /* 1줄: 의뢰자 | 샘플, 2줄: 희망완료일, 3줄: 모집기한 (줄 앞 구분선 없음) */
+    .lmeta > span:nth-child(n+3) { flex-basis:100%; }
+    .lmeta > span:nth-child(n+3)::before { display:none; }
   }
 </style>
 </head>
@@ -267,6 +299,22 @@
         '<span><em>모집 기한</em>' + x.from + ' ~ ' + x.to + '</span>' +
       '</div><p class="reg">등록일 ' + x.reg + '</p></div></a>';
   }
+  // 목록형 B안 행 (Project-list 977:7939)
+  function listRow(x) {
+    var badges = '<div class="badges"><span class="badge tag">' + esc(x.cat) + '</span>' + status(x) + '</div>';
+    var p = x.priv, v = function (t) { return p ? '비공개' : t; };
+    var inner = '<div class="top"><div class="row1">' + badges + (p ? '<img class="lock" src="assets/main/ic-lock-key.svg" alt="비공개">' : '<span class="dday">' + dday(x) + '</span>') + '</div>' +
+      '<h3>' + esc(x.title) + '</h3></div>' +
+      '<div class="info"><div class="lmeta">' +
+        '<span>' + v(x.owner) + '</span>' +
+        '<span><em>샘플 :</em>' + v(x.samples + '개') + '</span>' +
+        '<span><em>희망완료일 :</em>' + v(x.due) + '</span>' +
+        '<span><em>모집기한 :</em>' + v(x.from + ' ~ ' + x.to) + '</span>' +
+      '</div><p class="reg">등록일 ' + x.reg + '</p></div>';
+    return p ? '<div class="lrow private">' + inner + '</div>' : '<a class="lrow" href="' + OP_PROJECTS.url(x) + '">' + inner + '</a>';
+  }
+  var LIST_A = new URLSearchParams(location.search).get('list') === 'a'; // 기존 카드형 목록과 비교용
+
   function gridCard(x) {
     var p = x.priv;
     var rows = '<div><em>샘플</em>' + (p ? '비공개' : x.samples + '개') + '</div>' +
@@ -311,7 +359,9 @@
     $('#total').textContent = '총 ' + all.length + '개';
     var box = $('#items');
     box.className = state.view === 'list' ? 'list' : 'grid';
-    box.innerHTML = slice.length ? slice.map(state.view === 'list' ? listCard : gridCard).join('') : '<div class="empty">조건에 맞는 프로젝트가 없습니다.</div>';
+    var boxed = state.view === 'list' && !LIST_A;
+    $('.main').classList.toggle('boxed', boxed);
+    box.innerHTML = slice.length ? slice.map(state.view === 'list' ? (LIST_A ? listCard : listRow) : gridCard).join('') : '<div class="empty">조건에 맞는 프로젝트가 없습니다.</div>';
     // 페이지네이션 (최대 5개 번호)
     var start = Math.max(1, Math.min(state.page - 2, pages - 4)), end = Math.min(pages, start + 4), html = '';
     var btn = function (p, inner, label, dis) { return '<button type="button" data-p="' + p + '" aria-label="' + label + '"' + (dis ? ' disabled' : '') + '>' + inner + '</button>'; };
