@@ -7,7 +7,7 @@
 <title>프로젝트 찾기 · OmicsPharm</title>
 <!-- Figma: Find Projects1-list (993:12559) · Find Projects1-grid (996:13677)
      카드: Project-list (974:7938) · Project-card Type=card (147:1266)
-     목록형 B안: Find Projects2-list (831:3469) — 오른쪽을 흰 박스 하나로 묶고 행을 구분선으로 나열. 기존 목록형(A안)은 ?list=a 로 비교 -->
+     B안: Find Projects2-list (831:3469) · Find Projects2-grid (977:9070) — 오른쪽을 흰 박스 하나로 묶고 행을 구분선으로 나열. 기존 목록형(A안)은 ?list=a 로 비교 -->
 <link rel="stylesheet" href="assets/common/site.css?v=20260929m">
 <script src="assets/common/site.js?v=20260929m"></script>
 <script src="assets/common/projects-data.js?v=20260929m"></script>
@@ -142,6 +142,8 @@
   .main.boxed .search { margin:0 24px; }
   .main.boxed .toolbar { padding:0 24px; }
   .main.boxed .list { gap:0; }
+  .main.boxed .grid { gap:4px; padding:0 28px; }
+  .grid .empty { grid-column:1 / -1; }
   .main.boxed .empty { border:0; border-top:1px solid var(--gray-300); border-radius:0; }
   .lrow { display:flex; flex-direction:column; gap:16px; padding:16px 24px; border-top:1px solid var(--gray-300); background:#fff; transition:background .15s; }
   a.lrow:hover { background:var(--gray-50); }
@@ -185,6 +187,7 @@
     .main.boxed { padding:16px 0; }
     .main.boxed .search { margin:0 16px; }
     .main.boxed .toolbar { padding:0 16px; }
+    .main.boxed .grid { gap:8px; padding:0 16px; }
     .lrow { padding:16px; gap:12px; }
     .lrow h3 { font-size:18px; line-height:26px; white-space:normal; word-break:keep-all; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
     .lmeta { font-size:14px; line-height:20px; column-gap:10px; }
@@ -359,7 +362,7 @@
     $('#total').textContent = '총 ' + all.length + '개';
     var box = $('#items');
     box.className = state.view === 'list' ? 'list' : 'grid';
-    var boxed = state.view === 'list' && !LIST_A;
+    var boxed = !LIST_A; // B안: 목록형·그리드형 모두 흰 박스 (Find Projects2-list 831:3469 / -grid 977:9070)
     $('.main').classList.toggle('boxed', boxed);
     box.innerHTML = slice.length ? slice.map(state.view === 'list' ? (LIST_A ? listCard : listRow) : gridCard).join('') : '<div class="empty">조건에 맞는 프로젝트가 없습니다.</div>';
     // 페이지네이션 (최대 5개 번호)
