@@ -63,7 +63,11 @@
   .badge.state { border:1px solid var(--blue-600); color:var(--blue-600); background:var(--blue-50); }
   .reg { font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
   .ptitle { display:flex; align-items:center; gap:8px; font-size:24px; font-weight:600; line-height:32px; letter-spacing:-.24px; }
-  .ptitle a { display:flex; }
+  /* 뒤로 가기: 누르는 영역 36px + hover 배경 */
+  .ptitle .back { display:flex; align-items:center; justify-content:center; width:36px; height:36px; margin-left:-6px; border-radius:8px; flex:none; transition:background .15s; }
+  .ptitle .back:hover { background:var(--gray-100); }
+  .ptitle .back:active { background:var(--gray-200); }
+  .ptitle .back:focus-visible { outline:2px solid var(--teal-600); outline-offset:1px; }
   .ptitle img { width:24px; height:24px; }
   .period { display:flex; align-items:center; gap:12px; height:40px; padding:0 16px; border:1px solid var(--gray-300); border-radius:999px; font-size:14px; line-height:20px; white-space:nowrap; }
   .period b { font-weight:600; }
@@ -233,7 +237,7 @@
     '<div class="phead">' +
       '<div class="prow"><div class="badges"><span class="badge tag">' + esc(d.svc) + '</span><span class="badge state">의뢰접수</span></div>' +
         '<span class="reg">등록일 ' + ymd(d.at) + ' · 의뢰번호 ' + esc(d.id) + '</span></div>' +
-      '<div class="prow"><h2 class="ptitle"><a href="mypage-project.html" aria-label="프로젝트 목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(d.title) + '</h2>' +
+      '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-project.html" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(d.title) + '</h2>' +
         (d.from || d.to ? '<div class="period"><b>모집기한</b><span>' + dot(d.from) + ' ~ ' + dot(d.to) + '</span><em>' + (closed ? '모집마감' : '모집중') + '</em></div>' : '') + '</div>' +
     '</div>' +
     '<div class="summary">' +
@@ -255,6 +259,11 @@
       }).join('') +
     '</div>';
   $('#project').outerHTML = html;
+  // 목록에서 들어왔으면 브라우저 뒤로 가기(스크롤 위치 유지), 아니면 목록으로
+  document.querySelector('.ptitle .back').addEventListener('click', function (e) {
+    var ref = document.referrer || '';
+    if (/mypage-project\.html(\?)?$/.test(ref.split('#')[0]) && history.length > 1) { e.preventDefault(); history.back(); }
+  });
   document.title = d.title + ' · 마이페이지 · OmicsPharm';
 })();
 </script>
