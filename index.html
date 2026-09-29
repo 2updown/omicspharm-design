@@ -150,7 +150,9 @@
   .btn-action { display:inline-flex; align-items:center; justify-content:center; gap:4px; height:56px; min-width:78px; border:1px solid var(--teal-600); border-radius:99px; background:var(--white); color:var(--teal-600); font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; }
   .btn-action .ic { width:20px; height:20px; }
   .btn-action:hover { border-color:var(--teal-700); color:var(--teal-700); }
-  .an-head .btn-action { padding:0 32px 0 40px; }
+  /* 섹션 오른쪽 텍스트 링크 (최근 프로젝트 전체보기와 동일) */
+  .an-head .more { flex:none; font-size:16px; font-weight:500; line-height:1.571; color:var(--gray-700); white-space:nowrap; }
+  .an-head .more:hover { color:var(--teal-600); }
   .an-grid { width:var(--wrap); max-width:100%; display:grid; grid-template-columns:repeat(3,1fr); gap:24px 12px; }
   .acard { display:flex; flex-direction:column; gap:10px; padding:11px; background:var(--white); border:1px solid transparent; border-radius:12px; filter:drop-shadow(0 4px 5px rgba(55,55,55,.05)); transition:border-color .15s; }
   .acard .img { position:relative; height:336px; border-radius:20px; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; padding:50px 40px; text-align:center; color:var(--white); }
@@ -168,6 +170,7 @@
   .acard:hover .go { background:var(--teal-600); }
   .acard:hover .go .def { display:none; }
   .acard:hover .go .hov { display:inline-block; color:var(--white); width:20px; height:20px; }
+  @media (hover:none) { .acard .img p { display:block; } } /* 터치 기기(태블릿 포함)는 설명 항상 표시 */
 
   /* ── CTA (959:12321) ── */
   .cta-sec { padding:60px 60px 100px; background:var(--white); display:flex; justify-content:center; }
@@ -197,8 +200,20 @@
     .sec, .cta-sec { padding-left:16px; padding-right:16px; }
     .sec-head h2, .an-head h2, .cta h2 { font-size:28px; line-height:38px; }
     .sec-head .desc br, .cta p br { display:none; }
-    .proj-grid, .an-grid { grid-template-columns:1fr; }
-    .an-head { flex-direction:column; align-items:flex-start; gap:20px; }
+    .proj-grid { grid-template-columns:1fr; }
+    /* 제목·더 알아보기 한 줄, 설명은 아래 */
+    .an-head { display:grid; grid-template-columns:1fr auto; align-items:center; column-gap:12px; }
+    .an-head > div { display:contents; }
+    .an-head p { grid-column:1 / -1; grid-row:2; font-size:16px; line-height:22px; }
+    /* 분석 서비스 카드: 2열 × 3줄, 터치에서는 hover 설명을 항상 표시 */
+    .an-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 8px; }
+    .acard { gap:8px; padding:6px; }
+    .acard .img { height:auto; min-height:210px; justify-content:center; gap:8px; padding:20px 8px; border-radius:12px; }
+    .acard .img h3 { font-size:16px; line-height:22px; }
+    .acard .img p { display:block; font-size:12px; line-height:17px; word-break:keep-all; }
+    .acard .img p br { display:none; }
+    .acard .foot { padding:0 4px 2px 6px; font-size:14px; }
+    .acard .go { width:32px; height:32px; }
     .feat-view { height:220px; } .feat-view .screen { height:216px; } .feat-view .screen img { width:100%; height:auto; }
   }
 </style>
@@ -359,15 +374,15 @@
       <h2>분석 서비스 소개</h2>
       <p>최첨단 분석 플랫폼과 전문성을 바탕으로, 한 차원 높은 정밀성과 효율성을 갖춘 혁신적인 바이오 분석 서비스를 제공합니다.</p>
     </div>
-    <a class="btn-action" href="#" data-soon="서비스 소개">더 알아보기 <span class="ic" style="--src:url(assets/main/ic-arrow-up-right-teal.svg)"></span></a>
+    <a class="more" href="#" data-soon="서비스 소개">더 알아보기</a>
   </div>
   <div class="an-grid">
-    <a class="acard" href="#" data-soon="Genomics 소개"><div class="img"><img src="assets/main/analysis-genomics.png" alt=""><h3>Genomics</h3><p>유전체 DNA의 염기서열 변이와 구조적 특성을<br>종합적으로 분석하여 질병의 유전적 원인과<br>분자적 기전을 규명하는 핵심 분석 방법입니다.</p></div><div class="foot">자세히 보기<span class="go"><span class="ic def" style="--src:url(assets/main/ic-arrow-up-right.svg)"></span><span class="ic hov" style="--src:url(assets/main/ic-arrow-right.svg)"></span></span></div></a>
-    <a class="acard" href="#" data-soon="Transcriptomics 소개"><div class="img"><img src="assets/main/analysis-transcriptomics.png" alt=""><h3>Transcriptomics</h3><p>세포 또는 조직에서 발현되는<br>RNA 전사체(transcriptome)를 분석하여<br>유전자 발현 변화와 생물학적 기능 변화를 규명하는<br>핵심 분석 방법입니다.</p></div><div class="foot">자세히 보기<span class="go"><span class="ic def" style="--src:url(assets/main/ic-arrow-up-right.svg)"></span><span class="ic hov" style="--src:url(assets/main/ic-arrow-right.svg)"></span></span></div></a>
-    <a class="acard" href="#" data-soon="Proteomics 소개"><div class="img"><img src="assets/main/analysis-proteomics.png" alt=""><h3>Proteomics</h3><p>단백질의 전체적인 발현과 변화를 한눈에 파악하여<br>생체 내 복잡한 분자 메커니즘을 해독하는 분석 방법입니다.</p></div><div class="foot">자세히 보기<span class="go"><span class="ic def" style="--src:url(assets/main/ic-arrow-up-right.svg)"></span><span class="ic hov" style="--src:url(assets/main/ic-arrow-right.svg)"></span></span></div></a>
-    <a class="acard" href="#" data-soon="Glycoproteomics 소개"><div class="img"><img src="assets/main/analysis-glycoproteomics.png" alt=""><h3>Glycoproteomics</h3><p>단백질의 당화 패턴과 구조적 변화를 정밀하게 분석하여<br>질병의 발생 메커니즘, 바이오마커 발굴,<br>신약 개발에 필수적인 정보를 제공합니다.</p></div><div class="foot">자세히 보기<span class="go"><span class="ic def" style="--src:url(assets/main/ic-arrow-up-right.svg)"></span><span class="ic hov" style="--src:url(assets/main/ic-arrow-right.svg)"></span></span></div></a>
-    <a class="acard" href="#" data-soon="Metabolomics 소개"><div class="img"><img src="assets/main/analysis-metabolomics.png" alt=""><h3>Metabolomics</h3><p>생체 내 대사산물의 변화를 체계적으로 분석하여<br>생명현상의 메커니즘을 이해하고, 질병과 관련된<br>생체지표를 발굴하는 첨단 연구 기술입니다.</p></div><div class="foot">자세히 보기<span class="go"><span class="ic def" style="--src:url(assets/main/ic-arrow-up-right.svg)"></span><span class="ic hov" style="--src:url(assets/main/ic-arrow-right.svg)"></span></span></div></a>
-    <a class="acard" href="#" data-soon="Olink Proteomics 소개"><div class="img"><img src="assets/main/analysis-olink.png" alt=""><h3>Olink Proteomics</h3><p>Proximity Extension Assay(PEA) 기술을 활용해<br>소량의 시료에서 다수의 단백질 바이오마커를<br>고감도·고특이도로 정량하는 분석 서비스입니다.</p></div><div class="foot">자세히 보기<span class="go"><span class="ic def" style="--src:url(assets/main/ic-arrow-up-right.svg)"></span><span class="ic hov" style="--src:url(assets/main/ic-arrow-right.svg)"></span></span></div></a>
+    <a class="acard" href="#" data-soon="Genomics 소개"><div class="img"><img src="assets/main/analysis-genomics.png" alt=""><h3>Genomics</h3><p>유전체 DNA의 염기서열 변이와 구조적 특성을 <br>종합적으로 분석하여 질병의 유전적 원인과 <br>분자적 기전을 규명하는 핵심 분석 방법입니다.</p></div><div class="foot">자세히 보기<span class="go"><span class="ic def" style="--src:url(assets/main/ic-arrow-up-right.svg)"></span><span class="ic hov" style="--src:url(assets/main/ic-arrow-right.svg)"></span></span></div></a>
+    <a class="acard" href="#" data-soon="Transcriptomics 소개"><div class="img"><img src="assets/main/analysis-transcriptomics.png" alt=""><h3>Transcriptomics</h3><p>세포 또는 조직에서 발현되는 <br>RNA 전사체(transcriptome)를 분석하여 <br>유전자 발현 변화와 생물학적 기능 변화를 규명하는 <br>핵심 분석 방법입니다.</p></div><div class="foot">자세히 보기<span class="go"><span class="ic def" style="--src:url(assets/main/ic-arrow-up-right.svg)"></span><span class="ic hov" style="--src:url(assets/main/ic-arrow-right.svg)"></span></span></div></a>
+    <a class="acard" href="#" data-soon="Proteomics 소개"><div class="img"><img src="assets/main/analysis-proteomics.png" alt=""><h3>Proteomics</h3><p>단백질의 전체적인 발현과 변화를 한눈에 파악하여 <br>생체 내 복잡한 분자 메커니즘을 해독하는 분석 방법입니다.</p></div><div class="foot">자세히 보기<span class="go"><span class="ic def" style="--src:url(assets/main/ic-arrow-up-right.svg)"></span><span class="ic hov" style="--src:url(assets/main/ic-arrow-right.svg)"></span></span></div></a>
+    <a class="acard" href="#" data-soon="Glycoproteomics 소개"><div class="img"><img src="assets/main/analysis-glycoproteomics.png" alt=""><h3>Glycoproteomics</h3><p>단백질의 당화 패턴과 구조적 변화를 정밀하게 분석하여 <br>질병의 발생 메커니즘, 바이오마커 발굴, <br>신약 개발에 필수적인 정보를 제공합니다.</p></div><div class="foot">자세히 보기<span class="go"><span class="ic def" style="--src:url(assets/main/ic-arrow-up-right.svg)"></span><span class="ic hov" style="--src:url(assets/main/ic-arrow-right.svg)"></span></span></div></a>
+    <a class="acard" href="#" data-soon="Metabolomics 소개"><div class="img"><img src="assets/main/analysis-metabolomics.png" alt=""><h3>Metabolomics</h3><p>생체 내 대사산물의 변화를 체계적으로 분석하여 <br>생명현상의 메커니즘을 이해하고, 질병과 관련된 <br>생체지표를 발굴하는 첨단 연구 기술입니다.</p></div><div class="foot">자세히 보기<span class="go"><span class="ic def" style="--src:url(assets/main/ic-arrow-up-right.svg)"></span><span class="ic hov" style="--src:url(assets/main/ic-arrow-right.svg)"></span></span></div></a>
+    <a class="acard" href="#" data-soon="Olink Proteomics 소개"><div class="img"><img src="assets/main/analysis-olink.png" alt=""><h3>Olink Proteomics</h3><p>Proximity Extension Assay(PEA) 기술을 활용해 <br>소량의 시료에서 다수의 단백질 바이오마커를 <br>고감도·고특이도로 정량하는 분석 서비스입니다.</p></div><div class="foot">자세히 보기<span class="go"><span class="ic def" style="--src:url(assets/main/ic-arrow-up-right.svg)"></span><span class="ic hov" style="--src:url(assets/main/ic-arrow-right.svg)"></span></span></div></a>
   </div>
 </section>
 
