@@ -21,7 +21,7 @@
   button { background:none; border:0; cursor:pointer; }
   [hidden] { display:none !important; }
 
-  .page-head { padding:32px 60px; }
+  .page-head { padding:32px 60px; text-align:center; }
   .page-head .in, .body .in { max-width:880px; margin:0 auto; }
   .page-head h1 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; }
   .page-head p { margin-top:12px; font-size:16px; line-height:22px; }
@@ -30,10 +30,6 @@
   .card { min-width:0; display:flex; flex-direction:column; gap:32px; padding:32px; background:#fff; border:1px solid var(--gray-200); border-radius:16px; }
   .group { display:flex; flex-direction:column; gap:20px; }
   .group > h2 { display:flex; align-items:center; gap:8px; padding-bottom:12px; border-bottom:2px solid #000; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
-  .group > h2 .num { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:50%; background:var(--teal-600); color:#fff; font-size:13px; font-weight:600; }
-  .member-note { display:flex; align-items:center; gap:8px; padding:12px 16px; border-radius:8px; background:var(--bg-green); font-size:14px; line-height:20px; color:var(--gray-700); }
-  .member-note b { color:var(--teal-600); font-weight:600; }
-  .member-note a { margin-left:auto; color:var(--teal-600); font-weight:500; white-space:nowrap; }
 
   .row2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
   .field { display:flex; flex-direction:column; gap:8px; min-width:0; }
@@ -129,10 +125,9 @@
 
 <main class="body"><div class="in">
   <form class="card" id="form" novalidate>
-    <p class="member-note" id="memberNote" hidden></p>
 
     <section class="group">
-      <h2><span class="num">1</span>문의 유형</h2>
+      <h2>문의 유형</h2>
       <div class="field" id="f-type">
         <label for="type">문의 유형<span class="req">*</span></label>
         <select class="select" id="type" required>
@@ -157,7 +152,7 @@
     </section>
 
     <section class="group">
-      <h2><span class="num">2</span>연락처 정보</h2>
+      <h2>연락처 정보</h2>
       <div class="row2">
         <div class="field" id="f-name"><label for="name">이름<span class="req">*</span></label><input class="input" id="name" autocomplete="name" placeholder="이름을 입력해주세요"></div>
         <div class="field" id="f-org"><label for="org">소속(기관·회사)<span class="req">*</span></label><input class="input" id="org" autocomplete="organization" placeholder="예) ○○대학교, ○○제약"></div>
@@ -170,7 +165,7 @@
     </section>
 
     <section class="group">
-      <h2><span class="num">3</span>문의 내용</h2>
+      <h2>문의 내용</h2>
       <div class="field" id="f-title"><label for="title">제목<span class="req">*</span></label><input class="input" id="title" maxlength="100" placeholder="문의 제목을 입력해주세요"></div>
       <div class="field" id="f-body">
         <label for="body">내용<span class="req">*</span></label>
@@ -237,9 +232,6 @@
     $('#email').value = s.email;
     if (acc.name) $('#name').value = acc.name;
     if (acc.org) $('#org').value = acc.org;
-    var note = $('#memberNote');
-    note.innerHTML = '<b>' + (OP.ROLE_LABEL[s.role] || '회원') + '</b> 계정 정보가 자동으로 입력되었습니다.';
-    note.hidden = false;
   }
 
   // 다른 화면에서 넘어온 값: 문의 유형·관련 프로젝트·서비스
