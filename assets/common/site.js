@@ -78,6 +78,33 @@
       '<div class="op-dd-menu" role="menu"><a href="#" role="menuitem" class="on" data-lang="ko">KOR</a><a href="#" role="menuitem" data-soon="영문(ENG)">ENG</a></div>' +
     '</div>';
 
+  // 좁은 화면(900px 미만): 알림·아바타·언어 대신 햄버거 메뉴 (Phosphor List / X 아이콘)
+  function drawer(s) {
+    var groups = Object.keys(MENUS).map(function (k) {
+      var m = MENUS[k];
+      return '<div class="op-dr-group">' +
+        '<button type="button" class="op-dr-toggle" aria-expanded="false">' + m.label + '<img src="' + A + 'ic-caret-down.svg" alt=""></button>' +
+        '<div class="op-dr-sub">' + m.items.map(function (t) { return '<a href="#" data-soon="' + t + '">' + t + '</a>'; }).join('') + '</div>' +
+      '</div>';
+    }).join('');
+    var account = s
+      ? '<div class="op-dr-who"><img src="' + A + 'user-icon.svg" alt=""><div><b>' + s.email.replace(/</g, '&lt;') + '</b><span>' + (ROLE_LABEL[s.role] || '') + '</span></div></div>' +
+        '<a class="op-dr-link sm" href="#" data-soon="알림">알림</a>' +
+        '<a class="op-dr-link sm" href="#" data-soon="마이페이지">마이페이지</a>' +
+        '<button type="button" class="op-dr-link sm" data-op-logout>로그아웃</button>'
+      : '<div class="op-dr-auth"><a class="op-dr-btn line" href="login.html">로그인</a><a class="op-dr-btn" href="signup.html">가입하기</a></div>';
+    return '<div class="op-drawer" id="opDrawer" hidden>' +
+      '<nav class="op-dr-nav" aria-label="전체 메뉴">' +
+        '<a class="op-dr-link" href="omicspharm-register.html" data-client-only>프로젝트 의뢰</a>' +
+        '<a class="op-dr-link" href="projects.html">프로젝트 찾기</a>' +
+        groups +
+      '</nav>' +
+      '<div class="op-dr-lang"><span>언어</span><div><a href="#" class="on" data-lang="ko">KOR</a><a href="#" data-soon="영문(ENG)">ENG</a></div></div>' +
+      '<div class="op-dr-account">' + account + '</div>' +
+    '</div>';
+  }
+  var BURGER = '<button type="button" class="op-burger" aria-controls="opDrawer" aria-expanded="false" aria-label="메뉴 열기"><img class="i-open" src="' + A + 'ic-list.svg" alt=""><img class="i-close" src="' + A + 'ic-x.svg" alt=""></button>';
+
   function gnb(active) {
     var s = OP.session();
     var on = function (k) { return active === k ? ' class="on"' : ''; };
@@ -99,17 +126,19 @@
               '<button type="button" data-op-logout role="menuitem">로그아웃</button>' +
             '</div>' +
           '</div>' +
+          BURGER +
         '</div>'
       : '<div class="op-gnb-cta">' +
           LANG +
           '<a class="op-gnb-login" href="login.html">로그인</a>' +
           '<a class="op-gnb-join" href="signup.html">가입하기</a>' +
+          BURGER +
         '</div>';
     return '<header class="op-gnb' + (s ? ' is-login' : '') + '" data-role="' + (s ? s.role : 'guest') + '">' +
       '<div class="op-gnb-in">' +
         '<a class="op-gnb-logo" href="index.html" aria-label="OmicsPharm 홈"><img src="' + A + 'logo.svg" alt="OmicsPharm"></a>' +
         menu + cta +
-      '</div></header>';
+      '</div></header>' + drawer(s);
   }
 
   function footer() {
@@ -153,6 +182,9 @@
     }
     if (e.target.closest('[data-op-logout]')) { OP.logout(); location.href = 'index.html'; return; }
     if (e.target.closest('[data-lang="ko"]')) { e.preventDefault(); closeDropdowns(); return; }
+    if (e.target.closest('.op-burger')) { setDrawer(document.getElementById('opDrawer').hidden); return; }
+    var tg = e.target.closest('.op-dr-toggle');
+    if (tg) { var g = tg.parentNode, o = !g.classList.contains('open'); g.classList.toggle('open', o); tg.setAttribute('aria-expanded', o ? 'true' : 'false'); return; }
     var ddBtn = e.target.closest('.op-dd-btn');
     if (ddBtn) { var dd = ddBtn.parentNode, open = !dd.classList.contains('open'); closeDropdowns(); setDropdown(dd, open); }
     else if (!e.target.closest('.op-dd-menu')) closeDropdowns();
@@ -161,13 +193,23 @@
     if (user && e.target.closest('.op-user > button')) user.classList.toggle('open');
   });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { document.querySelectorAll('.op-user.open').forEach(function (u) { u.classList.remove('open'); }); closeDropdowns(); }
+    if (e.key === 'Escape') { document.querySelectorAll('.op-user.open').forEach(function (u) { u.classList.remove('open'); }); closeDropdowns(); setDrawer(false); }
   });
 
   function setDropdown(dd, open) {
     dd.classList.toggle('open', open);
     dd.querySelector('.op-dd-btn').setAttribute('aria-expanded', open ? 'true' : 'false');
   }
+  function setDrawer(open) {
+    var d = document.getElementById('opDrawer'), b = document.querySelector('.op-burger');
+    if (!d || !b) return;
+    d.hidden = !open;
+    b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    b.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+    document.documentElement.classList.toggle('op-drawer-open', open);
+  }
+  // 넓은 화면으로 돌아가면 햄버거 메뉴 닫기
+  window.addEventListener('resize', function () { if (window.innerWidth >= 900) setDrawer(false); });
   function closeDropdowns() { document.querySelectorAll('.op-dd.open').forEach(function (d) { setDropdown(d, false); }); }
   // 마우스를 올리면 열리고, 벗어나면 닫힌다 (터치 기기는 클릭으로)
   document.addEventListener('mouseover', function (e) {
