@@ -181,7 +181,7 @@
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <button type="button" class="close" data-close aria-label="닫기">×</button>
     <h2 id="modalTitle"></h2>
-    <div class="body"><p id="modalDesc"></p><a class="policy-link" id="modalLink" href="#" target="_blank" rel="noopener">전문 보기 (새 창)</a></div>
+    <div class="body policy" id="modalBody" tabindex="0"></div>
     <button type="button" class="btn-action" id="modalAgree">동의하기</button>
   </div>
 </div>
@@ -252,7 +252,18 @@
   var modal = $('#modal'), openTerm = null;
   var TITLES = { tos: '[필수] 서비스 이용약관', privacy: '[필수] 개인정보 처리방침' };
   var LINKS = { tos: 'https://www.omicspharm.com/policy/terms', privacy: 'https://www.omicspharm.com/policy/privacy' };
-  $$('[data-open]').forEach(function (b) { b.addEventListener('click', function () { openTerm = b.dataset.open; $('#modalTitle').textContent = TITLES[openTerm]; $('#modalDesc').textContent = (openTerm === 'tos' ? '서비스 이용약관' : '개인정보 처리방침') + ' 전문은 오믹스팜 홈페이지에서 확인하실 수 있습니다.'; $('#modalLink').href = LINKS[openTerm]; modal.hidden = false; }); });
+  $$('[data-open]').forEach(function (b) { b.addEventListener('click', function () { openTerm = b.dataset.open; $('#modalTitle').textContent = TITLES[openTerm]; loadPolicy(openTerm); modal.hidden = false; }); });
+  // 약관 전문: assets/policy/ 에 복사해 둔 오믹스팜 약관 본문을 불러온다 (실패 시 원문 링크)
+  var FILES = { tos: 'assets/policy/terms.html', privacy: 'assets/policy/privacy.html' }, cache = {};
+  function loadPolicy(key) {
+    var body = $('#modalBody');
+    body.scrollTop = 0;
+    if (cache[key]) { body.innerHTML = cache[key]; return; }
+    body.textContent = '불러오는 중…';
+    fetch(FILES[key]).then(function (r) { if (!r.ok) throw r; return r.text(); })
+      .then(function (t) { cache[key] = t; if (openTerm === key) body.innerHTML = t; })
+      .catch(function () { body.innerHTML = '약관을 불러오지 못했습니다. <a class="policy-link" target="_blank" rel="noopener" href="' + LINKS[key] + '">홈페이지에서 보기</a>'; });
+  }
   function closeModal() { modal.hidden = true; }
   $('[data-close]', modal).addEventListener('click', closeModal);
   modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
