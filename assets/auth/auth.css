@@ -19,8 +19,11 @@ input { font:inherit; color:inherit; }
 .auth { display:flex; min-height:100vh; }
 
 /* ── 왼쪽: login-bg ── */
-.auth-bg { flex:1 1 0; min-width:0; padding:12px; background:linear-gradient(146.03deg, #ffd5a3 0%, #00d8bf 102.95%); }
-.auth-card { position:relative; height:100%; min-height:1000px; background:#fff; border-radius:12px; overflow:hidden; }
+/* 왼쪽 패널은 화면 높이에 고정(스크롤해도 그대로), 오른쪽만 길어지면 페이지가 스크롤된다 */
+.auth-bg { flex:1 1 0; min-width:0; padding:12px; background:linear-gradient(146.03deg, #ffd5a3 0%, #00d8bf 102.95%); position:sticky; top:0; height:100vh; align-self:flex-start; }
+.auth-card { position:relative; height:100%; background:#fff; border-radius:12px; overflow:hidden; }
+/* Figma 카드(696×1000) 비율 그대로 묶어서 패널 크기에 맞게 확대·축소 (auth.js가 --s 계산) */
+.auth-card .stage { position:absolute; left:50%; top:50%; width:696px; height:1000px; transform:translate(-50%,-50%) scale(var(--s, 1)); }
 .auth-card .ellipse { position:absolute; right:-498.58px; top:-458px; width:1074.584px; height:1070px; display:flex; align-items:center; justify-content:center; pointer-events:none; }
 .auth-card .ellipse img { width:803.187px; height:792.788px; transform:rotate(26.84deg); flex:none; }
 .auth-card .logo { position:absolute; top:98px; left:calc(50% + .5px); transform:translateX(-50%); width:219px; height:33px; overflow:hidden; }

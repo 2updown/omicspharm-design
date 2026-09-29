@@ -2,7 +2,7 @@
 (function () {
   var P = 'assets/auth/';
   var BG =
-    '<div class="auth-card">' +
+    '<div class="auth-card"><div class="stage">' +
       '<div class="ellipse"><img src="' + P + 'ellipse.svg" alt=""></div>' +
       '<a class="logo" href="index.html" aria-label="OmicsPharm 홈"><img src="' + P + 'logo.svg" alt="OmicsPharm"></a>' +
       '<div class="hero-box">' +
@@ -20,10 +20,21 @@
         '<h1>All Your Omics Research<br><b>In One Place</b></h1>' +
         '<p>Explore analysis projects, get matched with the right experts,<br>and generate AI-powered research reports<br>all on one integrated platform.</p>' +
       '</div>' +
-    '</div>';
+    '</div></div>';
 
+  // 비주얼(696×1000)을 패널 안에 잘리지 않게 꽉 맞춤: 가로·세로 중 작은 쪽 비율 사용 (최대 1.3배)
+  function fit(card) {
+    var s = Math.min(card.clientWidth / 696, card.clientHeight / 1000, 1.3);
+    card.style.setProperty('--s', s.toFixed(4));
+  }
   function render() {
-    document.querySelectorAll('[data-auth-bg]').forEach(function (el) { el.classList.add('auth-bg'); el.innerHTML = BG; });
+    document.querySelectorAll('[data-auth-bg]').forEach(function (el) {
+      el.classList.add('auth-bg'); el.innerHTML = BG;
+      var card = el.querySelector('.auth-card');
+      fit(card);
+      if (window.ResizeObserver) new ResizeObserver(function () { fit(card); }).observe(card);
+      else window.addEventListener('resize', function () { fit(card); });
+    });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render); else render();
 
