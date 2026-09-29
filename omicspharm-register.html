@@ -523,8 +523,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20260929k">
-<script src="assets/common/site.js?v=20260929k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20260929l">
+<script src="assets/common/site.js?v=20260929l"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -1079,7 +1079,70 @@
     if(cur===MAX){ submit(); return; }
     cur++; render();
   };
-  function submit(){ toast('분석 의뢰가 제출되었습니다') }
+  // 제출: 입력 내용을 섹션·항목 단위로 모아 저장(데모: 이 브라우저 localStorage)하고 마이페이지 프로젝트 관리로 이동
+  function subTxt(el){ return (el.textContent||'').replace(/\s+/g,' ').trim(); }
+  function subFieldValue(f){
+    var out=[];
+    $$('input[type=checkbox]:checked, input[type=radio]:checked', f).forEach(function(i){
+      if(i.classList.contains('aty')){ out.push(subTxt(i.parentNode)); return; }
+      var l=i.closest('label'); if(!l) return;
+      var c=l.cloneNode(true); $$('.d', c).forEach(function(d){ d.remove(); }); out.push(subTxt(c));
+    });
+    $$('input[type=text]:not(:disabled), input[type=number], input[type=date], textarea', f).forEach(function(i){
+      if(i.id==='tgtIn' || i.style.display==='none' || !i.value.trim()) return; out.push(i.value.trim());  // 다른 단계는 숨겨져 있으니 offsetParent로 거르지 않음
+    });
+    var dates=$$('input[type=date]', f).map(function(i){ return i.value; }).filter(Boolean);
+    if(dates.length===2) return dates.join(' ~ ');
+    $$('select', f).forEach(function(sel){ var num=sel.previousElementSibling; if(num && num.value) out[out.length-1]=num.value+' '+sel.value; else if(!num) out.push(sel.value); });
+    var tags=$$('.tag', f).map(function(t){ return subTxt(t).replace(/×$/,'').trim(); }); if(tags.length) out.unshift(tags.join(', '));
+    return out.filter(Boolean).join(' / ');
+  }
+  function collectSubmission(){
+    var sections=[];
+    $$('.step').forEach(function(st){
+      if(+st.dataset.step===1) return;                       // 1단계는 요약 정보로 따로 저장
+      $$('.sec', st).forEach(function(sec){
+        if(sec.classList.contains('rev') || (sec.classList.contains('cond') && !sec.classList.contains('on'))) return;
+        var h=sec.querySelector('h2'); if(!h) return;
+        var title=subTxt(h).replace(/\*$/,'').trim(), rows=[];
+        $$('.field', sec).forEach(function(f){
+          if(f.classList.contains('cond') && !f.classList.contains('on')) return;
+          var lb=f.querySelector('.flabel'); if(!lb) return;
+          var v=subFieldValue(f); if(v) rows.push([subTxt(lb).replace(/\*$/,'').trim(), v]);
+        });
+        if(sec.querySelector('#grpBody') && $('input[name="grpUse"][value="y"]').checked){
+          rows=rows.filter(function(r){ return r[0]!=='그룹 구성'; });
+          $$('#grpBody tr').forEach(function(tr){
+            var tds=tr.querySelectorAll('td'); if(tds.length<3) return;
+            var nm=tds[1].querySelector('input'), n=tds[2].querySelector('input');
+            rows.push([subTxt(tds[0]), (nm?nm.value:'')+(n&&n.value?' · '+n.value+'개':'')]);
+          });
+        }
+        var ta=!sec.querySelector('.tbl') && sec.querySelector('textarea');
+        if(ta){ if(ta.value.trim()) sections.push({ title:title, note:ta.value.trim() }); return; }
+        if(rows.length) sections.push({ title:title, rows:rows });
+      });
+    });
+    var chk=function(name){ var i=$('input[name="'+name+'"]:checked'); return i?subTxt(i.parentNode):''; };
+    var inputs=$$('.step[data-step="1"] input[type=text]:disabled');
+    return {
+      id:'REQ-'+Date.now().toString(36).toUpperCase(), at:Date.now(),
+      svc:svcName()||'분석 서비스 미선택', title:$('#reqName').value.trim()||'제목 없는 의뢰',
+      purpose:($('.step[data-step="1"] textarea')||{}).value||'', open:chk('sec'),
+      manager:inputs[0]?inputs[0].value:'', org:inputs[1]?inputs[1].value:'',
+      samples:$('#totalN').value, due:$('#dueDate').value, from:$('#rFrom').value, to:$('#rTo').value, budget:chk('bud'),
+      sections:sections
+    };
+  }
+  function submit(){
+    var d=collectSubmission(), list=[];
+    try{ list=JSON.parse(localStorage.getItem('op.submitted')||'[]'); }catch(e){}
+    list.unshift(d);
+    try{ localStorage.setItem('op.submitted', JSON.stringify(list.slice(0,20))); }catch(e){}
+    dirty=false;
+    OP.flash('분석 의뢰가 제출되었습니다.');
+    location.href='mypage-project.html?id='+encodeURIComponent(d.id);
+  }
   prev.onclick=function(){ if(cur>1){ clearErr(); cur--; render(); } };
   tabs.forEach(function(t){t.onclick=function(){
     var g=+t.dataset.go;

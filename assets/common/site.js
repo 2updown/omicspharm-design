@@ -90,7 +90,7 @@
     var account = s
       ? '<div class="op-dr-who"><img src="' + A + 'user-icon.svg" alt=""><div><b>' + s.email.replace(/</g, '&lt;') + '</b><span>' + (ROLE_LABEL[s.role] || '') + '</span></div></div>' +
         '<a class="op-dr-link sm" href="#" data-soon="알림">알림</a>' +
-        '<a class="op-dr-link sm" href="#" data-soon="마이페이지">마이페이지</a>' +
+        '<a class="op-dr-link sm" href="mypage-project.html">마이페이지</a>' +
         '<button type="button" class="op-dr-link sm" data-op-logout>로그아웃</button>'
       : '<div class="op-dr-auth"><a class="op-dr-btn line" href="login.html">로그인</a><a class="op-dr-btn" href="signup.html">가입하기</a></div>';
     return '<div class="op-drawer" id="opDrawer" hidden>' +
@@ -122,7 +122,7 @@
             '<button type="button" aria-haspopup="menu" aria-label="내 계정"><img src="' + A + 'user-icon.svg" alt=""></button>' +
             '<div class="op-user-menu" role="menu">' +
               '<div class="who"><b>' + s.email.replace(/</g, '&lt;') + '</b><span>' + (ROLE_LABEL[s.role] || '') + '</span></div>' +
-              '<a href="#" data-soon="마이페이지" role="menuitem">마이페이지</a>' +
+              '<a href="mypage-project.html" role="menuitem">마이페이지</a>' +
               '<button type="button" data-op-logout role="menuitem">로그아웃</button>' +
             '</div>' +
           '</div>' +
