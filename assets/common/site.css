@@ -57,7 +57,8 @@
 .op-bell { position:relative; }
 .op-bell::after { content:""; position:absolute; top:1px; right:2px; width:6px; height:6px; border-radius:1000px; background:var(--op-red-600); }
 .op-user { position:relative; }
-.op-user > button img { display:block; width:36px; height:36px; }
+.op-user > button { display:flex; align-items:center; }
+.op-user > button img { display:block; width:24px; height:24px; } /* 지구본·알림 아이콘과 같은 24px (Figma 원본 36px) */
 .op-user > button:hover img { filter:brightness(.95); }
 .op-user-menu { position:absolute; top:calc(100% + 12px); right:0; min-width:220px; padding:8px; background:#fff; border-radius:8px;
   box-shadow:0 0 2px #00000029, 0 16px 24px #00000029; display:none; }
