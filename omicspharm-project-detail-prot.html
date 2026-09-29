@@ -86,7 +86,7 @@
     border-radius:20px;padding:3px 12px;font-size:12.5px}
 
   /* 섹션 탭 */
-  .tabs{position:sticky;top:0;z-index:20;display:flex;gap:2px;background:#fff;
+  .tabs{position:sticky;top:70px;z-index:20;display:flex;gap:2px;background:#fff;
     border-bottom:1px solid var(--line);margin:0 -46px 34px;padding:0 46px;overflow-x:auto}
   .tabs a{padding:15px 18px;font-size:14px;color:var(--ink-3);text-decoration:none;
     border-bottom:2px solid transparent;white-space:nowrap;transition:.15s}
@@ -135,21 +135,12 @@
     .fgrid{grid-template-columns:1fr}
   }
 </style>
+<link rel="stylesheet" href="assets/common/site.css">
+<script src="assets/common/site.js"></script>
 </head>
 <body>
 
-<div class="nav">
-  <div class="navbar">
-    <a class="logo" href="client-main.html">Omics<span>Pharm</span></a>
-    <a href="omicspharm-register.html">프로젝트 등록</a>
-    <a href="#">프로젝트 찾기</a>
-    <a href="#">이용 가이드</a>
-    <a href="#">상담하기</a>
-    <div class="navspace"></div>
-    <div class="navbtn"><span>마이페이지</span><span>로그아웃</span></div>
-    <div class="lang">KO</div>
-  </div>
-</div>
+<div data-op-gnb></div>
 
 <div class="page">
   <div class="back">‹</div>
@@ -166,7 +157,7 @@
     <div class="period"><div><b>모집기한</b> 2026-09-09 ~ 2026-09-23</div></div>
 
     <div class="summary">
-      <div><span class="ic">◔</span>*****(jhkim)</div>
+      <div><span class="ic">◔</span>*****(user01)</div>
       <div><span class="ic">⌁</span>샘플 : 24개</div>
       <div><span class="ic">▤</span>희망완료일 : ~2026.11.20</div>
       <div><span class="ic">₩</span>희망가격 : 500만~1,000만원</div>
@@ -279,25 +270,7 @@
   </div>
 </div>
 
-<footer>
-  <div class="fin">
-    <div class="flogo">OmicsPharm</div>
-    <div class="fgrid">
-      <div>
-        <a href="#">개인정보처리방침</a>
-        <a href="#">이용약관</a>
-        <a href="#">Insights</a>
-      </div>
-      <div>CellKey AI Co., Ltd.</div>
-      <div>
-        사업자 등록번호 695-87-01297<br>
-        <b>본사</b> 충북 청주시 흥덕구 오송읍 오송생명1로 194-41, 408호(기업연구관2)<br>
-        <b>BIO R&amp;D CENTER</b> 서울특별시 서초구 서초대로 67 성령빌딩 8층
-      </div>
-    </div>
-    <div class="copy">Copyright © 2026 CellKey AI Co., Ltd. All rights reserved.</div>
-  </div>
-</footer>
+<div data-op-footer></div>
 
 <script>
 (function(){

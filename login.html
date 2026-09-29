@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>로그인 · OmicsPharm</title>
+<!-- Figma: Signin-Empty (1109:36770) · Signin-Filled (1121:43950) · Signin-error (1136:47449) · Signin-error-callout (1136:47778) -->
+<link rel="stylesheet" href="assets/common/site.css">
+<link rel="stylesheet" href="assets/auth/auth.css">
+<script src="assets/common/site.js"></script>
+<script src="assets/auth/auth.js"></script>
+</head>
+<body>
+<div class="auth">
+  <aside data-auth-bg></aside>
+  <main class="auth-main">
+    <div class="auth-inner">
+      <form class="auth-form" id="form" novalidate>
+        <div class="auth-title"><h1>로그인</h1></div>
+        <div class="auth-body">
+          <div class="fields">
+            <div class="field" id="f-email">
+              <label for="email">Work email<span class="req">*</span></label>
+              <div class="input"><input id="email" type="email" autocomplete="username" placeholder="email@domain.com"></div>
+            </div>
+            <div class="fields" style="gap:12px">
+              <div class="field" id="f-pw">
+                <label for="pw">Password<span class="req">*</span></label>
+                <div class="input"><input id="pw" type="password" autocomplete="current-password" placeholder="Enter password"><button type="button" class="ic" data-eye aria-label="비밀번호 보기"><img src="assets/auth/ic-eye.svg" alt=""></button></div>
+              </div>
+              <div class="callout" id="callout" role="alert" hidden><span class="warn"></span>이메일 또는 비밀번호가 일치하지 않습니다. 다시 확인해주세요.</div>
+              <div class="opts">
+                <label class="check"><input type="checkbox" id="remember"><i></i>아이디저장</label>
+                <a class="link" href="find-password.html">비밀번호 찾기</a>
+              </div>
+            </div>
+          </div>
+          <button class="btn-action off" id="submit" type="submit">로그인</button>
+        </div>
+      </form>
+      <div class="alt"><span>아직 회원이 아니신가요?</span><a href="signup.html">회원가입하기</a></div>
+      <p class="demo-note">데모 계정 · <code>client@omicspharm.test</code> / <code>partner@omicspharm.test</code> / <code>admin@omicspharm.test</code> · 비밀번호 <code>Demo@1234</code></p>
+    </div>
+  </main>
+</div>
+
+<script>
+  var $ = function (s) { return document.querySelector(s); };
+  var email = $('#email'), pw = $('#pw'), btn = $('#submit'), callout = $('#callout');
+  var REMEMBER = 'op.rememberEmail';
+  try { var saved = localStorage.getItem(REMEMBER); if (saved) { email.value = saved; $('#remember').checked = true; } } catch (e) {}
+  if (AUTH.param('email')) email.value = AUTH.param('email');
+
+  function sync() { btn.classList.toggle('off', !(email.value.trim() && pw.value)); }
+  [email, pw].forEach(function (i) { i.addEventListener('input', function () { sync(); callout.hidden = true; AUTH.setError(i.closest('.field'), ''); }); });
+  sync();
+  AUTH.bindEye();
+
+  $('#form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = email.value.trim(), ok = true;
+    callout.hidden = true;
+    if (!v) { AUTH.setError($('#f-email'), '이메일을 입력해주세요.'); ok = false; }
+    else if (!AUTH.EMAIL_RE.test(v)) { AUTH.setError($('#f-email'), '올바른 이메일 형식으로 입력해주세요.'); ok = false; }
+    if (!pw.value) { AUTH.setError($('#f-pw'), '비밀번호를 입력해주세요.'); ok = false; }
+    if (!ok) { btn.classList.remove('off'); return; }
+
+    // 가입한 이메일로 회원 유형을 판별 (데모: 브라우저에 저장된 가입 정보)
+    var acc = OP.account(v);
+    if (!acc || acc.pw !== pw.value) { callout.hidden = false; return; }
+    try { if ($('#remember').checked) localStorage.setItem(REMEMBER, v); else localStorage.removeItem(REMEMBER); } catch (e2) {}
+    OP.login(v);
+    // 가입 후 첫 로그인: 추가 정보 입력으로 이어서 진행
+    if (!acc.profileDone) { location.href = 'signup-form.html?type=' + acc.role + '&step=info'; return; }
+    location.href = AUTH.param('next') || 'index.html';
+  });
+</script>
+</body>
+</html>

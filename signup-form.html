@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>회원가입 · OmicsPharm</title>
+<!-- Figma 회원가입/로그인 섹션 (254:18355)
+     클라이언트: Signup-Filled 281:23123 → email confirmation 270:22235 → 기본정보 1/2 806:5078 → 추가정보 2/2 806:5117 → 완료 1120:43157
+     분석파트너: Signup-Filled 1109:37231 → email confirmation 1109:37308 → 1/3 1109:37368 → 2/3 1109:37427 → 3/3 1117:42815 → 완료 1120:42976 -->
+<link rel="stylesheet" href="assets/common/site.css">
+<link rel="stylesheet" href="assets/auth/auth.css">
+<script src="assets/common/site.js"></script>
+<script src="assets/auth/auth.js"></script>
+</head>
+<body>
+<div class="auth">
+  <aside data-auth-bg></aside>
+
+  <!-- 1. 계정 만들기 -->
+  <main class="auth-main" data-step="account">
+    <div class="auth-inner">
+      <form class="auth-form" id="accountForm" novalidate>
+        <div class="auth-title"><h1>회원가입</h1><p class="type-label"></p></div>
+        <div class="auth-body">
+          <div class="fields">
+            <div class="fields">
+              <div class="field" id="f-email">
+                <label for="email">Work email<span class="req">*</span></label>
+                <div class="input"><input id="email" type="email" autocomplete="username" placeholder="email@domain.com"><img class="ic" id="emailOk" src="assets/auth/ic-check-circle.svg" alt="사용 가능한 이메일" hidden></div>
+              </div>
+              <div class="fields" style="gap:16px">
+                <div class="field">
+                  <label for="pw">Password<span class="req">*</span></label>
+                  <div class="input"><input id="pw" type="password" autocomplete="new-password" placeholder="Enter password"><button type="button" class="ic" data-eye aria-label="비밀번호 보기"><img src="assets/auth/ic-eye.svg" alt=""></button></div>
+                </div>
+                <ul class="rules" id="rules">
+                  <li data-r="len">8자 이상</li>
+                  <li data-r="lower">소문자 1자 이상</li>
+                  <li data-r="upper">대문자 1개 이상</li>
+                  <li data-r="num">숫자 1자 이상</li>
+                  <li data-r="sym">특수문자 1개 이상</li>
+                </ul>
+              </div>
+            </div>
+            <div class="terms">
+              <label class="check"><input type="checkbox" id="agreeAll"><i></i>모든 약관에 동의합니다.</label>
+              <div class="t"><label class="check"><input type="checkbox" class="agree" data-term="tos"><i></i><span><em>[필수]</em> 이용 약관 동의</span></label><button type="button" data-open="tos" aria-label="이용 약관 보기"><img src="assets/auth/ic-caret-right.svg" alt=""></button></div>
+              <div class="t"><label class="check"><input type="checkbox" class="agree" data-term="privacy"><i></i><span><em>[필수]</em> 개인정보 수집 및 이용 동의</span></label><button type="button" data-open="privacy" aria-label="개인정보 처리방침 보기"><img src="assets/auth/ic-caret-right.svg" alt=""></button></div>
+            </div>
+          </div>
+          <button class="btn-action off" id="startBtn" type="submit">시작하기</button>
+        </div>
+      </form>
+      <div class="alt"><span>이미 회원이신가요?</span><a href="login.html">로그인하기</a></div>
+    </div>
+  </main>
+
+  <!-- 2. 이메일 인증 -->
+  <main class="auth-main" data-step="email" hidden>
+    <a class="brand-top" href="index.html"><img src="assets/auth/logo.svg" alt="OmicsPharm" style="width:219px;height:23.5px;display:block"></a>
+    <div class="center-msg">
+      <h1>Check your email</h1>
+      <p>인증 메일이 <b class="sent-to"></b> (으)로 전송되었습니다.<br>받으신 이메일에서 인증 버튼을 클릭한 후 이어서 진행해주세요.</p>
+      <a class="btn-action" id="toLogin" href="login.html">로그인 하기</a>
+    </div>
+    <div class="resend"><b>이메일을 확인할 수 없나요? 스팸 편지함 확인 또는</b><a href="#" id="resend">이메일 다시 보내기</a></div>
+  </main>
+
+  <!-- 3. 기본정보 입력 -->
+  <main class="auth-main stepped" data-step="info" hidden>
+    <div class="steps-head"><div class="t"><span>기본정보 입력</span><span class="n"></span></div><div class="bar"><i></i></div></div>
+    <div class="auth-inner">
+      <form class="auth-form" id="infoForm" novalidate>
+        <div class="auth-title"><h1>회원가입</h1><p class="type-label"></p></div>
+        <div class="auth-body">
+          <div class="fields">
+            <div class="field"><label for="name">이름<span class="req">*</span></label><div class="input"><input id="name" required placeholder="이름" autocomplete="name"></div></div>
+            <div class="field"><label for="nick">닉네임<span class="req">*</span></label><div class="input"><input id="nick" required placeholder="닉네임"></div></div>
+            <div class="row2">
+              <div class="field"><label for="org">소속(회사)<span class="req">*</span></label><div class="input"><input id="org" required placeholder="소속" autocomplete="organization"></div></div>
+              <div class="field"><label for="dept">부서<span class="req">*</span></label><div class="input"><input id="dept" required placeholder="부서"></div></div>
+            </div>
+            <div class="field"><label for="country">국가<span class="req">*</span></label>
+              <div class="input select"><select id="country"><option>South Korea</option><option>United States</option><option>Japan</option><option>China</option><option>Other</option></select></div>
+            </div>
+          </div>
+          <button class="btn-action off" id="infoNext" type="submit">다음</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <!-- 4. (파트너) 제공 서비스 -->
+  <main class="auth-main stepped" data-step="service" hidden>
+    <div class="steps-head"><div class="t"><span>추가 정보 입력</span><span class="n"></span></div><div class="bar"><i></i></div></div>
+    <div class="auth-inner">
+      <form class="auth-form" id="serviceForm" novalidate>
+        <div class="auth-title"><h1>회원가입</h1><p class="type-label"></p></div>
+        <div class="fields" style="gap:12px">
+          <div class="notice"><b>어떤 분석을 제공하시나요?</b><p>대표 서비스 1개를 먼저 등록하면 관련 프로젝트 추천에 활용됩니다.<br>추가 서비스와 상세 정보는 가입 후 마이페이지에서 언제든 입력할 수 있습니다.</p></div>
+          <div class="auth-body">
+            <div class="fields" style="gap:20px">
+              <div class="field"><span class="label">서비스 선택<span class="req">*</span></span>
+                <div class="opts-grid" data-group="service" data-single>
+                  <button type="button" class="opt-btn on">단백체</button><button type="button" class="opt-btn">Olink</button><button type="button" class="opt-btn">대사체</button><button type="button" class="opt-btn">유전체</button><button type="button" class="opt-btn">전사체</button><button type="button" class="opt-btn">바이오의약품·ADC</button><button type="button" class="opt-btn">기타</button>
+                </div>
+              </div>
+              <div class="field"><span class="label">분석 유형<span class="req">*</span></span>
+                <div class="opts-grid" data-group="type"><button type="button" class="chip">Untargeted</button><button type="button" class="chip">Targeted</button><button type="button" class="chip">PTM</button></div>
+              </div>
+              <div class="field"><span class="label">지원 Source · 생물종<span class="req">*</span></span>
+                <div class="opts-grid" data-group="species"><button type="button" class="chip">Human</button><button type="button" class="chip">Mouse</button><button type="button" class="chip">Rat</button><button type="button" class="chip">기타</button></div>
+              </div>
+              <div class="field"><span class="label">지원 시료<span class="req">*</span></span>
+                <div class="opts-grid" data-group="sample"><button type="button" class="chip">조직</button><button type="button" class="chip">세포</button><button type="button" class="chip">혈청</button><button type="button" class="chip">혈장</button><button type="button" class="chip">전혈</button><button type="button" class="chip">CSF</button><button type="button" class="chip">CM</button><button type="button" class="chip">EV</button><button type="button" class="chip">정제단백질</button></div>
+              </div>
+              <div class="field"><span class="label">수행 상태<span class="req">*</span></span>
+                <div class="opts-grid" data-group="status" data-single><button type="button" class="chip">즉시 수행 가능</button><button type="button" class="chip">사전협의 필요</button></div>
+              </div>
+              <div class="field"><span class="label">표준 소요 기간<span class="req">*</span></span>
+                <div class="stepper-row">
+                  <div class="stepper" data-min="1" data-max="365"><button type="button" data-d="-1" aria-label="줄이기"><img src="assets/auth/ic-minus.svg" alt=""></button><output id="dayFrom">7</output><button type="button" data-d="1" aria-label="늘리기"><img src="assets/auth/ic-plus.svg" alt=""></button></div>
+                  <span>~</span>
+                  <div class="stepper" data-min="1" data-max="365"><button type="button" data-d="-1" aria-label="줄이기"><img src="assets/auth/ic-minus.svg" alt=""></button><output id="dayTo">14</output><button type="button" data-d="1" aria-label="늘리기"><img src="assets/auth/ic-plus.svg" alt=""></button></div>
+                  <span>영업일</span>
+                </div>
+                <p class="help">일반적인 의뢰 기준입니다. 실제 일정은 내용에 따라 협의합니다.</p>
+              </div>
+            </div>
+            <div class="btn-row"><button type="button" class="btn-prev" data-prev>이전</button><button class="btn-action" type="submit">다음</button></div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <!-- 5. 기관 정보 -->
+  <main class="auth-main stepped" data-step="business" hidden>
+    <div class="steps-head"><div class="t"><span>추가 정보 입력</span><span class="n"></span></div><div class="bar"><i></i></div></div>
+    <div class="auth-inner">
+      <form class="auth-form" id="bizForm" novalidate>
+        <div class="auth-title"><h1>회원가입</h1><p class="type-label"></p></div>
+        <div class="auth-body">
+          <div class="fields">
+            <div class="row2">
+              <div class="field"><label for="ceo">대표자명</label><div class="input"><input id="ceo" placeholder="이름"></div></div>
+              <div class="field"><label for="bizno">사업자번호</label><div class="input"><input id="bizno" inputmode="numeric" placeholder="사업자번호"></div></div>
+            </div>
+            <div class="field"><label for="addr">주소</label>
+              <div class="with-btn"><div class="input"><input id="addr" placeholder="예) 세화로 168, 도산대로 33"></div><button type="button" class="btn-outline" data-soon="주소 검색">검색</button></div>
+            </div>
+            <div class="field" id="f-file">
+              <span class="label">사업자등록증<span class="req partner-only">*</span><img class="info client-only" src="assets/auth/ic-warning-circle.svg" alt="안내" tabindex="0"><span class="tip client-only">해당 파일은 '프로젝트 등록'시 업로드가 필수입니다.</span></span>
+              <label class="input file"><span id="fileName">파일 선택</span><img class="ic" src="assets/auth/ic-paperclip.svg" alt=""><input type="file" id="file" accept=".pdf,.jpg,.jpeg,.png"></label>
+              <p class="help">첨부 파일은 최대 1개, 30MB까지 등록 가능합니다.</p>
+            </div>
+          </div>
+          <div class="btn-row"><button type="button" class="btn-prev" data-prev>이전</button><button class="btn-action" type="submit">가입완료</button></div>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <!-- 6. 완료 -->
+  <main class="auth-main" data-step="done" hidden>
+    <div class="done">
+      <div class="ok"><i></i></div>
+      <h1>가입이 완료되었습니다.</h1>
+      <p class="client-only">이제 분석 의뢰를 등록하고 적합한 분석기관을 추천받을 수 있습니다.<br>등록하신 의뢰는 담당 매니저가 검토한 뒤 후보 기관을 안내해 드립니다.</p>
+      <p class="partner-only">등록하신 제공 서비스를 기준으로 적합한 의뢰 프로젝트를 추천해드립니다.<br>마이페이지에서 아래 항목을 채우시면 추천 정확도가 높아집니다.</p>
+      <ul class="partner-only"><li>세부 분석 역량</li><li>보유 기술 및 장비</li><li>제공 결과 및 산출물 형식</li><li>제공 서비스 추가 등록 및 대표 서비스 순위 지정</li></ul>
+      <a class="btn-action client-only" href="index.html#projects">프로젝트 둘러보기</a>
+      <a class="btn-action partner-only" href="#" data-soon="마이페이지">마이페이지로 이동</a>
+    </div>
+  </main>
+</div>
+
+<!-- 약관 모달 (modal 1074:31259 / 1088:36004) -->
+<div class="modal-dim" id="modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button type="button" class="close" data-close aria-label="닫기">×</button>
+    <h2 id="modalTitle"></h2>
+    <div class="body">약관 전문은 준비 중입니다.</div>
+    <button type="button" class="btn-action" id="modalAgree">동의하기</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
+  var type = AUTH.param('type') === 'partner' ? 'partner' : 'client';
+  var FLOW = type === 'partner' ? ['info', 'service', 'business'] : ['info', 'business'];
+  var PENDING = 'op.pendingSignup';
+
+  $$('.type-label').forEach(function (p) { p.textContent = type === 'partner' ? 'Analysis Partner' : 'Client'; });
+  $$(type === 'partner' ? '.client-only' : '.partner-only').forEach(function (el) { el.hidden = true; });
+
+  function show(step) {
+    $$('[data-step]').forEach(function (m) { m.hidden = m.getAttribute('data-step') !== step; });
+    var i = FLOW.indexOf(step);
+    if (i > -1) {
+      var head = $('[data-step="' + step + '"] .steps-head');
+      $('.n', head).textContent = (i + 1) + '/' + FLOW.length;
+      $('.bar i', head).style.width = ((i + 1) / FLOW.length * 100) + '%';
+    }
+    window.scrollTo(0, 0);
+    var u = new URL(location.href); u.searchParams.set('step', step); history.replaceState(null, '', u);
+  }
+  function next(step) { var i = FLOW.indexOf(step); show(i + 1 < FLOW.length ? FLOW[i + 1] : 'done'); }
+  function prev(step) { var i = FLOW.indexOf(step); if (i > 0) show(FLOW[i - 1]); }
+
+  /* ── 1. 계정 ── */
+  var email = $('#email'), pw = $('#pw'), start = $('#startBtn');
+  var RULES = { len: /.{8,}/, lower: /[a-z]/, upper: /[A-Z]/, num: /[0-9]/, sym: /[^A-Za-z0-9]/ };
+  function emailState() {
+    var v = email.value.trim();
+    if (!v) return '';
+    if (!AUTH.EMAIL_RE.test(v)) return '올바른 이메일 형식으로 입력해주세요.';
+    if (OP.account(v)) return '이미 가입된 이메일입니다.';
+    return 'ok';
+  }
+  function syncAccount() {
+    var es = emailState();
+    $('#emailOk').hidden = es !== 'ok';
+    var pwOk = true;
+    $$('#rules li').forEach(function (li) { var ok = RULES[li.dataset.r].test(pw.value); li.classList.toggle('ok', ok); pwOk = pwOk && ok; });
+    var agreed = $$('.agree').every(function (c) { return c.checked; });
+    $('#agreeAll').checked = agreed;
+    start.classList.toggle('off', !(es === 'ok' && pwOk && agreed));
+  }
+  email.addEventListener('input', function () { AUTH.setError($('#f-email'), ''); syncAccount(); });
+  email.addEventListener('blur', function () { var es = emailState(); AUTH.setError($('#f-email'), es && es !== 'ok' ? es : ''); });
+  pw.addEventListener('input', syncAccount);
+  $('#agreeAll').addEventListener('change', function () { var on = this.checked; $$('.agree').forEach(function (c) { c.checked = on; }); syncAccount(); });
+  $$('.agree').forEach(function (c) { c.addEventListener('change', syncAccount); });
+  AUTH.bindEye();
+  $('#accountForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var es = emailState();
+    if (es !== 'ok') { AUTH.setError($('#f-email'), es || '이메일을 입력해주세요.'); return; }
+    if (start.classList.contains('off')) { OP.toast('비밀번호 조건과 필수 약관 동의를 확인해주세요.'); return; }
+    var v = email.value.trim().toLowerCase();
+    OP.saveAccount(v, { role: type, pw: pw.value, profileDone: false });
+    try { sessionStorage.setItem(PENDING, v); } catch (e2) {}
+    $('.sent-to').textContent = v;
+    $('#toLogin').href = 'login.html?email=' + encodeURIComponent(v);
+    show('email');
+  });
+
+  /* 약관 모달 */
+  var modal = $('#modal'), openTerm = null;
+  var TITLES = { tos: '[필수] 서비스 이용약관', privacy: '[필수] 개인정보 처리방침' };
+  $$('[data-open]').forEach(function (b) { b.addEventListener('click', function () { openTerm = b.dataset.open; $('#modalTitle').textContent = TITLES[openTerm]; modal.hidden = false; }); });
+  function closeModal() { modal.hidden = true; }
+  $('[data-close]', modal).addEventListener('click', closeModal);
+  modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+  $('#modalAgree').addEventListener('click', function () { $('.agree[data-term="' + openTerm + '"]').checked = true; syncAccount(); closeModal(); });
+
+  /* ── 2. 이메일 ── */
+  $('#resend').addEventListener('click', function (e) { e.preventDefault(); OP.toast('인증 메일을 다시 보냈습니다. (데모)'); });
+
+  /* ── 3. 기본정보 ── */
+  var req = $$('#infoForm input[required]');
+  function syncInfo() { $('#infoNext').classList.toggle('off', !req.every(function (i) { return i.value.trim(); })); }
+  req.forEach(function (i) { i.addEventListener('input', syncInfo); });
+  $('#infoForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if ($('#infoNext').classList.contains('off')) { OP.toast('필수 항목을 모두 입력해주세요.'); return; }
+    next('info');
+  });
+
+  /* ── 4. 서비스 ── */
+  $$('.opts-grid').forEach(function (g) {
+    g.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      if (g.hasAttribute('data-single')) $$('button', g).forEach(function (x) { x.classList.toggle('on', x === b); });
+      else b.classList.toggle('on');
+    });
+  });
+  $$('.stepper').forEach(function (s) {
+    s.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      var o = $('output', s), v = +o.value + +b.dataset.d;
+      o.value = Math.min(+s.dataset.max, Math.max(+s.dataset.min, v));
+      var from = $('#dayFrom'), to = $('#dayTo');
+      if (+from.value > +to.value) { if (o === from) to.value = from.value; else from.value = to.value; }
+    });
+  });
+  $('#serviceForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var missing = $$('#serviceForm .opts-grid').some(function (g) { return !$('.on', g); });
+    if (missing) { OP.toast('필수 항목을 모두 선택해주세요.'); return; }
+    next('service');
+  });
+
+  /* ── 5. 기관 정보 ── */
+  $('#file').addEventListener('change', function () {
+    var f = this.files[0];
+    $('#fileName').textContent = f ? f.name : '파일 선택';
+    $('#fileName').parentNode.classList.toggle('has', !!f);
+    AUTH.setError($('#f-file'), '');
+  });
+  $('#bizForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (type === 'partner' && !$('#file').files.length) { AUTH.setError($('#f-file'), '사업자등록증을 첨부해주세요.'); return; }
+    var s = OP.session(), who = (s && s.email) || (function () { try { return sessionStorage.getItem(PENDING); } catch (e2) { return null; } })();
+    if (who) { OP.saveAccount(who, { profileDone: true, name: $('#name').value.trim() }); OP.login(who); }
+    show('done');
+  });
+
+  $$('[data-prev]').forEach(function (b) { b.addEventListener('click', function () { prev(b.closest('[data-step]').dataset.step); }); });
+
+  syncAccount(); syncInfo();
+  var initial = AUTH.param('step');
+  show(initial && (FLOW.indexOf(initial) > -1 || initial === 'email' || initial === 'done') ? initial : 'account');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+/* OmicsPharm 공통 레이아웃: 헤더(GNB) · 푸터 · 토스트
+   Figma: 04_Resource/Component — Header Navigation (130:27973), Footer (458:31963), toast (1120:43102)
+   기존 페이지 CSS와 충돌하지 않도록 모든 클래스에 op- 접두사를 쓴다. */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+:root {
+  --op-teal-50:#edfefa; --op-teal-500:#00bba6; --op-teal-600:#009788; --op-teal-700:#00786e;
+  --op-bg-green:#f6faf9; --op-gray-50:#fafafa; --op-gray-100:#f5f5f5; --op-gray-200:#e5e5e5; --op-gray-300:#d4d4d4;
+  --op-gray-400:#a3a3a3; --op-gray-500:#737373; --op-gray-600:#525252; --op-gray-700:#404040; --op-red-600:#f00011;
+  --op-shadow2:0 4px 8px #00000014, 0 0 2px #0000000a;
+  --op-toast:#0f172acc;
+  --op-font:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif;
+}
+
+/* ── Header Navigation ── */
+.op-gnb { position:sticky; top:0; z-index:50; height:70px; padding:0 60px; background:rgba(255,255,255,.7); backdrop-filter:blur(12px);
+  font-family:var(--op-font); color:#000; -webkit-font-smoothing:antialiased; box-sizing:border-box; }
+.op-gnb:not(.is-login) { border-bottom:1px solid var(--op-gray-200); }
+.op-gnb *, .op-footer * { box-sizing:border-box; }
+.op-gnb a, .op-footer a { color:inherit; text-decoration:none; }
+.op-gnb button { font:inherit; border:0; background:none; padding:0; cursor:pointer; color:inherit; }
+.op-gnb-in { max-width:1320px; height:100%; margin:0 auto; display:flex; align-items:center; justify-content:space-between; }
+.op-gnb-logo img { display:block; width:219px; height:23px; }
+.op-gnb-menu { display:flex; gap:48px; height:100%; align-items:center; }
+.op-gnb-menu a { display:flex; align-items:center; gap:8px; height:70px; font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; }
+.op-gnb-menu a:hover, .op-gnb-menu a.on { color:var(--op-teal-600); }
+.op-gnb-menu img { width:16px; height:16px; }
+.op-gnb-cta { display:flex; align-items:center; justify-content:flex-end; gap:24px; }
+.op-gnb.is-login .op-gnb-cta { width:202px; }
+.op-gnb-cta .op-ic24 { display:block; width:24px; height:24px; }
+.op-gnb-login { display:inline-flex; align-items:center; height:32px; font-size:16px; font-weight:500; line-height:22px; }
+.op-gnb-login:hover { color:var(--op-gray-700); }
+.op-gnb-join { display:inline-flex; align-items:center; justify-content:center; height:48px; min-width:84px; padding:0 16px; border-radius:8px;
+  background:#000; color:#fff !important; font-size:16px; font-weight:500; line-height:22px; }
+.op-gnb-join:hover { background:var(--op-gray-600); }
+.op-bell { position:relative; }
+.op-bell::after { content:""; position:absolute; top:1px; right:2px; width:6px; height:6px; border-radius:1000px; background:var(--op-red-600); }
+.op-user { position:relative; }
+.op-user > button img { display:block; width:36px; height:36px; }
+.op-user > button:hover img { filter:brightness(.95); }
+.op-user-menu { position:absolute; top:calc(100% + 12px); right:0; min-width:220px; padding:8px; background:#fff; border-radius:8px;
+  box-shadow:0 0 2px #00000029, 0 16px 24px #00000029; display:none; }
+.op-user.open .op-user-menu { display:block; }
+.op-user-menu .who { padding:10px 12px 12px; border-bottom:1px solid var(--op-gray-200); margin-bottom:6px; }
+.op-user-menu .who b { display:block; font-size:14px; font-weight:500; line-height:20px; word-break:break-all; }
+.op-user-menu .who span { display:inline-block; margin-top:6px; padding:2px 8px; border-radius:8px; border:1px solid var(--op-teal-600);
+  color:var(--op-teal-600); font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; }
+.op-user-menu a, .op-user-menu button { display:block; width:100%; text-align:left; padding:10px 12px; border-radius:4px; font-size:14px; line-height:20px; }
+.op-user-menu a:hover, .op-user-menu button:hover { background:var(--op-gray-100); }
+
+/* ── Footer ── */
+.op-footer { background:var(--op-bg-green); border-top:1px solid var(--op-gray-300); padding:0 60px; font-family:var(--op-font); color:#000; -webkit-font-smoothing:antialiased; }
+.op-footer-in { max-width:1320px; margin:0 auto; display:flex; flex-direction:column; gap:24px; padding:40px 0; }
+.op-f-top { display:flex; align-items:flex-end; justify-content:space-between; }
+.op-f-left { display:flex; flex-direction:column; gap:32px; }
+.op-f-left > img { display:block; width:219px; height:23px; }
+.op-f-info { display:flex; flex-direction:column; gap:8px; font-size:14px; line-height:20px; }
+.op-f-info div { display:flex; gap:8px; }
+.op-f-info b { font-weight:500; }
+.op-f-social { display:flex; gap:20px; align-items:center; }
+.op-f-social .s1 { position:relative; display:block; width:24px; height:24px; border-radius:2px; background:#000; }
+.op-f-social .s1 img { position:absolute; left:5px; top:5.5px; width:13px; height:13px; }
+.op-f-social .s2 { display:block; width:24px; height:24px; }
+.op-f-line { height:0; box-shadow:0 0 0 .5px var(--op-gray-300); }
+.op-f-bottom { display:flex; align-items:center; justify-content:space-between; height:25px; font-size:12px; line-height:18px; letter-spacing:-.12px; }
+.op-f-bottom nav { display:flex; gap:24px; }
+
+/* ── Toast ── */
+.op-toast { position:fixed; left:50%; bottom:40px; transform:translate(-50%, 20px); opacity:0; pointer-events:none; z-index:100; padding:12px 20px;
+  border-radius:8px; background:var(--op-toast); color:#fff; font-family:var(--op-font); font-size:14px; font-weight:500; line-height:20px; transition:opacity .2s, transform .2s; }
+.op-toast.show { opacity:1; transform:translate(-50%, 0); }
+
+@media (max-width:1180px) {
+  .op-gnb, .op-footer { padding-left:24px; padding-right:24px; }
+  .op-gnb-menu { gap:24px; }
+}
+@media (max-width:900px) {
+  .op-gnb-menu { display:none; }
+  .op-gnb.is-login .op-gnb-cta { width:auto; }
+}
+@media (max-width:760px) {
+  .op-gnb, .op-footer { padding-left:16px; padding-right:16px; }
+  .op-gnb-cta .op-globe { display:none; }
+  .op-f-top { flex-direction:column; align-items:flex-start; gap:20px; }
+  .op-f-bottom { flex-direction:column; align-items:flex-start; height:auto; gap:8px; }
+}
