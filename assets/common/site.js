@@ -65,7 +65,7 @@
     service:   { label: '서비스 소개', items: ['분석 서비스 소개', '이용방법'] },
     support:   { label: '고객지원', items: ['문의하기', 'FAQ'] }
   };
-  var PAGES = { '문의하기': 'contact.html', 'FAQ': 'faq.html' };
+  var PAGES = { '문의하기': 'contact.html', 'FAQ': 'faq.html', 'Insight': 'blog.html' };
   function link(t) { return PAGES[t] ? 'href="' + PAGES[t] + '"' : 'href="#" data-soon="' + t + '"'; }
   function dropdown(key) {
     var m = MENUS[key];

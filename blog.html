@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png">
+<title>Insights · OmicsPharm</title>
+<!-- 커뮤니티 > Insight (Figma 시안 없음 — Upstage Blog 레이아웃 참고, 탭은 FAQ 탭 컴포넌트)
+     글 목록·썸네일은 현재 홈페이지 Insights(/newsletter) 게시글 10개. 상세는 기존 홈페이지 글로 새 창 연결
+     ?cat=news|insight  탭 선택 / 한 페이지 12개 -->
+<link rel="stylesheet" href="assets/common/site.css?v=20260930c">
+<script src="assets/common/site.js?v=20260930c"></script>
+<style>
+  :root {
+    --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
+    --gray-50:#fafafa; --gray-100:#f5f5f5; --gray-200:#e5e5e5; --gray-300:#d4d4d4; --gray-400:#a3a3a3; --gray-500:#737373; --gray-600:#525252; --gray-700:#404040;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#fff; color:#000; font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; }
+  button { font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
+  .in { max-width:1320px; margin:0 auto; }
+
+  .page-head { padding:64px 60px 32px; }
+  .page-head h1 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; }
+  .page-head p { margin-top:12px; font-size:16px; line-height:22px; color:var(--gray-600); }
+
+  /* 탭 (FAQ 탭과 동일) */
+  .tabs-wrap { padding:0 60px; background:#fff; position:sticky; top:70px; z-index:5; }
+  .tabs { display:flex; gap:32px; }
+  .tabs button { position:relative; flex:none; white-space:nowrap; height:60px; padding:0 4px; font-size:18px; font-weight:500; line-height:24px; color:var(--gray-500); }
+  .tabs button:hover { color:#000; }
+  .tabs button.on { color:#000; font-weight:600; }
+  .tabs button.on::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--teal-600); }
+  .tabs button span { margin-left:4px; font-size:14px; font-weight:500; color:var(--gray-400); }
+
+  .body { padding:32px 60px 80px; }
+  .total { font-size:16px; font-weight:500; line-height:22px; color:var(--gray-700); }
+  .total b { color:var(--teal-600); }
+
+  /* 글 카드 */
+  .posts { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:32px 24px; margin-top:20px; }
+  .post { display:flex; flex-direction:column; border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; background:#fff; transition:border-color .15s, box-shadow .15s; }
+  .post:hover { border-color:var(--teal-500); box-shadow:0 4px 8px #00000014, 0 0 2px #0000000a; }
+  .post .thumb { position:relative; aspect-ratio:1 / 1; overflow:hidden; background:var(--gray-100); border-bottom:1px solid var(--gray-200); }
+  .post .thumb img { width:100%; height:100%; object-fit:cover; transition:transform .3s; }
+  .post .thumb img.wide { object-fit:contain; background:#fff; }
+  .post:hover .thumb img { transform:scale(1.03); }
+  .post .txt { display:flex; flex-direction:column; gap:10px; flex:1; padding:16px 16px 20px; }
+  .badge { align-self:flex-start; display:inline-flex; align-items:center; padding:2px 8px; border:1px solid var(--teal-600); border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; color:var(--teal-600); white-space:nowrap; }
+  .post h3 { font-size:17px; font-weight:600; line-height:25px; letter-spacing:-.17px; word-break:keep-all; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+  .post:hover h3 { color:var(--teal-700); }
+  .post .meta { margin-top:auto; display:flex; align-items:center; gap:6px; font-size:13px; line-height:18px; color:var(--gray-500); }
+  .post .meta i { width:2px; height:2px; border-radius:50%; background:var(--gray-400); }
+
+  /* 페이지네이션 (프로젝트 찾기와 동일) */
+  .pager { display:flex; justify-content:center; gap:4px; margin-top:48px; }
+  .pager button { width:40px; height:40px; padding:8px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:500; line-height:22px; color:#a8a29e; }
+  .pager button:hover:not(:disabled):not(.on) { background:var(--gray-50); color:var(--gray-700); }
+  .pager button.on { background:var(--teal-600); border-color:var(--teal-600); color:#fff; }
+  .pager button:disabled { opacity:.4; cursor:default; }
+  .pager img { width:20px; height:20px; }
+
+  @media (max-width:1180px) {
+    .page-head, .tabs-wrap, .body { padding-left:24px; padding-right:24px; }
+    .posts { grid-template-columns:repeat(3, minmax(0,1fr)); }
+  }
+  @media (max-width:900px) { .posts { grid-template-columns:repeat(2, minmax(0,1fr)); } }
+  @media (max-width:640px) {
+    .page-head { padding:40px 16px 20px; }
+    .page-head h1 { font-size:28px; line-height:38px; }
+    .page-head p { font-size:14px; line-height:20px; }
+    .tabs-wrap { padding:0 16px; }
+    .tabs { gap:20px; overflow-x:auto; scrollbar-width:none; }
+    .tabs::-webkit-scrollbar { display:none; }
+    .tabs button { height:52px; font-size:16px; }
+    .body { padding:20px 16px 56px; }
+    .posts { gap:16px 8px; margin-top:12px; }
+    .post .txt { gap:8px; padding:12px 12px 14px; }
+    .post h3 { font-size:14px; line-height:20px; letter-spacing:-.14px; }
+    .post .meta { font-size:12px; }
+    .post .meta .by, .post .meta i { display:none; }
+    .pager { margin-top:32px; flex-wrap:wrap; }
+  }
+</style>
+</head>
+<body>
+<div data-op-gnb="community"></div>
+
+<section class="page-head"><div class="in">
+  <h1>Insights</h1>
+  <p>OmicsPharm의 최신 이야기를 나눕니다.</p>
+</div></section>
+
+<nav class="tabs-wrap" aria-label="카테고리"><div class="in tabs" role="tablist" id="tabs"></div></nav>
+
+<main class="body"><div class="in">
+  <p class="total" id="total"></p>
+  <div class="posts" id="posts"></div>
+  <nav class="pager" id="pager" aria-label="페이지"></nav>
+</div></main>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var PER = 12;
+  var SRC = 'https://www.omicspharm.com/newsletter?tpf=board/view&board_code=2&code=';
+  // 현재 홈페이지 Insights 게시글 (제목 앞 [2026 …] 말머리는 카테고리 배지로 표시)
+  var CATS = [['all', '전체'], ['news', 'OmicsPharm 뉴스'], ['insight', 'AI 인사이트']];
+  var POSTS = [
+    [17, 'news',    '2026.06.02', 'jpg', 'CellKey AI의 OmicsPharm - NIPA XaaS 선도모델 개발사업 선정'],
+    [16, 'insight', '2026.04.23', 'jpg', '혈액 한 방울로 심장병을 15년 전에 알 수 있다고요?'],
+    [15, 'insight', '2026.04.01', 'png', '멀티오믹스 AI가 암 진단을 바꾸는 방식 : 비침습 진단과 조기 예측의 시대'],
+    [14, 'insight', '2026.03.31', 'png', '불완전한 멀티오믹스 데이터, AI로 어디까지 ‘복구’할 수 있을까?'],
+    [13, 'insight', '2026.03.31', 'png', "멀티오믹스와 AI, '디지털 트윈'의 현실적인 시작점"],
+    [11, 'insight', '2026.03.31', 'png', '멀티오믹스 AI 리스크 모델, 언제부터 임상에서 써도 되는 수준이 될까?'],
+    [10, 'insight', '2026.03.31', 'png', '멀티오믹스 AI, 실제 R&D 워크플로우에서는 이렇게 쓰인다!'],
+    [9,  'insight', '2026.03.31', 'png', 'AI를 통한 멀티오믹스 분석, 실제로 어느 정도 성과를 내고 있을까?'],
+    [8,  'insight', '2026.03.31', 'png', "멀티오믹스에 왜 이제는 'AI'가 필수인가"],
+    [7,  'insight', '2026.03.31', 'png', 'AI 멀티오믹스로 코호트 2배 확대하는 법']
+  ];
+  var LABEL = { news: 'OmicsPharm 뉴스', insight: 'AI 인사이트' };
+  var P = new URLSearchParams(location.search);
+  var state = { cat: LABEL[P.get('cat')] ? P.get('cat') : 'all', page: 1 };
+
+  function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+  function count(c) { return c === 'all' ? POSTS.length : POSTS.filter(function (p) { return p[1] === c; }).length; }
+
+  function render() {
+    $('#tabs').innerHTML = CATS.map(function (c) {
+      var on = c[0] === state.cat;
+      return '<button type="button" role="tab" aria-selected="' + on + '" data-cat="' + c[0] + '"' + (on ? ' class="on"' : '') + '>' + c[1] + '<span>' + count(c[0]) + '</span></button>';
+    }).join('');
+    var list = POSTS.filter(function (p) { return state.cat === 'all' || p[1] === state.cat; });
+    var pages = Math.max(1, Math.ceil(list.length / PER));
+    if (state.page > pages) state.page = pages;
+    $('#total').innerHTML = '전체 <b>' + list.length + '</b>개';
+    $('#posts').innerHTML = list.slice((state.page - 1) * PER, state.page * PER).map(function (p) {
+      return '<a class="post" href="' + SRC + p[0] + '" target="_blank" rel="noopener">' +
+        '<div class="thumb"><img src="assets/insight/post-' + p[0] + '.' + p[3] + '" alt="" loading="lazy"></div>' +
+        '<div class="txt"><span class="badge">' + LABEL[p[1]] + '</span><h3>' + esc(p[4]) + '</h3>' +
+        '<p class="meta"><span class="by">OmicsPharm</span><i></i><span>' + p[2] + '</span></p></div></a>';
+    }).join('');
+    // 가로로 긴 썸네일은 잘리지 않게 전체 표시
+    [].forEach.call(document.querySelectorAll('.thumb img'), function (img) {
+      var fit = function () { if (img.naturalWidth / img.naturalHeight > 1.25) img.classList.add('wide'); };
+      if (img.complete) fit(); else img.addEventListener('load', fit);
+    });
+    var html = '', btn = function (p, ic, label, dis) { return '<button type="button" data-p="' + p + '" aria-label="' + label + '"' + (dis ? ' disabled' : '') + '><img src="assets/find/ic-' + ic + '.svg" alt=""></button>'; };
+    var start = Math.max(1, Math.min(state.page - 2, pages - 4)), end = Math.min(pages, start + 4);
+    html += btn(1, 'caret-double-left', '첫 페이지', state.page === 1) + btn(state.page - 1, 'caret-left', '이전 페이지', state.page === 1);
+    for (var i = start; i <= end; i++) html += '<button type="button" data-p="' + i + '"' + (i === state.page ? ' class="on" aria-current="page"' : '') + '>' + i + '</button>';
+    html += btn(state.page + 1, 'caret-right', '다음 페이지', state.page === pages) + btn(pages, 'caret-double-right', '마지막 페이지', state.page === pages);
+    $('#pager').innerHTML = html;
+  }
+
+  $('#tabs').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-cat]'); if (!b || b.dataset.cat === state.cat) return;
+    state.cat = b.dataset.cat; state.page = 1;
+    var u = new URL(location.href); if (state.cat === 'all') u.searchParams.delete('cat'); else u.searchParams.set('cat', state.cat); history.replaceState(null, '', u);
+    render();
+  });
+  $('#pager').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b || b.disabled) return;
+    state.page = +b.dataset.p; render(); $('.tabs-wrap').scrollIntoView({ behavior: 'smooth' });
+  });
+  render();
+})();
+</script>
+</body>
+</html>
