@@ -8,9 +8,9 @@
 <!-- 커뮤니티 > Insight (Figma 시안 없음 — Upstage Blog 레이아웃 참고, 탭은 FAQ 탭 컴포넌트)
      글 목록은 현재 홈페이지 Insights(/newsletter) 게시글 10개 (assets/insight/posts.js). 카드 → blog-post.html?id=
      ?cat=news|insight  탭 선택 / 한 페이지 12개 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20260930x">
-<script src="assets/common/site.js?v=20260930x"></script>
-<script src="assets/insight/posts.js?v=20260930x"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20260930y">
+<script src="assets/common/site.js?v=20260930y"></script>
+<script src="assets/insight/posts.js?v=20260930y"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -27,7 +27,7 @@
   .page-head h1 { font-size:36px; font-weight:700; line-height:46px; letter-spacing:-.36px; }
 
   /* 탭 (FAQ 탭과 동일) */
-  .tabs-wrap { padding:0 60px; background:#fff; position:sticky; top:70px; z-index:5; }
+  .tabs-wrap { padding:0 60px; background:#fff; }
   .tabs { display:flex; gap:32px; }
   .tabs button { position:relative; flex:none; white-space:nowrap; height:60px; padding:0 4px; font-size:18px; font-weight:500; line-height:24px; color:var(--gray-500); }
   .tabs button:hover { color:#000; }
@@ -35,21 +35,10 @@
   .tabs button.on::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--teal-600); }
 
   .body { padding:32px 60px 80px; }
-  .total { font-size:16px; font-weight:500; line-height:22px; color:var(--gray-700); }
-  .total b { color:var(--teal-600); }
-  .lhead { display:flex; align-items:center; justify-content:space-between; gap:16px; }
-  .search { display:flex; align-items:center; gap:4px; width:320px; height:40px; padding:0 4px 0 16px; background:#fff; border:1px solid var(--gray-300); border-radius:8px; }
-  .search:focus-within { border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
-  .search input { flex:1; min-width:0; border:0; outline:0; background:none; font:inherit; font-size:14px; line-height:20px; }
-  .search input::placeholder { color:var(--gray-400); }
-  .search input::-webkit-search-cancel-button { display:none; }
-  .search button { flex:none; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border:0; border-radius:6px; background:none; cursor:pointer; }
-  .search button:hover { background:var(--gray-100); }
-  .search img { width:20px; height:20px; }
   .empty { grid-column:1 / -1; padding:80px 0; text-align:center; font-size:16px; line-height:24px; color:var(--gray-500); }
 
   /* 글 카드 */
-  .posts { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:32px 20px; margin-top:20px; }
+  .posts { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:32px 20px; }
   .post { display:flex; flex-direction:column; border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; background:#fff; transition:border-color .15s, box-shadow .15s; }
   .post:hover { border-color:var(--teal-500); box-shadow:0 4px 8px #00000014, 0 0 2px #0000000a; }
   .post .thumb { position:relative; aspect-ratio:427 / 260; overflow:hidden; background:var(--gray-100); }
@@ -83,10 +72,8 @@
     .tabs::-webkit-scrollbar { display:none; }
     .tabs button { height:52px; font-size:16px; }
     .body { padding:20px 16px 56px; }
-    .posts { grid-template-columns:1fr; gap:16px; margin-top:12px; }
-    .lhead { flex-direction:column-reverse; align-items:stretch; gap:12px; }
-    .search { width:100%; }
-    .pager { margin-top:32px; flex-wrap:wrap; }
+    .posts { grid-template-columns:1fr; gap:16px; }
+        .pager { margin-top:32px; flex-wrap:wrap; }
   }
 </style>
 </head>
@@ -100,10 +87,6 @@
 <nav class="tabs-wrap" aria-label="카테고리"><div class="in tabs" role="tablist" id="tabs"></div></nav>
 
 <main class="body"><div class="in">
-  <div class="lhead">
-    <p class="total" id="total"></p>
-    <form class="search" id="search" role="search"><input type="search" id="q" placeholder="검색어를 입력하세요." aria-label="Insights 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>
-  </div>
   <div class="posts" id="posts"></div>
   <nav class="pager" id="pager" aria-label="페이지"></nav>
 </div></main>
@@ -133,7 +116,6 @@
     });
     var pages = Math.max(1, Math.ceil(list.length / PER));
     if (state.page > pages) state.page = pages;
-    $('#total').innerHTML = '전체 <b>' + list.length + '</b>개';
     $('#posts').innerHTML = list.slice((state.page - 1) * PER, state.page * PER).map(function (p) {
       return '<a class="post" href="blog-post.html?id=' + p.id + '">' +
         '<div class="thumb"><span class="badge">' + LABEL[p.cat] + '</span><img src="' + (p.thumb || 'assets/insight/thumb-' + p.id + '.jpg') + '" alt="" loading="lazy"></div>' +
@@ -154,8 +136,6 @@
     var u = new URL(location.href); if (state.cat === 'all') u.searchParams.delete('cat'); else u.searchParams.set('cat', state.cat); history.replaceState(null, '', u);
     render();
   });
-  $('#search').addEventListener('submit', function (e) { e.preventDefault(); state.q = $('#q').value; state.page = 1; render(); });
-  $('#q').addEventListener('input', function () { if (!this.value && state.q) { state.q = ''; state.page = 1; render(); } });
   $('#pager').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b || b.disabled) return;
     state.page = +b.dataset.p; render(); $('.tabs-wrap').scrollIntoView({ behavior: 'smooth' });
