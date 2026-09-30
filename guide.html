@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png">
+<title>이용방법 · OmicsPharm</title>
+<!-- 서비스 소개 > 이용방법 (Figma 시안 없음 — 현재 홈페이지 /Instructions-for-use 내용 그대로, 분석 서비스 소개 섹션은 service.html로 분리되어 제외)
+     하단 CTA 배너는 메인(index.html) 하단 배너와 동일 -->
+<link rel="stylesheet" href="assets/common/site.css?v=20260930o">
+<script src="assets/common/site.js?v=20260930o"></script>
+<style>
+  :root {
+    --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9; --white:#fff;
+    --gray-50:#fafafa; --gray-100:#f5f5f5; --gray-200:#e5e5e5; --gray-300:#d4d4d4; --gray-400:#a3a3a3; --gray-500:#737373; --gray-600:#525252; --gray-700:#404040;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#fff; color:#000; font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; }
+  ul, ol { list-style:none; }
+  .in { max-width:1320px; margin:0 auto; }
+  .ico { display:inline-block; flex:none; background:currentColor; -webkit-mask:var(--i) center/contain no-repeat; mask:var(--i) center/contain no-repeat; }
+
+  /* 상단 */
+  .page-head { padding:64px 60px 56px; }
+  .eyebrow { font-size:14px; font-weight:600; line-height:20px; letter-spacing:.04em; color:var(--teal-600); }
+  .page-head h1 { margin-top:12px; font-size:36px; font-weight:700; line-height:48px; letter-spacing:-.36px; word-break:keep-all; }
+  .page-head h1 em { font-style:normal; color:var(--teal-600); }
+  .page-head p { margin-top:16px; font-size:17px; line-height:28px; color:var(--gray-600); word-break:keep-all; }
+
+  .sec { padding:80px 60px; }
+  .sec.tint { background:var(--bg-green); }
+  .sec-head h2 { margin-top:8px; font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; word-break:keep-all; }
+  .sec-head p { margin-top:12px; font-size:16px; line-height:26px; color:var(--gray-600); word-break:keep-all; }
+
+  /* 6단계 이용 프로세스 */
+  .steps { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:24px; margin-top:40px; counter-reset:s; }
+  .step { position:relative; display:flex; flex-direction:column; padding:28px; border:1px solid var(--gray-200); border-radius:16px; background:#fff; }
+  .step .top { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .step .no { font-size:32px; font-weight:800; line-height:40px; letter-spacing:-.5px; color:var(--teal-600); }
+  .step .tag { padding:4px 10px; border-radius:99px; background:var(--teal-50); font-size:13px; font-weight:600; line-height:18px; color:var(--teal-700); white-space:nowrap; }
+  .step h3 { margin-top:16px; font-size:20px; font-weight:700; line-height:28px; letter-spacing:-.2px; }
+  .step .d { margin-top:10px; font-size:15px; line-height:24px; color:var(--gray-600); word-break:keep-all; }
+  .step ul { display:flex; flex-direction:column; gap:8px; margin-top:20px; padding-top:18px; border-top:1px dashed var(--gray-300); }
+  .step li { display:flex; gap:8px; font-size:14px; line-height:21px; color:var(--gray-700); word-break:keep-all; }
+  .step li::before { content:""; flex:none; width:18px; height:18px; margin-top:1px; border-radius:50%; background:var(--teal-600) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.2l2.6 2.6L14 7.4' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat; }
+
+  /* 활용 가이드 */
+  .tips { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:24px; margin-top:40px; }
+  .tip { display:flex; gap:20px; padding:28px; border:1px solid var(--gray-200); border-radius:16px; background:#fff; }
+  .tip i { display:flex; align-items:center; justify-content:center; width:48px; height:48px; flex:none; border-radius:12px; background:var(--teal-50); color:var(--teal-600); }
+  .tip i .ico { width:26px; height:26px; }
+  .tip h3 { font-size:18px; font-weight:700; line-height:26px; letter-spacing:-.18px; word-break:keep-all; }
+  .tip p { margin-top:8px; font-size:15px; line-height:24px; color:var(--gray-600); word-break:keep-all; }
+
+  /* 자주 묻는 질문 (FAQ 페이지와 같은 아코디언) */
+  .faq-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; }
+  .faq-head .more { flex:none; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-700); }
+  .faq-head .more:hover { color:var(--teal-600); }
+  .sec-head p a { color:var(--teal-600); font-weight:500; text-decoration:underline; text-underline-offset:3px; }
+  .qa { margin-top:32px; border-top:2px solid #000; }
+  .qa details { border-bottom:1px solid var(--gray-200); }
+  .qa summary { display:flex; align-items:center; gap:16px; padding:22px 24px; cursor:pointer; list-style:none; }
+  .qa summary::-webkit-details-marker { display:none; }
+  .qa summary:hover { background:var(--gray-50); }
+  .qa .q { flex:none; font-size:18px; font-weight:700; line-height:24px; color:var(--teal-600); }
+  .qa .t { flex:1; min-width:0; font-size:17px; font-weight:500; line-height:24px; word-break:keep-all; }
+  .qa .car { width:20px; height:20px; color:var(--gray-500); transition:transform .2s; --i:url(assets/faq/caret-down.svg); }
+  .qa details[open] .car { transform:rotate(180deg); }
+  .qa details[open] summary { background:var(--gray-50); }
+  .qa .a { display:flex; gap:16px; padding:20px 24px 24px; background:var(--gray-50); border-top:1px solid var(--gray-200); font-size:15px; line-height:25px; color:var(--gray-700); word-break:keep-all; }
+  .qa .a > b { flex:none; font-size:18px; font-weight:700; line-height:24px; color:var(--gray-400); }
+  .qa .a a { color:var(--teal-600); font-weight:500; text-decoration:underline; text-underline-offset:3px; }
+
+  /* 하단 CTA 배너 — 메인 하단 배너와 동일 */
+  .cta-sec { padding:60px 60px 100px; background:var(--white); display:flex; justify-content:center; }
+  .cta { position:relative; width:1320px; max-width:100%; padding:60px 0; border-radius:24px; overflow:hidden; display:flex; flex-direction:column; align-items:center; gap:24px; text-align:center; }
+  .cta > img { position:absolute; left:0; top:-29.72%; width:100%; height:159.45%; object-fit:cover; }
+  .cta::before { content:""; position:absolute; inset:0; background:rgba(6,83,71,.8); z-index:1; }
+  .cta > *:not(img) { position:relative; z-index:2; }
+  .cta h2 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; color:var(--white); }
+  .cta p { font-size:18px; line-height:24px; letter-spacing:-.18px; color:#edeff6; }
+  .btn-action { display:inline-flex; align-items:center; justify-content:center; gap:4px; height:56px; min-width:78px; padding:0 32px; border:1px solid var(--teal-600); border-radius:99px; background:var(--white); color:var(--teal-600); font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; }
+  .btn-action .ico { width:20px; height:20px; }
+  .btn-action:hover { border-color:var(--teal-700); color:var(--teal-700); }
+
+  @media (max-width:1180px) {
+    .page-head, .sec, .cta-sec { padding-left:24px; padding-right:24px; }
+    .steps { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  }
+  @media (max-width:760px) {
+    .page-head { padding:40px 16px 36px; }
+    .page-head h1 { font-size:28px; line-height:38px; }
+    .page-head h1 br, .page-head p br { display:none; }
+    .page-head p { font-size:15px; line-height:24px; }
+    .sec { padding:56px 16px; }
+    .sec-head h2 { font-size:24px; line-height:34px; }
+    .sec-head p { font-size:15px; line-height:24px; }
+    .sec-head p br { display:none; }
+    .steps, .tips { grid-template-columns:1fr; gap:12px; margin-top:28px; }
+    .step, .tip { padding:22px 20px; }
+    .tip { gap:16px; }
+    .faq-head { flex-direction:column; align-items:flex-start; gap:12px; }
+    .qa summary { gap:10px; padding:16px; align-items:flex-start; }
+    .qa .t { font-size:15px; line-height:22px; }
+    .qa .a { gap:10px; padding:16px; font-size:14px; line-height:22px; }
+    .cta-sec { padding:40px 16px 64px; }
+    .cta { padding:44px 20px; }
+    .cta h2 { font-size:28px; line-height:38px; }
+    .cta p { font-size:15px; line-height:22px; }
+    .cta p br { display:none; }
+  }
+</style>
+</head>
+<body>
+<div data-op-gnb="service"></div>
+
+<section class="page-head"><div class="in">
+  <p class="eyebrow">클라이언트 이용 가이드</p>
+  <h1>복잡한 오믹스 분석,<br><em>OmicsPharm</em>에서 한 번에 해결하세요.</h1>
+  <p>프로젝트 등록만으로 견적부터 분석, 프로젝트 관리까지<br>전문 컨설턴트가 전 과정을 함께합니다.</p>
+</div></section>
+
+<section class="sec tint" id="process"><div class="in">
+  <div class="sec-head">
+    <p class="eyebrow">HOW IT WORKS</p>
+    <h2>6단계 이용 프로세스</h2>
+    <p>분석 의뢰의 전 주기를 단일 플랫폼에서 투명하게 관리합니다.<br>전담 컨설턴트가 의뢰 등록부터 최종 보고서 수령까지 전 과정을 밀착 지원합니다.</p>
+  </div>
+  <ol class="steps" id="steps"></ol>
+</div></section>
+
+<section class="sec" id="tips"><div class="in">
+  <div class="sec-head">
+    <p class="eyebrow">SMART TIPS</p>
+    <h2>성공적인 분석 의뢰를 위한 활용 가이드</h2>
+    <p>OmicsPharm을 효과적으로 활용하여 연구 성과를 극대화하는 방법을 안내합니다.</p>
+  </div>
+  <div class="tips" id="tipList"></div>
+</div></section>
+
+<section class="sec tint" id="faq"><div class="in">
+  <div class="faq-head">
+    <div class="sec-head">
+      <p class="eyebrow">FAQ</p>
+      <h2>자주 묻는 질문</h2>
+      <p>클라이언트가 가장 많이 문의하는 내용을 모았습니다. 더 궁금한 점은 <a href="contact.html">문의하기</a>를 이용해 주세요.</p>
+    </div>
+    <a class="more" href="faq.html">FAQ 전체 보기</a>
+  </div>
+  <div class="qa" id="qa"></div>
+</div></section>
+
+<section class="cta-sec">
+  <div class="cta">
+    <img src="assets/main/cta-bg.png" alt="">
+    <h2>오믹스 분석이 필요하신가요?</h2>
+    <p>유전체, 전사체, 단백체, 대사체 등 다양한 분석 의뢰를 지원하고,<br>견적부터 프로젝트 관리까지 전문 컨설턴트가 함께합니다.</p>
+    <a class="btn-action" href="omicspharm-register.html" data-client-only>프로젝트 의뢰하기 <span class="ico" style="--i:url(assets/main/ic-arrow-right.svg)"></span></a>
+  </div>
+</section>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var ASK = '<a href="contact.html">문의하기</a>';
+  // 현재 홈페이지 /Instructions-for-use 내용 그대로 (상담하기 → 문의하기)
+  var STEPS = [
+    ['회원가입 및 로그인', '5분 이내 완료', '이메일 인증만으로 즉시 이용 가능한 클라이언트 계정을 생성하세요.',
+      ['이메일 인증 완료 후 즉시 서비스 이용 가능', '마이페이지 → 내 정보 관리에서 소속기관·연락처 사전 등록 권장', '사업자등록증은 프로젝트 등록 단계에서 업로드']],
+    ['프로젝트 등록', '분석 의뢰 제출', '분석 서비스 유형을 선택하고 시료 정보와 분석 요구사항을 입력합니다.',
+      ['분석 서비스 1종 = 프로젝트 1건 등록 원칙', '임시저장 기능으로 작성 중 내용 보존 후 재개 가능', '비공개 설정 시 클라이언트의 프로젝트 정보 비공개 처리']],
+    ['견적서 수신 및 확인', '평균 2~5 영업일', '모집기한 내 여러 견적서를 수신하고, 가격, 분석 일정, 수행 방법을 기준으로 최적의 분석 조건을 선택하세요.',
+      ['마이페이지 → 프로젝트 관리에서 복수 견적 비교 검토', 'Q&amp;A 기능으로 분석파트너에게 방법론·일정 추가 질의 가능', '선정이 어려울 경우 컨설턴트의 전문적 추천 서비스 제공']],
+    ['견적 선택 및 계약', '컨설턴트 중개 지원', '최종 견적을 선택하면 전담 컨설턴트의 중개 하에 계약이 진행됩니다. 계약 조건, 납부 일정, 분석 범위 등 모든 내용이 플랫폼 내에서 문서로 관리됩니다.',
+      ['계약금 납부 확인 후 분석 착수', '컨설턴트가 계약 조건 협의·체결 전 과정을 밀착 지원']],
+    ['분석 진행 모니터링', '실시간 진행 현황', '계약 완료 후 분석파트너가 분석을 진행합니다. 마이페이지에서 프로젝트 관리 → 계약 → 분석 → 보고서 검수 단계별 진행 현황을 실시간으로 모니터링할 수 있습니다.',
+      ['각 단계 전환 시 알림 자동 발송', '시료 발송 방법·일정은 컨설턴트가 조율하여 안내']],
+    ['보고서 검토 및 완료', 'Raw Data 포함', '분석이 완료된 보고서를 검토한 후 최종 승인합니다. 국문/영문 리포트와 Raw 데이터를 마이페이지에서 안전하게 다운로드할 수 있습니다.',
+      ['마이페이지 → 분석결과 관리에서 결과 파일 일괄 다운로드', '검토 의견 제출 후 최종 승인으로 프로젝트 완료']]
+  ];
+  var TIPS = [
+    ['buildings', '프로젝트 등록 전 기관 정보를 사전 등록하세요', '마이페이지 → 내 정보 관리에서 소속기관, 연락처, 사업자등록증을 미리 등록해두면 프로젝트 의뢰 시 관련 정보가 자동 연동됩니다. 분석파트너와의 신뢰 관계 구축에도 도움이 됩니다.'],
+    ['stack', '분석 서비스 종류별로 프로젝트를 분리 등록하세요', '단백체·대사체 등 복수의 분석을 동시에 의뢰할 경우 서비스별로 별도 프로젝트를 등록하는 것이 원칙입니다. 전문 분야별 분석파트너로부터 특화된 견적을 받을 수 있어 분석 품질과 비용 효율 모두에서 유리합니다.'],
+    ['lock-key', '비공개 설정으로 클라이언트 정보를 보호하세요', "프로젝트 등록 시 '비공개로 업로드' 옵션을 활성화하면 프로젝트 정보가 노출되지 않습니다."],
+    ['chats-circle', 'Q&amp;A와 컨설턴트 상담을 적극 활용하세요', '분석 방법, 시료 조건, 소요 기간 등 분석파트너에게 궁금한 사항은 마이페이지 Q&amp;A 기능으로 직접 질의할 수 있습니다. 적합한 분석 서비스 선정이 어렵다면 전담 컨설턴트의 무료 전문 상담을 받으세요.']
+  ];
+  var FAQ = [
+    ['회원가입은 무료인가요? 어떤 비용이 발생하나요?', 'OmicsPharm 클라이언트 회원가입 및 플랫폼 이용은 완전 무료입니다. 비용은 분석 의뢰가 성사되어 계약이 체결된 경우에 한해 분석파트너의 견적 기준으로 발생하며, 플랫폼 중개 수수료는 셀키AI의 서비스 정책에 따라 별도 안내됩니다.'],
+    ['프로젝트 등록 후 견적을 받기까지 얼마나 걸리나요?', '프로젝트 등록 시 설정한 모집기한에 따라 다르지만 일반적으로 2~5 영업일 내에 복수의 분석파트너로부터 견적서가 접수됩니다. 모집기한 종료 후에는 자동으로 견적 접수가 마감되며, 수신된 모든 견적서는 마이페이지에서 비교·검토할 수 있습니다.'],
+    ['분석 결과물(보고서)은 어떤 형식으로 받을 수 있나요?', "프로젝트 등록 시 '요청 서류 양식'에서 국문 리포트, 영문 리포트, 결과 이미지, Raw 데이터를 복수 선택할 수 있습니다. 분석 완료 후 마이페이지 → 분석결과 관리 페이지에서 선택한 형식의 결과물을 다운로드할 수 있습니다."],
+    ['시료는 어떻게 보내나요?', '계약 완료 후 전담 컨설턴트가 시료 발송 방법 및 일정을 조율합니다. 냉동·냉장·상온 등 시료 특성에 맞는 보관 조건과 운송 방법을 컨설턴트와 함께 사전에 확인하여 시료 손상 없이 안전하게 분석파트너에게 전달될 수 있도록 지원합니다.'],
+    ['어떤 분석이 필요한지 잘 모를 때는 어떻게 하나요?', ASK + " 페이지를 통해 전담 컨설턴트에게 무료 상담을 신청하세요. 연구 목적, 보유 시료 종류와 수량을 설명해 주시면 최적의 분석 서비스와 적합한 분석파트너를 추천해 드립니다. 명확한 분류가 어려운 경우 프로젝트 등록 시 '기타 분석'을 선택하여 자유 형식으로 의뢰서를 작성할 수도 있습니다."],
+    ['해외에서도 의뢰가 가능한가요?', "현재 OmicsPharm은 국내 기반 서비스로 운영되고 있으며, 글로벌 서비스 확장을 준비 중입니다. 프로젝트 등록 시 '분석 희망 국가'를 지정할 수 있으며, 해외 분석파트너 연결이나 국제 시료 운송 등 해외 의뢰 관련 사항은 " + ASK + ' 페이지를 통해 컨설턴트에게 문의해 주세요.']
+  ];
+
+  $('#steps').innerHTML = STEPS.map(function (s, i) {
+    return '<li class="step"><div class="top"><span class="no">' + String(i + 1).padStart(2, '0') + '</span><span class="tag">' + s[1] + '</span></div>' +
+      '<h3>' + s[0] + '</h3><p class="d">' + s[2] + '</p><ul>' + s[3].map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></li>';
+  }).join('');
+  $('#tipList').innerHTML = TIPS.map(function (t) {
+    return '<div class="tip"><i><span class="ico" style="--i:url(assets/guide/ic-' + t[0] + '.svg)"></span></i><div><h3>' + t[1] + '</h3><p>' + t[2] + '</p></div></div>';
+  }).join('');
+  $('#qa').innerHTML = FAQ.map(function (f) {
+    return '<details><summary><span class="q">Q</span><span class="t">' + f[0] + '</span><span class="ico car"></span></summary><div class="a"><b>A</b><div>' + f[1] + '</div></div></details>';
+  }).join('');
+})();
+</script>
+</body>
+</html>
