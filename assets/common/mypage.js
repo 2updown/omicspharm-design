@@ -50,6 +50,22 @@
     unread: function () { return D.alarms().filter(function (a) { return !a.read; }).length; }
   };
 
+  // 확인 모달: OP.confirm('제목', '설명', '삭제', 확인 시 실행할 함수)
+  D.confirm = function (title, desc, yes, cb) {
+    var m = document.createElement('div');
+    m.className = 'op-confirm'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
+    m.innerHTML = '<div class="box"><h3>' + esc(title) + '</h3><p>' + esc(desc) + '</p><div class="btns"><button type="button" class="no">취소</button><button type="button" class="yes">' + esc(yes) + '</button></div></div>';
+    var close = function () { m.remove(); document.removeEventListener('keydown', key); };
+    var key = function (e) { if (e.key === 'Escape') close(); };
+    m.addEventListener('click', function (e) {
+      if (e.target === m || e.target.classList.contains('no')) close();
+      else if (e.target.classList.contains('yes')) { close(); cb(); }
+    });
+    document.addEventListener('keydown', key);
+    document.body.appendChild(m); m.querySelector('.no').focus();
+  };
+  D.removeProject = function (id) { write('op.submitted', D.projects().filter(function (p) { return p.id !== id; })); };
+
   OP.my = D;
   OP.mypage = function (key) {
     var s = OP.session();

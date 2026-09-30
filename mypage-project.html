@@ -7,10 +7,10 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261001g">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261001g">
-<script src="assets/common/site.js?v=20261001g"></script>
-<script src="assets/common/mypage.js?v=20261001g"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261001h">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261001h">
+<script src="assets/common/site.js?v=20261001h"></script>
+<script src="assets/common/mypage.js?v=20261001h"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -75,6 +75,12 @@
   .kv > div { display:flex; border-bottom:1px solid var(--gray-200); font-size:14px; line-height:20px; }
   .kv dt { width:270px; flex:none; padding:12px 18px; background:var(--gray-100); font-weight:500; }
   .kv dd { flex:1; min-width:0; padding:12px 18px; white-space:pre-line; word-break:break-word; }
+  /* 수정·삭제 */
+  .pacts { display:flex; align-items:center; justify-content:space-between; gap:16px; padding-top:24px; border-top:1px solid var(--gray-200); }
+  .pacts p { font-size:14px; line-height:20px; color:var(--gray-500); }
+  .pacts div { display:flex; gap:8px; flex:none; }
+  .pacts .del { color:#f00011; }
+  .pacts .del:hover { background:#fff1f2; border-color:#f00011; }
   .note { padding:24px; border-radius:8px; background:var(--bg-green); font-size:16px; line-height:22px; white-space:pre-line; }
 
   /* 프로젝트 관리 목록: 프로젝트 찾기 목록형 카드(Project-list Type=card)와 동일 */
@@ -114,6 +120,8 @@
     .summary { grid-template-columns:1fr; }
     .kv > div { flex-direction:column; }
     .kv dt { width:100%; }
+    .pacts { flex-direction:column; align-items:stretch; }
+    .pacts div .btn { flex:1; }
   }
 </style>
 </head>
@@ -195,7 +203,7 @@
   var html =
     '<div class="phead">' +
       '<div class="prow"><div class="badges"><span class="badge tag">' + esc(d.svc) + '</span><span class="badge state">의뢰접수</span></div>' +
-        '<span class="reg">등록일 ' + ymd(d.at) + ' · 의뢰번호 ' + esc(d.id) + '</span></div>' +
+        '<span class="reg">등록일 ' + ymd(d.at) + (d.updatedAt ? ' · 수정일 ' + ymd(d.updatedAt) : '') + ' · 의뢰번호 ' + esc(d.id) + '</span></div>' +
       '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-project.html" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(d.title) + '</h2>' +
         (d.from || d.to ? '<div class="period"><b>모집기한</b><span>' + dot(d.from) + ' ~ ' + dot(d.to) + '</span><em>' + (closed ? '모집마감' : '모집중') + '</em></div>' : '') + '</div>' +
     '</div>' +
@@ -216,8 +224,18 @@
         return '<section class="sec"><h3>' + esc(sec.title) + '</h3><dl class="kv">' +
           sec.rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl></section>';
       }).join('') +
-    '</div>';
+    '</div>' +
+    // 의뢰접수(견적 선정 전) 단계에서만 수정·삭제 가능
+    '<div class="pacts"><p>분석파트너의 견적이 선정되기 전까지 의뢰 내용을 수정하거나 삭제할 수 있습니다.</p>' +
+      '<div><button type="button" class="btn del" id="pDel">삭제</button><a class="btn primary" href="omicspharm-register.html?edit=' + encodeURIComponent(d.id) + '">수정하기</a></div></div>';
   $('#project').outerHTML = html;
+  $('#pDel').addEventListener('click', function () {
+    OP.my.confirm('의뢰를 삭제하시겠습니까?', '"' + d.title + '" 의뢰가 삭제되며 복구할 수 없습니다. 제출된 견적도 함께 사라집니다.', '삭제', function () {
+      OP.my.removeProject(d.id);
+      OP.flash('의뢰가 삭제되었습니다.');
+      location.replace('mypage-project.html');
+    });
+  });
   // 목록에서 들어왔으면 브라우저 뒤로 가기(스크롤 위치 유지), 아니면 목록으로
   document.querySelector('.ptitle .back').addEventListener('click', function (e) {
     var ref = document.referrer || '';

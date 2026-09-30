@@ -80,3 +80,15 @@ button { background:none; border:0; cursor:pointer; }
   .body { padding:8px 16px 48px; }
   .card { padding:16px; gap:16px; }
 }
+
+/* 확인 모달 (프로젝트 의뢰 화면의 확인 모달과 동일) */
+.op-confirm { position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center; padding:24px; background:rgba(0,0,0,.5); }
+.op-confirm .box { width:100%; max-width:512px; padding:24px; border-radius:12px; background:#fff; box-shadow:0 16px 40px rgba(0,0,0,.14); }
+.op-confirm h3 { font-size:18px; font-weight:600; line-height:24px; }
+.op-confirm p { margin-top:12px; font-size:16px; line-height:22px; color:var(--gray-600); word-break:keep-all; }
+.op-confirm .btns { display:flex; justify-content:flex-end; gap:8px; margin-top:22px; }
+.op-confirm .btns button { height:40px; padding:0 16px; border-radius:8px; font-size:16px; font-weight:500; }
+.op-confirm .no { border:1px solid var(--gray-300); background:#fff; color:var(--gray-500); }
+.op-confirm .no:hover { border-color:var(--gray-400); }
+.op-confirm .yes { background:#f00011; color:#fff; }
+.op-confirm .yes:hover { background:#ca0008; }

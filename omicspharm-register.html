@@ -537,8 +537,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261001g">
-<script src="assets/common/site.js?v=20261001g"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261001h">
+<script src="assets/common/site.js?v=20261001h"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -1148,7 +1148,7 @@
     visited[cur]=true;
     steps.forEach(function(s){s.classList.toggle('on',+s.dataset.step===cur)});
     prev.disabled = cur===1;
-    next.textContent = cur===MAX ? '분석 의뢰 제출' : '다음';
+    next.textContent = cur===MAX ? (EDIT ? '수정 완료' : '분석 의뢰 제출') : '다음';
     $('#svcTitle').textContent = svcName()||'단백체 분석';
     var TITLES=[['의뢰 정보','분석 서비스를 고르고 의뢰 제목과 연구 목적을 작성해 주세요.'],
                 ['분석 상세','수행할 분석 유형과 세부 항목을 선택해 주세요.'],
@@ -1238,11 +1238,14 @@
   }
   function submit(){
     var d=collectSubmission(), list=[];
+    d.form=collect(); d.form.id=null; // 수정하기에서 입력값을 그대로 다시 불러오기 위해 보관
     try{ list=JSON.parse(localStorage.getItem('op.submitted')||'[]'); }catch(e){}
-    list.unshift(d);
+    var k=EDIT?list.findIndex(function(x){return x.id===EDIT.id}):-1;
+    if(k>-1){ d.id=EDIT.id; d.at=EDIT.at; d.updatedAt=Date.now(); list[k]=d; }
+    else list.unshift(d);
     try{ localStorage.setItem('op.submitted', JSON.stringify(list.slice(0,20))); }catch(e){}
     dirty=false;
-    OP.flash('분석 의뢰가 제출되었습니다.');
+    OP.flash(k>-1?'의뢰 내용이 수정되었습니다.':'분석 의뢰가 제출되었습니다.');
     location.href='mypage-project.html?id='+encodeURIComponent(d.id);
   }
   prev.onclick=function(){ if(cur>1){ clearErr(); cur--; render(); } };
@@ -1350,6 +1353,14 @@
   };
 
   /* ── 확인 모달 ── */
+  // 수정할 의뢰 (없거나 입력값이 보관되지 않은 예전 제출본이면 상세로 돌려보냄)
+  var EDIT=(function(){
+    var id=new URLSearchParams(location.search).get('edit'); if(!id) return null;
+    var L=[]; try{ L=JSON.parse(localStorage.getItem('op.submitted')||'[]'); }catch(e){}
+    var d=L.filter(function(x){return x.id===id})[0];
+    if(!d||!d.form){ OP.flash(d?'이전 버전으로 제출된 의뢰라 수정할 수 없습니다.':'의뢰를 찾을 수 없습니다.'); location.replace(d?'mypage-project.html?id='+encodeURIComponent(id):'mypage-project.html'); return null; }
+    return d;
+  })();
   var cModal=$('#confirmModal'), cCb=null;
   function confirmBox(title,desc,yes,cb){
     $('#cTitle').textContent=title; $('#cDesc').textContent=desc; $('#cYes').textContent=yes;
@@ -1412,7 +1423,7 @@
 
   // 목록으로 돌아가기 → 프로젝트 찾기 (Figma 프로토타입). 저장 안 한 내용이 있으면 확인 모달(1181:56862) 먼저
   $('.crumb .back').onclick=function(){
-    var go=function(){ location.href='projects.html' };
+    var go=function(){ location.href=EDIT ? 'mypage-project.html?id='+encodeURIComponent(EDIT.id) : 'projects.html' };
     if(dirty) confirmBox('작성을 취소하시겠습니까?','지금 나가면 저장되지 않은 내용이 사라집니다.','삭제',go);
     else go();
   };
@@ -1468,6 +1479,15 @@
   }
 
   markPhone(); drawSmp();
+  // 수정 모드: 마이페이지 프로젝트 상세의 [수정하기] → ?edit=의뢰번호
+  if(EDIT){
+    $('.crumb .ptitle').textContent='분석 의뢰 수정';
+    $('.crumb .back').lastChild.textContent='의뢰 상세로 돌아가기';
+    $('#saveBtn').style.display='none'; $('#openList').closest('.scard').style.display='none'; // 제출한 의뢰는 임시저장 대상이 아님
+    apply(EDIT.form); curId=null;
+    for(var n=1;n<=MAX;n++) visited[n]=true;
+    cur=1; document.title='분석 의뢰 수정 · OmicsPharm';
+  }
   refresh(); render();
 })();
 </script>
