@@ -120,7 +120,9 @@
 .op-f-social { display:flex; gap:20px; align-items:center; }
 .op-f-social .s1 { position:relative; display:block; width:24px; height:24px; border-radius:2px; background:#000; }
 .op-f-social .s1 img { position:absolute; left:5px; top:5.5px; width:13px; height:13px; }
-.op-f-social .s2 { display:block; width:24px; height:24px; }
+.op-f-social .s2, .op-f-social .s2 img { display:block; width:24px; height:24px; }
+.op-f-social a { transition:opacity .15s; }
+.op-f-social a:hover { opacity:.7; }
 .op-f-line { height:0; box-shadow:0 0 0 .5px var(--op-gray-300); }
 .op-f-bottom { display:flex; align-items:center; justify-content:space-between; height:25px; font-size:12px; line-height:18px; letter-spacing:-.12px; }
 .op-f-bottom nav { display:flex; gap:24px; }

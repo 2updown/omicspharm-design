@@ -155,8 +155,8 @@
           '</div>' +
         '</div>' +
         '<div class="op-f-social">' +
-          '<span class="s1"><img src="' + A + 'social-1.svg" alt="SNS"></span>' +
-          '<img class="s2" src="' + A + 'social-2.svg" alt="SNS">' +
+          '<a class="s1" href="https://blog.naver.com/cellkeyai" target="_blank" rel="noopener" aria-label="네이버 블로그 (새 창)"><img src="' + A + 'social-1.svg" alt=""></a>' +
+          '<a class="s2" href="https://www.linkedin.com/company/cellkey/" target="_blank" rel="noopener" aria-label="링크드인 (새 창)"><img src="' + A + 'social-2.svg" alt=""></a>' +
         '</div>' +
       '</div>' +
       '<div class="op-f-line"></div>' +
