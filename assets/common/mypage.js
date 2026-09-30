@@ -5,6 +5,7 @@
 (function () {
   var MENU = [
     ['dash', '대시보드', 'mypage.html'],
+    ['quote', '견적관리', '#', 'partner'], // 분석파트너: 셀키가 보낸 견적 요청 확인·견적 제출 (화면 준비 중)
     ['project', '프로젝트 관리', 'mypage-project.html'],
     ['inquiry', '문의내역', 'mypage-inquiry.html'],
     ['alarm', '알림', 'mypage-alarm.html'],
@@ -25,7 +26,20 @@
     answer: { at: new Date(2026, 8, 19, 10, 5).getTime(), body: '안녕하세요, OmicsPharm입니다.\n문의하신 조건(혈장 20개, 정량 단백체 분석)은 프로젝트로 등록하시면 분석파트너들의 견적을 비교해 받아보실 수 있습니다.\n일반적으로 시료 수령 후 4~6주 정도 소요되며, 고농도 단백질 제거(depletion) 여부에 따라 비용이 달라집니다.' }
   };
 
+  // 분석파트너 프로젝트 관리 예시: 셀키 매칭 후 계약된 프로젝트만 (계약 → 분석 → 보고서 등록 → 보고서 검토 → 보고서 승인 → 완료)
+  var P_STAGES = ['계약', '분석', '보고서 등록', '보고서 검토', '보고서 승인', '완료'];
+  var PARTNER_DEMO = [
+    { id: 'PRJ-2609C1', svc: 'Glycoproteomics', stage: '계약', title: '항체 의약품 N-glycan 당쇄 프로파일링', client: '○○바이오', samples: 6, amount: '920만원', contract: '2026-09-26', due: '2026-12-05', at: new Date(2026, 8, 26).getTime(), qa: 0 },
+    { id: 'PRJ-2609A7', svc: 'Metabolomics', stage: '분석', title: '대장암 환자 혈청 대사체 프로파일링', client: '○○대학교 의과대학', samples: 48, amount: '1,850만원', contract: '2026-09-12', due: '2026-11-20', at: new Date(2026, 8, 12).getTime(), qa: 1 },
+    { id: 'PRJ-2608B3', svc: 'Transcriptomics', stage: '보고서 등록', title: '마우스 간 조직 RNA-seq 발현 차이 분석', client: '○○연구소', samples: 24, amount: '1,200만원', contract: '2026-08-04', due: '2026-10-10', at: new Date(2026, 7, 4).getTime(), qa: 0 },
+    { id: 'PRJ-2607D2', svc: 'Olink', stage: '보고서 검토', title: '혈장 Olink Target 96 염증 패널 분석', client: '○○병원', samples: 80, amount: '2,400만원', contract: '2026-07-21', due: '2026-09-30', at: new Date(2026, 6, 21).getTime(), qa: 2 },
+    { id: 'PRJ-2607E5', svc: 'Genomics', stage: '보고서 승인', title: '세포주 전장 유전체 변이 분석 (WGS)', client: '○○제약', samples: 12, amount: '1,560만원', contract: '2026-07-02', due: '2026-09-15', at: new Date(2026, 6, 2).getTime(), qa: 0 },
+    { id: 'PRJ-2605F8', svc: 'Proteomics', stage: '완료', title: '인슐린 유사체 LC-MS 펩타이드 매핑', client: '○○바이오로직스', samples: 4, amount: '680만원', contract: '2026-05-18', due: '2026-07-31', at: new Date(2026, 4, 18).getTime(), qa: 0, review: 1 }
+  ];
+
   var D = {
+    P_STAGES: P_STAGES,
+    partnerProjects: function () { var s = OP.session(); return s && s.role === 'partner' ? PARTNER_DEMO.slice() : []; },
     esc: esc, ymd: ymd, ymdhm: ymdhm,
     projects: function () { return read('op.submitted', []); },
     // 로그인한 계정이 보낸 문의만 (+ 클라이언트에게는 답변 완료 예시 1건)
@@ -46,6 +60,11 @@
       D.inquiries().forEach(function (q) {
         if (q.answer) L.push({ id: 'a-' + q.id, cat: 'inquiry', at: q.answer.at, t: "'" + q.title + "' 문의에 답변이 등록되었습니다.", href: 'mypage-inquiry.html?id=' + q.id });
         L.push({ id: 'q-' + q.id, cat: 'inquiry', at: q.at, t: "'" + q.title + "' 문의가 접수되었습니다.", href: 'mypage-inquiry.html?id=' + q.id });
+      });
+      D.partnerProjects().forEach(function (p) {
+        if (p.qa) L.push({ id: 'qa-' + p.id, cat: 'project', at: p.at + 864e5 * 10, t: "'" + p.title + "' 프로젝트에 새 Q&A " + p.qa + '건이 등록되었습니다.', href: 'mypage-project.html?id=' + p.id });
+        if (p.review) L.push({ id: 'rv-' + p.id, cat: 'project', at: new Date(2026, 7, 5).getTime(), t: "'" + p.title + "' 프로젝트에 리뷰가 등록되었습니다.", href: 'mypage-project.html?id=' + p.id });
+        if (p.stage === '계약') L.push({ id: 'ct-' + p.id, cat: 'project', at: p.at, t: "'" + p.title + "' 프로젝트가 매칭되어 계약 단계가 시작되었습니다.", href: 'mypage-project.html?id=' + p.id });
       });
       L.push({ id: 'n-21', cat: 'notice', at: new Date(2026, 8, 28, 9, 0).getTime(), t: '[공지] OmicsPharm 서비스 리뉴얼 오픈 안내', href: 'notice-view.html?id=21' });
       L.push({ id: 'n-20', cat: 'notice', at: new Date(2026, 8, 15, 9, 0).getTime(), t: '[공지] 개인정보처리방침 변경 안내', href: 'notice-view.html?id=20' });
@@ -88,9 +107,9 @@
         '<div class="me"><img src="' + esc(acc.photo || 'assets/main/user-icon.svg') + '" alt="">' +
           '<span class="role">' + esc(OP.ROLE_LABEL[s.role] || '') + '</span>' +
           '<b>' + esc(name) + ' 님</b><span>(' + esc(s.email) + ')</span>' + (org ? '<span>' + esc(org) + '</span>' : '') + '</div>' +
-        '<nav class="menu" aria-label="마이페이지 메뉴">' + MENU.map(function (m) {
+        '<nav class="menu" aria-label="마이페이지 메뉴">' + MENU.filter(function (m) { return !m[3] || m[3] === s.role; }).map(function (m) {
           var on = m[0] === key;
-          return '<a href="' + m[2] + '"' + (on ? ' class="on" aria-current="page"' : '') + '>' + m[1] +
+          return '<a href="' + m[2] + '"' + (m[2] === '#' ? ' data-soon="' + m[1] + '"' : '') + (on ? ' class="on" aria-current="page"' : '') + '>' + m[1] +
             (m[0] === 'alarm' && n ? '<span class="cnt">' + n + '</span>' : '') + '</a>';
         }).join('') + '</nav>';
     }

@@ -7,10 +7,10 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261001j">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261001j">
-<script src="assets/common/site.js?v=20261001j"></script>
-<script src="assets/common/mypage.js?v=20261001j"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261001k">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261001k">
+<script src="assets/common/site.js?v=20261001k"></script>
+<script src="assets/common/mypage.js?v=20261001k"></script>
 <style>
   .hello { flex-direction:row; align-items:center; justify-content:space-between; }
   .hello h2 { font-size:22px; font-weight:700; line-height:32px; letter-spacing:-.22px; }
@@ -18,7 +18,7 @@
   .hello .acts { display:flex; gap:8px; }
 
   /* 진행 현황: 단계별 개수 */
-  .flow { display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
+  .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
   .flow > * { position:relative; display:flex; flex-direction:column; align-items:center; gap:6px; padding:20px 8px; text-align:center; }
   .flow > * + * { border-left:1px solid var(--gray-200); }
   .flow a:hover { background:var(--gray-50); }
@@ -115,21 +115,29 @@
   var P = D.myProjects();
 
   $('#hi').textContent = me.name + ' 님, 안녕하세요.';
-  $('#hiSub').textContent = client ? '진행 중인 프로젝트와 새 소식을 확인해보세요.' : '받은 견적 요청과 진행 중인 프로젝트를 확인해보세요.';
+  $('#hiSub').textContent = client ? '진행 중인 프로젝트와 새 소식을 확인해보세요.' : '진행 중인 프로젝트와 새 소식을 확인해보세요.';
   $('#acts').innerHTML = client
     ? '<a class="btn" href="contact.html">문의하기</a><a class="btn primary" href="omicspharm-register.html">프로젝트 의뢰하기</a>'
     : '<a class="btn" href="contact.html">문의하기</a><a class="btn primary" href="projects.html">프로젝트 찾기</a>';
 
-  // 지금은 제출한 의뢰가 모두 '의뢰접수' 단계
-  // 분석파트너: 셀키(관리자)가 보낸 견적 요청 → 견적 제출 → 셀키 매칭(선정) → 분석 → 결과 제출
-  var steps = client ? ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'] : ['견적 요청', '견적 제출', '매칭 완료', '분석 진행', '결과 제출'];
-  var counts = client ? [P.length, 0, 0, 0, 0] : [0, 0, 0, 0, 0];
+  // 분석파트너: 셀키 매칭 후 계약된 프로젝트의 단계 (견적 요청·제출은 견적관리에서)
+  var PP = D.partnerProjects();
+  var steps = client ? ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'] : D.P_STAGES;
+  // 클라이언트: 지금은 제출한 의뢰가 모두 '의뢰접수' 단계
+  var counts = client ? [P.length, 0, 0, 0, 0] : steps.map(function (t) { return PP.filter(function (p) { return p.stage === t; }).length; });
+  $('#flow').style.setProperty('--n', steps.length);
   $('#flow').innerHTML = steps.map(function (t, i) {
     // 0건인 단계는 누를 수 없다
     return counts[i] ? '<a href="mypage-project.html"><b class="has">' + counts[i] + '</b><span>' + t + '</span></a>'
                      : '<div aria-disabled="true"><b>0</b><span>' + t + '</span></div>';
   }).join('');
 
+  if (!client && PP.length) {
+    $('#plist').innerHTML = '<div class="plist">' + PP.slice(0, 3).map(function (p) {
+      return '<a href="mypage-project.html?id=' + p.id + '"><span class="badges"><span class="badge tag">' + esc(p.svc) + '</span><span class="badge ' + (p.stage === '완료' ? 'done' : 'state') + '">' + p.stage + '</span></span>' +
+        '<h4>' + esc(p.title) + '</h4><span class="dt">' + esc(p.client) + '</span></a>';
+    }).join('') + '</div>';
+  } else
   $('#plist').innerHTML = client && P.length
     ? '<div class="plist">' + P.slice(0, 3).map(function (p) {
         return '<a href="mypage-project.html?id=' + encodeURIComponent(p.id) + '"><span class="badges"><span class="badge tag">' + esc(p.svc) + '</span><span class="badge state">의뢰접수</span></span>' +
