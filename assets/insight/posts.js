@@ -1,4 +1,5 @@
-/* 커뮤니티 > Insights 게시글 — 현재 홈페이지 Insights(/newsletter) 글 10개를 옮겨옴. 썸네일은 thumb-{id}.jpg (16:9) */
+/* 커뮤니티 > Insights 게시글 — 현재 홈페이지 Insights(/newsletter) 글 10개를 옮겨옴. 썸네일은 thumb-{id}.jpg (16:9)
+   필드: id, cat(news|insight), date, title, body(HTML), author(생략 시 OmicsPharm), thumb(생략 시 thumb-{id}.jpg) — 추후 어드민에서 작성·썸네일 업로드 */
 window.OP_POSTS = [
  {
   "id": 17,

@@ -7,9 +7,9 @@
 <title>Insights · OmicsPharm</title>
 <!-- 커뮤니티 > Insights 상세 (Figma 시안 없음 — Upstage Blog 글 상세 레이아웃 참고)
      ?id=게시글 번호 (assets/insight/posts.js) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20260930w">
-<script src="assets/common/site.js?v=20260930w"></script>
-<script src="assets/insight/posts.js?v=20260930w"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20260930x">
+<script src="assets/common/site.js?v=20260930x"></script>
+<script src="assets/insight/posts.js?v=20260930x"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -68,17 +68,18 @@
   .related-head h2 { font-size:28px; font-weight:700; line-height:38px; letter-spacing:-.28px; }
   .related-head a { font-size:16px; font-weight:500; line-height:22px; color:var(--gray-700); white-space:nowrap; }
   .related-head a:hover { color:var(--teal-600); }
-  .posts { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:24px; margin-top:24px; }
+  .posts { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:20px; margin-top:24px; }
   .post { display:flex; flex-direction:column; border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; background:#fff; transition:border-color .15s, box-shadow .15s; }
   .post:hover { border-color:var(--teal-500); box-shadow:0 4px 8px #00000014, 0 0 2px #0000000a; }
-  .post .thumb { aspect-ratio:16 / 9; overflow:hidden; background:var(--gray-100); border-bottom:1px solid var(--gray-200); }
+  .post .thumb { position:relative; aspect-ratio:427 / 260; overflow:hidden; background:var(--gray-100); }
   .post .thumb img { width:100%; height:100%; object-fit:cover; transition:transform .3s; }
   .post:hover .thumb img { transform:scale(1.03); }
-  .post .txt { display:flex; flex-direction:column; gap:12px; flex:1; padding:20px 20px 24px; }
-  .post h3 { font-size:18px; font-weight:600; line-height:26px; letter-spacing:-.18px; word-break:keep-all; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+  .post .badge { position:absolute; left:8px; top:11px; z-index:1; display:inline-flex; align-items:center; padding:2px 8px; border-radius:8px; background:var(--gray-600); font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; color:#fff; white-space:nowrap; }
+  .post .txt { display:flex; flex-direction:column; gap:16px; flex:1; padding:12px 12px 24px; }
+  .post .meta { display:flex; align-items:center; gap:4px; font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
+  .post .meta i { width:2px; height:2px; border-radius:50%; background:var(--gray-500); }
+  .post h3 { font-size:18px; font-weight:700; line-height:24px; letter-spacing:-.18px; color:#080808; word-break:keep-all; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
   .post:hover h3 { color:var(--teal-700); }
-  .post .meta { margin-top:auto; display:flex; align-items:center; gap:6px; font-size:13px; line-height:18px; color:var(--gray-500); }
-  .post .meta i { width:2px; height:2px; border-radius:50%; background:var(--gray-400); }
 
   @media (max-width:1180px) { .related { padding-left:24px; padding-right:24px; } .posts { grid-template-columns:repeat(2, minmax(0,1fr)); } .posts .post:nth-child(3) { display:none; } }
   @media (max-width:640px) {
@@ -141,7 +142,7 @@
   $('#title').textContent = p.title;
   $('#cat').textContent = LABEL[p.cat]; $('#cat').href = 'blog.html?cat=' + p.cat;
   $('#date').textContent = p.date;
-  $('#hero').src = 'assets/insight/thumb-' + p.id + '.jpg';
+  $('#hero').src = p.thumb || 'assets/insight/thumb-' + p.id + '.jpg';
   $('#body').innerHTML = p.body;
 
   // 이전 글(더 오래된 글) · 다음 글(더 최근 글) — 목록 순서(최신순) 기준
@@ -164,8 +165,8 @@
   var rel = others.filter(function (x) { return x.cat === p.cat; }).concat(others.filter(function (x) { return x.cat !== p.cat; })).slice(0, 3);
   var esc = function (t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
   $('#related').innerHTML = rel.map(function (x) {
-    return '<a class="post" href="blog-post.html?id=' + x.id + '"><div class="thumb"><img src="assets/insight/thumb-' + x.id + '.jpg" alt="" loading="lazy"></div>' +
-      '<div class="txt"><h3>' + esc(x.title) + '</h3><p class="meta"><span>' + LABEL[x.cat] + '</span><i></i><span>' + x.date + '</span></p></div></a>';
+    return '<a class="post" href="blog-post.html?id=' + x.id + '"><div class="thumb"><span class="badge">' + LABEL[x.cat] + '</span><img src="' + (x.thumb || 'assets/insight/thumb-' + x.id + '.jpg') + '" alt="" loading="lazy"></div>' +
+      '<div class="txt"><p class="meta"><span>' + esc(x.author || 'OmicsPharm') + '</span><i></i><span>' + x.date + '</span></p><h3>' + esc(x.title) + '</h3></div></a>';
   }).join('');
 })();
 </script>

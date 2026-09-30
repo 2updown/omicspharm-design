@@ -8,9 +8,9 @@
 <!-- 커뮤니티 > Insight (Figma 시안 없음 — Upstage Blog 레이아웃 참고, 탭은 FAQ 탭 컴포넌트)
      글 목록은 현재 홈페이지 Insights(/newsletter) 게시글 10개 (assets/insight/posts.js). 카드 → blog-post.html?id=
      ?cat=news|insight  탭 선택 / 한 페이지 12개 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20260930w">
-<script src="assets/common/site.js?v=20260930w"></script>
-<script src="assets/insight/posts.js?v=20260930w"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20260930x">
+<script src="assets/common/site.js?v=20260930x"></script>
+<script src="assets/insight/posts.js?v=20260930x"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -49,18 +49,19 @@
   .empty { grid-column:1 / -1; padding:80px 0; text-align:center; font-size:16px; line-height:24px; color:var(--gray-500); }
 
   /* 글 카드 */
-  .posts { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:32px 24px; margin-top:20px; }
+  .posts { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:32px 20px; margin-top:20px; }
   .post { display:flex; flex-direction:column; border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; background:#fff; transition:border-color .15s, box-shadow .15s; }
   .post:hover { border-color:var(--teal-500); box-shadow:0 4px 8px #00000014, 0 0 2px #0000000a; }
-  .post .thumb { position:relative; aspect-ratio:16 / 9; overflow:hidden; background:var(--gray-100); border-bottom:1px solid var(--gray-200); }
+  .post .thumb { position:relative; aspect-ratio:427 / 260; overflow:hidden; background:var(--gray-100); }
   .post .thumb img { width:100%; height:100%; object-fit:cover; transition:transform .3s; }
   .post:hover .thumb img { transform:scale(1.03); }
-  .post .txt { display:flex; flex-direction:column; gap:12px; flex:1; padding:20px 20px 24px; }
-  .badge { align-self:flex-start; display:inline-flex; align-items:center; padding:2px 8px; border:1px solid var(--teal-600); border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; color:var(--teal-600); white-space:nowrap; }
-  .post h3 { font-size:18px; font-weight:600; line-height:26px; letter-spacing:-.18px; word-break:keep-all; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+  /* 썸네일 좌측 상단 카테고리 뱃지 */
+  .badge { position:absolute; left:8px; top:11px; z-index:1; display:inline-flex; align-items:center; padding:2px 8px; border-radius:8px; background:var(--gray-600); font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; color:#fff; white-space:nowrap; }
+  .post .txt { display:flex; flex-direction:column; gap:16px; flex:1; padding:12px 12px 24px; }
+  .post .meta { display:flex; align-items:center; gap:4px; font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
+  .post .meta i { width:2px; height:2px; border-radius:50%; background:var(--gray-500); }
+  .post h3 { font-size:18px; font-weight:700; line-height:24px; letter-spacing:-.18px; color:#080808; word-break:keep-all; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
   .post:hover h3 { color:var(--teal-700); }
-  .post .meta { margin-top:auto; display:flex; align-items:center; gap:6px; font-size:13px; line-height:18px; color:var(--gray-500); }
-  .post .meta i { width:2px; height:2px; border-radius:50%; background:var(--gray-400); }
 
   /* 페이지네이션 (프로젝트 찾기와 동일) */
   .pager { display:flex; justify-content:center; gap:4px; margin-top:48px; }
@@ -135,9 +136,8 @@
     $('#total').innerHTML = '전체 <b>' + list.length + '</b>개';
     $('#posts').innerHTML = list.slice((state.page - 1) * PER, state.page * PER).map(function (p) {
       return '<a class="post" href="blog-post.html?id=' + p.id + '">' +
-        '<div class="thumb"><img src="assets/insight/thumb-' + p.id + '.jpg" alt="" loading="lazy"></div>' +
-        '<div class="txt"><span class="badge">' + LABEL[p.cat] + '</span><h3>' + esc(p.title) + '</h3>' +
-        '<p class="meta"><span class="by">OmicsPharm</span><i></i><span>' + p.date + '</span></p></div></a>';
+        '<div class="thumb"><span class="badge">' + LABEL[p.cat] + '</span><img src="' + (p.thumb || 'assets/insight/thumb-' + p.id + '.jpg') + '" alt="" loading="lazy"></div>' +
+        '<div class="txt"><p class="meta"><span>' + esc(p.author || 'OmicsPharm') + '</span><i></i><span>' + p.date + '</span></p><h3>' + esc(p.title) + '</h3></div></a>';
     }).join('') || '<p class="empty">' + (q ? '검색 결과가 없습니다.' : '등록된 글이 없습니다.') + '</p>';
     $('#pager').hidden = list.length <= PER;
     var html = '', btn = function (p, ic, label, dis) { return '<button type="button" data-p="' + p + '" aria-label="' + label + '"' + (dis ? ' disabled' : '') + '><img src="assets/find/ic-' + ic + '.svg" alt=""></button>'; };
