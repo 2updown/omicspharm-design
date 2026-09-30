@@ -7,10 +7,10 @@
 <title>내 정보 관리 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / (분석파트너) 분석 가능 서비스 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261001a">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261001a">
-<script src="assets/common/site.js?v=20261001a"></script>
-<script src="assets/common/mypage.js?v=20261001a"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261001b">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261001b">
+<script src="assets/common/site.js?v=20261001b"></script>
+<script src="assets/common/mypage.js?v=20261001b"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -49,14 +49,14 @@
 
   /* 비밀번호 재확인 */
   .gate { align-items:center; padding:56px 24px; text-align:center; }
-  .gate .lock { display:flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:50%; background:var(--teal-50); }
+  .gate .lock { display:flex; align-items:center; justify-content:center; }
+  .gate .lock svg { width:40px; height:40px; }
   .gfield { display:flex; flex-direction:column; gap:6px; }
   .gate h3 { font-size:20px; font-weight:700; line-height:28px; letter-spacing:-.2px; }
   .gate p { margin-top:-16px; font-size:14px; line-height:20px; color:var(--gray-500); }
   .gate form { display:flex; flex-direction:column; align-items:stretch; gap:8px; width:100%; max-width:360px; text-align:left; }
   .gate .inp { max-width:none; height:48px; }
   .gate .btn { width:100%; margin-top:8px; }
-  .gate .demo { font-size:12px; line-height:18px; color:var(--gray-400); text-align:center; }
   .secure { display:flex; flex-direction:column; gap:24px; }
 
   /* 프로필 사진 */
@@ -66,6 +66,7 @@
   .photo .pbtns div { display:flex; gap:8px; }
   .photo .btn { height:36px; padding:0 14px; }
   .photo input[type=file] { display:none; }
+  .photo .note { font-size:12px; line-height:18px; color:var(--teal-700); font-weight:500; }
 
   .leave { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 24px; border:1px solid var(--gray-200); border-radius:16px; background:#fff; }
   .leave p { font-size:14px; line-height:20px; color:var(--gray-500); }
@@ -106,7 +107,6 @@
       <form id="fGate" novalidate>
         <div class="gfield"><input class="inp" id="gpw" type="password" placeholder="비밀번호" aria-label="비밀번호" autocomplete="current-password"></div>
         <button type="submit" class="btn primary lg">확인</button>
-        <p class="demo">※ 데모: 아무 값이나 입력하면 넘어갑니다.</p>
       </form>
     </section>
 
@@ -118,7 +118,8 @@
           <div class="field"><div class="flabel">프로필 사진</div><div class="fbody">
             <div class="photo"><img id="pImg" src="assets/main/user-icon.svg" alt="프로필 사진">
               <div class="pbtns"><div><label class="btn" for="pFile">사진 변경</label><button type="button" class="btn" id="pDel">삭제</button></div>
-                <p class="help">JPG, PNG 파일 · 10MB 이하. 정사각형으로 잘려 표시됩니다.</p></div>
+                <p class="help">JPG, PNG 파일 · 10MB 이하. 정사각형으로 잘려 표시됩니다.</p>
+                <p class="note" id="pNote" hidden>아래 저장하기를 눌러야 변경한 사진이 반영됩니다.</p></div>
               <input type="file" id="pFile" accept="image/png,image/jpeg,image/webp"></div>
           </div></div>
           <div class="field"><div class="flabel">이메일(아이디)</div><div class="fbody"><p class="val" id="vEmail"></p></div></div>
@@ -166,7 +167,7 @@
   var $ = function (s) { return document.querySelector(s); };
   var email = me.s.email, acc = me.acc, partner = me.s.role === 'partner';
 
-  // 비밀번호 재확인 (데모: 아무 값이나 입력하면 통과)
+  // 비밀번호 재확인 (데모: 아무 값이나 입력하면 통과 — 화면에는 표시하지 않음)
   $('#fGate').addEventListener('submit', function (e) {
     e.preventDefault();
     var g = $('#gpw');
@@ -178,7 +179,7 @@
 
   // 프로필 사진: 가운데를 정사각형으로 잘라 240px로 줄여 저장
   var DEF = 'assets/main/user-icon.svg';
-  var photo = acc.photo || '';
+  var photo = acc.photo || ''; // 화면에 보이는 사진(저장 전 미리보기 포함). 저장하기를 눌러야 계정에 반영
   var showPhoto = function () { $('#pImg').src = photo || DEF; $('#pDel').disabled = !photo; };
   showPhoto();
   $('#pFile').addEventListener('change', function () {
@@ -192,16 +193,15 @@
       c.width = c.height = 240;
       c.getContext('2d').drawImage(img, (img.width - n) / 2, (img.height - n) / 2, n, n, 0, 0, 240, 240);
       photo = c.toDataURL('image/jpeg', .85); URL.revokeObjectURL(img.src);
-      OP.saveAccount(email, { photo: photo }); showPhoto(); refresh();
-      OP.toast('프로필 사진이 변경되었습니다.');
+      showPhoto(); pending(true);
     };
     img.src = URL.createObjectURL(f);
   });
   $('#pDel').addEventListener('click', function () {
-    photo = ''; OP.saveAccount(email, { photo: '' }); showPhoto(); refresh();
-    OP.toast('프로필 사진을 삭제했습니다.');
+    photo = ''; showPhoto(); pending(true);
   });
-  // 왼쪽 프로필·GNB 아이콘 즉시 반영
+  function pending(on) { $('#pNote').hidden = !on; }
+  // 저장 후 왼쪽 프로필·GNB 아이콘 반영
   function refresh() {
     OP.mypage('account');
     var g = document.querySelector('.op-user > button img'); if (g) g.src = photo || DEF;
@@ -232,10 +232,10 @@
     err(n, n.value.trim() ? '' : '이름을 입력해주세요.');
     err(o, o.value.trim() ? '' : '소속을 입력해주세요.');
     if (!n.value.trim() || !o.value.trim()) return;
-    var data = { name: n.value.trim(), org: o.value.trim(), dept: $('#dept').value.trim(), phone: $('#phone').value.trim() };
+    var data = { name: n.value.trim(), org: o.value.trim(), dept: $('#dept').value.trim(), phone: $('#phone').value.trim(), photo: photo };
     if (partner) data.svcs = [].map.call(document.querySelectorAll('#svcs input:checked'), function (i) { return i.value; });
     OP.saveAccount(email, data);
-    refresh();
+    refresh(); pending(false);
     OP.toast('회원 정보가 저장되었습니다.');
   });
 
