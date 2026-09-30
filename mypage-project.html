@@ -227,7 +227,7 @@
     '</div>' +
     // 의뢰접수(견적 선정 전) 단계에서만 수정·삭제 가능
     '<div class="pacts"><p>분석파트너의 견적이 선정되기 전까지 의뢰 내용을 수정하거나 삭제할 수 있습니다.</p>' +
-      '<div><button type="button" class="btn del" id="pDel">삭제</button><a class="btn primary" href="omicspharm-register.html?edit=' + encodeURIComponent(d.id) + '">수정하기</a></div></div>';
+      '<div><button type="button" class="btn del" id="pDel">삭제</button><a class="btn primary" href="omicspharm-register.html?edit=' + encodeURIComponent(d.id) + '&t=' + Date.now() + '">수정하기</a></div></div>';
   $('#project').outerHTML = html;
   $('#pDel').addEventListener('click', function () {
     OP.my.confirm('의뢰를 삭제하시겠습니까?', '"' + d.title + '" 의뢰가 삭제되며 복구할 수 없습니다. 제출된 견적도 함께 사라집니다.', '삭제', function () {
