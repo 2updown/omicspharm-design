@@ -15,7 +15,7 @@
     --gray-50:#fafafa; --gray-100:#f5f5f5; --gray-200:#e5e5e5; --gray-300:#d4d4d4; --gray-400:#a3a3a3; --gray-500:#737373; --gray-600:#525252; --gray-700:#404040;
   }
   * { box-sizing:border-box; margin:0; padding:0; }
-  body { background:var(--gray-50); color:#000; font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  body { background:#fff; color:#000; font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
   a { color:inherit; text-decoration:none; }
   button, input { font:inherit; color:inherit; }
   button { background:none; border:0; cursor:pointer; }
@@ -37,11 +37,6 @@
   .search .go { display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:8px; background:var(--teal-600); color:#fff; }
   .search .go:hover { background:var(--teal-700); }
   .search .go .ico { width:20px; height:20px; }
-  .tops { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px; margin-top:20px; font-size:14px; line-height:20px; }
-  .tops > span { margin-right:4px; font-weight:500; color:var(--gray-600); }
-  .chip { height:32px; padding:0 14px; border:1px solid var(--gray-300); border-radius:99px; background:#fff; font-size:14px; line-height:20px; color:var(--gray-700); }
-  .chip:hover { border-color:var(--teal-600); color:var(--teal-600); }
-  .chip.on { border-color:var(--teal-600); background:var(--teal-600); color:#fff; }
 
   /* 탭: 클라이언트 / 분석파트너 */
   .tabs-wrap { padding:0 60px; background:#fff; border-bottom:1px solid var(--gray-200); position:sticky; top:70px; z-index:5; }
@@ -110,8 +105,7 @@
     .hero h1 { font-size:28px; line-height:38px; }
     .hero p { font-size:14px; line-height:20px; }
     .search { height:52px; margin-top:24px; padding-left:16px; }
-    .tops > span { flex-basis:100%; margin:0 0 2px; }
-    .tabs-wrap { padding:0 16px; }
+      .tabs-wrap { padding:0 16px; }
     .tabs { gap:0; }
     .tabs button { flex:1; height:52px; font-size:16px; }
     .body { padding:28px 16px 56px; }
@@ -139,7 +133,6 @@
     <button type="button" class="clear" id="clear" aria-label="검색어 지우기" hidden>×</button>
     <button type="submit" class="go" aria-label="검색"><span class="ico" style="--i:url(assets/faq/magnifying-glass.svg)"></span></button>
   </form>
-  <div class="tops" id="tops"><span>자주 찾는 검색어</span></div>
 </section>
 
 <nav class="tabs-wrap" aria-label="이용자 유형"><div class="in tabs" role="tablist">
@@ -179,7 +172,6 @@
   // 분석파트너는 같은 절차를 파트너 입장에서 정리한 예시 — 운영 정책 확정 후 교체.
   var FAQ = {
     client: {
-      tops: ['견적', '비공개', '시료 발송', '보고서'],
       cats: ['회원·계정', '프로젝트 등록', '견적·계약', '시료·분석 진행', '결과·보고서'],
       items: [
         ['회원·계정', '회원가입은 무료인가요? 어떤 비용이 발생하나요?', '<p>OmicsPharm 클라이언트 회원가입과 플랫폼 이용은 무료입니다.</p><p>비용은 분석 의뢰가 성사되어 계약이 체결된 경우에만 분석파트너의 견적을 기준으로 발생하며, 플랫폼 중개 수수료는 셀키AI의 서비스 정책에 따라 별도로 안내됩니다.</p>'],
@@ -204,7 +196,6 @@
       ]
     },
     partner: {
-      tops: ['파트너 가입', '견적 제출', '시료', '정산'],
       cats: ['가입·승인', '프로젝트 찾기', '견적·계약', '분석 수행', '결과·정산'],
       items: [
         ['가입·승인', '분석파트너로 가입하려면 어떻게 하나요?', '<p>상단의 [가입하기]에서 "분석파트너"를 선택한 뒤 이메일 인증, 기관 정보, 제공 가능한 분석 서비스, 사업자 정보를 입력하면 가입 신청이 완료됩니다.</p>'],
@@ -242,7 +233,6 @@
   function renderTab() {
     var d = FAQ[state.tab];
     $$('.tabs button').forEach(function (b) { var on = b.dataset.tab === state.tab; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
-    $('#tops').innerHTML = '<span>자주 찾는 검색어</span>' + d.tops.map(function (t) { return '<button type="button" class="chip" data-top="' + esc(t) + '">' + esc(t) + '</button>'; }).join('');
     $('#cat').innerHTML = '<option value="">카테고리 전체</option>' + d.cats.map(function (c) { return '<option>' + c + '</option>'; }).join('');
     $('#cat').value = state.cat;
     $('#askBtn').href = 'contact.html?type=' + (state.tab === 'partner' ? 'partner' : 'service');
@@ -290,7 +280,6 @@
   $('#q').addEventListener('input', function () { state.q = this.value; state.page = 1; $('#clear').hidden = !this.value; render(); });
   $('#searchForm').addEventListener('submit', function (e) { e.preventDefault(); if (state.q.trim()) go($('#faqSec')); });
   $('#clear').addEventListener('click', function () { setQ(''); state.page = 1; render(); $('#q').focus(); });
-  $('#tops').addEventListener('click', function (e) { var t = e.target.closest('[data-top]'); if (t) { setQ(t.dataset.top); state.cat = ''; $('#cat').value = ''; state.page = 1; render(); go($('#faqSec')); } });
 
   setQ(state.q);
   renderTab();
