@@ -33,17 +33,36 @@
   .sec-head h2 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; word-break:keep-all; }
   .sec-head p { margin-top:12px; font-size:16px; line-height:26px; color:var(--gray-600); word-break:keep-all; }
 
-  /* 6단계 이용 프로세스 */
-  .steps { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:24px; margin-top:40px; counter-reset:s; }
-  .step { position:relative; display:flex; flex-direction:column; padding:28px; border:1px solid var(--gray-200); border-radius:16px; background:#fff; }
-  .step .top { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-  .step .no { font-size:32px; font-weight:800; line-height:40px; letter-spacing:-.5px; color:var(--teal-600); }
-  .step .tag { padding:4px 10px; border-radius:99px; background:var(--teal-50); font-size:13px; font-weight:600; line-height:18px; color:var(--teal-700); white-space:nowrap; }
-  .step h3 { margin-top:16px; font-size:20px; font-weight:700; line-height:28px; letter-spacing:-.2px; }
-  .step .d { margin-top:10px; font-size:15px; line-height:24px; color:var(--gray-600); word-break:keep-all; }
-  .step ul { display:flex; flex-direction:column; gap:8px; margin-top:20px; padding-top:18px; border-top:1px dashed var(--gray-300); }
-  .step li { display:flex; gap:8px; font-size:14px; line-height:21px; color:var(--gray-700); word-break:keep-all; }
-  .step li::before { content:""; flex:none; width:18px; height:18px; margin-top:1px; border-radius:50%; background:var(--teal-600) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.2l2.6 2.6L14 7.4' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat; }
+  /* 6단계 이용 프로세스 — 가운데 세로 타임라인, 좌우 교차 (Conicorn "How We Work" 참고) */
+  #process .sec-head { text-align:center; }
+  .flow { position:relative; max-width:1080px; margin:56px auto 0; }
+  .flow .rail { position:absolute; left:50%; top:24px; bottom:24px; width:2px; margin-left:-1px; background:var(--gray-200); border-radius:2px; }
+  .flow .fill { position:absolute; left:0; top:0; width:100%; height:0; background:var(--teal-600); border-radius:2px; transition:height .15s linear; }
+  .step { position:relative; display:grid; grid-template-columns:minmax(0,1fr) 96px minmax(0,1fr); align-items:center; }
+  .step + .step { margin-top:24px; }
+  .step .dot { grid-column:2; justify-self:center; position:relative; z-index:1; display:flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:50%; background:#fff; border:2px solid var(--gray-300); transition:all .25s; }
+  .step .num { display:flex; flex-direction:column; gap:8px; }
+  .step .num b { font-size:56px; font-weight:800; line-height:60px; letter-spacing:-1px; color:var(--gray-200); transition:color .25s; }
+  .step .num span { align-self:flex-start; padding:4px 12px; border-radius:99px; background:var(--gray-100); font-size:13px; font-weight:600; line-height:18px; color:var(--gray-500); transition:all .25s; }
+  .step .card { padding:28px; border:1px solid var(--gray-200); border-radius:24px; background:#fff; transition:all .25s; }
+  .step .card h3 { font-size:20px; font-weight:700; line-height:28px; letter-spacing:-.2px; }
+  .step .card .d { margin-top:8px; font-size:15px; line-height:24px; color:var(--gray-600); word-break:keep-all; }
+  .step .card ul { display:flex; flex-direction:column; gap:8px; margin-top:18px; padding-top:16px; border-top:1px dashed var(--gray-300); }
+  .step .card li { display:flex; gap:8px; font-size:14px; line-height:21px; color:var(--gray-700); word-break:keep-all; }
+  .step .card li::before { content:""; flex:none; width:18px; height:18px; margin-top:1px; border-radius:50%; background:var(--teal-600) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.2l2.6 2.6L14 7.4' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat; }
+  /* 홀수 단계: 카드 오른쪽 · 번호 왼쪽 / 짝수 단계: 카드 왼쪽 · 번호 오른쪽 */
+  .step .num { grid-column:1; grid-row:1; align-items:flex-end; text-align:right; }
+  .step .card { grid-column:3; grid-row:1; }
+  .step:nth-child(even) .num { grid-column:3; align-items:flex-start; text-align:left; }
+  .step:nth-child(even) .num span { align-self:flex-start; }
+  .step:nth-child(odd) .num span { align-self:flex-end; }
+  .step:nth-child(even) .card { grid-column:1; }
+  .step .dot { grid-row:1; }
+  /* 지나온 단계 강조 */
+  .step.on .dot { width:36px; height:36px; border:0; background:var(--teal-600) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.2l2.6 2.6L14 7.4' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/22px no-repeat; box-shadow:0 0 0 6px var(--teal-50); }
+  .step.on .num b { color:var(--teal-600); }
+  .step.on .num span { background:var(--teal-50); color:var(--teal-700); }
+  .step.on .card { border-color:var(--teal-100); box-shadow:0 8px 24px rgba(0,120,110,.08); }
 
   /* 활용 가이드 */
   .tips { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:24px; margin-top:40px; }
@@ -86,7 +105,6 @@
 
   @media (max-width:1180px) {
     .page-head, .sec, .cta-sec { padding-left:24px; padding-right:24px; }
-    .steps { grid-template-columns:repeat(2, minmax(0,1fr)); }
   }
   @media (max-width:760px) {
     .page-head { padding:40px 16px 36px; }
@@ -97,8 +115,18 @@
     .sec-head h2 { font-size:24px; line-height:34px; }
     .sec-head p { font-size:15px; line-height:24px; }
     .sec-head p br { display:none; }
-    .steps, .tips { grid-template-columns:1fr; gap:12px; margin-top:28px; }
-    .step, .tip { padding:22px 20px; }
+    .tips { grid-template-columns:1fr; gap:12px; margin-top:28px; }
+    .tip { padding:22px 20px; }
+    /* 타임라인: 선은 왼쪽, 번호·카드는 오른쪽에 세로로 */
+    .flow { margin-top:32px; }
+    .flow .rail { left:17px; margin-left:0; }
+    .step, .step:nth-child(even) { grid-template-columns:36px minmax(0,1fr); column-gap:14px; align-items:start; }
+    .step + .step { margin-top:20px; }
+    .step .dot, .step:nth-child(even) .dot { grid-column:1; grid-row:1 / span 2; margin-top:6px; }
+    .step .num, .step:nth-child(even) .num { grid-column:2; grid-row:1; flex-direction:row; align-items:center; gap:10px; text-align:left; }
+    .step .num b { font-size:28px; line-height:36px; }
+    .step:nth-child(odd) .num span { align-self:center; }
+    .step .card, .step:nth-child(even) .card { grid-column:2; grid-row:2; margin-top:10px; padding:20px; border-radius:16px; }
     .tip { gap:16px; }
     .faq-head { flex-direction:column; align-items:flex-start; gap:12px; }
     .qa summary { gap:10px; padding:16px; align-items:flex-start; }
@@ -124,7 +152,7 @@
     <h2>6단계 이용 프로세스</h2>
     <p>분석 의뢰의 전 주기를 단일 플랫폼에서 투명하게 관리합니다.<br>전담 컨설턴트가 의뢰 등록부터 최종 보고서 수령까지 전 과정을 밀착 지원합니다.</p>
   </div>
-  <ol class="steps" id="steps"></ol>
+  <div class="flow"><div class="rail"><div class="fill" id="fill"></div></div><ol id="steps"></ol></div>
 </div></section>
 
 <section class="sec" id="tips"><div class="in">
@@ -192,9 +220,30 @@
   ];
 
   $('#steps').innerHTML = STEPS.map(function (s, i) {
-    return '<li class="step"><div class="top"><span class="no">' + String(i + 1).padStart(2, '0') + '</span><span class="tag">' + s[1] + '</span></div>' +
-      '<h3>' + s[0] + '</h3><p class="d">' + s[2] + '</p><ul>' + s[3].map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></li>';
+    return '<li class="step"><div class="num"><b>' + String(i + 1).padStart(2, '0') + '</b><span>' + s[1] + '</span></div><i class="dot"></i>' +
+      '<div class="card"><h3>' + s[0] + '</h3><p class="d">' + s[2] + '</p><ul>' + s[3].map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div></li>';
   }).join('');
+
+  // 스크롤에 따라 가운데 선이 채워지고, 선이 지나간 단계가 강조됨
+  var flow = document.querySelector('.flow'), rail = flow.querySelector('.rail'), fill = $('#fill');
+  var stepEls = [].slice.call(document.querySelectorAll('.step'));
+  // 세로선을 첫 번째 점 가운데부터 마지막 점 가운데까지만 표시
+  function placeRail() {
+    var f = flow.getBoundingClientRect(), d1 = stepEls[0].querySelector('.dot').getBoundingClientRect(), d2 = stepEls[stepEls.length - 1].querySelector('.dot').getBoundingClientRect();
+    rail.style.top = (d1.top + d1.height / 2 - f.top) + 'px';
+    rail.style.bottom = (f.bottom - (d2.top + d2.height / 2)) + 'px';
+  }
+  function progress() {
+    var mark = window.innerHeight * 0.6;
+    var r = rail.getBoundingClientRect();
+    var h = Math.max(0, Math.min(r.height, mark - r.top));
+    fill.style.height = h + 'px';
+    stepEls.forEach(function (el) { var d = el.querySelector('.dot').getBoundingClientRect(); el.classList.toggle('on', d.top + d.height / 2 <= mark); });
+  }
+  window.addEventListener('scroll', progress, { passive: true });
+  window.addEventListener('resize', function () { placeRail(); progress(); });
+  placeRail(); progress();
+  window.addEventListener('load', function () { placeRail(); progress(); });
   $('#tipList').innerHTML = TIPS.map(function (t) {
     return '<div class="tip"><i><span class="ico" style="--i:url(assets/guide/ic-' + t[0] + '.svg)"></span></i><div><h3>' + t[1] + '</h3><p>' + t[2] + '</p></div></div>';
   }).join('');
