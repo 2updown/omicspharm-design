@@ -179,13 +179,19 @@
     if (hasFooter && !document.querySelector('.op-float')) document.body.insertAdjacentHTML('beforeend', FLOAT);
     if (hasFooter && !document.body.hasAttribute('data-op-no-enter')) enterAnim();
   }
-  // 페이지 진입 효과: 헤더·푸터·고정 요소(모달, 플로팅 버튼 등)를 뺀 본문 블록에 차례로 적용 (메인은 자체 스크롤 효과 사용)
+  // 페이지 진입 효과: 헤더·푸터·고정 요소(모달, 플로팅 버튼 등)를 뺀 본문 블록에 차례로 적용 (상단 영역은 글자만) (메인은 자체 스크롤 효과 사용)
   function enterAnim() {
     var skip = /(^|\s)(op-gnb|op-footer|op-float|op-drawer|op-toast)(\s|$)/, n = 0;
     [].forEach.call(document.body.children, function (el) {
       if (/^(SCRIPT|STYLE|TEMPLATE)$/.test(el.tagName) || skip.test(el.className) || el.hidden) return;
       if (getComputedStyle(el).position === 'fixed') return;
-      el.classList.add('op-enter'); el.style.setProperty('--op-d', Math.min(n++, 4) * 0.1 + 's');
+      // 상단 영역(첫 블록)은 배경·이미지는 그대로 두고 안쪽 글자 요소만 올라오게
+      var targets = [el];
+      if (n === 0) {
+        var box = el.querySelector(':scope > .in') || el;
+        targets = [].filter.call(box.children, function (c) { return !/^(IMG|VIDEO|PICTURE|SVG|CANVAS)$/i.test(c.tagName) && getComputedStyle(c).position !== 'absolute'; });
+      }
+      targets.forEach(function (t) { t.classList.add('op-enter'); t.style.setProperty('--op-d', Math.min(n++, 5) * 0.1 + 's'); });
     });
   }
 
