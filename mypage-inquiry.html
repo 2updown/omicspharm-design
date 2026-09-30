@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png">
+<title>문의내역 · 마이페이지 · OmicsPharm</title>
+<!-- 마이페이지 > 문의내역 (Figma 시안 없음). 문의하기(contact.html)에서 보낸 문의(localStorage op.inquiries) + 답변 완료 예시 1건.
+     행을 누르면 문의 내용과 답변이 펼쳐진다. ?id= 로 들어오면 해당 문의를 펼친다 -->
+<link rel="stylesheet" href="assets/common/site.css?v=20260930z">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20260930z">
+<script src="assets/common/site.js?v=20260930z"></script>
+<script src="assets/common/mypage.js?v=20260930z"></script>
+<style>
+  .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+
+  .qlist { border-top:2px solid #000; }
+  .qa { border-bottom:1px solid var(--gray-200); }
+  .qa > button { display:flex; align-items:center; gap:16px; width:100%; min-height:64px; padding:12px 16px; text-align:left; }
+  .qa > button:hover .t { color:var(--teal-700); }
+  .qa .st { flex:none; width:72px; }
+  .qa .ty { flex:none; width:120px; font-size:14px; line-height:20px; color:var(--gray-500); }
+  .qa .t { flex:1; min-width:0; font-size:16px; font-weight:500; line-height:22px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .qa .dt { flex:none; font-size:14px; line-height:20px; color:var(--gray-500); }
+  .qa .car { flex:none; width:20px; height:20px; transition:transform .2s; }
+  .qa.open .car { transform:rotate(180deg); }
+  .qa.open > button { background:var(--gray-50); }
+
+  .detail { display:flex; flex-direction:column; gap:16px; padding:20px 16px 24px; border-top:1px solid var(--gray-200); }
+  .detail dl { display:flex; flex-wrap:wrap; gap:6px 20px; font-size:13px; line-height:18px; }
+  .detail dt { color:var(--gray-500); } .detail dl div { display:flex; gap:6px; }
+  .detail .q { font-size:15px; line-height:1.7; color:var(--gray-700); white-space:pre-line; word-break:break-word; }
+  .ans { padding:20px; border-radius:12px; background:var(--bg-green); border:1px solid #dfece8; }
+  .ans h5 { display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:14px; font-weight:600; line-height:20px; color:var(--teal-700); }
+  .ans h5 span { font-weight:400; font-size:13px; color:var(--gray-500); }
+  .ans p { margin-top:10px; font-size:15px; line-height:1.7; color:var(--gray-700); white-space:pre-line; }
+  .ans.wait { background:var(--gray-50); border-color:var(--gray-200); }
+  .ans.wait p { margin:0; color:var(--gray-500); }
+  .demo { font-size:12px; color:var(--gray-400); }
+
+  @media (max-width:640px) {
+    .bar { flex-direction:column; align-items:stretch; }
+    .qa > button { flex-wrap:wrap; gap:6px 10px; padding:14px 4px; }
+    .qa .st { width:auto; } .qa .ty { width:auto; font-size:13px; }
+    .qa .t { flex-basis:100%; order:3; white-space:normal; font-size:15px; }
+    .qa .dt { margin-left:auto; font-size:13px; }
+    .qa .car { display:none; }
+    .detail { padding:16px 4px 20px; }
+  }
+</style>
+</head>
+<body>
+<div data-op-gnb></div>
+
+<section class="page-head"><div class="in">
+  <h1>마이페이지</h1>
+  <p>의뢰하신 프로젝트와 계정 정보를 한곳에서 관리할 수 있습니다.</p>
+</div></section>
+
+<main class="body"><div class="in">
+  <aside class="side" data-op-side></aside>
+
+  <div class="main">
+    <div class="intro">
+      <h2>문의내역</h2>
+      <p>문의하기로 보내신 문의와 답변을 확인할 수 있습니다. 답변이 등록되면 알림과 이메일로 알려드립니다.</p>
+    </div>
+
+    <section class="card">
+      <div class="bar">
+        <div class="chips" id="chips" role="tablist"></div>
+        <a class="btn primary" href="contact.html">새 문의하기</a>
+      </div>
+      <div id="list"></div>
+    </section>
+  </div>
+</div></main>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var me = OP.mypage('inquiry'); if (!me) return;
+  var D = OP.my, esc = D.esc, $ = function (s) { return document.querySelector(s); };
+  var ALL = D.inquiries();
+  var openId = new URLSearchParams(location.search).get('id');
+  var state = { f: 'all' };
+  var F = [['all', '전체'], ['wait', '답변대기'], ['done', '답변완료']];
+  var match = function (q, f) { return f === 'all' || (f === 'done') === !!q.answer; };
+
+  function render() {
+    $('#chips').innerHTML = F.map(function (f) {
+      var n = ALL.filter(function (q) { return match(q, f[0]); }).length;
+      return '<button type="button" role="tab" data-f="' + f[0] + '"' + (state.f === f[0] ? ' class="on" aria-selected="true"' : '') + '>' + f[1] + '<span>' + n + '</span></button>';
+    }).join('');
+    var L = ALL.filter(function (q) { return match(q, state.f); });
+    $('#list').innerHTML = L.length ? '<div class="qlist">' + L.map(function (q) {
+      var meta = [['접수번호', q.id], ['문의 유형', q.type + (q.svc ? ' · ' + q.svc : '')]];
+      if (q.ref) meta.push(['관련 프로젝트', q.ref]);
+      if (q.file) meta.push(['첨부파일', q.file]);
+      meta.push(['접수일시', D.ymdhm(q.at)]);
+      return '<div class="qa' + (q.id === openId ? ' open' : '') + '" id="' + esc(q.id) + '">' +
+        '<button type="button" aria-expanded="' + (q.id === openId) + '">' +
+          '<span class="st">' + (q.answer ? '<span class="badge done">답변완료</span>' : '<span class="badge wait">답변대기</span>') + '</span>' +
+          '<span class="ty">' + esc(q.type) + '</span><span class="t">' + esc(q.title) + '</span><span class="dt">' + D.ymd(q.at) + '</span>' +
+          '<img class="car" src="assets/find/ic-chevron-down.svg" alt=""></button>' +
+        '<div class="detail"' + (q.id === openId ? '' : ' hidden') + '>' +
+          '<dl>' + meta.map(function (m) { return '<div><dt>' + m[0] + '</dt><dd>' + esc(m[1]) + '</dd></div>'; }).join('') + '</dl>' +
+          '<p class="q">' + esc(q.body) + '</p>' +
+          (q.answer
+            ? '<div class="ans"><h5>OmicsPharm 답변<span>' + D.ymdhm(q.answer.at) + '</span></h5><p>' + esc(q.answer.body) + '</p></div>'
+            : '<div class="ans wait"><p>담당자가 내용을 확인하고 있습니다. 영업일 기준 1~2일 안에 답변드리겠습니다.</p></div>') +
+          (q.demo ? '<p class="demo">※ 화면 확인용 예시 문의입니다.</p>' : '') +
+        '</div></div>';
+    }).join('') + '</div>'
+    : '<div class="empty"><b>' + (state.f === 'all' ? '문의 내역이 없습니다' : '해당하는 문의가 없습니다') + '</b><p>궁금한 점은 문의하기로 남겨주세요.</p></div>';
+  }
+  $('#chips').addEventListener('click', function (e) { var b = e.target.closest('[data-f]'); if (b) { state.f = b.dataset.f; render(); } });
+  $('#list').addEventListener('click', function (e) {
+    var b = e.target.closest('.qa > button'); if (!b) return;
+    var qa = b.parentNode, open = !qa.classList.contains('open');
+    qa.classList.toggle('open', open); b.setAttribute('aria-expanded', open); qa.querySelector('.detail').hidden = !open;
+  });
+  render();
+  if (openId && document.getElementById(openId)) setTimeout(function () { document.getElementById(openId).scrollIntoView({ block: 'center' }); }, 50);
+})();
+</script>
+</body>
+</html>

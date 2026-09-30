@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png">
+<title>내 정보 관리 · 마이페이지 · OmicsPharm</title>
+<!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / (분석파트너) 분석 가능 서비스 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
+     데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
+<link rel="stylesheet" href="assets/common/site.css?v=20260930z">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20260930z">
+<script src="assets/common/site.js?v=20260930z"></script>
+<script src="assets/common/mypage.js?v=20260930z"></script>
+<style>
+  .card form { display:flex; flex-direction:column; gap:20px; }
+  /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
+  .tbl { border-top:2px solid #000; }
+  .field { display:grid; grid-template-columns:200px 1fr; border-bottom:1px solid var(--gray-200); }
+  .flabel { display:flex; align-items:center; padding:12px 18px; background:var(--gray-100); font-size:14px; font-weight:500; line-height:20px; }
+  .flabel .req { color:var(--red-600); margin-left:2px; }
+  .fbody { display:flex; flex-direction:column; justify-content:center; gap:6px; padding:8px 12px; min-width:0; }
+  .fbody .val { font-size:14px; line-height:20px; padding:0 4px; }
+  .fbody .val small { margin-left:8px; font-size:12px; color:var(--gray-500); }
+  .inp { width:100%; max-width:420px; height:40px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font-size:14px; line-height:20px; }
+  .inp:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+  .inp.bad { border-color:var(--red-600); }
+  .help { font-size:12px; line-height:18px; color:var(--gray-500); }
+  .msg { font-size:12px; line-height:18px; color:var(--red-600); }
+  .actions { display:flex; justify-content:flex-end; }
+
+  .svcs { display:flex; flex-wrap:wrap; gap:8px; padding:4px 0; }
+  .svcs label { display:inline-flex; align-items:center; height:36px; padding:0 14px; border:1px solid var(--gray-300); border-radius:8px; font-size:14px; cursor:pointer; }
+  .svcs input { position:absolute; opacity:0; pointer-events:none; }
+  .svcs label:has(input:checked) { border-color:var(--teal-600); background:var(--teal-50); color:var(--teal-700); font-weight:500; }
+  .svcs label:has(input:focus-visible) { box-shadow:0 0 0 3px #00786e33; }
+
+  /* 알림 설정: 토글 */
+  .prefs { border-top:1px solid var(--gray-200); }
+  .pref { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 4px; border-bottom:1px solid var(--gray-200); cursor:pointer; }
+  .pref b { display:block; font-size:15px; font-weight:500; line-height:22px; }
+  .pref span { display:block; margin-top:2px; font-size:13px; line-height:18px; color:var(--gray-500); }
+  .sw { position:relative; flex:none; width:44px; height:24px; }
+  .sw input { position:absolute; inset:0; opacity:0; margin:0; cursor:pointer; }
+  .sw i { position:absolute; inset:0; border-radius:99px; background:var(--gray-300); transition:background .15s; pointer-events:none; }
+  .sw i::after { content:""; position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#fff; box-shadow:0 1px 2px #00000033; transition:transform .15s; }
+  .sw input:checked + i { background:var(--teal-600); }
+  .sw input:checked + i::after { transform:translateX(20px); }
+  .sw input:focus-visible + i { box-shadow:0 0 0 3px #00786e33; }
+
+  .leave { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 24px; border:1px solid var(--gray-200); border-radius:16px; background:#fff; }
+  .leave p { font-size:14px; line-height:20px; color:var(--gray-500); }
+  .leave a { flex:none; font-size:14px; font-weight:500; color:var(--gray-500); text-decoration:underline; text-underline-offset:3px; }
+  .leave a:hover { color:var(--red-600); }
+
+  @media (max-width:640px) {
+    .field { grid-template-columns:1fr; }
+    .flabel { padding:10px 12px; }
+    .fbody { padding:10px 0 14px; }
+    .inp { max-width:none; }
+    .actions .btn { width:100%; }
+    .leave { flex-direction:column; align-items:flex-start; padding:16px; }
+  }
+</style>
+</head>
+<body>
+<div data-op-gnb></div>
+
+<section class="page-head"><div class="in">
+  <h1>마이페이지</h1>
+  <p>의뢰하신 프로젝트와 계정 정보를 한곳에서 관리할 수 있습니다.</p>
+</div></section>
+
+<main class="body"><div class="in">
+  <aside class="side" data-op-side></aside>
+
+  <div class="main">
+    <div class="intro">
+      <h2>내 정보 관리</h2>
+      <p>회원 정보, 비밀번호, 알림 수신 여부를 변경할 수 있습니다.</p>
+    </div>
+
+    <section class="card">
+      <div class="card-head"><h3>기본 정보</h3></div>
+      <form id="fInfo" novalidate>
+        <div class="tbl">
+          <div class="field"><div class="flabel">이메일(아이디)</div><div class="fbody"><p class="val" id="vEmail"></p></div></div>
+          <div class="field"><div class="flabel">회원 유형</div><div class="fbody"><p class="val" id="vRole"></p></div></div>
+          <div class="field"><label class="flabel" for="name">이름<span class="req">*</span></label><div class="fbody"><input class="inp" id="name" autocomplete="name"></div></div>
+          <div class="field"><label class="flabel" for="org">소속(기관·회사)<span class="req">*</span></label><div class="fbody"><input class="inp" id="org" autocomplete="organization"></div></div>
+          <div class="field"><label class="flabel" for="dept">부서·직책</label><div class="fbody"><input class="inp" id="dept" placeholder="예) 연구개발팀 / 선임연구원"></div></div>
+          <div class="field"><label class="flabel" for="phone">연락처</label><div class="fbody"><input class="inp" id="phone" type="tel" inputmode="tel" placeholder="010-0000-0000" autocomplete="tel"></div></div>
+          <div class="field" id="rowSvc" hidden><div class="flabel">분석 가능 서비스</div><div class="fbody"><div class="svcs" id="svcs"></div><p class="help">선택한 분야의 새 프로젝트가 등록되면 알려드립니다.</p></div></div>
+        </div>
+        <div class="actions"><button type="submit" class="btn primary lg">저장하기</button></div>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h3>비밀번호 변경</h3></div>
+      <form id="fPw" novalidate>
+        <div class="tbl">
+          <div class="field"><label class="flabel" for="pw0">현재 비밀번호</label><div class="fbody"><input class="inp" id="pw0" type="password" autocomplete="current-password"></div></div>
+          <div class="field"><label class="flabel" for="pw1">새 비밀번호</label><div class="fbody"><input class="inp" id="pw1" type="password" autocomplete="new-password"><p class="help">영문, 숫자, 특수문자를 포함해 8자 이상 입력해주세요.</p></div></div>
+          <div class="field"><label class="flabel" for="pw2">새 비밀번호 확인</label><div class="fbody"><input class="inp" id="pw2" type="password" autocomplete="new-password"></div></div>
+        </div>
+        <div class="actions"><button type="submit" class="btn lg">비밀번호 변경</button></div>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h3>알림 설정</h3></div>
+      <div class="prefs" id="prefs"></div>
+    </section>
+
+    <div class="leave">
+      <p>탈퇴하면 진행 중인 프로젝트와 문의 내역을 더 이상 확인할 수 없습니다.</p>
+      <a href="#" data-soon="회원 탈퇴">회원 탈퇴</a>
+    </div>
+  </div>
+</div></main>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var me = OP.mypage('account'); if (!me) return;
+  var $ = function (s) { return document.querySelector(s); };
+  var email = me.s.email, acc = me.acc, partner = me.s.role === 'partner';
+
+  $('#vEmail').textContent = email;
+  $('#vRole').innerHTML = OP.my.esc(OP.ROLE_LABEL[me.s.role] || '') + '<small>회원 유형은 변경할 수 없습니다.</small>';
+  $('#name').value = acc.name || ''; $('#org').value = acc.org || me.org || ''; $('#dept').value = acc.dept || ''; $('#phone').value = acc.phone || '';
+
+  var SVCS = ['Genomics', 'Transcriptomics', 'Proteomics', 'Metabolomics', 'Glycoproteomics', 'Olink', '바이오의약품 특성 분석', 'Bioinformatics'];
+  if (partner) {
+    $('#rowSvc').hidden = false;
+    var mine = acc.svcs || [];
+    $('#svcs').innerHTML = SVCS.map(function (v) { return '<label><input type="checkbox" value="' + v + '"' + (mine.indexOf(v) > -1 ? ' checked' : '') + '>' + v + '</label>'; }).join('');
+  }
+
+  function err(input, msg) {
+    var box = input.closest('.fbody'), m = box.querySelector('.msg');
+    input.classList.toggle('bad', !!msg);
+    if (!msg) { if (m) m.remove(); return; }
+    if (!m) { m = document.createElement('p'); m.className = 'msg'; box.appendChild(m); }
+    m.textContent = msg;
+  }
+
+  $('#fInfo').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var n = $('#name'), o = $('#org');
+    err(n, n.value.trim() ? '' : '이름을 입력해주세요.');
+    err(o, o.value.trim() ? '' : '소속을 입력해주세요.');
+    if (!n.value.trim() || !o.value.trim()) return;
+    var data = { name: n.value.trim(), org: o.value.trim(), dept: $('#dept').value.trim(), phone: $('#phone').value.trim() };
+    if (partner) data.svcs = [].map.call(document.querySelectorAll('#svcs input:checked'), function (i) { return i.value; });
+    OP.saveAccount(email, data);
+    OP.mypage('account');
+    OP.toast('회원 정보가 저장되었습니다.');
+  });
+
+  $('#fPw').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var p0 = $('#pw0'), p1 = $('#pw1'), p2 = $('#pw2'), ok = true;
+    var cur = (OP.account(email) || {}).pw;
+    if (!p0.value) { err(p0, '현재 비밀번호를 입력해주세요.'); ok = false; }
+    else if (cur && p0.value !== cur) { err(p0, '현재 비밀번호가 일치하지 않습니다.'); ok = false; } else err(p0, '');
+    if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/.test(p1.value)) { err(p1, '영문, 숫자, 특수문자를 포함해 8자 이상 입력해주세요.'); ok = false; }
+    else if (p1.value === p0.value) { err(p1, '현재 비밀번호와 다른 비밀번호를 입력해주세요.'); ok = false; } else err(p1, '');
+    if (p2.value !== p1.value || !p2.value) { err(p2, '새 비밀번호가 일치하지 않습니다.'); ok = false; } else err(p2, '');
+    if (!ok) return;
+    OP.saveAccount(email, { pw: p1.value });
+    this.reset();
+    OP.toast('비밀번호가 변경되었습니다.');
+  });
+
+  // 알림 설정 (이메일 수신)
+  var PREFS = [
+    ['quote', partner ? '새 프로젝트 · 선정 결과' : '견적 도착 · 프로젝트 진행', partner ? '관심 분야 새 프로젝트, 견적 선정 여부, 진행 상태 변경을 알려드립니다.' : '분석파트너의 견적 도착, 계약·분석·결과 단계 변경을 알려드립니다.', true],
+    ['inquiry', '문의 답변', '문의하신 내용에 답변이 등록되면 알려드립니다.', true],
+    ['notice', '공지 · 서비스 소식', '서비스 변경, 점검 등 주요 공지를 알려드립니다.', true],
+    ['mkt', '마케팅 정보 수신 (선택)', '뉴스레터, 이벤트, 신규 서비스 소식을 받아보실 수 있습니다.', false]
+  ];
+  var pref = {}; try { pref = JSON.parse(localStorage.getItem('op.alarmPref') || '{}')[email] || {}; } catch (e2) {}
+  $('#prefs').innerHTML = PREFS.map(function (p) {
+    var on = p[0] in pref ? pref[p[0]] : p[3];
+    return '<label class="pref"><div><b>' + p[1] + '</b><span>' + p[2] + '</span></div><span class="sw"><input type="checkbox" role="switch" data-k="' + p[0] + '"' + (on ? ' checked' : '') + ' aria-label="' + p[1] + ' 이메일 알림"><i></i></span></label>';
+  }).join('');
+  $('#prefs').addEventListener('change', function (e) {
+    var k = e.target.dataset.k; if (!k) return;
+    var all = {}; try { all = JSON.parse(localStorage.getItem('op.alarmPref') || '{}'); } catch (e3) {}
+    all[email] = Object.assign(all[email] || {}, (function () { var o = {}; o[k] = e.target.checked; return o; })());
+    try { localStorage.setItem('op.alarmPref', JSON.stringify(all)); } catch (e4) {}
+    OP.toast(e.target.checked ? '알림을 켰습니다.' : '알림을 껐습니다.');
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png">
+<title>마이페이지 · OmicsPharm</title>
+<!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
+     진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
+<link rel="stylesheet" href="assets/common/site.css?v=20260930z">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20260930z">
+<script src="assets/common/site.js?v=20260930z"></script>
+<script src="assets/common/mypage.js?v=20260930z"></script>
+<style>
+  .hello { flex-direction:row; align-items:center; justify-content:space-between; }
+  .hello h2 { font-size:22px; font-weight:700; line-height:32px; letter-spacing:-.22px; }
+  .hello p { margin-top:4px; font-size:14px; line-height:20px; color:var(--gray-500); }
+  .hello .acts { display:flex; gap:8px; }
+
+  /* 진행 현황: 단계별 개수 */
+  .flow { display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
+  .flow a { position:relative; display:flex; flex-direction:column; align-items:center; gap:6px; padding:20px 8px; text-align:center; }
+  .flow a + a { border-left:1px solid var(--gray-200); }
+  .flow a:hover { background:var(--gray-50); }
+  .flow b { font-size:28px; font-weight:700; line-height:36px; color:var(--gray-300); }
+  .flow b.has { color:var(--teal-600); }
+  .flow span { font-size:14px; font-weight:500; line-height:20px; color:var(--gray-600); }
+
+  .grid2 { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:24px; }
+
+  /* 최근 프로젝트 */
+  .plist { display:flex; flex-direction:column; }
+  .plist a { display:flex; align-items:center; gap:16px; padding:16px 4px; border-bottom:1px solid var(--gray-200); }
+  .plist a:first-child { border-top:1px solid var(--gray-200); }
+  .plist a:hover h4 { color:var(--teal-700); text-decoration:underline; text-underline-offset:3px; }
+  .plist .badges { display:flex; gap:6px; flex:none; }
+  .plist h4 { flex:1; min-width:0; font-size:16px; font-weight:600; line-height:22px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .plist .dt { flex:none; font-size:13px; line-height:18px; color:var(--gray-500); }
+
+  /* 알림·문의 짧은 목록 */
+  .mini { display:flex; flex-direction:column; }
+  .mini a { display:flex; align-items:flex-start; gap:10px; padding:12px 0; border-bottom:1px solid var(--gray-100); }
+  .mini a:last-child { border-bottom:0; }
+  .mini a:hover .t { color:var(--teal-700); }
+  .mini .dot { flex:none; width:6px; height:6px; margin-top:8px; border-radius:50%; background:var(--orange-600); }
+  .mini .dot.read { background:transparent; }
+  .mini .tx { flex:1; min-width:0; }
+  .mini .t { display:block; font-size:14px; font-weight:500; line-height:20px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .mini .d { display:block; margin-top:2px; font-size:12px; line-height:18px; color:var(--gray-500); }
+  .mini .badge { flex:none; margin-top:1px; }
+  .mini-empty { padding:32px 0; text-align:center; font-size:14px; color:var(--gray-500); }
+
+  @media (max-width:1180px) { .grid2 { grid-template-columns:minmax(0,1fr); } }
+  @media (max-width:640px) {
+    .hello { flex-direction:column; align-items:flex-start; }
+    .hello .acts { width:100%; } .hello .acts .btn { flex:1; }
+    .flow { grid-template-columns:repeat(3, minmax(0,1fr)); }
+    .flow a:nth-child(4) { border-left:0; }
+    .flow a:nth-child(n+4) { border-top:1px solid var(--gray-200); }
+    .flow b { font-size:22px; line-height:30px; }
+    .flow span { font-size:13px; }
+    .plist a { flex-wrap:wrap; gap:6px 12px; }
+    .plist h4 { flex-basis:100%; order:2; white-space:normal; }
+    .plist .dt { margin-left:auto; }
+  }
+</style>
+</head>
+<body>
+<div data-op-gnb></div>
+
+<section class="page-head"><div class="in">
+  <h1>마이페이지</h1>
+  <p>의뢰하신 프로젝트와 계정 정보를 한곳에서 관리할 수 있습니다.</p>
+</div></section>
+
+<main class="body"><div class="in">
+  <aside class="side" data-op-side></aside>
+
+  <div class="main">
+    <section class="card hello">
+      <div><h2 id="hi"></h2><p id="hiSub"></p></div>
+      <div class="acts" id="acts"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h3>프로젝트 진행 현황</h3><a class="more" href="mypage-project.html">전체 보기</a></div>
+      <div class="flow" id="flow"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h3>최근 프로젝트</h3><a class="more" href="mypage-project.html">전체 보기</a></div>
+      <div id="plist"></div>
+    </section>
+
+    <div class="grid2">
+      <section class="card">
+        <div class="card-head"><h3>최근 알림</h3><a class="more" href="mypage-alarm.html">전체 보기</a></div>
+        <div class="mini" id="alarms"></div>
+      </section>
+      <section class="card">
+        <div class="card-head"><h3>최근 문의</h3><a class="more" href="mypage-inquiry.html">전체 보기</a></div>
+        <div class="mini" id="inqs"></div>
+      </section>
+    </div>
+  </div>
+</div></main>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var me = OP.mypage('dash'); if (!me) return;
+  var D = OP.my, esc = D.esc, $ = function (s) { return document.querySelector(s); };
+  var client = me.s.role === 'client';
+  var P = D.projects();
+
+  $('#hi').textContent = me.name + ' 님, 안녕하세요.';
+  $('#hiSub').textContent = client ? '진행 중인 프로젝트와 새 소식을 확인해보세요.' : '견적을 제출한 프로젝트와 새 소식을 확인해보세요.';
+  $('#acts').innerHTML = client
+    ? '<a class="btn" href="contact.html">문의하기</a><a class="btn primary" href="omicspharm-register.html">프로젝트 의뢰하기</a>'
+    : '<a class="btn" href="contact.html">문의하기</a><a class="btn primary" href="projects.html">프로젝트 찾기</a>';
+
+  // 단계: 클라이언트는 의뢰→결과, 분석파트너는 견적 제출→결과 제출. 지금은 제출한 의뢰가 모두 '의뢰접수' 단계
+  var steps = client ? ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'] : ['견적 제출', '선정', '계약', '분석 진행', '결과 제출'];
+  var counts = client ? [P.length, 0, 0, 0, 0] : [0, 0, 0, 0, 0];
+  $('#flow').innerHTML = steps.map(function (t, i) {
+    return '<a href="mypage-project.html"><b' + (counts[i] ? ' class="has"' : '') + '>' + counts[i] + '</b><span>' + t + '</span></a>';
+  }).join('');
+
+  $('#plist').innerHTML = client && P.length
+    ? '<div class="plist">' + P.slice(0, 3).map(function (p) {
+        return '<a href="mypage-project.html?id=' + encodeURIComponent(p.id) + '"><span class="badges"><span class="badge tag">' + esc(p.svc) + '</span><span class="badge state">의뢰접수</span></span>' +
+          '<h4>' + esc(p.title) + '</h4><span class="dt">' + D.ymd(p.at) + '</span></a>';
+      }).join('') + '</div>'
+    : '<div class="empty"><b>' + (client ? '의뢰한 프로젝트가 없습니다' : '견적을 제출한 프로젝트가 없습니다') + '</b>' +
+      '<p>' + (client ? '분석 의뢰를 등록하면 분석파트너들의 견적을 비교해 받아볼 수 있습니다.' : '프로젝트 찾기에서 참여할 프로젝트를 찾아 견적을 제출해보세요.') + '</p>' +
+      (client ? '<a class="btn primary lg" href="omicspharm-register.html">프로젝트 의뢰하기</a>' : '<a class="btn primary lg" href="projects.html">프로젝트 찾기</a>') + '</div>';
+
+  var A = D.alarms().slice(0, 4);
+  $('#alarms').innerHTML = A.map(function (a) {
+    return '<a href="' + a.href + '" data-id="' + a.id + '"><i class="dot' + (a.read ? ' read' : '') + '"></i><span class="tx"><span class="t">' + esc(a.t) + '</span><span class="d">' + D.ymdhm(a.at) + '</span></span></a>';
+  }).join('') || '<p class="mini-empty">새 알림이 없습니다.</p>';
+  $('#alarms').addEventListener('click', function (e) { var a = e.target.closest('[data-id]'); if (a) D.markRead([a.dataset.id]); });
+
+  var Q = D.inquiries().slice(0, 4);
+  $('#inqs').innerHTML = Q.map(function (q) {
+    return '<a href="mypage-inquiry.html?id=' + q.id + '">' + (q.answer ? '<span class="badge done">답변완료</span>' : '<span class="badge wait">답변대기</span>') +
+      '<span class="tx"><span class="t">' + esc(q.title) + '</span><span class="d">' + esc(q.type) + ' · ' + D.ymd(q.at) + '</span></span></a>';
+  }).join('') || '<p class="mini-empty">문의 내역이 없습니다.</p>';
+})();
+</script>
+</body>
+</html>
