@@ -41,7 +41,7 @@
   .sec.full { display:block; }
   .pic img { display:block; width:100%; aspect-ratio:529 / 407; object-fit:cover; border-radius:16px; }
   .eyebrow { font-size:14px; font-weight:600; line-height:20px; letter-spacing:.04em; color:var(--teal-600); text-transform:uppercase; }
-  .sec h2 { margin-top:8px; font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; word-break:keep-all; }
+  .sec h2 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; word-break:keep-all; }
   .desc { margin-top:20px; font-size:16px; line-height:1.75; color:var(--gray-700); word-break:keep-all; }
   .desc p + p { margin-top:12px; }
 
@@ -237,7 +237,7 @@
     '<div class="feats">' + FEATS.map(function (f) { return '<div class="feat"><i><span class="ico" style="--i:url(' + I + 'ic-' + f[0] + '.svg)"></span></i><b>' + f[1] + '</b><p>' + f[2] + '</p></div>'; }).join('') + '</div></div></section>';
 
   S.forEach(function (s, k) {
-    var head = '<p class="eyebrow">' + s.ko + '</p><h2>' + s.name + '</h2>' + desc(s.ps);
+    var head = '<h2>' + s.name + '</h2>' + desc(s.ps);
     if (s.table) {
       html += '<section class="sec full" id="' + s.id + '"><div class="head-row">' + pic(s.img) + '<div>' + head + '</div></div>' +
         '<table class="bp"><thead><tr><th>분류</th><th>품목</th><th>목적</th></tr></thead><tbody>' +
@@ -250,7 +250,7 @@
     html += '<section class="sec' + (k % 2 === 0 ? ' rev' : '') + '" id="' + s.id + '">' + pic(s.img) + '<div>' + head + body + '</div></section>';
   });
 
-  html += '<section class="samples" id="samples"><p class="eyebrow">Samples</p><h2>다양한 종류의 시료에서 분석이 가능하며<br>신규 물질에 대한 <em>분석법 개발 및 밸리데이션</em> 서비스도 제공합니다.</h2>' +
+  html += '<section class="samples" id="samples"><h2>다양한 종류의 시료에서 분석이 가능하며<br>신규 물질에 대한 <em>분석법 개발 및 밸리데이션</em> 서비스도 제공합니다.</h2>' +
     '<div class="scards">' + SAMPLES.map(function (x) { return '<div class="scard"><img src="' + I + 'guide-' + x[0] + '.jpg" alt="" loading="lazy"><div><b>' + x[1] + '</b><small>' + x[2] + '</small><p>' + x[3] + '</p></div></div>'; }).join('') + '</div>' +
     '<div class="req"><h3>시료 요구사항<small>Sample Requirements</small></h3><ul><li>단백질 양 :<b>100 μg</b></li><li>Cell count :<b>&gt; 10⁷</b></li><li>EV particles :<b>&gt; 10¹⁰</b></li></ul></div></section>' +
     '<section class="cta"><div><h2>필요한 분석을 바로 의뢰해보세요</h2><p>어떤 분석이 맞을지 모르겠다면 문의를 남겨주세요. 담당 컨설턴트가 안내해드립니다.</p></div>' +
