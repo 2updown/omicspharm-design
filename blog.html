@@ -6,10 +6,11 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png">
 <title>Insights · OmicsPharm</title>
 <!-- 커뮤니티 > Insight (Figma 시안 없음 — Upstage Blog 레이아웃 참고, 탭은 FAQ 탭 컴포넌트)
-     글 목록·썸네일은 현재 홈페이지 Insights(/newsletter) 게시글 10개. 상세는 기존 홈페이지 글로 새 창 연결
+     글 목록은 현재 홈페이지 Insights(/newsletter) 게시글 10개 (assets/insight/posts.js). 카드 → blog-post.html?id=
      ?cat=news|insight  탭 선택 / 한 페이지 12개 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20260930c">
-<script src="assets/common/site.js?v=20260930c"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20260930d">
+<script src="assets/common/site.js?v=20260930d"></script>
+<script src="assets/insight/posts.js?v=20260930d"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -41,9 +42,8 @@
   .posts { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:32px 24px; margin-top:20px; }
   .post { display:flex; flex-direction:column; border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; background:#fff; transition:border-color .15s, box-shadow .15s; }
   .post:hover { border-color:var(--teal-500); box-shadow:0 4px 8px #00000014, 0 0 2px #0000000a; }
-  .post .thumb { position:relative; aspect-ratio:1 / 1; overflow:hidden; background:var(--gray-100); border-bottom:1px solid var(--gray-200); }
+  .post .thumb { position:relative; aspect-ratio:16 / 9; overflow:hidden; background:var(--gray-100); border-bottom:1px solid var(--gray-200); }
   .post .thumb img { width:100%; height:100%; object-fit:cover; transition:transform .3s; }
-  .post .thumb img.wide { object-fit:contain; background:#fff; }
   .post:hover .thumb img { transform:scale(1.03); }
   .post .txt { display:flex; flex-direction:column; gap:12px; flex:1; padding:20px 20px 24px; }
   .badge { align-self:flex-start; display:inline-flex; align-items:center; padding:2px 8px; border:1px solid var(--teal-600); border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; color:var(--teal-600); white-space:nowrap; }
@@ -98,48 +98,30 @@
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var PER = 12;
-  var SRC = 'https://www.omicspharm.com/newsletter?tpf=board/view&board_code=2&code=';
-  // 현재 홈페이지 Insights 게시글 (제목 앞 [2026 …] 말머리는 카테고리 배지로 표시)
   var CATS = [['all', '전체'], ['news', 'OmicsPharm 뉴스'], ['insight', 'AI 인사이트']];
-  var POSTS = [
-    [17, 'news',    '2026.06.02', 'jpg', 'CellKey AI의 OmicsPharm - NIPA XaaS 선도모델 개발사업 선정'],
-    [16, 'insight', '2026.04.23', 'jpg', '혈액 한 방울로 심장병을 15년 전에 알 수 있다고요?'],
-    [15, 'insight', '2026.04.01', 'png', '멀티오믹스 AI가 암 진단을 바꾸는 방식 : 비침습 진단과 조기 예측의 시대'],
-    [14, 'insight', '2026.03.31', 'png', '불완전한 멀티오믹스 데이터, AI로 어디까지 ‘복구’할 수 있을까?'],
-    [13, 'insight', '2026.03.31', 'png', "멀티오믹스와 AI, '디지털 트윈'의 현실적인 시작점"],
-    [11, 'insight', '2026.03.31', 'png', '멀티오믹스 AI 리스크 모델, 언제부터 임상에서 써도 되는 수준이 될까?'],
-    [10, 'insight', '2026.03.31', 'png', '멀티오믹스 AI, 실제 R&D 워크플로우에서는 이렇게 쓰인다!'],
-    [9,  'insight', '2026.03.31', 'png', 'AI를 통한 멀티오믹스 분석, 실제로 어느 정도 성과를 내고 있을까?'],
-    [8,  'insight', '2026.03.31', 'png', "멀티오믹스에 왜 이제는 'AI'가 필수인가"],
-    [7,  'insight', '2026.03.31', 'png', 'AI 멀티오믹스로 코호트 2배 확대하는 법']
-  ];
+  var POSTS = window.OP_POSTS;
   var LABEL = { news: 'OmicsPharm 뉴스', insight: 'AI 인사이트' };
   var P = new URLSearchParams(location.search);
   var state = { cat: LABEL[P.get('cat')] ? P.get('cat') : 'all', page: 1 };
 
   function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
-  function count(c) { return c === 'all' ? POSTS.length : POSTS.filter(function (p) { return p[1] === c; }).length; }
+  function count(c) { return c === 'all' ? POSTS.length : POSTS.filter(function (p) { return p.cat === c; }).length; }
 
   function render() {
     $('#tabs').innerHTML = CATS.map(function (c) {
       var on = c[0] === state.cat;
       return '<button type="button" role="tab" aria-selected="' + on + '" data-cat="' + c[0] + '"' + (on ? ' class="on"' : '') + '>' + c[1] + '<span>' + count(c[0]) + '</span></button>';
     }).join('');
-    var list = POSTS.filter(function (p) { return state.cat === 'all' || p[1] === state.cat; });
+    var list = POSTS.filter(function (p) { return state.cat === 'all' || p.cat === state.cat; });
     var pages = Math.max(1, Math.ceil(list.length / PER));
     if (state.page > pages) state.page = pages;
     $('#total').innerHTML = '전체 <b>' + list.length + '</b>개';
     $('#posts').innerHTML = list.slice((state.page - 1) * PER, state.page * PER).map(function (p) {
-      return '<a class="post" href="' + SRC + p[0] + '" target="_blank" rel="noopener">' +
-        '<div class="thumb"><img src="assets/insight/post-' + p[0] + '.' + p[3] + '" alt="" loading="lazy"></div>' +
-        '<div class="txt"><span class="badge">' + LABEL[p[1]] + '</span><h3>' + esc(p[4]) + '</h3>' +
-        '<p class="meta"><span class="by">OmicsPharm</span><i></i><span>' + p[2] + '</span></p></div></a>';
+      return '<a class="post" href="blog-post.html?id=' + p.id + '">' +
+        '<div class="thumb"><img src="assets/insight/thumb-' + p.id + '.jpg" alt="" loading="lazy"></div>' +
+        '<div class="txt"><span class="badge">' + LABEL[p.cat] + '</span><h3>' + esc(p.title) + '</h3>' +
+        '<p class="meta"><span class="by">OmicsPharm</span><i></i><span>' + p.date + '</span></p></div></a>';
     }).join('');
-    // 가로로 긴 썸네일은 잘리지 않게 전체 표시
-    [].forEach.call(document.querySelectorAll('.thumb img'), function (img) {
-      var fit = function () { if (img.naturalWidth / img.naturalHeight > 1.25) img.classList.add('wide'); };
-      if (img.complete) fit(); else img.addEventListener('load', fit);
-    });
     var html = '', btn = function (p, ic, label, dis) { return '<button type="button" data-p="' + p + '" aria-label="' + label + '"' + (dis ? ' disabled' : '') + '><img src="assets/find/ic-' + ic + '.svg" alt=""></button>'; };
     var start = Math.max(1, Math.min(state.page - 2, pages - 4)), end = Math.min(pages, start + 4);
     html += btn(1, 'caret-double-left', '첫 페이지', state.page === 1) + btn(state.page - 1, 'caret-left', '이전 페이지', state.page === 1);

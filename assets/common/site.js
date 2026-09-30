@@ -149,7 +149,7 @@
         '<div class="op-f-left">' +
           '<img src="' + A + 'logo.svg" alt="OmicsPharm">' +
           '<div class="op-f-info">' +
-            '<div><b>사업자등록번호</b><span>659-87-01297</span></div>' +
+            '<div><b>사업자등록번호</b><span>695-87-01297</span></div>' +
             '<div><b>본사</b><span>28160 충북 청주시 흥덕구 오송읍 오송생명1로 194-41, 408호(기업연구관2)</span></div>' +
             '<div><b>BIO R&amp;D CENTER</b><span>06571 서울특별시 서초구 서초대로 67 성령빌딩 8층</span></div>' +
           '</div>' +
