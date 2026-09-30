@@ -7,10 +7,10 @@
 <title>알림 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 알림 (Figma 시안 없음). GNB 종 아이콘이 이 화면으로 연결된다.
      알림은 이 브라우저의 의뢰·문의 기록 + 공지로 만든다(assets/common/mypage.js). 읽음 상태는 localStorage op.alarmRead -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261001d">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261001d">
-<script src="assets/common/site.js?v=20261001d"></script>
-<script src="assets/common/mypage.js?v=20261001d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261001e">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261001e">
+<script src="assets/common/site.js?v=20261001e"></script>
+<script src="assets/common/mypage.js?v=20261001e"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; }
   .readall { font-size:14px; font-weight:500; line-height:20px; color:var(--gray-500); white-space:nowrap; }
@@ -22,9 +22,6 @@
   .al:hover { background:var(--gray-50); }
   .al.new { background:#f6faf9; }
   .al.new:hover { background:#eef6f4; }
-  .al .ic { flex:none; display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:var(--gray-100); }
-  .al .ic img { width:20px; height:20px; opacity:.7; }
-  .al.new .ic { background:var(--teal-50); }
   .al .tx { flex:1; min-width:0; }
   .al .top { display:flex; align-items:center; gap:8px; font-size:12px; line-height:18px; color:var(--gray-500); }
   .al .top .cat { font-weight:600; color:var(--gray-600); }
@@ -37,8 +34,7 @@
   @media (max-width:640px) {
     .bar { flex-wrap:wrap; }
     .al { gap:10px; padding:14px 4px; }
-    .al .ic { width:32px; height:32px; } .al .ic img { width:16px; height:16px; }
-    .al .car { display:none; }
+      .al .car { display:none; }
   }
 </style>
 </head>
@@ -88,7 +84,6 @@
     $('#readAll').disabled = !L.some(function (a) { return !a.read; });
     $('#list').innerHTML = L.length ? '<div class="alist">' + L.map(function (a) {
       return '<a class="al' + (a.read ? '' : ' new') + '" href="' + a.href + '" data-id="' + a.id + '">' +
-        '<span class="ic"><img src="' + CAT[a.cat][1] + '" alt=""></span>' +
         '<span class="tx"><span class="top"><span class="cat">' + CAT[a.cat][0] + '</span><span>' + D.ymdhm(a.at) + '</span>' + (a.read ? '' : '<i class="dot" aria-label="읽지 않음"></i>') + '</span>' +
           '<p class="t">' + esc(a.t) + '</p>' + (a.sub ? '<p class="sub">' + esc(a.sub) + '</p>' : '') + '</span>' +
         '<img class="car" src="assets/find/ic-caret-right.svg" alt=""></a>';
