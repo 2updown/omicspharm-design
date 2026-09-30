@@ -6,9 +6,9 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png">
 <title>OmicsPharm</title>
 <!-- Figma: [OmicsPharm] Renewal / 03_디자인(작업중) / 1440_시안1 (180:5300) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20260930r">
-<script src="assets/common/site.js?v=20260930r"></script>
-<script src="assets/common/projects-data.js?v=20260930r"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20260930u">
+<script src="assets/common/site.js?v=20260930u"></script>
+<script src="assets/common/projects-data.js?v=20260930u"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --teal-900:#004f4a;
@@ -448,16 +448,16 @@
   }));
 </script>
 <script>
-/* 메인 스크롤 등장 효과: 요소마다 .rv를 붙이고 화면에 들어오면 .in (같은 묶음 안에서는 순서대로 조금씩 늦게) */
+/* 메인 스크롤 등장 효과 (배경·배경 이미지는 고정, 글자·내용만): 요소마다 .rv를 붙이고 화면에 들어오면 .in (같은 묶음 안에서는 순서대로 조금씩 늦게) */
 (function () {
   var groups = [
     ['.hero-copy h1', '.hero-copy p', '.hero-btns'],
     ['.proof > p', '.proof .marquee'],
     ['.service .sec-head', '.service-shot'],
-    ['.features .sec-head', '.feat-box'],
+    ['.features .sec-head', '.feat-in > *'],
     ['.proj-head', '#projView'],
     ['.an-head'], ['.an-grid .acard'],
-    ['.cta']
+    ['.cta > h2', '.cta > p', '.cta > .btn-action']
   ];
   var els = [];
   groups.forEach(function (g) {

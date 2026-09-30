@@ -185,12 +185,25 @@
     [].forEach.call(document.body.children, function (el) {
       if (/^(SCRIPT|STYLE|TEMPLATE)$/.test(el.tagName) || skip.test(el.className) || el.hidden) return;
       if (getComputedStyle(el).position === 'fixed') return;
-      // 상단 영역(첫 블록)은 배경·이미지는 그대로 두고 안쪽 글자 요소만 올라오게
-      var targets = [el];
-      if (n === 0) {
-        var box = el.querySelector(':scope > .in') || el;
-        targets = [].filter.call(box.children, function (c) { return !/^(IMG|VIDEO|PICTURE|SVG|CANVAS)$/i.test(c.tagName) && getComputedStyle(c).position !== 'absolute'; });
-      }
+      // 배경(섹션 배경·배경 이미지)은 그대로 두고 안쪽 내용만 올라오게
+      //  - 안쪽 .in 래퍼가 있으면: 상단(첫 블록)은 그 안의 글자 요소 하나하나, 나머지는 .in 통째로
+      //  - 없으면: 블록의 직계 자식 중 배경용 이미지·영상·절대배치 요소를 뺀 것
+      var box = el.querySelector(':scope > .in');
+      // 배경을 가진 박스(배경색·배경 이미지·깔린 이미지)는 통째로 움직이지 않고 그 안쪽으로 들어감
+      var hasBg = function (c) {
+        var cs = getComputedStyle(c);
+        return cs.backgroundImage !== 'none' || !/rgba\(0, 0, 0, 0\)|transparent/.test(cs.backgroundColor) ||
+          [].some.call(c.children, function (k) { return /^(IMG|VIDEO|PICTURE)$/i.test(k.tagName) && getComputedStyle(k).position === 'absolute'; });
+      };
+      var kids = function (p) {
+        var out = [];
+        [].forEach.call(p.children, function (c) {
+          if (/^(IMG|VIDEO|PICTURE|SVG|CANVAS)$/i.test(c.tagName) || getComputedStyle(c).position === 'absolute') return;
+          if (hasBg(c) && c.children.length && !/^(A|BUTTON|LABEL|INPUT|SELECT|TEXTAREA|FORM)$/.test(c.tagName)) out = out.concat(kids(c)); else out.push(c); // 버튼·입력창은 통째로
+        });
+        return out;
+      };
+      var targets = box ? (n === 0 ? kids(box) : [box]) : kids(el);
       targets.forEach(function (t) { t.classList.add('op-enter'); t.style.setProperty('--op-d', Math.min(n++, 5) * 0.1 + 's'); });
     });
   }
