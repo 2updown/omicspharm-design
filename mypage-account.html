@@ -7,10 +7,10 @@
 <title>내 정보 관리 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / (분석파트너) 분석 가능 서비스 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261001k">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261001k">
-<script src="assets/common/site.js?v=20261001k"></script>
-<script src="assets/common/mypage.js?v=20261001k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261001l">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261001l">
+<script src="assets/common/site.js?v=20261001l"></script>
+<script src="assets/common/mypage.js?v=20261001l"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -111,7 +111,7 @@
       <form id="fInfo" novalidate>
         <div class="tbl">
           <div class="field"><div class="flabel">프로필 사진</div><div class="fbody">
-            <div class="photo"><img id="pImg" src="assets/main/user-icon.svg" alt="프로필 사진">
+            <div class="photo"><img id="pImg" src="assets/main/user-icon.svg?v=2" alt="프로필 사진">
               <div class="pbtns"><div><label class="btn" for="pFile">사진 변경</label><button type="button" class="btn" id="pDel">삭제</button></div>
                 <p class="help">JPG, PNG 파일 · 10MB 이하. 정사각형으로 잘려 표시됩니다.</p>
                 <p class="note" id="pNote" hidden>아래 저장하기를 눌러야 변경한 사진이 반영됩니다.</p></div>
@@ -173,7 +173,7 @@
   $('#gpw').focus();
 
   // 프로필 사진: 가운데를 정사각형으로 잘라 240px로 줄여 저장
-  var DEF = 'assets/main/user-icon.svg';
+  var DEF = 'assets/main/user-icon.svg?v=2';
   var photo = acc.photo || ''; // 화면에 보이는 사진(저장 전 미리보기 포함). 저장하기를 눌러야 계정에 반영
   var showPhoto = function () { $('#pImg').src = photo || DEF; $('#pDel').disabled = !photo; };
   showPhoto();

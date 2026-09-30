@@ -59,7 +59,8 @@
 .op-user { position:relative; }
 .op-user > button { display:flex; align-items:center; }
 .op-user > button img { display:block; width:24px; height:24px; border-radius:50%; object-fit:cover; } /* 지구본·알림 아이콘과 같은 24px (Figma 원본 36px) */
-.op-user > button:hover img { filter:brightness(.95); }
+.op-user > button:hover img { filter:brightness(.8); } /* 올린 프로필 사진 */
+.op-user > button:hover img[src*="user-icon.svg"] { filter:none; content:url(../main/user-icon-hover.svg?v=2); } /* 기본 아이콘: Figma hover 상태(1088:36000) */
 .op-user-menu { position:absolute; top:calc(100% + 12px); right:0; min-width:220px; padding:8px; background:#fff; border-radius:8px;
   box-shadow:0 0 2px #00000029, 0 16px 24px #00000029; display:none; }
 .op-user.open .op-user-menu { display:block; }

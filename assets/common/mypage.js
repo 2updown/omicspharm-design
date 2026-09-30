@@ -104,7 +104,7 @@
     if (side) {
       var n = D.unread();
       side.innerHTML =
-        '<div class="me"><img src="' + esc(acc.photo || 'assets/main/user-icon.svg') + '" alt="">' +
+        '<div class="me"><img src="' + esc(acc.photo || 'assets/main/user-icon.svg?v=2') + '" alt="">' +
           '<span class="role">' + esc(OP.ROLE_LABEL[s.role] || '') + '</span>' +
           '<b>' + esc(name) + ' 님</b><span>(' + esc(s.email) + ')</span>' + (org ? '<span>' + esc(org) + '</span>' : '') + '</div>' +
         '<nav class="menu" aria-label="마이페이지 메뉴">' + MENU.filter(function (m) { return !m[3] || m[3] === s.role; }).map(function (m) {
