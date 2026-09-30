@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png">
+<title>FAQ · OmicsPharm</title>
+<!-- 고객지원 > FAQ (Figma 시안 없음 — 상단은 Fiverr Help Center, 탭 아래 목록은 카페24 엑스퍼트 FAQ 형식 참고)
+     ?tab=client|partner  탭 선택 (파트너 계정으로 로그인하면 기본 partner) / ?q=검색어 -->
+<link rel="stylesheet" href="assets/common/site.css?v=20260930a">
+<script src="assets/common/site.js?v=20260930a"></script>
+<style>
+  :root {
+    --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
+    --gray-50:#fafafa; --gray-100:#f5f5f5; --gray-200:#e5e5e5; --gray-300:#d4d4d4; --gray-400:#a3a3a3; --gray-500:#737373; --gray-600:#525252; --gray-700:#404040;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--gray-50); color:#000; font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; }
+  button, input { font:inherit; color:inherit; }
+  button { background:none; border:0; cursor:pointer; }
+  [hidden] { display:none !important; }
+  .in { max-width:1320px; margin:0 auto; }
+  .ico { display:inline-block; flex:none; background:currentColor; -webkit-mask:var(--i) center/contain no-repeat; mask:var(--i) center/contain no-repeat; }
+
+  /* 상단 검색 */
+  .hero { position:relative; overflow:hidden; padding:64px 60px 56px; background:radial-gradient(60% 120% at 85% 0%, #d1faf1 0%, rgba(209,250,241,0) 60%), radial-gradient(50% 100% at 0% 100%, #e3f4ff 0%, rgba(227,244,255,0) 60%), var(--bg-green); border-bottom:1px solid var(--gray-200); text-align:center; }
+  .hero h1 { font-size:36px; font-weight:700; line-height:46px; letter-spacing:-.36px; }
+  .hero p { margin-top:12px; font-size:16px; line-height:22px; color:var(--gray-600); }
+  .search { display:flex; align-items:center; gap:8px; max-width:720px; height:56px; margin:32px auto 0; padding:0 8px 0 20px; background:#fff; border:1px solid var(--gray-300); border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.06); }
+  .search:focus-within { border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+  .search input { flex:1; min-width:0; border:0; outline:0; background:none; font-size:16px; line-height:22px; }
+  .search input::placeholder { color:var(--gray-400); }
+  .search input::-webkit-search-cancel-button { display:none; }
+  .search .clear { width:32px; height:32px; border-radius:8px; color:var(--gray-400); font-size:20px; line-height:32px; }
+  .search .clear:hover { background:var(--gray-100); color:var(--gray-600); }
+  .search .go { display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:8px; background:var(--teal-600); color:#fff; }
+  .search .go:hover { background:var(--teal-700); }
+  .search .go .ico { width:20px; height:20px; }
+  .tops { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px; margin-top:20px; font-size:14px; line-height:20px; }
+  .tops > span { margin-right:4px; font-weight:500; color:var(--gray-600); }
+  .chip { height:32px; padding:0 14px; border:1px solid var(--gray-300); border-radius:99px; background:#fff; font-size:14px; line-height:20px; color:var(--gray-700); }
+  .chip:hover { border-color:var(--teal-600); color:var(--teal-600); }
+  .chip.on { border-color:var(--teal-600); background:var(--teal-600); color:#fff; }
+
+  /* 탭: 클라이언트 / 분석파트너 */
+  .tabs-wrap { padding:0 60px; background:#fff; border-bottom:1px solid var(--gray-200); position:sticky; top:70px; z-index:5; }
+  .tabs { display:flex; gap:32px; }
+  .tabs button { position:relative; height:60px; padding:0 4px; font-size:18px; font-weight:500; line-height:24px; color:var(--gray-500); }
+  .tabs button:hover { color:#000; }
+  .tabs button.on { color:#000; font-weight:600; }
+  .tabs button.on::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--teal-600); }
+
+  .body { padding:40px 60px 80px; }
+
+  /* 목록 머리: 전체 N건 + 카테고리 선택 (카페24 FAQ 형식) */
+  .lhead { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .lhead h2 { font-size:24px; font-weight:700; line-height:32px; letter-spacing:-.24px; }
+  .lhead h2 b { color:var(--teal-600); }
+  .lhead .kw { margin-left:8px; font-size:16px; font-weight:500; color:var(--gray-500); }
+  .sel { position:relative; }
+  .sel select { height:40px; min-width:200px; padding:0 40px 0 16px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font:inherit; font-size:14px; line-height:20px; appearance:none; -webkit-appearance:none; cursor:pointer; }
+  .sel select:focus-visible { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+  .sel::after { content:""; position:absolute; right:14px; top:12px; width:16px; height:16px; background:url(assets/find/ic-chevron-down.svg) center/contain no-repeat; pointer-events:none; }
+
+  /* 질문 목록 (아코디언) */
+  .qa { margin-top:20px; border-top:2px solid #000; background:#fff; }
+  .qa details { border-bottom:1px solid var(--gray-200); }
+  .qa summary { display:flex; align-items:center; gap:16px; padding:20px 24px; cursor:pointer; list-style:none; }
+  .qa summary::-webkit-details-marker { display:none; }
+  .qa summary:hover { background:var(--gray-50); }
+  .qa summary:focus-visible { outline:2px solid var(--teal-600); outline-offset:-2px; }
+  .qa .qt { flex:1; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
+  .qa .tag { padding:2px 8px; border-radius:8px; background:var(--teal-50); font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; color:var(--teal-700); }
+  .qa .t { font-size:16px; font-weight:500; line-height:24px; word-break:keep-all; }
+  .qa .t mark { background:var(--teal-100); color:inherit; border-radius:2px; }
+  .qa .car { width:20px; height:20px; color:var(--gray-500); transition:transform .2s; }
+  .qa details[open] .car { transform:rotate(180deg); }
+  .qa .a { padding:20px 24px 24px; background:var(--gray-50); border-top:1px solid var(--gray-200); font-size:15px; line-height:24px; color:var(--gray-700); word-break:keep-all; }
+  .qa .a p + p { margin-top:8px; }
+  .qa .a a { color:var(--teal-600); font-weight:500; text-decoration:underline; text-underline-offset:3px; }
+  .none { padding:56px 24px; text-align:center; border-bottom:1px solid var(--gray-200); }
+  .none b { display:block; font-size:18px; font-weight:600; line-height:24px; }
+  .none p { margin-top:8px; font-size:14px; line-height:20px; color:var(--gray-500); }
+
+  /* 페이지네이션 (프로젝트 찾기와 동일) */
+  .pager { display:flex; justify-content:center; gap:4px; margin-top:32px; }
+  .pager button { width:40px; height:40px; padding:8px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:500; line-height:22px; color:#a8a29e; }
+  .pager button:hover:not(:disabled):not(.on) { background:var(--gray-50); color:var(--gray-700); }
+  .pager button.on { background:var(--teal-600); border-color:var(--teal-600); color:#fff; }
+  .pager button:disabled { opacity:.4; cursor:default; }
+  .pager img { width:20px; height:20px; }
+
+  /* 하단 문의 */
+  .help { display:flex; align-items:center; justify-content:space-between; gap:24px; margin-top:56px; padding:32px 40px; background:#fff; border:1px solid var(--gray-200); border-radius:16px; }
+  .help .t { display:flex; align-items:center; gap:16px; }
+  .help .t i { display:flex; align-items:center; justify-content:center; width:52px; height:52px; flex:none; border-radius:50%; background:var(--teal-50); color:var(--teal-600); }
+  .help .t i .ico { width:28px; height:28px; }
+  .help h2 { font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; }
+  .help p { margin-top:4px; font-size:14px; line-height:20px; color:var(--gray-600); }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:4px; height:48px; min-width:120px; padding:0 24px; border-radius:8px; font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; }
+  .btn.pri { background:var(--teal-600); color:#fff; }
+  .btn.pri:hover { background:var(--teal-700); }
+
+  @media (max-width:1180px) {
+    .hero, .tabs-wrap, .body { padding-left:24px; padding-right:24px; }
+  }
+  @media (max-width:640px) {
+    .hero { padding:40px 16px 32px; }
+    .hero h1 { font-size:28px; line-height:38px; }
+    .hero p { font-size:14px; line-height:20px; }
+    .search { height:52px; margin-top:24px; padding-left:16px; }
+    .tops > span { flex-basis:100%; margin:0 0 2px; }
+    .tabs-wrap { padding:0 16px; }
+    .tabs { gap:0; }
+    .tabs button { flex:1; height:52px; font-size:16px; }
+    .body { padding:28px 16px 56px; }
+    .lhead { flex-direction:column; align-items:stretch; gap:12px; }
+    .lhead h2 { font-size:20px; line-height:28px; }
+    .sel select { width:100%; }
+    .qa summary { gap:10px; padding:16px; }
+    .qa .t { font-size:15px; line-height:22px; }
+    .qa .a { padding:16px; font-size:14px; line-height:22px; }
+    .pager { flex-wrap:wrap; }
+    .help { flex-direction:column; align-items:stretch; padding:24px 20px; margin-top:40px; }
+    .help .t { align-items:flex-start; }
+    .help .btn { width:100%; }
+  }
+</style>
+</head>
+<body>
+<div data-op-gnb="support"></div>
+
+<section class="hero">
+  <h1>무엇을 도와드릴까요?</h1>
+  <p>OmicsPharm 이용 중 궁금한 점을 검색하거나 카테고리에서 찾아보세요.</p>
+  <form class="search" id="searchForm" role="search">
+    <input type="search" id="q" placeholder="궁금한 내용을 검색해보세요. 예) 견적, 시료 발송, 정산" aria-label="FAQ 검색" autocomplete="off">
+    <button type="button" class="clear" id="clear" aria-label="검색어 지우기" hidden>×</button>
+    <button type="submit" class="go" aria-label="검색"><span class="ico" style="--i:url(assets/faq/magnifying-glass.svg)"></span></button>
+  </form>
+  <div class="tops" id="tops"><span>자주 찾는 검색어</span></div>
+</section>
+
+<nav class="tabs-wrap" aria-label="이용자 유형"><div class="in tabs" role="tablist">
+  <button type="button" role="tab" data-tab="client">클라이언트</button>
+  <button type="button" role="tab" data-tab="partner">분석파트너</button>
+</div></nav>
+
+<main class="body"><div class="in">
+  <section id="faqSec">
+    <div class="lhead">
+      <h2 id="total"></h2>
+      <div class="sel"><select id="cat" aria-label="카테고리"></select></div>
+    </div>
+    <div class="qa" id="qa"></div>
+    <nav class="pager" id="pager" aria-label="페이지"></nav>
+  </section>
+
+  <section class="help">
+    <div class="t">
+      <i><span class="ico" style="--i:url(assets/faq/chat-circle-dots.svg)"></span></i>
+      <div><h2>원하는 답변을 찾지 못하셨나요?</h2><p>문의를 남겨주시면 담당 매니저가 확인 후 이메일로 답변드립니다.</p></div>
+    </div>
+    <a class="btn pri" id="askBtn" href="contact.html?type=service">문의하기</a>
+  </section>
+</div></main>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var $$ = function (s) { return [].slice.call(document.querySelectorAll(s)); };
+  var ASK = '<a href="contact.html?type=service">문의하기</a>';
+  var PER = 10;
+
+  // FAQ 내용: 클라이언트는 현재 홈페이지 이용 가이드(Instructions-for-use)의 절차·자주 묻는 질문을 기준으로 작성.
+  // 분석파트너는 같은 절차를 파트너 입장에서 정리한 예시 — 운영 정책 확정 후 교체.
+  var FAQ = {
+    client: {
+      tops: ['견적', '비공개', '시료 발송', '보고서'],
+      cats: ['회원·계정', '프로젝트 등록', '견적·계약', '시료·분석 진행', '결과·보고서'],
+      items: [
+        ['회원·계정', '회원가입은 무료인가요? 어떤 비용이 발생하나요?', '<p>OmicsPharm 클라이언트 회원가입과 플랫폼 이용은 무료입니다.</p><p>비용은 분석 의뢰가 성사되어 계약이 체결된 경우에만 분석파트너의 견적을 기준으로 발생하며, 플랫폼 중개 수수료는 셀키AI의 서비스 정책에 따라 별도로 안내됩니다.</p>'],
+        ['회원·계정', '회원가입은 어떻게 하나요?', '<p>상단의 [가입하기]에서 "클라이언트"를 선택하고 이메일 인증을 완료하면 바로 이용할 수 있습니다. 가입은 5분 이내로 끝납니다.</p><p>회원 유형(클라이언트·분석파트너)은 가입할 때 정해지며, 로그인할 때는 이메일로 유형이 자동 구분됩니다.</p>'],
+        ['회원·계정', '소속기관과 연락처는 어디에서 등록하나요?', '<p>[마이페이지 &gt; 내 정보 관리]에서 소속기관, 연락처, 사업자등록증을 미리 등록할 수 있습니다.</p><p>미리 등록해두면 프로젝트를 의뢰할 때 관련 정보가 자동으로 연동되고, 분석파트너와의 신뢰 관계를 쌓는 데도 도움이 됩니다.</p>'],
+        ['회원·계정', '사업자등록증은 언제 제출하나요?', '<p>사업자등록증은 프로젝트 등록 단계에서 업로드하면 됩니다. [마이페이지 &gt; 내 정보 관리]에 미리 등록해둘 수도 있습니다.</p>'],
+        ['회원·계정', '비밀번호를 잊어버렸어요.', '<p>로그인 화면의 [비밀번호 찾기]에서 가입한 이메일을 입력하면 비밀번호 재설정 안내를 받을 수 있습니다.</p>'],
+        ['프로젝트 등록', '분석 의뢰(프로젝트 등록)는 어떻게 하나요?', '<p>상단의 [프로젝트 의뢰]에서 분석 서비스 유형을 선택하고, 시료 정보와 분석 요구사항을 단계별로 입력한 뒤 제출하면 됩니다.</p><p>제출한 프로젝트는 [마이페이지 &gt; 프로젝트 관리]에서 확인할 수 있습니다.</p>'],
+        ['프로젝트 등록', '여러 종류의 분석을 한 번에 의뢰할 수 있나요?', '<p>분석 서비스 1종당 프로젝트 1건 등록이 원칙입니다. 단백체·대사체 등 여러 분석이 필요하면 서비스별로 프로젝트를 나눠 등록해주세요.</p><p>분야별 전문 분석파트너에게 특화된 견적을 받을 수 있어 분석 품질과 비용 면에서 모두 유리합니다.</p>'],
+        ['프로젝트 등록', '작성 중인 의뢰 내용을 저장할 수 있나요?', '<p>네. 작성 중 [임시저장]을 누르면 입력한 내용이 보존되며, 나중에 이어서 작성할 수 있습니다.</p>'],
+        ['프로젝트 등록', '프로젝트 정보를 비공개로 할 수 있나요?', '<p>프로젝트 등록 시 "비공개로 업로드" 옵션을 켜면 프로젝트 정보가 외부에 노출되지 않습니다.</p>'],
+        ['프로젝트 등록', '어떤 분석이 필요한지 잘 모를 때는 어떻게 하나요?', '<p>' + ASK + '로 전담 컨설턴트에게 무료 상담을 신청하세요. 연구 목적과 보유 시료의 종류·수량을 알려주시면 알맞은 분석 서비스와 분석파트너를 추천해드립니다.</p><p>분류가 어려운 경우 프로젝트 등록 시 "기타 분석"을 선택해 자유 형식으로 의뢰서를 작성할 수도 있습니다.</p>'],
+        ['프로젝트 등록', '해외에서도 의뢰할 수 있나요?', '<p>현재 OmicsPharm은 국내 기반으로 운영되고 있으며 글로벌 서비스 확장을 준비 중입니다.</p><p>프로젝트 등록 시 "분석 희망 국가"를 지정할 수 있으며, 해외 분석파트너 연결이나 국제 시료 운송 등은 ' + ASK + '로 컨설턴트에게 문의해주세요.</p>'],
+        ['견적·계약', '프로젝트 등록 후 견적을 받기까지 얼마나 걸리나요?', '<p>등록 시 설정한 모집기한에 따라 다르지만, 일반적으로 2~5 영업일 안에 여러 분석파트너의 견적서가 접수됩니다.</p><p>모집기한이 끝나면 견적 접수가 자동으로 마감되며, 받은 견적서는 모두 마이페이지에서 비교·검토할 수 있습니다.</p>'],
+        ['견적·계약', '받은 견적은 어떻게 비교하나요?', '<p>[마이페이지 &gt; 프로젝트 관리]에서 여러 견적을 가격, 분석 일정, 수행 방법 기준으로 비교할 수 있습니다.</p><p>선정이 어렵다면 컨설턴트의 추천 서비스를 받을 수 있습니다.</p>'],
+        ['견적·계약', '분석파트너에게 직접 질문할 수 있나요?', '<p>네. 분석 방법, 시료 조건, 소요 기간 등 궁금한 점은 마이페이지의 Q&amp;A 기능으로 분석파트너에게 직접 질의할 수 있습니다.</p>'],
+        ['견적·계약', '계약은 어떻게 진행되나요?', '<p>최종 견적을 선택하면 전담 컨설턴트의 중개로 계약이 진행됩니다. 계약 조건, 납부 일정, 분석 범위 등 모든 내용은 플랫폼 안에서 문서로 관리됩니다.</p><p>계약금 납부가 확인되면 분석이 시작됩니다.</p>'],
+        ['시료·분석 진행', '시료는 어떻게 보내나요?', '<p>계약이 완료되면 전담 컨설턴트가 시료 발송 방법과 일정을 조율합니다.</p><p>냉동·냉장·상온 등 시료 특성에 맞는 보관 조건과 운송 방법을 컨설턴트와 미리 확인해, 시료가 손상 없이 분석파트너에게 전달되도록 지원합니다.</p>'],
+        ['시료·분석 진행', '분석 진행 상황은 어떻게 확인하나요?', '<p>[마이페이지 &gt; 프로젝트 관리]에서 계약 → 분석 → 보고서 검수 단계별 진행 현황을 실시간으로 확인할 수 있습니다. 단계가 바뀔 때마다 알림이 자동으로 발송됩니다.</p>'],
+        ['결과·보고서', '분석 결과물(보고서)은 어떤 형식으로 받을 수 있나요?', '<p>프로젝트 등록 시 "요청 서류 양식"에서 국문 리포트, 영문 리포트, 결과 이미지, Raw 데이터를 여러 개 선택할 수 있습니다.</p><p>분석이 끝나면 [마이페이지 &gt; 분석결과 관리]에서 선택한 형식의 결과물을 내려받을 수 있습니다.</p>'],
+        ['결과·보고서', '보고서를 받은 뒤에는 어떻게 마무리하나요?', '<p>보고서를 검토한 뒤 검토 의견을 제출하고 최종 승인하면 프로젝트가 완료됩니다. 결과 파일은 [마이페이지 &gt; 분석결과 관리]에서 한 번에 내려받을 수 있습니다.</p>']
+      ]
+    },
+    partner: {
+      tops: ['파트너 가입', '견적 제출', '시료', '정산'],
+      cats: ['가입·승인', '프로젝트 찾기', '견적·계약', '분석 수행', '결과·정산'],
+      items: [
+        ['가입·승인', '분석파트너로 가입하려면 어떻게 하나요?', '<p>상단의 [가입하기]에서 "분석파트너"를 선택한 뒤 이메일 인증, 기관 정보, 제공 가능한 분석 서비스, 사업자 정보를 입력하면 가입 신청이 완료됩니다.</p>'],
+        ['가입·승인', '가입할 때 어떤 서류가 필요한가요?', '<p>기관 확인을 위해 사업자등록증 첨부가 필요합니다.</p>'],
+        ['가입·승인', '가입 승인 결과는 어떻게 알 수 있나요?', '<p>제출한 정보를 확인한 뒤 가입한 이메일로 승인 결과를 안내드립니다.</p>'],
+        ['가입·승인', '제공 가능한 분석 서비스를 변경하고 싶어요.', '<p>[마이페이지]의 기관 정보에서 제공 서비스를 수정할 수 있습니다. 서비스를 추가하면 해당 분야의 프로젝트에 견적을 제출할 수 있습니다.</p>'],
+        ['프로젝트 찾기', '참여할 프로젝트는 어디에서 찾나요?', '<p>상단의 [프로젝트 찾기]에서 모집 상태, 분석 분야, 예상 금액으로 필터링해 원하는 프로젝트를 찾을 수 있습니다.</p>'],
+        ['프로젝트 찾기', '비공개 프로젝트는 무엇인가요?', '<p>클라이언트가 "비공개로 업로드"를 선택한 프로젝트입니다. 목록에는 분석 분야와 모집 상태만 표시되고 상세 정보는 공개되지 않습니다.</p>'],
+        ['프로젝트 찾기', '프로젝트 내용이 궁금하면 어떻게 하나요?', '<p>프로젝트 상세 화면 하단의 [문의하기]로 클라이언트에게 분석 조건이나 시료 정보를 질문할 수 있습니다.</p>'],
+        ['견적·계약', '견적은 어떻게 제출하나요?', '<p>모집 중인 프로젝트에서 가격, 분석 일정, 수행 방법을 입력해 견적서를 제출합니다. 클라이언트는 이 세 가지를 기준으로 견적을 비교합니다.</p>'],
+        ['견적·계약', '모집기한이 지나면 견적을 낼 수 없나요?', '<p>네. 모집기한이 끝나면 해당 프로젝트의 견적 접수가 자동으로 마감됩니다.</p>'],
+        ['견적·계약', '클라이언트의 질문에는 어떻게 답하나요?', '<p>클라이언트가 마이페이지 Q&amp;A 기능으로 남긴 질문에 답변할 수 있습니다. 분석 방법, 시료 조건, 소요 기간 등을 구체적으로 안내해주세요.</p>'],
+        ['견적·계약', '선정된 뒤 계약은 어떻게 진행되나요?', '<p>클라이언트가 견적을 선택하면 전담 컨설턴트의 중개로 계약이 진행됩니다. 계약 조건과 분석 범위는 플랫폼 안에서 문서로 관리되며, 계약금 납부가 확인되면 분석을 시작합니다.</p>'],
+        ['분석 수행', '시료는 어떻게 받나요?', '<p>계약이 완료되면 전담 컨설턴트가 시료 발송 방법과 일정을 조율해 안내합니다. 보관 조건(냉동·냉장·상온)과 운송 방법을 미리 확인해주세요.</p>'],
+        ['분석 수행', '진행 상황은 어떻게 공유하나요?', '<p>프로젝트 관리 화면에서 단계별 진행 현황을 업데이트하면 클라이언트에게 알림이 자동으로 발송됩니다.</p>'],
+        ['분석 수행', '받은 시료에 문제가 있으면 어떻게 하나요?', '<p>시료 상태나 수량에 문제가 있으면 분석을 시작하기 전에 프로젝트 [문의하기]나 담당 컨설턴트에게 알려주세요.</p>'],
+        ['결과·정산', '결과보고서는 어떤 형식으로 등록하나요?', '<p>클라이언트가 요청한 형식(국문 리포트, 영문 리포트, 결과 이미지, Raw 데이터)에 맞춰 결과물을 등록합니다. 클라이언트가 검토 후 최종 승인하면 프로젝트가 완료됩니다.</p>'],
+        ['결과·정산', '플랫폼 수수료가 있나요?', '<p>플랫폼 중개 수수료는 셀키AI의 서비스 정책에 따라 별도로 안내됩니다. 자세한 내용은 ' + ASK + '로 확인해주세요.</p>'],
+        ['결과·정산', '정산은 언제 받을 수 있나요?', '<p>정산 일정과 방법은 ' + ASK + '로 확인해주세요.</p>']
+      ]
+    }
+  };
+
+  var P = new URLSearchParams(location.search);
+  var s = OP.session();
+  var state = { tab: P.get('tab') === 'partner' || (!P.get('tab') && s && s.role === 'partner') ? 'partner' : 'client', cat: '', q: P.get('q') || '', page: 1 };
+
+  function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+  function strip(h) { return h.replace(/<[^>]+>/g, ' ').replace(/&gt;/g, '>').replace(/&amp;/g, '&'); }
+  function hl(t, q) {
+    var i = q ? t.toLowerCase().indexOf(q.toLowerCase()) : -1;
+    return i < 0 ? esc(t) : esc(t.slice(0, i)) + '<mark>' + esc(t.slice(i, i + q.length)) + '</mark>' + esc(t.slice(i + q.length));
+  }
+
+  function renderTab() {
+    var d = FAQ[state.tab];
+    $$('.tabs button').forEach(function (b) { var on = b.dataset.tab === state.tab; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+    $('#tops').innerHTML = '<span>자주 찾는 검색어</span>' + d.tops.map(function (t) { return '<button type="button" class="chip" data-top="' + esc(t) + '">' + esc(t) + '</button>'; }).join('');
+    $('#cat').innerHTML = '<option value="">카테고리 전체</option>' + d.cats.map(function (c) { return '<option>' + c + '</option>'; }).join('');
+    $('#cat').value = state.cat;
+    $('#askBtn').href = 'contact.html?type=' + (state.tab === 'partner' ? 'partner' : 'service');
+    render();
+  }
+
+  function render() {
+    var d = FAQ[state.tab], q = state.q.trim(), ql = q.toLowerCase();
+    var list = d.items.filter(function (x) {
+      if (state.cat && x[0] !== state.cat) return false;
+      return !ql || (x[0] + ' ' + x[1] + ' ' + strip(x[2])).toLowerCase().indexOf(ql) >= 0;
+    });
+    var pages = Math.max(1, Math.ceil(list.length / PER));
+    if (state.page > pages) state.page = pages;
+    $('#total').innerHTML = (state.cat || '전체') + ' <b>' + list.length + '</b>건' + (q ? '<span class="kw">\'' + esc(q) + '\' 검색 결과</span>' : '');
+    $('#qa').innerHTML = list.length ? list.slice((state.page - 1) * PER, state.page * PER).map(function (x) {
+      return '<details><summary><span class="qt"><span class="tag">' + x[0] + '</span><span class="t">' + hl(x[1], q) + '</span></span>' +
+        '<span class="ico car" style="--i:url(assets/faq/caret-down.svg)"></span></summary><div class="a">' + x[2] + '</div></details>';
+    }).join('') : '<div class="none"><b>검색 결과가 없습니다</b><p>다른 검색어를 입력하거나 아래 [문의하기]로 질문을 남겨주세요.</p></div>';
+    // 페이지네이션 (한 페이지 10개)
+    var html = '', btn = function (p, img, label, dis) { return '<button type="button" data-p="' + p + '" aria-label="' + label + '"' + (dis ? ' disabled' : '') + '><img src="assets/find/ic-' + img + '.svg" alt=""></button>'; };
+    var start = Math.max(1, Math.min(state.page - 2, pages - 4)), end = Math.min(pages, start + 4);
+    html += btn(1, 'caret-double-left', '첫 페이지', state.page === 1) + btn(state.page - 1, 'caret-left', '이전 페이지', state.page === 1);
+    for (var p = start; p <= end; p++) html += '<button type="button" data-p="' + p + '"' + (p === state.page ? ' class="on" aria-current="page"' : '') + '>' + p + '</button>';
+    html += btn(state.page + 1, 'caret-right', '다음 페이지', state.page === pages) + btn(pages, 'caret-double-right', '마지막 페이지', state.page === pages);
+    $('#pager').innerHTML = html;
+  }
+
+  function go(el) { var y = el.getBoundingClientRect().top + scrollY - 70 - $('.tabs-wrap').offsetHeight - 16; scrollTo({ top: y, behavior: 'smooth' }); }
+  function setQ(v) { state.q = v; $('#q').value = v; $('#clear').hidden = !v; }
+
+  $$('.tabs button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (state.tab === b.dataset.tab) return;
+      state.tab = b.dataset.tab; state.cat = ''; state.page = 1; setQ('');
+      var u = new URL(location.href); u.searchParams.set('tab', state.tab); u.searchParams.delete('q'); history.replaceState(null, '', u);
+      renderTab();
+    });
+  });
+  $('#cat').addEventListener('change', function () { state.cat = this.value; state.page = 1; render(); });
+  $('#pager').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b || b.disabled) return;
+    state.page = +b.dataset.p; render(); go($('#faqSec'));
+  });
+  $('#q').addEventListener('input', function () { state.q = this.value; state.page = 1; $('#clear').hidden = !this.value; render(); });
+  $('#searchForm').addEventListener('submit', function (e) { e.preventDefault(); if (state.q.trim()) go($('#faqSec')); });
+  $('#clear').addEventListener('click', function () { setQ(''); state.page = 1; render(); $('#q').focus(); });
+  $('#tops').addEventListener('click', function (e) { var t = e.target.closest('[data-top]'); if (t) { setQ(t.dataset.top); state.cat = ''; $('#cat').value = ''; state.page = 1; render(); go($('#faqSec')); } });
+
+  setQ(state.q);
+  renderTab();
+})();
+</script>
+</body>
+</html>
