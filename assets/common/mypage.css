@@ -22,13 +22,13 @@ button { background:none; border:0; cursor:pointer; }
 .side { width:343px; flex:none; background:#fff; border:1px solid var(--gray-200); border-radius:16px; position:sticky; top:94px; }
 .me { display:flex; flex-direction:column; align-items:center; gap:4px; padding:28px 24px 24px; border-bottom:1px solid var(--gray-200); text-align:center; }
 .me img { width:56px; height:56px; margin-bottom:8px; border-radius:50%; object-fit:cover; }
-.me .role { padding:2px 8px; border-radius:8px; background:var(--teal-600); color:#fff; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; margin-bottom:4px; }
+.me .role { padding:2px 8px; border-radius:8px; border:1px solid var(--teal-600); color:var(--teal-600); font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; margin-bottom:4px; }
 .me b { font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
 .me span { font-size:14px; line-height:20px; color:var(--gray-500); word-break:break-all; }
 .menu { display:flex; flex-direction:column; padding:12px; }
 .menu a { display:flex; align-items:center; gap:8px; height:48px; padding:0 16px; border-radius:8px; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-500); }
 .menu a:hover { background:var(--gray-50); color:#000; }
-.menu a.on { background:var(--teal-50); color:var(--teal-600); font-weight:600; }
+.menu a.on { color:var(--teal-600); font-weight:600; }
 .menu a .cnt { margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:99px; background:var(--orange-600); color:#fff; font-size:12px; font-weight:600; line-height:20px; text-align:center; }
 
 /* 오른쪽 */
