@@ -31,7 +31,8 @@
   .hero-img img { display:block; width:100%; aspect-ratio:16 / 9; object-fit:cover; border-radius:12px; border:1px solid var(--gray-200); }
 
   /* 본문 */
-  .article { max-width:720px; margin:0 auto; padding:56px 24px 0; font-size:18px; line-height:1.75; color:var(--gray-700); word-break:keep-all; overflow-wrap:break-word; }
+  /* 본문 폭 = 대표 이미지 폭 (1024px) */
+  .article { max-width:1024px; margin:0 auto; padding:56px 60px 0; box-sizing:content-box; font-size:18px; line-height:1.75; color:var(--gray-700); word-break:keep-all; overflow-wrap:break-word; }
   .article p + p { margin-top:20px; }
   .article h2 { margin:48px 0 16px; font-size:24px; font-weight:700; line-height:34px; letter-spacing:-.24px; color:#000; }
   .article h2:first-child { margin-top:0; }
@@ -44,7 +45,7 @@
   .article td, .article th { padding:12px 16px; border-bottom:1px solid var(--gray-200); text-align:left; vertical-align:top; }
   .article > * + table, .article > table + * { margin-top:24px; }
 
-  .post-foot { max-width:720px; margin:64px auto 0; padding:32px 24px 0; border-top:1px solid var(--gray-200); display:flex; justify-content:space-between; align-items:center; gap:16px; }
+  .post-foot { max-width:min(1024px, calc(100% - 120px)); margin:64px auto 0; padding:32px 0 0; border-top:1px solid var(--gray-200); display:flex; justify-content:space-between; align-items:center; gap:16px; }
   .tag { display:inline-flex; align-items:center; padding:2px 8px; border:1px solid var(--teal-600); border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; color:var(--teal-600); }
   .share { display:inline-flex; align-items:center; gap:6px; height:40px; padding:0 16px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font:inherit; font-size:14px; font-weight:500; color:var(--gray-600); cursor:pointer; }
   .share:hover { background:var(--gray-50); }
@@ -77,7 +78,7 @@
     .article { padding:36px 16px 0; font-size:16px; }
     .article h2 { margin:36px 0 12px; font-size:20px; line-height:28px; }
     .article table { display:block; overflow-x:auto; font-size:14px; }
-    .post-foot { margin-top:48px; padding:24px 16px 0; }
+    .post-foot { max-width:calc(100% - 32px); margin-top:48px; padding:24px 0 0; }
     .related { margin-top:64px; padding:0 16px 64px; }
     .related-head h2 { font-size:22px; line-height:30px; }
     .posts { grid-template-columns:1fr; gap:16px; }
@@ -111,7 +112,7 @@
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
-  var LABEL = { news: 'OmicsPharm 뉴스', insight: 'AI 인사이트' };
+  var LABEL = { news: 'News', insight: 'Insight' };
   var POSTS = window.OP_POSTS;
   var id = +new URLSearchParams(location.search).get('id');
   var p = POSTS.filter(function (x) { return x.id === id; })[0];

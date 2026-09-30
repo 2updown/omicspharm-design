@@ -98,9 +98,9 @@
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var PER = 12;
-  var CATS = [['all', '전체'], ['news', 'OmicsPharm 뉴스'], ['insight', 'AI 인사이트']];
+  var CATS = [['all', 'All'], ['news', 'News'], ['insight', 'Insight']];
   var POSTS = window.OP_POSTS;
-  var LABEL = { news: 'OmicsPharm 뉴스', insight: 'AI 인사이트' };
+  var LABEL = { news: 'News', insight: 'Insight' };
   var P = new URLSearchParams(location.search);
   var state = { cat: LABEL[P.get('cat')] ? P.get('cat') : 'all', page: 1 };
 
