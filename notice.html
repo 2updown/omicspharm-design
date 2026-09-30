@@ -7,9 +7,9 @@
 <title>공지사항 · OmicsPharm</title>
 <!-- 커뮤니티 > 공지사항 (Figma 시안 없음 — 마크로젠 공지사항 게시판 구조 참고: 고정 공지 + 번호 목록 + 첨부 + 하단 검색)
      공지 데이터: assets/common/notices.js (예시). 한 페이지 10개, 제목 → notice-view.html?id= -->
-<link rel="stylesheet" href="assets/common/site.css?v=20260930e">
-<script src="assets/common/site.js?v=20260930e"></script>
-<script src="assets/common/notices.js?v=20260930e"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20260930f">
+<script src="assets/common/site.js?v=20260930f"></script>
+<script src="assets/common/notices.js?v=20260930f"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -154,7 +154,7 @@
     if (state.page > pages) state.page = pages;
     // 고정 공지는 검색하지 않을 때 모든 페이지 맨 위에 표시
     var top = q ? [] : pins;
-    $('#total').innerHTML = (q ? "'" + esc(state.q.trim()) + "' 검색 결과 " : '전체 ') + '<b>' + items.length + '</b>건';
+    $('#total').innerHTML = (q ? "'" + esc(state.q.trim()) + "' 검색 결과 " : '전체 ') + '<b>' + (items.length + top.length) + '</b>건';
     var body = top.map(row).join('') + items.slice((state.page - 1) * PER, state.page * PER).map(row).join('');
     $('#rows').innerHTML = body || '<tr class="none"><td colspan="4">검색 결과가 없습니다.</td></tr>';
     var html = '', btn = function (p, ic, label, dis) { return '<button type="button" data-p="' + p + '" aria-label="' + label + '"' + (dis ? ' disabled' : '') + '><img src="assets/find/ic-' + ic + '.svg" alt=""></button>'; };
