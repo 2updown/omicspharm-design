@@ -230,7 +230,7 @@
       '<div><button type="button" class="btn del" id="pDel">삭제</button><a class="btn primary" href="omicspharm-register.html?edit=' + encodeURIComponent(d.id) + '&t=' + Date.now() + '">수정하기</a></div></div>';
   $('#project').outerHTML = html;
   $('#pDel').addEventListener('click', function () {
-    OP.my.confirm('의뢰를 삭제하시겠습니까?', '"' + d.title + '" 의뢰가 삭제되며 복구할 수 없습니다. 제출된 견적도 함께 사라집니다.', '삭제', function () {
+    OP.my.confirm('의뢰를 삭제하시겠습니까?', '"' + d.title + '" 의뢰가 삭제되며 복구할 수 없습니다.', '삭제', function () {
       OP.my.removeProject(d.id);
       OP.flash('의뢰가 삭제되었습니다.');
       location.replace('mypage-project.html');
