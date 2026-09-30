@@ -119,7 +119,7 @@
           LANG +
           '<a class="op-bell" href="mypage-alarm.html" aria-label="알림"><img class="op-ic24" src="' + A + 'ic-bell.svg" alt=""></a>' +
           '<div class="op-user">' +
-            '<button type="button" aria-haspopup="menu" aria-label="내 계정"><img src="' + A + 'user-icon.svg" alt=""></button>' +
+            '<button type="button" aria-haspopup="menu" aria-label="내 계정"><img src="' + ((OP.account(s.email) || {}).photo || A + 'user-icon.svg') + '" alt=""></button>' +
             '<div class="op-user-menu" role="menu">' +
               '<div class="who"><b>' + s.email.replace(/</g, '&lt;') + '</b><span>' + (ROLE_LABEL[s.role] || '') + '</span></div>' +
               '<a href="mypage.html" role="menuitem">마이페이지</a>' +

@@ -7,10 +7,10 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20260930z">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20260930z">
-<script src="assets/common/site.js?v=20260930z"></script>
-<script src="assets/common/mypage.js?v=20260930z"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261001a">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261001a">
+<script src="assets/common/site.js?v=20261001a"></script>
+<script src="assets/common/mypage.js?v=20261001a"></script>
 <style>
   .hello { flex-direction:row; align-items:center; justify-content:space-between; }
   .hello h2 { font-size:22px; font-weight:700; line-height:32px; letter-spacing:-.22px; }
@@ -19,12 +19,13 @@
 
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
-  .flow a { position:relative; display:flex; flex-direction:column; align-items:center; gap:6px; padding:20px 8px; text-align:center; }
-  .flow a + a { border-left:1px solid var(--gray-200); }
+  .flow > * { position:relative; display:flex; flex-direction:column; align-items:center; gap:6px; padding:20px 8px; text-align:center; }
+  .flow > * + * { border-left:1px solid var(--gray-200); }
   .flow a:hover { background:var(--gray-50); }
   .flow b { font-size:28px; font-weight:700; line-height:36px; color:var(--gray-300); }
   .flow b.has { color:var(--teal-600); }
   .flow span { font-size:14px; font-weight:500; line-height:20px; color:var(--gray-600); }
+  .flow div span { color:var(--gray-400); }
 
   .grid2 { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:24px; }
 
@@ -55,8 +56,8 @@
     .hello { flex-direction:column; align-items:flex-start; }
     .hello .acts { width:100%; } .hello .acts .btn { flex:1; }
     .flow { grid-template-columns:repeat(3, minmax(0,1fr)); }
-    .flow a:nth-child(4) { border-left:0; }
-    .flow a:nth-child(n+4) { border-top:1px solid var(--gray-200); }
+    .flow > :nth-child(4) { border-left:0; }
+    .flow > :nth-child(n+4) { border-top:1px solid var(--gray-200); }
     .flow b { font-size:22px; line-height:30px; }
     .flow span { font-size:13px; }
     .plist a { flex-wrap:wrap; gap:6px 12px; }
@@ -124,7 +125,9 @@
   var steps = client ? ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'] : ['견적 제출', '선정', '계약', '분석 진행', '결과 제출'];
   var counts = client ? [P.length, 0, 0, 0, 0] : [0, 0, 0, 0, 0];
   $('#flow').innerHTML = steps.map(function (t, i) {
-    return '<a href="mypage-project.html"><b' + (counts[i] ? ' class="has"' : '') + '>' + counts[i] + '</b><span>' + t + '</span></a>';
+    // 0건인 단계는 누를 수 없다
+    return counts[i] ? '<a href="mypage-project.html"><b class="has">' + counts[i] + '</b><span>' + t + '</span></a>'
+                     : '<div aria-disabled="true"><b>0</b><span>' + t + '</span></div>';
   }).join('');
 
   $('#plist').innerHTML = client && P.length
