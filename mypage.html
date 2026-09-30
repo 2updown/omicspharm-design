@@ -7,10 +7,10 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261001i">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261001i">
-<script src="assets/common/site.js?v=20261001i"></script>
-<script src="assets/common/mypage.js?v=20261001i"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261001j">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261001j">
+<script src="assets/common/site.js?v=20261001j"></script>
+<script src="assets/common/mypage.js?v=20261001j"></script>
 <style>
   .hello { flex-direction:row; align-items:center; justify-content:space-between; }
   .hello h2 { font-size:22px; font-weight:700; line-height:32px; letter-spacing:-.22px; }
@@ -112,16 +112,17 @@
   var me = OP.mypage('dash'); if (!me) return;
   var D = OP.my, esc = D.esc, $ = function (s) { return document.querySelector(s); };
   var client = me.s.role === 'client';
-  var P = D.projects();
+  var P = D.myProjects();
 
   $('#hi').textContent = me.name + ' 님, 안녕하세요.';
-  $('#hiSub').textContent = client ? '진행 중인 프로젝트와 새 소식을 확인해보세요.' : '견적을 제출한 프로젝트와 새 소식을 확인해보세요.';
+  $('#hiSub').textContent = client ? '진행 중인 프로젝트와 새 소식을 확인해보세요.' : '받은 견적 요청과 진행 중인 프로젝트를 확인해보세요.';
   $('#acts').innerHTML = client
     ? '<a class="btn" href="contact.html">문의하기</a><a class="btn primary" href="omicspharm-register.html">프로젝트 의뢰하기</a>'
     : '<a class="btn" href="contact.html">문의하기</a><a class="btn primary" href="projects.html">프로젝트 찾기</a>';
 
-  // 단계: 클라이언트는 의뢰→결과, 분석파트너는 견적 제출→결과 제출. 지금은 제출한 의뢰가 모두 '의뢰접수' 단계
-  var steps = client ? ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'] : ['견적 제출', '선정', '계약', '분석 진행', '결과 제출'];
+  // 지금은 제출한 의뢰가 모두 '의뢰접수' 단계
+  // 분석파트너: 셀키(관리자)가 보낸 견적 요청 → 견적 제출 → 셀키 매칭(선정) → 분석 → 결과 제출
+  var steps = client ? ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'] : ['견적 요청', '견적 제출', '매칭 완료', '분석 진행', '결과 제출'];
   var counts = client ? [P.length, 0, 0, 0, 0] : [0, 0, 0, 0, 0];
   $('#flow').innerHTML = steps.map(function (t, i) {
     // 0건인 단계는 누를 수 없다
@@ -134,9 +135,9 @@
         return '<a href="mypage-project.html?id=' + encodeURIComponent(p.id) + '"><span class="badges"><span class="badge tag">' + esc(p.svc) + '</span><span class="badge state">의뢰접수</span></span>' +
           '<h4>' + esc(p.title) + '</h4><span class="dt">' + D.ymd(p.at) + '</span></a>';
       }).join('') + '</div>'
-    : '<div class="empty"><b>' + (client ? '의뢰한 프로젝트가 없습니다' : '견적을 제출한 프로젝트가 없습니다') + '</b>' +
-      '<p>' + (client ? '분석 의뢰를 등록하면 분석파트너들의 견적을 비교해 받아볼 수 있습니다.' : '프로젝트 찾기에서 참여할 프로젝트를 찾아 견적을 제출해보세요.') + '</p>' +
-      (client ? '<a class="btn primary lg" href="omicspharm-register.html">프로젝트 의뢰하기</a>' : '<a class="btn primary lg" href="projects.html">프로젝트 찾기</a>') + '</div>';
+    : '<div class="empty"><b>' + (client ? '의뢰한 프로젝트가 없습니다' : '받은 견적 요청이 없습니다') + '</b>' +
+      '<p>' + (client ? '분석 의뢰를 등록하면 분석파트너들의 견적을 비교해 받아볼 수 있습니다.' : 'OmicsPharm이 분석 의뢰에 맞는 파트너로 선정해 견적을 요청하면 여기에서 확인할 수 있습니다.') + '</p>' +
+      (client ? '<a class="btn primary lg" href="omicspharm-register.html">프로젝트 의뢰하기</a>' : '') + '</div>';
 
   var A = D.alarms().slice(0, 4);
   $('#alarms').innerHTML = A.map(function (a) {

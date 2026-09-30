@@ -28,11 +28,19 @@
   var D = {
     esc: esc, ymd: ymd, ymdhm: ymdhm,
     projects: function () { return read('op.submitted', []); },
-    inquiries: function () { return read('op.inquiries', []).concat([DEMO_INQ]); },
+    // 로그인한 계정이 보낸 문의만 (+ 클라이언트에게는 답변 완료 예시 1건)
+    inquiries: function () {
+      var s = OP.session() || {};
+      return read('op.inquiries', []).filter(function (q) { return (q.owner || String(q.email || '').toLowerCase()) === s.email; })
+        .concat(s.role === 'client' ? [DEMO_INQ] : []);
+    },
     // 알림은 이 브라우저의 의뢰·문의 기록으로 만든다
+    // 프로젝트: 클라이언트는 자기가 의뢰한 것. 분석파트너는 셀키(관리자)가 견적 요청을 보낸 의뢰만 볼 수 있다 (아직 데이터 없음)
+    myProjects: function () { var s = OP.session(); return s && s.role === 'client' ? D.projects() : []; },
     alarms: function () {
       var readIds = read('op.alarmRead', []), L = [];
-      D.projects().forEach(function (p) {
+      // 의뢰 접수 알림은 의뢰한 클라이언트에게만 (분석파트너는 셀키의 견적 요청을 받은 뒤에만 의뢰를 확인)
+      D.myProjects().forEach(function (p) {
         L.push({ id: 'p-' + p.id, cat: 'project', at: p.at, t: "'" + (p.title || p.id) + "' 프로젝트 의뢰가 접수되었습니다.", sub: '분석파트너의 견적이 도착하면 알려드릴게요.', href: 'mypage-project.html?id=' + encodeURIComponent(p.id) });
       });
       D.inquiries().forEach(function (q) {

@@ -7,10 +7,10 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261001i">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261001i">
-<script src="assets/common/site.js?v=20261001i"></script>
-<script src="assets/common/mypage.js?v=20261001i"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261001j">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261001j">
+<script src="assets/common/site.js?v=20261001j"></script>
+<script src="assets/common/mypage.js?v=20261001j"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -164,8 +164,8 @@
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
   if (!OP.mypage('project')) return; // 로그인 확인 + 왼쪽 프로필·메뉴
 
-  var list = [];
-  try { list = JSON.parse(localStorage.getItem('op.submitted') || '[]'); } catch (e) {}
+  var list = OP.my.myProjects(); // 분석파트너는 클라이언트 의뢰를 볼 수 없음 (셀키가 견적 요청을 보낸 의뢰만)
+  var partner = OP.session().role !== 'client';
   var id = new URLSearchParams(location.search).get('id');
   var d = id ? list.filter(function (x) { return x.id === id; })[0] : null;
   var dot = function (v) { return v ? v.replace(/-/g, '.') : '-'; };
@@ -192,6 +192,11 @@
   }
 
   if (id && !d && list.length) { location.replace('mypage-project.html'); return; } // 없는 의뢰번호면 목록으로
+  if (!d && partner) {
+    $('.toprow').hidden = true;
+    $('#project').innerHTML = '<div class="empty"><b>받은 견적 요청이 없습니다</b><p>OmicsPharm이 분석 의뢰에 맞는 파트너로 선정해 견적을 요청하면 여기에서 의뢰 내용을 확인하고 견적을 보낼 수 있습니다.</p></div>';
+    return;
+  }
   if (!d) {
     $('#project').innerHTML = '<div class="empty"><b>제출한 프로젝트가 없습니다</b><p>분석 의뢰를 제출하면 여기에서 진행상황과 내용을 확인할 수 있습니다.</p>' +
       '<a href="omicspharm-register.html" data-client-only>프로젝트 의뢰하기</a></div>';
