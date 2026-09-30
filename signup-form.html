@@ -343,11 +343,7 @@
     show('done');
   });
 
-  $('#toMypage').addEventListener('click', function (e) {
-    e.preventDefault();
-    OP.toast('마이페이지는 준비 중입니다. 메인 화면으로 이동합니다.');
-    setTimeout(function () { location.href = 'index.html'; }, 1500);
-  });
+  $('#toMypage').setAttribute('href', 'mypage.html');
 
   $$('[data-prev]').forEach(function (b) { b.addEventListener('click', function () { prev(b.closest('[data-step]').dataset.step); }); });
 
