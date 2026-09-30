@@ -7,9 +7,9 @@
 <title>공지사항 · OmicsPharm</title>
 <!-- 커뮤니티 > 공지사항 (Figma 시안 없음 — 마크로젠 공지사항 게시판 구조 참고: 고정 공지 + 번호 목록 + 첨부 + 하단 검색)
      공지 데이터: assets/common/notices.js (예시). 한 페이지 10개, 제목 → notice-view.html?id= -->
-<link rel="stylesheet" href="assets/common/site.css?v=20260930v">
-<script src="assets/common/site.js?v=20260930v"></script>
-<script src="assets/common/notices.js?v=20260930v"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20260930w">
+<script src="assets/common/site.js?v=20260930w"></script>
+<script src="assets/common/notices.js?v=20260930w"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -28,7 +28,7 @@
   .page-head h1 { font-size:36px; font-weight:700; line-height:46px; letter-spacing:-.36px; }
   .body { padding:0 60px 80px; }
 
-  .lhead { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; }
+  .lhead { display:flex; align-items:center; justify-content:space-between; gap:16px; }
   .total { font-size:16px; font-weight:500; line-height:22px; color:var(--gray-700); }
   .total b { color:var(--teal-600); }
 
@@ -58,20 +58,19 @@
   .pager button:disabled { opacity:.4; cursor:default; }
   .pager img { width:20px; height:20px; }
 
-  /* 하단 검색 */
-  .search { display:flex; justify-content:center; gap:8px; margin-top:32px; }
+  /* 검색 (Insights 검색창과 동일) */
+  .search { display:flex; align-items:center; gap:8px; }
   .sel { position:relative; }
-  .sel select { height:48px; width:120px; padding:0 36px 0 16px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font-size:15px; appearance:none; -webkit-appearance:none; cursor:pointer; }
-  .sel::after { content:""; position:absolute; right:12px; top:16px; width:16px; height:16px; background:url(assets/find/ic-chevron-down.svg) center/contain no-repeat; pointer-events:none; }
-  .field { display:flex; align-items:center; width:360px; height:48px; padding:0 8px 0 16px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; }
+  .sel select { height:40px; width:100px; padding:0 32px 0 14px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font-size:14px; line-height:20px; appearance:none; -webkit-appearance:none; cursor:pointer; }
+  .sel::after { content:""; position:absolute; right:10px; top:12px; width:16px; height:16px; background:url(assets/find/ic-chevron-down.svg) center/contain no-repeat; pointer-events:none; }
+  .field { display:flex; align-items:center; gap:4px; width:320px; height:40px; padding:0 4px 0 16px; background:#fff; border:1px solid var(--gray-300); border-radius:8px; }
   .field:focus-within, .sel select:focus-visible { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
-  .field input { flex:1; min-width:0; border:0; outline:0; background:none; font-size:15px; }
+  .field input { flex:1; min-width:0; border:0; outline:0; background:none; font-size:14px; line-height:20px; }
   .field input::placeholder { color:var(--gray-400); }
   .field input::-webkit-search-cancel-button { display:none; }
-  .field .x { width:28px; height:28px; border-radius:6px; font-size:18px; line-height:28px; color:var(--gray-400); }
-  .field .x:hover { background:var(--gray-100); }
-  .go { height:48px; min-width:88px; padding:0 20px; border-radius:8px; background:var(--teal-600); color:#fff; font-size:16px; font-weight:500; }
-  .go:hover { background:var(--teal-700); }
+  .field button { flex:none; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:6px; }
+  .field button:hover { background:var(--gray-100); }
+  .field img { width:20px; height:20px; }
 
   @media (max-width:1180px) { .page-head, .body { padding-left:24px; padding-right:24px; } }
   @media (max-width:760px) {
@@ -95,8 +94,7 @@
     .m-meta .clip { width:16px; height:16px; }
     .none { padding:0 !important; } .none td { height:auto; padding:48px 0; border:0; }
     .pager { margin-top:28px; flex-wrap:wrap; }
-    .search { flex-wrap:wrap; }
-    .sel select { width:100px; }
+    .lhead { flex-direction:column-reverse; align-items:stretch; gap:12px; }
     .field { flex:1; width:auto; min-width:0; }
     .go { flex-basis:100%; }
   }
@@ -108,18 +106,19 @@
 <section class="page-head"><div class="in"><h1>공지사항</h1></div></section>
 
 <main class="body"><div class="in">
-  <div class="lhead"><p class="total" id="total"></p></div>
+  <div class="lhead">
+    <p class="total" id="total"></p>
+    <form class="search" id="search" role="search">
+      <div class="sel"><select id="scope" aria-label="검색 범위"><option value="all">전체</option><option value="title">제목</option><option value="body">내용</option></select></div>
+      <label class="field"><input type="search" id="q" placeholder="검색어를 입력하세요." aria-label="검색어" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></label>
+    </form>
+  </div>
   <table class="board">
     <colgroup><col class="c-no"><col><col class="c-file"><col class="c-date"></colgroup>
     <thead><tr><th scope="col" class="c-no">번호</th><th scope="col">제목</th><th scope="col" class="c-file">첨부파일</th><th scope="col" class="c-date">등록일</th></tr></thead>
     <tbody id="rows"></tbody>
   </table>
   <nav class="pager" id="pager" aria-label="페이지"></nav>
-  <form class="search" id="search" role="search">
-    <div class="sel"><select id="scope" aria-label="검색 범위"><option value="all">전체</option><option value="title">제목</option><option value="body">내용</option></select></div>
-    <label class="field"><input type="search" id="q" placeholder="검색어를 입력하세요." aria-label="검색어"><button type="button" class="x" id="clear" aria-label="검색어 지우기" hidden>×</button></label>
-    <button type="submit" class="go">검색</button>
-  </form>
 </div></main>
 
 <div data-op-footer></div>
@@ -169,8 +168,7 @@
     state.page = +b.dataset.p; render(); scrollTo({ top: 0, behavior: 'smooth' });
   });
   $('#search').addEventListener('submit', function (e) { e.preventDefault(); state.q = $('#q').value; state.scope = $('#scope').value; state.page = 1; render(); });
-  $('#q').addEventListener('input', function () { $('#clear').hidden = !this.value; if (!this.value && state.q) { state.q = ''; state.page = 1; render(); } });
-  $('#clear').addEventListener('click', function () { $('#q').value = ''; this.hidden = true; state.q = ''; state.page = 1; render(); $('#q').focus(); });
+  $('#q').addEventListener('input', function () { if (!this.value && state.q) { state.q = ''; state.page = 1; render(); } });
   render();
 })();
 </script>
