@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png">
+<title>분석 서비스 안내 · OmicsPharm</title>
+<!-- 서비스 소개 > 분석 서비스 소개 (Figma 시안 없음 — 현재 홈페이지 /projects/guide 내용·이미지를 그대로 옮기고 우리 컴포넌트로 구성)
+     섹션 id: overview, genomics, transcriptomics, proteomics, glycoproteomics, metabolomics, olink, bioinformatics, biopharma, adc, specialized, samples -->
+<link rel="stylesheet" href="assets/common/site.css?v=20260930n">
+<script src="assets/common/site.js?v=20260930n"></script>
+<style>
+  :root {
+    --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
+    --gray-50:#fafafa; --gray-100:#f5f5f5; --gray-200:#e5e5e5; --gray-300:#d4d4d4; --gray-400:#a3a3a3; --gray-500:#737373; --gray-600:#525252; --gray-700:#404040;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-padding-top:140px; }
+  body { background:#fff; color:#000; font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; }
+  ul { list-style:none; }
+  .in { max-width:1320px; margin:0 auto; }
+  .ico { display:inline-block; flex:none; background:currentColor; -webkit-mask:var(--i) center/contain no-repeat; mask:var(--i) center/contain no-repeat; }
+
+  .page-head { padding:64px 60px 24px; }
+  .page-head h1 { font-size:36px; font-weight:700; line-height:46px; letter-spacing:-.36px; }
+
+  /* 서비스 바로가기 (FAQ 탭 컴포넌트, 가로 스크롤) */
+  .tabs-wrap { position:sticky; top:70px; z-index:5; padding:0 60px; background:#fff; border-bottom:1px solid var(--gray-200); }
+  .tabs { display:flex; gap:28px; overflow-x:auto; scrollbar-width:none; }
+  .tabs::-webkit-scrollbar { display:none; }
+  .tabs a { position:relative; flex:none; display:flex; align-items:center; height:56px; padding:0 2px; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-500); white-space:nowrap; }
+  .tabs a:hover { color:#000; }
+  .tabs a.on { color:#000; font-weight:600; }
+  .tabs a.on::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--teal-600); }
+
+  .body { padding:0 60px 96px; }
+  .sec { display:grid; grid-template-columns:minmax(0,530px) minmax(0,1fr); gap:64px; align-items:start; padding:72px 0; border-bottom:1px solid var(--gray-200); }
+  .sec.rev { grid-template-columns:minmax(0,1fr) minmax(0,530px); }
+  .sec.rev .pic { order:2; }
+  .sec.full { display:block; }
+  .pic img { display:block; width:100%; aspect-ratio:529 / 407; object-fit:cover; border-radius:16px; }
+  .eyebrow { font-size:14px; font-weight:600; line-height:20px; letter-spacing:.04em; color:var(--teal-600); text-transform:uppercase; }
+  .sec h2 { margin-top:8px; font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; word-break:keep-all; }
+  .desc { margin-top:20px; font-size:16px; line-height:1.75; color:var(--gray-700); word-break:keep-all; }
+  .desc p + p { margin-top:12px; }
+
+  /* 분석항목 카드 */
+  .items { margin-top:28px; padding:24px; border:1px solid var(--gray-200); border-radius:12px; background:var(--gray-50); }
+  .items h3 { font-size:16px; font-weight:600; line-height:22px; }
+  .items ul { display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+  .items li { display:flex; gap:10px; font-size:15px; line-height:22px; color:var(--gray-700); word-break:keep-all; }
+  .items li .ico { width:20px; height:20px; margin-top:1px; color:var(--teal-600); --i:url(assets/service/ic-check-circle.svg); }
+
+  /* Overview 특징 */
+  .feats { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:28px; }
+  .feat { padding:20px; border:1px solid var(--gray-200); border-radius:12px; background:#fff; }
+  .feat i { display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:10px; background:var(--teal-50); color:var(--teal-600); }
+  .feat i .ico { width:22px; height:22px; }
+  .feat b { display:block; margin-top:14px; font-size:17px; font-weight:600; line-height:24px; }
+  .feat p { margin-top:6px; font-size:14px; line-height:21px; color:var(--gray-600); word-break:keep-all; }
+
+  /* Bioinformatics 그룹 */
+  .groups { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; margin-top:28px; }
+  .groups .items { margin-top:0; padding:20px; }
+  .groups .items:last-child { grid-column:1 / -1; }
+
+  /* 바이오의약품 특성분석 표 */
+  .head-row { display:grid; grid-template-columns:minmax(0,530px) minmax(0,1fr); gap:64px; align-items:center; }
+  .bp { width:100%; margin-top:40px; border-collapse:collapse; border-top:2px solid #000; font-size:15px; line-height:22px; }
+  .bp th { height:52px; padding:0 20px; background:var(--gray-50); border-bottom:1px solid var(--gray-300); font-weight:600; color:var(--gray-700); text-align:left; }
+  .bp td { padding:12px 20px; border-bottom:1px solid var(--gray-200); color:var(--gray-700); vertical-align:top; }
+  .bp td.cat { width:220px; background:#fff; font-weight:600; color:#000; border-right:1px solid var(--gray-200); vertical-align:middle; }
+  .bp td.it { width:340px; color:#000; }
+  .bp tr.first td { border-top:1px solid var(--gray-300); }
+
+  /* 시료 */
+  .samples { padding:72px 0 0; }
+  .samples h2 { font-size:32px; font-weight:700; line-height:44px; letter-spacing:-.32px; word-break:keep-all; }
+  .samples h2 em { font-style:normal; color:var(--teal-600); }
+  .scards { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:24px; margin-top:40px; }
+  .scard { border:1px solid var(--gray-200); border-radius:16px; overflow:hidden; background:#fff; }
+  .scard img { display:block; width:100%; aspect-ratio:538 / 401; object-fit:cover; }
+  .scard div { padding:20px; }
+  .scard b { display:block; font-size:18px; font-weight:600; line-height:26px; }
+  .scard small { display:block; margin-top:2px; font-size:13px; line-height:18px; color:var(--gray-500); }
+  .scard p { margin-top:12px; font-size:15px; line-height:22px; color:var(--gray-700); word-break:keep-all; }
+  .req { display:flex; align-items:center; gap:40px; margin-top:24px; padding:28px 32px; border-radius:16px; background:var(--bg-green); border:1px solid var(--teal-100); }
+  .req h3 { flex:none; font-size:18px; font-weight:700; line-height:26px; }
+  .req h3 small { display:block; font-size:13px; font-weight:500; color:var(--gray-500); }
+  .req ul { display:flex; flex-wrap:wrap; gap:12px 40px; }
+  .req li { font-size:16px; line-height:24px; color:var(--gray-700); }
+  .req li b { margin-left:6px; font-weight:700; color:#000; }
+
+  /* 하단 안내 */
+  .cta { display:flex; align-items:center; justify-content:space-between; gap:24px; margin-top:72px; padding:32px 40px; border:1px solid var(--gray-200); border-radius:16px; }
+  .cta h2 { font-size:22px; font-weight:700; line-height:30px; }
+  .cta p { margin-top:4px; font-size:15px; line-height:22px; color:var(--gray-600); }
+  .cta div:last-child { display:flex; gap:8px; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; height:48px; min-width:140px; padding:0 20px; border-radius:8px; font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; }
+  .btn.pri { background:var(--teal-600); color:#fff; } .btn.pri:hover { background:var(--teal-700); }
+  .btn.line { border:1px solid var(--gray-300); background:#fff; color:var(--gray-700); } .btn.line:hover { background:var(--gray-50); }
+
+  @media (max-width:1180px) {
+    .page-head, .tabs-wrap, .body { padding-left:24px; padding-right:24px; }
+    .sec, .sec.rev, .head-row { gap:40px; }
+    .scards { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  }
+  @media (max-width:900px) {
+    .sec, .sec.rev, .head-row { grid-template-columns:1fr; gap:28px; }
+    .sec.rev .pic { order:0; }
+    .bp td.cat { width:auto; }
+    .bp td.it { width:auto; }
+  }
+  @media (max-width:640px) {
+    html { scroll-padding-top:128px; }
+    .page-head { padding:40px 16px 16px; }
+    .page-head h1 { font-size:28px; line-height:38px; }
+    .tabs-wrap { padding:0 16px; }
+    .tabs { gap:20px; }
+    .tabs a { height:52px; font-size:15px; }
+    .body { padding:0 16px 64px; }
+    .sec { padding:48px 0; }
+    .pic img { border-radius:12px; }
+    .sec h2, .samples h2 { font-size:24px; line-height:34px; }
+    .desc { margin-top:14px; font-size:15px; }
+    .items { margin-top:20px; padding:18px 16px; }
+    .items li { font-size:14px; }
+    .feats, .groups { grid-template-columns:1fr; }
+    /* 표 → 분류별 블록 */
+    .bp, .bp tbody, .bp tr, .bp td { display:block; width:100%; }
+    .bp thead { display:none; }
+    .bp tr { display:grid; grid-template-columns:1fr; padding:10px 0; border-bottom:1px solid var(--gray-200); }
+    .bp td { padding:2px 0; border:0; }
+    .bp td.cat { padding:14px 0 6px; border:0; font-size:16px; color:var(--teal-700); }
+    .bp tr.first td { border-top:0; }
+    .bp td.it { font-weight:500; }
+    .bp td.pp { font-size:14px; color:var(--gray-500); }
+    .scards { grid-template-columns:1fr; gap:16px; margin-top:28px; }
+    .req { flex-direction:column; align-items:flex-start; gap:14px; padding:20px; }
+    .req ul { flex-direction:column; gap:6px; }
+    .cta { flex-direction:column; align-items:stretch; padding:24px 20px; margin-top:48px; }
+    .cta div:last-child .btn { flex:1; min-width:0; }
+  }
+</style>
+</head>
+<body>
+<div data-op-gnb="service"></div>
+
+<section class="page-head"><div class="in"><h1>분석 서비스 안내</h1></div></section>
+
+<nav class="tabs-wrap" aria-label="서비스 바로가기"><div class="in tabs" id="tabs"></div></nav>
+
+<main class="body"><div class="in" id="secs"></div></main>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var I = 'assets/service/';
+  var CHECK = '<span class="ico"></span>';
+  var li = function (arr) { return arr.map(function (t) { return '<li>' + CHECK + '<span>' + t + '</span></li>'; }).join(''); };
+  var items = function (arr, title) { return '<div class="items"><h3>' + (title || '분석항목') + '</h3><ul>' + li(arr) + '</ul></div>'; };
+  var desc = function (ps) { return '<div class="desc">' + ps.map(function (p) { return '<p>' + p + '</p>'; }).join('') + '</div>'; };
+
+  // 현재 홈페이지 /projects/guide 내용 그대로
+  var S = [
+    { id: 'genomics', img: '04', name: 'Genomics', ko: '유전체 분석', ps: [
+      'Genomics 분석은 유전체 DNA의 염기서열 변이와 구조적 특성을 종합적으로 분석하여 질병의 유전적 원인과 분자적 기전을 규명하는 핵심 분석 방법입니다.',
+      '차세대 염기서열 분석(NGS) 기술과 고도화된 Bioinformatics 파이프라인을 기반으로 질병 관련 변이 탐색, 유전적 위험도 평가, 정밀의료 연구 등 다양한 연구 및 임상 분야에서 활용 가능한 정보를 제공합니다.'],
+      items: ['Whole Genome Sequencing (WGS) 분석', 'Whole Exome Sequencing (WES) 분석', 'Targeted Sequencing 분석', 'SNV / INDEL / CNV / Structural Variant 분석', 'Variant Annotation 및 Pathogenicity 해석 (ClinVar, gnomAD 등 기반)', 'Single Cell DNA Sequencing 분석'] },
+    { id: 'transcriptomics', img: '11', name: 'Transcriptomics', ko: '전사체 분석', ps: [
+      'Transcriptomics 분석은 세포 또는 조직에서 발현되는 RNA 전사체(transcriptome)를 분석하여 유전자 발현 변화와 생물학적 기능 변화를 규명하는 핵심 분석 방법입니다.',
+      'RNA-seq 기반의 정량 분석과 다양한 bioinformatics 분석을 통해 질병 기전 연구, 바이오마커 발굴, 약물 반응 분석 등에 활용되는 정밀한 전사체 정보를 제공합니다.'],
+      items: ['Bulk RNA-seq 기반 유전자 발현 분석', 'Differential Gene Expression 분석', 'Alternative Splicing 분석', 'Fusion Gene 분석', 'Functional Pathway 및 Gene Set Enrichment 분석', 'Single Cell RNA-seq 분석'] },
+    { id: 'proteomics', img: '02', name: 'Proteomics', ko: '단백체 분석', ps: [
+      'Proteomics 분석은 단백질의 전체적인 발현과 변화를 한눈에 파악하여 생체 내 복잡한 분자 메커니즘을 해독하는 분석 방법입니다.',
+      '최첨단 질량분석기와 AI 기술을 활용해 얻어진 Proteomics 데이터는 질병 관련 바이오마커 발굴, 약물 타겟 연구, 그리고 정밀의학 개발 등 다양한 분야에 활용 가능한 정보를 제공합니다.'],
+      items: ['단백질 정성 및 정량 분석', '다양한 Post translational modifications 분석', '인산화단백질 분석', 'DDA와 DIA 분석', 'Targeted MS 분석 (PRM, MRM)'] },
+    { id: 'glycoproteomics', img: '03', name: 'Glycoproteomics', ko: '당단백체 분석', ps: [
+      'Glycoproteomics는 단백질의 당화 패턴과 구조적 변화를 정밀하게 분석하여 질병의 발생 메커니즘, 바이오마커 발굴, 신약 개발에 필수적인 정보를 제공합니다.',
+      '최신 질량분석기와 AI 기반 분석 플랫폼을 통해 Glycoproteomics 데이터를 고속 처리하며, 복잡한 당단백질 네트워크를 해독하는 최적의 솔루션을 제공합니다.'],
+      items: ['당단백질 정성 및 정량 분석 (N-glycosylation &amp; O-glycosylation)', 'Site-specific Glycosylation Analysis', '질병 상태와 연관된 특이적 Glycan 또는 당화 패턴 발굴', '항체, 융합 단백질 등 치료용 Glycoprotein의 당화 특성화', '바이오의약품 생산 공정 중 당화 일관성 확인'] },
+    { id: 'metabolomics', img: '05', name: 'Metabolomics', ko: '대사체 분석', ps: [
+      'Metabolomics 분석은 생체 내 대사산물의 변화를 체계적으로 분석하여 생명현상의 메커니즘을 이해하고, 질병과 관련된 생체지표를 발굴하는 첨단 연구 기술입니다.',
+      '최첨단 질량분석기를 활용해 얻어진 Metabolomics 데이터는 질병 진단, 약물 반응 모니터링, 그리고 정밀의학 개발 등 다양한 분야에 폭넓게 적용되고 있습니다.',
+      '비표적 분석부터 표적 대사체 분석까지 폭넓은 접근이 가능하며, 정밀한 통계 분석을 통해 고객에게 차별화된 인사이트를 제공합니다.'],
+      items: ['대사체 정성 및 정량 분석', 'DDA와 DIA 분석', 'Metabolic pathways 분석', 'Targeted MS 분석 (PRM, MRM)'] },
+    { id: 'olink', img: '13', name: 'Olink Proteomics', ko: 'Olink 분석', ps: [
+      'Olink 분석은 Proximity Extension Assay(PEA) 기술을 활용해 소량의 시료에서 다수의 단백질 바이오마커를 고감도·고특이도로 정량하는 분석 서비스입니다.',
+      '두 개의 항체가 동일 표적 단백질에 결합할 때 형성되는 DNA reporter를 qPCR 또는 NGS로 판독하여, 염증·종양·심혈관·신경질환 등 다양한 연구 분야에서 biomarker discovery와 validation에 활용됩니다.'],
+      items: ['Olink Explore HT 기반 대규모 단백질 profiling', 'Olink Target 96/48 disease-focused panel 분석', '혈청·혈장 등 소량 시료 기반 multiplex protein analysis', 'NPX 기반 상대정량 및 QC 리포트', 'Multi-omics 통합 분석 및 biomarker 후보 도출'] },
+    { id: 'bioinformatics', img: '06', name: 'Bioinformatics Analysis', ko: '생물정보 분석', ps: [
+      'Bioinformatics Analysis는 생물학적 데이터의 복잡성을 해결하고, 유전체, 단백질체, 대사체 등 다차원 데이터에서 의미 있는 정보를 추출하여 연구의 혁신을 가능하게 합니다.',
+      '셀키에이아이는 AI 기반의 최첨단 알고리즘과 클라우드 인프라를 활용하여 종합적인 생물학적 해석을 제공합니다.'],
+      groups: [
+        ['유전체(Genomics)', ['DNA/RNA variant 분석 (SNV, InDel 등)', '유전자 패널 및 전장유전체/전장엑솜 데이터 해석', '변이 annotation 및 기능 영향 분석', '질환 연관 유전자 및 바이오마커 발굴']],
+        ['전사체(Transcriptomics)', ['RNA-seq 기반 유전자 발현 정량 분석', '차등 발현 유전자(DEG) 분석', '기능 풍부도 분석 및 경로 분석', '유전자 네트워크 및 바이오마커 발굴']],
+        ['단백질체(Proteomics)', ['단백질 발현 정량 분석 (Label-free, SILAC, TMT 등)', '단백질 상호작용 분석 (PPI 네트워크)', '바이오마커 발굴']],
+        ['대사체(Metabolomics)', ['대사체 프로파일링 및 정량 분석', '대사 네트워크 분석']],
+        ['통합 오믹스 데이터 분석', ['Multi-omics 통합 해석 (Genomics, Transcriptomics, Proteomics, Metabolomics)', '경로 분석(Pathway Analysis) 및 네트워크 분석', 'AI/ML 기반 바이오마커 발굴']]] },
+    { id: 'biopharma', img: '09', name: '바이오의약품 특성분석', ko: 'Biopharmaceutical Characterization', table: true, ps: [
+      '최신 분석 기술과 전문성을 바탕으로 바이오의약품의 물리화학적, 생물학적 특성을 정밀하게 분석하여 품질과 안전성을 보장합니다.'] },
+    { id: 'adc', img: '07', name: 'Antibody-Drug Conjugate (ADC)', ko: 'ADC 분석', ps: [
+      'Antibody-Drug Conjugates (ADC)는 항체와 약물을 결합하여 높은 특이성과 강력한 치료 효과를 제공하는 차세대 항암제입니다. ADC 분석은 약물-항체 비율(DAR), 결합 부위, 안정성, 그리고 약동학적 특성을 정밀하게 평가하여 연구 및 개발의 핵심 단계를 지원합니다.',
+      '셀키에이아이는 최첨단 질량분석 기술과 전문적인 분석 역량을 통해 ADC의 특성화를 위한 완벽한 솔루션을 제공합니다.'],
+      items: ['항체 정량 분석', '항체에 결합된 약물 및 site 분석', 'Free payload 분석', 'Linker 안정성 분석', '항체와 약물의 비율 DAR(Drug-to-Antibody Ratio) 분석'] },
+    { id: 'specialized', img: '12', name: 'Specialized Analysis', ko: '맞춤형 분석', ps: [
+      '표준 멀티오믹스 분석 서비스 외에도, 특정 연구 및 개발 목적에 맞춘 맞춤형 분석 솔루션이 제공됩니다.',
+      '참여 분석 파트너들은 통합 멀티오믹스 분석, 바이오의약품 특성 분석, 맞춤형 분석법 개발 등 복잡한 연구 프로젝트를 지원하며, 각 프로젝트의 목적에 맞는 최적의 분석 전략을 설계하기 위해 사전 컨설팅을 통해 서비스를 제공합니다.'],
+      items: ['통합 멀티오믹스 분석 (genomics, transcriptomics, proteomics, metabolomics)', 'AI 기반 바이오마커 발굴 및 Pathway 분석', 'Cross-omics 데이터 통합 및 시스템 생물학 분석', '복잡한 생물학 연구 프로젝트를 위한 분석 설계 컨설팅', 'Small molecule 분석을 위한 LC–MS/MS 분석법 개발', '정량 바이오분석법 개발', '분석법 검증 (Analytical Method Validation)'] }
+  ];
+  var BP = [
+    ['Identification of antibody', [['Intact Mass', '항체 및 ADC의 전체 분자량 확인'], ['Peptide mapping fingerprinting', '단백질의 아미노산 서열 및 변형 확인'], ['Full length sequencing', '항체의 전체 서열 확인'], ['N/C terminal determination', '단백질 N말단 및 C말단의 서열 확인'], ['Amino acid composition', '단백질의 아미노산 조성 분석'], ['Extinction Coefficient', '단백질의 광학적 흡광도 계수 측정']]],
+    ['Modification analysis', [['Modification (Oxidation, deamidation)', '산화 및 탈아미드화 같은 화학적 변형 확인'], ['IsoAsp analysis', 'IsoAsp 형성 확인'], ['Glycation analysis', 'Glycation된 부위 확인'], ['PEGylation analysis', 'PEG(폴리에틸렌 글리콜) 결합 확인'], ['Succinimeide analysis', 'Succinimide 중간체 확인'], ['Disulfide bond analysis', '이황화 결합 위치와 상태 확인'], ['Free thiol analysis', '자유 티올 그룹 존재 여부 확인']]],
+    ['Glycan analysis', [['Monosaccharide composition', '단당류 구성 분석'], ['Sialic acid compositon', '시알산의 조성 및 함량 분석'], ['N-linked glycan profile', 'N-연결 당구조 분석'], ['O-linked glycan profile', 'O-연결 당구조 분석'], ['N-Glycosylation site', 'N-당화 위치 분석'], ['O-Glycosylation site', 'O-당화 위치 분석']]],
+    ['Structure analysis', [['UV', '자외선 흡광도 분석'], ['Flurescence', '형광 특성 분석'], ['CD', '단백질의 이차 구조 분석'], ['DSC', '단백질 열 안정성 분석'], ['FT-IR', '단백질의 구조 분석']]],
+    ['Aggregation analysis', [['DLS', '입자 크기 및 분포 분석'], ['SEC-UPLC', '단백질의 분자량 분포 확인']]]
+  ];
+  var FEATS = [
+    ['target', '정확도와 민감도 향상', '고감도 장비와 알고리즘으로 다양한 샘플에서 높은 정확도와 민감도의 데이터 제공'],
+    ['sliders-horizontal', '맞춤형 분석 솔루션', '질병 연구, 신약 개발, 정밀의학 등 고객의 목표에 최적화된 분석 서비스를 제공'],
+    ['cpu', '혁신적인 분석 인프라', 'AI 기반 고속 데이터 처리로 분석 시간을 단축'],
+    ['rocket-launch', '지속적인 기술 혁신', '최신 오믹스 분석 기술과 AI Agents 등 AI 기술을 지속적으로 고도화하여 경쟁력 강화']
+  ];
+  var SAMPLES = [
+    ['10_1', '생물학적 시료', 'Biological sample', '혈청, 혈장, 세포주, 조직, CSF'],
+    ['10_2', '당단백질', 'Glycoprotein', '엑소좀, Cell lysate, Secretome'],
+    ['10_3', '바이오 의약품', 'Biopharmaceutical products', '항체의약품, 융합단백질 의약품'],
+    ['10_4', '식품, 화장품, 기타 산업', 'Food, cosmetics, and other industries', '단백질/당단백질 원료<br>그 밖에 지표 물질 (상담을 통해 분석법 개발 및 밸리데이션 가능)']
+  ];
+
+  var pic = function (n) { return '<div class="pic"><img src="' + I + 'guide-' + n + '.jpg" alt="" loading="lazy"></div>'; };
+  var html = '<section class="sec" id="overview">' + pic('01') +
+    '<div><h2>Overview</h2>' +
+    '<div class="feats">' + FEATS.map(function (f) { return '<div class="feat"><i><span class="ico" style="--i:url(' + I + 'ic-' + f[0] + '.svg)"></span></i><b>' + f[1] + '</b><p>' + f[2] + '</p></div>'; }).join('') + '</div></div></section>';
+
+  S.forEach(function (s, k) {
+    var head = '<p class="eyebrow">' + s.ko + '</p><h2>' + s.name + '</h2>' + desc(s.ps);
+    if (s.table) {
+      html += '<section class="sec full" id="' + s.id + '"><div class="head-row">' + pic(s.img) + '<div>' + head + '</div></div>' +
+        '<table class="bp"><thead><tr><th>분류</th><th>품목</th><th>목적</th></tr></thead><tbody>' +
+        BP.map(function (g) { return g[1].map(function (r, i) {
+          return '<tr' + (i === 0 ? ' class="first"' : '') + '>' + (i === 0 ? '<td class="cat" rowspan="' + g[1].length + '">' + g[0] + '</td>' : '') + '<td class="it">' + r[0] + '</td><td class="pp">' + r[1] + '</td></tr>';
+        }).join(''); }).join('') + '</tbody></table></section>';
+      return;
+    }
+    var body = s.groups ? '<div class="groups">' + s.groups.map(function (g) { return items(g[1], g[0]); }).join('') + '</div>' : items(s.items);
+    html += '<section class="sec' + (k % 2 === 0 ? ' rev' : '') + '" id="' + s.id + '">' + pic(s.img) + '<div>' + head + body + '</div></section>';
+  });
+
+  html += '<section class="samples" id="samples"><p class="eyebrow">Samples</p><h2>다양한 종류의 시료에서 분석이 가능하며<br>신규 물질에 대한 <em>분석법 개발 및 밸리데이션</em> 서비스도 제공합니다.</h2>' +
+    '<div class="scards">' + SAMPLES.map(function (x) { return '<div class="scard"><img src="' + I + 'guide-' + x[0] + '.jpg" alt="" loading="lazy"><div><b>' + x[1] + '</b><small>' + x[2] + '</small><p>' + x[3] + '</p></div></div>'; }).join('') + '</div>' +
+    '<div class="req"><h3>시료 요구사항<small>Sample Requirements</small></h3><ul><li>단백질 양 :<b>100 μg</b></li><li>Cell count :<b>&gt; 10⁷</b></li><li>EV particles :<b>&gt; 10¹⁰</b></li></ul></div></section>' +
+    '<section class="cta"><div><h2>필요한 분석을 바로 의뢰해보세요</h2><p>어떤 분석이 맞을지 모르겠다면 문의를 남겨주세요. 담당 컨설턴트가 안내해드립니다.</p></div>' +
+    '<div><a class="btn line" href="contact.html?type=quote">문의하기</a><a class="btn pri" href="omicspharm-register.html" data-client-only>프로젝트 의뢰하기</a></div></section>';
+  $('#secs').innerHTML = html;
+
+  // 바로가기 탭 + 스크롤 위치 표시
+  var TABS = [['overview', 'Overview']].concat(S.map(function (s) { return [s.id, s.id === 'biopharma' ? '바이오의약품' : s.id === 'adc' ? 'ADC' : s.name.replace(' Analysis', '').replace(' Proteomics', '')]; })).concat([['samples', '시료 안내']]);
+  $('#tabs').innerHTML = TABS.map(function (t) { return '<a href="#' + t[0] + '" data-t="' + t[0] + '">' + t[1] + '</a>'; }).join('');
+  var links = [].slice.call(document.querySelectorAll('#tabs a'));
+  function spy() {
+    var y = window.scrollY + 160, cur = TABS[0][0];
+    TABS.forEach(function (t) { var el = document.getElementById(t[0]); if (el && el.offsetTop <= y) cur = t[0]; });
+    links.forEach(function (a) {
+      var on = a.dataset.t === cur;
+      if (on && !a.classList.contains('on')) { var bar = a.parentNode; bar.scrollLeft = a.offsetLeft - bar.clientWidth / 2 + a.offsetWidth / 2; }
+      a.classList.toggle('on', on);
+    });
+  }
+  window.addEventListener('scroll', spy, { passive: true }); spy();
+})();
+</script>
+</body>
+</html>
