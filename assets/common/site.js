@@ -177,6 +177,16 @@
     document.querySelectorAll('[data-op-footer]').forEach(function (el) { el.outerHTML = footer(); });
     // 헤더·푸터가 있는 일반 페이지에만 맨 위로 + 챗봇 버튼 (로그인·회원가입 풀페이지 제외)
     if (hasFooter && !document.querySelector('.op-float')) document.body.insertAdjacentHTML('beforeend', FLOAT);
+    if (hasFooter && !document.body.hasAttribute('data-op-no-enter')) enterAnim();
+  }
+  // 페이지 진입 효과: 헤더·푸터·고정 요소(모달, 플로팅 버튼 등)를 뺀 본문 블록에 차례로 적용 (메인은 자체 스크롤 효과 사용)
+  function enterAnim() {
+    var skip = /(^|\s)(op-gnb|op-footer|op-float|op-drawer|op-toast)(\s|$)/, n = 0;
+    [].forEach.call(document.body.children, function (el) {
+      if (/^(SCRIPT|STYLE|TEMPLATE)$/.test(el.tagName) || skip.test(el.className) || el.hidden) return;
+      if (getComputedStyle(el).position === 'fixed') return;
+      el.classList.add('op-enter'); el.style.setProperty('--op-d', Math.min(n++, 4) * 0.1 + 's');
+    });
   }
 
   // 내용이 짧은 페이지: 푸터를 화면 맨 아래에 붙임 (푸터 위 여백만 늘려서 다른 레이아웃은 그대로)
