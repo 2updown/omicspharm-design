@@ -181,6 +181,23 @@
     if (hasFooter && !document.querySelector('.op-float')) document.body.insertAdjacentHTML('beforeend', FLOAT);
   }
 
+  // 내용이 짧은 페이지: 푸터를 화면 맨 아래에 붙임 (푸터 위 여백만 늘려서 다른 레이아웃은 그대로)
+  function stickFooter() {
+    var f = document.querySelector('.op-footer'); if (!f) return;
+    f.style.marginTop = '';
+    var gap = window.innerHeight - (f.getBoundingClientRect().bottom + window.scrollY);
+    if (gap > 0) f.style.marginTop = gap + 'px';
+  }
+  var sfT;
+  function queueFooter() { clearTimeout(sfT); sfT = setTimeout(stickFooter, 0); }
+  function watchFooter() {
+    if (!document.querySelector('.op-footer')) return;
+    stickFooter();
+    window.addEventListener('load', queueFooter);
+    window.addEventListener('resize', queueFooter);
+    if (window.ResizeObserver) new ResizeObserver(queueFooter).observe(document.body);
+  }
+
   document.addEventListener('click', function (e) {
     var soon = e.target.closest('[data-soon]');
     if (soon) { e.preventDefault(); OP.toast("'" + soon.getAttribute('data-soon') + "' 화면은 준비 중입니다."); return; }
@@ -246,5 +263,6 @@
   }
   window.addEventListener('scroll', syncGnb, { passive: true });
   function init() { render(); syncGnb(); showFlash(); }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  function initAll() { init(); watchFooter(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll); else initAll();
 })();
