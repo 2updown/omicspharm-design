@@ -7,9 +7,9 @@
 <title>Insights · OmicsPharm</title>
 <!-- 커뮤니티 > Insights 상세 (Figma 시안 없음 — Upstage Blog 글 상세 레이아웃 참고)
      ?id=게시글 번호 (assets/insight/posts.js) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20260930d">
-<script src="assets/common/site.js?v=20260930d"></script>
-<script src="assets/insight/posts.js?v=20260930d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20260930e">
+<script src="assets/common/site.js?v=20260930e"></script>
+<script src="assets/insight/posts.js?v=20260930e"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -45,10 +45,22 @@
   .article td, .article th { padding:12px 16px; border-bottom:1px solid var(--gray-200); text-align:left; vertical-align:top; }
   .article > * + table, .article > table + * { margin-top:24px; }
 
-  .post-foot { max-width:min(1024px, calc(100% - 120px)); margin:64px auto 0; padding:32px 0 0; border-top:1px solid var(--gray-200); display:flex; justify-content:space-between; align-items:center; gap:16px; }
-  .tag { display:inline-flex; align-items:center; padding:2px 8px; border:1px solid var(--teal-600); border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; color:var(--teal-600); }
-  .share { display:inline-flex; align-items:center; gap:6px; height:40px; padding:0 16px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font:inherit; font-size:14px; font-weight:500; color:var(--gray-600); cursor:pointer; }
-  .share:hover { background:var(--gray-50); }
+  /* 이전 글 / 다음 글 (양쪽 정렬) + 버튼 */
+  .post-nav { max-width:min(1024px, calc(100% - 120px)); margin:64px auto 0; display:grid; grid-template-columns:1fr 1fr; border-top:1px solid var(--gray-200); border-bottom:1px solid var(--gray-200); }
+  .post-nav a, .post-nav span { display:flex; flex-direction:column; gap:6px; min-width:0; padding:24px 0; }
+  .post-nav .next { align-items:flex-end; text-align:right; border-left:1px solid var(--gray-200); padding-left:24px; }
+  .post-nav .prev { padding-right:24px; }
+  .post-nav small { display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:500; line-height:20px; color:var(--gray-500); }
+  .post-nav small img { width:16px; height:16px; opacity:.6; }
+  .post-nav b { max-width:100%; font-size:17px; font-weight:600; line-height:25px; color:#000; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .post-nav a:hover b { color:var(--teal-700); }
+  .post-nav span b { color:var(--gray-400); font-weight:500; }
+  .post-foot { max-width:min(1024px, calc(100% - 120px)); margin:24px auto 0; display:flex; justify-content:flex-end; gap:8px; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; height:48px; min-width:120px; padding:0 20px; border-radius:8px; font:inherit; font-size:16px; font-weight:500; line-height:22px; cursor:pointer; }
+  .btn.line { border:1px solid var(--gray-300); background:#fff; color:var(--gray-600); }
+  .btn.line:hover { background:var(--gray-50); }
+  .btn.pri { border:0; background:var(--teal-600); color:#fff; }
+  .btn.pri:hover { background:var(--teal-700); }
 
   /* 관련 글 */
   .related { max-width:1320px; margin:96px auto 0; padding:0 60px 96px; }
@@ -78,7 +90,13 @@
     .article { padding:36px 16px 0; font-size:16px; }
     .article h2 { margin:36px 0 12px; font-size:20px; line-height:28px; }
     .article table { display:block; overflow-x:auto; font-size:14px; }
-    .post-foot { max-width:calc(100% - 32px); margin-top:48px; padding:24px 0 0; }
+    .post-nav { max-width:calc(100% - 32px); margin-top:48px; grid-template-columns:1fr; }
+    .post-nav .next { align-items:flex-start; text-align:left; border-left:0; border-top:1px solid var(--gray-200); padding-left:0; }
+    .post-nav .prev { padding-right:0; }
+    .post-nav a, .post-nav span { padding:18px 0; }
+    .post-nav b { font-size:15px; line-height:22px; }
+    .post-foot { max-width:calc(100% - 32px); }
+    .post-foot .btn { flex:1; min-width:0; }
     .related { margin-top:64px; padding:0 16px 64px; }
     .related-head h2 { font-size:22px; line-height:30px; }
     .posts { grid-template-columns:1fr; gap:16px; }
@@ -97,9 +115,10 @@
 
 <article class="article" id="body"></article>
 
+<nav class="post-nav" id="postNav" aria-label="이전 글, 다음 글"></nav>
 <div class="post-foot">
-  <span class="tag" id="tag"></span>
-  <button type="button" class="share" id="share">링크 복사</button>
+  <button type="button" class="btn line" id="share">링크 복사</button>
+  <a class="btn pri" href="blog.html">목록으로</a>
 </div>
 
 <section class="related">
@@ -124,7 +143,16 @@
   $('#date').textContent = p.date;
   $('#hero').src = 'assets/insight/thumb-' + p.id + '.jpg';
   $('#body').innerHTML = p.body;
-  $('#tag').textContent = LABEL[p.cat];
+
+  // 이전 글(더 오래된 글) · 다음 글(더 최근 글) — 목록 순서(최신순) 기준
+  var i = POSTS.indexOf(p), older = POSTS[i + 1], newer = POSTS[i - 1];
+  var escT = function (t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+  var nav = function (x, cls, label) {
+    var head = '<small>' + (cls === 'prev' ? '<img src="assets/find/ic-caret-left.svg" alt="">' + label : label + '<img src="assets/find/ic-caret-right.svg" alt="">') + '</small>';
+    return x ? '<a class="' + cls + '" href="blog-post.html?id=' + x.id + '">' + head + '<b>' + escT(x.title) + '</b></a>'
+             : '<span class="' + cls + '">' + head + '<b>' + label + '이 없습니다</b></span>';
+  };
+  $('#postNav').innerHTML = nav(older, 'prev', '이전 글') + nav(newer, 'next', '다음 글');
 
   $('#share').addEventListener('click', function () {
     (navigator.clipboard ? navigator.clipboard.writeText(location.href) : Promise.reject()).then(

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png">
+<title>공지사항 · OmicsPharm</title>
+<!-- 커뮤니티 > 공지사항 (Figma 시안 없음 — 마크로젠 공지사항 게시판 구조 참고: 고정 공지 + 번호 목록 + 첨부 + 하단 검색)
+     공지 내용은 프로토타입용 예시. 한 페이지 10개 -->
+<link rel="stylesheet" href="assets/common/site.css?v=20260930e">
+<script src="assets/common/site.js?v=20260930e"></script>
+<style>
+  :root {
+    --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
+    --gray-50:#fafafa; --gray-100:#f5f5f5; --gray-200:#e5e5e5; --gray-300:#d4d4d4; --gray-400:#a3a3a3; --gray-500:#737373; --gray-600:#525252; --gray-700:#404040;
+    --orange-600:#fd4900;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#fff; color:#000; font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; }
+  button, input, select { font:inherit; color:inherit; }
+  button { background:none; border:0; cursor:pointer; }
+  .in { max-width:1320px; margin:0 auto; }
+
+  .page-head { padding:64px 60px 32px; }
+  .page-head h1 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; }
+  .body { padding:0 60px 80px; }
+
+  .lhead { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; }
+  .total { font-size:16px; font-weight:500; line-height:22px; color:var(--gray-700); }
+  .total b { color:var(--teal-600); }
+
+  /* 게시판 표 */
+  .board { width:100%; margin-top:16px; border-collapse:collapse; border-top:2px solid #000; table-layout:fixed; }
+  .board th { height:56px; padding:0 16px; border-bottom:1px solid var(--gray-300); background:var(--gray-50); font-size:15px; font-weight:600; line-height:22px; color:var(--gray-700); }
+  .board td { height:64px; padding:0 16px; border-bottom:1px solid var(--gray-200); font-size:15px; line-height:22px; color:var(--gray-600); text-align:center; }
+  .board .c-no { width:96px; } .board .c-file { width:96px; } .board .c-date { width:140px; }
+  .board td.t { text-align:left; }
+  .board td.t a { display:inline-flex; align-items:center; gap:8px; max-width:100%; color:#000; font-size:16px; font-weight:500; }
+  .board td.t a span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .board tr:hover td.t a span { color:var(--teal-700); text-decoration:underline; text-underline-offset:3px; }
+  .board tr.pin td { background:#f6faf9; }
+  .board tr.pin td.t a { font-weight:600; }
+  .pin-badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:8px; background:var(--teal-600); font-size:12px; font-weight:500; line-height:18px; color:#fff; }
+  .board td.t .pin-badge { display:none; } /* PC는 번호 칸에 표시, 모바일은 제목 옆 */
+  .new { flex:none; font-style:normal; display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:50%; background:var(--orange-600); font-size:10px; font-weight:700; line-height:1; color:#fff; }
+  .clip { font-style:normal; display:inline-block; width:20px; height:20px; vertical-align:middle; background:var(--gray-500); -webkit-mask:url(assets/auth/ic-paperclip.svg) center/contain no-repeat; mask:url(assets/auth/ic-paperclip.svg) center/contain no-repeat; }
+  .m-meta { display:none; }
+  .none td { height:160px; color:var(--gray-500); }
+
+  /* 페이지네이션 (프로젝트 찾기와 동일) */
+  .pager { display:flex; justify-content:center; gap:4px; margin-top:40px; }
+  .pager button { width:40px; height:40px; padding:8px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:500; line-height:22px; color:#a8a29e; }
+  .pager button:hover:not(:disabled):not(.on) { background:var(--gray-50); color:var(--gray-700); }
+  .pager button.on { background:var(--teal-600); border-color:var(--teal-600); color:#fff; }
+  .pager button:disabled { opacity:.4; cursor:default; }
+  .pager img { width:20px; height:20px; }
+
+  /* 하단 검색 */
+  .search { display:flex; justify-content:center; gap:8px; margin-top:32px; }
+  .sel { position:relative; }
+  .sel select { height:48px; width:120px; padding:0 36px 0 16px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font-size:15px; appearance:none; -webkit-appearance:none; cursor:pointer; }
+  .sel::after { content:""; position:absolute; right:12px; top:16px; width:16px; height:16px; background:url(assets/find/ic-chevron-down.svg) center/contain no-repeat; pointer-events:none; }
+  .field { display:flex; align-items:center; width:360px; height:48px; padding:0 8px 0 16px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; }
+  .field:focus-within, .sel select:focus-visible { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+  .field input { flex:1; min-width:0; border:0; outline:0; background:none; font-size:15px; }
+  .field input::placeholder { color:var(--gray-400); }
+  .field input::-webkit-search-cancel-button { display:none; }
+  .field .x { width:28px; height:28px; border-radius:6px; font-size:18px; line-height:28px; color:var(--gray-400); }
+  .field .x:hover { background:var(--gray-100); }
+  .go { height:48px; min-width:88px; padding:0 20px; border-radius:8px; background:var(--teal-600); color:#fff; font-size:16px; font-weight:500; }
+  .go:hover { background:var(--teal-700); }
+
+  @media (max-width:1180px) { .page-head, .body { padding-left:24px; padding-right:24px; } }
+  @media (max-width:760px) {
+    .page-head { padding:40px 16px 20px; }
+    .page-head h1 { font-size:28px; line-height:38px; }
+    .body { padding:0 16px 56px; }
+    /* 표 → 목록: 제목 위, 날짜·첨부 아래 */
+    .board thead, .board .c-no, .board .c-file, .board .c-date { display:none; }
+    .board, .board tbody, .board tr, .board td { display:block; width:100%; }
+    .board td { height:auto; }
+    .board td.no, .board td.file, .board td.date { display:none; }
+    .board tr { padding:16px 4px; border-bottom:1px solid var(--gray-200); }
+    .board tr.pin { background:#f6faf9; padding-left:12px; padding-right:12px; }
+    .board tr.pin td { background:none; }
+    .board td.t { padding:0; border:0; }
+    .board td.t a { display:flex; align-items:flex-start; flex-wrap:wrap; gap:6px 8px; font-size:15px; line-height:22px; }
+    .board td.t a span { white-space:normal; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; flex-basis:100%; order:2; }
+    .board td.t a .pin-badge, .board td.t a .new { order:1; }
+    .board td.t .pin-badge { display:inline-flex; }
+    .m-meta { display:flex; align-items:center; gap:8px; margin-top:6px; font-size:13px; line-height:18px; color:var(--gray-500); }
+    .m-meta .clip { width:16px; height:16px; }
+    .none { padding:0 !important; } .none td { height:auto; padding:48px 0; border:0; }
+    .pager { margin-top:28px; flex-wrap:wrap; }
+    .search { flex-wrap:wrap; }
+    .sel select { width:100px; }
+    .field { flex:1; width:auto; min-width:0; }
+    .go { flex-basis:100%; }
+  }
+</style>
+</head>
+<body>
+<div data-op-gnb="community"></div>
+
+<section class="page-head"><div class="in"><h1>공지사항</h1></div></section>
+
+<main class="body"><div class="in">
+  <div class="lhead"><p class="total" id="total"></p></div>
+  <table class="board">
+    <colgroup><col class="c-no"><col><col class="c-file"><col class="c-date"></colgroup>
+    <thead><tr><th scope="col" class="c-no">번호</th><th scope="col">제목</th><th scope="col" class="c-file">첨부파일</th><th scope="col" class="c-date">등록일</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <nav class="pager" id="pager" aria-label="페이지"></nav>
+  <form class="search" id="search" role="search">
+    <div class="sel"><select id="scope" aria-label="검색 범위"><option value="all">전체</option><option value="title">제목</option><option value="body">내용</option></select></div>
+    <label class="field"><input type="search" id="q" placeholder="검색어를 입력하세요." aria-label="검색어"><button type="button" class="x" id="clear" aria-label="검색어 지우기" hidden>×</button></label>
+    <button type="submit" class="go">검색</button>
+  </form>
+</div></main>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var PER = 10, TODAY = new Date(2026, 8, 30);
+  // 프로토타입용 예시 공지 (pin: 상단 고정, file: 첨부 여부, body: 검색용 요약)
+  var NOTICES = [
+    { pin: 1, t: 'OmicsPharm 서비스 리뉴얼 오픈 안내', d: '2026.09.28', body: '새로운 OmicsPharm 플랫폼 오픈과 주요 변경 사항을 안내드립니다.' },
+    { pin: 1, t: '[안내] 개인정보처리방침 변경 안내', d: '2026.09.15', file: 1, body: '개인정보처리방침 일부 조항 변경 안내' },
+    { pin: 1, t: '분석 의뢰 전 꼭 확인해주세요 - 서비스별 시료 요구량 안내', d: '2026.08.01', file: 1, body: '단백체, 대사체, 유전체, 바이오의약품 시료 요구량' },
+    { t: '추석 연휴 고객지원 운영 안내', d: '2026.09.22', body: '추석 연휴 기간 문의 답변 및 시료 수령 일정 안내' },
+    { t: '[점검] 서버 정기 점검에 따른 서비스 일시 중단 안내', d: '2026.09.10', body: '정기 점검 시간 동안 로그인과 프로젝트 등록이 제한됩니다.' },
+    { t: 'Olink 분석 서비스 신규 오픈', d: '2026.08.25', file: 1, body: 'Olink Proteomics 분석 서비스를 새롭게 제공합니다.' },
+    { t: '분석파트너 모집 안내 (2026년 하반기)', d: '2026.08.12', file: 1, body: '분석파트너 신규 모집 일정과 신청 방법' },
+    { t: '프로젝트 비공개 등록 기능 추가 안내', d: '2026.07.30', body: '프로젝트 등록 시 비공개로 업로드할 수 있습니다.' },
+    { t: '견적서 비교 화면 개선 안내', d: '2026.07.14', body: '마이페이지 프로젝트 관리에서 견적 비교 화면이 개선되었습니다.' },
+    { t: '여름 휴가 기간 시료 발송 일정 안내', d: '2026.07.01', body: '휴가 기간 시료 발송 및 분석 일정 조정 안내' },
+    { t: '[보도자료] CellKey AI, NIPA XaaS 선도모델 개발사업 선정', d: '2026.06.02', body: 'OmicsPharm이 NIPA XaaS 선도모델 개발사업에 선정되었습니다.' },
+    { t: '이용약관 개정 안내', d: '2026.05.20', file: 1, body: '서비스 이용약관 일부 개정 안내' },
+    { t: '[점검] 결제 시스템 점검 안내', d: '2026.05.08', body: '결제 시스템 점검 일정 안내' },
+    { t: '대사체 Targeted 분석 항목 확대 안내', d: '2026.04.21', file: 1, body: '대사체 Targeted 분석 가능 항목이 확대되었습니다.' },
+    { t: '분석결과 관리 메뉴 오픈 안내', d: '2026.04.02', body: '마이페이지에서 분석 결과 파일을 한 번에 내려받을 수 있습니다.' },
+    { t: '설 연휴 고객지원 운영 안내', d: '2026.02.09', body: '설 연휴 기간 문의 답변 일정 안내' },
+    { t: '2026년 분석 서비스 가격 정책 안내', d: '2026.01.15', file: 1, body: '2026년 분석 서비스 가격 정책 안내' },
+    { t: '연말연시 고객지원 운영 안내', d: '2025.12.22', body: '연말연시 문의 답변 일정 안내' },
+    { t: '유전체 분석 Long-read 시퀀싱 서비스 추가', d: '2025.11.27', body: 'Long-read DNA 시퀀싱 서비스가 추가되었습니다.' },
+    { t: '회원가입 절차 간소화 안내', d: '2025.11.03', body: '이메일 인증만으로 가입할 수 있도록 절차가 간소화되었습니다.' },
+    { t: 'OmicsPharm 베타 서비스 오픈', d: '2025.10.01', body: 'OmicsPharm 베타 서비스를 시작합니다.' }
+  ];
+  var pins = NOTICES.filter(function (n) { return n.pin; });
+  var list = NOTICES.filter(function (n) { return !n.pin; });
+  list.forEach(function (n, i) { n.no = list.length - i; });
+
+  var state = { q: '', scope: 'all', page: 1 };
+  function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+  function isNew(d) { var p = d.split('.'); return (TODAY - new Date(+p[0], p[1] - 1, +p[2])) / 864e5 <= 14; }
+  function row(n) {
+    var badge = n.pin ? '<span class="pin-badge">공지</span>' : '';
+    var nw = isNew(n.d) ? '<i class="new" aria-label="새 글">N</i>' : '';
+    return '<tr' + (n.pin ? ' class="pin"' : '') + '>' +
+      '<td class="no">' + (n.pin ? '<span class="pin-badge">공지</span>' : n.no) + '</td>' +
+      '<td class="t"><a href="#" data-soon="공지사항 상세">' + (n.pin ? badge : '') + '<span>' + esc(n.t) + '</span>' + nw + '</a>' +
+        '<p class="m-meta"><span>' + n.d + '</span>' + (n.file ? '<i class="clip" aria-label="첨부파일"></i>' : '') + '</p></td>' +
+      '<td class="file">' + (n.file ? '<i class="clip" aria-label="첨부파일 있음"></i>' : '') + '</td>' +
+      '<td class="date">' + n.d + '</td></tr>';
+  }
+  function render() {
+    var q = state.q.trim().toLowerCase();
+    var hit = function (n) { return !q || ((state.scope !== 'body' ? n.t : '') + ' ' + (state.scope !== 'title' ? n.body : '')).toLowerCase().indexOf(q) >= 0; };
+    var items = list.filter(hit);
+    var pages = Math.max(1, Math.ceil(items.length / PER));
+    if (state.page > pages) state.page = pages;
+    // 고정 공지는 검색하지 않을 때 모든 페이지 맨 위에 표시
+    var top = q ? [] : pins;
+    $('#total').innerHTML = (q ? "'" + esc(state.q.trim()) + "' 검색 결과 " : '전체 ') + '<b>' + items.length + '</b>건';
+    var body = top.map(row).join('') + items.slice((state.page - 1) * PER, state.page * PER).map(row).join('');
+    $('#rows').innerHTML = body || '<tr class="none"><td colspan="4">검색 결과가 없습니다.</td></tr>';
+    var html = '', btn = function (p, ic, label, dis) { return '<button type="button" data-p="' + p + '" aria-label="' + label + '"' + (dis ? ' disabled' : '') + '><img src="assets/find/ic-' + ic + '.svg" alt=""></button>'; };
+    var start = Math.max(1, Math.min(state.page - 2, pages - 4)), end = Math.min(pages, start + 4);
+    html += btn(1, 'caret-double-left', '첫 페이지', state.page === 1) + btn(state.page - 1, 'caret-left', '이전 페이지', state.page === 1);
+    for (var i = start; i <= end; i++) html += '<button type="button" data-p="' + i + '"' + (i === state.page ? ' class="on" aria-current="page"' : '') + '>' + i + '</button>';
+    html += btn(state.page + 1, 'caret-right', '다음 페이지', state.page === pages) + btn(pages, 'caret-double-right', '마지막 페이지', state.page === pages);
+    $('#pager').innerHTML = html;
+  }
+  $('#pager').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b || b.disabled) return;
+    state.page = +b.dataset.p; render(); scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  $('#search').addEventListener('submit', function (e) { e.preventDefault(); state.q = $('#q').value; state.scope = $('#scope').value; state.page = 1; render(); });
+  $('#q').addEventListener('input', function () { $('#clear').hidden = !this.value; if (!this.value && state.q) { state.q = ''; state.page = 1; render(); } });
+  $('#clear').addEventListener('click', function () { $('#q').value = ''; this.hidden = true; state.q = ''; state.page = 1; render(); $('#q').focus(); });
+  render();
+})();
+</script>
+</body>
+</html>
