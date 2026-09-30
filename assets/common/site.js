@@ -89,20 +89,18 @@
         '<div class="op-dr-sub">' + m.items.map(function (t) { return '<a ' + link(t) + '>' + t + '</a>'; }).join('') + '</div>' +
       '</div>';
     }).join('');
+    // 기존 오믹스팜 모바일 메뉴처럼 한 줄씩 꽉 찬 목록 (언어·알림·마이페이지·계정 정보는 제외)
     var account = s
-      ? '<div class="op-dr-who"><img src="' + A + 'user-icon.svg" alt=""><div><b>' + s.email.replace(/</g, '&lt;') + '</b><span>' + (ROLE_LABEL[s.role] || '') + '</span></div></div>' +
-        '<a class="op-dr-link sm" href="#" data-soon="알림">알림</a>' +
-        '<a class="op-dr-link sm" href="mypage-project.html">마이페이지</a>' +
-        '<button type="button" class="op-dr-link sm" data-op-logout>로그아웃</button>'
+      ? '<button type="button" class="op-dr-link" data-op-logout>로그아웃</button>'
       : '<div class="op-dr-auth"><a class="op-dr-btn line" href="login.html">로그인</a><a class="op-dr-btn" href="signup.html">가입하기</a></div>';
     return '<div class="op-drawer" id="opDrawer" hidden>' +
       '<nav class="op-dr-nav" aria-label="전체 메뉴">' +
         '<a class="op-dr-link" href="omicspharm-register.html" data-client-only>프로젝트 의뢰</a>' +
         '<a class="op-dr-link" href="projects.html">프로젝트 찾기</a>' +
         groups +
+        (s ? account : '') +
       '</nav>' +
-      '<div class="op-dr-lang"><span>언어</span><div><a href="#" class="on" data-lang="ko">KOR</a><a href="#" data-soon="영문(ENG)">ENG</a></div></div>' +
-      '<div class="op-dr-account">' + account + '</div>' +
+      (s ? '' : account) +
     '</div>';
   }
   var BURGER = '<button type="button" class="op-burger" aria-controls="opDrawer" aria-expanded="false" aria-label="메뉴 열기"><img class="i-open" src="' + A + 'ic-list.svg" alt=""><img class="i-close" src="' + A + 'ic-x.svg" alt=""></button>';
