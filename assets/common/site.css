@@ -169,3 +169,7 @@
   .op-f-top { flex-direction:column; align-items:flex-start; gap:20px; }
   .op-f-bottom { flex-direction:column; align-items:flex-start; height:auto; gap:8px; }
 }
+
+
+/* 내용이 짧은 페이지에서 푸터 아래 빈 영역도 푸터 색으로 채움 (레이아웃은 그대로) */
+html:has(.op-footer) { background:var(--op-bg-green); }
