@@ -22,11 +22,12 @@
   button { background:none; border:0; cursor:pointer; }
   [hidden] { display:none !important; }
 
-  .page-head { padding:32px 60px; text-align:center; }
+  /* 상단: FAQ 상단 비주얼과 동일 (검색창 제외) */
+  .page-head { padding:64px 60px 56px; background:radial-gradient(60% 120% at 85% 0%, #d1faf1 0%, rgba(209,250,241,0) 60%), radial-gradient(50% 100% at 0% 100%, #e3f4ff 0%, rgba(227,244,255,0) 60%), var(--bg-green); text-align:center; }
   .page-head .in, .body .in { max-width:1320px; margin:0 auto; }
-  .page-head h1 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; }
-  .page-head p { margin-top:12px; font-size:16px; line-height:22px; }
-  .body { padding:20px 60px 60px; }
+  .page-head h1 { font-size:36px; font-weight:700; line-height:46px; letter-spacing:-.36px; }
+  .page-head p { margin-top:12px; font-size:16px; line-height:22px; color:var(--gray-600); }
+  .body { padding:40px 60px 60px; }
 
   .card { min-width:0; display:flex; flex-direction:column; gap:32px; padding:24px; background:#fff; border:1px solid var(--gray-200); border-radius:16px; }
   .group > h2 { margin:0 0 12px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
@@ -99,6 +100,10 @@
   }
   @media (max-width:640px) {
     .page-head, .body { padding-left:16px; padding-right:16px; }
+    .page-head { padding-top:40px; padding-bottom:32px; }
+    .page-head h1 { font-size:28px; line-height:38px; }
+    .page-head p { font-size:14px; line-height:20px; }
+    .body { padding-top:28px; }
     .card { padding:20px 16px; }
     .field { grid-template-columns:1fr; }
     .flabel { padding:10px 12px; }
