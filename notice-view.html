@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png">
+<title>공지사항 · OmicsPharm</title>
+<!-- 커뮤니티 > 공지사항 상세 (Figma 시안 없음 — 마크로젠 공지사항 상세 구조 참고: 제목·등록일 / 첨부 / 본문 / 이전글·다음글 / 목록)
+     ?id= (assets/common/notices.js) -->
+<link rel="stylesheet" href="assets/common/site.css?v=20260930e">
+<script src="assets/common/site.js?v=20260930e"></script>
+<script src="assets/common/notices.js?v=20260930e"></script>
+<style>
+  :root {
+    --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
+    --gray-50:#fafafa; --gray-100:#f5f5f5; --gray-200:#e5e5e5; --gray-300:#d4d4d4; --gray-400:#a3a3a3; --gray-500:#737373; --gray-600:#525252; --gray-700:#404040;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#fff; color:#000; font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; }
+  [hidden] { display:none !important; }
+  .in { max-width:1320px; margin:0 auto; }
+
+  .page-head { padding:64px 60px 32px; }
+  .page-head h1 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; }
+  .body { padding:0 60px 80px; }
+
+  /* 글 머리: 제목 | 등록일 */
+  .view { border-top:2px solid #000; }
+  .vhead { display:flex; align-items:center; gap:24px; padding:24px 24px; background:var(--gray-50); border-bottom:1px solid var(--gray-300); }
+  .vhead h2 { flex:1; min-width:0; display:flex; align-items:center; gap:10px; font-size:22px; font-weight:600; line-height:32px; letter-spacing:-.22px; word-break:keep-all; }
+  .pin-badge { flex:none; display:inline-flex; align-items:center; padding:2px 8px; border-radius:8px; background:var(--teal-600); font-size:12px; font-weight:500; line-height:18px; letter-spacing:0; color:#fff; }
+  .vhead dl { flex:none; display:flex; gap:8px; font-size:15px; line-height:22px; }
+  .vhead dt { color:var(--gray-500); }
+  .vhead dd { color:var(--gray-700); }
+
+  /* 첨부파일 */
+  .files { display:flex; align-items:center; gap:16px; padding:14px 24px; border-bottom:1px solid var(--gray-200); font-size:15px; line-height:22px; }
+  .files > span { flex:none; font-weight:500; color:var(--gray-500); }
+  .files a { display:inline-flex; align-items:center; gap:6px; min-width:0; color:var(--gray-700); }
+  .files a:hover { color:var(--teal-700); text-decoration:underline; text-underline-offset:3px; }
+  .files a b { font-weight:400; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .clip { flex:none; width:18px; height:18px; background:currentColor; -webkit-mask:url(assets/auth/ic-paperclip.svg) center/contain no-repeat; mask:url(assets/auth/ic-paperclip.svg) center/contain no-repeat; }
+
+  /* 본문 */
+  .content { min-height:280px; padding:48px 24px 64px; font-size:16px; line-height:1.8; color:var(--gray-700); word-break:keep-all; overflow-wrap:break-word; }
+  .content p + p { margin-top:16px; }
+  .content b { color:#000; font-weight:600; }
+
+  /* 이전글 · 다음글 */
+  .pn { border-top:1px solid var(--gray-300); }
+  .pn > * { display:flex; align-items:center; gap:24px; height:64px; padding:0 24px; border-bottom:1px solid var(--gray-200); font-size:15px; line-height:22px; }
+  .pn a:hover { background:var(--gray-50); }
+  .pn a:hover .tt { color:var(--teal-700); text-decoration:underline; text-underline-offset:3px; }
+  .pn .lb { flex:none; display:inline-flex; align-items:center; gap:6px; width:88px; font-weight:500; color:var(--gray-500); }
+  .pn .lb img { width:16px; height:16px; opacity:.6; }
+  .pn .tt { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#000; }
+  .pn span .tt { color:var(--gray-400); }
+  .pn .dt { flex:none; color:var(--gray-500); }
+
+  .actions { display:flex; justify-content:center; margin-top:40px; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; height:48px; min-width:160px; padding:0 24px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-600); }
+  .btn:hover { background:var(--gray-50); }
+
+  @media (max-width:1180px) { .page-head, .body { padding-left:24px; padding-right:24px; } }
+  @media (max-width:760px) {
+    .page-head { padding:40px 16px 20px; }
+    .page-head h1 { font-size:28px; line-height:38px; }
+    .body { padding:0 16px 56px; }
+    .vhead { flex-direction:column; align-items:flex-start; gap:8px; padding:20px 16px; }
+    .vhead h2 { flex-wrap:wrap; font-size:18px; line-height:26px; }
+    .vhead dl { font-size:13px; }
+    .files { flex-direction:column; align-items:flex-start; gap:6px; padding:12px 16px; font-size:14px; }
+    .files a { max-width:100%; }
+    .content { min-height:200px; padding:28px 16px 40px; font-size:15px; }
+    .pn > * { gap:12px; height:56px; padding:0 12px; font-size:14px; }
+    .pn .lb { width:64px; }
+    .pn .dt { display:none; }
+    .actions { margin-top:28px; }
+    .btn { width:100%; }
+  }
+</style>
+</head>
+<body>
+<div data-op-gnb="community"></div>
+
+<section class="page-head"><div class="in"><h1>공지사항</h1></div></section>
+
+<main class="body"><div class="in">
+  <article class="view">
+    <header class="vhead">
+      <h2 id="title"></h2>
+      <dl><dt>등록일</dt><dd id="date"></dd></dl>
+    </header>
+    <div class="files" id="files" hidden><span>첨부파일</span></div>
+    <div class="content" id="content"></div>
+  </article>
+  <nav class="pn" id="pn" aria-label="이전글, 다음글"></nav>
+  <div class="actions"><a class="btn" href="notice.html">목록</a></div>
+</div></main>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var ALL = window.OP_NOTICES;
+  // 목록과 같은 순서: 고정 공지 → 일반 공지(최신순)
+  var ORDER = ALL.filter(function (n) { return n.pin; }).concat(ALL.filter(function (n) { return !n.pin; }));
+  var id = +new URLSearchParams(location.search).get('id');
+  var i = -1; ORDER.forEach(function (n, k) { if (n.id === id) i = k; });
+  if (i < 0) { location.replace('notice.html'); return; }
+  var n = ORDER[i];
+  var esc = function (t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+
+  document.title = n.t + ' · 공지사항 · OmicsPharm';
+  $('#title').innerHTML = (n.pin ? '<span class="pin-badge">공지</span>' : '') + '<span>' + esc(n.t) + '</span>';
+  $('#date').textContent = n.d;
+  if (n.file) {
+    $('#files').hidden = false;
+    $('#files').insertAdjacentHTML('beforeend', '<a href="#" data-soon="첨부파일 다운로드"><i class="clip"></i><b>' + esc(n.file) + '</b></a>');
+  }
+  $('#content').innerHTML = n.body.map(function (p) { return '<p>' + p + '</p>'; }).join('');
+
+  // 이전글 = 목록에서 한 칸 위, 다음글 = 한 칸 아래
+  var row = function (x, label, icon) {
+    var lb = '<span class="lb">' + label + '<img src="assets/find/ic-caret-' + icon + '.svg" alt=""></span>';
+    return x ? '<a href="notice-view.html?id=' + x.id + '">' + lb + '<span class="tt">' + esc(x.t) + '</span><span class="dt">' + x.d + '</span></a>'
+             : '<span>' + lb + '<span class="tt">' + label + '이 없습니다.</span></span>';
+  };
+  $('#pn').innerHTML = row(ORDER[i - 1], '이전글', 'up') + row(ORDER[i + 1], '다음글', 'down');
+})();
+</script>
+</body>
+</html>
