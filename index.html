@@ -217,6 +217,11 @@
     .acard .go { width:32px; height:32px; }
     .feat-view { height:220px; } .feat-view .screen { height:216px; } .feat-view .screen img { width:100%; height:auto; }
   }
+
+  /* 스크롤 등장 효과 (Conicorn 참고): 흐림+투명 상태에서 아래→위로 떠오르며 나타남 */
+  .rv { opacity:0; filter:blur(5px); transform:translate3d(0,2rem,0); transition:opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1), filter .9s cubic-bezier(.2,.7,.2,1); transition-delay:var(--d,0s); }
+  .rv.in { opacity:1; filter:none; transform:none; }
+  @media (prefers-reduced-motion:reduce) { .rv { opacity:1; filter:none; transform:none; transition:none; } }
 </style>
 </head>
 <body>
@@ -441,6 +446,43 @@
     featImg.classList.add('fade');
     setTimeout(() => { featImg.src = tab.dataset.img; featImg.alt = tab.querySelector('.t').textContent + ' 화면 예시'; featImg.classList.remove('fade'); }, 200);
   }));
+</script>
+<script>
+/* 메인 스크롤 등장 효과: 요소마다 .rv를 붙이고 화면에 들어오면 .in (같은 묶음 안에서는 순서대로 조금씩 늦게) */
+(function () {
+  var groups = [
+    ['.hero-copy h1', '.hero-copy p', '.hero-btns'],
+    ['.proof > p', '.proof .marquee'],
+    ['.service .sec-head', '.service-shot'],
+    ['.features .sec-head', '.feat-box'],
+    ['.proj-head', '#projView'],
+    ['.an-head'], ['.an-grid .acard'],
+    ['.cta']
+  ];
+  var els = [];
+  groups.forEach(function (g) {
+    var n = 0;
+    g.forEach(function (sel) {
+      [].forEach.call(document.querySelectorAll(sel), function (el, k) {
+        var step = sel === '.an-grid .acard' ? (k % 3) : n++;
+        el.classList.add('rv'); el.style.setProperty('--d', (step * 0.12) + 's'); els.push(el);
+      });
+    });
+  });
+  // 화면 아래 10% 지점을 지나면 등장 (스크롤 위치로 계산)
+  function reveal() {
+    var line = window.innerHeight * 0.9;
+    els = els.filter(function (el) {
+      if (el.getBoundingClientRect().top < line) { el.classList.add('in'); return false; }
+      return true;
+    });
+    if (!els.length) { window.removeEventListener('scroll', reveal); window.removeEventListener('resize', reveal); }
+  }
+  window.addEventListener('scroll', reveal, { passive: true });
+  window.addEventListener('resize', reveal);
+  window.addEventListener('load', reveal);
+  reveal();
+})();
 </script>
 </body>
 </html>
