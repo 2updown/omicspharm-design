@@ -171,6 +171,7 @@
 <script>
 (function () {
   var me = OP.mypage('quote'); if (!me) return;
+  if (me.s.role === 'client') { location.replace('mypage.html'); return; } // 견적관리는 분석파트너·컨설턴트 전용 (클라이언트로 전환하면 대시보드로)
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var esc = OP.my.esc;
   var P = OP_PROJECTS.DATA, card = $('#card');
