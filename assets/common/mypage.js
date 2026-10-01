@@ -1,19 +1,20 @@
 /* 마이페이지 공통 — 로그인 확인, 왼쪽 프로필·메뉴, 데모 데이터(이 브라우저 localStorage 기준)
-   메뉴: 대시보드 / 프로젝트 관리 / 문의내역 / 알림 / 내 정보 관리 (분석파트너 +견적관리, 컨설턴트는 의뢰·매칭·파트너·문의 관리)
+   메뉴: 대시보드 / 프로젝트 관리 / 문의내역 / 알림 / 내 정보 관리 (분석파트너 +견적관리, 컨설턴트 = 분석파트너 화면 +클라이언트·분석파트너 관리·관리자 페이지)
    (기존 '분석결과 관리'는 프로젝트 상세의 '결과보고서' 탭으로 통합)
    사용: <aside class="side" data-op-side></aside> + var me = OP.mypage('dash'); */
 (function () {
-  // [키, 이름, 주소, 보이는 유형(없으면 모두)] — 이름이 유형별로 다르면 { client:…, partner:…, admin:… }
-  // admin = 컨설턴트(셀키): 전체 의뢰를 보고 분석파트너에게 견적 요청 → 견적 받은 곳 중 매칭
+  // [키, 이름, 주소, 보이는 유형(없으면 모두)]
+  // admin = 컨설턴트(셀키): 당분간 분석파트너와 같은 화면 + 관리 메뉴 추가 (메뉴는 바뀌거나 통폐합될 수 있음)
   var MENU = [
     ['dash', '대시보드', 'mypage.html'],
-    ['quote', '견적관리', '#', 'partner'], // 분석파트너: 셀키가 보낸 견적 요청 확인·견적 제출 (화면 준비 중)
-    ['project', { client: '프로젝트 관리', partner: '프로젝트 관리', admin: '의뢰 관리' }, 'mypage-project.html'],
-    ['matching', '견적·매칭 관리', '#', 'admin'],
-    ['partners', '분석파트너 관리', '#', 'admin'],
-    ['inquiry', { client: '문의내역', partner: '문의내역', admin: '문의 관리' }, 'mypage-inquiry.html'],
+    ['quote', '견적관리', '#', ['partner', 'admin']], // 셀키가 보낸 견적 요청 확인·견적 제출 (화면 준비 중)
+    ['project', '프로젝트 관리', 'mypage-project.html'],
+    ['inquiry', '문의내역', 'mypage-inquiry.html'],
     ['alarm', '알림', 'mypage-alarm.html'],
-    ['account', '내 정보 관리', 'mypage-account.html']
+    ['account', '내 정보 관리', 'mypage-account.html'],
+    ['clients', '클라이언트 관리', '#', ['admin']],
+    ['partners', '분석파트너 관리', '#', ['admin']],
+    ['admin', '관리자 페이지', '#', ['admin']]
   ];
   function read(k, f) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch (e) { return f; } }
   function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
@@ -43,13 +44,12 @@
 
   var D = {
     P_STAGES: P_STAGES,
-    partnerProjects: function () { var s = OP.session(); return s && s.role === 'partner' ? PARTNER_DEMO.slice() : []; },
+    partnerProjects: function () { var s = OP.session(); return s && (s.role === 'partner' || s.role === 'admin') ? PARTNER_DEMO.slice() : []; }, // 컨설턴트도 같은 화면
     esc: esc, ymd: ymd, ymdhm: ymdhm,
     projects: function () { return read('op.submitted', []); },
-    // 로그인한 계정이 보낸 문의만 (+ 클라이언트에게는 답변 완료 예시 1건). 컨설턴트는 전체 문의
+    // 로그인한 계정이 보낸 문의만 (+ 클라이언트에게는 답변 완료 예시 1건)
     inquiries: function () {
       var s = OP.session() || {};
-      if (s.role === 'admin') return read('op.inquiries', []).concat([DEMO_INQ]);
       return read('op.inquiries', []).filter(function (q) { return (q.owner || String(q.email || '').toLowerCase()) === s.email; })
         .concat(s.role === 'client' ? [DEMO_INQ] : []);
     },
@@ -61,10 +61,6 @@
       // 의뢰 접수 알림은 의뢰한 클라이언트에게만 (분석파트너는 셀키의 견적 요청을 받은 뒤에만 의뢰를 확인)
       D.myProjects().forEach(function (p) {
         L.push({ id: 'p-' + p.id, cat: 'project', at: p.at, t: "'" + (p.title || p.id) + "' 프로젝트 의뢰가 접수되었습니다.", sub: '분석파트너의 견적이 도착하면 알려드릴게요.', href: 'mypage-project.html?id=' + encodeURIComponent(p.id) });
-      });
-      // 컨설턴트: 새 의뢰 접수 알림
-      if ((OP.session() || {}).role === 'admin') D.projects().forEach(function (p) {
-        L.push({ id: 'ap-' + p.id, cat: 'project', at: p.at, t: "새 분석 의뢰가 접수되었습니다: '" + (p.title || p.id) + "'", sub: (p.org || '') + (p.svc ? ' · ' + p.svc : '') + ' — 분석파트너에게 견적을 요청해주세요.', href: 'mypage-project.html?id=' + encodeURIComponent(p.id) });
       });
       D.inquiries().forEach(function (q) {
         if (q.answer) L.push({ id: 'a-' + q.id, cat: 'inquiry', at: q.answer.at, t: "'" + q.title + "' 문의에 답변이 등록되었습니다.", href: 'mypage-inquiry.html?id=' + q.id });
@@ -116,8 +112,8 @@
         '<div class="me"><img src="' + esc(acc.photo || 'assets/main/user-icon.svg?v=2') + '" alt="">' +
           '<span class="role">' + esc(OP.ROLE_LABEL[s.role] || '') + '</span>' +
           '<b>' + esc(name) + ' 님</b><span>(' + esc(s.email) + ')</span>' + (org ? '<span>' + esc(org) + '</span>' : '') + '</div>' +
-        '<nav class="menu" aria-label="마이페이지 메뉴">' + MENU.filter(function (m) { return !m[3] || m[3] === s.role; }).map(function (m) {
-          var on = m[0] === key, label = typeof m[1] === 'string' ? m[1] : m[1][s.role];
+        '<nav class="menu" aria-label="마이페이지 메뉴">' + MENU.filter(function (m) { return !m[3] || m[3].indexOf(s.role) > -1; }).map(function (m) {
+          var on = m[0] === key, label = m[1];
           return '<a href="' + m[2] + '"' + (m[2] === '#' ? ' data-soon="' + label + '"' : '') + (on ? ' class="on" aria-current="page"' : '') + '>' + label +
             (m[0] === 'alarm' && n ? '<span class="cnt">' + n + '</span>' : '') + '</a>';
         }).join('') + '</nav>';
