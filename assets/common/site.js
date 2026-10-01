@@ -94,7 +94,8 @@
       cur = -1;
       box.innerHTML = list.length ? list.map(function (x, i) {
         return '<li role="option" data-i="' + i + '"' + (x.add ? ' class="add"' : '') + '>' + (x.add ? '<span>' + esc(x.v) + '</span><em>+ 직접 추가</em>' : '<span>' + mark(x.v, q) + '</span>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '')) + '</li>';
-      }).join('') : '<li class="none">' + esc(q.length < (opt.minChars || 0) ? opt.short || '' : opt.empty || '입력해서 검색하세요.') + '</li>';
+      }).join('') : '';
+      if (!list.length) { close(); return; } // 보여줄 항목이 없으면 안내 문구 없이 닫아 둔다
       box.hidden = false; input.setAttribute('aria-expanded', 'true');
     }
     function close() { box.hidden = true; input.setAttribute('aria-expanded', 'false'); }
@@ -118,10 +119,10 @@
     // 보호: 2글자 이상 입력해야 검색, 앞글자가 맞는 소속만 최대 5개, 부서 수 등 부가 정보는 보여주지 않음
     OP.combo(orgInput, function () {
       return Object.keys(OP.orgDB()).sort(function (a, b) { return a.localeCompare(b, 'ko'); }).map(function (o) { return { v: o }; });
-    }, { minChars: 2, prefix: true, max: 5, short: '소속명을 2글자 이상 입력하면 검색됩니다.', empty: '소속명을 2글자 이상 입력하면 검색됩니다.' });
+    }, { minChars: 2, prefix: true, max: 5 });
     if (deptInput) OP.combo(deptInput, function () {
       return (OP.orgDB()[norm(orgInput.value)] || []).map(function (d) { return { v: d }; });
-    }, { empty: '이 소속에 등록된 부서가 없습니다. 직접 입력해주세요.' });
+    });
   };
 
   var A = 'assets/main/';
