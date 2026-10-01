@@ -91,7 +91,7 @@
       if (q && !exact) list.push({ v: q, add: true });
       cur = -1;
       box.innerHTML = list.length ? list.map(function (x, i) {
-        return '<li role="option" data-i="' + i + '"' + (x.add ? ' class="add"' : '') + '>' + (x.add ? '<span>‘' + esc(x.v) + '’ 직접 추가</span><small>' + esc(opt.addHint || '새로 등록됩니다') + '</small>' : '<span>' + mark(x.v, q) + '</span>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '')) + '</li>';
+        return '<li role="option" data-i="' + i + '"' + (x.add ? ' class="add"' : '') + '>' + (x.add ? '<span>' + esc(x.v) + '</span><em>+ 직접 추가</em>' : '<span>' + mark(x.v, q) + '</span>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '')) + '</li>';
       }).join('') : '<li class="none">' + esc(opt.empty || '입력해서 검색하세요.') + '</li>';
       box.hidden = false; input.setAttribute('aria-expanded', 'true');
     }
@@ -116,10 +116,10 @@
     OP.combo(orgInput, function () {
       var db = OP.orgDB();
       return Object.keys(db).sort(function (a, b) { return a.localeCompare(b, 'ko'); }).map(function (o) { return { v: o, sub: db[o].length ? '부서 ' + db[o].length + '개' : '' }; });
-    }, { empty: '소속을 입력해 검색하세요.', addHint: '등록된 소속이 없어요. 새 소속으로 추가됩니다' });
+    }, { empty: '소속을 입력해 검색하세요.' });
     if (deptInput) OP.combo(deptInput, function () {
       return (OP.orgDB()[norm(orgInput.value)] || []).map(function (d) { return { v: d }; });
-    }, { empty: '이 소속에 등록된 부서가 없습니다. 직접 입력해주세요.', addHint: '새 부서로 추가됩니다' });
+    }, { empty: '이 소속에 등록된 부서가 없습니다. 직접 입력해주세요.' });
   };
 
   var A = 'assets/main/';
