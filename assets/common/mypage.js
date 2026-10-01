@@ -7,7 +7,7 @@
   // admin = 컨설턴트(셀키): 당분간 분석파트너와 같은 화면 + 관리 메뉴 추가 (메뉴는 바뀌거나 통폐합될 수 있음)
   var MENU = [
     ['dash', '대시보드', 'mypage.html'],
-    ['quote', '견적관리', '#', ['partner', 'admin']], // 셀키가 보낸 견적 요청 확인·견적 제출 (화면 준비 중)
+    ['quote', '견적관리', 'mypage-quote.html', ['partner', 'admin']], // 견적서 작성·제출 내역
     ['project', '프로젝트 관리', 'mypage-project.html'],
     ['inquiry', '문의내역', 'mypage-inquiry.html'],
     ['alarm', '알림', 'mypage-alarm.html'],
