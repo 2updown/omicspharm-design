@@ -6,9 +6,9 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>분석 서비스 안내 · OmicsPharm</title>
 <!-- 서비스 소개 > 분석 서비스 안내 (Figma 시안 없음 — 현재 홈페이지 /projects/guide 내용·이미지를 그대로 옮기고 우리 컴포넌트로 구성)
-     섹션 id: overview, genomics, transcriptomics, proteomics, glycoproteomics, metabolomics, olink, bioinformatics, biopharma, adc, specialized, samples -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261002b">
-<script src="assets/common/site.js?v=20261002b"></script>
+     레이아웃: Overview → 분석 서비스 탭(고른 서비스만 표시, 마크로젠 NGS 페이지 참고) → 시료 안내. 섹션 id: overview, genomics, transcriptomics, proteomics, glycoproteomics, metabolomics, olink, bioinformatics, biopharma, adc, specialized, samples -->
+<link rel="stylesheet" href="assets/common/site.css?v=20261002c">
+<script src="assets/common/site.js?v=20261002c"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -25,14 +25,22 @@
   .page-head { padding:64px 60px 24px; text-align:center; }
   .page-head h1 { font-size:36px; font-weight:700; line-height:46px; letter-spacing:-.36px; }
 
-  /* 서비스 바로가기 (FAQ 탭 컴포넌트, 가로 스크롤) */
-  .tabs-wrap { position:sticky; top:70px; z-index:5; padding:0 60px; background:#fff; border-bottom:1px solid var(--gray-200); }
-  .tabs { display:flex; gap:28px; overflow-x:auto; scrollbar-width:none; }
+  /* 분석 서비스 탭 (마크로젠 NGS 페이지 참고): Overview 아래 탭 → 고른 서비스 내용만 표시 */
+  .svc { padding-top:72px; scroll-margin-top:70px; }
+  .svc > h2 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; }
+  .svc-bar { display:flex; align-items:center; gap:16px; margin-top:24px; border-bottom:1px solid var(--gray-200); }
+  .tabs { flex:1; min-width:0; display:flex; gap:32px; overflow-x:auto; scrollbar-width:none; scroll-behavior:smooth; }
   .tabs::-webkit-scrollbar { display:none; }
-  .tabs a { position:relative; flex:none; display:flex; align-items:center; height:56px; padding:0 2px; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-500); white-space:nowrap; }
-  .tabs a:hover { color:#000; }
-  .tabs a.on { color:#000; font-weight:600; }
-  .tabs a.on::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--teal-600); }
+  .tabs button { position:relative; flex:none; display:flex; align-items:center; height:56px; padding:0 2px; font:inherit; font-size:17px; font-weight:500; line-height:24px; color:var(--gray-400); white-space:nowrap; background:none; border:0; cursor:pointer; }
+  .tabs button:hover { color:#000; }
+  .tabs button.on { color:#000; font-weight:700; }
+  .tabs button.on::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--teal-600); }
+  .arrows { flex:none; display:flex; gap:6px; }
+  .arrows button { display:flex; align-items:center; justify-content:center; width:36px; height:36px; border:1px solid var(--gray-300); border-radius:50%; background:#fff; cursor:pointer; }
+  .arrows button:hover:not(:disabled) { border-color:var(--gray-500); }
+  .arrows button:disabled { opacity:.35; cursor:default; }
+  .arrows img { width:18px; height:18px; }
+  .panel[hidden] { display:none; }
 
   .body { padding:0 60px 96px; }
   .sec { display:grid; grid-template-columns:minmax(0,530px) minmax(0,1fr); gap:64px; align-items:start; padding:72px 0; border-bottom:1px solid var(--gray-200); }
@@ -104,7 +112,7 @@
   .btn.line { border:1px solid var(--gray-300); background:#fff; color:var(--gray-700); } .btn.line:hover { background:var(--gray-50); }
 
   @media (max-width:1180px) {
-    .page-head, .tabs-wrap, .body { padding-left:24px; padding-right:24px; }
+    .page-head, .body { padding-left:24px; padding-right:24px; }
     .sec, .sec.rev, .head-row { gap:40px; }
     .scards { grid-template-columns:repeat(2, minmax(0,1fr)); }
   }
@@ -119,9 +127,11 @@
     html { scroll-padding-top:128px; }
     .page-head { padding:40px 16px 16px; }
     .page-head h1 { font-size:28px; line-height:38px; }
-    .tabs-wrap { padding:0 16px; }
+    .svc { padding-top:48px; }
+    .svc > h2 { font-size:24px; line-height:34px; }
     .tabs { gap:20px; }
-    .tabs a { height:52px; font-size:15px; }
+    .tabs button { height:52px; font-size:15px; }
+    .arrows { display:none; }
     .body { padding:0 16px 64px; }
     .sec { padding:48px 0; }
     .pic img { border-radius:12px; }
@@ -152,7 +162,6 @@
 
 <section class="page-head"><div class="in"><h1>분석 서비스 안내</h1></div></section>
 
-<nav class="tabs-wrap" aria-label="서비스 바로가기"><div class="in tabs" id="tabs"></div></nav>
 
 <main class="body"><div class="in" id="secs"></div></main>
 
@@ -239,10 +248,14 @@
     '<div><h2>Overview</h2>' +
     '<div class="feats">' + FEATS.map(function (f) { return '<div class="feat"><b>' + f[1] + '</b><p>' + f[2] + '</p></div>'; }).join('') + '</div></div></section>';
 
+  var TABS = S.map(function (s) { return [s.id, s.id === 'biopharma' ? '바이오의약품' : s.id === 'adc' ? 'ADC' : s.name.replace(' Analysis', '').replace(' Proteomics', '')]; });
+  html += '<div class="svc" id="service"><h2>분석 서비스</h2><div class="svc-bar"><div class="tabs" id="tabs" role="tablist">' +
+    TABS.map(function (t) { return '<button type="button" role="tab" data-t="' + t[0] + '" aria-controls="' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div>' +
+    '<div class="arrows"><button type="button" id="tPrev" aria-label="이전 서비스"><img src="assets/find/ic-caret-left.svg" alt=""></button><button type="button" id="tNext" aria-label="다음 서비스"><img src="assets/find/ic-caret-right.svg" alt=""></button></div></div>';
   S.forEach(function (s, k) {
     var head = '<h2>' + s.name + '</h2>' + desc(s.ps);
     if (s.table) {
-      html += '<section class="sec full" id="' + s.id + '"><div>' + head + '</div>' +
+      html += '<section class="sec full panel" role="tabpanel" id="' + s.id + '"><div>' + head + '</div>' +
         '<table class="bp"><thead><tr><th>분류</th><th>품목</th><th>목적</th></tr></thead><tbody>' +
         BP.map(function (g) { return g[1].map(function (r, i) {
           return '<tr' + (i === 0 ? ' class="first"' : '') + '>' + (i === 0 ? '<td class="cat" rowspan="' + g[1].length + '">' + g[0] + '</td>' : '') + '<td class="it">' + r[0] + '</td><td class="pp">' + r[1] + '</td></tr>';
@@ -250,28 +263,35 @@
       return;
     }
     var body = s.groups ? '<div class="groups">' + s.groups.map(function (g) { return items(g[1], g[0]); }).join('') + '</div>' : items(s.items);
-    html += '<section class="sec' + (s.left ? '' : ' rev') + '" id="' + s.id + '">' + pic(s.img) + '<div>' + head + body + '</div></section>';
+    html += '<section class="sec panel' + (s.left ? '' : ' rev') + '" role="tabpanel" id="' + s.id + '">' + pic(s.img) + '<div>' + head + body + '</div></section>';
   });
+  html += '</div>';
 
   html += '<section class="samples" id="samples"><h2>다양한 종류의 시료에서<br>분석이 가능하며 신규 물질에 대한<br><em>분석법 개발 및 밸리데이션 서비스</em>도 제공합니다.</h2>' +
     '<div class="scards">' + SAMPLES.map(function (x) { return '<div class="scard"><img src="' + I + 'guide-' + x[0] + '.jpg" alt="" loading="lazy"><div><b>' + x[1] + '</b>' + (x[2] ? '<small>' + x[2] + '</small>' : '') + '<p>' + x[3] + '</p></div></div>'; }).join('') + '</div>' +
     '<div class="req"><h3>시료 요구사항<small>Sample Requirements</small></h3><ul><li>단백질 양: 100 μg</li><li>Cellcount : &gt; 10⁷</li><li>EVparticles : &gt; 10¹⁰</li></ul></div></section>';
   $('#secs').innerHTML = html;
 
-  // 바로가기 탭 + 스크롤 위치 표시
-  var TABS = [['overview', 'Overview']].concat(S.map(function (s) { return [s.id, s.id === 'biopharma' ? '바이오의약품' : s.id === 'adc' ? 'ADC' : s.name.replace(' Analysis', '').replace(' Proteomics', '')]; })).concat([['samples', '시료 안내']]);
-  $('#tabs').innerHTML = TABS.map(function (t) { return '<a href="#' + t[0] + '" data-t="' + t[0] + '">' + t[1] + '</a>'; }).join('');
-  var links = [].slice.call(document.querySelectorAll('#tabs a'));
-  function spy() {
-    var y = window.scrollY + 160, cur = TABS[0][0];
-    TABS.forEach(function (t) { var el = document.getElementById(t[0]); if (el && el.offsetTop <= y) cur = t[0]; });
-    links.forEach(function (a) {
-      var on = a.dataset.t === cur;
-      if (on && !a.classList.contains('on')) { var bar = a.parentNode; bar.scrollLeft = a.offsetLeft - bar.clientWidth / 2 + a.offsetWidth / 2; }
-      a.classList.toggle('on', on);
+  // 서비스 탭: 고른 서비스만 보여준다. 주소 #서비스id 로 바로 열 수 있음 (메인 분석 서비스 카드 → service.html#genomics)
+  var ids = TABS.map(function (t) { return t[0]; });
+  function show(id, scroll) {
+    if (ids.indexOf(id) < 0) id = ids[0];
+    [].forEach.call(document.querySelectorAll('#tabs button'), function (b) {
+      var on = b.dataset.t === id; b.classList.toggle('on', on); b.setAttribute('aria-selected', on);
+      if (on) { var bar = b.parentNode; bar.scrollLeft = b.offsetLeft - bar.offsetLeft - bar.clientWidth / 2 + b.offsetWidth / 2; }
     });
+    ids.forEach(function (x) { document.getElementById(x).hidden = x !== id; });
+    var k = ids.indexOf(id); $('#tPrev').disabled = k === 0; $('#tNext').disabled = k === ids.length - 1;
+    history.replaceState(null, '', '#' + id);
+    if (scroll) document.getElementById('service').scrollIntoView({ behavior: 'smooth' });
   }
-  window.addEventListener('scroll', spy, { passive: true }); spy();
+  $('#tabs').addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (b) show(b.dataset.t); });
+  $('#tPrev').addEventListener('click', function () { var k = ids.indexOf($('#tabs .on').dataset.t); show(ids[k - 1]); });
+  $('#tNext').addEventListener('click', function () { var k = ids.indexOf($('#tabs .on').dataset.t); show(ids[k + 1]); });
+  var h = location.hash.slice(1);
+  show(h, ids.indexOf(h) > -1);
+  window.addEventListener('hashchange', function () { var x = location.hash.slice(1); if (ids.indexOf(x) > -1) show(x, true); });
+  if (h === 'samples' || h === 'overview') document.getElementById(h).scrollIntoView();
 })();
 </script>
 </body>
