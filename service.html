@@ -89,19 +89,23 @@
   .samples { padding:72px 0 0; }
   .samples h2 { font-size:32px; font-weight:700; line-height:44px; letter-spacing:-.32px; word-break:keep-all; }
   .samples h2 em { font-style:normal; color:var(--teal-600); }
-  .scards { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:24px; margin-top:40px; }
-  .scard { border:1px solid var(--gray-200); border-radius:16px; overflow:hidden; background:#fff; }
-  .scard img { display:block; width:100%; aspect-ratio:538 / 401; object-fit:cover; }
-  .scard div { padding:20px; }
-  .scard b { display:block; font-size:18px; font-weight:600; line-height:26px; }
-  .scard small { display:block; margin-top:2px; font-size:13px; line-height:18px; color:var(--gray-500); }
-  .scard p { margin-top:12px; font-size:15px; line-height:22px; color:var(--gray-700); word-break:keep-all; }
-  .req { display:flex; align-items:center; gap:40px; margin-top:24px; padding:28px 32px; border-radius:16px; background:var(--bg-green); border:1px solid var(--teal-100); }
-  .req h3 { flex:none; font-size:18px; font-weight:700; line-height:26px; }
-  .req h3 small { display:block; font-size:13px; font-weight:500; color:var(--gray-500); }
-  .req ul { display:flex; flex-wrap:wrap; gap:12px 40px; }
-  .req li { font-size:16px; line-height:24px; color:var(--gray-700); }
-  .req li b { margin-left:6px; font-weight:700; color:#000; }
+  /* 시료 안내: 큰 이미지 4칸 안에 텍스트 (현재 홈페이지 레이아웃). 스크롤하면 텍스트가 차례로 떠오르고, hover 시 이미지 살짝 확대 */
+  .stiles { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; margin-top:40px; }
+  .stile { position:relative; width:100%; overflow:hidden; aspect-ratio:538 / 360; border-radius:16px; background:#0b2a26; isolation:isolate; }
+  .stile img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .8s cubic-bezier(.2,.7,.2,1); }
+  .stile::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.38) 45%, rgba(0,0,0,.08) 100%); transition:opacity .4s; z-index:1; }
+  .stile .tx { position:absolute; left:40px; right:40px; bottom:40px; z-index:2; color:#fff; }
+  .stile b { display:block; font-size:24px; font-weight:700; line-height:32px; letter-spacing:-.24px; word-break:keep-all; }
+  .stile small { display:block; margin-top:2px; font-size:15px; font-weight:500; line-height:22px; color:rgba(255,255,255,.8); }
+  .stile ul { display:flex; flex-direction:column; gap:6px; margin-top:16px; }
+  .stile li { display:flex; gap:8px; font-size:15px; line-height:22px; color:rgba(255,255,255,.92); word-break:keep-all; }
+  .stile li::before { content:""; flex:none; width:4px; height:4px; margin-top:9px; border-radius:50%; background:#5ee6d3; }
+  .stile:hover img { transform:scale(1.05); }
+  .stile:hover::after { opacity:.85; }
+  /* 스크롤 진입 시 텍스트만 떠오름 */
+  .stile .tx { opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; transition-delay:var(--d, 0s); }
+  .stile.in .tx { opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce) { .stile .tx { opacity:1; transform:none; transition:none; } .stile img { transition:none; } }
 
   /* 하단 안내 */
   .cta { display:flex; align-items:center; justify-content:space-between; gap:24px; margin-top:72px; padding:32px 40px; border:1px solid var(--gray-200); border-radius:16px; }
@@ -115,7 +119,6 @@
   @media (max-width:1180px) {
     .page-head, .body { padding-left:24px; padding-right:24px; }
     .sec, .sec.rev, .head-row { gap:40px; }
-    .scards { grid-template-columns:repeat(2, minmax(0,1fr)); }
   }
   @media (max-width:900px) {
     .sec, .sec.rev, .head-row { grid-template-columns:1fr; gap:28px; }
@@ -152,9 +155,11 @@
     .bp tr.first td { border-top:0; }
     .bp td.it { font-weight:500; }
     .bp td.pp { font-size:14px; color:var(--gray-500); }
-    .scards { grid-template-columns:1fr; gap:16px; margin-top:28px; }
-    .req { flex-direction:column; align-items:flex-start; gap:14px; padding:20px; }
-    .req ul { flex-direction:column; gap:6px; }
+    .stiles { grid-template-columns:1fr; gap:12px; margin-top:28px; }
+    .stile { aspect-ratio:4 / 3; border-radius:12px; }
+    .stile .tx { left:24px; right:24px; bottom:24px; }
+    .stile b { font-size:20px; line-height:28px; }
+    .stile small, .stile li { font-size:14px; }
     .cta { flex-direction:column; align-items:stretch; padding:24px 20px; margin-top:48px; }
     .cta div:last-child .btn { flex:1; min-width:0; }
   }
@@ -239,11 +244,12 @@
     ['cpu', '혁신적인 분석 인프라', 'AI 기반 고속 데이터 처리로 분석 시간을 단축'],
     ['rocket-launch', '지속적인 기술 혁신', '최신 오믹스 분석 기술과 AI Agents 등 AI 기술을 지속적으로 고도화하여 경쟁력 강화']
   ];
+  // 현재 홈페이지와 같은 4칸 (이미지·문구 그대로)
   var SAMPLES = [
-    ['10_1', '생물학적 시료', 'Biological sample', '혈청, 혈장, 세포주, 조직, CSF'],
-    ['10_2', '당단백질', '', '엑소좀, Cell lysate,Secretome'],
-    ['10_3', '바이오 의약품', 'Biopharmaceuticalproducts', '항체의약품, 융합단백질 의약품'],
-    ['10_4', '식품, 화장품, 기타 산업', 'Food, cosmetics, and other industries', '단백질/당단백질 원료<br>그 밖에 지표 물질 (상담을 통해 분석법 개발 및 밸리데이션 가능)']
+    ['10_1', '생물학적 시료', 'Biological sample', ['혈청, 혈장, 세포주, 조직, CSF', '당단백질', '엑소좀, Cell lysate,Secretome']],
+    ['10_2', '바이오 의약품', 'Biopharmaceuticalproducts', ['항체의약품, 융합단백질 의약품']],
+    ['10_3', '식품, 화장품, 기타 산업', 'Food, cosmetics, and other industries', ['단백질/당단백질 원료', '그 밖에 지표 물질 (상담을 통해 분석법 개발 및 밸리데이션 가능)']],
+    ['10_4', '시료 요구사항', 'Sample Requirements', ['단백질 양: 100 μg', 'Cellcount : &gt; 10⁷', 'EVparticles : &gt; 10¹⁰']]
   ];
 
   var pic = function (n) { return '<div class="pic"><img src="' + I + 'guide-' + n + '.jpg" alt="" loading="lazy"></div>'; };
@@ -272,8 +278,10 @@
   html += '</div>';
 
   html += '<section class="samples" id="samples"><h2>다양한 종류의 시료에서<br>분석이 가능하며 신규 물질에 대한<br><em>분석법 개발 및 밸리데이션 서비스</em>도 제공합니다.</h2>' +
-    '<div class="scards">' + SAMPLES.map(function (x) { return '<div class="scard"><img src="' + I + 'guide-' + x[0] + '.jpg" alt="" loading="lazy"><div><b>' + x[1] + '</b>' + (x[2] ? '<small>' + x[2] + '</small>' : '') + '<p>' + x[3] + '</p></div></div>'; }).join('') + '</div>' +
-    '<div class="req"><h3>시료 요구사항<small>Sample Requirements</small></h3><ul><li>단백질 양: 100 μg</li><li>Cellcount : &gt; 10⁷</li><li>EVparticles : &gt; 10¹⁰</li></ul></div></section>';
+    '<div class="stiles">' + SAMPLES.map(function (x, k) {
+      return '<div class="stile" style="--d:' + (k * 0.12) + 's"><img src="' + I + 'guide-' + x[0] + '.jpg" alt="" loading="lazy">' +
+        '<div class="tx"><b>' + x[1] + '</b><small>' + x[2] + '</small><ul>' + x[3].map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div></div>';
+    }).join('') + '</div></section>';
   $('#secs').innerHTML = html;
 
   // 서비스 탭: 고른 서비스만 보여준다. 주소 #서비스id 로 바로 열 수 있음 (메인 분석 서비스 카드 → service.html#genomics)
@@ -311,6 +319,10 @@
     });
     bar.addEventListener('click', function (e) { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
   })();
+  // 시료 안내 타일: 화면에 들어오면 텍스트가 차례로 떠오름 (스크롤 위치로 판단)
+  var tiles = [].slice.call(document.querySelectorAll('.stile'));
+  function revealTiles() { tiles.forEach(function (t) { if (!t.classList.contains('in') && t.getBoundingClientRect().top < innerHeight * 0.88) t.classList.add('in'); }); }
+  window.addEventListener('scroll', revealTiles, { passive: true }); window.addEventListener('resize', revealTiles); revealTiles();
   var h = location.hash.slice(1);
   if (ids.indexOf(h) > -1) show(h, true); else show(ids[0], false, true);
   window.addEventListener('hashchange', function () { var x = location.hash.slice(1); if (ids.indexOf(x) > -1) show(x, true); });
