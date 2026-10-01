@@ -7,8 +7,8 @@
 <title>분석 서비스 안내 · OmicsPharm</title>
 <!-- 서비스 소개 > 분석 서비스 안내 (Figma 시안 없음 — 현재 홈페이지 /projects/guide 내용·이미지를 그대로 옮기고 우리 컴포넌트로 구성)
      레이아웃: Overview → 분석 서비스 탭(고른 서비스만 표시, 마크로젠 NGS 페이지 참고) → 시료 안내. 섹션 id: overview, genomics, transcriptomics, proteomics, glycoproteomics, metabolomics, olink, bioinformatics, biopharma, adc, specialized, samples -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261002i">
-<script src="assets/common/site.js?v=20261002i"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002j">
+<script src="assets/common/site.js?v=20261002j"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -42,6 +42,10 @@
   .arrows button:disabled { opacity:.35; cursor:default; }
   .arrows img { width:18px; height:18px; }
   .panel[hidden] { display:none !important; } /* .sec.full의 display:block보다 우선 */
+  /* 탭을 누르면 새 패널의 사진·제목·설명·항목이 차례로 떠오름 */
+  .panel.pop .rv { animation:panelUp .6s cubic-bezier(.2,.7,.2,1) both; animation-delay:var(--d, 0s); }
+  @keyframes panelUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:none; } }
+  @media (prefers-reduced-motion:reduce) { .panel.pop .rv { animation:none; } }
 
   .body { padding:0 60px 96px; }
   .sec { display:grid; grid-template-columns:minmax(0,530px) minmax(0,1fr); gap:64px; align-items:start; padding:72px 0; border-bottom:1px solid var(--gray-200); }
@@ -294,8 +298,15 @@
     });
     ids.forEach(function (x) { document.getElementById(x).hidden = x !== id; });
     var k = ids.indexOf(id); $('#tPrev').disabled = k === 0; $('#tNext').disabled = k === ids.length - 1;
+    if (!quiet) pop(document.getElementById(id));
     if (!quiet) history.replaceState(null, '', '#' + id); // 처음 열 때는 주소를 바꾸지 않음 (새로고침해도 맨 위에서 시작)
     if (scroll) document.getElementById('service').scrollIntoView({ behavior: 'smooth' });
+  }
+  // 패널 안 콘텐츠를 순서대로 떠오르게 (다시 누를 때마다 처음부터)
+  function pop(p) {
+    var els = p.querySelectorAll('.pic, h2, .desc, .bp, .groups, :scope > div > .items');
+    [].forEach.call(els, function (el, i) { el.classList.add('rv'); el.setAttribute('data-op-skip-enter', ''); el.style.setProperty('--d', (i * 0.1) + 's'); });
+    p.classList.remove('pop'); void p.offsetWidth; p.classList.add('pop');
   }
   $('#tabs').addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (b) show(b.dataset.t); });
   $('#tPrev').addEventListener('click', function () { var k = ids.indexOf($('#tabs .on').dataset.t); show(ids[k - 1]); });
