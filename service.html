@@ -40,7 +40,7 @@
   .arrows button:hover:not(:disabled) { border-color:var(--gray-500); }
   .arrows button:disabled { opacity:.35; cursor:default; }
   .arrows img { width:18px; height:18px; }
-  .panel[hidden] { display:none; }
+  .panel[hidden] { display:none !important; } /* .sec.full의 display:block보다 우선 */
 
   .body { padding:0 60px 96px; }
   .sec { display:grid; grid-template-columns:minmax(0,530px) minmax(0,1fr); gap:64px; align-items:start; padding:72px 0; border-bottom:1px solid var(--gray-200); }
@@ -263,7 +263,8 @@
       return;
     }
     var body = s.groups ? '<div class="groups">' + s.groups.map(function (g) { return items(g[1], g[0]); }).join('') + '</div>' : items(s.items);
-    html += '<section class="sec panel' + (s.left ? '' : ' rev') + '" role="tabpanel" id="' + s.id + '">' + pic(s.img) + '<div>' + head + body + '</div></section>';
+    // 한 번에 하나만 보이므로 사진 위치는 모두 왼쪽으로 통일
+    html += '<section class="sec panel" role="tabpanel" id="' + s.id + '">' + pic(s.img) + '<div>' + head + body + '</div></section>';
   });
   html += '</div>';
 
