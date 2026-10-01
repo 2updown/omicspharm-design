@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" fill="none">
+  <rect width="320" height="220" fill="#E8F1FF"/>
+  <circle cx="58" cy="54" r="22" fill="#CFE0FF"/>
+  <g transform="translate(70 118)">
+    <path d="M0 10a8 8 0 0 1 8-8h40l10 10h86a8 8 0 0 1 8 8v58a8 8 0 0 1-8 8H8a8 8 0 0 1-8-8z" fill="#FD8A4E"/>
+    <rect x="16" y="34" width="70" height="8" rx="4" fill="#fff" opacity=".85"/>
+  </g>
+  <g transform="translate(94 88)">
+    <path d="M0 10a8 8 0 0 1 8-8h40l10 10h86a8 8 0 0 1 8 8v58a8 8 0 0 1-8 8H8a8 8 0 0 1-8-8z" fill="#4C8DF6"/>
+    <rect x="16" y="34" width="56" height="8" rx="4" fill="#fff" opacity=".85"/>
+  </g>
+  <g transform="translate(118 58)">
+    <path d="M0 10a8 8 0 0 1 8-8h40l10 10h86a8 8 0 0 1 8 8v58a8 8 0 0 1-8 8H8a8 8 0 0 1-8-8z" fill="#009788"/>
+    <rect x="16" y="34" width="80" height="8" rx="4" fill="#fff" opacity=".9"/>
+    <rect x="16" y="50" width="48" height="8" rx="4" fill="#fff" opacity=".6"/>
+  </g>
+  <g transform="translate(244 96) rotate(18)">
+    <rect x="0" y="0" width="22" height="72" rx="11" fill="#fff" stroke="#9DBDF5" stroke-width="2"/>
+    <path d="M2 40h18v21a9 9 0 0 1-18 0z" fill="#00BBA6"/>
+    <rect x="-4" y="-6" width="30" height="10" rx="4" fill="#1F2937"/>
+  </g>
+</svg>

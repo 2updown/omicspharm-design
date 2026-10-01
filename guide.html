@@ -70,13 +70,15 @@
   .step.on .num span { background:var(--orange-600); }
   .step.on .card { border-color:var(--teal-100); box-shadow:0 1px 2px rgba(0,0,0,.1), 0 0 2px rgba(0,0,0,.08); } /* Shadow/shadow1 */
 
-  /* 활용 가이드 */
-  .tips { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:24px; margin-top:40px; }
-  .tip { display:flex; gap:20px; padding:28px; border:1px solid var(--gray-200); border-radius:16px; background:#fff; }
-  .tip i { display:flex; align-items:center; justify-content:center; width:48px; height:48px; flex:none; border-radius:12px; background:var(--teal-50); color:var(--teal-600); }
-  .tip i .ico { width:26px; height:26px; }
-  .tip h3 { font-size:18px; font-weight:700; line-height:26px; letter-spacing:-.18px; word-break:keep-all; }
-  .tip p { margin-top:8px; font-size:15px; line-height:24px; color:var(--gray-600); word-break:keep-all; }
+  /* 활용 가이드 — 세로 카드 (카페24 엑스퍼트 '쉽고 편리한 프로세스' 참고): 일러스트 → 제목 → 설명 */
+  .tips { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:24px; margin-top:40px; }
+  .tip { display:flex; flex-direction:column; gap:20px; padding:20px 20px 28px; border-radius:16px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.06); }
+  .tip .art { aspect-ratio:320 / 220; border-radius:12px; overflow:hidden; }
+  .tip .art img { display:block; width:100%; height:100%; object-fit:cover; }
+  .tip .tx { display:flex; flex-direction:column; gap:8px; padding:0 4px; }
+  .tip h3 { font-size:18px; font-weight:700; line-height:26px; letter-spacing:-.18px; color:var(--teal-700); word-break:keep-all; }
+  .tip h3 em { font-style:normal; margin-right:4px; }
+  .tip p { font-size:15px; line-height:24px; color:var(--gray-600); word-break:keep-all; }
 
   /* 자주 묻는 질문 (FAQ 페이지와 같은 아코디언) */
   .faq-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; }
@@ -111,6 +113,7 @@
 
   @media (max-width:1180px) {
     .page-head, .sec, .cta-sec { padding-left:24px; padding-right:24px; }
+    .tips { grid-template-columns:repeat(2, minmax(0,1fr)); }
   }
   @media (max-width:760px) {
     .page-head { padding:40px 16px 36px; }
@@ -121,8 +124,8 @@
     .sec-head h2 { font-size:24px; line-height:34px; }
     .sec-head p { font-size:15px; line-height:24px; }
     .sec-head p br { display:none; }
-    .tips { grid-template-columns:1fr; gap:12px; margin-top:28px; }
-    .tip { padding:22px 20px; }
+    .tips { grid-template-columns:1fr; gap:16px; margin-top:28px; }
+    .tip { padding:16px 16px 24px; gap:16px; }
     /* 타임라인: 선은 왼쪽, 번호·카드는 오른쪽에 세로로 */
     .flow { margin-top:32px; }
     .flow .rail { left:17px; margin-left:0; }
@@ -133,7 +136,6 @@
     .step .num b { font-size:28px; line-height:36px; }
     .step:nth-child(odd) .num span { align-self:center; }
     .step .card, .step:nth-child(even) .card { grid-column:2; grid-row:2; margin-top:10px; padding:20px; border-radius:16px; }
-    .tip { gap:16px; }
     .faq-head { flex-direction:column; align-items:flex-start; gap:12px; }
     .qa summary { gap:10px; padding:16px; align-items:flex-start; }
     .qa .t { font-size:15px; line-height:22px; }
@@ -211,10 +213,10 @@
       ['마이페이지 → 분석결과 관리에서 결과 파일 일괄 다운로드', '검토 의견 제출 후 최종 승인으로 프로젝트 완료']]
   ];
   var TIPS = [
-    ['buildings', '프로젝트 등록 전 기관 정보를 사전 등록하세요', '마이페이지 → 내 정보 관리에서 소속기관, 연락처, 사업자등록증을 미리 등록해두면 프로젝트 의뢰 시 관련 정보가 자동 연동됩니다. 분석파트너와의 신뢰 관계 구축에도 도움이 됩니다.'],
-    ['stack', '분석 서비스 종류별로 프로젝트를 분리 등록하세요', '단백체·대사체 등 복수의 분석을 동시에 의뢰할 경우 서비스별로 별도 프로젝트를 등록하는 것이 원칙입니다. 전문 분야별 분석파트너로부터 특화된 견적을 받을 수 있어 분석 품질과 비용 효율 모두에서 유리합니다.'],
-    ['lock-key', '비공개 설정으로 클라이언트 정보를 보호하세요', "프로젝트 등록 시 '비공개로 업로드' 옵션을 활성화하면 프로젝트 정보가 노출되지 않습니다."],
-    ['chats-circle', 'Q&amp;A와 컨설턴트 상담을 적극 활용하세요', '분석 방법, 시료 조건, 소요 기간 등 분석파트너에게 궁금한 사항은 마이페이지 Q&amp;A 기능으로 직접 질의할 수 있습니다. 적합한 분석 서비스 선정이 어렵다면 전담 컨설턴트의 무료 전문 상담을 받으세요.']
+    ['org', '프로젝트 등록 전 기관 정보를 사전 등록하세요', '마이페이지 → 내 정보 관리에서 소속기관, 연락처, 사업자등록증을 미리 등록해두면 프로젝트 의뢰 시 관련 정보가 자동 연동됩니다. 분석파트너와의 신뢰 관계 구축에도 도움이 됩니다.'],
+    ['split', '분석 서비스 종류별로 프로젝트를 분리 등록하세요', '단백체·대사체 등 복수의 분석을 동시에 의뢰할 경우 서비스별로 별도 프로젝트를 등록하는 것이 원칙입니다. 전문 분야별 분석파트너로부터 특화된 견적을 받을 수 있어 분석 품질과 비용 효율 모두에서 유리합니다.'],
+    ['private', '비공개 설정으로 클라이언트 정보를 보호하세요', "프로젝트 등록 시 '비공개로 업로드' 옵션을 활성화하면 프로젝트 정보가 노출되지 않습니다."],
+    ['qna', 'Q&amp;A와 컨설턴트 상담을 적극 활용하세요', '분석 방법, 시료 조건, 소요 기간 등 분석파트너에게 궁금한 사항은 마이페이지 Q&amp;A 기능으로 직접 질의할 수 있습니다. 적합한 분석 서비스 선정이 어렵다면 전담 컨설턴트의 무료 전문 상담을 받으세요.']
   ];
   var FAQ = [
     ['회원가입은 무료인가요? 어떤 비용이 발생하나요?', 'OmicsPharm 클라이언트 회원가입 및 플랫폼 이용은 완전 무료입니다. 비용은 분석 의뢰가 성사되어 계약이 체결된 경우에 한해 분석파트너의 견적 기준으로 발생하며, 플랫폼 중개 수수료는 셀키AI의 서비스 정책에 따라 별도 안내됩니다.'],
@@ -251,8 +253,8 @@
   window.addEventListener('resize', function () { placeRail(); progress(); });
   placeRail(); progress();
   window.addEventListener('load', function () { placeRail(); progress(); });
-  $('#tipList').innerHTML = TIPS.map(function (t) {
-    return '<div class="tip"><i><span class="ico" style="--i:url(assets/guide/ic-' + t[0] + '.svg)"></span></i><div><h3>' + t[1] + '</h3><p>' + t[2] + '</p></div></div>';
+  $('#tipList').innerHTML = TIPS.map(function (t, i) {
+    return '<div class="tip"><div class="art"><img src="assets/guide/tip-' + t[0] + '.svg" alt="" loading="lazy"></div><div class="tx"><h3><em>TIP ' + (i + 1) + '.</em>' + t[1] + '</h3><p>' + t[2] + '</p></div></div>';
   }).join('');
   $('#qa').innerHTML = FAQ.map(function (f) {
     return '<details><summary><span class="q">Q</span><span class="t">' + f[0] + '</span><span class="ico car"></span></summary><div class="a"><b>A</b><div>' + f[1] + '</div></div></details>';
