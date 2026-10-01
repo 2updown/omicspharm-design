@@ -11,7 +11,7 @@
 <script src="assets/common/site.js?v=20261001l"></script>
 <style>
   :root {
-    --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9; --white:#fff;
+    --teal-50:#edfefa; --teal-100:#bffdf1; --orange-600:#fd4900; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9; --white:#fff;
     --gray-50:#fafafa; --gray-100:#f5f5f5; --gray-200:#e5e5e5; --gray-300:#d4d4d4; --gray-400:#a3a3a3; --gray-500:#737373; --gray-600:#525252; --gray-700:#404040;
   }
   * { box-sizing:border-box; margin:0; padding:0; }
@@ -42,15 +42,19 @@
   .step { position:relative; display:grid; grid-template-columns:minmax(0,1fr) 96px minmax(0,1fr); align-items:center; }
   .step + .step { margin-top:24px; }
   .step .dot { grid-column:2; justify-self:center; position:relative; z-index:1; display:flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:50%; background:#fff; border:2px solid var(--gray-300); transition:all .25s; }
+  /* 지나온 단계: Stepper indicator (Status=Completed) */
+  .step .dot::after { content:""; width:16px; height:16px; background:url(assets/guide/check.svg) center/contain no-repeat; opacity:0; transition:opacity .25s; }
   .step .num { display:flex; flex-direction:column; gap:8px; }
-  .step .num b { font-size:56px; font-weight:800; line-height:60px; letter-spacing:-1px; color:var(--gray-200); transition:color .25s; }
-  .step .num span { align-self:flex-start; padding:4px 12px; border-radius:99px; background:var(--gray-100); font-size:13px; font-weight:600; line-height:18px; color:var(--gray-500); transition:all .25s; }
-  .step .card { padding:28px; border:1px solid var(--gray-200); border-radius:24px; background:#fff; transition:all .25s; }
-  .step .card h3 { font-size:20px; font-weight:700; line-height:28px; letter-spacing:-.2px; }
-  .step .card .d { margin-top:8px; font-size:15px; line-height:24px; color:var(--gray-600); word-break:keep-all; }
-  .step .card ul { display:flex; flex-direction:column; gap:8px; margin-top:18px; padding-top:16px; border-top:1px dashed var(--gray-300); }
-  .step .card li { display:flex; gap:8px; font-size:14px; line-height:21px; color:var(--gray-700); word-break:keep-all; }
-  .step .card li::before { content:""; flex:none; width:18px; height:18px; margin-top:1px; border-radius:50%; background:var(--teal-600) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.2l2.6 2.6L14 7.4' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat; }
+  .step .num b { font-size:55px; font-weight:800; line-height:1.4; letter-spacing:-.55px; color:var(--gray-200); transition:color .25s; }
+  /* badge_basic: 기본 fill gray-600, 지나온 단계 fill orange-600 */
+  .step .num span { align-self:flex-start; padding:2px 8px; border-radius:8px; background:var(--gray-600); font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; color:#fff; transition:background .25s; }
+  /* process-card (Figma 1398:15054) */
+  .step .card { padding:28px 24px; border:1px solid var(--gray-200); border-radius:24px; background:#fff; transition:border-color .25s, box-shadow .25s; }
+  .step .card h3 { font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; }
+  .step .card .d { margin-top:4px; font-size:16px; line-height:22px; color:var(--gray-600); word-break:keep-all; }
+  .step .card ul { display:flex; flex-direction:column; gap:8px; margin-top:8px; padding-top:9px; background:repeating-linear-gradient(90deg, var(--gray-300) 0 3px, transparent 3px 6px) top / 100% 1px no-repeat; }
+  .step .card li { display:flex; gap:8px; font-size:14px; line-height:20px; color:var(--gray-700); word-break:keep-all; }
+  .step .card li::before { content:""; flex:none; width:20px; height:20px; background:url(assets/guide/check-circle.svg) center/contain no-repeat; }
   /* 홀수 단계: 카드 오른쪽 · 번호 왼쪽 / 짝수 단계: 카드 왼쪽 · 번호 오른쪽 */
   .step .num { grid-column:1; grid-row:1; align-items:flex-end; text-align:right; }
   .step .card { grid-column:3; grid-row:1; }
@@ -60,10 +64,11 @@
   .step:nth-child(even) .card { grid-column:1; }
   .step .dot { grid-row:1; }
   /* 지나온 단계 강조 */
-  .step.on .dot { width:36px; height:36px; border:0; background:var(--teal-600) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.2l2.6 2.6L14 7.4' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/22px no-repeat; box-shadow:0 0 0 6px var(--teal-50); }
-  .step.on .num b { color:var(--teal-600); }
-  .step.on .num span { background:var(--teal-50); color:var(--teal-700); }
-  .step.on .card { border-color:var(--teal-100); box-shadow:0 8px 24px rgba(0,120,110,.08); }
+  .step.on .dot { width:32px; height:32px; border:0; background:var(--teal-600); }
+  .step.on .dot::after { opacity:1; }
+  .step.on .num b { color:#000; }
+  .step.on .num span { background:var(--orange-600); }
+  .step.on .card { border-color:var(--teal-100); box-shadow:0 1px 2px rgba(0,0,0,.1), 0 0 2px rgba(0,0,0,.08); } /* Shadow/shadow1 */
 
   /* 활용 가이드 */
   .tips { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:24px; margin-top:40px; }
