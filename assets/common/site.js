@@ -85,14 +85,16 @@
     var esc = function (t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
     function mark(t, q) { var i = q ? t.toLowerCase().indexOf(q.toLowerCase()) : -1; return i < 0 ? esc(t) : esc(t.slice(0, i)) + '<b>' + esc(t.slice(i, i + q.length)) + '</b>' + esc(t.slice(i + q.length)); }
     function open() {
-      var q = norm(input.value), all = items(q) || [];
-      list = all.filter(function (x) { return !q || x.v.toLowerCase().indexOf(q.toLowerCase()) > -1; }).slice(0, 8);
+      var q = norm(input.value), all = items(q) || [], lq = q.toLowerCase();
+      // opt.minChars: 이 글자 수 미만이면 목록을 보여주지 않음 / opt.prefix: 이름이나 단어의 앞부분이 맞는 것만 / opt.max: 최대 개수
+      var hit = function (x) { var v = x.v.toLowerCase(); return !q || (opt.prefix ? (v.indexOf(lq) === 0 || v.split(' ').some(function (w) { return w.indexOf(lq) === 0; })) : v.indexOf(lq) > -1); };
+      list = q.length < (opt.minChars || 0) ? [] : all.filter(hit).slice(0, opt.max || 8);
       var exact = all.some(function (x) { return x.v.toLowerCase() === q.toLowerCase(); });
       if (q && !exact) list.push({ v: q, add: true });
       cur = -1;
       box.innerHTML = list.length ? list.map(function (x, i) {
         return '<li role="option" data-i="' + i + '"' + (x.add ? ' class="add"' : '') + '>' + (x.add ? '<span>' + esc(x.v) + '</span><em>+ 직접 추가</em>' : '<span>' + mark(x.v, q) + '</span>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '')) + '</li>';
-      }).join('') : '<li class="none">' + esc(opt.empty || '입력해서 검색하세요.') + '</li>';
+      }).join('') : '<li class="none">' + esc(q.length < (opt.minChars || 0) ? opt.short || '' : opt.empty || '입력해서 검색하세요.') + '</li>';
       box.hidden = false; input.setAttribute('aria-expanded', 'true');
     }
     function close() { box.hidden = true; input.setAttribute('aria-expanded', 'false'); }
@@ -113,10 +115,10 @@
   };
   // 소속 → 부서 연결 (같은 소속을 고르면 그 소속에 등록된 부서가 뜬다)
   OP.orgCombo = function (orgInput, deptInput) {
+    // 보호: 2글자 이상 입력해야 검색, 앞글자가 맞는 소속만 최대 5개, 부서 수 등 부가 정보는 보여주지 않음
     OP.combo(orgInput, function () {
-      var db = OP.orgDB();
-      return Object.keys(db).sort(function (a, b) { return a.localeCompare(b, 'ko'); }).map(function (o) { return { v: o, sub: db[o].length ? '부서 ' + db[o].length + '개' : '' }; });
-    }, { empty: '소속을 입력해 검색하세요.' });
+      return Object.keys(OP.orgDB()).sort(function (a, b) { return a.localeCompare(b, 'ko'); }).map(function (o) { return { v: o }; });
+    }, { minChars: 2, prefix: true, max: 5, short: '소속명을 2글자 이상 입력하면 검색됩니다.', empty: '소속명을 2글자 이상 입력하면 검색됩니다.' });
     if (deptInput) OP.combo(deptInput, function () {
       return (OP.orgDB()[norm(orgInput.value)] || []).map(function (d) { return { v: d }; });
     }, { empty: '이 소속에 등록된 부서가 없습니다. 직접 입력해주세요.' });
