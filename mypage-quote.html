@@ -8,11 +8,11 @@
 <!-- 마이페이지 > 견적관리 (분석파트너). 현재 홈페이지 견적서 작성 화면(mypage/estimate-write)을 새 디자인으로 옮긴 초안.
      ?id=프로젝트번호 → [의뢰내용][견적서] 탭: 의뢰 요약 + 견적서 작성(고객사 / 공급자 / 제안가 / Notice / 임시저장·최종 제출)
      ?id 없음 → 내가 작성·제출한 견적 목록. 데모 저장: localStorage op.quotes { 프로젝트id: {...} } -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261002g">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261002g">
-<script src="assets/common/site.js?v=20261002g"></script>
-<script src="assets/common/mypage.js?v=20261002g"></script>
-<script src="assets/common/projects-data.js?v=20261002g"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002h">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261002h">
+<script src="assets/common/site.js?v=20261002h"></script>
+<script src="assets/common/mypage.js?v=20261002h"></script>
+<script src="assets/common/projects-data.js?v=20261002h"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -175,13 +175,22 @@
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var esc = OP.my.esc;
   var P = OP_PROJECTS.DATA, card = $('#card');
-  var read = function () { try { return JSON.parse(localStorage.getItem('op.quotes') || '{}'); } catch (e) { return {}; } };
-  var write = function (v) { try { localStorage.setItem('op.quotes', JSON.stringify(v)); } catch (e) {} };
+  // 견적은 계정별로 저장: op.quotes2 { 이메일: { 프로젝트id: {...} } } (예전 공용 저장분 op.quotes는 사용하지 않음)
+  var KEY = 'op.quotes2', ME = me.s.email;
+  try { localStorage.removeItem('op.quotes'); } catch (e) {}
+  var all = function () { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } };
+  var read = function () { return all()[ME] || {}; };
+  var write = function (v) { var a = all(); a[ME] = v; try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {} };
   var CUR = { KRW: '₩', USD: '$', JPY: '¥' };
   var money = function (n, c) { n = Math.round(n || 0); return (CUR[c] || '₩') + ' ' + n.toLocaleString('ko-KR'); };
   var id = new URLSearchParams(location.search).get('id');
   var x = id !== null ? P[+id] : null;
 
+  // 미인증 분석파트너: 견적관리 이용 불가 (목록·작성 모두)
+  if (me.s.role === 'partner' && !OP.canQuote()) {
+    card.innerHTML = '<div class="empty"><b>인증된 분석파트너만 견적서를 작성할 수 있습니다</b><p>OmicsPharm이 기관·서비스 정보를 확인한 뒤 인증해 드립니다.<br>인증 전에는 공개 프로젝트 열람만 가능합니다.</p><a class="btn lg" href="mypage-account.html">내 정보 관리에서 확인</a></div>';
+    return;
+  }
   // ── 견적 목록 ──
   if (!x) {
     var Q = read(), ids = Object.keys(Q).sort(function (a, b) { return Q[b].at - Q[a].at; });
@@ -195,11 +204,6 @@
     return;
   }
 
-  // 미인증 분석파트너: 견적서 작성 불가 안내
-  if (me.s.role === 'partner' && !OP.canQuote()) {
-    card.innerHTML = '<div class="empty"><b>인증된 분석파트너만 견적서를 작성할 수 있습니다</b><p>OmicsPharm이 기관·서비스 정보를 확인한 뒤 인증해 드립니다.<br>인증 전에는 공개 프로젝트 열람만 가능합니다.</p><a class="btn lg" href="mypage-account.html">내 정보 관리에서 확인</a></div>';
-    return;
-  }
   // ── 견적서 작성 ──
   var saved = read()[id] || null;
   var acc = me.acc;

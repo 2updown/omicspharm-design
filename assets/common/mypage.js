@@ -44,7 +44,7 @@
 
   var D = {
     P_STAGES: P_STAGES,
-    partnerProjects: function () { var s = OP.session(); return s && (s.role === 'partner' || s.role === 'admin') ? PARTNER_DEMO.slice() : []; }, // 컨설턴트도 같은 화면
+    partnerProjects: function () { var s = OP.session(); return s && (s.role === 'admin' || OP.partnerVerified()) ? PARTNER_DEMO.slice() : []; }, // 인증 분석파트너·컨설턴트만 (미인증은 매칭·계약된 프로젝트가 없음)
     esc: esc, ymd: ymd, ymdhm: ymdhm,
     projects: function () { return read('op.submitted', []); },
     // 로그인한 계정이 보낸 문의만 (+ 클라이언트에게는 답변 완료 예시 1건)
