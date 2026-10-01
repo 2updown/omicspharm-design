@@ -66,13 +66,6 @@
           <div class="fields">
             <div class="field"><label for="name">이름<span class="req">*</span></label><div class="input"><input id="name" required placeholder="이름" autocomplete="name"></div></div>
             <div class="field"><label for="nick">닉네임<span class="req">*</span></label><div class="input"><input id="nick" required placeholder="닉네임"></div></div>
-            <div class="row2">
-              <div class="field"><label for="org">소속(회사)<span class="req">*</span></label><div class="input"><input id="org" required placeholder="소속" autocomplete="organization"></div></div>
-              <div class="field"><label for="dept">부서<span class="req">*</span></label><div class="input"><input id="dept" required placeholder="부서"></div></div>
-            </div>
-            <div class="field"><label for="country">국가<span class="req">*</span></label>
-              <div class="input select"><select id="country"><option>South Korea</option><option>United States</option><option>Japan</option><option>China</option><option>Other</option></select></div>
-            </div>
             <!-- 휴대폰 번호: 국가번호 + 3칸 (클라이언트·분석파트너 공통) -->
             <div class="field" id="f-phone"><label for="ph1">휴대폰 번호<span class="req">*</span></label>
               <div class="phone">
@@ -83,6 +76,13 @@
                 <span aria-hidden="true">-</span>
                 <div class="input"><input id="ph3" required inputmode="numeric" maxlength="4" placeholder="0000" aria-label="휴대폰 번호 끝자리"></div>
               </div>
+            </div>
+            <div class="row2">
+              <div class="field"><label for="org">소속(회사)<span class="req">*</span></label><div class="input"><input id="org" required placeholder="소속" autocomplete="organization"></div></div>
+              <div class="field"><label for="dept">부서<span class="req">*</span></label><div class="input"><input id="dept" required placeholder="부서"></div></div>
+            </div>
+            <div class="field"><label for="country">국가<span class="req">*</span></label>
+              <div class="input select"><select id="country"><option>South Korea</option><option>United States</option><option>Japan</option><option>China</option><option>Other</option></select></div>
             </div>
           </div>
           <button class="btn-action off" id="infoNext" type="submit">다음</button>
