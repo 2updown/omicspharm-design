@@ -80,9 +80,12 @@
   .totals tr.final td { height:52px; background:var(--bg-green); font-size:16px; font-weight:700; color:#000; }
   .totals tr.final td:last-child { color:var(--teal-700); font-size:18px; }
   textarea.inp { height:120px; padding:12px; resize:vertical; line-height:22px; }
-  .acts { display:flex; justify-content:center; gap:8px; margin-top:8px; }
+  /* 하단 버튼: 왼쪽 임시저장(button_outline tertiary) / 오른쪽 미리보기·최종 제출 묶음 (gap 8) */
+  .acts { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:8px; }
+  .acts .right { display:flex; gap:8px; }
   .acts .btn { min-width:160px; }
-  .acts .btn.ghost { border-color:var(--teal-100); background:var(--teal-50); color:var(--teal-700); }
+  .acts .btn.tertiary { border-color:var(--gray-300); background:#fff; color:var(--gray-500); }
+  .acts .btn.tertiary:hover { background:var(--gray-50); color:var(--gray-600); }
 
   /* 견적서 미리보기 (A4 문서) */
   .pv { position:fixed; inset:0; z-index:100; display:flex; flex-direction:column; background:rgba(0,0,0,.55); }
@@ -147,7 +150,8 @@
     .summary { grid-template-columns:1fr; }
     .kv dt { width:40%; }
     .totals td:last-child { width:auto; }
-    .acts .btn { flex:1; min-width:0; }
+    .acts { flex-direction:column-reverse; align-items:stretch; }
+    .acts .btn { min-width:0; } .acts .right .btn { flex:1; }
     .qrow { flex-wrap:wrap; gap:4px 12px; } .qrow .t { flex-basis:100%; } .qrow .p { width:auto; margin-left:auto; }
   }
 </style>
@@ -237,7 +241,8 @@
         '<tr class="final"><td>최종</td><td id="tFinal"></td></tr>' +
       '</tbody></table>' +
       '<h4>Notice</h4><textarea class="inp" id="memo" placeholder="분석 방법, 소요 기간, 시료 발송 조건 등 클라이언트에게 전달할 내용을 입력해주세요."></textarea>' +
-      '<div class="acts"><button type="button" class="btn lg" id="preview">견적서 미리보기</button><button type="button" class="btn lg ghost" id="saveTmp">임시저장</button><button type="button" class="btn primary lg" id="submit"' + (x.open ? '' : ' disabled') + '>견적서 최종 제출</button></div>' +
+      '<div class="acts"><button type="button" class="btn lg tertiary" id="saveTmp">임시저장</button>' +
+        '<div class="right"><button type="button" class="btn lg" id="preview">견적서 미리보기</button><button type="button" class="btn primary lg" id="submit"' + (x.open ? '' : ' disabled') + '>견적서 최종 제출</button></div></div>' +
     '</section>';
 
   // 공급자: 저장본 → 없으면 내 계정 정보로 채움
