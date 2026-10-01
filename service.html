@@ -26,7 +26,7 @@
   .page-head h1 { font-size:36px; font-weight:700; line-height:46px; letter-spacing:-.36px; }
 
   /* 분석 서비스 탭 (마크로젠 NGS 페이지 참고): Overview 아래 탭 → 고른 서비스 내용만 표시 */
-  .svc { padding-top:72px; scroll-margin-top:70px; }
+  .svc { padding-top:32px; scroll-margin-top:70px; }
   .svc > h2 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; }
   .svc-bar { display:flex; align-items:center; gap:16px; margin-top:24px; border-bottom:1px solid var(--gray-200); }
   .tabs { flex:1; min-width:0; display:flex; gap:32px; overflow-x:auto; scrollbar-width:none; scroll-behavior:smooth; }
@@ -64,7 +64,7 @@
   .feats { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); border-top:1px solid var(--gray-200); border-left:1px solid var(--gray-200); }
   .feat { padding:28px; border-right:1px solid var(--gray-200); border-bottom:1px solid var(--gray-200); background:#fff; }
   /* 칸 아래쪽을 오른쪽 사진 아래 끝에 맞춤 */
-  #overview { align-items:stretch; border-bottom:0; }
+  #overview { align-items:stretch; border-bottom:0; padding-bottom:40px; }
   #overview > div:not(.pic) { display:flex; flex-direction:column; }
   #overview .feats { flex:1; grid-auto-rows:1fr; }
   .feat b { display:block; font-size:19px; font-weight:700; line-height:27px; letter-spacing:-.19px; word-break:keep-all; }
@@ -127,15 +127,16 @@
     html { scroll-padding-top:128px; }
     .page-head { padding:40px 16px 16px; }
     .page-head h1 { font-size:28px; line-height:38px; }
-    .svc { padding-top:48px; }
+    .svc { padding-top:16px; }
+    #overview { padding-bottom:32px; }
     .svc > h2 { font-size:24px; line-height:34px; }
     .tabs { gap:20px; }
     .tabs button { height:52px; font-size:15px; }
     .arrows { display:none; }
-    /* 모바일: 탭 줄을 손으로 밀면 가운데 온 서비스로 바로 바뀜 (스냅 캐러셀) */
+    /* 모바일: 탭 줄을 손으로 밀면 맨 왼쪽에 온 서비스로 바로 바뀜 (스냅 캐러셀) */
     .tabs { scroll-snap-type:x mandatory; scroll-behavior:auto; }
-    .tabs::before, .tabs::after { content:""; flex:0 0 calc(50% - 60px); }
-    .tabs button { scroll-snap-align:center; }
+    .tabs::after { content:""; flex:0 0 calc(100% - 120px); } /* 마지막 탭까지 왼쪽에 붙일 수 있게 */
+    .tabs button { scroll-snap-align:start; }
     .body { padding:0 16px 64px; }
     .sec { padding:48px 0; }
     .pic img { border-radius:12px; }
@@ -278,12 +279,12 @@
   $('#secs').innerHTML = html;
 
   // 서비스 탭: 고른 서비스만 보여준다. 주소 #서비스id 로 바로 열 수 있음 (메인 분석 서비스 카드 → service.html#genomics)
-  var ids = TABS.map(function (t) { return t[0]; });
+  var ids = TABS.map(function (t) { return t[0]; }), mq = window.matchMedia('(max-width:640px)');
   function show(id, scroll, quiet) {
     if (ids.indexOf(id) < 0) id = ids[0];
     [].forEach.call(document.querySelectorAll('#tabs button'), function (b) {
       var on = b.dataset.t === id; b.classList.toggle('on', on); b.setAttribute('aria-selected', on);
-      if (on) { var bar = b.parentNode; bar.scrollLeft = b.offsetLeft - bar.offsetLeft - bar.clientWidth / 2 + b.offsetWidth / 2; }
+      if (on) { var bar = b.parentNode, x = b.offsetLeft - bar.offsetLeft; bar.scrollLeft = mq.matches ? x : x - bar.clientWidth / 2 + b.offsetWidth / 2; } // 모바일은 왼쪽 정렬, PC는 가운데
     });
     ids.forEach(function (x) { document.getElementById(x).hidden = x !== id; });
     var k = ids.indexOf(id); $('#tPrev').disabled = k === 0; $('#tNext').disabled = k === ids.length - 1;
@@ -293,14 +294,14 @@
   $('#tabs').addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (b) show(b.dataset.t); });
   $('#tPrev').addEventListener('click', function () { var k = ids.indexOf($('#tabs .on').dataset.t); show(ids[k - 1]); });
   $('#tNext').addEventListener('click', function () { var k = ids.indexOf($('#tabs .on').dataset.t); show(ids[k + 1]); });
-  // 모바일: 탭 줄 스와이프가 멈추면 가운데에 온 탭을 선택
-  var mq = window.matchMedia('(max-width:640px)'), swipeT;
+  // 모바일: 탭 줄 스와이프가 멈추면 맨 왼쪽에 온 탭을 선택
+  var swipeT;
   $('#tabs').addEventListener('scroll', function () {
     if (!mq.matches) return;
     clearTimeout(swipeT);
     swipeT = setTimeout(function () {
-      var bar = $('#tabs'), mid = bar.getBoundingClientRect().left + bar.clientWidth / 2, best = null, d = 1e9;
-      [].forEach.call(bar.querySelectorAll('button'), function (b) { var r = b.getBoundingClientRect(), x = Math.abs(r.left + r.width / 2 - mid); if (x < d) { d = x; best = b; } });
+      var bar = $('#tabs'), left = bar.getBoundingClientRect().left, best = null, d = 1e9;
+      [].forEach.call(bar.querySelectorAll('button'), function (b) { var x = Math.abs(b.getBoundingClientRect().left - left); if (x < d) { d = x; best = b; } });
       if (best && !best.classList.contains('on')) show(best.dataset.t);
     }, 150);
   }, { passive: true });
