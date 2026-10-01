@@ -7,9 +7,9 @@
   var ACC_KEY = 'op.accounts', SES_KEY = 'op.session';
   var DEMO_PW = 'Demo@1234';
   var SEED = {
-    'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true, name: '홍길동', org: '○○연구소' },
-    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '○○분석센터' },
-    'admin@omicspharm.test':   { role: 'admin',   pw: DEMO_PW, profileDone: true, name: '셀키 컨설턴트', org: '셀키' }
+    'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true, name: '홍길동', org: '○○연구소', phone: '+82 010-1234-5678' },
+    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '○○분석센터', phone: '+82 010-2345-6789' },
+    'admin@omicspharm.test':   { role: 'admin',   pw: DEMO_PW, profileDone: true, name: '셀키 컨설턴트', org: '셀키', phone: '+82 010-3456-7890' }
   };
   var ROLE_LABEL = { client: '클라이언트', partner: '분석파트너', admin: '컨설턴트' }; // admin = 셀키 컨설턴트
 
@@ -23,7 +23,12 @@
   var OP = window.OP = {
     DEMO_PW: DEMO_PW,
     ROLE_LABEL: ROLE_LABEL,
-    accounts: function () { return Object.assign({}, SEED, read(ACC_KEY, {})); },
+    // 데모 계정은 저장된 값 위에 기본값을 깔아 둔다 (연락처 등 필수값이 비지 않게)
+    accounts: function () {
+      var st = read(ACC_KEY, {}), all = Object.assign({}, SEED, st);
+      Object.keys(SEED).forEach(function (k) { if (st[k]) { all[k] = Object.assign({}, SEED[k], st[k]); if (!st[k].phone) all[k].phone = SEED[k].phone; } });
+      return all;
+    },
     account: function (email) { return OP.accounts()[String(email || '').trim().toLowerCase()] || null; },
     saveAccount: function (email, data) {
       var all = read(ACC_KEY, {}), key = String(email).trim().toLowerCase();
