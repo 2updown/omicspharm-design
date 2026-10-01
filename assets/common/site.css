@@ -181,7 +181,7 @@
 .op-ac li small { flex:none; font-size:12px; line-height:18px; color:var(--op-gray-500); }
 .op-ac li:hover, .op-ac li.on { background:var(--op-gray-100); }
 .op-ac li.add span { font-weight:500; }
-.op-ac li.add em { flex:none; font-style:normal; padding:2px 10px; border:1px solid var(--op-teal-600); border-radius:6px; font-size:13px; font-weight:500; line-height:20px; color:var(--op-teal-600); background:#fff; }
-.op-ac li.add:hover em, .op-ac li.add.on em { background:var(--op-teal-600); color:#fff; }
+.op-ac li.add em { flex:none; font-style:normal; font-size:14px; font-weight:600; line-height:20px; color:var(--op-teal-600); }
+.op-ac li.add:hover em, .op-ac li.add.on em { color:var(--op-teal-700); text-decoration:underline; text-underline-offset:3px; }
 .op-ac li.none { cursor:default; font-size:14px; color:var(--op-gray-500); }
 .op-ac li.none:hover { background:none; }
