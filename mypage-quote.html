@@ -84,6 +84,52 @@
   .acts .btn { min-width:160px; }
   .acts .btn.ghost { border-color:var(--teal-100); background:var(--teal-50); color:var(--teal-700); }
 
+  /* 견적서 미리보기 (A4 문서) */
+  .pv { position:fixed; inset:0; z-index:100; display:flex; flex-direction:column; background:rgba(0,0,0,.55); }
+  .pv[hidden] { display:none; }
+  .pv-bar { flex:none; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 20px; background:#111; color:#fff; }
+  .pv-bar b { font-size:15px; font-weight:600; }
+  .pv-bar div { display:flex; gap:8px; }
+  .pv-bar button { height:36px; padding:0 14px; border-radius:8px; font-size:14px; font-weight:500; background:#fff; color:#111; }
+  .pv-bar button.x { background:#333; color:#fff; }
+  .pv-scroll { flex:1; overflow:auto; padding:32px 16px; }
+  .doc { width:794px; max-width:100%; min-height:1123px; margin:0 auto; padding:56px 56px 48px; background:#fff; color:#111; font-size:13px; line-height:20px; box-shadow:0 8px 32px rgba(0,0,0,.25); }
+  .doc-head { display:flex; align-items:flex-end; justify-content:space-between; padding-bottom:14px; border-bottom:3px solid #111; }
+  .doc-head img { width:150px; height:auto; }
+  .doc-head h1 { font-size:28px; font-weight:800; line-height:34px; letter-spacing:.2em; }
+  .doc-head h1 small { display:block; font-size:12px; font-weight:500; letter-spacing:.1em; color:#666; text-align:right; }
+  .doc-meta { display:flex; justify-content:space-between; gap:16px; margin:16px 0 20px; font-size:12px; color:#444; }
+  .doc h2 { margin:22px 0 8px; font-size:14px; font-weight:700; }
+  .doc table { width:100%; border-collapse:collapse; table-layout:fixed; }
+  .doc th, .doc td { padding:7px 10px; border:1px solid #c9c9c9; vertical-align:middle; word-break:break-word; }
+  .doc th { background:#f2f4f3; font-weight:600; text-align:left; }
+  .doc .parties { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .doc .parties h3 { margin-bottom:6px; font-size:13px; font-weight:700; }
+  .doc .parties th { width:34%; }
+  .doc .it th { text-align:center; }
+  .doc .it td.r, .doc .tt td.r { text-align:right; white-space:nowrap; }
+  .doc .it td.c { text-align:center; }
+  .doc .it tr.sub td { background:#fafafa; font-weight:600; }
+  .doc .tt { margin-top:-1px; }
+  .doc .tt th { width:70%; text-align:right; }
+  .doc .tt tr.minus td { color:#d00; }
+  .doc .tt tr.final th, .doc .tt tr.final td { background:#eaf6f3; font-size:15px; font-weight:800; }
+  .doc .memo { min-height:72px; padding:10px 12px; border:1px solid #c9c9c9; white-space:pre-line; }
+  .doc .sign { display:flex; justify-content:flex-end; align-items:center; gap:12px; margin-top:28px; font-size:14px; }
+  .doc .sign b { font-size:15px; }
+  .doc .stamp { display:inline-flex; align-items:center; justify-content:center; width:52px; height:52px; border:2px solid #d33; border-radius:50%; color:#d33; font-size:12px; font-weight:700; transform:rotate(-12deg); }
+  .doc .foot { margin-top:28px; padding-top:12px; border-top:1px solid #ddd; font-size:11px; color:#777; text-align:center; }
+  .doc .demo { color:#999; }
+  @media (max-width:640px) { .doc { padding:28px 20px; min-height:0; font-size:12px; } .doc .parties { grid-template-columns:1fr; } .doc-head h1 { font-size:22px; } .pv-scroll { padding:16px 8px; } }
+  @media print {
+    body > *:not(.pv) { display:none !important; }
+    .pv { position:static; background:none; }
+    .pv-bar { display:none; }
+    .pv-scroll { padding:0; overflow:visible; }
+    .doc { box-shadow:none; width:auto; min-height:0; padding:0; }
+    @page { size:A4; margin:16mm; }
+  }
+
   /* 목록 */
   .qlist { border-top:2px solid #000; }
   .qrow { display:flex; align-items:center; gap:16px; padding:16px 12px; border-bottom:1px solid var(--gray-200); }
@@ -194,7 +240,7 @@
         '<tr class="final"><td>최종</td><td id="tFinal"></td></tr>' +
       '</tbody></table>' +
       '<h4>Notice</h4><textarea class="inp" id="memo" placeholder="분석 방법, 소요 기간, 시료 발송 조건 등 클라이언트에게 전달할 내용을 입력해주세요."></textarea>' +
-      '<div class="acts"><button type="button" class="btn lg ghost" id="saveTmp">임시저장</button><button type="button" class="btn primary lg" id="submit"' + (x.open ? '' : ' disabled') + '>견적서 최종 제출</button></div>' +
+      '<div class="acts"><button type="button" class="btn lg" id="preview">견적서 미리보기</button><button type="button" class="btn lg ghost" id="saveTmp">임시저장</button><button type="button" class="btn primary lg" id="submit"' + (x.open ? '' : ' disabled') + '>견적서 최종 제출</button></div>' +
     '</section>';
 
   // 공급자: 저장본 → 없으면 내 계정 정보로 채움
@@ -269,6 +315,56 @@
     [].forEach.call(card.querySelectorAll('input, select, textarea, #rows button, #addGroup'), function (el) { el.disabled = true; });
     $('#saveTmp').hidden = true; $('#submit').disabled = true; $('#submit').textContent = '제출 완료';
   }
+
+  // 견적서 미리보기: 지금 입력한 내용으로 A4 견적서 문서를 보여준다 (인쇄·PDF 저장 가능)
+  var pv = document.createElement('div');
+  pv.className = 'pv'; pv.hidden = true; pv.setAttribute('role', 'dialog'); pv.setAttribute('aria-modal', 'true'); pv.setAttribute('aria-label', '견적서 미리보기');
+  document.body.appendChild(pv);
+  function preview() {
+    var q = collect(!!(saved && saved.submitted)), cur = q.cur, sup = q.supplier, val = function (v) { return esc(v || '-'); };
+    var sum = q.groups.reduce(function (t, g) { return t + sub(g); }, 0), sale = num(q.sale), add = num(q.addSale);
+    var net = Math.max(0, sum - sale - add), vat = cur === 'KRW' ? Math.round(net * 0.1) : 0;
+    var today = new Date(), ymd = OP.my.ymd(today), valid = OP.my.ymd(today.getTime() + 30 * 864e5);
+    var no = 'Q-' + String(x.id + 1).padStart(4, '0') + '-' + ymd.replace(/\./g, '').slice(2);
+    var rows = q.groups.map(function (g) {
+      return g.lines.map(function (l, i) {
+        return '<tr>' + (i === 0 ? '<td rowspan="' + (g.lines.length + 1) + '">' + val(g.name) + '</td>' : '') +
+          '<td>' + val(l.d) + '</td><td class="c">' + esc(l.q || '') + '</td><td class="c">' + esc(l.u || '') + '</td><td class="r">' + money(num(l.p), cur) + '</td><td class="r">' + money(num(l.q) * num(l.p), cur) + '</td></tr>';
+      }).join('') + '<tr class="sub"><td colspan="4" style="text-align:right">소계</td><td class="r">' + money(sub(g), cur) + '</td></tr>';
+    }).join('');
+    pv.innerHTML =
+      '<div class="pv-bar"><b>견적서 미리보기</b><div><button type="button" id="pvPrint">인쇄 · PDF 저장</button><button type="button" class="x" id="pvClose">닫기</button></div></div>' +
+      '<div class="pv-scroll"><article class="doc">' +
+        '<div class="doc-head"><img src="assets/main/logo.svg" alt="OmicsPharm"><h1>견 적 서<small>QUOTATION</small></h1></div>' +
+        '<div class="doc-meta"><span>견적번호 ' + no + '</span><span>견적일자 ' + ymd + '</span><span>유효기간 ' + valid + '까지</span></div>' +
+        '<table><tr><th style="width:18%">프로젝트명</th><td>' + esc(x.title) + '</td></tr><tr><th>분석 분야</th><td>' + esc(x.cat) + ' · 시료 ' + x.samples + '개 · 희망완료일 ' + x.due + '</td></tr></table>' +
+        '<div class="parties" style="margin-top:16px">' +
+          '<div><h3>고객사</h3><table><tr><th>기업명</th><td>셀키</td></tr><tr><th>담당자</th><td>셀키 컨설턴트</td></tr><tr><th>연락처</th><td>+82 010-3456-7890</td></tr><tr><th>이메일</th><td>admin@omicspharm.test</td></tr></table></div>' +
+          '<div><h3>공급자</h3><table><tr><th>기업명</th><td>' + val(sup.s_org) + '</td></tr><tr><th>대표자</th><td>' + val(sup.s_ceo) + '</td></tr><tr><th>사업자등록번호</th><td>' + val(sup.s_biz) + '</td></tr><tr><th>담당자</th><td>' + val(sup.s_mgr) + '</td></tr><tr><th>연락처</th><td>' + val(sup.s_tel) + '</td></tr><tr><th>이메일</th><td>' + val(sup.s_mail) + '</td></tr><tr><th>주소</th><td>' + val(sup.s_addr) + '</td></tr></table></div>' +
+        '</div>' +
+        '<h2>제안가 <span style="font-weight:400;color:#666">(' + ({ KRW: '원화, 공급가 VAT 별도', USD: '달러', JPY: '엔화' })[cur] + ')</span></h2>' +
+        '<table class="it"><colgroup><col style="width:22%"><col><col style="width:9%"><col style="width:9%"><col style="width:15%"><col style="width:16%"></colgroup>' +
+          '<tr><th>시험명</th><th>세부내용</th><th>수량</th><th>Unit</th><th>단가</th><th>금액</th></tr>' + rows + '</table>' +
+        '<table class="tt"><tr><th>분석료 합계</th><td class="r">' + money(sum, cur) + '</td></tr>' +
+          (sale ? '<tr class="minus"><th>할인</th><td class="r">-' + money(sale, cur) + '</td></tr>' : '') +
+          (add ? '<tr class="minus"><th>추가 할인</th><td class="r">-' + money(add, cur) + '</td></tr>' : '') +
+          '<tr><th>분석료 총계</th><td class="r">' + money(net, cur) + '</td></tr>' +
+          (cur === 'KRW' ? '<tr><th>VAT 10%</th><td class="r">' + money(vat, cur) + '</td></tr>' : '') +
+          '<tr class="final"><th>최종 견적 금액</th><td class="r">' + money(net + vat, cur) + '</td></tr></table>' +
+        '<h2>Notice</h2><div class="memo">' + (q.memo ? esc(q.memo) : '<span class="demo">작성된 내용이 없습니다.</span>') + '</div>' +
+        '<div class="sign"><span>위와 같이 견적합니다.</span><b>' + val(sup.s_org) + '</b><span class="stamp">(인)</span></div>' +
+        '<p class="foot">본 견적서는 OmicsPharm 분석 중개 플랫폼을 통해 발행되었습니다. · 계약은 OmicsPharm 컨설턴트의 중개 하에 진행됩니다.</p>' +
+      '</article></div>';
+    pv.hidden = false; document.body.style.overflow = 'hidden';
+    $('#pvClose').focus();
+  }
+  function closePv() { pv.hidden = true; document.body.style.overflow = ''; $('#preview').focus(); }
+  $('#preview').addEventListener('click', preview);
+  pv.addEventListener('click', function (e) {
+    if (e.target.closest('#pvClose') || e.target === pv) closePv();
+    else if (e.target.closest('#pvPrint')) window.print();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !pv.hidden) closePv(); });
 
   // 탭: 해당 영역으로 스크롤 + 스크롤 위치 따라 표시
   var tabs = [].slice.call(card.querySelectorAll('.qtabs button'));
