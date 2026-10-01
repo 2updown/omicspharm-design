@@ -182,6 +182,6 @@
 .op-ac li:hover, .op-ac li.on { background:var(--op-gray-100); }
 .op-ac li.add span { font-weight:500; }
 .op-ac li.add em { flex:none; font-style:normal; font-size:14px; font-weight:600; line-height:20px; color:var(--op-teal-600); }
-.op-ac li.add:hover em, .op-ac li.add.on em { color:var(--op-teal-700); text-decoration:underline; text-underline-offset:3px; }
+.op-ac li.add:hover em, .op-ac li.add.on em { color:var(--op-teal-700); }
 .op-ac li.none { cursor:default; font-size:14px; color:var(--op-gray-500); }
 .op-ac li.none:hover { background:none; }
