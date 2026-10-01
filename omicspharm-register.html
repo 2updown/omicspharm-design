@@ -537,8 +537,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261001x">
-<script src="assets/common/site.js?v=20261001x"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261001y">
+<script src="assets/common/site.js?v=20261001y"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -566,15 +566,10 @@
       <div class="sec">
         <h2>의뢰자 정보</h2>
         <div class="tbl">
-          <div class="field"><div class="flabel">담당자</div><div class="fbody"><input type="text" value="홍길동" disabled></div></div>
-          <div class="field"><div class="flabel">소속</div><div class="fbody"><input type="text" value="○○연구소" disabled></div></div>
-          <div class="field" id="phoneField" data-req="verify"><div class="flabel">연락처<span class="req">*</span></div><div class="fbody">
-            <div class="phrow">
-              <input type="text" id="phoneVal" value="" placeholder="휴대폰 인증 후 자동 입력됩니다." disabled>
-              <span class="vbadge" id="vBadge">미인증</span>
-              <button type="button" class="vbtn" id="verifyBtn">인증하기</button>
-            </div>
-            <p class="fhelp" id="phoneHelp" hidden>담당 매니저 연락을 위해 휴대폰 인증이 필요합니다.</p></div></div>
+          <div class="field"><div class="flabel">담당자</div><div class="fbody"><input type="text" id="mgrVal" value="홍길동" disabled></div></div>
+          <div class="field"><div class="flabel">소속</div><div class="fbody"><input type="text" id="orgVal" value="○○연구소" disabled></div></div>
+          <!-- 연락처: 회원가입 때 입력한 휴대폰 번호를 그대로 표시 (별도 인증 없음) -->
+          <div class="field" id="phoneField"><div class="flabel">연락처</div><div class="fbody"><input type="text" id="phoneVal" value="" placeholder="등록된 연락처가 없습니다. 마이페이지에서 입력해주세요." disabled></div></div>
         </div>
         <p class="tnote">회원 정보가 자동 입력됩니다. 변경은 마이페이지에서 가능합니다.</p>
       </div>
@@ -1103,7 +1098,6 @@
       var m=miss[+b.dataset.i]; cur=m.step; render();
       setTimeout(function(){
         m.el.scrollIntoView({behavior:'smooth',block:'center'});
-        if(m.el.id==='phoneField' && !VERIFIED) openPhone();
       },40);
     }});
     miss.forEach(function(m){ m.el.classList.add('invalid');
@@ -1263,15 +1257,13 @@
   /* ── 휴대폰 인증 ── */
   var VERIFIED=false, PHONE='', tick=null, code='';
   var pModal=$('#phoneModal');
+  // 의뢰자 정보: 회원 정보(담당자·소속·회원가입 때 입력한 휴대폰 번호)를 그대로 표시. 휴대폰 인증 절차 없음
   function markPhone(){
+    var ss=OP.session(), acc=ss?(OP.account(ss.email)||{}):{};
+    PHONE=acc.phone||''; VERIFIED=true;
     $('#phoneVal').value=PHONE;
-    $('#vBadge').textContent=VERIFIED?'인증 완료':'미인증';
-    $('#vBadge').classList.toggle('ok',VERIFIED);
-    $('#verifyBtn').textContent=VERIFIED?'번호 변경':'인증하기';
-    $('#phoneHelp').textContent = VERIFIED
-      ? '인증된 번호는 계정에 저장되어 다음 의뢰부터 자동으로 입력됩니다.'
-      : '담당 매니저 연락을 위해 휴대폰 인증이 필요합니다. 한 번 인증하면 다음 의뢰부터 자동으로 입력됩니다.';
-    $('#phoneField').classList.remove('warn');
+    if(acc.name) $('#mgrVal').value=acc.name;
+    if(acc.org) $('#orgVal').value=acc.org;
   }
   function openPhone(){
     $('#pDesc').textContent='담당 매니저 연락을 위해 휴대폰 인증이 필요합니다. 인증한 번호는 계정에 저장됩니다.';
@@ -1280,7 +1272,6 @@
     clearInterval(tick); pModal.classList.add('on'); $('#pPhone').focus();
   }
   function closePhone(){ pModal.classList.remove('on'); clearInterval(tick) }
-  $('#verifyBtn').onclick=openPhone;
   $('#pCancel').onclick=closePhone;
   pModal.onclick=function(e){ if(e.target===pModal) closePhone() };
 
