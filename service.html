@@ -31,7 +31,7 @@
   .svc-bar { display:flex; align-items:center; gap:16px; margin-top:24px; border-bottom:1px solid var(--gray-200); }
   .tabs { flex:1; min-width:0; display:flex; gap:32px; overflow-x:auto; scrollbar-width:none; scroll-behavior:smooth; }
   .tabs::-webkit-scrollbar { display:none; }
-  .tabs.drag { scroll-snap-type:none !important; scroll-behavior:auto; cursor:grabbing; user-select:none; }
+  .tabs.drag { scroll-behavior:auto; cursor:grabbing; user-select:none; }
   .tabs button { position:relative; flex:none; display:flex; align-items:center; height:56px; padding:0 2px; font:inherit; font-size:17px; font-weight:500; line-height:24px; color:var(--gray-400); white-space:nowrap; background:none; border:0; cursor:pointer; }
   .tabs button:hover { color:#000; }
   .tabs button.on { color:#000; font-weight:700; }
@@ -134,10 +134,7 @@
     .tabs { gap:20px; }
     .tabs button { height:52px; font-size:15px; }
     .arrows { display:none; }
-    /* 모바일: 탭 줄을 손으로 밀면 맨 왼쪽에 온 서비스로 바로 바뀜 (스냅 캐러셀) */
-    .tabs { scroll-snap-type:x mandatory; scroll-behavior:auto; }
-    .tabs::after { content:""; flex:0 0 calc(100% - 120px); } /* 마지막 탭까지 왼쪽에 붙일 수 있게 */
-    .tabs button { scroll-snap-align:start; }
+    /* 모바일: 탭 줄은 손으로 밀어 자유롭게 움직이고, 서비스는 탭을 눌러야 바뀜 */
     .body { padding:0 16px 64px; }
     .sec { padding:48px 0; }
     .pic img { border-radius:12px; }
@@ -295,17 +292,6 @@
   $('#tabs').addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (b) show(b.dataset.t); });
   $('#tPrev').addEventListener('click', function () { var k = ids.indexOf($('#tabs .on').dataset.t); show(ids[k - 1]); });
   $('#tNext').addEventListener('click', function () { var k = ids.indexOf($('#tabs .on').dataset.t); show(ids[k + 1]); });
-  // 모바일: 탭 줄 스와이프가 멈추면 맨 왼쪽에 온 탭을 선택
-  var swipeT;
-  $('#tabs').addEventListener('scroll', function () {
-    if (!mq.matches) return;
-    clearTimeout(swipeT);
-    swipeT = setTimeout(function () {
-      var bar = $('#tabs'), left = bar.getBoundingClientRect().left, best = null, d = 1e9;
-      [].forEach.call(bar.querySelectorAll('button'), function (b) { var x = Math.abs(b.getBoundingClientRect().left - left); if (x < d) { d = x; best = b; } });
-      if (best && !best.classList.contains('on')) show(best.dataset.t);
-    }, 150);
-  }, { passive: true });
   // 마우스로도 탭 줄을 끌어서 넘길 수 있게 (PC 브라우저를 좁혀 볼 때). 끌고 난 뒤의 클릭은 무시
   (function () {
     var bar = $('#tabs'), down = false, sx = 0, sl = 0, moved = false;
@@ -321,7 +307,7 @@
     });
     window.addEventListener('pointerup', function () {
       if (!down) return; down = false;
-      if (moved) { bar.classList.remove('drag'); bar.dispatchEvent(new Event('scroll')); }
+      if (moved) bar.classList.remove('drag');
     });
     bar.addEventListener('click', function (e) { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
   })();
