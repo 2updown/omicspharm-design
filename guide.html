@@ -240,7 +240,8 @@
     rail.style.bottom = (f.bottom - (d2.top + d2.height / 2)) + 'px';
   }
   function progress() {
-    var mark = window.innerHeight * 0.6;
+    // 처음 화면에서는 모두 기본 상태 → 스크롤한 만큼 기준선이 내려가며(최대 화면 60%) 단계가 켜진다
+    var mark = Math.min(window.innerHeight * 0.6, window.scrollY + window.innerHeight * 0.25);
     var r = rail.getBoundingClientRect();
     var h = Math.max(0, Math.min(r.height, mark - r.top));
     fill.style.height = h + 'px';
