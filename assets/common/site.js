@@ -59,22 +59,49 @@
   };
 
   /* ── 소속(회사)·부서: DB 기반 자동완성 + 직접 입력 ──
-     데모 DB = 가입된 계정들의 소속·부서 + localStorage 'op.orgs' { 소속명: [부서…] }.
-     실제 서비스에서는 서버 DB 검색 API로 바꾼다. */
-  var ORG_SEED = { '○○연구소': ['단백체연구팀', '유전체분석실'], '○○대학교 의과대학': ['생화학교실', '약리학교실'], '○○바이오': ['연구개발팀'], '○○병원': ['임상연구센터'], '○○제약': ['신약개발팀', '품질관리팀'], '○○분석센터': ['질량분석팀'], '셀키': ['컨설팅팀'] };
+     보호 정책 (실제 서비스에서는 서버 검색 API가 같은 규칙을 적용):
+     1) 소속: 2글자 이상, 앞글자 일치, 최대 5개, 부가 정보 없음
+     2) 사용자가 새로 추가한 소속은 셀키 승인 전까지 다른 사용자 검색에 나오지 않음 (본인에게만 보임)
+     3) 부서: 가입자 3명 이상인 부서만, 사용자 이메일 도메인이 그 기관 도메인과 같을 때만 노출 (무료 메일은 직접 입력)
+     데모 DB = 아래 예시 + 가입된 계정들(op.accounts)의 소속·부서. 승인된 소속 목록은 localStorage 'op.orgApproved' */
+  var ORG_SEED = {
+    '○○연구소': { domains: ['omicspharm.test'], depts: { '단백체연구팀': 3, '유전체분석실': 1 } }, // 데모 계정과 같은 도메인
+    '○○대학교 의과대학': { domains: ['univ.example'], depts: { '생화학교실': 4, '약리학교실': 1 } },
+    '○○바이오': { domains: ['bio.example'], depts: { '연구개발팀': 5 } },
+    '○○병원': { domains: ['hospital.example'], depts: { '임상연구센터': 2 } },
+    '○○제약': { domains: ['pharma.example'], depts: { '신약개발팀': 3, '품질관리팀': 1 } },
+    '○○분석센터': { domains: ['center.example'], depts: { '질량분석팀': 3 } },
+    '셀키': { domains: ['cellkey.example'], depts: { '컨설팅팀': 3 } }
+  };
+  var FREE_MAIL = ['gmail.com', 'naver.com', 'daum.net', 'hanmail.net', 'kakao.com', 'nate.com', 'hotmail.com', 'outlook.com', 'yahoo.com', 'icloud.com', 'me.com'];
+  var DEPT_MIN = 3;
   var norm = function (t) { return String(t || '').replace(/\s+/g, ' ').trim(); };
+  var domainOf = function (email) { return String(email || '').toLowerCase().split('@')[1] || ''; };
+  function myEmail() { var s = OP.session(); if (s) return s.email; try { return sessionStorage.getItem('op.pendingSignup') || ''; } catch (e) { return ''; } }
+  // { 소속: { domains:[], depts:{ 부서: 가입자 수 }, seed, owners:[] } }
   OP.orgDB = function () {
     var db = {};
-    var add = function (o, d) { o = norm(o); if (!o) return; db[o] = db[o] || []; d = norm(d); if (d && db[o].indexOf(d) < 0) db[o].push(d); };
-    Object.keys(ORG_SEED).forEach(function (o) { add(o); ORG_SEED[o].forEach(function (d) { add(o, d); }); });
-    var acc = OP.accounts(); Object.keys(acc).forEach(function (k) { add(acc[k].org, acc[k].dept); });
-    var st = read('op.orgs', {}); Object.keys(st).forEach(function (o) { add(o); (st[o] || []).forEach(function (d) { add(o, d); }); });
+    var get = function (o) { return db[o] = db[o] || { domains: [], depts: {}, owners: [] }; };
+    Object.keys(ORG_SEED).forEach(function (o) { var x = get(o); x.seed = true; x.domains = ORG_SEED[o].domains.slice(); Object.assign(x.depts, ORG_SEED[o].depts); });
+    var acc = OP.accounts();
+    Object.keys(acc).forEach(function (email) {
+      var o = norm(acc[email].org); if (!o) return;
+      var x = get(o), d = norm(acc[email].dept), dom = domainOf(email);
+      x.owners.push(email);
+      if (dom && FREE_MAIL.indexOf(dom) < 0 && x.domains.indexOf(dom) < 0) x.domains.push(dom);
+      if (d) x.depts[d] = (x.depts[d] || 0) + 1;
+    });
     return db;
   };
-  OP.saveOrg = function (org, dept) {
-    org = norm(org); dept = norm(dept); if (!org) return;
-    var st = read('op.orgs', {}); st[org] = st[org] || []; if (dept && st[org].indexOf(dept) < 0) st[org].push(dept); write('op.orgs', st);
+  // 정책 2: 검색에 보이는 소속 = 예시·승인된 소속 + 내가 추가한 소속
+  OP.orgVisible = function (o, x) { var me = myEmail(); return x.seed || read('op.orgApproved', []).indexOf(o) > -1 || x.owners.indexOf(me) > -1; };
+  // 정책 3: 이 소속의 부서 중 나에게 보여줄 수 있는 것
+  OP.deptVisible = function (o) {
+    var x = OP.orgDB()[norm(o)], dom = domainOf(myEmail());
+    if (!x || !dom || FREE_MAIL.indexOf(dom) > -1 || x.domains.indexOf(dom) < 0) return [];
+    return Object.keys(x.depts).filter(function (d) { return x.depts[d] >= DEPT_MIN; });
   };
+  OP.saveOrg = function () {}; // 소속·부서는 계정 정보(op.accounts)에 저장된 값으로 집계 — 서버에서는 신규 소속을 '검수 대기'로 등록
   // 입력칸 아래 자동완성 목록. items(q) → [{v, sub}], 일치하는 항목이 없으면 '직접 추가'
   OP.combo = function (input, items, opt) {
     opt = opt || {};
@@ -114,14 +141,15 @@
     input.addEventListener('blur', function () { setTimeout(close, 100); });
     return { open: open, close: close };
   };
-  // 소속 → 부서 연결 (같은 소속을 고르면 그 소속에 등록된 부서가 뜬다)
+  // 소속 → 부서 연결 (같은 기관 도메인 사용자에게만, 3명 이상 등록된 부서가 뜬다)
   OP.orgCombo = function (orgInput, deptInput) {
     // 보호: 2글자 이상 입력해야 검색, 앞글자가 맞는 소속만 최대 5개, 부서 수 등 부가 정보는 보여주지 않음
     OP.combo(orgInput, function () {
-      return Object.keys(OP.orgDB()).sort(function (a, b) { return a.localeCompare(b, 'ko'); }).map(function (o) { return { v: o }; });
+      var db = OP.orgDB();
+      return Object.keys(db).filter(function (o) { return OP.orgVisible(o, db[o]); }).sort(function (a, b) { return a.localeCompare(b, 'ko'); }).map(function (o) { return { v: o }; });
     }, { minChars: 2, prefix: true, max: 5 });
     if (deptInput) OP.combo(deptInput, function () {
-      return (OP.orgDB()[norm(orgInput.value)] || []).map(function (d) { return { v: d }; });
+      return OP.deptVisible(orgInput.value).map(function (d) { return { v: d }; });
     });
   };
 
