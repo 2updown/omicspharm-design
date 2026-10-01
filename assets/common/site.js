@@ -9,9 +9,9 @@
   var SEED = {
     'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true, name: '홍길동', org: '○○연구소' },
     'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '○○분석센터' },
-    'admin@omicspharm.test':   { role: 'admin',   pw: DEMO_PW, profileDone: true, name: '관리자', org: 'OmicsPharm' }
+    'admin@omicspharm.test':   { role: 'admin',   pw: DEMO_PW, profileDone: true, name: '셀키 컨설턴트', org: '셀키' }
   };
-  var ROLE_LABEL = { client: '클라이언트', partner: '분석파트너', admin: '관리자 (셀키)' };
+  var ROLE_LABEL = { client: '클라이언트', partner: '분석파트너', admin: '컨설턴트' }; // admin = 셀키 컨설턴트
 
   function read(key, fallback) {
     try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
@@ -124,7 +124,7 @@
               '<div class="who"><b>' + s.email.replace(/</g, '&lt;') + '</b><span>' + (ROLE_LABEL[s.role] || '') + '</span></div>' +
               // 프로토타입 확인용: 로그아웃 없이 데모 계정으로 유형 전환
               '<div class="op-switch"><p>화면 전환 (데모)</p><div>' +
-                [['client', '클라이언트'], ['partner', '분석파트너']].map(function (r) {
+                [['client', '클라이언트'], ['partner', '분석파트너'], ['admin', '컨설턴트']].map(function (r) {
                   return '<button type="button" data-op-as="' + r[0] + '"' + (s.role === r[0] ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + r[1] + '</button>';
                 }).join('') + '</div></div>' +
               '<a href="mypage.html" role="menuitem">마이페이지</a>' +

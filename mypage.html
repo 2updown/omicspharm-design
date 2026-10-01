@@ -7,10 +7,10 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261001o">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261001o">
-<script src="assets/common/site.js?v=20261001o"></script>
-<script src="assets/common/mypage.js?v=20261001o"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261001p">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261001p">
+<script src="assets/common/site.js?v=20261001p"></script>
+<script src="assets/common/mypage.js?v=20261001p"></script>
 <style>
   .hello { flex-direction:row; align-items:center; justify-content:space-between; }
   .hello h2 { font-size:22px; font-weight:700; line-height:32px; letter-spacing:-.22px; }
@@ -111,20 +111,24 @@
 (function () {
   var me = OP.mypage('dash'); if (!me) return;
   var D = OP.my, esc = D.esc, $ = function (s) { return document.querySelector(s); };
-  var client = me.s.role === 'client';
-  var P = D.myProjects();
+  var client = me.s.role === 'client', admin = me.s.role === 'admin';
+  var P = admin ? D.projects() : D.myProjects(); // 컨설턴트는 전체 의뢰
 
   $('#hi').textContent = me.name + ' 님, 안녕하세요.';
-  $('#hiSub').textContent = client ? '진행 중인 프로젝트와 새 소식을 확인해보세요.' : '진행 중인 프로젝트와 새 소식을 확인해보세요.';
-  $('#acts').innerHTML = client
+  $('#hiSub').textContent = admin ? '새로 접수된 의뢰를 확인하고 분석파트너에게 견적을 요청해보세요.' : '진행 중인 프로젝트와 새 소식을 확인해보세요.';
+  $('#acts').innerHTML = admin
+    ? '<a class="btn" href="#" data-soon="견적·매칭 관리">견적·매칭 관리</a><a class="btn primary" href="mypage-project.html">의뢰 관리</a>'
+    : client
     ? '<a class="btn" href="contact.html">문의하기</a><a class="btn primary" href="omicspharm-register.html">프로젝트 의뢰하기</a>'
     : '<a class="btn" href="contact.html">문의하기</a><a class="btn primary" href="projects.html">프로젝트 찾기</a>';
 
   // 분석파트너: 셀키 매칭 후 계약된 프로젝트의 단계 (견적 요청·제출은 견적관리에서)
   var PP = D.partnerProjects();
-  var steps = client ? ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'] : D.P_STAGES;
+  // 컨설턴트: 의뢰 접수 → 견적 요청 → 견적 수신 → 매칭 완료 → 진행 중 (지금은 모든 의뢰가 '의뢰 접수')
+  var steps = admin ? ['의뢰 접수', '견적 요청', '견적 수신', '매칭 완료', '진행 중'] : client ? ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'] : D.P_STAGES;
   // 클라이언트: 지금은 제출한 의뢰가 모두 '의뢰접수' 단계
-  var counts = client ? [P.length, 0, 0, 0, 0] : steps.map(function (t) { return PP.filter(function (p) { return p.stage === t; }).length; });
+  var counts = client || admin ? [P.length, 0, 0, 0, 0] : steps.map(function (t) { return PP.filter(function (p) { return p.stage === t; }).length; });
+  if (admin) { $('#flow').closest('.card').querySelector('h3').textContent = '의뢰 처리 현황'; $('#plist').closest('.card').querySelector('h3').textContent = '최근 접수된 의뢰'; }
   $('#flow').style.setProperty('--n', steps.length);
   $('#flow').innerHTML = steps.map(function (t, i) {
     // 0건인 단계는 누를 수 없다
@@ -138,13 +142,13 @@
         '<h4>' + esc(p.title) + '</h4><span class="dt">' + esc(p.client) + '</span></a>';
     }).join('') + '</div>';
   } else
-  $('#plist').innerHTML = client && P.length
+  $('#plist').innerHTML = (client || admin) && P.length
     ? '<div class="plist">' + P.slice(0, 3).map(function (p) {
         return '<a href="mypage-project.html?id=' + encodeURIComponent(p.id) + '"><span class="badges"><span class="badge tag">' + esc(p.svc) + '</span><span class="badge state">의뢰접수</span></span>' +
-          '<h4>' + esc(p.title) + '</h4><span class="dt">' + D.ymd(p.at) + '</span></a>';
+          '<h4>' + esc(p.title) + '</h4><span class="dt">' + (admin && p.org ? esc(p.org) + ' · ' : '') + D.ymd(p.at) + '</span></a>';
       }).join('') + '</div>'
-    : '<div class="empty"><b>' + (client ? '의뢰한 프로젝트가 없습니다' : '받은 견적 요청이 없습니다') + '</b>' +
-      '<p>' + (client ? '분석 의뢰를 등록하면 분석파트너들의 견적을 비교해 받아볼 수 있습니다.' : 'OmicsPharm이 분석 의뢰에 맞는 파트너로 선정해 견적을 요청하면 여기에서 확인할 수 있습니다.') + '</p>' +
+    : '<div class="empty"><b>' + (admin ? '접수된 의뢰가 없습니다' : client ? '의뢰한 프로젝트가 없습니다' : '받은 견적 요청이 없습니다') + '</b>' +
+      '<p>' + (admin ? '클라이언트가 분석 의뢰를 등록하면 여기에 표시됩니다.' : client ? '분석 의뢰를 등록하면 분석파트너들의 견적을 비교해 받아볼 수 있습니다.' : 'OmicsPharm이 분석 의뢰에 맞는 파트너로 선정해 견적을 요청하면 여기에서 확인할 수 있습니다.') + '</p>' +
       (client ? '<a class="btn primary lg" href="omicspharm-register.html">프로젝트 의뢰하기</a>' : '') + '</div>';
 
   var A = D.alarms().slice(0, 4);
