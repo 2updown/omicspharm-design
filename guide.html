@@ -7,8 +7,8 @@
 <title>이용방법 · OmicsPharm</title>
 <!-- 서비스 소개 > 이용방법 (Figma 시안 없음 — 현재 홈페이지 /Instructions-for-use 내용 그대로, 분석 서비스 소개 섹션은 service.html로 분리되어 제외)
      하단 CTA 배너는 메인(index.html) 하단 배너와 동일 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261002h">
-<script src="assets/common/site.js?v=20261002h"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002i">
+<script src="assets/common/site.js?v=20261002i"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-100:#bffdf1; --orange-600:#fd4900; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9; --white:#fff;
@@ -115,6 +115,11 @@
   .btn-action .ico { width:20px; height:20px; }
   .btn-action:hover { border-color:var(--teal-700); color:var(--teal-700); }
 
+  /* 하단 CTA: 화면에 들어오면 글자·버튼만 차례로 떠오름 (배너 배경은 그대로) */
+  .cta .cta-rv { opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; transition-delay:var(--d, 0s); }
+  .cta.in .cta-rv { opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce) { .cta .cta-rv { opacity:1; transform:none; transition:none; } }
+
   @media (max-width:1180px) {
     .page-head, .sec, .cta-sec { padding-left:24px; padding-right:24px; }
     .tips { grid-template-columns:repeat(2, minmax(0,1fr)); }
@@ -189,9 +194,9 @@
 <section class="cta-sec">
   <div class="cta">
     <img src="assets/main/cta-bg.png" alt="">
-    <h2>오믹스 분석이 필요하신가요?</h2>
-    <p>유전체, 전사체, 단백체, 대사체 등 다양한 분석 의뢰를 지원하고,<br>견적부터 프로젝트 관리까지 전문 컨설턴트가 함께합니다.</p>
-    <a class="btn-action" href="omicspharm-register.html" data-client-only>프로젝트 의뢰하기 <span class="ico" style="--i:url(assets/main/ic-arrow-right.svg)"></span></a>
+    <h2 class="cta-rv" data-op-skip-enter>오믹스 분석이 필요하신가요?</h2>
+    <p class="cta-rv" data-op-skip-enter style="--d:.12s">유전체, 전사체, 단백체, 대사체 등 다양한 분석 의뢰를 지원하고,<br>견적부터 프로젝트 관리까지 전문 컨설턴트가 함께합니다.</p>
+    <a class="btn-action cta-rv" data-op-skip-enter style="--d:.24s" href="omicspharm-register.html" data-client-only>프로젝트 의뢰하기 <span class="ico" style="--i:url(assets/main/ic-arrow-right.svg)"></span></a>
   </div>
 </section>
 
@@ -260,6 +265,12 @@
   $('#tipList').innerHTML = TIPS.map(function (t, i) {
     return '<div class="tip" style="--d:' + (i * 0.12) + 's"><div class="art"><img src="assets/guide/tip-' + t[0] + '.svg" alt="" loading="lazy"></div><div class="tx"><h3><em>TIP ' + (i + 1) + '.</em>' + t[1] + '</h3><p>' + t[2] + '</p></div></div>';
   }).join('');
+  // 하단 CTA 글자 등장 (페이지 진입 효과는 건너뛰고 스크롤 등장으로)
+  var cta = document.querySelector('.cta'); // 글자·버튼에 cta-rv 클래스 (마크업)
+  function revealCta() { if (!cta.classList.contains('in') && cta.getBoundingClientRect().top < innerHeight * 0.85) cta.classList.add('in'); }
+  window.addEventListener('scroll', revealCta, { passive: true }); window.addEventListener('resize', revealCta);
+  window.addEventListener('load', revealCta);
+  setTimeout(revealCta, 60);
   var tipEls = [].slice.call(document.querySelectorAll('.tip'));
   function revealTips() { tipEls.forEach(function (t) { if (!t.classList.contains('in') && t.getBoundingClientRect().top < innerHeight * 0.88) t.classList.add('in'); }); }
   window.addEventListener('scroll', revealTips, { passive: true }); window.addEventListener('resize', revealTips); revealTips();

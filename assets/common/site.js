@@ -341,7 +341,7 @@
       var kids = function (p) {
         var out = [];
         [].forEach.call(p.children, function (c) {
-          if (/^(IMG|VIDEO|PICTURE|SVG|CANVAS)$/i.test(c.tagName) || getComputedStyle(c).position === 'absolute') return;
+          if (/^(IMG|VIDEO|PICTURE|SVG|CANVAS)$/i.test(c.tagName) || getComputedStyle(c).position === 'absolute' || c.hasAttribute('data-op-skip-enter')) return; // 자체 스크롤 등장 효과가 있는 요소는 제외
           if (hasBg(c) && c.children.length && !/^(A|BUTTON|LABEL|INPUT|SELECT|TEXTAREA|FORM)$/.test(c.tagName)) out = out.concat(kids(c)); else out.push(c); // 버튼·입력창은 통째로
         });
         return out;
