@@ -88,7 +88,8 @@
   .tip { position:absolute; left:50%; bottom:calc(100% + 10px); transform:translateX(-50%); padding:8px 12px; border-radius:6px; background:#101113; color:var(--gray-300);
     font-size:12px; line-height:18px; letter-spacing:-.12px; white-space:nowrap; display:none; z-index:5; }
   .tip::after { content:""; position:absolute; left:50%; top:100%; transform:translateX(-50%); border:7px solid transparent; border-bottom:0; border-top-color:#101113; }
-  .tip-wrap:hover .tip, .tip-wrap:focus-within .tip { display:block; }
+  /* 문구에 마우스를 올렸을 때만 표시 (클릭·체크 후에는 남지 않음). 키보드 이동 시에는 포커스 표시 중에만 */
+  .tip-wrap .tl:hover + .tip, .tip-wrap:has(input:focus-visible) .tip { display:block; }
   .select { position:relative; }
   .select select { height:40px; padding:0 40px 0 16px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font-size:14px; line-height:20px; appearance:none; -webkit-appearance:none; cursor:pointer; }
   .select::after { content:""; position:absolute; right:16px; top:12px; width:16px; height:16px; background:url(assets/find/ic-chevron-down.svg) center/contain no-repeat; pointer-events:none; }
@@ -247,7 +248,7 @@
       <div class="toolbar">
         <span class="total" id="total"></span>
         <div class="tools">
-          <label class="check tip-wrap"><input type="checkbox" id="hidePrivate"><i></i><span>비공개 프로젝트 제외</span><span class="tip">비공개로 등록된 프로젝트를 검색 결과에서 제외합니다.</span></label>
+          <label class="check tip-wrap"><input type="checkbox" id="hidePrivate"><i></i><span class="tl">비공개 프로젝트 제외</span><span class="tip">비공개로 등록된 프로젝트를 검색 결과에서 제외합니다.</span></label>
           <div class="select"><select id="sort" aria-label="정렬">
             <option value="new">최신 등록 순</option>
             <option value="deadline">마감 임박 순</option>
