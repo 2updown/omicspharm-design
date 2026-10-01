@@ -132,6 +132,10 @@
     .tabs { gap:20px; }
     .tabs button { height:52px; font-size:15px; }
     .arrows { display:none; }
+    /* 모바일: 탭 줄을 손으로 밀면 가운데 온 서비스로 바로 바뀜 (스냅 캐러셀) */
+    .tabs { scroll-snap-type:x mandatory; scroll-behavior:auto; }
+    .tabs::before, .tabs::after { content:""; flex:0 0 calc(50% - 60px); }
+    .tabs button { scroll-snap-align:center; }
     .body { padding:0 16px 64px; }
     .sec { padding:48px 0; }
     .pic img { border-radius:12px; }
@@ -289,6 +293,17 @@
   $('#tabs').addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (b) show(b.dataset.t); });
   $('#tPrev').addEventListener('click', function () { var k = ids.indexOf($('#tabs .on').dataset.t); show(ids[k - 1]); });
   $('#tNext').addEventListener('click', function () { var k = ids.indexOf($('#tabs .on').dataset.t); show(ids[k + 1]); });
+  // 모바일: 탭 줄 스와이프가 멈추면 가운데에 온 탭을 선택
+  var mq = window.matchMedia('(max-width:640px)'), swipeT;
+  $('#tabs').addEventListener('scroll', function () {
+    if (!mq.matches) return;
+    clearTimeout(swipeT);
+    swipeT = setTimeout(function () {
+      var bar = $('#tabs'), mid = bar.getBoundingClientRect().left + bar.clientWidth / 2, best = null, d = 1e9;
+      [].forEach.call(bar.querySelectorAll('button'), function (b) { var r = b.getBoundingClientRect(), x = Math.abs(r.left + r.width / 2 - mid); if (x < d) { d = x; best = b; } });
+      if (best && !best.classList.contains('on')) show(best.dataset.t);
+    }, 150);
+  }, { passive: true });
   var h = location.hash.slice(1);
   show(h, ids.indexOf(h) > -1);
   window.addEventListener('hashchange', function () { var x = location.hash.slice(1); if (ids.indexOf(x) > -1) show(x, true); });
