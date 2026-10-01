@@ -53,12 +53,14 @@
     flash: function (msg) { try { sessionStorage.setItem('op.flash', msg); } catch (e) {} },
     CLIENT_ONLY_MSG: '의뢰자(클라이언트)만 프로젝트를 등록할 수 있습니다.',
     // 클라이언트 전용 화면 진입 판단: 'ok' | 'login' | 'deny'
-    /* 프로젝트 열람 권한: 비공개 프로젝트는 분석파트너·컨설턴트만 열람, 클라이언트·비로그인은 불가.
-       (정책 예정: 분석파트너 인증/미인증 구분 — 미인증은 공개만 열람·견적 제한. 프로토타입 화면에는 아직 반영하지 않음) */
+    /* 프로젝트 열람 권한: 비공개 프로젝트는 인증 분석파트너·컨설턴트만 열람. 클라이언트·비로그인·미인증 분석파트너는 불가 */
     // 분석파트너 인증 여부 (표시용. 관리자가 기관·서비스 정보를 확인한 뒤 설정 — 가입 여부와 별도 관리)
     partnerVerified: function (email) { var s = OP.session(); email = email || (s && s.email); var a = OP.account(email) || {}; return a.role === 'partner' && !!a.verified; },
-    canSeePrivate: function () { var s = OP.session(); return !!s && (s.role === 'partner' || s.role === 'admin'); },
-    canQuote: function () { var s = OP.session(); return !!s && s.role === 'partner'; },
+    // 미인증 분석파트너: 공개 프로젝트만 열람, 견적서 작성 불가 / 인증 분석파트너·컨설턴트: 비공개 열람
+    canSeePrivate: function () { var s = OP.session(); return !!s && (s.role === 'admin' || OP.partnerVerified()); },
+    canQuote: function () { return OP.partnerVerified(); },
+    isPartner: function () { var s = OP.session(); return !!s && s.role === 'partner'; },
+    UNVERIFIED_MSG: '인증된 분석파트너만 이용할 수 있습니다. OmicsPharm이 기관·서비스 정보를 확인한 뒤 인증해 드립니다.',
     clientGate: function () { var s = OP.session(); return !s ? 'login' : s.role === 'client' ? 'ok' : 'deny'; },
     // 클라이언트 전용 페이지 맨 위에서 호출: 조건이 안 되면 로그인 또는 메인으로 돌려보낸다
     requireClient: function () {
