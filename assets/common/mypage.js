@@ -110,7 +110,8 @@
       var n = D.unread();
       side.innerHTML =
         '<div class="me"><img src="' + esc(acc.photo || 'assets/main/user-icon.svg?v=2') + '" alt="">' +
-          '<span class="role">' + esc(OP.ROLE_LABEL[s.role] || '') + '</span>' +
+          '<span class="roles"><span class="role">' + esc(OP.ROLE_LABEL[s.role] || '') + '</span>' +
+            (s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '') + '</span>' +
           '<b>' + esc(name) + ' 님</b><span>(' + esc(s.email) + ')</span>' + (org ? '<span>' + esc(org) + '</span>' : '') + '</div>' +
         '<nav class="menu" aria-label="마이페이지 메뉴">' + MENU.filter(function (m) { return !m[3] || m[3].indexOf(s.role) > -1; }).map(function (m) {
           var on = m[0] === key, label = m[1];

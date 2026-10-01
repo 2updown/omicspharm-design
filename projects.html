@@ -8,9 +8,9 @@
 <!-- Figma: Find Projects1-list (993:12559) · Find Projects1-grid (996:13677)
      카드: Project-list (974:7938) · Project-card Type=card (147:1266)
      B안: Find Projects2-list (831:3469) · Find Projects2-grid (977:9070) — 오른쪽을 흰 박스 하나로 묶고 행을 구분선으로 나열. 기존 목록형(A안)은 ?list=a 로 비교 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261002c">
-<script src="assets/common/site.js?v=20261002c"></script>
-<script src="assets/common/projects-data.js?v=20261002c"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002d">
+<script src="assets/common/site.js?v=20261002d"></script>
+<script src="assets/common/projects-data.js?v=20261002d"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -160,6 +160,12 @@
   .lmeta > span + span::before { content:""; align-self:stretch; width:0; margin-right:12px; border-left:1px solid var(--gray-300); }
   .lmeta em { margin-right:4px; font-style:normal; font-weight:400; }
   .lrow .reg { font-size:12px; line-height:18px; letter-spacing:-.12px; color:#9b9b9b; }
+  /* 오른쪽 위: (비공개) 자물쇠 + D-day / 아래: 등록일 + 견적서 작성 버튼(분석파트너, 모집 중) */
+  .rt { display:inline-flex; align-items:center; gap:8px; }
+  .foot { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:18px; }
+  .qbtn { flex:none; display:inline-flex; align-items:center; justify-content:center; height:36px; padding:0 16px; border-radius:8px; background:var(--teal-600); color:#fff; font-size:14px; font-weight:500; line-height:20px; cursor:pointer; transition:background .15s; }
+  .qbtn:hover { background:var(--teal-700); }
+  .qbtn:focus-visible { outline:2px solid var(--teal-600); outline-offset:2px; }
 
   .empty { padding:80px 0; text-align:center; color:var(--gray-500); font-size:16px; line-height:22px; background:#fff; border:1px solid var(--gray-200); border-radius:12px; }
 
@@ -285,9 +291,15 @@
   function status(x) { return x.open ? '<span class="badge open">모집중</span>' : '<span class="badge closed">모집마감</span>'; }
   function dday(x) { return x.open ? '종료 D-' + String(x.days).padStart(2, '0') : '모집 종료'; }
 
+  // 비공개 프로젝트: 분석파트너·컨설턴트는 내용까지 보이고 자물쇠로 표시, 클라이언트·비로그인은 가려지고 열 수 없음
+  var SEE_PRIV = OP.canSeePrivate(), QUOTE = OP.canQuote();
+  function masked(x) { return x.priv && !SEE_PRIV; }
+  var LOCK = '<img class="lock" src="assets/main/ic-lock-key.svg" alt="비공개" title="비공개 프로젝트">';
+  // 분석파트너: 모집 중인 프로젝트에 견적서 작성 버튼 (마감이면 없음)
+  function quoteBtn(x) { return QUOTE && x.open ? '<span class="qbtn" role="button" tabindex="0" data-quote="' + x.id + '">견적서 작성</span>' : ''; }
   function listCard(x) {
     var badges = '<div class="badges"><span class="badge tag">' + esc(x.cat) + '</span>' + status(x) + '</div>';
-    if (x.priv) {
+    if (masked(x)) {
       return '<div class="lcard private"><div class="head"><div class="row1">' + badges + '<img class="lock" src="assets/main/ic-lock-key.svg" alt="비공개"></div><h3>' + esc(x.title) + '</h3></div>' +
         '<div class="info"><div class="meta">' +
           '<span><img src="assets/find/ic-user.svg" alt="">비공개</span>' +
@@ -296,37 +308,37 @@
           '<span><img src="assets/find/ic-calendar.svg" alt=""><em>모집 기한</em>비공개</span>' +
         '</div><p class="reg">등록일 ' + x.reg + '</p></div></div>';
     }
-    return '<a class="lcard" href="' + OP_PROJECTS.url(x) + '"><div class="head"><div class="row1">' + badges + '<span class="dday">' + dday(x) + '</span></div><h3>' + esc(x.title) + '</h3></div>' +
+    return '<a class="lcard" href="' + OP_PROJECTS.url(x) + '"><div class="head"><div class="row1">' + badges + '<span class="rt">' + (x.priv ? LOCK : '') + '<span class="dday">' + dday(x) + '</span></span></div><h3>' + esc(x.title) + '</h3></div>' +
       '<div class="info"><div class="meta">' +
         '<span>' + x.owner + '</span>' +
         '<span><em>샘플</em>' + x.samples + '개</span>' +
         '<span><em>희망완료일</em>' + x.due + '</span>' +
         '<span><em>모집 기한</em>' + x.from + ' ~ ' + x.to + '</span>' +
-      '</div><p class="reg">등록일 ' + x.reg + '</p></div></a>';
+      '</div><div class="foot"><p class="reg">등록일 ' + x.reg + '</p>' + quoteBtn(x) + '</div></div></a>';
   }
   // 목록형 B안 행 (Project-list 977:7939)
   function listRow(x) {
     var badges = '<div class="badges"><span class="badge tag">' + esc(x.cat) + '</span>' + status(x) + '</div>';
-    var p = x.priv, v = function (t) { return p ? '비공개' : t; };
-    var inner = '<div class="top"><div class="row1">' + badges + (p ? '<img class="lock" src="assets/main/ic-lock-key.svg" alt="비공개">' : '<span class="dday">' + dday(x) + '</span>') + '</div>' +
+    var p = masked(x), v = function (t) { return p ? '비공개' : t; };
+    var inner = '<div class="top"><div class="row1">' + badges + (p ? LOCK : '<span class="rt">' + (x.priv ? LOCK : '') + '<span class="dday">' + dday(x) + '</span></span>') + '</div>' +
       '<h3>' + esc(x.title) + '</h3></div>' +
       '<div class="info"><div class="lmeta">' +
         '<span>' + v(x.owner) + '</span>' +
         '<span><em>샘플 :</em>' + v(x.samples + '개') + '</span>' +
         '<span><em>희망완료일 :</em>' + v(x.due) + '</span>' +
         '<span><em>모집기한 :</em>' + v(x.from + ' ~ ' + x.to) + '</span>' +
-      '</div><p class="reg">등록일 ' + x.reg + '</p></div>';
+      '</div><div class="foot"><p class="reg">등록일 ' + x.reg + '</p>' + (p ? '' : quoteBtn(x)) + '</div></div>';
     return p ? '<div class="lrow private">' + inner + '</div>' : '<a class="lrow" href="' + OP_PROJECTS.url(x) + '">' + inner + '</a>';
   }
   var LIST_A = new URLSearchParams(location.search).get('list') === 'a'; // 기존 카드형 목록과 비교용
 
   function gridCard(x) {
-    var p = x.priv;
+    var p = masked(x);
     var rows = '<div><em>샘플</em>' + (p ? '비공개' : x.samples + '개') + '</div>' +
       '<div><em>희망완료일</em>' + (p ? '비공개' : x.due) + '</div>' +
       '<div><em>모집 기한</em>' + (p ? '비공개' : x.from + ' ~ ' + x.to) + '</div>' +
-      '<p class="reg">등록일 ' + x.reg + '</p>';
-    var top = '<div class="top"><div class="row1"><div class="badges"><span class="badge tag">' + esc(x.cat) + '</span>' + status(x) + '</div>' + (p ? '<img class="lock" src="assets/main/ic-lock-key.svg" alt="비공개">' : '') + '</div><h3>' + esc(x.title) + '</h3></div>';
+      '<div class="foot"><p class="reg">등록일 ' + x.reg + '</p>' + (p ? '' : quoteBtn(x)) + '</div>';
+    var top = '<div class="top"><div class="row1"><div class="badges"><span class="badge tag">' + esc(x.cat) + '</span>' + status(x) + '</div>' + (x.priv ? LOCK : '') + '</div><h3>' + esc(x.title) + '</h3></div>';
     return p ? '<div class="gcard private">' + top + '<div class="rows">' + rows + '</div></div>'
              : '<a class="gcard" href="' + OP_PROJECTS.url(x) + '">' + top + '<div class="rows">' + rows + '</div></a>';
   }
@@ -349,6 +361,15 @@
     }[state.sort];
     return out.sort(by);
   }
+
+  // 견적서 작성 버튼: 행(링크) 이동 대신 프로젝트 상세의 견적 작성 영역으로
+  function goQuote(e) {
+    var b = e.target.closest('[data-quote]'); if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    location.href = 'omicspharm-project-detail-prot.html?id=' + b.dataset.quote + '#quote';
+  }
+  document.querySelector('.results').addEventListener('click', goQuote, true);
+  document.querySelector('.results').addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-quote]')) goQuote(e); });
 
   function renderRange() {
     var lo = +$('#minP').value, hi = +$('#maxP').value;

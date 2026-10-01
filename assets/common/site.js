@@ -8,7 +8,7 @@
   var DEMO_PW = 'Demo@1234';
   var SEED = {
     'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true, name: '홍길동', org: '○○연구소', phone: '+82 010-1234-5678' },
-    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '○○분석센터', phone: '+82 010-2345-6789' },
+    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '○○분석센터', phone: '+82 010-2345-6789', verified: true },
     'admin@omicspharm.test':   { role: 'admin',   pw: DEMO_PW, profileDone: true, name: '셀키 컨설턴트', org: '셀키', phone: '+82 010-3456-7890' }
   };
   var ROLE_LABEL = { client: '클라이언트', partner: '분석파트너', admin: '컨설턴트' }; // admin = 셀키 컨설턴트
@@ -53,6 +53,12 @@
     flash: function (msg) { try { sessionStorage.setItem('op.flash', msg); } catch (e) {} },
     CLIENT_ONLY_MSG: '의뢰자(클라이언트)만 프로젝트를 등록할 수 있습니다.',
     // 클라이언트 전용 화면 진입 판단: 'ok' | 'login' | 'deny'
+    /* 프로젝트 열람 권한: 비공개 프로젝트는 분석파트너·컨설턴트만 열람, 클라이언트·비로그인은 불가.
+       (정책 예정: 분석파트너 인증/미인증 구분 — 미인증은 공개만 열람·견적 제한. 프로토타입 화면에는 아직 반영하지 않음) */
+    // 분석파트너 인증 여부 (표시용. 관리자가 기관·서비스 정보를 확인한 뒤 설정 — 가입 여부와 별도 관리)
+    partnerVerified: function (email) { var s = OP.session(); email = email || (s && s.email); var a = OP.account(email) || {}; return a.role === 'partner' && !!a.verified; },
+    canSeePrivate: function () { var s = OP.session(); return !!s && (s.role === 'partner' || s.role === 'admin'); },
+    canQuote: function () { var s = OP.session(); return !!s && s.role === 'partner'; },
     clientGate: function () { var s = OP.session(); return !s ? 'login' : s.role === 'client' ? 'ok' : 'deny'; },
     // 클라이언트 전용 페이지 맨 위에서 호출: 조건이 안 되면 로그인 또는 메인으로 돌려보낸다
     requireClient: function () {
@@ -246,12 +252,17 @@
           '<div class="op-user">' +
             '<button type="button" aria-haspopup="menu" aria-label="내 계정"><img src="' + ((OP.account(s.email) || {}).photo || A + 'user-icon.svg?v=2') + '" alt=""></button>' +
             '<div class="op-user-menu" role="menu">' +
-              '<div class="who"><b>' + s.email.replace(/</g, '&lt;') + '</b><span>' + (ROLE_LABEL[s.role] || '') + '</span></div>' +
+              '<div class="who"><b>' + s.email.replace(/</g, '&lt;') + '</b><span>' + (ROLE_LABEL[s.role] || '') + '</span>' +
+                (s.role === 'partner' ? '<span class="vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '') + '</div>' +
               // 프로토타입 확인용: 로그아웃 없이 데모 계정으로 유형 전환
               '<div class="op-switch"><p>화면 전환 (데모)</p><div>' +
                 [['client', '클라이언트'], ['partner', '분석파트너'], ['admin', '컨설턴트']].map(function (r) {
                   return '<button type="button" data-op-as="' + r[0] + '"' + (s.role === r[0] ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + r[1] + '</button>';
-                }).join('') + '</div></div>' +
+                }).join('') + '</div>' +
+                (s.role === 'partner' ? '<p class="sub">인증 표시 (데모)</p><div>' + [[1, '인증'], [0, '미인증']].map(function (v) {
+                  var on = OP.partnerVerified() === !!v[0];
+                  return '<button type="button" data-op-verify="' + v[0] + '"' + (on ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + v[1] + '</button>';
+                }).join('') + '</div>' : '') + '</div>' +
               '<a href="mypage.html" role="menuitem">마이페이지</a>' +
               '<button type="button" data-op-logout role="menuitem">로그아웃</button>' +
             '</div>' +
@@ -366,6 +377,12 @@
       if (g === 'deny') { e.preventDefault(); OP.toast(OP.CLIENT_ONLY_MSG); return; }
     }
     if (e.target.closest('[data-op-logout]')) { OP.logout(); location.href = 'index.html'; return; }
+    var vf = e.target.closest('[data-op-verify]');
+    if (vf) {
+      var on = vf.getAttribute('data-op-verify') === '1', ss = OP.session();
+      if (ss && OP.partnerVerified() !== on) { OP.saveAccount(ss.email, { verified: on }); location.reload(); }
+      return;
+    }
     var as = e.target.closest('[data-op-as]');
     if (as) {
       var role = as.getAttribute('data-op-as'), cur = OP.session();

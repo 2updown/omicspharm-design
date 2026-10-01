@@ -70,6 +70,11 @@
   color:var(--op-teal-600); font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; }
 .op-switch { padding:4px 12px 12px; border-bottom:1px solid var(--op-gray-200); margin-bottom:6px; }
 .op-switch p { font-size:12px; line-height:18px; color:var(--op-gray-500); margin-bottom:6px; }
+.op-switch p.sub { margin-top:10px; }
+/* 분석파트너 인증 표시 */
+.op-vchip, .op-user-menu .who .vchip { display:inline-flex; align-items:center; gap:3px; margin-left:4px; padding:2px 8px; border-radius:8px; border:1px solid var(--op-gray-300); background:var(--op-gray-100); color:var(--op-gray-500); font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; }
+.op-vchip.ok, .op-user-menu .who .vchip.ok { border-color:#bcd6ff; background:#edf6ff; color:#0065f4; }
+.op-vchip.ok::before, .op-user-menu .who .vchip.ok::before { content:""; width:12px; height:12px; background:currentColor; -webkit-mask:url(../main/ic-seal-check.svg) center/contain no-repeat; mask:url(../main/ic-seal-check.svg) center/contain no-repeat; }
 .op-switch div { display:flex; gap:4px; padding:3px; border-radius:8px; background:var(--op-gray-100); }
 .op-user-menu .op-switch button { flex:1; width:auto; padding:6px 8px; border-radius:6px; text-align:center; font-size:13px; font-weight:500; color:var(--op-gray-500); }
 .op-user-menu .op-switch button:hover { background:#fff; color:#000; }

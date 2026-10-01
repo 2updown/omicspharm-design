@@ -6,9 +6,9 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261002c">
-<script src="assets/common/site.js?v=20261002c"></script>
-<script src="assets/common/projects-data.js?v=20261002c"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002d">
+<script src="assets/common/site.js?v=20261002d"></script>
+<script src="assets/common/projects-data.js?v=20261002d"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -94,6 +94,10 @@
   .cta-bar b { display:block; font-size:16px; font-weight:600; line-height:22px; }
   .cta-bar span { display:block; margin-top:2px; font-size:14px; line-height:20px; color:var(--gray-500); }
   .cta-bar .btn-filled { margin-left:auto; min-width:160px; padding:0 24px; }
+  .aside .btn-filled.off { background:var(--gray-200); color:var(--gray-400); cursor:default; }
+  .badge.priv { display:inline-flex; align-items:center; gap:4px; border:1px solid var(--gray-300); color:var(--gray-600); background:var(--gray-100); }
+  .badge.priv img { width:14px; height:14px; }
+  #quote { scroll-margin-top:94px; }
   .cta-bar .btn-filled.off { background:var(--gray-200); color:var(--gray-400); pointer-events:none; }
   body.has-cta-bar .op-float { bottom:112px; } /* 플로팅 버튼이 문의 바에 가리지 않게 */
 
@@ -264,7 +268,8 @@
   // ?id= 프로젝트 불러오기 (id 0 = Figma 예시 프로젝트). 비공개 프로젝트는 볼 수 없음
   var P = OP_PROJECTS.DATA, id = parseInt(new URLSearchParams(location.search).get('id'), 10);
   var x = P[isNaN(id) ? 0 : id] || P[0];
-  if (x.priv) { OP.flash('비공개 프로젝트는 볼 수 없습니다.'); location.replace('projects.html'); return; }
+  // 비공개 프로젝트: 분석파트너·컨설턴트만 열람 (클라이언트·비로그인은 목록으로)
+  if (x.priv && !OP.canSeePrivate()) { OP.flash('비공개 프로젝트는 볼 수 없습니다.'); location.replace('projects.html'); return; }
   var won = function (n) { return n.toLocaleString('ko-KR') + '만'; };
   var lo = x.id === 0 ? 500 : Math.max(50, Math.round(x.price * 0.7 / 50) * 50), hi = x.id === 0 ? 1000 : Math.round(x.price * 1.3 / 50) * 50;
   var F = {
@@ -279,7 +284,13 @@
   // 하단 문의 바: 모집 중이면 문의, 마감이면 비활성. 로그인 전에는 로그인 화면으로
   document.body.classList.add('has-cta-bar');
   var cta = $('#ctaBtn');
-  if (x.open) {
+  var partner = OP.canQuote();
+  if (x.open && partner) {
+    // 분석파트너: 하단 바와 오른쪽 패널에 견적서 작성 (모집 중일 때만)
+    $('.cta-bar b').textContent = '이 프로젝트에 견적을 제안해보세요';
+    $('#ctaSub').textContent = '모집기한 ' + x.to + '까지 · 제출한 견적은 마이페이지 견적관리에서 확인할 수 있습니다';
+    cta.textContent = '견적서 작성'; cta.href = '#'; cta.setAttribute('data-soon', '견적서 작성');
+  } else if (x.open) {
     $('#ctaSub').textContent = '모집기한 ' + x.to + '까지 · 담당 매니저가 확인 후 연락드립니다';
     if (!OP.session()) cta.href = 'login.html?next=' + encodeURIComponent('omicspharm-project-detail-prot.html?id=' + x.id);
     else cta.href = 'contact.html?type=project&ref=' + encodeURIComponent(x.title);
@@ -288,9 +299,21 @@
     cta.textContent = '모집 마감'; cta.classList.add('off'); cta.setAttribute('aria-disabled', 'true');
   }
 
+  if (partner) {
+    var pn = $('.aside .panel');
+    pn.id = 'quote';
+    pn.innerHTML = x.open
+      ? '<h3>이 프로젝트에<br>견적을 제안해보세요</h3><a class="btn-filled" href="#" data-soon="견적서 작성">견적서 작성</a>'
+      : '<h3>모집이 마감된<br>프로젝트입니다</h3><span class="btn-filled off" aria-disabled="true">모집 마감</span>';
+  }
+  if (x.priv) {
+    var st = $('[data-f="status"]');
+    st.insertAdjacentHTML('afterend', '<span class="badge priv"><img src="assets/main/ic-lock-key.svg" alt="">비공개</span>');
+  }
+
   // 이전·다음 프로젝트: 프로젝트 찾기 기본 정렬(최신 등록 순)과 같은 순서, 공개 프로젝트만
   var dt = OP_PROJECTS.date;
-  var list = P.filter(function (p) { return !p.priv; }).sort(function (a, b) { return (dt(b.reg) - dt(a.reg)) || (a.id - b.id); }), k = list.indexOf(x);
+  var list = P.filter(function (p) { return !p.priv || OP.canSeePrivate(); }).sort(function (a, b) { return (dt(b.reg) - dt(a.reg)) || (a.id - b.id); }), k = list.indexOf(x);
   [['#prevP', list[k - 1]], ['#nextP', list[k + 1]]].forEach(function (pair) {
     var a = $(pair[0]), t = pair[1];
     if (t) { a.href = OP_PROJECTS.url(t); a.title = t.title; } else { a.classList.add('off'); a.setAttribute('aria-disabled', 'true'); }

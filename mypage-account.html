@@ -7,10 +7,10 @@
 <title>내 정보 관리 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / (분석파트너) 분석 가능 서비스 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261002c">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261002c">
-<script src="assets/common/site.js?v=20261002c"></script>
-<script src="assets/common/mypage.js?v=20261002c"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002d">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261002d">
+<script src="assets/common/site.js?v=20261002d"></script>
+<script src="assets/common/mypage.js?v=20261002d"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -204,7 +204,10 @@
   }
 
   $('#vEmail').textContent = email;
-  $('#vRole').innerHTML = OP.my.esc(OP.ROLE_LABEL[me.s.role] || '') + '<small>회원 유형은 변경할 수 없습니다.</small>';
+  $('#vRole').innerHTML = OP.my.esc(OP.ROLE_LABEL[me.s.role] || '') +
+    (me.s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' +
+      '<small>' + (OP.partnerVerified() ? '기관·서비스 정보 확인이 완료된 분석파트너입니다.' : 'OmicsPharm이 기관·서비스 정보를 확인한 뒤 인증해 드립니다.') + '</small>'
+      : '<small>회원 유형은 변경할 수 없습니다.</small>');
   OP.orgCombo($('#org'), $('#dept')); // 소속·부서: DB 자동완성 + 직접 입력
   $('#name').value = acc.name || ''; $('#org').value = acc.org || me.org || ''; $('#dept').value = acc.dept || '';
   var PHN = OP.phoneField($('#phoneHost'), { value: acc.phone || '', id: 'ph' });
