@@ -52,13 +52,11 @@
   .items li { display:flex; gap:10px; font-size:15px; line-height:22px; color:var(--gray-700); word-break:keep-all; }
   .items li .ico { width:20px; height:20px; margin-top:1px; color:var(--teal-600); --i:url(assets/service/ic-check-circle.svg); }
 
-  /* Overview 특징 */
-  .feats { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:28px; }
-  .feat { padding:20px; border:1px solid var(--gray-200); border-radius:12px; background:#fff; }
-  .feat i { display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:10px; background:var(--teal-50); color:var(--teal-600); }
-  .feat i .ico { width:22px; height:22px; }
-  .feat b { display:block; margin-top:14px; font-size:17px; font-weight:600; line-height:24px; }
-  .feat p { margin-top:6px; font-size:14px; line-height:21px; color:var(--gray-600); word-break:keep-all; }
+  /* Overview 특징 — 선으로 나눈 칸 4개 (마크로젠 서비스 페이지 참고), 아이콘 없음 */
+  .feats { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); margin-top:28px; border-top:1px solid var(--gray-200); border-left:1px solid var(--gray-200); }
+  .feat { padding:28px 24px; border-right:1px solid var(--gray-200); border-bottom:1px solid var(--gray-200); background:#fff; }
+  .feat b { display:block; font-size:17px; font-weight:700; line-height:24px; letter-spacing:-.17px; word-break:keep-all; }
+  .feat p { margin-top:10px; font-size:14px; line-height:22px; color:var(--gray-600); word-break:keep-all; }
 
   /* Bioinformatics 그룹 */
   .groups { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; margin-top:28px; }
@@ -234,7 +232,7 @@
   var pic = function (n) { return '<div class="pic"><img src="' + I + 'guide-' + n + '.jpg" alt="" loading="lazy"></div>'; };
   var html = '<section class="sec rev" id="overview">' + pic('01') +
     '<div><h2>Overview</h2>' +
-    '<div class="feats">' + FEATS.map(function (f) { return '<div class="feat"><i><span class="ico" style="--i:url(' + I + 'ic-' + f[0] + '.svg)"></span></i><b>' + f[1] + '</b><p>' + f[2] + '</p></div>'; }).join('') + '</div></div></section>';
+    '<div class="feats">' + FEATS.map(function (f) { return '<div class="feat"><b>' + f[1] + '</b><p>' + f[2] + '</p></div>'; }).join('') + '</div></div></section>';
 
   S.forEach(function (s, k) {
     var head = '<h2>' + s.name + '</h2>' + desc(s.ps);
