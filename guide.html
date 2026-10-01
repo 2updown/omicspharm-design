@@ -79,6 +79,10 @@
   .tip h3 { font-size:18px; font-weight:700; line-height:26px; letter-spacing:-.18px; color:var(--teal-700); word-break:keep-all; }
   .tip h3 em { font-style:normal; margin-right:4px; }
   .tip p { font-size:15px; line-height:24px; color:var(--gray-600); word-break:keep-all; }
+  /* 스크롤 진입 시 텍스트만 차례로 떠오름 (분석 서비스 안내 시료 카드와 같은 인터렉션) */
+  .tip .tx { opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; transition-delay:var(--d, 0s); }
+  .tip.in .tx { opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce) { .tip .tx { opacity:1; transform:none; transition:none; } }
 
   /* 자주 묻는 질문 (FAQ 페이지와 같은 아코디언) */
   .faq-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; }
@@ -98,11 +102,6 @@
   .qa .a { display:flex; gap:16px; padding:20px 24px 24px; background:var(--gray-50); border-top:1px solid var(--gray-200); font-size:15px; line-height:25px; color:var(--gray-700); word-break:keep-all; }
   .qa .a > b { flex:none; font-size:18px; font-weight:700; line-height:24px; color:var(--gray-400); }
   .qa .a a { color:var(--teal-600); font-weight:500; text-decoration:underline; text-underline-offset:3px; }
-
-  /* 텍스트 등장 효과 (페이지 전체): 화면에 들어오면 글자만 아래에서 떠오름. 배경·카드·일러스트는 그대로 */
-  .rv { opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; transition-delay:var(--d, 0s); }
-  .rv.in { opacity:1; transform:none; }
-  @media (prefers-reduced-motion:reduce) { .rv { opacity:1; transform:none; transition:none; } }
 
   /* 하단 CTA 배너 — 메인 하단 배너와 동일 */
   .cta-sec { padding:60px 60px 100px; background:var(--white); display:flex; justify-content:center; }
@@ -153,7 +152,7 @@
   }
 </style>
 </head>
-<body data-op-no-enter>
+<body>
 <div data-op-gnb="service"></div>
 
 <section class="page-head"><div class="in">
@@ -259,32 +258,14 @@
   placeRail(); progress();
   window.addEventListener('load', function () { placeRail(); progress(); });
   $('#tipList').innerHTML = TIPS.map(function (t, i) {
-    return '<div class="tip"><div class="art"><img src="assets/guide/tip-' + t[0] + '.svg" alt="" loading="lazy"></div><div class="tx"><h3><em>TIP ' + (i + 1) + '.</em>' + t[1] + '</h3><p>' + t[2] + '</p></div></div>';
+    return '<div class="tip" style="--d:' + (i * 0.12) + 's"><div class="art"><img src="assets/guide/tip-' + t[0] + '.svg" alt="" loading="lazy"></div><div class="tx"><h3><em>TIP ' + (i + 1) + '.</em>' + t[1] + '</h3><p>' + t[2] + '</p></div></div>';
   }).join('');
+  var tipEls = [].slice.call(document.querySelectorAll('.tip'));
+  function revealTips() { tipEls.forEach(function (t) { if (!t.classList.contains('in') && t.getBoundingClientRect().top < innerHeight * 0.88) t.classList.add('in'); }); }
+  window.addEventListener('scroll', revealTips, { passive: true }); window.addEventListener('resize', revealTips); revealTips();
   $('#qa').innerHTML = FAQ.map(function (f) {
     return '<details><summary><span class="q">Q</span><span class="t">' + f[0] + '</span><span class="ico car"></span></summary><div class="a"><b>A</b><div>' + f[1] + '</div></div></details>';
   }).join('');
-
-  // 텍스트 등장 효과: 대상은 글자 요소만 (섹션 배경·카드 박스·일러스트·표 선은 움직이지 않음)
-  var RV = [
-    '.page-head h1',
-    '#process .sec-head > *', '.step .num', '.step .card > *',
-    '#tips .sec-head > *', '.tip .tx',
-    '.faq-head .sec-head > *', '.faq-head .more', '.qa summary .q', '.qa summary .t',
-    '.cta > h2', '.cta > p', '.cta > .btn-action'
-  ];
-  var rvEls = [].slice.call(document.querySelectorAll(RV.join(',')));
-  rvEls.forEach(function (el) { el.classList.add('rv'); });
-  function reveal() {
-    var k = 0;
-    rvEls.forEach(function (el) {
-      if (el.classList.contains('in') || el.getBoundingClientRect().top > innerHeight * 0.9) return;
-      el.style.setProperty('--d', Math.min(k++, 5) * 0.08 + 's'); // 한 번에 들어온 것끼리 차례로
-      el.classList.add('in');
-    });
-  }
-  window.addEventListener('scroll', reveal, { passive: true }); window.addEventListener('resize', reveal);
-  setTimeout(reveal, 60);
 })();
 </script>
 </body>
