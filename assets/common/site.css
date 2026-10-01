@@ -185,3 +185,15 @@
 .op-ac li.add:hover em, .op-ac li.add.on em { color:var(--op-teal-700); }
 .op-ac li.none { cursor:default; font-size:14px; color:var(--op-gray-500); }
 .op-ac li.none:hover { background:none; }
+
+/* 휴대폰 번호 (국가번호 + 3칸) — Figma 1222:69206 */
+.op-phone { display:flex; align-items:center; gap:8px; width:100%; }
+div.op-phone select, div.op-phone input { height:40px; min-width:0; border:1px solid var(--op-gray-300); border-radius:8px; background-color:#fff; font:inherit; font-size:14px; line-height:20px; color:#000; }
+div.op-phone select { flex:none; width:auto; padding:0 34px 0 16px; appearance:none; -webkit-appearance:none; background:#fff url(../find/ic-chevron-down.svg) right 12px center/16px no-repeat; cursor:pointer; }
+div.op-phone input { flex:1 1 0; width:0; padding:0 16px; }
+div.op-phone input::placeholder { color:var(--op-gray-400); }
+div.op-phone select:focus, div.op-phone input:focus { outline:0; border-color:var(--op-teal-700); box-shadow:0 0 0 3px #00786e33; }
+.op-phone > span { flex:none; font-size:16px; line-height:22px; color:#000; }
+div.op-phone :disabled { background-color:var(--op-gray-100); color:var(--op-gray-400); cursor:default; opacity:1; -webkit-text-fill-color:var(--op-gray-400); }
+div.op-phone.bad input, div.op-phone.bad select { border-color:var(--op-red-600); }
+@media (max-width:480px) { .op-phone { gap:4px; } div.op-phone select { padding:0 26px 0 10px; background-position:right 8px center; } div.op-phone input { padding:0 8px; text-align:center; } }

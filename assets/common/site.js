@@ -153,6 +153,31 @@
     });
   };
 
+  /* ── 휴대폰 번호: 국가번호 드롭다운 + 3칸 (회원가입·내 정보 관리·의뢰 등록 공통, Figma 1222:69206) ──
+     저장 형식 '+82 010-1234-5678' */
+  var CC = ['+82', '+1', '+81', '+86', '+44', '+49', '+65'];
+  OP.phoneParse = function (v) { var m = String(v || '').match(/^(\+\d+)\s*(\d*)-?(\d*)-?(\d*)$/); return m ? { cc: m[1], p: [m[2], m[3], m[4]] } : { cc: '+82', p: ['', '', ''] }; };
+  // host 안에 칸을 그린다. { value, disabled, id } → { get(), valid(), el }
+  OP.phoneField = function (host, o) {
+    o = o || {}; var v = OP.phoneParse(o.value), id = o.id || 'ph', dis = o.disabled ? ' disabled' : '';
+    var cc = CC.indexOf(v.cc) < 0 ? CC.concat([v.cc]) : CC;
+    host.innerHTML = '<div class="op-phone">' +
+      '<select id="' + id + 'Cc" aria-label="국가번호"' + dis + '>' + cc.map(function (c) { return '<option' + (c === v.cc ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select>' +
+      [[3, '010', '앞자리'], [4, '0000', '가운데 자리'], [4, '0000', '끝자리']].map(function (f, i) {
+        return (i ? '<span aria-hidden="true">-</span>' : '') + '<input id="' + id + (i + 1) + '" inputmode="numeric" maxlength="' + f[0] + '" placeholder="' + f[1] + '" value="' + (v.p[i] || '') + '" aria-label="휴대폰 번호 ' + f[2] + '"' + dis + '>';
+      }).join('') + '</div>';
+    var ins = [].slice.call(host.querySelectorAll('input'));
+    ins.forEach(function (i, k) {
+      i.addEventListener('input', function () { i.value = i.value.replace(/\D/g, ''); if (i.value.length >= i.maxLength && ins[k + 1]) ins[k + 1].focus(); });
+      i.addEventListener('keydown', function (e) { if (e.key === 'Backspace' && !i.value && ins[k - 1]) ins[k - 1].focus(); });
+    });
+    return {
+      el: host.querySelector('.op-phone'), inputs: ins,
+      get: function () { var p = ins.map(function (i) { return i.value; }); return p.join('') ? host.querySelector('select').value + ' ' + p.join('-') : ''; },
+      valid: function () { return /^\d{2,3}$/.test(ins[0].value) && /^\d{3,4}$/.test(ins[1].value) && /^\d{4}$/.test(ins[2].value); }
+    };
+  };
+
   var A = 'assets/main/';
   // 메가메뉴 (Figma 메가메뉴 1303:74974 · Header State=menu1 1029:13726). 하위 화면은 아직 없어 누르면 준비 중 안내.
   var MENUS = {

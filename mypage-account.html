@@ -7,10 +7,10 @@
 <title>내 정보 관리 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / (분석파트너) 분석 가능 서비스 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261001y">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261001y">
-<script src="assets/common/site.js?v=20261001y"></script>
-<script src="assets/common/mypage.js?v=20261001y"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002a">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261002a">
+<script src="assets/common/site.js?v=20261002a"></script>
+<script src="assets/common/mypage.js?v=20261002a"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -24,6 +24,7 @@
   .inp { width:100%; max-width:420px; height:40px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font-size:14px; line-height:20px; }
   .inp:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
   .inp.bad { border-color:var(--red-600); }
+  .phwrap { max-width:420px; }
   .help { font-size:12px; line-height:18px; color:var(--gray-500); }
   .msg { font-size:12px; line-height:18px; color:var(--red-600); }
   .actions { display:flex; justify-content:flex-end; }
@@ -122,7 +123,7 @@
           <div class="field"><label class="flabel" for="name">이름<span class="req">*</span></label><div class="fbody"><input class="inp" id="name" autocomplete="name"></div></div>
           <div class="field"><label class="flabel" for="org">소속(기관·회사)<span class="req">*</span></label><div class="fbody"><input class="inp" id="org" placeholder="소속 검색 또는 입력"></div></div>
           <div class="field"><label class="flabel" for="dept">부서·직책</label><div class="fbody"><input class="inp" id="dept" placeholder="부서 검색 또는 입력"></div></div>
-          <div class="field"><label class="flabel" for="phone">연락처</label><div class="fbody"><input class="inp" id="phone" type="tel" inputmode="tel" placeholder="010-0000-0000" autocomplete="tel"></div></div>
+          <div class="field"><label class="flabel" for="ph1">연락처<span class="req">*</span></label><div class="fbody"><div id="phoneHost" class="phwrap"></div></div></div>
           <div class="field" id="rowSvc" hidden><div class="flabel">분석 가능 서비스</div><div class="fbody"><div class="svcs" id="svcs"></div><p class="help">선택한 분야의 새 프로젝트가 등록되면 알려드립니다.</p></div></div>
         </div>
         <div class="actions"><button type="submit" class="btn primary lg">저장하기</button></div>
@@ -205,7 +206,8 @@
   $('#vEmail').textContent = email;
   $('#vRole').innerHTML = OP.my.esc(OP.ROLE_LABEL[me.s.role] || '') + '<small>회원 유형은 변경할 수 없습니다.</small>';
   OP.orgCombo($('#org'), $('#dept')); // 소속·부서: DB 자동완성 + 직접 입력
-  $('#name').value = acc.name || ''; $('#org').value = acc.org || me.org || ''; $('#dept').value = acc.dept || ''; $('#phone').value = acc.phone || '';
+  $('#name').value = acc.name || ''; $('#org').value = acc.org || me.org || ''; $('#dept').value = acc.dept || '';
+  var PHN = OP.phoneField($('#phoneHost'), { value: acc.phone || '', id: 'ph' });
 
   var SVCS = ['Genomics', 'Transcriptomics', 'Proteomics', 'Metabolomics', 'Glycoproteomics', 'Olink', '바이오의약품 특성 분석', 'Bioinformatics'];
   if (partner) {
@@ -228,7 +230,9 @@
     err(n, n.value.trim() ? '' : '이름을 입력해주세요.');
     err(o, o.value.trim() ? '' : '소속을 입력해주세요.');
     if (!n.value.trim() || !o.value.trim()) return;
-    var data = { name: n.value.trim(), org: o.value.trim(), dept: $('#dept').value.trim(), phone: $('#phone').value.trim(), photo: photo };
+    var pOk = PHN.valid(); PHN.el.classList.toggle('bad', !pOk); err(PHN.inputs[0], pOk ? '' : '휴대폰 번호를 정확히 입력해주세요.');
+    if (!pOk) return;
+    var data = { name: n.value.trim(), org: o.value.trim(), dept: $('#dept').value.trim(), phone: PHN.get(), photo: photo };
     if (partner) data.svcs = [].map.call(document.querySelectorAll('#svcs input:checked'), function (i) { return i.value; });
     OP.saveAccount(email, data);
     OP.saveOrg(data.org, data.dept);
