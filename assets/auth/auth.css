@@ -90,6 +90,12 @@ input { font:inherit; color:inherit; }
 .input.file input { display:none; }
 .with-btn { display:flex; gap:8px; }
 .with-btn .input { flex:1; }
+/* 휴대폰 번호: 국가번호 드롭다운 + 3칸 */
+.phone { display:flex; align-items:center; gap:8px; }
+.phone .input { flex:1 1 0; min-width:0; }
+.phone .input.cc { flex:0 0 104px; }
+.phone .input input { text-align:center; }
+.phone > span { flex:none; color:var(--gray-400); }
 .btn-outline { height:56px; min-width:90px; padding:0 20px; border:1px solid var(--teal-600); border-radius:8px; background:#fff; color:var(--teal-600); font-size:16px; font-weight:500; line-height:22px; }
 .btn-outline:hover { border-color:var(--teal-700); color:var(--teal-700); }
 
@@ -207,5 +213,8 @@ input { font:inherit; color:inherit; }
 @media (max-width:560px) {
   .auth-main.stepped { padding:20px 16px; }
   .row2 { flex-direction:column; gap:24px; }
+  .phone { gap:4px; }
+  .phone .input { padding:0 10px; }
+  .phone .input.cc { flex-basis:84px; }
   .brand-top { left:16px; top:20px; }
 }
