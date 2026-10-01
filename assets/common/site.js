@@ -122,6 +122,11 @@
             '<button type="button" aria-haspopup="menu" aria-label="내 계정"><img src="' + ((OP.account(s.email) || {}).photo || A + 'user-icon.svg?v=2') + '" alt=""></button>' +
             '<div class="op-user-menu" role="menu">' +
               '<div class="who"><b>' + s.email.replace(/</g, '&lt;') + '</b><span>' + (ROLE_LABEL[s.role] || '') + '</span></div>' +
+              // 프로토타입 확인용: 로그아웃 없이 데모 계정으로 유형 전환
+              '<div class="op-switch"><p>화면 전환 (데모)</p><div>' +
+                [['client', '클라이언트'], ['partner', '분석파트너']].map(function (r) {
+                  return '<button type="button" data-op-as="' + r[0] + '"' + (s.role === r[0] ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + r[1] + '</button>';
+                }).join('') + '</div></div>' +
               '<a href="mypage.html" role="menuitem">마이페이지</a>' +
               '<button type="button" data-op-logout role="menuitem">로그아웃</button>' +
             '</div>' +
@@ -236,6 +241,17 @@
       if (g === 'deny') { e.preventDefault(); OP.toast(OP.CLIENT_ONLY_MSG); return; }
     }
     if (e.target.closest('[data-op-logout]')) { OP.logout(); location.href = 'index.html'; return; }
+    var as = e.target.closest('[data-op-as]');
+    if (as) {
+      var role = as.getAttribute('data-op-as'), cur = OP.session();
+      if (cur && cur.role === role) { closeDropdowns(); return; }
+      OP.login(role + '@omicspharm.test'); // 데모 계정 (SEED)
+      OP.flash(ROLE_LABEL[role] + ' 화면으로 전환했습니다.');
+      // 클라이언트 전용 화면(프로젝트 의뢰)에서 분석파트너로 바꾸면 마이페이지로
+      if (role !== 'client' && /omicspharm-register\.html/.test(location.pathname)) location.href = 'mypage.html';
+      else location.reload();
+      return;
+    }
     if (e.target.closest('[data-lang="ko"]')) { e.preventDefault(); closeDropdowns(); return; }
     if (e.target.closest('.op-top')) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
     if (e.target.closest('.op-burger')) { setDrawer(document.getElementById('opDrawer').hidden); return; }
