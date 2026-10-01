@@ -172,3 +172,14 @@
 @keyframes opEnter { from { opacity:0; transform:translate3d(0,100px,0); } to { opacity:1; transform:none; } }
 .op-enter { animation:opEnter .8s ease both; animation-delay:var(--op-d,0s); }
 @media (prefers-reduced-motion:reduce) { .op-enter { animation:none; } }
+
+/* 자동완성 목록 (소속·부서 등) */
+.op-ac { position:absolute; left:0; right:0; top:100%; margin-top:4px; z-index:30; max-height:280px; overflow-y:auto; padding:6px; list-style:none; background:#fff; border:1px solid var(--op-gray-200); border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.08); }
+.op-ac li { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 12px; border-radius:6px; font-size:15px; line-height:22px; cursor:pointer; }
+.op-ac li span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.op-ac li b { color:var(--op-teal-600); font-weight:600; }
+.op-ac li small { flex:none; font-size:12px; line-height:18px; color:var(--op-gray-500); }
+.op-ac li:hover, .op-ac li.on { background:var(--op-gray-100); }
+.op-ac li.add span { color:var(--op-teal-600); font-weight:600; }
+.op-ac li.none { cursor:default; font-size:14px; color:var(--op-gray-500); }
+.op-ac li.none:hover { background:none; }

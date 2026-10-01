@@ -58,6 +58,70 @@
     }
   };
 
+  /* ── 소속(회사)·부서: DB 기반 자동완성 + 직접 입력 ──
+     데모 DB = 가입된 계정들의 소속·부서 + localStorage 'op.orgs' { 소속명: [부서…] }.
+     실제 서비스에서는 서버 DB 검색 API로 바꾼다. */
+  var ORG_SEED = { '○○연구소': ['단백체연구팀', '유전체분석실'], '○○대학교 의과대학': ['생화학교실', '약리학교실'], '○○바이오': ['연구개발팀'], '○○병원': ['임상연구센터'], '○○제약': ['신약개발팀', '품질관리팀'], '○○분석센터': ['질량분석팀'], '셀키': ['컨설팅팀'] };
+  var norm = function (t) { return String(t || '').replace(/\s+/g, ' ').trim(); };
+  OP.orgDB = function () {
+    var db = {};
+    var add = function (o, d) { o = norm(o); if (!o) return; db[o] = db[o] || []; d = norm(d); if (d && db[o].indexOf(d) < 0) db[o].push(d); };
+    Object.keys(ORG_SEED).forEach(function (o) { add(o); ORG_SEED[o].forEach(function (d) { add(o, d); }); });
+    var acc = OP.accounts(); Object.keys(acc).forEach(function (k) { add(acc[k].org, acc[k].dept); });
+    var st = read('op.orgs', {}); Object.keys(st).forEach(function (o) { add(o); (st[o] || []).forEach(function (d) { add(o, d); }); });
+    return db;
+  };
+  OP.saveOrg = function (org, dept) {
+    org = norm(org); dept = norm(dept); if (!org) return;
+    var st = read('op.orgs', {}); st[org] = st[org] || []; if (dept && st[org].indexOf(dept) < 0) st[org].push(dept); write('op.orgs', st);
+  };
+  // 입력칸 아래 자동완성 목록. items(q) → [{v, sub}], 일치하는 항목이 없으면 '직접 추가'
+  OP.combo = function (input, items, opt) {
+    opt = opt || {};
+    var host = input.closest('.fbody') || input.closest('.field') || input.parentNode, box = document.createElement('ul'), cur = -1, list = [];
+    box.className = 'op-ac'; box.setAttribute('role', 'listbox'); box.hidden = true; box.id = input.id + '-ac';
+    host.style.position = 'relative'; host.appendChild(box);
+    input.setAttribute('autocomplete', 'off'); input.setAttribute('role', 'combobox'); input.setAttribute('aria-autocomplete', 'list'); input.setAttribute('aria-controls', box.id); input.setAttribute('aria-expanded', 'false');
+    var esc = function (t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+    function mark(t, q) { var i = q ? t.toLowerCase().indexOf(q.toLowerCase()) : -1; return i < 0 ? esc(t) : esc(t.slice(0, i)) + '<b>' + esc(t.slice(i, i + q.length)) + '</b>' + esc(t.slice(i + q.length)); }
+    function open() {
+      var q = norm(input.value), all = items(q) || [];
+      list = all.filter(function (x) { return !q || x.v.toLowerCase().indexOf(q.toLowerCase()) > -1; }).slice(0, 8);
+      var exact = all.some(function (x) { return x.v.toLowerCase() === q.toLowerCase(); });
+      if (q && !exact) list.push({ v: q, add: true });
+      cur = -1;
+      box.innerHTML = list.length ? list.map(function (x, i) {
+        return '<li role="option" data-i="' + i + '"' + (x.add ? ' class="add"' : '') + '>' + (x.add ? '<span>‘' + esc(x.v) + '’ 직접 추가</span><small>' + esc(opt.addHint || '새로 등록됩니다') + '</small>' : '<span>' + mark(x.v, q) + '</span>' + (x.sub ? '<small>' + esc(x.sub) + '</small>' : '')) + '</li>';
+      }).join('') : '<li class="none">' + esc(opt.empty || '입력해서 검색하세요.') + '</li>';
+      box.hidden = false; input.setAttribute('aria-expanded', 'true');
+    }
+    function close() { box.hidden = true; input.setAttribute('aria-expanded', 'false'); }
+    function pick(i) { var x = list[i]; if (!x) return; input.value = x.v; close(); input.dispatchEvent(new Event('input', { bubbles: true })); input.dispatchEvent(new Event('change', { bubbles: true })); if (opt.onPick) opt.onPick(x); }
+    function hi(n) { var li = box.querySelectorAll('li[data-i]'); if (!li.length) return; cur = (n + li.length) % li.length; li.forEach(function (l, k) { l.classList.toggle('on', k === cur); }); li[cur].scrollIntoView({ block: 'nearest' }); }
+    input.addEventListener('focus', open);
+    input.addEventListener('input', function (e) { if (e.isTrusted) open(); });
+    input.addEventListener('keydown', function (e) {
+      if (box.hidden && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) { open(); return; }
+      if (e.key === 'ArrowDown') { e.preventDefault(); hi(cur + 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); hi(cur - 1); }
+      else if (e.key === 'Enter' && !box.hidden && cur > -1) { e.preventDefault(); pick(cur); }
+      else if (e.key === 'Escape' || e.key === 'Tab') close();
+    });
+    box.addEventListener('mousedown', function (e) { var li = e.target.closest('li[data-i]'); if (li) { e.preventDefault(); pick(+li.dataset.i); } });
+    input.addEventListener('blur', function () { setTimeout(close, 100); });
+    return { open: open, close: close };
+  };
+  // 소속 → 부서 연결 (같은 소속을 고르면 그 소속에 등록된 부서가 뜬다)
+  OP.orgCombo = function (orgInput, deptInput) {
+    OP.combo(orgInput, function () {
+      var db = OP.orgDB();
+      return Object.keys(db).sort(function (a, b) { return a.localeCompare(b, 'ko'); }).map(function (o) { return { v: o, sub: db[o].length ? '부서 ' + db[o].length + '개' : '' }; });
+    }, { empty: '소속을 입력해 검색하세요.', addHint: '등록된 소속이 없어요. 새 소속으로 추가됩니다' });
+    if (deptInput) OP.combo(deptInput, function () {
+      return (OP.orgDB()[norm(orgInput.value)] || []).map(function (d) { return { v: d }; });
+    }, { empty: '이 소속에 등록된 부서가 없습니다. 직접 입력해주세요.', addHint: '새 부서로 추가됩니다' });
+  };
+
   var A = 'assets/main/';
   // 메가메뉴 (Figma 메가메뉴 1303:74974 · Header State=menu1 1029:13726). 하위 화면은 아직 없어 누르면 준비 중 안내.
   var MENUS = {

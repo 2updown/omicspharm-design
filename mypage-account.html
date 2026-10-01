@@ -7,10 +7,10 @@
 <title>내 정보 관리 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / (분석파트너) 분석 가능 서비스 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261001q">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261001q">
-<script src="assets/common/site.js?v=20261001q"></script>
-<script src="assets/common/mypage.js?v=20261001q"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261001r">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261001r">
+<script src="assets/common/site.js?v=20261001r"></script>
+<script src="assets/common/mypage.js?v=20261001r"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -120,8 +120,8 @@
           <div class="field"><div class="flabel">이메일(아이디)</div><div class="fbody"><p class="val" id="vEmail"></p></div></div>
           <div class="field"><div class="flabel">회원 유형</div><div class="fbody"><p class="val" id="vRole"></p></div></div>
           <div class="field"><label class="flabel" for="name">이름<span class="req">*</span></label><div class="fbody"><input class="inp" id="name" autocomplete="name"></div></div>
-          <div class="field"><label class="flabel" for="org">소속(기관·회사)<span class="req">*</span></label><div class="fbody"><input class="inp" id="org" autocomplete="organization"></div></div>
-          <div class="field"><label class="flabel" for="dept">부서·직책</label><div class="fbody"><input class="inp" id="dept" placeholder="예) 연구개발팀 / 선임연구원"></div></div>
+          <div class="field"><label class="flabel" for="org">소속(기관·회사)<span class="req">*</span></label><div class="fbody"><input class="inp" id="org" placeholder="소속 검색 또는 입력"></div></div>
+          <div class="field"><label class="flabel" for="dept">부서·직책</label><div class="fbody"><input class="inp" id="dept" placeholder="부서 검색 또는 입력"></div></div>
           <div class="field"><label class="flabel" for="phone">연락처</label><div class="fbody"><input class="inp" id="phone" type="tel" inputmode="tel" placeholder="010-0000-0000" autocomplete="tel"></div></div>
           <div class="field" id="rowSvc" hidden><div class="flabel">분석 가능 서비스</div><div class="fbody"><div class="svcs" id="svcs"></div><p class="help">선택한 분야의 새 프로젝트가 등록되면 알려드립니다.</p></div></div>
         </div>
@@ -204,6 +204,7 @@
 
   $('#vEmail').textContent = email;
   $('#vRole').innerHTML = OP.my.esc(OP.ROLE_LABEL[me.s.role] || '') + '<small>회원 유형은 변경할 수 없습니다.</small>';
+  OP.orgCombo($('#org'), $('#dept')); // 소속·부서: DB 자동완성 + 직접 입력
   $('#name').value = acc.name || ''; $('#org').value = acc.org || me.org || ''; $('#dept').value = acc.dept || ''; $('#phone').value = acc.phone || '';
 
   var SVCS = ['Genomics', 'Transcriptomics', 'Proteomics', 'Metabolomics', 'Glycoproteomics', 'Olink', '바이오의약품 특성 분석', 'Bioinformatics'];
@@ -230,6 +231,7 @@
     var data = { name: n.value.trim(), org: o.value.trim(), dept: $('#dept').value.trim(), phone: $('#phone').value.trim(), photo: photo };
     if (partner) data.svcs = [].map.call(document.querySelectorAll('#svcs input:checked'), function (i) { return i.value; });
     OP.saveAccount(email, data);
+    OP.saveOrg(data.org, data.dept);
     refresh(); pending(false);
     OP.toast('회원 정보가 저장되었습니다.');
   });

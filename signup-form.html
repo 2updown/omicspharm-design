@@ -8,10 +8,10 @@
 <!-- Figma 회원가입/로그인 섹션 (254:18355)
      클라이언트: Signup-Filled 281:23123 → 기본정보 1/2 806:5078 → 추가정보 2/2 806:5117 → 완료 1120:43157
      분석파트너: Signup-Filled 1109:37231 → 1/3 1109:37368 → 2/3 1109:37427 → 3/3 1117:42815 → 완료 1120:42976 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261001q">
-<link rel="stylesheet" href="assets/auth/auth.css?v=20261001q">
-<script src="assets/common/site.js?v=20261001q"></script>
-<script src="assets/auth/auth.js?v=20261001q"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261001r">
+<link rel="stylesheet" href="assets/auth/auth.css?v=20261001r">
+<script src="assets/common/site.js?v=20261001r"></script>
+<script src="assets/auth/auth.js?v=20261001r"></script>
 </head>
 <body>
 <div class="auth">
@@ -78,8 +78,8 @@
               </div>
             </div>
             <div class="row2">
-              <div class="field"><label for="org">소속(회사)<span class="req">*</span></label><div class="input"><input id="org" required placeholder="소속" autocomplete="organization"></div></div>
-              <div class="field"><label for="dept">부서<span class="req">*</span></label><div class="input"><input id="dept" required placeholder="부서"></div></div>
+              <div class="field"><label for="org">소속(회사)<span class="req">*</span></label><div class="input"><input id="org" required placeholder="소속 검색 또는 입력"></div></div>
+              <div class="field"><label for="dept">부서<span class="req">*</span></label><div class="input"><input id="dept" required placeholder="부서 검색 또는 입력"></div></div>
             </div>
             <div class="field"><label for="country">국가<span class="req">*</span></label>
               <div class="input select"><select id="country"><option>South Korea</option><option>United States</option><option>Japan</option><option>China</option><option>Other</option></select></div>
@@ -286,6 +286,8 @@
     });
     i.addEventListener('keydown', function (e) { if (e.key === 'Backspace' && !i.value && PH[k - 1]) PH[k - 1].focus(); });
   });
+  // 소속·부서: DB 자동완성 + 직접 입력
+  OP.orgCombo($('#org'), $('#dept'));
   var DIAL = { 'South Korea': '+82', 'United States': '+1', 'Japan': '+81', 'China': '+86' };
   $('#country').addEventListener('change', function () { if (DIAL[this.value]) $('#cc').value = DIAL[this.value]; });
   function phoneOk() { return /^\d{2,3}$/.test(PH[0].value) && /^\d{3,4}$/.test(PH[1].value) && /^\d{4}$/.test(PH[2].value); }
@@ -345,7 +347,7 @@
     e.preventDefault();
     if (type === 'partner' && !$('#file').files.length) { AUTH.setError($('#f-file'), '사업자등록증을 첨부해주세요.'); return; }
     var s = OP.session(), who = (s && s.email) || (function () { try { return sessionStorage.getItem(PENDING); } catch (e2) { return null; } })();
-    if (who) { OP.saveAccount(who, { profileDone: true, name: $('#name').value.trim(), org: $('#org').value.trim(), dept: $('#dept').value.trim(), phone: $('#cc').value + ' ' + PH.map(function (i) { return i.value; }).join('-') }); OP.login(who); }
+    if (who) { OP.saveAccount(who, { profileDone: true, name: $('#name').value.trim(), org: $('#org').value.trim(), dept: $('#dept').value.trim(), phone: $('#cc').value + ' ' + PH.map(function (i) { return i.value; }).join('-') }); OP.saveOrg($('#org').value, $('#dept').value); OP.login(who); }
     show('done');
   });
 
