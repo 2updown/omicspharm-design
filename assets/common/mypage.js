@@ -46,7 +46,12 @@
     P_STAGES: P_STAGES,
     partnerProjects: function () { var s = OP.session(); return s && (s.role === 'admin' || OP.partnerVerified()) ? PARTNER_DEMO.slice() : []; }, // 인증 분석파트너·컨설턴트만 (미인증은 매칭·계약된 프로젝트가 없음)
     esc: esc, ymd: ymd, ymdhm: ymdhm,
-    projects: function () { return read('op.submitted', []); },
+    // 이전 양식(V4 입력 기준 이전)으로 제출된 의뢰는 정리하고 V4 양식 의뢰만 보여줌
+    projects: function () {
+      var L = read('op.submitted', []), V = L.filter(function (p) { return p.ver === 4; });
+      if (V.length !== L.length) write('op.submitted', V);
+      return V;
+    },
     // 로그인한 계정이 보낸 문의만 (+ 클라이언트에게는 답변 완료 예시 1건)
     inquiries: function () {
       var s = OP.session() || {};

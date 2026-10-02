@@ -470,7 +470,7 @@
   /* 서비스별 2단계 */
   .svcnone{margin:0;padding:48px 16px;border:1px dashed var(--n300);border-radius:8px;text-align:center;font-size:14px;color:var(--n500)}
   .svcblk.on{display:block}
-  .opts .etcin{width:220px;height:40px;margin-left:-4px}
+  .opts .etcin{width:220px;height:40px;margin-left:-4px;background:#fff;cursor:text} /* 체크박스용 배경 이미지가 입력칸에 붙지 않게 */
   .opts .etcin:disabled{background:var(--n100)}
   .items input[type=radio]{border-radius:50%;background:#fff;border:1.5px solid var(--n300)}
   .items input[type=radio]:checked{border:0;background:var(--teal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.2l2.6 2.6L14 7.4' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/20px no-repeat}
@@ -537,8 +537,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261002t">
-<script src="assets/common/site.js?v=20261002t"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002u">
+<script src="assets/common/site.js?v=20261002u"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -934,6 +934,7 @@
 <script>
 (function(){
   var cur=1, MAX=4;
+  var FORM_VER=4;     // 의뢰 입력 양식 버전 (V4 입력 기준). 이전 양식으로 제출된 의뢰는 마이페이지에서 정리됨
   var FREE_NAV=true;   // 내부 검토용: 필수값 검사 없이 단계 이동 허용
   var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
   var steps=$$('.step'), tabs=$$('.st'), prev=$('#prev'), next=$('#next');
@@ -1249,7 +1250,7 @@
   }
   function submit(){
     var d=collectSubmission(), list=[];
-    d.form=collect(); d.form.id=null; // 수정하기에서 입력값을 그대로 다시 불러오기 위해 보관
+    d.ver=FORM_VER; d.form=collect(); d.form.id=null; // 수정하기에서 입력값을 그대로 다시 불러오기 위해 보관
     try{ list=JSON.parse(localStorage.getItem('op.submitted')||'[]'); }catch(e){}
     var k=EDIT?list.findIndex(function(x){return x.id===EDIT.id}):-1;
     if(k>-1){ d.id=EDIT.id; d.at=EDIT.at; d.updatedAt=Date.now(); list[k]=d; }
@@ -1363,7 +1364,7 @@
     var id=new URLSearchParams(location.search).get('edit'); if(!id) return null;
     var L=[]; try{ L=JSON.parse(localStorage.getItem('op.submitted')||'[]'); }catch(e){}
     var d=L.filter(function(x){return x.id===id})[0];
-    if(!d){ OP.flash('의뢰를 찾을 수 없습니다.'); location.replace('mypage-project.html'); return null; }
+    if(!d || d.ver!==FORM_VER || !d.form){ OP.flash('의뢰를 찾을 수 없습니다.'); location.replace('mypage-project.html'); return null; }
     return d;
   })();
   var cModal=$('#confirmModal'), cCb=null;
@@ -1388,7 +1389,8 @@
     get:async function(){ if(window.storage&&window.storage.get){try{var r=await window.storage.get(KEY);return r&&r.value?JSON.parse(r.value):[]}catch(e){return []}} return MEM[KEY]||[] },
     set:async function(v){ if(window.storage&&window.storage.set){try{await window.storage.set(KEY,JSON.stringify(v));return}catch(e){}} MEM[KEY]=v }
   };
-  function fields(){ return $$('.card input, .card select, .card textarea').filter(function(el){return !el.closest('#grpBody')&&!el.disabled}) }
+  // 저장·복원은 순서(인덱스)로 맞추므로 '기타' 입력칸은 비활성 상태여도 포함 (빼면 체크 상태에 따라 순서가 어긋남)
+  function fields(){ return $$('.card input, .card select, .card textarea').filter(function(el){return !el.closest('#grpBody')&&(!el.disabled||el.classList.contains('etcin'))}) }
   function collect(){
     var T=0,D=0; for(var n=1;n<=MAX;n++){var st=stepStat(n); T+=st.total; D+=st.done}
     return { id:curId, title:($('#reqName').value.trim()||(svcName()||'새')+' 의뢰서'), svc:svcName()||'서비스 미선택',
@@ -1484,56 +1486,12 @@
   }
 
   markPhone(); drawSmp();
-  // 입력값 원본이 없는 예전 제출본: 제출 요약(항목명·값)을 화면 항목에 맞춰 최대한 다시 채운다
-  function restoreFromSummary(d){
-    var norm=function(t){ return String(t||'').replace(/\s+/g,' ').trim(); };
-    var optText=function(i){ var l=i.closest('label'); if(!l) return ''; var c=l.cloneNode(true); $$('.d',c).forEach(function(x){x.remove()}); return norm(c.textContent); };
-    var set=function(el,v){ el.value=v; el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); };
-    var pick=function(scope,txt){ var hit=$$('input[type=checkbox], input[type=radio]',scope).filter(function(i){ return optText(i)===txt; })[0];
-      if(hit && !hit.checked){ hit.checked=true; hit.dispatchEvent(new Event('change',{bubbles:true})); } return !!hit; };
-    // 1단계: 서비스·제목·목적·공개 범위
-    var sv=$$('input[name="svc"]').filter(function(i){ return (i.dataset.name||(i.parentNode.querySelector('b')||{}).textContent)===d.svc; })[0];
-    if(sv){ sv.checked=true; sv.dispatchEvent(new Event('change',{bubbles:true})); }
-    syncSvc(); syncCond(); syncShow();
-    if(d.title) set($('#reqName'), d.title);
-    var pt=$('.step[data-step="1"] textarea'); if(pt && d.purpose) set(pt, d.purpose);
-    if(d.open) pick($('.step[data-step="1"]'), d.open);
-    // 2~4단계: 섹션 제목 → 항목명 → 값(' / '로 구분)
-    (d.sections||[]).forEach(function(sec){
-      syncCond(); syncShow(); // 앞에서 고른 값에 따라 나타나는 섹션 반영
-      var box=$$('.step .sec').filter(function(x){ var h=x.querySelector('h2'); return h && visible(x) && norm(h.textContent).replace(/\*$/,'').trim()===sec.title; })[0];
-      if(!box) return;
-      if(sec.note){ var ta=box.querySelector('textarea'); if(ta) set(ta, sec.note); return; }
-      (sec.rows||[]).forEach(function(r){
-        var f=$$('.field',box).filter(function(x){ var lb=x.querySelector('.flabel'); return lb && norm(lb.textContent).replace(/\*$/,'').trim()===r[0]; })[0];
-        if(!f) return;
-        var dates=$$('input[type=date]',f);
-        if(dates.length===2 && / ~ /.test(r[1])){ var dd=r[1].split(' ~ '); set(dates[0],dd[0]); set(dates[1],dd[1]); return; }
-        var rest=[];
-        r[1].split(' / ').forEach(function(part){ if(!pick(f,part)) rest.push(part); });
-        if(f.querySelector('#tgtTags') && rest.length){ TAGS.set(rest.shift().split(', ')); }
-        $$('input[type=text]:not(:disabled), input[type=number], input[type=date], textarea',f).forEach(function(i){
-          if(i.id==='tgtIn' || i.classList.contains('etcin') || !rest.length) return;
-          var v=rest.shift(); var sel=i.nextElementSibling&&i.nextElementSibling.tagName==='SELECT'?i.nextElementSibling:null;
-          if(sel){ var m=v.split(' '); set(i,m[0]); if(m[1]) set(sel,m[1]); } else set(i,v);
-        });
-      });
-    });
-    if(d.samples) set($('#totalN'), d.samples);
-    if(d.due) set($('#dueDate'), d.due);
-    if(d.from) set($('#rFrom'), d.from);
-    if(d.to) set($('#rTo'), d.to);
-    if(d.budget) pick(document, d.budget);
-    syncCond(); syncSvc(); syncShow(); syncEtc(); drawSmp();
-  }
-
   // 수정 모드: 마이페이지 프로젝트 상세의 [수정하기] → ?edit=의뢰번호
   if(EDIT){
     $('.crumb .ptitle').textContent='분석 의뢰 수정';
     $('.crumb .back').lastChild.textContent='의뢰 상세로 돌아가기';
     $('#saveBtn').style.display='none'; $('#openList').closest('.scard').style.display='none'; // 제출한 의뢰는 임시저장 대상이 아님
-    if(EDIT.form) apply(EDIT.form);
-    else { restoreFromSummary(EDIT); setTimeout(function(){ toast('이전에 제출된 의뢰입니다. 불러온 내용을 확인해주세요.'); },300); }
+    apply(EDIT.form);
     curId=null; dirty=false;
     for(var n=1;n<=MAX;n++) visited[n]=true;
     cur=1; document.title='분석 의뢰 수정 · OmicsPharm';
