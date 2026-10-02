@@ -141,7 +141,7 @@
 
   /* 목록형 B안 (831:3469): 검색·툴바·목록·페이지를 흰 박스 하나로 */
   /* 그리드형 기본: Figma Find Projects2-grid (1425:18464). 카드마다 오른쪽·아래 선(gray-300), 박스 가장자리까지 붙임. 기존 박스 안 카드형은 ?grid=a */
-  .main.boxed .grid.lines { gap:0; padding:0; } /* 툴바와 간격 8px (.results gap) */
+  .main.boxed .grid.lines { gap:0; padding:0; border-top:1px solid var(--gray-300); } /* 툴바와 간격 8px (.results gap), 첫 줄 위에도 선 */
   .grid.lines > .gcard, .grid.lines > .gfill { gap:16px; padding:4px 4px 16px; border:0; border-right:1px solid var(--gray-300); border-bottom:1px solid var(--gray-300); border-radius:0; box-shadow:none; background:#fff; transition:background .15s; }
   .grid.lines > :nth-child(3n) { border-right:0; } /* 마지막 열은 박스 테두리와 겹치지 않게 */
   .grid.lines > a.gcard:hover { border-color:var(--gray-300); background:var(--gray-50); box-shadow:none; }
