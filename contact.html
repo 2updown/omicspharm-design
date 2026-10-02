@@ -65,6 +65,11 @@
   .file span { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .file button { font-size:13px; color:var(--gray-500); }
   .file input { display:none; }
+  /* 사진 첨부 미리보기 */
+  .fprev { display:flex; align-items:flex-end; gap:8px; margin-top:8px; }
+  .fprev img { display:block; max-width:200px; max-height:140px; border:1px solid var(--gray-200); border-radius:8px; object-fit:contain; background:var(--gray-50); }
+  .fprev span { font-size:12px; line-height:18px; color:var(--gray-500); }
+  .fprev[hidden] { display:none; }
 
   /* 동의 */
   .agree-box { max-height:140px; overflow:auto; padding:16px; border:1px solid var(--gray-200); border-radius:8px; background:var(--gray-50); font-size:13px; line-height:20px; color:var(--gray-600); word-break:keep-all; }
@@ -163,11 +168,12 @@
       <div class="tbl">
         <div class="field" id="f-title"><label class="flabel" for="title">제목<span class="req">*</span></label><div class="fbody"><input class="input" id="title" maxlength="100" placeholder="문의 제목을 입력해주세요"></div></div>
         <div class="field" id="f-body"><label class="flabel" for="body">내용<span class="req">*</span></label><div class="fbody pad">
-          <textarea class="textarea" id="body" maxlength="2000" placeholder="정확한 답변을 위해 분석 목적, 시료 종류와 수량, 희망 일정 등을 함께 적어주세요."></textarea>
+          <textarea class="textarea" id="body" maxlength="2000" placeholder="문의하실 내용을 구체적으로 적어주세요.&#10;관련 서비스나 프로젝트, 확인이 필요한 사항을 함께 적어주시면 더 정확하게 답변드릴 수 있습니다."></textarea>
           <p class="help"><span>개인정보(주민등록번호 등)는 입력하지 마세요.</span><span id="count">0 / 2000</span></p>
         </div></div>
         <div class="field"><div class="flabel">첨부파일</div><div class="fbody">
           <label class="file" id="fileBox"><img src="assets/auth/ic-paperclip.svg" alt=""><span id="fileName">파일 선택 (최대 1개, 30MB)</span><button type="button" id="fileClear" hidden>삭제</button><input type="file" id="file"></label>
+          <div class="fprev" id="fPrev" hidden><img id="fPrevImg" alt="첨부 사진 미리보기"><span>사진은 답변 담당자에게 함께 전달됩니다.</span></div>
         </div></div>
         <div class="field" id="f-agree"><div class="flabel">개인정보 수집 및 이용 동의<span class="req">*</span></div><div class="fbody pad">
           <div class="agree-box" tabindex="0">
@@ -239,11 +245,26 @@
 
   // 첨부 (최대 30MB)
   var file = $('#file');
+  // 사진(JPG·PNG·WEBP·GIF)은 실제로 올라가도록 긴 변 1200px로 줄여 함께 저장하고 미리보기를 보여줌 (데모: 이 브라우저에 저장). 다른 파일은 이름만
+  var fileImg = '';
   file.addEventListener('change', function () {
     var f = file.files[0];
     if (f && f.size > 30 * 1024 * 1024) { OP.toast('30MB 이하 파일만 첨부할 수 있습니다.'); file.value = ''; f = null; }
     $('#fileName').textContent = f ? f.name : '파일 선택 (최대 1개, 30MB)';
     $('#fileBox').classList.toggle('has', !!f); $('#fileClear').hidden = !f;
+    fileImg = ''; $('#fPrev').hidden = true;
+    if (f && /^image\/(png|jpeg|webp|gif)$/.test(f.type)) {
+      var img = new Image();
+      img.onload = function () {
+        var k = Math.min(1, 1200 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+        c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        var g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+        fileImg = c.toDataURL('image/jpeg', .8); URL.revokeObjectURL(img.src);
+        if (file.files[0] === f) { $('#fPrevImg').src = fileImg; $('#fPrev').hidden = false; }
+      };
+      img.onerror = function () { OP.toast('사진을 읽을 수 없습니다. 다른 파일을 선택해주세요.'); };
+      img.src = URL.createObjectURL(f);
+    }
   });
   $('#fileClear').addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); file.value = ''; file.dispatchEvent(new Event('change')); });
 
@@ -278,8 +299,14 @@
     var typeLabel = type.options[type.selectedIndex].textContent;
     var item = { id: 'Q-' + Date.now().toString(36).toUpperCase(), at: Date.now(), owner: (OP.session() || {}).email || '', type: typeLabel, svc: type.value === 'quote' ? $('#svc').value : '', ref: P.get('ref') || '',
       name: $('#name').value.trim(), org: $('#org').value.trim(), email: em, phone: $('#phone').value.trim(), title: $('#title').value.trim(), body: body.value.trim(),
-      file: file.files[0] ? file.files[0].name : '' };
-    try { var L = JSON.parse(localStorage.getItem('op.inquiries') || '[]'); L.unshift(item); localStorage.setItem('op.inquiries', JSON.stringify(L.slice(0, 50))); } catch (err) {}
+      file: file.files[0] ? file.files[0].name : '', fileImg: file.files[0] ? fileImg : '' };
+    var L = []; try { L = JSON.parse(localStorage.getItem('op.inquiries') || '[]'); } catch (err) {}
+    L.unshift(item);
+    try { localStorage.setItem('op.inquiries', JSON.stringify(L.slice(0, 50))); }
+    catch (err) { // 저장 공간이 부족하면 예전 문의의 사진부터 비우고 다시 저장
+      L.slice(1).forEach(function (q) { q.fileImg = ''; });
+      try { localStorage.setItem('op.inquiries', JSON.stringify(L.slice(0, 50))); } catch (err2) { item.fileImg = ''; try { localStorage.setItem('op.inquiries', JSON.stringify(L.slice(0, 50))); } catch (err3) {} }
+    }
 
     var esc = function (v) { return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
     $('#doneMail').textContent = em;

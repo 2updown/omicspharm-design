@@ -30,6 +30,7 @@
   .detail dl { display:flex; flex-wrap:wrap; gap:6px 20px; font-size:13px; line-height:18px; }
   .detail dt { color:var(--gray-500); } .detail dl div { display:flex; gap:6px; }
   .detail .q { font-size:15px; line-height:1.7; color:var(--gray-700); white-space:pre-line; word-break:break-word; }
+  .detail .att img { display:block; max-width:min(100%, 360px); max-height:280px; border:1px solid var(--gray-200); border-radius:8px; object-fit:contain; background:var(--gray-50); }
   .ans { padding:20px; border-radius:12px; background:var(--bg-green); border:1px solid #dfece8; }
   .ans h5 { display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:14px; font-weight:600; line-height:20px; color:var(--teal-700); }
   .ans h5 span { font-weight:400; font-size:13px; color:var(--gray-500); }
@@ -102,6 +103,7 @@
         '<div class="detail"' + (q.id === openId ? '' : ' hidden') + '>' +
           '<dl>' + meta.map(function (m) { return '<div><dt>' + m[0] + '</dt><dd>' + esc(m[1]) + '</dd></div>'; }).join('') + '</dl>' +
           '<p class="q">' + esc(q.body) + '</p>' +
+          (q.fileImg && /^data:image\//.test(q.fileImg) ? '<div class="att"><img src="' + q.fileImg + '" alt="첨부 사진 ' + esc(q.file || '') + '"></div>' : '') +
           (q.answer
             ? '<div class="ans"><h5>OmicsPharm 답변<span>' + D.ymdhm(q.answer.at) + '</span></h5><p>' + esc(q.answer.body) + '</p></div>'
             : '<div class="ans wait"><p>담당자가 내용을 확인하고 있습니다. 영업일 기준 1~2일 안에 답변드리겠습니다.</p></div>') +
