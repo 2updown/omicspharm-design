@@ -6,9 +6,9 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261002j">
-<script src="assets/common/site.js?v=20261002j"></script>
-<script src="assets/common/projects-data.js?v=20261002j"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002k">
+<script src="assets/common/site.js?v=20261002k"></script>
+<script src="assets/common/projects-data.js?v=20261002k"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -100,6 +100,65 @@
   #quote { scroll-margin-top:94px; }
   .cta-bar .btn-filled.off { background:var(--gray-200); color:var(--gray-400); pointer-events:none; }
   body.has-cta-bar .op-float { bottom:112px; } /* 플로팅 버튼이 문의 바에 가리지 않게 */
+
+  /* 프로젝트 문의 (챗봇형 시안): 오른쪽 패널 / 모바일은 아래에서 올라오는 시트 */
+  .pq-dim { position:fixed; inset:0; z-index:90; background:rgba(0,0,0,.4); opacity:0; transition:opacity .25s; }
+  .pq-dim.on { opacity:1; }
+  .pq { position:fixed; top:0; right:0; bottom:0; z-index:91; display:flex; flex-direction:column; width:440px; max-width:100%; background:#fff; box-shadow:-8px 0 32px rgba(0,0,0,.12); transform:translateX(100%); transition:transform .3s cubic-bezier(.2,.7,.2,1); }
+  .pq.on { transform:none; }
+  .pq[hidden], .pq-dim[hidden] { display:none; }
+  .pq-hd { display:flex; align-items:flex-start; gap:12px; padding:20px 20px 16px 24px; border-bottom:1px solid var(--gray-200); }
+  .pq-hd h2 { font-size:18px; font-weight:700; line-height:26px; }
+  .pq-hd p { margin-top:2px; font-size:13px; line-height:19px; color:var(--gray-500); }
+  .pq-hd p i { display:inline-block; width:6px; height:6px; margin-right:6px; border-radius:50%; background:#22c55e; vertical-align:1px; }
+  .pq-x { margin-left:auto; flex:none; display:flex; align-items:center; justify-content:center; width:36px; height:36px; border:0; border-radius:8px; background:none; color:var(--gray-600); cursor:pointer; }
+  .pq-x:hover { background:var(--gray-100); }
+  .pq-prj { display:flex; flex-direction:column; gap:4px; margin:16px 24px 0; padding:14px 16px; border:1px solid var(--gray-200); border-radius:12px; background:var(--gray-50); }
+  .pq-prj small { font-size:12px; line-height:18px; color:var(--gray-500); }
+  .pq-prj small b { margin-right:6px; font-weight:600; color:var(--teal-600); }
+  .pq-prj strong { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:14px; font-weight:600; line-height:20px; word-break:keep-all; }
+  .pq-log { flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:12px; padding:20px 24px 24px; }
+  .pq-day { align-self:center; padding:2px 10px; border-radius:99px; background:var(--gray-100); font-size:12px; line-height:18px; color:var(--gray-500); }
+  .pq-m { display:flex; gap:8px; max-width:86%; animation:pqIn .35s ease both; }
+  .pq-m .av { flex:none; width:32px; height:32px; border-radius:50%; border:1px solid var(--gray-200); background:#fff url(assets/common/favicon.png) center / 20px no-repeat; }
+  .pq-m .who { display:block; margin-bottom:4px; font-size:12px; font-weight:600; line-height:16px; color:var(--gray-600); }
+  .pq-m .bb { padding:10px 14px; border-radius:4px 14px 14px 14px; background:var(--gray-100); font-size:15px; line-height:22px; color:#000; white-space:pre-wrap; word-break:break-word; }
+  .pq-m time { align-self:flex-end; flex:none; font-size:11px; line-height:16px; color:var(--gray-400); }
+  .pq-m.me { align-self:flex-end; flex-direction:row-reverse; }
+  .pq-m.me .bb { border-radius:14px 4px 14px 14px; background:var(--teal-600); color:#fff; }
+  .pq-m .file { display:flex; align-items:center; gap:6px; margin-top:6px; padding:8px 10px; border-radius:8px; background:rgba(255,255,255,.18); font-size:13px; line-height:18px; }
+  .pq-m:not(.me) .file { background:#fff; border:1px solid var(--gray-200); }
+  .pq-done { margin-top:10px; padding:12px 14px; border:1px solid var(--gray-200); border-radius:10px; background:#fff; font-size:13px; line-height:20px; color:var(--gray-600); }
+  .pq-done dt { float:left; width:64px; color:var(--gray-500); }
+  .pq-done dd { color:#000; }
+  .pq-done a { display:inline-block; margin-top:8px; font-weight:600; color:var(--teal-600); }
+  .pq-chips { display:flex; flex-wrap:wrap; gap:8px; padding-left:40px; animation:pqIn .35s ease .1s both; }
+  .pq-chips button { height:36px; padding:0 14px; border:1px solid var(--teal-600); border-radius:99px; background:#fff; font:inherit; font-size:14px; font-weight:500; color:var(--teal-600); cursor:pointer; }
+  .pq-chips button:hover { background:var(--teal-50, #effbf9); }
+  .pq-typing { display:flex; gap:4px; padding:14px; }
+  .pq-typing i { width:6px; height:6px; border-radius:50%; background:var(--gray-400); animation:pqDot 1s infinite; }
+  .pq-typing i:nth-child(2) { animation-delay:.15s; } .pq-typing i:nth-child(3) { animation-delay:.3s; }
+  @keyframes pqIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  @keyframes pqDot { 0%, 60%, 100% { opacity:.3; transform:none; } 30% { opacity:1; transform:translateY(-3px); } }
+  .pq-ft { padding:12px 16px 16px; border-top:1px solid var(--gray-200); }
+  .pq-att { display:flex; align-items:center; gap:6px; margin:0 4px 8px; font-size:13px; color:var(--gray-600); }
+  .pq-att[hidden] { display:none; }
+  .pq-att button { border:0; background:none; color:var(--gray-400); cursor:pointer; font-size:16px; line-height:1; }
+  .pq-in { display:flex; align-items:flex-end; gap:6px; padding:6px 6px 6px 8px; border:1px solid var(--gray-300); border-radius:12px; }
+  .pq-in:focus-within { border-color:var(--teal-600); }
+  .pq-in textarea { flex:1; min-width:0; max-height:120px; padding:7px 4px; border:0; outline:0; resize:none; font:inherit; font-size:15px; line-height:22px; }
+  .pq-in textarea::placeholder { color:var(--gray-400); }
+  .pq-ib { flex:none; display:flex; align-items:center; justify-content:center; width:36px; height:36px; border:0; border-radius:8px; background:none; color:var(--gray-500); cursor:pointer; }
+  .pq-ib:hover { background:var(--gray-100); }
+  .pq-send { background:var(--teal-600); color:#fff; }
+  .pq-send:hover { background:var(--teal-700); }
+  .pq-send:disabled { background:var(--gray-200); color:var(--gray-400); cursor:default; }
+  .pq-note { margin-top:8px; font-size:12px; line-height:18px; color:var(--gray-400); text-align:center; }
+  @media (max-width:640px) {
+    .pq { top:auto; left:0; width:100%; height:88vh; height:88dvh; border-radius:16px 16px 0 0; transform:translateY(100%); }
+    .pq-hd { padding:16px 12px 12px 16px; } .pq-prj { margin:12px 16px 0; } .pq-log { padding:16px; }
+  }
+  @media (prefers-reduced-motion:reduce) { .pq, .pq-dim { transition:none; } .pq-m, .pq-chips { animation:none; } }
 
   @media (max-width:1180px) { .body, .cta-bar { padding-left:24px; padding-right:24px; } }
   @media (max-width:960px) {
@@ -259,6 +318,26 @@
   </div>
 </div>
 
+<div class="pq-dim" id="pqDim" hidden></div>
+<section class="pq" id="pq" role="dialog" aria-modal="true" aria-labelledby="pqTitle" hidden>
+  <div class="pq-hd">
+    <div><h2 id="pqTitle">프로젝트 문의</h2><p><i></i>OmicsPharm 컨설턴트가 확인 후 답변드립니다 · 평일 1일 이내</p></div>
+    <button type="button" class="pq-x" id="pqX" aria-label="닫기"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
+  </div>
+  <div class="pq-prj"><small><b id="pqCat"></b><span id="pqNo"></span></small><strong id="pqPrj"></strong></div>
+  <div class="pq-log" id="pqLog" aria-live="polite"></div>
+  <div class="pq-ft">
+    <div class="pq-att" id="pqAtt" hidden><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 6l-6 6a2 2 0 003 3l6-6a4 4 0 00-6-6l-6 6"/></svg><span></span><button type="button" aria-label="첨부 취소">×</button></div>
+    <div class="pq-in">
+      <button type="button" class="pq-ib" id="pqClip" aria-label="파일 첨부"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 6l-6 6a2 2 0 003 3l6-6a4 4 0 00-6-6l-6 6"/></svg></button>
+      <input type="file" id="pqFile" hidden>
+      <textarea id="pqTx" rows="1" placeholder="궁금한 점을 입력해주세요"></textarea>
+      <button type="button" class="pq-ib pq-send" id="pqSend" aria-label="보내기" disabled><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 16V4M5 9l5-5 5 5"/></svg></button>
+    </div>
+    <p class="pq-note">의뢰자에게 직접 전달되지 않으며, OmicsPharm 컨설턴트가 확인합니다.</p>
+  </div>
+</section>
+
 <div data-op-footer></div>
 
 <script>
@@ -289,7 +368,7 @@
   if (x.open) {
     $('#ctaSub').textContent = '모집기한 ' + x.to + '까지 · 담당 매니저가 확인 후 연락드립니다';
     if (!OP.session()) cta.href = 'login.html?next=' + encodeURIComponent('omicspharm-project-detail-prot.html?id=' + x.id);
-    else cta.href = 'contact.html?type=project&ref=' + encodeURIComponent(x.title);
+    else { cta.href = '#'; cta.addEventListener('click', function (e) { e.preventDefault(); openPQ(); }); }
   } else {
     $('#ctaSub').textContent = '모집이 마감된 프로젝트입니다';
     cta.textContent = '모집 마감'; cta.classList.add('off'); cta.setAttribute('aria-disabled', 'true');
@@ -310,6 +389,115 @@
   if (x.priv) {
     var st = $('[data-f="status"]');
     st.insertAdjacentHTML('afterend', '<span class="badge priv"><img src="assets/main/ic-lock-key.svg" alt="">비공개</span>');
+  }
+
+  // ── 프로젝트 문의 (챗봇형 시안) ──
+  // 주제 버튼 고르기 → 내용 입력 → 접수. 대화는 계정·프로젝트별로 이 브라우저에 저장되고,
+  // 마이페이지 문의내역(op.inquiries)에도 '프로젝트 문의'로 함께 남는다
+  var pq = $('#pq'), dim = $('#pqDim'), log = $('#pqLog'), tx = $('#pqTx'), send = $('#pqSend'), fileIn = $('#pqFile'), att = $('#pqAtt');
+  var TOPICS = [
+    ['시료', '시료·샘플', '시료에 대해 어떤 점이 궁금하신가요?\n예) 시료량이 부족할 때 진행 가능 여부, 보관·운송 조건'],
+    ['방법', '분석 방법·범위', '분석 방법이나 범위에 대해 궁금한 점을 적어주세요.\n예) DIA 대신 DDA 적용 가능 여부, 정량 대상 추가'],
+    ['일정', '일정', '일정에 대해 궁금한 점을 적어주세요.\n예) 희망완료일 조정 가능 여부, 중간 결과 공유 시점'],
+    ['견적', '견적·비용', '견적이나 비용에 대해 궁금한 점을 적어주세요.\n예) 표준물질 구매 비용 포함 여부, 결제 조건'],
+    ['기타', '기타', '궁금한 점을 자유롭게 적어주세요.']
+  ];
+  var STORE = 'op.pchat', ses = OP.session() || {}, me = (OP.account(ses.email) || {}).name || '회원';
+  var readS = function () { try { return JSON.parse(localStorage.getItem(STORE) || '{}'); } catch (e) { return {}; } };
+  var key = (ses.email || '') + '|' + x.id;
+  var th = readS()[key] || { msgs: [], topic: '', qid: '' };
+  var save = function () { try { var all = readS(); all[key] = th; localStorage.setItem(STORE, JSON.stringify(all)); } catch (e) {} };
+  var esc = function (v) { return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+  var hm = function (t) { var d = new Date(t); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+  var down = function () { log.scrollTop = log.scrollHeight; };
+
+  function bubble(m) {
+    var el = document.createElement('div');
+    el.className = 'pq-m' + (m.me ? ' me' : '');
+    var file = m.file ? '<div class="file"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 6l-6 6a2 2 0 003 3l6-6a4 4 0 00-6-6l-6 6"/></svg>' + esc(m.file) + '</div>' : '';
+    var done = m.done ? '<dl class="pq-done"><div><dt>접수번호</dt><dd>' + esc(m.done) + '</dd></div><div><dt>주제</dt><dd>' + esc(th.topic) + '</dd></div><a href="mypage-inquiry.html?id=' + encodeURIComponent(m.done) + '">문의내역에서 보기 ›</a></dl>' : '';
+    el.innerHTML = (m.me ? '' : '<span class="av" aria-hidden="true"></span>') +
+      '<div>' + (m.me ? '' : '<span class="who">' + (m.who || 'OmicsPharm') + '</span>') + (m.t ? '<div class="bb">' + esc(m.t) + file + '</div>' : '') + done + '</div>' +
+      '<time>' + hm(m.at) + '</time>';
+    log.appendChild(el);
+  }
+  function chips() {
+    var c = document.createElement('div'); c.className = 'pq-chips'; c.id = 'pqChips';
+    c.innerHTML = TOPICS.map(function (t, i) { return '<button type="button" data-i="' + i + '">' + t[1] + '</button>'; }).join('');
+    log.appendChild(c);
+  }
+  function add(m) { m.at = m.at || Date.now(); th.msgs.push(m); save(); bubble(m); down(); }
+  // 봇 답변은 잠깐 '입력 중' 표시 뒤에 나타남
+  function bot(m, then) {
+    var t = document.createElement('div'); t.className = 'pq-m';
+    t.innerHTML = '<span class="av" aria-hidden="true"></span><div class="bb pq-typing"><i></i><i></i><i></i></div>';
+    log.appendChild(t); down();
+    setTimeout(function () { t.remove(); add(m); if (then) then(); }, 650);
+  }
+  function render() {
+    log.innerHTML = '<span class="pq-day">' + (th.msgs[0] ? new Date(th.msgs[0].at) : new Date()).toLocaleDateString('ko-KR') + '</span>';
+    th.msgs.forEach(bubble);
+    if (!th.topic) chips();
+    // 컨설턴트 답변이 등록되었으면 대화에 표시 (마이페이지 문의내역과 같은 데이터)
+    if (th.qid) {
+      var Q; try { Q = JSON.parse(localStorage.getItem('op.inquiries') || '[]'); } catch (e) { Q = []; }
+      var q = Q.filter(function (v) { return v.id === th.qid; })[0];
+      if (q && q.answer) bubble({ who: 'OmicsPharm 컨설턴트', t: q.answer.body, at: q.answer.at });
+    }
+    down();
+  }
+  function openPQ() {
+    if (!th.msgs.length) th.msgs.push({ t: me + '님, 안녕하세요.\n이 프로젝트에 대해 어떤 점이 궁금하신가요?', at: Date.now() });
+    render();
+    pq.hidden = dim.hidden = false; document.body.classList.add('op-drawer-open'); document.documentElement.style.overflow = 'hidden';
+    requestAnimationFrame(function () { pq.classList.add('on'); dim.classList.add('on'); });
+    setTimeout(function () { (th.topic ? tx : pq.querySelector('.pq-chips button') || tx).focus({ preventScroll: true }); }, 320);
+  }
+  function closePQ() {
+    pq.classList.remove('on'); dim.classList.remove('on');
+    document.body.classList.remove('op-drawer-open'); document.documentElement.style.overflow = '';
+    setTimeout(function () { pq.hidden = dim.hidden = true; }, 300);
+    cta.focus({ preventScroll: true });
+  }
+  $('#pqX').addEventListener('click', closePQ); dim.addEventListener('click', closePQ);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !pq.hidden) closePQ(); });
+  $('#pqCat').textContent = x.cat; $('#pqNo').textContent = F.no; $('#pqPrj').textContent = x.title;
+
+  function pick(i) {
+    var T = TOPICS[i]; th.topic = T[1];
+    var c = document.getElementById('pqChips'); if (c) c.remove();
+    add({ me: true, t: T[1] });
+    bot({ t: T[2] }, function () { tx.focus(); });
+  }
+  log.addEventListener('click', function (e) { var b = e.target.closest('#pqChips button'); if (b) pick(+b.dataset.i); });
+
+  function sync() { send.disabled = !tx.value.trim() && !fileIn.files[0]; tx.style.height = 'auto'; tx.style.height = Math.min(tx.scrollHeight, 120) + 'px'; }
+  tx.addEventListener('input', sync);
+  tx.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); if (!send.disabled) submit(); } });
+  $('#pqClip').addEventListener('click', function () { fileIn.click(); });
+  fileIn.addEventListener('change', function () { att.hidden = !fileIn.files[0]; att.querySelector('span').textContent = fileIn.files[0] ? fileIn.files[0].name : ''; sync(); });
+  att.querySelector('button').addEventListener('click', function () { fileIn.value = ''; att.hidden = true; sync(); });
+  send.addEventListener('click', submit);
+
+  function submit() {
+    var t = tx.value.trim(), f = fileIn.files[0] ? fileIn.files[0].name : '';
+    if (!t && !f) return;
+    if (!th.topic) { th.topic = '기타'; var c = document.getElementById('pqChips'); if (c) c.remove(); }
+    add({ me: true, t: t, file: f });
+    tx.value = ''; fileIn.value = ''; att.hidden = true; sync();
+    var L; try { L = JSON.parse(localStorage.getItem('op.inquiries') || '[]'); } catch (e) { L = []; }
+    var first = !th.qid;
+    if (first) {
+      // 첫 메시지: 문의 접수 (마이페이지 문의내역에 '프로젝트 문의'로 등록)
+      var a = OP.account(ses.email) || {};
+      th.qid = 'Q-' + Date.now().toString(36).toUpperCase(); save();
+      L.unshift({ id: th.qid, at: Date.now(), owner: ses.email || '', type: '프로젝트 문의', svc: th.topic, ref: x.title, name: a.name || '', org: a.org || '', email: ses.email || '', phone: a.phone || '', title: '[' + th.topic + '] ' + x.title, body: t, file: f });
+    } else {
+      // 이어서 보낸 메시지는 같은 문의에 덧붙임
+      L.forEach(function (q) { if (q.id === th.qid) { q.body += '\n\n' + t; if (f && !q.file) q.file = f; } });
+    }
+    try { localStorage.setItem('op.inquiries', JSON.stringify(L.slice(0, 50))); } catch (e) {}
+    if (first) bot({ t: '문의가 접수되었습니다.\n컨설턴트가 확인 후 이 대화창과 마이페이지 문의내역으로 답변드립니다. 추가로 전할 내용이 있으면 이어서 보내주세요.', done: th.qid });
   }
 
   // 이전·다음 프로젝트: 프로젝트 찾기 기본 정렬(최신 등록 순)과 같은 순서, 공개 프로젝트만
