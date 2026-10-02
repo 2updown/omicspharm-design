@@ -83,7 +83,7 @@
       L.forEach(function (a) { a.read = readIds.indexOf(a.id) > -1; });
       return L;
     },
-    markRead: function (ids) { var r = read('op.alarmRead', []); ids.forEach(function (i) { if (r.indexOf(i) < 0) r.push(i); }); write('op.alarmRead', r); },
+    markRead: function (ids) { var r = read('op.alarmRead', []); ids.forEach(function (i) { if (r.indexOf(i) < 0) r.push(i); }); write('op.alarmRead', r); if (OP.syncBell) OP.syncBell(); },
     unread: function () { return D.alarms().filter(function (a) { return !a.read; }).length; }
   };
 

@@ -55,7 +55,8 @@
   background:#000; color:#fff !important; font-size:16px; font-weight:500; line-height:22px; }
 .op-gnb-join:hover { background:var(--op-gray-600); }
 .op-bell { position:relative; }
-.op-bell::after { content:""; position:absolute; top:1px; right:2px; width:6px; height:6px; border-radius:1000px; background:var(--op-red-600); }
+.op-bell.on::after { display:block; }
+.op-bell::after { display:none; content:""; position:absolute; top:1px; right:2px; width:6px; height:6px; border-radius:1000px; background:var(--op-red-600); }
 .op-user { position:relative; }
 .op-user > button { display:flex; align-items:center; }
 .op-user > button img { display:block; width:24px; height:24px; border-radius:50%; object-fit:cover; } /* 지구본·알림 아이콘과 같은 24px (Figma 원본 36px) */

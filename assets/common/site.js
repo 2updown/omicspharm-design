@@ -458,7 +458,16 @@
     var t = document.querySelector('.op-top'); if (t) t.classList.toggle('show', window.scrollY > 400); // 어느 정도 내려야 맨 위로 버튼 표시
   }
   window.addEventListener('scroll', syncGnb, { passive: true });
-  function init() { render(); syncGnb(); showFlash(); }
+  // GNB 알림 빨간 점: 읽지 않은 알림이 있을 때만. 알림 목록은 mypage.js가 만들므로 없는 페이지에서는 불러와서 계산
+  var SITE_SRC = (document.currentScript || {}).src || '';
+  OP.syncBell = function () {
+    var b = document.querySelector('.op-bell'); if (!b) return;
+    if (OP.my) { b.classList.toggle('on', OP.my.unread() > 0); return; }
+    if (OP._bellLoading) return; OP._bellLoading = true;
+    var sc = document.createElement('script'); sc.src = SITE_SRC.replace('site.js', 'mypage.js');
+    sc.onload = function () { OP.syncBell(); }; document.head.appendChild(sc);
+  };
+  function init() { render(); syncGnb(); showFlash(); if (OP.session()) OP.syncBell(); }
   function initAll() { init(); watchFooter(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll); else initAll();
 })();
