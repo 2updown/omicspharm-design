@@ -140,6 +140,24 @@
   .gcard .reg { font-size:12px; line-height:18px; letter-spacing:-.12px; color:#9b9b9b; }
 
   /* 목록형 B안 (831:3469): 검색·툴바·목록·페이지를 흰 박스 하나로 */
+  /* 그리드 C안 비교용 (?grid=b): 카드 테두리 없이 구분선으로만 나눈 격자 (목록 B안과 같은 방식) */
+  .main.boxed .grid.lines { gap:0; padding:0; }
+  .grid.lines > .gcard, .grid.lines > .gfill { gap:16px; padding:20px 24px 24px; border:0; border-top:1px solid var(--gray-300); border-radius:0; box-shadow:none; transition:background .15s; }
+  .grid.lines > :not(:nth-child(3n+1)) { border-left:1px solid var(--gray-200); }
+  .grid.lines > a.gcard:hover { background:var(--gray-50); box-shadow:none; }
+  .grid.lines > a.gcard:hover h3 { color:var(--teal-700); }
+  .grid.lines .gcard .top { padding:0; border-bottom:0; border-radius:0; background:none; }
+  .grid.lines .gcard .rows { padding:0; }
+  .grid.lines .gcard.private { background:linear-gradient(99.06deg, #f6f9f8 10.77%, #eff2f1 100.96%); }
+  @media (max-width:1180px) {
+    .grid.lines > :not(:nth-child(3n+1)) { border-left:0; }
+    .grid.lines > :nth-child(2n) { border-left:1px solid var(--gray-200); }
+  }
+  @media (max-width:640px) {
+    .main.boxed .grid.lines { padding:0; }
+    .grid.lines > :nth-child(2n) { border-left:0; }
+    .grid.lines > .gcard { padding:16px; }
+  }
   .main.boxed { gap:24px; padding:24px 0; background:#fff; border:1px solid var(--gray-200); border-radius:16px; margin-bottom:24px; }
   .main.boxed .search { margin:0 24px; }
   .main.boxed .toolbar { padding:0 24px; }
@@ -341,6 +359,7 @@
     return p ? '<div class="lrow private">' + inner + '</div>' : '<a class="lrow" href="' + OP_PROJECTS.url(x) + '">' + inner + '</a>';
   }
   var LIST_A = new URLSearchParams(location.search).get('list') === 'a'; // 기존 카드형 목록과 비교용
+  var GRID_B = new URLSearchParams(location.search).get('grid') === 'b'; // 구분선형 그리드 비교용
 
   function gridCard(x) {
     var p = masked(x);
@@ -390,6 +409,12 @@
     $('#rangeLabel').textContent = (lo === 0 && hi === 1000) ? '전체' : lo + '-' + (hi === 1000 ? '1000만원 이상' : hi + '만원');
   }
 
+  var gridCols = 0;
+  // 화면 폭이 바뀌어 열 수가 달라지면 빈칸 수를 다시 맞춤
+  window.addEventListener('resize', function () {
+    var b = $('#items');
+    if (b.classList.contains('lines') && getComputedStyle(b).gridTemplateColumns.split(' ').length !== gridCols) render();
+  });
   function render() {
     var all = filtered(), per = PER[state.view], pages = Math.max(1, Math.ceil(all.length / per));
     if (state.page > pages) state.page = pages;
@@ -400,6 +425,14 @@
     var boxed = !LIST_A; // B안: 목록형·그리드형 모두 흰 박스 (Find Projects2-list 831:3469 / -grid 977:9070)
     $('.main').classList.toggle('boxed', boxed);
     box.innerHTML = slice.length ? slice.map(state.view === 'list' ? (LIST_A ? listCard : listRow) : gridCard).join('') : '<div class="empty">조건에 맞는 프로젝트가 없습니다.</div>';
+    // 구분선형 그리드: 마지막 줄이 비면 빈칸을 채워 격자 선이 끝까지 이어지게
+    var lines = GRID_B && state.view === 'grid' && boxed;
+    box.classList.toggle('lines', lines);
+    if (lines && slice.length) {
+      var cols = getComputedStyle(box).gridTemplateColumns.split(' ').length;
+      box.insertAdjacentHTML('beforeend', new Array((cols - slice.length % cols) % cols + 1).join('<div class="gfill" aria-hidden="true"></div>'));
+      gridCols = cols;
+    }
     // 페이지네이션 (최대 5개 번호)
     var start = Math.max(1, Math.min(state.page - 2, pages - 4)), end = Math.min(pages, start + 4), html = '';
     var btn = function (p, inner, label, dis) { return '<button type="button" data-p="' + p + '" aria-label="' + label + '"' + (dis ? ' disabled' : '') + '>' + inner + '</button>'; };
@@ -425,6 +458,7 @@
   $('#hidePrivate').addEventListener('change', function () { update({ hidePrivate: this.checked }); });
   $('#sort').addEventListener('change', function () { update({ sort: this.value }); });
   $$('.views button').forEach(function (b) { b.addEventListener('click', function () { $$('.views button').forEach(function (x) { x.classList.toggle('on', x === b); }); update({ view: b.dataset.view }); }); });
+  if (GRID_B) $('.views button[data-view="grid"]').click(); // 비교용 주소는 그리드형으로 바로 열기
   $('#pager').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b || b.disabled) return;
     update({ page: +b.dataset.p });
