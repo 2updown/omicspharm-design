@@ -6,9 +6,9 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>OmicsPharm</title>
 <!-- Figma: [OmicsPharm] Renewal / 03_디자인(작업중) / 1440_시안1 (180:5300) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261002l">
-<script src="assets/common/site.js?v=20261002l"></script>
-<script src="assets/common/projects-data.js?v=20261002l"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002m">
+<script src="assets/common/site.js?v=20261002m"></script>
+<script src="assets/common/projects-data.js?v=20261002m"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --teal-900:#004f4a;
@@ -155,23 +155,29 @@
   .an-head .more { flex:none; font-size:16px; font-weight:500; line-height:1.571; color:var(--gray-700); white-space:nowrap; }
   .an-head .more:hover { color:var(--teal-600); }
   .an-grid { width:var(--wrap); max-width:100%; display:grid; grid-template-columns:repeat(3,1fr); gap:24px 12px; }
-  .acard { display:flex; flex-direction:column; gap:10px; padding:11px; background:var(--white); border:1px solid transparent; border-radius:12px; filter:drop-shadow(0 4px 5px rgba(55,55,55,.05)); transition:border-color .15s; }
-  .acard .img { position:relative; height:336px; border-radius:20px; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; padding:50px 40px; text-align:center; color:var(--white); }
-  .acard .img > img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-  .acard .img::after { content:""; position:absolute; inset:0; background:rgba(0,0,0,.4); }
+  .acard { display:flex; flex-direction:column; gap:10px; padding:11px; background:var(--white); border:1px solid transparent; border-radius:12px; filter:drop-shadow(0 4px 5px rgba(55,55,55,.05)); transition:border-color .25s; }
+  .acard .img { position:relative; height:336px; border-radius:20px; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0; padding:50px 40px; text-align:center; color:var(--white); isolation:isolate; }
+  .acard .img > img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .8s cubic-bezier(.2,.7,.2,1); }
+  .acard .img::after { content:""; position:absolute; inset:0; background:rgba(0,0,0,.4); transition:background .4s; }
   .acard .img h3, .acard .img p { position:relative; z-index:1; }
   .acard .img h3 { font-size:30px; font-weight:600; line-height:normal; }
-  .acard .img p { display:none; font-size:16px; line-height:1.3; }
+  /* hover: 설명이 펼쳐지며 떠오르고(제목은 자연히 위로), 사진은 천천히 확대 */
+  .acard .img p { max-height:0; margin-top:0; overflow:hidden; opacity:0; transform:translateY(12px); font-size:16px; line-height:1.3;
+    transition:max-height .5s cubic-bezier(.2,.7,.2,1), margin-top .5s cubic-bezier(.2,.7,.2,1), opacity .35s ease, transform .5s cubic-bezier(.2,.7,.2,1); }
   .acard .foot { display:flex; align-items:center; justify-content:space-between; font-size:18px; font-weight:500; line-height:1.4; }
-  .acard .go { width:40px; height:40px; border-radius:8px; background:var(--gray-100); display:flex; align-items:center; justify-content:center; }
+  .acard .go { width:40px; height:40px; border-radius:8px; background:var(--gray-100); display:flex; align-items:center; justify-content:center; transition:background .25s; }
   .acard .go .ic { width:18px; height:18px; color:var(--black); }
-  .acard .go .hov { display:none; }
+  /* 화살표는 하나로: 평소 ↗(-45°) → hover 시 →로 회전 */
+  .acard .go .def { display:none; }
+  .acard .go .hov { display:inline-block; transform:rotate(-45deg); transition:transform .35s cubic-bezier(.2,.7,.2,1), color .25s; }
   .acard:hover { border-color:var(--teal-500); }
-  .acard:hover .img p { display:block; }
+  .acard:hover .img > img { transform:scale(1.05); }
+  .acard:hover .img::after { background:rgba(0,0,0,.52); }
+  .acard:hover .img p { max-height:130px; margin-top:20px; opacity:1; transform:none; transition-delay:0s, 0s, .08s, .04s; }
   .acard:hover .go { background:var(--teal-600); }
-  .acard:hover .go .def { display:none; }
-  .acard:hover .go .hov { display:inline-block; color:var(--white); width:20px; height:20px; }
-  @media (hover:none) { .acard .img p { display:block; } } /* 터치 기기(태블릿 포함)는 설명 항상 표시 */
+  .acard:hover .go .hov { transform:none; color:var(--white); }
+  @media (prefers-reduced-motion:reduce) { .acard .img > img, .acard .img p, .acard .go .hov { transition:none; } }
+  @media (hover:none) { .acard .img p { max-height:none; margin-top:20px; opacity:1; transform:none; } } /* 터치 기기(태블릿 포함)는 설명 항상 표시 */
 
   /* ── CTA (959:12321) ── */
   .cta-sec { padding:60px 60px 100px; background:var(--white); display:flex; justify-content:center; }
@@ -211,7 +217,7 @@
     .acard { gap:8px; padding:6px; }
     .acard .img { height:auto; min-height:210px; justify-content:center; gap:8px; padding:20px 8px; border-radius:12px; }
     .acard .img h3 { font-size:16px; line-height:22px; }
-    .acard .img p { display:block; font-size:12px; line-height:17px; word-break:keep-all; }
+    .acard .img p { max-height:none; margin-top:0; opacity:1; transform:none; font-size:12px; line-height:17px; word-break:keep-all; }
     .acard .img p br { display:none; }
     .acard .foot { padding:0 4px 2px 6px; font-size:14px; }
     .acard .go { width:32px; height:32px; }
