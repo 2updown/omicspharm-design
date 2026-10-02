@@ -7,10 +7,10 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261002w">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261002w">
-<script src="assets/common/site.js?v=20261002w"></script>
-<script src="assets/common/mypage.js?v=20261002w"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002y">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261002y">
+<script src="assets/common/site.js?v=20261002y"></script>
+<script src="assets/common/mypage.js?v=20261002y"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -205,7 +205,7 @@
     var D = OP.my, STAGES = D.P_STAGES, ALL = D.partnerProjects();
     if (OP.isPartner() && !OP.partnerVerified()) { // 미인증: 매칭·계약된 프로젝트 없음
       $('.toprow').hidden = true;
-      $('#project').outerHTML = '<div class="empty"><b>진행 중인 프로젝트가 없습니다</b><p>인증된 분석파트너만 프로젝트 매칭·계약이 가능합니다.<br>OmicsPharm이 기관·서비스 정보를 확인한 뒤 인증해 드립니다.</p><a class="btn lg" href="mypage-account.html">내 정보 관리에서 확인</a></div>';
+      $('#project').outerHTML = '<div class="empty"><b>진행 중인 프로젝트가 없습니다</b><p>인증된 분석파트너만 프로젝트 매칭·계약이 가능합니다.<br>' + OP.verifyHint() + '</p>' + (OP.hasBizDoc() ? '<a class="btn lg" href="mypage-account.html">내 정보 관리에서 확인</a>' : '<a class="btn lg primary" href="mypage-account.html#doc">사업자등록증 올리기</a>') + '</div>';
       return;
     }
     var pid = new URLSearchParams(location.search).get('id');

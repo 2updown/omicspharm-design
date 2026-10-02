@@ -8,7 +8,7 @@
   var DEMO_PW = 'Demo@1234';
   var SEED = {
     'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true, name: '홍길동', org: '○○연구소', phone: '+82 010-1234-5678' },
-    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '○○분석센터', phone: '+82 010-2345-6789', verified: true },
+    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '○○분석센터', phone: '+82 010-2345-6789', verified: true, bizDoc: '사업자등록증_○○분석센터.pdf' },
     'admin@omicspharm.test':   { role: 'admin',   pw: DEMO_PW, profileDone: true, name: '셀키 컨설턴트', org: '셀키', phone: '+82 010-3456-7890' }
   };
   var ROLE_LABEL = { client: '클라이언트', partner: '분석파트너', admin: '컨설턴트' }; // admin = 셀키 컨설턴트
@@ -66,6 +66,9 @@
     canSeePrivate: function () { var s = OP.session(); return !!s && (s.role === 'admin' || OP.partnerVerified()); },
     canQuote: function () { return OP.partnerVerified(); },
     isPartner: function () { var s = OP.session(); return !!s && s.role === 'partner'; },
+    // 미인증 분석파트너 안내: 사업자등록증을 아직 안 올렸으면 업로드 안내, 올렸으면 확인 중 안내
+    verifyHint: function () { var s = OP.session(), a = (s && OP.account(s.email)) || {}; return a.bizDoc ? '제출하신 사업자등록증을 확인하고 있습니다. 확인이 끝나면 인증해 드립니다.' : '사업자등록증을 올리면 OmicsPharm이 기관·서비스 정보를 확인한 뒤 인증해 드립니다.'; },
+    hasBizDoc: function () { var s = OP.session(), a = (s && OP.account(s.email)) || {}; return !!a.bizDoc; },
     UNVERIFIED_MSG: '인증된 분석파트너만 이용할 수 있습니다. OmicsPharm이 기관·서비스 정보를 확인한 뒤 인증해 드립니다.',
     clientGate: function () { var s = OP.session(); return !s ? 'login' : s.role === 'client' ? 'ok' : 'deny'; },
     // 클라이언트 전용 페이지 맨 위에서 호출: 조건이 안 되면 로그인 또는 메인으로 돌려보낸다
