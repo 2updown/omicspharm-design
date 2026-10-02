@@ -132,7 +132,7 @@
 <script>
 (function () {
   var $ = function (s) { return document.querySelector(s); };
-  var LABEL = { news: 'News', insight: 'Insight' };
+  var LABEL = { news: 'News', insight: 'Insights' };
   var POSTS = window.OP_POSTS;
   var id = +new URLSearchParams(location.search).get('id');
   var p = POSTS.filter(function (x) { return x.id === id; })[0];

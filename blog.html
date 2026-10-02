@@ -97,9 +97,9 @@
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var PER = 9;
-  var CATS = [['all', 'All'], ['news', 'News'], ['insight', 'Insight']];
+  var CATS = [['all', 'All'], ['news', 'News'], ['insight', 'Insights']];
   var POSTS = window.OP_POSTS;
-  var LABEL = { news: 'News', insight: 'Insight' };
+  var LABEL = { news: 'News', insight: 'Insights' };
   var P = new URLSearchParams(location.search);
   var state = { cat: LABEL[P.get('cat')] ? P.get('cat') : 'all', page: 1, q: '' };
 
