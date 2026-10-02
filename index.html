@@ -6,9 +6,9 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>OmicsPharm</title>
 <!-- Figma: [OmicsPharm] Renewal / 03_디자인(작업중) / 1440_시안1 (180:5300) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261002o">
-<script src="assets/common/site.js?v=20261002o"></script>
-<script src="assets/common/projects-data.js?v=20261002o"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002p">
+<script src="assets/common/site.js?v=20261002p"></script>
+<script src="assets/common/projects-data.js?v=20261002p"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --teal-900:#004f4a;
@@ -244,7 +244,7 @@
       <p>AI Agent 기반 오믹스 마켓플레이스에서 혁신적 오믹스 분석을 경험해보세요.</p>
     </div>
     <div class="hero-btns">
-      <a class="btn-primary" href="omicspharm-register.html" data-client-only>프로젝트 등록</a>
+      <a class="btn-primary" href="omicspharm-register.html" id="heroReg">프로젝트 등록</a>
       <a class="btn-tertiary" href="contact.html">문의하기</a>
     </div>
   </div>
@@ -403,7 +403,7 @@
     <img src="assets/main/cta-bg.png" alt="">
     <h2>오믹스 분석이 필요하신가요?</h2>
     <p>유전체, 전사체, 단백체, 대사체 등 다양한 분석 의뢰를 지원하고,<br>견적부터 프로젝트 관리까지 전문 컨설턴트가 함께합니다.</p>
-    <a class="btn-action" href="omicspharm-register.html" data-client-only>프로젝트 의뢰하기 <span class="ic" style="--src:url(assets/main/ic-arrow-right.svg)"></span></a>
+    <a class="btn-action" href="contact.html">문의하기 <span class="ic" style="--src:url(assets/main/ic-arrow-right.svg)"></span></a>
   </div>
 </section>
 
@@ -488,6 +488,14 @@
   window.addEventListener('resize', reveal);
   window.addEventListener('load', reveal);
   reveal();
+
+  // 히어로 '프로젝트 등록': 클라이언트는 바로 등록 화면, 그 외(비로그인·분석파트너·컨설턴트)는 로그인 화면으로
+  document.getElementById('heroReg').addEventListener('click', function (e) {
+    if (OP.clientGate() === 'ok') return;
+    e.preventDefault();
+    if (OP.session()) OP.flash('프로젝트 등록은 클라이언트 계정으로 로그인 후 이용할 수 있습니다.');
+    location.href = 'login.html?next=' + encodeURIComponent('omicspharm-register.html');
+  });
 })();
 </script>
 </body>
