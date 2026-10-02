@@ -7,9 +7,9 @@
 <title>공지사항 · OmicsPharm</title>
 <!-- 커뮤니티 > 공지사항 상세 (Figma 시안 없음 — 마크로젠 공지사항 상세 구조 참고: 제목·등록일 / 첨부 / 본문 / 이전글·다음글 / 목록)
      ?id= (assets/common/notices.js) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261002n">
-<script src="assets/common/site.js?v=20261002n"></script>
-<script src="assets/common/notices.js?v=20261002n"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002o">
+<script src="assets/common/site.js?v=20261002o"></script>
+<script src="assets/common/notices.js?v=20261002o"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -125,7 +125,7 @@
   // 이전글 = 목록에서 한 칸 위, 다음글 = 한 칸 아래
   var row = function (x, label, icon) {
     var lb = '<span class="lb">' + label + '<img src="assets/find/ic-caret-' + icon + '.svg" alt=""></span>';
-    return x ? '<a href="notice-view.html?id=' + x.id + '">' + lb + '<span class="tt">' + esc(x.t) + '</span><span class="dt">' + x.d + '</span></a>'
+    return x ? '<a href="notice-view.html?id=' + x.id + '&r=2">' + lb + '<span class="tt">' + esc(x.t) + '</span><span class="dt">' + x.d + '</span></a>'
              : '<span>' + lb + '<span class="tt">' + label + '이 없습니다.</span></span>';
   };
   $('#pn').innerHTML = row(ORDER[i - 1], '이전글', 'up') + row(ORDER[i + 1], '다음글', 'down');

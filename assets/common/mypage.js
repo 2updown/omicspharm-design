@@ -71,8 +71,8 @@
         if (p.review) L.push({ id: 'rv-' + p.id, cat: 'project', at: new Date(2026, 7, 5).getTime(), t: "'" + p.title + "' 프로젝트에 리뷰가 등록되었습니다.", href: 'mypage-project.html?id=' + p.id });
         if (p.stage === '계약') L.push({ id: 'ct-' + p.id, cat: 'project', at: p.at, t: "'" + p.title + "' 프로젝트가 매칭되어 계약 단계가 시작되었습니다.", href: 'mypage-project.html?id=' + p.id });
       });
-      L.push({ id: 'n-21', cat: 'notice', at: new Date(2026, 8, 28, 9, 0).getTime(), t: '[공지] OmicsPharm 서비스 리뉴얼 오픈 안내', href: 'notice-view.html?id=21' });
-      L.push({ id: 'n-20', cat: 'notice', at: new Date(2026, 8, 15, 9, 0).getTime(), t: '[공지] 개인정보처리방침 변경 안내', href: 'notice-view.html?id=20' });
+      L.push({ id: 'n-21', cat: 'notice', at: new Date(2026, 8, 28, 9, 0).getTime(), t: '[공지] OmicsPharm 서비스 리뉴얼 오픈 안내', href: 'notice-view.html?id=21&r=2' });
+      L.push({ id: 'n-20', cat: 'notice', at: new Date(2026, 8, 15, 9, 0).getTime(), t: '[공지] 개인정보처리방침 변경 안내', href: 'notice-view.html?id=20&r=2' });
       L.push({ id: 'w', cat: 'notice', at: new Date(2026, 8, 1, 9, 0).getTime(), t: 'OmicsPharm 회원이 되신 것을 환영합니다.', sub: '이용방법에서 프로젝트 의뢰부터 결과 수령까지의 과정을 확인해보세요.', href: 'guide.html' });
       L.sort(function (a, b) { return b.at - a.at; });
       L.forEach(function (a) { a.read = readIds.indexOf(a.id) > -1; });

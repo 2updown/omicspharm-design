@@ -7,9 +7,9 @@
 <title>공지사항 · OmicsPharm</title>
 <!-- 커뮤니티 > 공지사항 (Figma 시안 없음 — 마크로젠 공지사항 게시판 구조 참고: 고정 공지 + 번호 목록 + 첨부 + 하단 검색)
      공지 데이터: assets/common/notices.js (예시). 한 페이지 10개, 제목 → notice-view.html?id= -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261002n">
-<script src="assets/common/site.js?v=20261002n"></script>
-<script src="assets/common/notices.js?v=20261002n"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002o">
+<script src="assets/common/site.js?v=20261002o"></script>
+<script src="assets/common/notices.js?v=20261002o"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -140,7 +140,7 @@
     var nw = isNew(n.d) ? '<i class="new" aria-label="새 글">N</i>' : '';
     return '<tr' + (n.pin ? ' class="pin"' : '') + '>' +
       '<td class="no">' + (n.pin ? '<span class="pin-badge">공지</span>' : n.no) + '</td>' +
-      '<td class="t"><a href="notice-view.html?id=' + n.id + '">' + (n.pin ? badge : '') + '<span>' + esc(n.t) + '</span>' + nw + '</a>' +
+      '<td class="t"><a href="notice-view.html?id=' + n.id + '&r=2">' + (n.pin ? badge : '') + '<span>' + esc(n.t) + '</span>' + nw + '</a>' +
         '<p class="m-meta"><span>' + n.d + '</span>' + (n.file ? '<i class="clip" aria-label="첨부파일"></i>' : '') + '</p></td>' +
       '<td class="file">' + (n.file ? '<i class="clip" aria-label="첨부파일 있음"></i>' : '') + '</td>' +
       '<td class="date">' + n.d + '</td></tr>';
