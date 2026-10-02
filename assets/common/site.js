@@ -259,7 +259,7 @@
     var cta = s
       ? '<div class="op-gnb-cta">' +
           LANG +
-          '<a class="op-bell" href="mypage-alarm.html" aria-label="알림"><img class="op-ic24" src="' + A + 'ic-bell.svg" alt=""></a>' +
+          '<a class="op-bell" href="mypage-alarm.html" aria-label="알림"><img class="op-ic24" src="' + A + 'ic-bell.svg?v=2" alt=""></a>' +
           '<div class="op-user">' +
             '<button type="button" aria-haspopup="menu" aria-label="내 계정"><img src="' + ((OP.account(s.email) || {}).photo || A + 'user-icon.svg?v=2') + '" alt=""></button>' +
             '<div class="op-user-menu" role="menu">' +
