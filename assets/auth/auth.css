@@ -70,9 +70,10 @@ input { font:inherit; color:inherit; }
 .field .req { font-size:12px; font-weight:400; line-height:18px; letter-spacing:-.12px; color:var(--red-600); }
 .field .info { width:16px; height:16px; margin-left:2px; cursor:help; position:relative; }
 /* 툴팁 (Figma tooltip 1424:14012): 왼쪽 꼬리, 아이콘 높이 가운데에 맞춤 */
-.tip { position:absolute; left:104px; top:10px; transform:translateY(-50%); width:max-content; min-width:102px; max-width:242px; padding:4px 8px; border-radius:4px; background:#1b1b1b; color:#fff; font-size:14px; font-weight:500; line-height:20px; text-align:center; word-break:keep-all; z-index:5; display:none; }
+.field > .label:has(.tip) { position:relative; align-self:flex-start; } /* 툴팁을 라벨(아이콘) 바로 오른쪽에 붙임 */
+.tip { position:absolute; left:calc(100% + 6px); top:50%; transform:translateY(-50%); width:max-content; min-width:102px; max-width:242px; padding:4px 8px; border-radius:4px; background:#1b1b1b; color:#fff; font-size:14px; font-weight:500; line-height:20px; text-align:center; word-break:keep-all; z-index:5; display:none; }
 .tip::before { content:""; position:absolute; left:-3px; top:50%; transform:translateY(-50%); border:3px solid transparent; border-left:0; border-right-color:#1b1b1b; }
-.field .info:hover + .tip, .field .info:focus + .tip { display:block; }
+.field .info:hover ~ .tip:not([hidden]), .field .info:focus ~ .tip:not([hidden]) { display:block; } /* 회원 유형별 문구 중 보이는 것만 */
 .input { display:flex; align-items:center; gap:4px; height:56px; padding:0 16px; background:#fff; border:1px solid var(--gray-300); border-radius:8px; }
 .input input { flex:1; min-width:0; border:0; outline:0; background:none; font-size:16px; line-height:22px; }
 .input input::placeholder { color:var(--gray-400); }
