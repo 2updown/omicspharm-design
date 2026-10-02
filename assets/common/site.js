@@ -200,11 +200,11 @@
   var A = 'assets/main/';
   // 메가메뉴 (Figma 메가메뉴 1303:74974 · Header State=menu1 1029:13726). 하위 화면은 아직 없어 누르면 준비 중 안내.
   var MENUS = {
-    community: { label: '커뮤니티', items: ['공지사항', 'Insight'] },
+    community: { label: '커뮤니티', items: ['공지사항', 'Insights'] },
     service:   { label: '서비스 소개', items: ['분석 서비스 안내', '이용방법'] },
     support:   { label: '고객지원', items: ['문의하기', 'FAQ'] }
   };
-  var PAGES = { '문의하기': 'contact.html', 'FAQ': 'faq.html', 'Insight': 'blog.html', '공지사항': 'notice.html', '분석 서비스 안내': 'service.html', '이용방법': 'guide.html' };
+  var PAGES = { '문의하기': 'contact.html', 'FAQ': 'faq.html', 'Insights': 'blog.html', '공지사항': 'notice.html', '분석 서비스 안내': 'service.html', '이용방법': 'guide.html' };
   function link(t) { return PAGES[t] ? 'href="' + PAGES[t] + '"' : 'href="#" data-soon="' + t + '"'; }
   function dropdown(key) {
     var m = MENUS[key];
