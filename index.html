@@ -40,9 +40,9 @@
   .hero-in { position:relative; }
   .hero-in { z-index:1; display:flex; flex-direction:column; align-items:center; gap:48px; }
   .hero-copy { display:flex; flex-direction:column; align-items:center; gap:36px; text-align:center; }
-  .hero h1 { width:933px; max-width:100%; font-size:55px; font-weight:800; line-height:1.4; letter-spacing:-.55px; }
-  .hero h1 em { font-style:normal; color:var(--teal-600); }
-  .hero p { font-size:18px; line-height:24px; letter-spacing:-.18px; }
+  .hero h1 { width:1200px; max-width:100%; word-break:keep-all; font-size:55px; font-weight:800; line-height:1.4; letter-spacing:-.55px; }
+  .hero h1 em { font-style:normal; color:var(--teal-600); white-space:nowrap; }
+  .hero p { font-size:18px; line-height:24px; letter-spacing:-.18px; word-break:keep-all; }
   .hero-btns { display:flex; gap:14px; width:380px; }
   .hero-btns a { flex:1; display:flex; align-items:center; justify-content:center; height:56px; min-width:90px; padding:0 20px; border-radius:8px; font-size:16px; font-weight:500; line-height:22px; }
   .btn-primary { background:var(--teal-600); color:var(--white); }
@@ -240,8 +240,8 @@
   <video class="hero-bg" src="assets/main/hero-dna.mp4" autoplay muted loop playsinline aria-hidden="true"></video>
   <div class="hero-in">
     <div class="hero-copy">
-      <h1>연구자, 분석기관, 데이터와 AI를 연결해<br><em>복잡한 오믹스 분석</em> 한 번에 해결해 드립니다.</h1>
-      <p>AI Agent 기반 오믹스 마켓플레이스에서 혁신적 오믹스 분석을 경험해보세요.</p>
+      <h1>분석기관 매칭부터 결과 리포트와 쉬운 해석까지,<br> Agentic AI가 <em>멀티오믹스 분석</em>을 한 번에 해결합니다.</h1>
+      <p>지금 의뢰하고, Agentic AI가 혁신하는 멀티오믹스 분석을 경험해 보세요.</p>
     </div>
     <div class="hero-btns">
       <a class="btn-primary" href="omicspharm-register.html" id="heroReg">프로젝트 등록</a>
