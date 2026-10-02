@@ -85,6 +85,7 @@
   .btn { display:inline-flex; align-items:center; justify-content:center; height:56px; min-width:120px; padding:0 24px; border-radius:8px; font-size:16px; font-weight:500; line-height:22px; }
   .btn.pri { background:var(--teal-600); color:#fff; }
   .btn.pri:hover { background:var(--teal-700); }
+  .btn.pri:disabled { background:var(--gray-200); color:var(--gray-400); cursor:default; } /* 개인정보 동의 전 */
   .btn.line { border:1px solid var(--gray-300); background:#fff; color:var(--gray-500); }
   .btn.line:hover { background:var(--gray-50); }
 
@@ -172,8 +173,9 @@
           <p class="help"><span>개인정보(주민등록번호 등)는 입력하지 마세요.</span><span id="count">0 / 2000</span></p>
         </div></div>
         <div class="field"><div class="flabel">첨부파일</div><div class="fbody">
-          <label class="file" id="fileBox" for="file"><img src="assets/auth/ic-paperclip.svg" alt=""><span id="fileName">파일 선택 (최대 1개, 30MB)</span><button type="button" id="fileClear" hidden>삭제</button><input type="file" id="file"></label>
-          <div class="fprev" id="fPrev" hidden><img id="fPrevImg" alt="첨부 사진 미리보기"><span>사진은 답변 담당자에게 함께 전달됩니다.</span></div>
+          <label class="file" id="fileBox" for="file"><img src="assets/auth/ic-paperclip.svg" alt=""><span id="fileName">파일 선택</span><button type="button" id="fileClear" hidden>삭제</button><input type="file" id="file" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.hwp,.hwpx,.zip"></label>
+          <p class="help">JPG, PNG, PDF, Word, Excel, PowerPoint, 한글(HWP), ZIP 형식만 업로드 가능합니다. (최대 1개, 30MB)</p>
+          <div class="fprev" id="fPrev" hidden><img id="fPrevImg" alt="첨부 사진 미리보기"></div>
         </div></div>
         <div class="field" id="f-agree"><div class="flabel">개인정보 수집 및 이용 동의<span class="req">*</span></div><div class="fbody pad">
           <div class="agree-box" tabindex="0">
@@ -191,7 +193,7 @@
 
     <div class="actions">
       <a class="btn line" href="index.html">취소</a>
-      <button class="btn pri" type="submit">문의 보내기</button>
+      <button class="btn pri" type="submit" id="send" disabled>문의 보내기</button>
     </div>
   </form>
 
@@ -249,11 +251,12 @@
   var fileImg = '';
   file.addEventListener('change', function () {
     var f = file.files[0];
+    if (f && !/\.(jpe?g|png|pdf|docx?|xlsx?|pptx?|hwpx?|zip)$/i.test(f.name)) { OP.toast('JPG, PNG, PDF, Word, Excel, PowerPoint, 한글(HWP), ZIP 파일만 첨부할 수 있습니다.'); file.value = ''; f = null; }
     if (f && f.size > 30 * 1024 * 1024) { OP.toast('30MB 이하 파일만 첨부할 수 있습니다.'); file.value = ''; f = null; }
-    $('#fileName').textContent = f ? f.name : '파일 선택 (최대 1개, 30MB)';
+    $('#fileName').textContent = f ? f.name : '파일 선택';
     $('#fileBox').classList.toggle('has', !!f); $('#fileClear').hidden = !f;
     fileImg = ''; $('#fPrev').hidden = true;
-    if (f && /^image\/(png|jpeg|webp|gif)$/.test(f.type)) {
+    if (f && /^image\/(png|jpeg)$/.test(f.type)) {
       var img = new Image();
       img.onload = function () {
         var k = Math.min(1, 1200 / Math.max(img.width, img.height)), c = document.createElement('canvas');
@@ -279,7 +282,10 @@
   [['name', 'f-name'], ['org', 'f-org'], ['email', 'f-email'], ['title', 'f-title'], ['body', 'f-body']].forEach(function (p) {
     document.getElementById(p[0]).addEventListener('input', function () { setErr(p[1], ''); });
   });
-  $('#agree').addEventListener('change', function () { setErr('f-agree', ''); });
+  // 개인정보 수집·이용에 동의해야 [문의 보내기] 활성화
+  function syncSend() { $('#send').disabled = !$('#agree').checked; }
+  $('#agree').addEventListener('change', function () { setErr('f-agree', ''); syncSend(); });
+  syncSend();
 
   $('#form').addEventListener('submit', function (e) {
     e.preventDefault();
