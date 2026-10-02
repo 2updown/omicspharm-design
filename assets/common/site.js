@@ -41,13 +41,19 @@
       write(SES_KEY, { email: key, role: acc ? acc.role : 'client' });
     },
     logout: function () { write(SES_KEY, null); },
+    // 토스트 (Figma Toast 1120:43107): 안내 아이콘 + 문구 + 닫기
     toast: function (msg) {
       var el = document.querySelector('.op-toast');
-      if (!el) { el = document.createElement('div'); el.className = 'op-toast'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
-      el.textContent = msg;
+      if (!el) {
+        el = document.createElement('div'); el.className = 'op-toast'; el.setAttribute('role', 'status');
+        el.innerHTML = '<img src="assets/common/ic-toast-info.svg" alt=""><span></span><button type="button" aria-label="닫기"><img src="assets/common/ic-toast-close.svg" alt=""></button>';
+        el.querySelector('button').addEventListener('click', function () { clearTimeout(el._t); el.classList.remove('show'); });
+        document.body.appendChild(el);
+      }
+      el.querySelector('span').textContent = msg;
       el.classList.add('show');
       clearTimeout(el._t);
-      el._t = setTimeout(function () { el.classList.remove('show'); }, 1800);
+      el._t = setTimeout(function () { el.classList.remove('show'); }, 3000);
     },
     // 페이지를 옮긴 뒤 띄울 토스트
     flash: function (msg) { try { sessionStorage.setItem('op.flash', msg); } catch (e) {} },

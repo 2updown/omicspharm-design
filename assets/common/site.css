@@ -147,9 +147,14 @@
 }
 
 /* ── Toast ── */
-.op-toast { position:fixed; left:50%; bottom:40px; transform:translate(-50%, 20px); opacity:0; pointer-events:none; z-index:100; padding:12px 20px;
-  border-radius:8px; background:var(--op-toast); color:#fff; font-family:var(--op-font); font-size:14px; font-weight:500; line-height:20px; transition:opacity .2s, transform .2s; }
-.op-toast.show { opacity:1; transform:translate(-50%, 0); }
+.op-toast { position:fixed; left:50%; bottom:40px; transform:translate(-50%, 20px); opacity:0; visibility:hidden; z-index:100; display:flex; align-items:center; gap:8px;
+  width:max-content; max-width:min(600px, calc(100vw - 32px)); min-height:54px; padding:8px 16px; border-radius:12px; background:var(--op-toast); color:#fff;
+  font-family:var(--op-font); font-size:14px; font-weight:400; line-height:20px; transition:opacity .2s, transform .2s, visibility .2s; }
+.op-toast > img { flex:none; width:20px; height:20px; }
+.op-toast span { flex:1; min-width:0; word-break:keep-all; }
+.op-toast button { flex:none; display:flex; width:20px; height:20px; padding:0; border:0; background:none; cursor:pointer; }
+.op-toast button img { width:20px; height:20px; }
+.op-toast.show { opacity:1; visibility:visible; transform:translate(-50%, 0); }
 
 @media (max-width:1180px) {
   .op-gnb, .op-footer { padding-left:24px; padding-right:24px; }

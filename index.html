@@ -6,9 +6,9 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>OmicsPharm</title>
 <!-- Figma: [OmicsPharm] Renewal / 03_디자인(작업중) / 1440_시안1 (180:5300) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261002p">
-<script src="assets/common/site.js?v=20261002p"></script>
-<script src="assets/common/projects-data.js?v=20261002p"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002q">
+<script src="assets/common/site.js?v=20261002q"></script>
+<script src="assets/common/projects-data.js?v=20261002q"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --teal-900:#004f4a;
@@ -489,11 +489,12 @@
   window.addEventListener('load', reveal);
   reveal();
 
-  // 히어로 '프로젝트 등록': 클라이언트는 바로 등록 화면, 그 외(비로그인·분석파트너·컨설턴트)는 로그인 화면으로
+  // 히어로 '프로젝트 등록': 클라이언트는 등록 화면, 비로그인은 로그인 화면, 분석파트너·컨설턴트는 안내 토스트만
   document.getElementById('heroReg').addEventListener('click', function (e) {
-    if (OP.clientGate() === 'ok') return;
+    var g = OP.clientGate();
+    if (g === 'ok') return;
     e.preventDefault();
-    if (OP.session()) OP.flash('프로젝트 등록은 클라이언트 계정으로 로그인 후 이용할 수 있습니다.');
+    if (g === 'deny') { OP.toast('프로젝트 등록은 클라이언트 계정으로 로그인 후 이용할 수 있습니다.'); return; }
     location.href = 'login.html?next=' + encodeURIComponent('omicspharm-register.html');
   });
 })();
