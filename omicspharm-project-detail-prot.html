@@ -6,9 +6,9 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261002k">
-<script src="assets/common/site.js?v=20261002k"></script>
-<script src="assets/common/projects-data.js?v=20261002k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261002l">
+<script src="assets/common/site.js?v=20261002l"></script>
+<script src="assets/common/projects-data.js?v=20261002l"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -101,11 +101,11 @@
   .cta-bar .btn-filled.off { background:var(--gray-200); color:var(--gray-400); pointer-events:none; }
   body.has-cta-bar .op-float { bottom:112px; } /* 플로팅 버튼이 문의 바에 가리지 않게 */
 
-  /* 프로젝트 문의 (챗봇형 시안): 오른쪽 패널 / 모바일은 아래에서 올라오는 시트 */
-  .pq-dim { position:fixed; inset:0; z-index:90; background:rgba(0,0,0,.4); opacity:0; transition:opacity .25s; }
-  .pq-dim.on { opacity:1; }
-  .pq { position:fixed; top:0; right:0; bottom:0; z-index:91; display:flex; flex-direction:column; width:440px; max-width:100%; background:#fff; box-shadow:-8px 0 32px rgba(0,0,0,.12); transform:translateX(100%); transition:transform .3s cubic-bezier(.2,.7,.2,1); }
-  .pq.on { transform:none; }
+  /* 프로젝트 문의 (챗봇형 시안): 오른쪽 아래 FAB 위로 뜨는 채팅 창 / 모바일은 아래에서 올라오는 시트 */
+  .pq-dim { display:none; }
+  .pq { position:fixed; right:40px; bottom:140px; z-index:46; display:flex; flex-direction:column; width:400px; height:min(640px, calc(100vh - 220px)); min-height:420px; background:#fff; border:1px solid var(--gray-200); border-radius:20px; box-shadow:0 16px 48px rgba(0,0,0,.16); overflow:hidden;
+    opacity:0; transform:translateY(12px) scale(.96); transform-origin:100% 100%; transition:opacity .22s ease, transform .28s cubic-bezier(.2,.7,.2,1); }
+  .pq.on { opacity:1; transform:none; }
   .pq[hidden], .pq-dim[hidden] { display:none; }
   .pq-hd { display:flex; align-items:flex-start; gap:12px; padding:20px 20px 16px 24px; border-bottom:1px solid var(--gray-200); }
   .pq-hd h2 { font-size:18px; font-weight:700; line-height:26px; }
@@ -155,7 +155,9 @@
   .pq-send:disabled { background:var(--gray-200); color:var(--gray-400); cursor:default; }
   .pq-note { margin-top:8px; font-size:12px; line-height:18px; color:var(--gray-400); text-align:center; }
   @media (max-width:640px) {
-    .pq { top:auto; left:0; width:100%; height:88vh; height:88dvh; border-radius:16px 16px 0 0; transform:translateY(100%); }
+    .pq-dim { display:block; position:fixed; inset:0; z-index:90; background:rgba(0,0,0,.4); opacity:0; transition:opacity .25s; }
+    .pq-dim.on { opacity:1; }
+    .pq { left:0; right:0 !important; bottom:0 !important; z-index:91; width:100%; height:88vh !important; height:88dvh !important; min-height:0; border:0; border-radius:16px 16px 0 0; opacity:1; transform:translateY(100%); transition:transform .3s cubic-bezier(.2,.7,.2,1); }
     .pq-hd { padding:16px 12px 12px 16px; } .pq-prj { margin:12px 16px 0; } .pq-log { padding:16px; }
   }
   @media (prefers-reduced-motion:reduce) { .pq, .pq-dim { transition:none; } .pq-m, .pq-chips { animation:none; } }
@@ -449,16 +451,37 @@
   function openPQ() {
     if (!th.msgs.length) th.msgs.push({ t: me + '님, 안녕하세요.\n이 프로젝트에 대해 어떤 점이 궁금하신가요?', at: Date.now() });
     render();
-    pq.hidden = dim.hidden = false; document.body.classList.add('op-drawer-open'); document.documentElement.style.overflow = 'hidden';
-    requestAnimationFrame(function () { pq.classList.add('on'); dim.classList.add('on'); });
+    place();
+    pq.hidden = dim.hidden = false; if (mob()) document.documentElement.style.overflow = 'hidden';
+    void pq.offsetWidth; pq.classList.add('on'); dim.classList.add('on');
     setTimeout(function () { (th.topic ? tx : pq.querySelector('.pq-chips button') || tx).focus({ preventScroll: true }); }, 320);
   }
   function closePQ() {
     pq.classList.remove('on'); dim.classList.remove('on');
-    document.body.classList.remove('op-drawer-open'); document.documentElement.style.overflow = '';
-    setTimeout(function () { pq.hidden = dim.hidden = true; }, 300);
-    cta.focus({ preventScroll: true });
+    document.documentElement.style.overflow = '';
+    setTimeout(function () { if (!pq.classList.contains('on')) pq.hidden = dim.hidden = true; }, 300);
   }
+  var isOpen = function () { return !pq.hidden && pq.classList.contains('on'); };
+  var mob = function () { return matchMedia('(max-width:640px)').matches; };
+  // 창은 FAB 바로 위에 붙임 (하단 문의 바가 있으면 FAB가 올라가 있으므로 실제 위치로 계산)
+  function place() {
+    var f = document.querySelector('.op-chat');
+    if (!f || mob()) return;
+    var r = f.getBoundingClientRect();
+    pq.style.bottom = (innerHeight - r.top + 16) + 'px';
+    pq.style.right = (innerWidth - r.right) + 'px';
+    pq.style.height = 'min(640px, ' + Math.max(420, r.top - 16 - 88) + 'px)';
+  }
+  window.addEventListener('resize', function () { if (isOpen()) place(); });
+  // FAB(상담 챗봇)를 누르면 문의 창을 열고 닫음. 공통 '준비 중' 안내보다 먼저 가로챔
+  document.addEventListener('click', function (e) {
+    var f = e.target.closest('.op-chat'); if (!f) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (isOpen()) return closePQ();
+    if (!OP.session()) { location.href = 'login.html?next=' + encodeURIComponent('omicspharm-project-detail-prot.html?id=' + x.id); return; }
+    if (!x.open) { OP.toast('모집이 마감된 프로젝트입니다.'); return; }
+    openPQ();
+  }, true);
   $('#pqX').addEventListener('click', closePQ); dim.addEventListener('click', closePQ);
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !pq.hidden) closePQ(); });
   $('#pqCat').textContent = x.cat; $('#pqNo').textContent = F.no; $('#pqPrj').textContent = x.title;
