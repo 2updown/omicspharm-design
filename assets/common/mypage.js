@@ -91,7 +91,6 @@
         if (adm && i === 5) L.push({ id: 'ra-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.client + '의 ' + p.title + ' 프로젝트 1차 결과보고서가 최종 승인 처리 되었습니다.', href: h });
         if (!adm && i === 5) L.push({ id: 'rf-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.title + ' 프로젝트의 1차 결과보고서가 최종 확인 처리 되었습니다.', sub: p.title + ' 프로젝트가 최종 완료 처리 되었습니다.', href: h });
         if (p.qa) L.push({ id: 'qa-' + p.id, k: 'Q&A', cat: 'project', at: p.at + 864e5 * 10, t: p.title + ' Q&A에 새로운 글이 등록 되었습니다.', sub: '문의제목: 시료 발송 일정 문의 · 작성자: ' + p.client, href: h });
-        if (!adm && p.review) L.push({ id: 'rv-' + p.id, k: '리뷰', cat: 'project', at: new Date(2026, 7, 5).getTime(), t: p.title + ' 프로젝트에 리뷰가 등록되었습니다.', href: h });
       });
       if (OP.flow) L = L.concat(OP.flow.alarms());
       L.push({ id: 'n-21', cat: 'notice', at: new Date(2026, 8, 28, 9, 0).getTime(), t: '[공지] OmicsPharm 서비스 리뉴얼 오픈 안내', href: 'notice-view.html?id=21&r=2' });
@@ -119,7 +118,7 @@
     document.addEventListener('keydown', key);
     document.body.appendChild(m); m.querySelector('.no').focus();
   };
-  D.removeProject = function (id) { write('op.submitted', D.projects().filter(function (p) { return p.id !== id; })); if (OP.flow) OP.flow.remove(id); };
+  D.removeProject = function (id) { if (OP.flow) OP.flow.remove(id); write('op.submitted', D.projects().filter(function (p) { return p.id !== id; })); };
 
   OP.my = D;
   OP.mypage = function (key) {

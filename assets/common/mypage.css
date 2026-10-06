@@ -181,3 +181,26 @@ button { background:none; border:0; cursor:pointer; }
   .ftodo { flex-direction:column; align-items:stretch; } .ftodo .acts .btn { flex:1; }
   .doc { padding:28px 20px; min-height:0; font-size:12px; } .doc-head h1 { font-size:22px; } .pv-scroll { padding:16px 8px; }
 }
+/* 계약서 (셀키 분석서비스 의뢰서) */
+.pv-scroll .doc + .doc, .pv-scroll .attach-t + .doc { margin-top:24px; }
+.pv-scroll .attach-t { width:794px; max-width:100%; margin:32px auto 0; color:#fff; font-size:14px; font-weight:600; }
+.cdoc { min-height:0; }
+.cdoc .c-brand { padding-bottom:10px; border-bottom:3px solid #111; font-size:22px; font-weight:800; letter-spacing:.35em; color:#0b6b62; }
+.cdoc .c-lead { margin:14px 0 16px; font-size:12px; line-height:19px; color:#444; }
+.cdoc .c-party th { width:14%; } .cdoc .c-party td { width:36%; }
+.cdoc .kv2 th { width:34%; }
+.cdoc .svc-t { margin:-2px 0 8px; font-weight:700; }
+.cdoc .blk-t { margin:12px 0 6px; font-weight:600; }
+.cdoc .it2 th { text-align:center; } .cdoc .it2 td.c { text-align:center; } .cdoc .it2 td.d { color:#555; font-size:12px; }
+.cdoc .y { color:#0b6b62; } .cdoc .n { color:#aaa; }
+.cdoc .need { padding:10px 14px; border:1px solid #c9c9c9; } .cdoc .need ul { margin:6px 0 0 18px; columns:2; font-size:12px; }
+.cdoc .c-sign-t { margin-top:28px; text-align:center; font-size:14px; font-weight:600; }
+.cdoc .c-date { margin-top:12px; text-align:center; }
+.cdoc .c-sign { margin-top:16px; text-align:right; font-size:14px; } .cdoc .c-sign b { margin:0 12px; }
+.cdoc.file .fileph { padding:80px 24px; text-align:center; } .cdoc.file .fileph b { font-size:16px; } .cdoc.file .fileph p { margin-top:8px; color:#666; }
+.ctlist { display:flex; flex-direction:column; border-top:2px solid #000; }
+.ctrow2 { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 12px; border-bottom:1px solid var(--gray-200); }
+.ctrow2 b { display:block; font-size:15px; font-weight:600; line-height:22px; }
+.ctrow2 span { font-size:13px; line-height:18px; color:var(--gray-500); }
+@media print { .pv-scroll .attach-t { display:none; } .pv-scroll .doc + .doc, .pv-scroll .attach-t + .doc { margin-top:0; page-break-before:always; } }
+@media (max-width:640px) { .ctrow2 { flex-direction:column; align-items:stretch; } .cdoc .need ul { columns:1; } }

@@ -9,11 +9,11 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=의뢰번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006b">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006b">
-<script src="assets/common/site.js?v=20261006b"></script>
-<script src="assets/common/mypage.js?v=20261006b"></script>
-<script src="assets/common/flow.js?v=20261006b"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006c">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006c">
+<script src="assets/common/site.js?v=20261006c"></script>
+<script src="assets/common/mypage.js?v=20261006c"></script>
+<script src="assets/common/flow.js?v=20261006c"></script>
 <style>
   /* 목록 */
   .rlist { display:flex; flex-direction:column; gap:12px; }
@@ -102,6 +102,17 @@
   .msg { padding:16px 20px; border-left:3px solid var(--teal-600); border-radius:0 8px 8px 0; background:var(--bg-green); font-size:14px; line-height:22px; white-space:pre-line; }
   .msg b { display:block; margin-bottom:4px; font-size:13px; color:var(--teal-700); }
 
+  .ctl { display:flex; flex-direction:column; border-top:2px solid #000; }
+  .ctrow { display:grid; grid-template-columns:minmax(0,1fr) auto 230px; align-items:center; gap:16px; padding:16px 12px; border-bottom:1px solid var(--gray-200); }
+  .ctrow .who b { display:block; font-size:15px; font-weight:600; line-height:22px; }
+  .ctrow .who span { font-size:13px; color:var(--gray-500); }
+  .ctrow .opt { display:flex; gap:16px; font-size:14px; }
+  .ctrow .opt label { display:inline-flex; align-items:center; gap:6px; cursor:pointer; white-space:nowrap; }
+  .ctrow .opt input { width:16px; height:16px; accent-color:var(--teal-600); }
+  .ctrow .act { display:flex; align-items:center; justify-content:flex-end; gap:8px; min-width:0; }
+  .ctrow .act .btn { height:36px; cursor:pointer; }
+  .ctrow .fn { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; color:var(--gray-500); }
+  @media (max-width:900px) { .ctrow { grid-template-columns:1fr; gap:10px; } .ctrow .act { justify-content:flex-start; } }
   details.req { border:1px solid var(--gray-200); border-radius:12px; }
   details.req > summary { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; font-size:16px; font-weight:600; cursor:pointer; list-style:none; }
   details.req > summary::-webkit-details-marker { display:none; }
@@ -168,12 +179,14 @@
   if (!id) {
     var R = F.requests(), cur = '전체';
     var TABS = [['전체'], ['검토 대기', 'review'], ['견적 수집 중', 'quoting'], ['클라이언트 검토', 'sent'], ['매칭 완료', 'matched']];
+    var qst = new URLSearchParams(location.search).get('st'); // 대시보드에서 단계 눌러 들어온 경우
+    TABS.forEach(function (t) { if (t[1] && t[1] === qst) cur = t[0]; });
     var next = function (s) {
       var c = cnt(s);
       if (s.st === 'review') return [s.ok ? '견적 요청 필요' : '의뢰 승인 필요', 1];
       if (s.st === 'quoting') return c.sub ? ['견적 ' + c.sub + '건 도착 · 전달 가능', 0] : ['견적 대기 중', 0];
       if (s.st === 'sent') return ['클라이언트 선택 대기', 0];
-      return [F.partner(s.pick).org + ' 매칭', 0];
+      return s.ct ? [F.partner(s.pick).org + ' · 분석 진행', 0] : ['계약서 등록 필요', 1];
     };
     card.innerHTML = '<div class="card-head"><h3>의뢰 관리</h3></div><div class="chips" id="chips" role="tablist"></div><div class="rlist" id="rl"></div>' +
       '<div class="demo-row"><span>※ 예시 의뢰 3건 + 이 브라우저에서 제출된 의뢰가 표시됩니다.</span><button type="button" id="reset">예시 데이터 초기화</button></div>';
@@ -205,18 +218,19 @@
   var r = F.req(id);
   if (!r) { location.replace('mypage-request.html'); return; }
   document.title = r.title + ' · 의뢰 관리 · OmicsPharm';
-  var STEPS = ['의뢰 승인', '견적 요청', '견적 확인·전달', '클라이언트 선택', '매칭 완료'];
+  var STEPS = ['의뢰 승인', '견적 요청', '견적 확인·전달', '견적 확정', '계약서 등록'];
 
   function render() {
     var s = F.state(id), c = cnt(s);
-    var k = { review: s.ok ? 1 : 0, quoting: c.sub ? 2 : 1, sent: 3, matched: 5 }[s.st];
+    var k = { review: s.ok ? 1 : 0, quoting: c.sub ? 2 : 1, sent: 3, matched: s.ct ? 5 : 4 }[s.st];
     var todo = {
       review: s.ok ? ['', '견적을 요청할 분석파트너를 선택해주세요.', '의뢰가 승인되어 등록되었습니다 (' + F.ymd(s.ok) + '). 분석 분야가 맞는 인증 파트너를 추천으로 표시했습니다.']
                    : ['warn', '의뢰서가 접수되었습니다. 확인 후 승인처리 해주세요.', '승인하면 프로젝트로 등록되고 의뢰사에게 \'의뢰승인\' 알림이 갑니다. 그다음 분석파트너에게 견적을 요청할 수 있습니다.'],
       quoting: c.sub ? ['', '도착한 견적을 확인하고 클라이언트에게 전달해주세요.', '수정이 필요한 견적은 [수정 요청]으로 파트너에게 돌려보낼 수 있습니다.']
                      : ['gray', '분석파트너의 견적을 기다리고 있습니다.', '견적 마감일 ' + dot(s.due) + ' · 견적이 도착하면 알림으로 알려드립니다.'],
       sent: ['gray', '클라이언트가 견적을 비교하고 있습니다.', '클라이언트가 분석파트너를 선택하면 매칭이 완료되고 계약 단계로 넘어갑니다.'],
-      matched: ['', F.partner(s.pick).org + '와 매칭이 완료되었습니다.', '계약 금액 ' + (s.pick ? F.money(F.total(s.P[s.pick].quote).net) + ' (VAT 별도)' : '') + ' · 프로젝트 관리에서 계약 이후 진행 상황을 관리합니다.']
+      matched: s.ct ? ['', '계약서 등록이 완료되었습니다.', F.partner(s.pick).org + ' · 계약 금액 ' + F.money(F.total(s.P[s.pick].quote).net) + ' (VAT 별도) · 분석 진행 단계로 넘어갔습니다.']
+                    : ['warn', F.josa(r.org || '의뢰사', '이', '가') + ' ' + F.partner(s.pick).org + ' 견적을 확정했습니다. 계약서를 등록해주세요.', '기본 양식(셀키 분석서비스 의뢰서)으로 만들거나, 기관 자체 시험의뢰서를 파일로 올릴 수 있습니다.']
     }[s.st];
     if (c.rev && s.st === 'quoting') todo = ['warn', '수정 요청한 견적 ' + c.rev + '건을 기다리고 있습니다.', todo[1] + '\n' + todo[2]];
 
@@ -228,10 +242,43 @@
       '</div>' +
       '<ol class="fsteps" style="--n:5" aria-label="진행 단계">' + STEPS.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
       '<div class="ftodo ' + todo[0] + '"><div><b>' + esc(todo[1]) + '</b><p>' + esc(todo[2]) + '</p></div>' +
-        (s.st === 'matched' ? '<div class="acts"><a class="btn primary" href="mypage-project.html?id=' + encodeURIComponent(id) + '">프로젝트 관리로 이동</a></div>' : s.st === 'review' && !s.ok ? '<div class="acts"><button type="button" class="btn primary" id="approve">의뢰 승인</button></div>' : '') + '</div>' +
+        (s.st === 'matched' && s.ct ? '<div class="acts"><a class="btn primary" href="mypage-project.html?id=' + encodeURIComponent(id) + '">프로젝트 관리로 이동</a></div>' : s.st === 'review' && !s.ok ? '<div class="acts"><button type="button" class="btn primary" id="approve">의뢰 승인</button></div>' : '') + '</div>' +
+      (s.st === 'matched' ? contractHTML(s) : '') +
       (s.st === 'review' ? (s.ok ? pickHTML(s, false) : '') : quotesHTML(s)) +
       '<details class="req"' + (s.st === 'review' ? ' open' : '') + '><summary>의뢰 내용</summary><div class="in">' + F.reqHTML(r) + '</div></details>';
     bind(s);
+  }
+
+  // 계약서 등록 (견적 확정 후): 클라이언트·분석파트너 계약서 각각 기본 양식 또는 기관 양식 파일
+  function contractHTML(s) {
+    if (s.ct) return '<div class="blk"><div class="blk-h"><h3>계약서</h3><span class="sub">클라이언트와 분석파트너에게 계약서 최종본 등록 알림이 전달되었습니다.</span></div>' + F.contractListHTML(s, ['client', 'partner']) + '</div>';
+    var row = function (side, t, who) {
+      return '<div class="ctrow" data-side="' + side + '"><div class="who"><b>' + t + '</b><span>' + esc(who) + '</span></div>' +
+        '<div class="opt"><label><input type="radio" name="ct-' + side + '" value="form" checked>기본 양식</label><label><input type="radio" name="ct-' + side + '" value="file">기관 양식 업로드</label></div>' +
+        '<div class="act"><button type="button" class="btn" data-pv="' + side + '">미리보기</button>' +
+          '<label class="btn up" hidden>파일 선택<input type="file" accept=".pdf,.doc,.docx,.hwp,.hwpx" hidden></label><span class="fn" hidden>선택된 파일 없음</span></div></div>';
+    };
+    return '<div class="blk" id="ctBlk"><div class="blk-h"><h3>계약서 등록</h3><span class="sub">기본 양식 = 셀키 분석서비스 의뢰서 + 별첨1 분석 견적서</span></div>' +
+      '<div class="ctl">' + row('client', '클라이언트 계약서', (r.org || '-') + (r.manager ? ' · ' + r.manager : '')) + row('partner', '분석파트너 계약서', F.partner(s.pick).org) + '</div>' +
+      '<div class="bar"><p>의뢰서의 분석 서비스 항목은 의뢰한 서비스(' + esc(r.svc) + ')에 맞춰 채워집니다.</p><div class="acts"><button type="button" class="btn primary lg" id="ctSave">계약서 등록 완료</button></div></div></div>';
+  }
+  function ctPick() {
+    var out = {}, ok = true;
+    [].forEach.call(card.querySelectorAll('.ctrow'), function (row) {
+      var side = row.dataset.side, type = row.querySelector('input[type=radio]:checked').value, f = row.querySelector('input[type=file]');
+      var name = type === 'file' && f.files[0] ? f.files[0].name : '';
+      if (type === 'file' && !name) ok = false;
+      out[side] = { type: type, name: name };
+    });
+    return ok ? out : null;
+  }
+  function ctSync() {
+    [].forEach.call(card.querySelectorAll('.ctrow'), function (row) {
+      var file = row.querySelector('input[type=radio]:checked').value === 'file';
+      row.querySelector('[data-pv]').hidden = file; row.querySelector('.up').hidden = !file; row.querySelector('.fn').hidden = !file;
+      var f = row.querySelector('input[type=file]'); row.querySelector('.fn').textContent = f.files[0] ? f.files[0].name : '선택된 파일 없음';
+    });
+    var b = $('#ctSave'); if (b) b.disabled = !ctPick();
   }
 
   // 분석파트너 선택 (처음 요청 / 추가 요청)
@@ -298,11 +345,21 @@
   function bind(s) {
     // 파트너 선택
     var syncSend = function () { var b = $('#send'); if (!b) return; var n = card.querySelectorAll('input[name="pk"]:checked').length; b.disabled = !n; b.textContent = '견적 요청 보내기' + (n ? ' (' + n + ')' : ''); };
-    card.onchange = function (e) { if (e.target.name === 'pk') syncSend(); if (e.target.name === 'fw') syncFwd(); };
+    card.onchange = function (e) { if (e.target.name === 'pk') syncSend(); if (e.target.name === 'fw') syncFwd(); if (e.target.closest('.ctrow')) ctSync(); };
+    ctSync();
     syncSend();
     card.onclick = function (e) {
       var t = e.target;
-      if (t.closest('#approve')) {
+      if (t.closest('[data-pv]')) {
+        var tmp = JSON.parse(JSON.stringify(s)); tmp.ct = null; F.showContract(r, tmp, t.closest('[data-pv]').dataset.pv);
+      } else if (t.closest('[data-ct]')) {
+        F.showContract(r, s, t.closest('[data-ct]').dataset.ct);
+      } else if (t.closest('#ctSave')) {
+        var c = ctPick(); if (!c) return;
+        F.ask({ title: '계약서를 등록할까요?', desc: '클라이언트(' + (r.org || '-') + ')와 분석파트너(' + F.partner(s.pick).org + ')에게 계약서 최종본 등록 알림이 가고, 프로젝트가 분석 진행 단계로 넘어갑니다.', label: false, yes: '등록' }, function () {
+          F.contract(id, c); OP.toast('계약서를 등록했습니다.'); render();
+        });
+      } else if (t.closest('#approve')) {
         F.ask({ title: '의뢰를 승인할까요?', desc: '"' + r.title + '" 의뢰가 프로젝트로 등록되고, 의뢰사(' + (r.org || '-') + ')에게 승인 알림이 갑니다.', label: false, yes: '승인' }, function () {
           F.approve(id); OP.toast('의뢰를 승인했습니다.'); render();
         });

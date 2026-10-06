@@ -7,11 +7,11 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006b">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006b">
-<script src="assets/common/site.js?v=20261006b"></script>
-<script src="assets/common/mypage.js?v=20261006b"></script>
-<script src="assets/common/flow.js?v=20261006b"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006c">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006c">
+<script src="assets/common/site.js?v=20261006c"></script>
+<script src="assets/common/mypage.js?v=20261006c"></script>
+<script src="assets/common/flow.js?v=20261006c"></script>
 <style>
   .hello { flex-direction:row; align-items:center; justify-content:space-between; }
   .hello h2 { font-size:22px; font-weight:700; line-height:32px; letter-spacing:-.22px; }
@@ -134,19 +134,19 @@
   if (admin) {
     var R = F.requests();
     pipe = ['의뢰 처리 현황', 'mypage-request.html', [['review', '검토 대기'], ['quoting', '견적 수집 중'], ['sent', '클라이언트 검토'], ['matched', '매칭 완료']].map(function (a) {
-      return [a[1], R.filter(function (r) { return F.state(r.id).st === a[0]; }).length];
+      return [a[1], R.filter(function (r) { return F.state(r.id).st === a[0]; }).length, '?st=' + a[0]];
     })];
   } else if (!client && OP.canQuote()) {
     var IN = F.inbox(me.s.email).map(function (o) { return F.pst(o.s, me.s.email); });
     pipe = ['견적 요청 현황', 'mypage-quote.html', [['작성 필요', /작성 대기|임시저장|수정 요청/], ['제출 완료', /제출 완료|클라이언트 검토 중/], ['선정', /^선정/], ['종료', /미선정|거절/]].map(function (a) {
-      return [a[0], IN.filter(function (t) { return a[1].test(t); }).length];
+      return [a[0], IN.filter(function (t) { return a[1].test(t); }).length, '?t=' + encodeURIComponent(a[0])];
     })];
   }
   if (pipe) {
     $('#pipeCard').hidden = false; $('#pipeH').textContent = pipe[0]; $('#pipeMore').href = pipe[1]; $('#pipeMore').textContent = '전체 보기';
     $('#pipe').style.setProperty('--n', pipe[2].length);
     $('#pipe').innerHTML = pipe[2].map(function (a, i) {
-      return a[1] ? '<a href="' + pipe[1] + '"><b class="has' + (i === 0 ? ' hot' : '') + '">' + a[1] + '</b><span>' + a[0] + '</span></a>' : '<div aria-disabled="true"><b>0</b><span>' + a[0] + '</span></div>';
+      return a[1] ? '<a href="' + pipe[1] + a[2] + '"><b class="has' + (i === 0 ? ' hot' : '') + '">' + a[1] + '</b><span>' + a[0] + '</span></a>' : '<div aria-disabled="true"><b>0</b><span>' + a[0] + '</span></div>';
     }).join('');
   }
 
@@ -158,7 +158,7 @@
   $('#flow').style.setProperty('--n', steps.length);
   $('#flow').innerHTML = steps.map(function (t, i) {
     // 0건인 단계는 누를 수 없다
-    return counts[i] ? '<a href="mypage-project.html"><b class="has">' + counts[i] + '</b><span>' + t + '</span></a>'
+    return counts[i] ? '<a href="mypage-project.html?stage=' + encodeURIComponent(t) + '"><b class="has">' + counts[i] + '</b><span>' + t + '</span></a>'
                      : '<div aria-disabled="true"><b>0</b><span>' + t + '</span></div>';
   }).join('');
 

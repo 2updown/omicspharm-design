@@ -89,7 +89,7 @@
     S[r3.id].P['p-omx'].revN = 1;
     return { v: VER, S: S };
   }
-  function db() { var d = read(KEY, null); if (!d || d.v !== VER) { d = seed(); write(KEY, d); } return d; }
+  function db() { var d = read(KEY, null); if (!d || d.v !== VER) { d = seed(); write(KEY, d); } d.X = d.X || []; return d; }
   function save(d) { write(KEY, d); }
   function state(id) { return db().S[id] || { st: 'review', P: {} }; }
   function put(id, fn) { var d = db(), s = d.S[id] || { st: 'review', P: {} }; fn(s); d.S[id] = s; save(d); return s; }
@@ -103,7 +103,7 @@
     requests: requests, req: req, state: state, total: total, money: money, man: man, num: num, esc: esc, ymd: ymd, iso: iso,
     // 단계 이름
     ADMIN_ST: { review: '검토 대기', quoting: '견적 수집 중', sent: '클라이언트 검토', matched: '매칭 완료' },
-    CLIENT_ST: { review: '의뢰접수', quoting: '의뢰접수', sent: '견적 비교', matched: '계약' },
+    CLIENT_ST: { review: '의뢰접수', quoting: '의뢰접수', sent: '견적 비교', matched: '계약' }, // 계약서 등록 후에는 '분석 진행'
     CLIENT_STEPS: ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'],
     // 파트너 쪽에서 본 견적 상태
     pst: function (s, k) {
@@ -152,10 +152,22 @@
     },
     // 클라이언트 선택 → 매칭 완료
     pick: function (id, k) { return put(id, function (s) { s.st = 'matched'; s.pick = k; s.pickAt = Date.now(); }); },
-    remove: function (id) { var d = db(); delete d.S[id]; save(d); },
+    // 의뢰 삭제: 기록을 남겨 컨설턴트·견적 요청받은 파트너에게 알림
+    remove: function (id) {
+      var d = db(), r = req(id), s = d.S[id];
+      if (r) d.X.push({ id: id, title: r.title, org: r.org, at: Date.now(), keys: s ? Object.keys(s.P) : [] });
+      delete d.S[id]; save(d);
+    },
+    // 계약서 등록 (컨설턴트): c = { client:{type:'form'|'file', name}, partner:{...} } → 분석 진행 단계로
+    contract: function (id, c) { return put(id, function (s) { s.ct = { at: Date.now(), client: c.client, partner: c.partner }; }); },
+    // 프로젝트 찾기에 게시된 의뢰 (컨설턴트 승인 후)
+    posted: function () {
+      var d = db().S;
+      return requests().filter(function (r) { return d[r.id] && d[r.id].ok; }).map(function (r) { return { r: r, s: d[r.id] }; });
+    },
     reset: function () { try { localStorage.removeItem(KEY); localStorage.removeItem('op.alarmRead'); } catch (e) {} },
     // 클라이언트 단계
-    clientStage: function (id) { return F.CLIENT_ST[state(id).st]; },
+    clientStage: function (id) { var s = state(id); return s.ct ? '분석 진행' : F.CLIENT_ST[s.st]; },
     // 분석파트너가 받은 견적 요청
     inbox: function (k) {
       var d = db().S;
@@ -167,7 +179,7 @@
       var d = db().S;
       return requests().filter(function (r) { var s = d[r.id]; return s && s.st === 'matched' && (!k || s.pick === k); }).map(function (r) {
         var s = d[r.id], q = s.P[s.pick].quote;
-        return { id: r.id, flow: true, svc: r.svc, stage: '계약', title: r.title, client: r.org || '-', partner: partner(s.pick).org, samples: r.samples || '-', amount: man(total(q).net), contract: iso(s.pickAt), due: r.due || iso(s.pickAt + DAY * 7 * (+q.weeks || 6)), at: s.pickAt, qa: 0 };
+        return { id: r.id, flow: true, ct: s.ct, svc: r.svc, stage: s.ct ? '분석' : '계약', title: r.title, client: r.org || '-', partner: partner(s.pick).org, samples: r.samples || '-', amount: man(total(q).net), contract: iso(s.ct ? s.ct.at : s.pickAt), due: r.due || iso(s.pickAt + DAY * 7 * (+q.weeks || 6)), at: s.pickAt, qa: 0 };
       });
     }
   };
@@ -191,10 +203,13 @@
           if (x.subAt && x.quote) L.push({ id: 'f-sub-' + r.id + k + (x.revN || 0), k: '견적등록', cat: 'project', at: x.subAt, t: o + '의 ' + qname(x) + '가 등록되었습니다.', sub: '프로젝트명: ' + nm + ' · 견적금액: ' + won(total(x.quote).final), href: href });
           if (x.dec) L.push({ id: 'f-dec-' + r.id + k, k: '견적거절', cat: 'project', at: x.dec.at, t: josa(o, '이', '가') + ' ' + nm + ' 견적 요청을 거절했습니다.', sub: x.dec.why, href: href });
         });
+        if (r.updatedAt) L.push({ id: 'f-ed-' + r.id + r.updatedAt, k: '의뢰수정', cat: 'project', at: r.updatedAt, t: cl + '의 ' + nm + ' 의뢰서가 수정되었습니다. 변경 내용을 확인해주세요.', href: href });
         if (s.pick) L.push({ id: 'f-pick-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: josa(cl, '이', '가') + ' ' + nm + ' 프로젝트의 최종 견적을 확정 했습니다.', sub: '공급사: ' + partner(s.pick).org + ' · 견적금액: ' + won(total(s.P[s.pick].quote).final), href: href });
       } else if (role === 'partner') {
         var x = s.P[ses.email]; if (!x) return;
         var qh = 'mypage-quote.html?rid=' + encodeURIComponent(r.id);
+        if (r.updatedAt && r.updatedAt > x.at) L.push({ id: 'f-ed-' + r.id + r.updatedAt, k: '의뢰수정', cat: 'project', at: r.updatedAt, t: nm + ' 프로젝트의 의뢰 내용이 수정되었습니다. 견적서 작성 전 변경 내용을 확인해주세요.', href: qh });
+        if (s.ct && s.pick === ses.email) L.push({ id: 'f-ct-' + r.id, k: '계약', cat: 'project', at: s.ct.at, t: nm + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
         L.push({ id: 'f-req-' + r.id, k: '견적제안', cat: 'project', at: x.at, t: nm + ' 프로젝트 검토 후 견적서를 작성해주세요.', sub: '견적 마감일: ' + (s.due ? s.due.replace(/-/g, '.') : '-'), href: qh });
         if (x.rev) L.push({ id: 'f-rev-' + r.id + x.revN, k: '견적수정요청', cat: 'project', at: x.rev.at, t: nm + ' 프로젝트 견적서의 수정을 요청드립니다.', sub: x.rev.note, href: qh });
         if (s.st === 'matched' && x.status === 'sub') L.push(s.pick === ses.email
@@ -202,6 +217,7 @@
           : { id: 'f-lose-' + r.id, k: '견적미선정', cat: 'project', at: s.pickAt, t: nm + '의 견적은 이번에 선정되지 않았습니다.', sub: '참여해주셔서 감사합니다.', href: qh });
       } else if (role === 'client' && (!r.demo || ses.email === 'client@omicspharm.test')) {
         var ph = 'mypage-project.html?id=' + encodeURIComponent(r.id);
+        if (s.ct) L.push({ id: 'f-ct-' + r.id, k: '계약', cat: 'project', at: s.ct.at, t: nm + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: ph + '&tab=contract' });
         if (s.ok) L.push({ id: 'f-ok-' + r.id, k: '의뢰승인', cat: 'project', at: s.ok, t: '의뢰하신 ' + nm + ' 프로젝트가 승인되어 등록되었습니다.', href: ph });
         if (s.sentAt) {
           var F2 = Object.keys(s.P).filter(function (k) { return s.P[k].fwd; }), A = F2.map(function (k) { return total(s.P[k].quote).final; });
@@ -209,6 +225,11 @@
             sub: '견적금액: ' + (A.length > 1 ? won(Math.min.apply(0, A)) + ' ~ ' + won(Math.max.apply(0, A)) : won(A[0] || 0)), href: ph + '&tab=quote' });
         }
       }
+    });
+    // 삭제된 의뢰
+    db().X.forEach(function (x) {
+      if (role === 'admin') L.push({ id: 'f-del-' + x.id, k: '의뢰삭제', cat: 'project', at: x.at, t: (x.org || '의뢰사') + '의 ' + x.title + ' 의뢰가 삭제되었습니다.', sub: x.keys.length ? '견적을 요청한 분석파트너 ' + x.keys.length + '곳에도 알림이 전달되었습니다.' : '', href: 'mypage-request.html' });
+      if (role === 'partner' && x.keys.indexOf(ses.email) > -1) L.push({ id: 'f-del-' + x.id, k: '의뢰삭제', cat: 'project', at: x.at, t: x.title + ' 프로젝트 의뢰가 취소되어 견적 요청이 종료되었습니다.', href: 'mypage-quote.html' });
     });
     return L;
   };
@@ -295,6 +316,85 @@
     });
     document.addEventListener('keydown', key);
     document.body.appendChild(m); sync(); (ta || m.querySelector('.no')).focus();
+  };
+
+  // ── 계약서 (셀키 분석서비스 의뢰서 기본 양식) ──
+  // 회사 시험의뢰서(docx) 구성: 1. 의뢰자 정보 / 2. 시료 정보 / 3. 분석 서비스(의뢰한 서비스 항목만) / 분석 유형별 샘플 요구량 / 서명 / 별첨1. 분석 견적서
+  // 기관 자체 시험의뢰서를 쓰는 경우에는 파일 업로드로 대신한다
+  var Y = 1, N = 0;
+  var FORM = {
+    '단백체': { name: '단백체 분석 (Proteomics)', blocks: [
+      { h: 'Untargeted protein analysis', items: [['정성분석', '단백질 리스트 및 GO analysis를 제공해 드립니다.', Y], ['정량분석', '정량분석은 heatmap, volcano plot, foldchange 값을 제공합니다.', Y], ['통계처리 (p-value, volcano plot 등)', '통계 처리를 통한 비교 분석을 원하면 동일한 그룹의 시료 3개 이상 필요합니다.', Y, '통계|그룹|차등|DEG'], ['PTM', 'acetylation, methylation, phosphorylation, glycosylation', N, 'PTM|인산화|phospho|glyco|당화']] },
+      { h: 'Targeted protein analysis', target: 1, fields: ['Target protein name', 'Target peptide', '내부표준물 (stable-isotope labeled synthetic peptide)', '시료 내 예상되는 타겟 단백질 농도 (선택사항)'] }] },
+    '대사체': { name: '대사체 분석 (Metabolomics)', blocks: [
+      { h: 'Untargeted metabolite analysis', items: [['정성분석', '대사체 리스트를 제공해 드립니다.', Y], ['정량분석', '정량분석은 heatmap, volcano plot, foldchange 값을 제공합니다.', Y], ['통계처리 (p-value, volcano plot 등)', '통계 처리를 통한 비교 분석을 원하면 시료 3개 이상 반복 분석이 필요합니다.', Y, '통계|군|그룹']] },
+      { h: 'Targeted metabolite analysis', target: 1, fields: ['Target metabolite name'] }] },
+    '유전체': { name: '유전체 분석 (Genomics)', blocks: [
+      { h: 'Whole Genome / Whole Exome / Targeted Sequencing', items: [['WGS (Whole Genome Sequencing)', '전장 유전체 분석(30× 또는 90×), 변이(Variant) 전체 탐지 목적', N, 'WGS|전장'], ['WES (Whole Exome Sequencing)', '코딩 영역(Exon) 기반 변이 분석, 희귀질환·암 패널 분석에 최적', N, 'WES|Exome|엑솜'], ['Targeted Gene Panel', '선정된 유전자 패널 기반 변이 분석(예: 암패널, 희귀질환패널 등)', N, '패널|Panel'], ['Low-pass WGS / CNV sequencing', '저커버리지 WGS 기반 Copy number variation 분석', N, 'Low-pass']] },
+      { h: 'Library Preparation & Sequencing-Type Options', items: [['DNA Library preparation', '샘플 품질 QC 후 Library 제작', Y], ['PCR-free Library', 'Bias 최소화, 고품질 분석 목적', N, 'PCR-free'], ['Paired-end sequencing (PE150 등)', 'Illumina PE 기반 표준 시퀀싱 방식', Y], ['Long-read sequencing (PacBio / Oxford Nanopore)', '구조변이·길이 긴 영역 분석 (선택 사항)', N, 'Long-read|PacBio|Nanopore']] },
+      { h: 'Variant Calling & Bioinformatics', items: [['Alignment (BWA-MEM 등)', 'Reference genome과 매핑된 BAM 제공', Y], ['Variant Calling (SNV/INDEL)', 'GATK 기반 변이 리스트(VCF) 제공', Y], ['CNV 분석', 'Copy number variation 분석', N, 'CNV'], ['SV 분석', '구조변이 (inversion, deletion, translocation)', N, 'SV|구조변이'], ['Annotation Report', 'ClinVar, dbSNP, gnomAD 기반 해석', Y], ['Filtering Options', 'Pathogenic / likely pathogenic / novel variant 분류', N, 'Filtering|pathogenic']] }] },
+    '전사체': { name: '유전체 분석 (Genomics) — RNA analysis', blocks: [
+      { h: 'RNA analysis', items: [['RNA-seq (mRNA profiling)', '전사체 기반 유전자 발현량 분석', Y], ['Small RNA-seq (miRNA 등)', 'miRNA, siRNA, piRNA 등 200 nt 이하 small RNA 발현 분석', N, 'miRNA|small RNA'], ['Transcript isoform 분석', 'long-read 이용 시 정확도 향상', N, 'isoform'], ['Differential expression(DGE) 분석', 'DESeq2 / edgeR 기반 DEG 리스트 제공', Y, 'DEG|차등'], ['Functional pathway 분석', 'GO, KEGG pathway 제공', N, 'GSEA|pathway|Pathway|경로']] }] },
+    '바이오의약품': { name: '바이오의약품 특성분석 (Biopharmaceutical Characterization)', blocks: [
+      { h: '', items: [['Intact Mass', '항체 및 ADC의 전체 분자량 확인', N, 'Intact'], ['Peptide mapping fingerprinting', '단백질의 아미노산 서열 및 변형 확인', N, 'Peptide mapping|펩타이드 매핑'], ['Full length sequencing', '항체의 전체 서열 확인', N, 'Full length'], ['N/C terminal determination', '단백질 N말단 및 C말단의 서열 확인', N, '말단|terminal'], ['Amino acid composition', '단백질의 아미노산 조성 분석', N, '아미노산 조성'], ['Extinction Coefficient', '단백질의 광학적 흡광도 계수 측정', N, 'Extinction'],
+        ['Modification (Oxidation, deamidation)', '산화 및 탈아미드화 같은 화학적 변형 확인', N, '산화|Oxidation|deamidation'], ['Disulfide bond', '이황화 결합 위치와 상태 확인', N, 'Disulfide|이황화'], ['Free thiol', 'Free thiol 그룹 존재 여부 확인', N, 'thiol'], ['Monosaccharide composition', '단당류 구성 분석', N, '단당류'], ['Sialic acid composition', '시알산의 조성 및 함량 분석', N, '시알산|Sialic'], ['N-linked glycan profile', 'N-연결 당구조 분석', N, 'N-glycan|N-linked|glycan'], ['O-linked glycan profile', 'O-연결 당구조 분석', N, 'O-linked'],
+        ['N-Glycosylation site', 'N-당화 위치 분석', N, 'N-Glycosylation'], ['O-Glycosylation site', 'O-당화 위치 분석', N, 'O-Glycosylation'], ['UV', '자외선 흡광도 분석', N, 'UV'], ['Fluorescence', '형광 특성 분석', N, 'Fluorescence|형광'], ['Circular dichroism', '단백질의 이차 구조 분석', N, 'dichroism|CD'], ['Differential Scanning Calorimetry', '단백질 열 안정성 분석', N, 'DSC|열 안정'], ['FT-IR', '단백질의 구조 분석', N, 'FT-IR'], ['Dynamic Light Scattering', '입자 크기 및 분포 분석', N, 'DLS|Light Scattering'], ['SEC-UPLC', '단백질의 분자량 분포 확인', N, 'SEC'],
+        ['ADC - DAR (Drug-to-Antibody Ratio)', '약물 대 항체 비율 분석', N, 'DAR'], ['ADC - Total antibody', 'Peptide를 이용한 항체 정량 분석', N, 'Total antibody'], ['ADC - Antibody-drug conjugation', '항체와 연결된 drug (linker+payload) 분석', N, 'conjugation|payload'], ['ADC - Free payload', '비결합 약물의 존재 확인', N, 'Free payload']] }] }
+  };
+  var NEED = {
+    '단백체·대사체': ['정제 단백질: 100 μg 이상', '혈액: 30 μL 이상', 'Cell: 1×10⁷ cells 이상', 'CM: 2 mL 이상', 'EV: 5×10⁹ particles 이상', '조직: protein 100 μg 이상'],
+    '유전체': ['gDNA: 500 ng+ (≥20 ng/µL) 이상', '혈액(EDTA): 1–3 mL 이상', 'Cell: 1×10⁶ cells 이상', '조직: 10–20 mg 이상', 'FFPE: 3–5 sections', 'RNA: 100 ng+ (RIN≥7) 이상', 'Long-read DNA: 5–10 µg 이상'],
+    '바이오의약품 특성분석': ['단백질의약품 시료: 1 mg 이상 (분석 항목에 따라 변동)']
+  };
+  var formKey = function (svc) { return ['단백체', '대사체', '유전체', '전사체', '바이오의약품'].filter(function (k) { return String(svc).indexOf(k) > -1; })[0] || ''; };
+  var rowVal = function (r, re) { var v = ''; (r.sections || []).forEach(function (sec) { (sec.rows || []).forEach(function (x) { if (re.test(x[0])) v = v || x[1]; }); }); return v; };
+  F.contractHTML = function (r, s, side) {
+    var k = formKey(r.svc), f = FORM[k], text = [r.title, r.purpose].concat((r.sections || []).map(function (sec) { return (sec.rows || []).map(function (x) { return x.join(' '); }).join(' ') + (sec.note || ''); })).join(' ');
+    var targeted = /표적|Target|타겟/i.test(text) && !/비표적|Untargeted/i.test(text);
+    var yn = function (it) { return (it[3] && new RegExp(it[3], 'i').test(text)) || it[2] ? '<b class="y">유</b>' : '<span class="n">무</span>'; };
+    var svcHTML = f ? f.blocks.map(function (b) {
+      var on = f.blocks.length === 1 || (b.target ? targeted : !targeted) || k === '유전체';
+      var head = b.h ? '<p class="blk-t">(' + (on ? 'o' : '&nbsp;&nbsp;') + ') ' + esc(b.h) + '</p>' : '';
+      if (b.fields) return head + '<table class="kv2">' + b.fields.map(function (x, i) { return '<tr><th>' + esc(x) + '</th><td>' + (on && i === 0 ? esc(rowVal(r, /타겟|Target|대상/) || '-') : '-') + '</td></tr>'; }).join('') + '</table>';
+      return head + '<table class="it2"><tr><th>항목</th><th style="width:56px">선택</th><th>설명</th></tr>' + b.items.map(function (it) { return '<tr><td>' + esc(it[0]) + '</td><td class="c">' + (on ? yn(it) : '<span class="n">-</span>') + '</td><td class="d">' + esc(it[1]) + '</td></tr>'; }).join('') + '</table>';
+    }).join('') : '<table class="kv2">' + (r.sections || []).filter(function (x) { return x.rows; }).map(function (sec) { return sec.rows.map(function (x) { return '<tr><th>' + esc(x[0]) + '</th><td>' + esc(x[1]) + '</td></tr>'; }).join(''); }).join('') + '</table>';
+    var need = k === '바이오의약품' ? '바이오의약품 특성분석' : (k === '유전체' || k === '전사체') ? '유전체' : '단백체·대사체';
+    var p = partner(s.pick), dt = new Date(s.ct ? s.ct.at : Date.now()), cl = side === 'client';
+    var who = cl ? [r.manager || '-', r.org || '-', '-'] : ['셀키 컨설턴트', '셀키에이아이', '02-3482-2743'];
+    return '<article class="doc cdoc">' +
+      '<div class="c-brand">C E L L K E Y</div>' +
+      '<p class="c-lead">최첨단 분석 플랫폼과 전문성을 바탕으로,<br>한 차원 높은 정밀성과 효율성을 갖춘 프리미엄 바이오 분석 서비스를 제공합니다.</p>' +
+      '<table class="c-party"><tr><th>의뢰기관</th><td>' + esc(cl ? r.org || '-' : '셀키에이아이') + '</td><th>수행기관</th><td>' + esc(cl ? '셀키에이아이 (분석 수행: ' + p.org + ')' : p.org) + '</td></tr><tr><th>프로젝트</th><td colspan="3">' + esc(r.title) + ' (' + esc(r.id) + ')</td></tr></table>' +
+      '<h2>1. 의뢰자 정보</h2><table class="kv2"><tr><th>담당자</th><td>' + esc(who[0]) + '</td></tr><tr><th>소속</th><td>' + esc(who[1]) + '</td></tr><tr><th>연락처</th><td>' + esc(who[2]) + '</td></tr></table>' +
+      '<h2>2. 시료 정보</h2><table class="kv2"><tr><th>Taxonomy (Source)</th><td>' + esc(rowVal(r, /Taxonomy/) || '-') + '</td></tr><tr><th>종류</th><td>' + esc(rowVal(r, /종류/) || '-') + '</td></tr><tr><th>시료 수</th><td>' + esc(r.samples || '-') + '</td></tr><tr><th>분석목적</th><td>' + esc(r.purpose || '-') + '</td></tr></table>' +
+      '<h2>3. 분석 서비스</h2><p class="svc-t">' + esc(f ? f.name : r.svc) + '</p>' + svcHTML +
+      '<h2>분석 유형별 샘플 요구량</h2><div class="need"><b>' + need + '</b><ul>' + NEED[need].map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>' +
+      '<p class="c-sign-t">위와 같은 내용의 시험을 의뢰합니다.</p>' +
+      '<p class="c-date">' + dt.getFullYear() + ' 년 &nbsp; ' + (dt.getMonth() + 1) + ' 월 &nbsp; ' + dt.getDate() + ' 일</p>' +
+      '<p class="c-sign">의뢰 담당자: <b>' + esc(who[0]) + '</b> (서명)</p>' +
+    '</article>';
+  };
+  // 계약서 보기: 기본 양식이면 의뢰서 + 별첨1 견적서, 업로드 파일이면 파일 안내
+  F.showContract = function (r, s, side) {
+    var c = s.ct && s.ct[side], q = s.P[s.pick].quote, label = side === 'client' ? '클라이언트 계약서' : '분석파트너 계약서';
+    var body = !c || c.type === 'form'
+      ? F.contractHTML(r, s, side) + '<p class="attach-t"># 별첨1. 분석 견적서</p>' + F.docHTML(r, q, s.pick)
+      : '<article class="doc cdoc file"><div class="c-brand">C E L L K E Y</div><div class="fileph"><b>' + esc(c.name) + '</b><p>기관 자체 양식으로 업로드한 계약서입니다.<br>프로토타입에서는 파일 내용을 표시하지 않습니다.</p></div></article>';
+    var pv = document.createElement('div');
+    pv.className = 'pv'; pv.setAttribute('role', 'dialog'); pv.setAttribute('aria-modal', 'true'); pv.setAttribute('aria-label', label);
+    pv.innerHTML = '<div class="pv-bar"><b>' + label + ' · ' + esc(r.title) + '</b><div><button type="button" data-print>인쇄 · PDF 저장</button><button type="button" class="x" data-close>닫기</button></div></div><div class="pv-scroll">' + body + '</div>';
+    var close = function () { pv.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', key); };
+    var key = function (e) { if (e.key === 'Escape') close(); };
+    pv.addEventListener('click', function (e) { if (e.target.closest('[data-close]') || e.target === pv) close(); else if (e.target.closest('[data-print]')) window.print(); });
+    document.addEventListener('keydown', key);
+    document.body.appendChild(pv); document.body.style.overflow = 'hidden'; pv.querySelector('[data-close]').focus();
+  };
+  // 계약서 목록 (클라이언트·파트너·컨설턴트 화면 공통)
+  F.contractListHTML = function (s, sides) {
+    return '<div class="ctlist">' + sides.map(function (side) {
+      var c = s.ct[side];
+      return '<div class="ctrow2"><div><b>' + (side === 'client' ? '클라이언트 계약서' : '분석파트너 계약서') + '</b><span>' + (c.type === 'form' ? '셀키 분석서비스 의뢰서 (기본 양식) + 별첨 견적서' : esc(c.name)) + ' · 등록 ' + ymd(s.ct.at) + '</span></div><button type="button" class="btn" data-ct="' + side + '">계약서 보기</button></div>';
+    }).join('') + '</div>';
   };
 
   OP.flow = F;

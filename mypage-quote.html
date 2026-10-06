@@ -9,17 +9,29 @@
      ?rid=의뢰번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006b">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006b">
-<script src="assets/common/site.js?v=20261006b"></script>
-<script src="assets/common/mypage.js?v=20261006b"></script>
-<script src="assets/common/flow.js?v=20261006b"></script>
-<script src="assets/common/projects-data.js?v=20261006b"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006c">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006c">
+<script src="assets/common/site.js?v=20261006c"></script>
+<script src="assets/common/mypage.js?v=20261006c"></script>
+<script src="assets/common/flow.js?v=20261006c"></script>
+<script src="assets/common/projects-data.js?v=20261006c"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
   .qtabs button { height:36px; padding:0 16px; border-radius:99px; background:var(--gray-100); font-size:14px; font-weight:500; color:var(--gray-500); }
   .qtabs button.on { background:#000; color:#fff; }
+  .qhead-card { gap:16px; }
+  #card .sec[hidden] { display:none; }
+  .next { display:flex; justify-content:flex-end; padding-top:8px; }
+  /* 수량: 직접 입력 + ▲▼ */
+  .stepper { position:relative; }
+  .stepper .inp { padding-right:30px; }
+  .stepper .spin { position:absolute; top:3px; right:3px; bottom:3px; display:flex; flex-direction:column; width:22px; border-left:1px solid var(--gray-200); }
+  .stepper .spin button { flex:1; display:flex; align-items:center; justify-content:center; padding:0; border-radius:0 6px 0 0; }
+  .stepper .spin button + button { border-top:1px solid var(--gray-200); border-radius:0 0 6px 0; }
+  .stepper .spin button:hover { background:var(--gray-100); }
+  .stepper .spin button:disabled { opacity:.4; cursor:default; background:none; }
+  .stepper .spin img { width:12px; height:12px; }
 
   /* 의뢰 요약 */
   .phead { display:flex; flex-direction:column; gap:12px; }
@@ -67,7 +79,7 @@
   .items td { padding:6px 8px; border-bottom:1px solid var(--gray-200); vertical-align:middle; }
   .items td.name { width:22%; vertical-align:top; border-right:1px solid var(--gray-200); }
   .items td.amt { width:14%; text-align:right; font-weight:500; white-space:nowrap; }
-  .items .c-qty { width:9%; } .items .c-unit { width:9%; } .items .c-price { width:15%; } .items .c-del { width:36px; }
+  .items .c-qty { width:11%; } .items .c-unit { width:8%; } .items .c-price { width:15%; } .items .c-del { width:36px; }
   .items .namebox { display:flex; flex-direction:column; gap:6px; }
   .items .linkbtn { align-self:flex-start; font-size:12px; color:var(--teal-700); font-weight:500; }
   .items .del { width:28px; height:28px; border-radius:6px; color:var(--gray-400); font-size:18px; line-height:28px; }
@@ -130,7 +142,7 @@
 
 <main class="body"><div class="in">
   <aside class="side" data-op-side></aside>
-  <div class="main"><section class="card" id="card"></section></div>
+  <div class="main"><section class="card qhead-card" id="head" hidden></section><section class="card" id="card"></section></div>
 </div></main>
 
 <div data-op-footer></div>
@@ -163,7 +175,7 @@
   }
   // ── 받은 견적 요청 목록 ──
   if (!x && !rid) {
-    var IN = F.inbox(ME), Q = read(), cur = '전체';
+    var IN = F.inbox(ME), Q = read(), cur = new URLSearchParams(location.search).get('t') || '전체'; // 대시보드에서 상태 눌러 들어오면 그 상태만
     var rows = IN.map(function (o) {
       var t = F.pst(o.s, ME);
       return { t: t, at: o.x.at, html: '<a class="qrow" href="mypage-quote.html?rid=' + encodeURIComponent(o.r.id) + '"><span class="badge ' + BADGE[t] + '">' + t + '</span>' +
@@ -223,18 +235,21 @@
   }
   var acc = me.acc;
 
-  card.innerHTML =
-    '<nav class="qtabs" role="tablist"><button type="button" class="on" data-go="req">의뢰내용</button><button type="button" data-go="quote">견적서</button></nav>' +
-    // 의뢰내용
-    '<section class="sec" id="req"><div class="phead">' +
+  // 위: 의뢰 제목·상태·안내 (항상 보임) / 아래: [의뢰내용] [견적서 작성] 탭 중 하나만 보임
+  var head = $('#head'); head.hidden = false;
+  head.innerHTML = '<div class="phead">' +
       '<div class="prow"><div class="badges"><span class="badge tag">' + esc(R.svc) + '</span>' + (rid ? '<span class="badge ' + BADGE[F.pst(S, ME)] + '">' + F.pst(S, ME) + '</span>' : '') + (R.open === '비공개' ? '<span class="badge done">비공개</span>' : '') + '</div><span class="reg">' + (rid ? '견적 요청일 : ' + F.ymd(X.at) : '등록일 : ' + dot(x.reg)) + '</span></div>' +
       '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-quote.html" aria-label="견적 목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(R.title) + '</h2>' +
         (rid ? '<span class="period"><b>견적 마감</b>' + dot(S.due) + (locked ? '' : '<em>' + dleft(S.due) + '</em>') + '</span>' : '<span class="period"><b>모집기한</b>' + dot(x.from) + ' ~ ' + dot(x.to) + '<em>' + (x.open ? '모집중' : '모집마감') + '</em></span>') + '</div></div>' +
-      banner + F.reqHTML(R) +
+      banner;
+  card.innerHTML =
+    '<nav class="qtabs" role="tablist"><button type="button" role="tab" data-go="req">의뢰내용</button><button type="button" role="tab" data-go="quote">' + (locked ? '제출한 견적서' : '견적서 작성') + '</button></nav>' +
+    // 의뢰내용
+    '<section class="sec" id="req" role="tabpanel">' + F.reqHTML(R) +
+      (locked ? '' : '<div class="next"><button type="button" class="btn primary lg" data-go="quote">견적서 작성하기</button></div>') +
     '</section>' +
-    '<div class="divider"></div>' +
     // 견적서
-    '<section class="sec" id="quote"><h3>견적서 ' + (locked ? '' : '작성') + '</h3>' +
+    '<section class="sec" id="quote" role="tabpanel">' +
       '<h4>고객사</h4><div class="grid2">' +
         '<div class="k">기업명</div><div>' + esc(R.org || '-') + '</div><div class="k">대표자성명</div><div>-</div>' +
         '<div class="k">연락처</div><div>-</div><div class="k">사업자등록번호</div><div>-</div>' +
@@ -276,7 +291,7 @@
         h += '<tr data-g="' + gi + '" data-l="' + li + '">' +
           (li === 0 ? '<td class="name" rowspan="' + (g.lines.length + 1) + '"><div class="namebox"><input class="inp" data-k="name" value="' + esc(g.name) + '" placeholder="예) LC-MS/MS 정량 분석"><button type="button" class="linkbtn" data-add-line>+ 세부내용 추가</button>' + (G.length > 1 ? '<button type="button" class="linkbtn" data-del-group style="color:var(--gray-500)">시험 삭제</button>' : '') + '</div></td>' : '') +
           '<td><input class="inp" data-k="d" value="' + esc(l.d) + '" placeholder="세부내용"></td>' +
-          '<td><input class="inp num" data-k="q" inputmode="numeric" value="' + esc(l.q) + '"></td>' +
+          '<td><div class="stepper"><input class="inp num" data-k="q" inputmode="numeric" value="' + esc(l.q) + '" aria-label="수량"><span class="spin"><button type="button" data-step="1" aria-label="수량 늘리기"><img src="assets/find/ic-caret-up.svg" alt=""></button><button type="button" data-step="-1" aria-label="수량 줄이기"><img src="assets/find/ic-caret-down.svg" alt=""></button></span></div></td>' +
           '<td><input class="inp" data-k="u" value="' + esc(l.u) + '"></td>' +
           '<td><input class="inp num" data-k="p" inputmode="numeric" value="' + esc(l.p) + '" placeholder="0"></td>' +
           '<td class="amt" data-amt>' + money(num(l.q) * num(l.p), cur) + '</td>' +
@@ -306,6 +321,11 @@
   });
   $('#rows').addEventListener('click', function (e) {
     var tr = e.target.closest('tr'); if (!tr) return; var gi = +tr.dataset.g;
+    var stp = e.target.closest('[data-step]');
+    if (stp) { // 수량 ▲▼: 1 아래로는 내려가지 않음
+      var ln = G[gi].lines[tr.dataset.l], nv = Math.max(1, (parseInt(ln.q, 10) || 0) + (+stp.dataset.step));
+      ln.q = String(nv); tr.querySelector('[data-k="q"]').value = nv; calc(); return;
+    }
     if (e.target.closest('[data-add-line]')) { G[gi].lines.push({ d: '', q: 1, u: 'EA', p: '' }); drawRows(); }
     else if (e.target.closest('[data-del-line]')) { G[gi].lines.splice(+tr.dataset.l, 1); drawRows(); }
     else if (e.target.closest('[data-del-group]')) { G.splice(gi, 1); drawRows(); }
@@ -350,13 +370,16 @@
   // 견적서 미리보기: 지금 입력한 내용으로 A4 견적서 (컨설턴트·클라이언트가 보는 것과 같은 문서)
   $('#preview').addEventListener('click', function () { F.showDoc(R, collect(locked), rid ? ME : '', '견적서 미리보기'); });
 
-  // 탭: 해당 영역으로 스크롤 + 스크롤 위치 따라 표시
+  // 탭: 한 번에 하나만 보임. 작성 대기면 의뢰내용부터, 그 외(임시저장·수정 요청·제출 후)는 견적서부터
   var tabs = [].slice.call(card.querySelectorAll('.qtabs button'));
-  card.querySelector('.qtabs').addEventListener('click', function (e) { var b = e.target.closest('[data-go]'); if (b) document.getElementById(b.dataset.go).scrollIntoView({ behavior: 'smooth' }); });
-  function spy() { var on = document.getElementById('quote').getBoundingClientRect().top < 200 ? 'quote' : 'req'; tabs.forEach(function (b) { b.classList.toggle('on', b.dataset.go === on); }); }
-  window.addEventListener('scroll', spy, { passive: true });
+  function show(k, scroll) {
+    tabs.forEach(function (b) { var on = b.dataset.go === k; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+    $('#req').hidden = k !== 'req'; $('#quote').hidden = k !== 'quote';
+    if (scroll) { var y = card.getBoundingClientRect().top + scrollY - 90; if (scrollY > y) scrollTo({ top: y, behavior: 'smooth' }); }
+  }
+  card.addEventListener('click', function (e) { var b = e.target.closest('[data-go]'); if (b) show(b.dataset.go, true); });
   document.title = R.title + ' · 견적서 · OmicsPharm';
-  if (location.hash === '#quote') setTimeout(function () { document.getElementById('quote').scrollIntoView(); spy(); }, 50);
+  show(location.hash === '#quote' || (rid && X.status !== 'req') || (!rid && saved) ? 'quote' : 'req');
 })();
 </script>
 </body>

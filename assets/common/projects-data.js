@@ -51,5 +51,16 @@
     x.open = x.days >= 0;
     return x;
   });
+  // 컨설턴트가 승인한 의뢰는 프로젝트 찾기에 게시 (flow.js가 먼저 로드된 페이지에서)
+  var POSTED = window.OP && OP.flow ? OP.flow.posted() : [];
+  var dot = function (v) { return String(v || '').replace(/-/g, '.'); };
+  var BUD = { '협의 필요': 500, '500만원 미만': 300, '500만~1,000만원': 750, '1,000만원 이상': 1200, '미정': 500 };
+  POSTED.forEach(function (o) {
+    var r = o.r, okd = OP.flow.ymd(o.s.ok), cat = CATS.indexOf(r.svc) > -1 ? r.svc : CATS[CATS.length - 1];
+    var x = { id: DATA.length, rid: r.id, cat: cat, title: r.title, samples: parseInt(r.samples, 10) || 0, price: BUD[r.budget] || 500, due: dot(r.due) || okd, from: dot(r.from) || okd, to: dot(r.to) || OP.flow.ymd(o.s.ok + 864e5 * 14), reg: okd, priv: r.open === '비공개', owner: '*****(' + (r.demo ? 'cli05' : 'client') + ')' };
+    x.days = Math.round((d(x.to) - TODAY) / 864e5);
+    x.open = x.days >= 0 && o.s.st !== 'matched';
+    DATA.push(x);
+  });
   window.OP_PROJECTS = { CATS: CATS, DATA: DATA, date: d, url: function (x) { return 'omicspharm-project-detail-prot.html?id=' + x.id; } };
 })();
