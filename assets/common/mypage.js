@@ -1,5 +1,5 @@
 /* 마이페이지 공통 — 로그인 확인, 왼쪽 프로필·메뉴, 데모 데이터(이 브라우저 localStorage 기준)
-   메뉴: 대시보드 / 프로젝트 관리 / 문의내역 / 알림 / 내 정보 관리 (분석파트너 +견적관리, 컨설턴트 = 분석파트너 화면 +클라이언트·분석파트너 관리·관리자 페이지)
+   메뉴: 대시보드 / 프로젝트 관리 / 문의내역 / 알림 / 내 정보 관리 (분석파트너 +견적관리, 컨설턴트 +의뢰 관리·클라이언트·분석파트너 관리·관리자 페이지)
    (기존 '분석결과 관리'는 프로젝트 상세의 '결과보고서' 탭으로 통합)
    사용: <aside class="side" data-op-side></aside> + var me = OP.mypage('dash'); */
 (function () {
@@ -7,7 +7,8 @@
   // admin = 컨설턴트(셀키): 당분간 분석파트너와 같은 화면 + 관리 메뉴 추가 (메뉴는 바뀌거나 통폐합될 수 있음)
   var MENU = [
     ['dash', '대시보드', 'mypage.html'],
-    ['quote', '견적관리', 'mypage-quote.html', ['partner', 'admin']], // 견적서 작성·제출 내역
+    ['request', '의뢰 관리', 'mypage-request.html', ['admin']], // 컨설턴트: 의뢰 검토 → 견적 요청 → 견적 비교·전달 → 매칭
+    ['quote', '견적관리', 'mypage-quote.html', ['partner']], // 분석파트너: 받은 견적 요청 → 견적서 작성·제출
     ['project', '프로젝트 관리', 'mypage-project.html'],
     ['inquiry', '문의내역', 'mypage-inquiry.html'],
     ['alarm', '알림', 'mypage-alarm.html'],
@@ -44,7 +45,12 @@
 
   var D = {
     P_STAGES: P_STAGES,
-    partnerProjects: function () { var s = OP.session(); return s && (s.role === 'admin' || OP.partnerVerified()) ? PARTNER_DEMO.slice() : []; }, // 인증 분석파트너·컨설턴트만 (미인증은 매칭·계약된 프로젝트가 없음)
+    // 인증 분석파트너·컨설턴트만 (미인증은 매칭·계약된 프로젝트가 없음). 견적 중개로 매칭된 프로젝트(계약 단계)가 앞에 붙는다
+    partnerProjects: function () {
+      var s = OP.session(); if (!s || !(s.role === 'admin' || OP.partnerVerified())) return [];
+      var M = OP.flow ? OP.flow.matched(s.role === 'admin' ? null : s.email) : [];
+      return M.concat(PARTNER_DEMO);
+    },
     esc: esc, ymd: ymd, ymdhm: ymdhm,
     // 이전 양식(V4 입력 기준 이전)으로 제출된 의뢰는 정리하고 V4 양식 의뢰만 보여줌
     projects: function () {
@@ -60,11 +66,16 @@
     },
     // 알림은 이 브라우저의 의뢰·문의 기록으로 만든다
     // 프로젝트: 클라이언트는 자기가 의뢰한 것. 분석파트너는 셀키(관리자)가 견적 요청을 보낸 의뢰만 볼 수 있다 (아직 데이터 없음)
-    myProjects: function () { var s = OP.session(); return s && s.role === 'client' ? D.projects() : []; },
+    // 클라이언트 데모 계정은 예시 의뢰(견적 중개 단계별)도 함께 본다
+    myProjects: function () {
+      var s = OP.session(); if (!s || s.role !== 'client') return [];
+      return OP.flow ? OP.flow.requests().filter(function (r) { return !r.demo || s.email === 'client@omicspharm.test'; }) : D.projects();
+    },
     alarms: function () {
       var readIds = read('op.alarmRead', []), L = [];
       // 의뢰 접수 알림은 의뢰한 클라이언트에게만 (분석파트너는 셀키의 견적 요청을 받은 뒤에만 의뢰를 확인)
       D.myProjects().forEach(function (p) {
+        if (p.demo) return; // 예시 의뢰 알림은 flow.js
         L.push({ id: 'p-' + p.id, cat: 'project', at: p.at, t: "'" + (p.title || p.id) + "' 프로젝트 의뢰가 접수되었습니다.", sub: '분석파트너의 견적이 도착하면 알려드릴게요.', href: 'mypage-project.html?id=' + encodeURIComponent(p.id) });
       });
       D.inquiries().forEach(function (q) {
@@ -72,10 +83,12 @@
         L.push({ id: 'q-' + q.id, cat: 'inquiry', at: q.at, t: "'" + q.title + "' 문의가 접수되었습니다.", href: 'mypage-inquiry.html?id=' + q.id });
       });
       D.partnerProjects().forEach(function (p) {
+        if (p.flow) return; // 견적 중개로 매칭된 프로젝트 알림은 flow.js
         if (p.qa) L.push({ id: 'qa-' + p.id, cat: 'project', at: p.at + 864e5 * 10, t: "'" + p.title + "' 프로젝트에 새 Q&A " + p.qa + '건이 등록되었습니다.', href: 'mypage-project.html?id=' + p.id });
         if (p.review) L.push({ id: 'rv-' + p.id, cat: 'project', at: new Date(2026, 7, 5).getTime(), t: "'" + p.title + "' 프로젝트에 리뷰가 등록되었습니다.", href: 'mypage-project.html?id=' + p.id });
         if (p.stage === '계약') L.push({ id: 'ct-' + p.id, cat: 'project', at: p.at, t: "'" + p.title + "' 프로젝트가 매칭되어 계약 단계가 시작되었습니다.", href: 'mypage-project.html?id=' + p.id });
       });
+      if (OP.flow) L = L.concat(OP.flow.alarms());
       L.push({ id: 'n-21', cat: 'notice', at: new Date(2026, 8, 28, 9, 0).getTime(), t: '[공지] OmicsPharm 서비스 리뉴얼 오픈 안내', href: 'notice-view.html?id=21&r=2' });
       L.push({ id: 'n-20', cat: 'notice', at: new Date(2026, 8, 15, 9, 0).getTime(), t: '[공지] 개인정보처리방침 변경 안내', href: 'notice-view.html?id=20&r=2' });
       L.push({ id: 'w', cat: 'notice', at: new Date(2026, 8, 1, 9, 0).getTime(), t: 'OmicsPharm 회원이 되신 것을 환영합니다.', sub: '이용방법에서 프로젝트 의뢰부터 결과 수령까지의 과정을 확인해보세요.', href: 'guide.html' });
@@ -101,7 +114,7 @@
     document.addEventListener('keydown', key);
     document.body.appendChild(m); m.querySelector('.no').focus();
   };
-  D.removeProject = function (id) { write('op.submitted', D.projects().filter(function (p) { return p.id !== id; })); };
+  D.removeProject = function (id) { write('op.submitted', D.projects().filter(function (p) { return p.id !== id; })); if (OP.flow) OP.flow.remove(id); };
 
   OP.my = D;
   OP.mypage = function (key) {

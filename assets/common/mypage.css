@@ -95,3 +95,89 @@ button { background:none; border:0; cursor:pointer; }
 .op-confirm .no:hover { border-color:var(--gray-400); }
 .op-confirm .yes { background:#f00011; color:#fff; }
 .op-confirm .yes:hover { background:#ca0008; }
+
+/* ── 견적 중개 공통 (flow.js) ── */
+.fsum { display:grid; grid-template-columns:repeat(4, auto); justify-content:space-between; gap:12px 24px; padding:18px 24px; border-radius:8px; background:var(--bg-green); }
+.fsum div { display:flex; align-items:center; gap:8px; font-size:14px; line-height:20px; white-space:nowrap; }
+.fsum img { width:20px; height:20px; filter:brightness(0); }
+.fsum em { font-style:normal; color:var(--gray-500); }
+.fsec { display:flex; flex-direction:column; gap:10px; }
+.fsec h4 { font-size:15px; font-weight:600; line-height:22px; }
+.fkv { border-top:2px solid #000; }
+.fkv > div { display:flex; border-bottom:1px solid var(--gray-200); font-size:14px; line-height:20px; }
+.fkv dt { width:200px; flex:none; padding:12px 18px; background:var(--gray-100); font-weight:500; }
+.fkv dd { flex:1; min-width:0; padding:12px 18px; white-space:pre-line; word-break:break-word; }
+.fnote { padding:18px 22px; border-radius:8px; background:var(--bg-green); font-size:14px; line-height:22px; white-space:pre-line; }
+/* 단계 표시 */
+.fsteps { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); gap:4px; }
+.fsteps li { list-style:none; display:flex; flex-direction:column; gap:8px; font-size:13px; font-weight:500; line-height:18px; color:var(--gray-400); text-align:center; }
+.fsteps li::before { content:""; height:6px; border-radius:99px; background:var(--gray-200); }
+.fsteps li.done { color:var(--gray-600); } .fsteps li.done::before { background:#8fd9cf; }
+.fsteps li.cur { color:var(--teal-700); font-weight:700; } .fsteps li.cur::before { background:var(--teal-600); }
+/* 다음 할 일 안내 */
+.ftodo { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 24px; border-radius:8px; background:var(--bg-green); }
+.ftodo b { display:block; font-size:16px; font-weight:600; line-height:22px; }
+.ftodo p { margin-top:4px; font-size:14px; line-height:20px; color:var(--gray-600); white-space:pre-line; }
+.ftodo .acts { display:flex; gap:8px; flex:none; }
+.ftodo.warn { background:#fff4ed; } .ftodo.warn b { color:var(--orange-600); }
+.ftodo.gray { background:var(--gray-100); }
+/* 상태 배지 추가 */
+.badge.ok { border:1px solid var(--teal-600); color:#fff; background:var(--teal-600); }
+.badge.red { border:1px solid #f00011; color:#f00011; background:#fff1f2; }
+.badge.lock { border:1px solid var(--gray-300); color:var(--gray-500); background:#fff; }
+/* 입력 모달 */
+.fask .yes.go { background:var(--teal-600); }
+.fask .yes.go:hover { background:var(--teal-700); }
+.fask .yes:disabled { background:var(--gray-200); color:var(--gray-400); cursor:not-allowed; }
+.fask-l { display:flex; flex-direction:column; gap:8px; margin-top:16px; font-size:14px; font-weight:500; color:var(--gray-700); }
+.fask textarea { height:120px; padding:12px; border:1px solid var(--gray-300); border-radius:8px; font:inherit; font-size:14px; line-height:22px; resize:vertical; }
+.fask textarea:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+/* 견적서 보기 (A4) */
+.pv { position:fixed; inset:0; z-index:100; display:flex; flex-direction:column; background:rgba(0,0,0,.55); }
+.pv[hidden] { display:none; }
+.pv-bar { flex:none; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 20px; background:#111; color:#fff; }
+.pv-bar b { font-size:15px; font-weight:600; }
+.pv-bar div { display:flex; gap:8px; }
+.pv-bar button { height:36px; padding:0 14px; border-radius:8px; font-size:14px; font-weight:500; background:#fff; color:#111; }
+.pv-bar button.x { background:#333; color:#fff; }
+.pv-scroll { flex:1; overflow:auto; padding:32px 16px; }
+.doc { width:794px; max-width:100%; min-height:1123px; margin:0 auto; padding:56px 56px 48px; background:#fff; color:#111; font-size:13px; line-height:20px; box-shadow:0 8px 32px rgba(0,0,0,.25); }
+.doc-head { display:flex; align-items:center; justify-content:space-between; padding-bottom:14px; border-bottom:3px solid #111; }
+.doc-head img { display:block; height:28px; width:auto; }
+.doc-head h1 { font-size:28px; font-weight:800; line-height:28px; letter-spacing:.2em; }
+.doc-meta { display:flex; justify-content:space-between; gap:16px; margin:16px 0 20px; font-size:12px; color:#444; }
+.doc h2 { margin:22px 0 8px; font-size:14px; font-weight:700; }
+.doc table { width:100%; border-collapse:collapse; table-layout:fixed; }
+.doc th, .doc td { padding:7px 10px; border:1px solid #c9c9c9; vertical-align:middle; word-break:break-word; }
+.doc th { background:#f2f4f3; font-weight:600; text-align:left; }
+.doc .parties { display:flex; flex-direction:column; gap:16px; }
+.doc .parties h3 { margin-bottom:6px; font-size:13px; font-weight:700; }
+.doc .parties th { width:17%; }
+.doc .it th { text-align:center; }
+.doc .it td.r, .doc .tt td.r { text-align:right; white-space:nowrap; }
+.doc .it td.c { text-align:center; }
+.doc .it tr.sub td { background:#fafafa; font-weight:600; }
+.doc .tt { margin-top:-1px; }
+.doc .tt th { width:70%; text-align:right; }
+.doc .tt tr.minus td { color:#d00; }
+.doc .tt tr.final th, .doc .tt tr.final td { background:#eaf6f3; font-size:15px; font-weight:800; }
+.doc .memo { min-height:72px; padding:10px 12px; border:1px solid #c9c9c9; white-space:pre-line; }
+.doc .sign { display:flex; justify-content:flex-end; align-items:center; gap:12px; margin-top:28px; font-size:14px; }
+.doc .sign b { font-size:15px; }
+.doc .demo { color:#999; }
+@media print {
+  body > *:not(.pv) { display:none !important; }
+  .pv { position:static; background:none; }
+  .pv-bar { display:none; }
+  .pv-scroll { padding:0; overflow:visible; }
+  .doc { box-shadow:none; width:auto; min-height:0; padding:0; }
+  @page { size:A4; margin:16mm; }
+}
+@media (max-width:960px) { .fsum { grid-template-columns:repeat(2, auto); justify-content:start; } .fkv dt { width:40%; } }
+@media (max-width:640px) {
+  .fsum { grid-template-columns:1fr; }
+  .fkv > div { flex-direction:column; } .fkv dt { width:100%; }
+  .fsteps { grid-template-columns:repeat(3, minmax(0,1fr)); row-gap:12px; }
+  .ftodo { flex-direction:column; align-items:stretch; } .ftodo .acts .btn { flex:1; }
+  .doc { padding:28px 20px; min-height:0; font-size:12px; } .doc-head h1 { font-size:22px; } .pv-scroll { padding:16px 8px; }
+}

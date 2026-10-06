@@ -462,10 +462,12 @@
   var SITE_SRC = (document.currentScript || {}).src || '';
   OP.syncBell = function () {
     var b = document.querySelector('.op-bell'); if (!b) return;
-    if (OP.my) { b.classList.toggle('on', OP.my.unread() > 0); return; }
+    if (OP.my && OP.flow) { b.classList.toggle('on', OP.my.unread() > 0); return; }
     if (OP._bellLoading) return; OP._bellLoading = true;
-    var sc = document.createElement('script'); sc.src = SITE_SRC.replace('site.js', 'mypage.js');
-    sc.onload = function () { OP.syncBell(); }; document.head.appendChild(sc);
+    // 알림 계산에 mypage.js + flow.js(견적 중개)가 필요
+    var load = function (f, cb) { var sc = document.createElement('script'); sc.src = SITE_SRC.replace('site.js', f); sc.onload = cb; document.head.appendChild(sc); };
+    var flow = function () { if (OP.flow) OP.syncBell(); else load('flow.js', OP.syncBell); };
+    if (OP.my) flow(); else load('mypage.js', flow);
   };
   function init() { render(); syncGnb(); showFlash(); if (OP.session()) OP.syncBell(); }
   function initAll() { init(); watchFooter(); }

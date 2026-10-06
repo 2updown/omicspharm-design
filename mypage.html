@@ -7,10 +7,11 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261003b">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261003b">
-<script src="assets/common/site.js?v=20261003b"></script>
-<script src="assets/common/mypage.js?v=20261003b"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006a">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006a">
+<script src="assets/common/site.js?v=20261006a"></script>
+<script src="assets/common/mypage.js?v=20261006a"></script>
+<script src="assets/common/flow.js?v=20261006a"></script>
 <style>
   .hello { flex-direction:row; align-items:center; justify-content:space-between; }
   .hello h2 { font-size:22px; font-weight:700; line-height:32px; letter-spacing:-.22px; }
@@ -24,6 +25,7 @@
   .flow a:hover { background:var(--gray-50); }
   .flow b { font-size:28px; font-weight:700; line-height:36px; color:var(--gray-300); }
   .flow b.has { color:var(--teal-600); }
+  .flow b.has.hot { color:var(--orange-600); }
   .flow span { font-size:14px; font-weight:500; line-height:20px; color:var(--gray-600); }
   .flow div span { color:var(--gray-400); }
 
@@ -82,6 +84,11 @@
       <div class="acts" id="acts"></div>
     </section>
 
+    <section class="card" id="pipeCard" hidden>
+      <div class="card-head"><h3 id="pipeH"></h3><a class="more" id="pipeMore"></a></div>
+      <div class="flow" id="pipe"></div>
+    </section>
+
     <section class="card">
       <div class="card-head"><h3>프로젝트 진행 현황</h3><a class="more" href="mypage-project.html">전체 보기</a></div>
       <div class="flow" id="flow"></div>
@@ -116,15 +123,38 @@
 
   $('#hi').textContent = me.name + ' 님, 안녕하세요.';
   $('#hiSub').textContent = client ? '진행 중인 프로젝트와 새 소식을 확인해보세요.' : '진행 중인 프로젝트와 새 소식을 확인해보세요.';
+  var F = OP.flow, admin = me.s.role === 'admin';
   $('#acts').innerHTML = client
     ? '<a class="btn" href="contact.html">문의하기</a><a class="btn primary" href="omicspharm-register.html">프로젝트 의뢰하기</a>'
-    : '<a class="btn" href="contact.html">문의하기</a><a class="btn primary" href="projects.html">프로젝트 찾기</a>';
+    : admin ? '<a class="btn" href="projects.html">프로젝트 찾기</a><a class="btn primary" href="mypage-request.html">의뢰 관리</a>'
+    : '<a class="btn" href="projects.html">프로젝트 찾기</a><a class="btn primary" href="mypage-quote.html">견적관리</a>';
+
+  // 견적 중개 현황: 컨설턴트 = 의뢰 처리 단계, 분석파트너 = 받은 견적 요청 상태
+  var pipe = null;
+  if (admin) {
+    var R = F.requests();
+    pipe = ['의뢰 처리 현황', 'mypage-request.html', [['review', '검토 대기'], ['quoting', '견적 수집 중'], ['sent', '클라이언트 검토'], ['matched', '매칭 완료']].map(function (a) {
+      return [a[1], R.filter(function (r) { return F.state(r.id).st === a[0]; }).length];
+    })];
+  } else if (!client && OP.canQuote()) {
+    var IN = F.inbox(me.s.email).map(function (o) { return F.pst(o.s, me.s.email); });
+    pipe = ['견적 요청 현황', 'mypage-quote.html', [['작성 필요', /작성 대기|임시저장|수정 요청/], ['제출 완료', /제출 완료|클라이언트 검토 중/], ['선정', /^선정/], ['종료', /미선정|거절/]].map(function (a) {
+      return [a[0], IN.filter(function (t) { return a[1].test(t); }).length];
+    })];
+  }
+  if (pipe) {
+    $('#pipeCard').hidden = false; $('#pipeH').textContent = pipe[0]; $('#pipeMore').href = pipe[1]; $('#pipeMore').textContent = '전체 보기';
+    $('#pipe').style.setProperty('--n', pipe[2].length);
+    $('#pipe').innerHTML = pipe[2].map(function (a, i) {
+      return a[1] ? '<a href="' + pipe[1] + '"><b class="has' + (i === 0 ? ' hot' : '') + '">' + a[1] + '</b><span>' + a[0] + '</span></a>' : '<div aria-disabled="true"><b>0</b><span>' + a[0] + '</span></div>';
+    }).join('');
+  }
 
   // 분석파트너: 셀키 매칭 후 계약된 프로젝트의 단계 (견적 요청·제출은 견적관리에서)
   var PP = D.partnerProjects();
   var steps = client ? ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'] : D.P_STAGES;
-  // 클라이언트: 지금은 제출한 의뢰가 모두 '의뢰접수' 단계
-  var counts = client ? [P.length, 0, 0, 0, 0] : steps.map(function (t) { return PP.filter(function (p) { return p.stage === t; }).length; });
+  // 클라이언트: 견적 중개 단계(의뢰접수 → 견적 비교 → 계약)까지 연결됨
+  var counts = client ? steps.map(function (t) { return P.filter(function (p) { return F.clientStage(p.id) === t; }).length; }) : steps.map(function (t) { return PP.filter(function (p) { return p.stage === t; }).length; });
   $('#flow').style.setProperty('--n', steps.length);
   $('#flow').innerHTML = steps.map(function (t, i) {
     // 0건인 단계는 누를 수 없다
@@ -140,7 +170,8 @@
   } else
   $('#plist').innerHTML = client && P.length
     ? '<div class="plist">' + P.slice(0, 3).map(function (p) {
-        return '<a href="mypage-project.html?id=' + encodeURIComponent(p.id) + '"><span class="badges"><span class="badge tag">' + esc(p.svc) + '</span><span class="badge state">의뢰접수</span></span>' +
+        var t = F.clientStage(p.id);
+        return '<a href="mypage-project.html?id=' + encodeURIComponent(p.id) + (t === '견적 비교' ? '&tab=quote' : '') + '"><span class="badges"><span class="badge tag">' + esc(p.svc) + '</span><span class="badge ' + (t === '계약' ? 'ok' : t === '견적 비교' ? 'wait' : 'state') + '">' + t + '</span></span>' +
           '<h4>' + esc(p.title) + '</h4><span class="dt">' + D.ymd(p.at) + '</span></a>';
       }).join('') + '</div>'
     : '<div class="empty"><b>' + (client ? '의뢰한 프로젝트가 없습니다' : '진행 중인 프로젝트가 없습니다') + '</b>' +

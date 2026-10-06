@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
+<title>의뢰 관리 · 마이페이지 · OmicsPharm</title>
+<!-- 마이페이지 > 의뢰 관리 (컨설턴트·셀키 전용). Figma 시안 없음.
+     ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
+     ?id=의뢰번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
+     데이터: assets/common/flow.js (localStorage op.flow) -->
+<link rel="stylesheet" href="assets/common/site.css?v=20261006a">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006a">
+<script src="assets/common/site.js?v=20261006a"></script>
+<script src="assets/common/mypage.js?v=20261006a"></script>
+<script src="assets/common/flow.js?v=20261006a"></script>
+<style>
+  /* 목록 */
+  .rlist { display:flex; flex-direction:column; gap:12px; }
+  .rcard { display:flex; flex-direction:column; gap:14px; padding:16px; background:#fff; border:1px solid var(--gray-200); border-radius:12px; transition:border-color .15s, box-shadow .15s; }
+  .rcard:hover { border-color:var(--teal-500); box-shadow:0 4px 8px #00000014, 0 0 2px #0000000a; }
+  .rcard .row1 { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .rcard .badges { display:flex; gap:6px; flex-wrap:wrap; }
+  .rcard h3 { font-size:18px; font-weight:600; line-height:26px; letter-spacing:-.18px; }
+  .rcard .next { flex:none; font-size:13px; font-weight:600; line-height:18px; color:var(--teal-700); white-space:nowrap; }
+  .rcard .next.urgent { color:var(--orange-600); }
+  .rcard .foot { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-top:12px; border-top:1px solid var(--gray-200); }
+  .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
+  .meta > span { display:inline-flex; align-items:center; gap:6px; white-space:nowrap; }
+  .meta > span + span::before { content:""; height:14px; border-left:1px solid var(--gray-300); margin-right:2px; }
+  .meta em { font-style:normal; color:var(--gray-500); }
+  .rcard .reg { font-size:12px; line-height:18px; color:var(--gray-400); white-space:nowrap; }
+  .prog { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--gray-600); white-space:nowrap; }
+  .prog i { display:block; width:72px; height:6px; border-radius:99px; background:var(--gray-200); overflow:hidden; }
+  .prog i b { display:block; height:100%; background:var(--teal-600); }
+  .demo-row { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; line-height:18px; color:var(--gray-400); }
+  .demo-row button { font-size:12px; color:var(--gray-500); text-decoration:underline; text-underline-offset:2px; }
+
+  /* 상세 머리 */
+  .phead { display:flex; flex-direction:column; gap:12px; }
+  .prow { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .badges { display:flex; gap:6px; flex-wrap:wrap; }
+  .reg { font-size:12px; line-height:18px; color:var(--gray-500); }
+  .ptitle { display:flex; align-items:center; gap:8px; font-size:22px; font-weight:600; line-height:30px; letter-spacing:-.22px; word-break:keep-all; }
+  .ptitle .back { display:flex; align-items:center; justify-content:center; width:32px; height:32px; margin-left:-6px; border-radius:8px; flex:none; }
+  .ptitle .back:hover { background:var(--gray-100); }
+  .ptitle img { width:22px; height:22px; }
+  .client { display:inline-flex; align-items:center; gap:8px; height:36px; padding:0 14px; border:1px solid var(--gray-300); border-radius:99px; font-size:14px; white-space:nowrap; }
+  .client b { font-weight:600; }
+
+  .blk { display:flex; flex-direction:column; gap:14px; }
+  .blk-h { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .blk-h h3 { font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
+  .blk-h .sub { font-size:13px; line-height:18px; color:var(--gray-500); }
+  .reqinfo { display:flex; flex-wrap:wrap; gap:6px 16px; padding:12px 16px; border-radius:8px; background:var(--gray-100); font-size:13px; line-height:20px; color:var(--gray-600); }
+  .reqinfo b { font-weight:600; color:#000; }
+
+  /* 분석파트너 선택 */
+  .pick { display:flex; flex-direction:column; border-top:2px solid #000; }
+  .pick label { display:grid; grid-template-columns:24px minmax(0,1.4fr) minmax(0,1.6fr) 90px 90px; align-items:center; gap:12px; padding:14px 12px; border-bottom:1px solid var(--gray-200); cursor:pointer; }
+  .pick label:hover { background:var(--gray-50); }
+  .pick label.off { cursor:not-allowed; opacity:.55; }
+  .pick label.off:hover { background:none; }
+  .pick input { width:18px; height:18px; accent-color:var(--teal-600); }
+  .pick .org { display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:15px; font-weight:600; line-height:22px; }
+  .pick .svc { display:flex; gap:4px; flex-wrap:wrap; }
+  .pick .svc span { padding:1px 8px; border-radius:6px; background:var(--gray-100); font-size:12px; line-height:18px; color:var(--gray-600); }
+  .pick .svc span.hit { background:var(--teal-50); color:var(--teal-700); font-weight:600; }
+  .pick .n { font-size:13px; color:var(--gray-500); text-align:right; white-space:nowrap; }
+  .pick .ph { display:grid; grid-template-columns:24px minmax(0,1.4fr) minmax(0,1.6fr) 90px 90px; gap:12px; padding:10px 12px; background:var(--gray-100); border-bottom:1px solid var(--gray-200); font-size:13px; font-weight:500; color:var(--gray-600); }
+  .pick .ph span:nth-child(n+4) { text-align:right; }
+  .form2 { display:grid; grid-template-columns:220px 1fr; gap:16px; }
+  .fld { display:flex; flex-direction:column; gap:8px; font-size:14px; font-weight:500; color:var(--gray-700); }
+  .fld input, .fld textarea { height:44px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; font:inherit; font-size:14px; font-weight:400; color:#000; background:#fff; }
+  .fld textarea { height:88px; padding:10px 12px; line-height:22px; resize:vertical; }
+  .fld input:focus, .fld textarea:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+  .bar { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .bar p { font-size:13px; line-height:20px; color:var(--gray-500); }
+  .bar .acts { display:flex; gap:8px; }
+  .btn:disabled { border-color:var(--gray-200); background:var(--gray-200); color:var(--gray-400); cursor:not-allowed; }
+
+  /* 받은 견적 */
+  .qt { display:flex; flex-direction:column; border-top:2px solid #000; }
+  .qt .h, .qt .r { display:grid; grid-template-columns:28px minmax(0,1.5fr) 120px minmax(0,1.1fr) 70px 90px 196px; align-items:center; gap:12px; padding:0 12px; }
+  .qt .h { height:44px; background:var(--gray-100); border-bottom:1px solid var(--gray-200); font-size:13px; font-weight:500; color:var(--gray-600); }
+  .qt .h span:nth-child(4), .qt .h span:nth-child(5) { text-align:right; }
+  .qt .r { min-height:64px; padding-top:12px; padding-bottom:12px; border-bottom:1px solid var(--gray-200); font-size:14px; line-height:20px; }
+  .qt .r.win { background:var(--teal-50); }
+  .qt .r input { width:18px; height:18px; accent-color:var(--teal-600); }
+  .qt .who b { display:block; font-size:15px; font-weight:600; line-height:22px; }
+  .qt .who span { font-size:12px; line-height:18px; color:var(--gray-500); }
+  .qt .amt { text-align:right; font-weight:600; white-space:nowrap; }
+  .qt .amt small { display:block; font-size:12px; font-weight:400; color:var(--gray-500); }
+  .qt .wk { text-align:right; white-space:nowrap; }
+  .qt .dt { font-size:13px; color:var(--gray-500); white-space:nowrap; }
+  .qt .act { display:flex; justify-content:flex-end; gap:6px; }
+  .qt .act .btn { height:32px; padding:0 10px; font-size:13px; }
+  .qt .note { grid-column:2 / -1; margin-top:-2px; padding:8px 12px; border-radius:6px; background:var(--gray-100); font-size:13px; line-height:20px; color:var(--gray-600); }
+  .qt .note.rev { background:#fff4ed; color:#a33a00; }
+  .qt .amt .mob { display:none; }
+  .hl { display:inline-block; margin-left:4px; padding:0 6px; border-radius:4px; background:var(--teal-50); font-size:11px; font-weight:600; line-height:18px; color:var(--teal-700); vertical-align:1px; }
+  .msg { padding:16px 20px; border-left:3px solid var(--teal-600); border-radius:0 8px 8px 0; background:var(--bg-green); font-size:14px; line-height:22px; white-space:pre-line; }
+  .msg b { display:block; margin-bottom:4px; font-size:13px; color:var(--teal-700); }
+
+  details.req { border:1px solid var(--gray-200); border-radius:12px; }
+  details.req > summary { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; font-size:16px; font-weight:600; cursor:pointer; list-style:none; }
+  details.req > summary::-webkit-details-marker { display:none; }
+  details.req > summary::after { content:""; width:20px; height:20px; background:url(assets/find/ic-chevron-down.svg) center/contain no-repeat; transition:transform .2s; }
+  details.req[open] > summary::after { transform:rotate(180deg); }
+  details.req .in { display:flex; flex-direction:column; gap:20px; padding:0 20px 20px; }
+
+  @media (max-width:1180px) {
+    .qt .h { display:none; }
+    .qt .r { grid-template-columns:28px minmax(0,1fr) auto; grid-template-areas:"ck who st" "ck amt amt" "ck act act"; gap:8px 12px; }
+    .qt .r > :nth-child(1) { grid-area:ck; align-self:start; margin-top:2px; }
+    .qt .r .who { grid-area:who; } .qt .r .st { grid-area:st; }
+    .qt .r .amt { grid-area:amt; display:flex; align-items:baseline; gap:8px; text-align:left; }
+    .qt .r .wk, .qt .r .dt { display:none; }
+    .qt .r .act { grid-area:act; justify-content:flex-start; }
+    .qt .note { grid-column:2 / -1; }
+    .qt .amt .mob { display:inline; font-weight:400; font-size:13px; color:var(--gray-500); }
+  }
+  @media (max-width:900px) {
+    .pick .ph { display:none; }
+    .pick label { grid-template-columns:24px minmax(0,1fr); grid-template-areas:"ck org" "ck svc" "ck n"; gap:6px 12px; }
+    .pick label > :nth-child(1) { grid-area:ck; align-self:start; margin-top:2px; }
+    .pick .org { grid-area:org; } .pick .svc { grid-area:svc; }
+    .pick .n { text-align:left; } .pick .n.c4 { grid-area:n; } .pick .n.c5 { display:none; }
+    .form2 { grid-template-columns:1fr; }
+  }
+  @media (max-width:640px) {
+    .prow, .rcard .row1, .rcard .foot, .bar { flex-direction:column; align-items:flex-start; }
+    .bar .acts { width:100%; } .bar .acts .btn { flex:1; }
+    .ptitle { font-size:18px; line-height:26px; }
+    .rcard h3 { font-size:16px; line-height:24px; }
+    .qt .r { padding-left:4px; padding-right:4px; }
+  }
+</style>
+</head>
+<body>
+<div data-op-gnb></div>
+
+<section class="page-head"><div class="in"><h1>마이페이지</h1></div></section>
+
+<main class="body"><div class="in">
+  <aside class="side" data-op-side></aside>
+  <div class="main"><section class="card" id="card"></section></div>
+</div></main>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var me = OP.mypage('request'); if (!me) return;
+  if (me.s.role !== 'admin') { location.replace('mypage.html'); return; } // 컨설턴트 전용
+  var F = OP.flow, esc = F.esc, $ = function (s, r) { return (r || document).querySelector(s); };
+  var card = $('#card'), id = new URLSearchParams(location.search).get('id');
+  var dot = function (v) { return v ? String(v).replace(/-/g, '.') : '-'; };
+  var md = function (t) { var d = new Date(t); return ('0' + (d.getMonth() + 1)).slice(-2) + '.' + ('0' + d.getDate()).slice(-2); };
+  var ST_BADGE = { review: 'wait', quoting: 'state', sent: 'state', matched: 'ok' };
+  var stBadge = function (s) { return '<span class="badge ' + ST_BADGE[s.st] + '">' + F.ADMIN_ST[s.st] + '</span>'; };
+  var cnt = function (s) {
+    var P = Object.keys(s.P).map(function (k) { return s.P[k]; });
+    return { all: P.length, sub: P.filter(function (x) { return x.status === 'sub'; }).length, dec: P.filter(function (x) { return x.status === 'dec'; }).length, rev: P.filter(function (x) { return x.status === 'rev'; }).length };
+  };
+
+  // ── 목록 ──
+  if (!id) {
+    var R = F.requests(), cur = '전체';
+    var TABS = [['전체'], ['검토 대기', 'review'], ['견적 수집 중', 'quoting'], ['클라이언트 검토', 'sent'], ['매칭 완료', 'matched']];
+    var next = function (s) {
+      var c = cnt(s);
+      if (s.st === 'review') return ['견적 요청 필요', 1];
+      if (s.st === 'quoting') return c.sub ? ['견적 ' + c.sub + '건 도착 · 전달 가능', 0] : ['견적 대기 중', 0];
+      if (s.st === 'sent') return ['클라이언트 선택 대기', 0];
+      return [F.partner(s.pick).org + ' 매칭', 0];
+    };
+    card.innerHTML = '<div class="card-head"><h3>의뢰 관리</h3></div><div class="chips" id="chips" role="tablist"></div><div class="rlist" id="rl"></div>' +
+      '<div class="demo-row"><span>※ 예시 의뢰 3건 + 이 브라우저에서 제출된 의뢰가 표시됩니다.</span><button type="button" id="reset">예시 데이터 초기화</button></div>';
+    var draw = function () {
+      $('#chips').innerHTML = TABS.map(function (t) {
+        var n = t[1] ? R.filter(function (r) { return F.state(r.id).st === t[1]; }).length : R.length;
+        return '<button type="button" role="tab" data-t="' + t[0] + '"' + (cur === t[0] ? ' class="on" aria-selected="true"' : '') + '>' + t[0] + '<span>' + n + '</span></button>';
+      }).join('');
+      var key = (TABS.filter(function (t) { return t[0] === cur; })[0] || [])[1];
+      var L = R.filter(function (r) { return !key || F.state(r.id).st === key; });
+      $('#rl').innerHTML = L.map(function (r) {
+        var s = F.state(r.id), c = cnt(s), n = next(s);
+        return '<a class="rcard" href="mypage-request.html?id=' + encodeURIComponent(r.id) + '">' +
+          '<div class="row1"><div class="badges"><span class="badge tag">' + esc(r.svc) + '</span>' + stBadge(s) + (r.open === '비공개' ? '<span class="badge lock">비공개</span>' : '') + '</div><span class="next' + (n[1] ? ' urgent' : '') + '">' + n[0] + '</span></div>' +
+          '<h3>' + esc(r.title) + '</h3>' +
+          '<div class="foot"><div class="meta"><span>' + esc((r.org || '-') + (r.manager ? '(' + r.manager + ')' : '')) + '</span><span><em>샘플</em>' + (r.samples ? esc(r.samples) + '개' : '-') + '</span><span><em>희망완료일</em>' + dot(r.due) + '</span></div>' +
+            (c.all ? '<span class="prog">견적 ' + c.sub + ' / ' + c.all + '<i><b style="width:' + Math.round((c.sub + c.dec) / c.all * 100) + '%"></b></i></span>' : '<span class="reg">접수 ' + F.ymd(r.at) + ' · ' + esc(r.id) + '</span>') + '</div></a>';
+      }).join('') || '<div class="empty"><b>해당 단계의 의뢰가 없습니다</b></div>';
+    };
+    $('#chips').addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (b) { cur = b.dataset.t; draw(); } });
+    $('#reset').addEventListener('click', function () {
+      OP.my.confirm('예시 데이터를 초기화할까요?', '견적 요청·제출·전달·선택 기록이 처음 상태로 돌아갑니다. 이 브라우저에서 제출한 의뢰 내용은 그대로 남습니다.', '초기화', function () { F.reset(); OP.flash('예시 데이터를 초기화했습니다.'); location.reload(); });
+    });
+    draw();
+    return;
+  }
+
+  // ── 상세 ──
+  var r = F.req(id);
+  if (!r) { location.replace('mypage-request.html'); return; }
+  document.title = r.title + ' · 의뢰 관리 · OmicsPharm';
+  var STEPS = ['의뢰 검토', '견적 요청', '견적 확인·전달', '클라이언트 선택', '매칭 완료'];
+
+  function render() {
+    var s = F.state(id), c = cnt(s);
+    var k = { review: 0, quoting: c.sub ? 2 : 1, sent: 3, matched: 5 }[s.st];
+    var todo = {
+      review: ['', '의뢰 내용을 검토하고 견적을 요청할 분석파트너를 선택해주세요.', '분석 분야가 맞는 인증 파트너를 추천으로 표시했습니다.'],
+      quoting: c.sub ? ['', '도착한 견적을 확인하고 클라이언트에게 전달해주세요.', '수정이 필요한 견적은 [수정 요청]으로 파트너에게 돌려보낼 수 있습니다.']
+                     : ['gray', '분석파트너의 견적을 기다리고 있습니다.', '견적 마감일 ' + dot(s.due) + ' · 견적이 도착하면 알림으로 알려드립니다.'],
+      sent: ['gray', '클라이언트가 견적을 비교하고 있습니다.', '클라이언트가 분석파트너를 선택하면 매칭이 완료되고 계약 단계로 넘어갑니다.'],
+      matched: ['', F.partner(s.pick).org + '와 매칭이 완료되었습니다.', '계약 금액 ' + (s.pick ? F.money(F.total(s.P[s.pick].quote).net) + ' (VAT 별도)' : '') + ' · 프로젝트 관리에서 계약 이후 진행 상황을 관리합니다.']
+    }[s.st];
+    if (c.rev && s.st === 'quoting') todo = ['warn', '수정 요청한 견적 ' + c.rev + '건을 기다리고 있습니다.', todo[1] + '\n' + todo[2]];
+
+    card.innerHTML =
+      '<div class="phead">' +
+        '<div class="prow"><div class="badges"><span class="badge tag">' + esc(r.svc) + '</span>' + stBadge(s) + (r.open === '비공개' ? '<span class="badge lock">비공개</span>' : '') + '</div><span class="reg">접수 ' + F.ymd(r.at) + ' · 의뢰번호 ' + esc(r.id) + '</span></div>' +
+        '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-request.html" aria-label="의뢰 목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(r.title) + '</h2>' +
+          '<span class="client"><b>클라이언트</b>' + esc((r.org || '-') + (r.manager ? ' · ' + r.manager : '')) + '</span></div>' +
+      '</div>' +
+      '<ol class="fsteps" style="--n:5" aria-label="진행 단계">' + STEPS.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
+      '<div class="ftodo ' + todo[0] + '"><div><b>' + esc(todo[1]) + '</b><p>' + esc(todo[2]) + '</p></div>' +
+        (s.st === 'matched' ? '<div class="acts"><a class="btn primary" href="mypage-project.html?id=' + encodeURIComponent(id) + '">프로젝트 관리로 이동</a></div>' : '') + '</div>' +
+      (s.st === 'review' ? pickHTML(s, false) : quotesHTML(s)) +
+      '<details class="req"' + (s.st === 'review' ? ' open' : '') + '><summary>의뢰 내용</summary><div class="in">' + F.reqHTML(r) + '</div></details>';
+    bind(s);
+  }
+
+  // 분석파트너 선택 (처음 요청 / 추가 요청)
+  function pickHTML(s, more) {
+    var L = F.PARTNERS.filter(function (p) { return !s.P[p.key]; })
+      .sort(function (a, b) { return (b.verified - a.verified) || (F.fits(b, r.svc) - F.fits(a, r.svc)) || b.done - a.done; });
+    var due = F.iso(Date.now() + 864e5 * 5);
+    return '<div class="blk" id="pickBlk">' +
+      '<div class="blk-h"><h3>' + (more ? '분석파트너 추가 요청' : '견적 요청할 분석파트너 선택') + '</h3><span class="sub">인증된 분석파트너만 선택할 수 있습니다.</span></div>' +
+      '<div class="pick"><div class="ph"><span></span><span>분석파트너</span><span>분석 분야</span><span>수행</span><span>소요</span></div>' +
+      L.map(function (p) {
+        var fit = F.fits(p, r.svc), off = !p.verified;
+        return '<label' + (off ? ' class="off"' : '') + '><input type="checkbox" name="pk" value="' + p.key + '"' + (off ? ' disabled' : fit && !more ? ' checked' : '') + '>' +
+          '<span class="org">' + esc(p.org) + (fit && !off ? '<span class="badge ok">추천</span>' : '') + (off ? '<span class="badge lock">미인증</span>' : '') + (p.login ? '<span class="badge tag">데모 계정</span>' : '') + '</span>' +
+          '<span class="svc">' + p.svc.map(function (x) { return '<span' + (r.svc.indexOf(x) > -1 ? ' class="hit"' : '') + '>' + esc(x) + '</span>'; }).join('') + '</span>' +
+          '<span class="n c4">' + (p.done ? '수행 ' + p.done + '건' : '수행 이력 없음') + '</span><span class="n c5">' + esc(p.lead) + '</span></label>';
+      }).join('') + '</div>' +
+      (more ? '' : '<div class="form2"><label class="fld">견적 마감일<input type="date" id="due" value="' + due + '" min="' + F.iso(Date.now()) + '"></label>' +
+        '<label class="fld">분석파트너에게 전달할 내용 (선택)<textarea id="memo" placeholder="예) 시료 수가 많아 일정 제안을 함께 부탁드립니다."></textarea></label></div>') +
+      '<div class="bar"><p>요청을 보내면 선택한 분석파트너만 의뢰 내용을 볼 수 있습니다.</p><div class="acts">' + (more ? '<button type="button" class="btn" id="pickCancel">취소</button>' : '') + '<button type="button" class="btn primary lg" id="send" disabled>견적 요청 보내기</button></div></div>' +
+    '</div>';
+  }
+
+  // 받은 견적
+  function quotesHTML(s) {
+    var keys = Object.keys(s.P).sort(function (a, b) { return order(s.P[a]) - order(s.P[b]) || s.P[a].at - s.P[b].at; });
+    var subs = keys.filter(function (k) { return s.P[k].status === 'sub'; });
+    var amt = function (k) { return F.total(s.P[k].quote).final; };
+    var low = subs.length > 1 ? subs.reduce(function (a, b) { return amt(b) < amt(a) ? b : a; }) : null;
+    var fast = subs.length > 1 ? subs.reduce(function (a, b) { return +s.P[b].quote.weeks < +s.P[a].quote.weeks ? b : a; }) : null;
+    var edit = s.st === 'quoting';
+    var badge = function (k) {
+      var t = F.pst(s, k);
+      var cls = { '작성 대기': 'done', '임시저장': 'done', '제출 완료': 'state', '수정 요청': 'wait', '거절': 'red', '클라이언트 검토 중': 'state', '선정': 'ok', '미선정': 'done' }[t];
+      if (s.st !== 'quoting' && s.P[k].status === 'sub' && !s.P[k].fwd) { t = '전달 안 함'; cls = 'done'; }
+      return '<span class="badge ' + cls + '">' + t + '</span>';
+    };
+    var rows = keys.map(function (k) {
+      var x = s.P[k], p = F.partner(k), q = x.quote, sub = x.status === 'sub';
+      return '<div class="r' + (s.pick === k ? ' win' : '') + '">' +
+        (edit && sub ? '<input type="checkbox" name="fw" value="' + k + '" checked aria-label="' + esc(p.org) + ' 견적 전달">' : '<span>' + (s.st !== 'quoting' && x.fwd ? '✓' : '') + '</span>') +
+        '<div class="who"><b>' + esc(p.org) + '</b><span>요청 ' + md(x.at) + (x.revN ? ' · 수정 ' + x.revN + '회' : '') + '</span></div>' +
+        '<div class="st">' + badge(k) + '</div>' +
+        '<div class="amt">' + (sub ? F.money(F.total(q).final) + (k === low ? '<span class="hl">최저가</span>' : '') + '<small>VAT 포함</small>' : '-') + (sub ? '<span class="mob">· ' + esc(q.weeks || '-') + '주</span>' : '') + '</div>' +
+        '<div class="wk">' + (sub ? esc(q.weeks || '-') + '주' + (k === fast ? '<span class="hl">최단</span>' : '') : '-') + '</div>' +
+        '<div class="dt">' + (x.subAt && sub ? md(x.subAt) + ' 제출' : x.status === 'dec' ? md(x.dec.at) + ' 거절' : '마감 ' + dot(s.due).slice(5)) + '</div>' +
+        '<div class="act">' + (sub ? '<button type="button" class="btn" data-doc="' + k + '">견적서 보기</button>' + (edit ? '<button type="button" class="btn" data-rev="' + k + '">수정 요청</button>' : '') : '') + '</div>' +
+        (x.status === 'rev' ? '<p class="note rev">수정 요청 · ' + md(x.rev.at) + ' — ' + esc(x.rev.note) + '</p>' : '') +
+        (x.status === 'dec' ? '<p class="note">거절 사유 — ' + esc(x.dec.why) + '</p>' : '') +
+      '</div>';
+    }).join('');
+    var c = cnt(s);
+    return '<div class="blk">' +
+      '<div class="blk-h"><h3>받은 견적 <span style="color:var(--teal-600)">' + c.sub + '</span> / ' + c.all + '</h3>' + (edit ? '<button type="button" class="btn" id="more">+ 분석파트너 추가 요청</button>' : '') + '</div>' +
+      '<div class="reqinfo"><span><b>견적 요청</b> ' + F.ymd(s.reqAt || r.at) + '</span><span><b>견적 마감</b> ' + dot(s.due) + '</span>' + (s.memo ? '<span><b>요청 메모</b> ' + esc(s.memo) + '</span>' : '') + '</div>' +
+      '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적</span><span>소요</span><span>일자</span><span></span></div>' + rows + '</div>' +
+      (edit ? '<div class="bar"><p>체크한 견적을 수정 없이 그대로 클라이언트에게 전달합니다. 기관명도 함께 공개됩니다.</p><div class="acts"><button type="button" class="btn primary lg" id="fwd"></button></div></div>' : '') +
+      (s.msg && s.st !== 'quoting' ? '<div class="msg"><b>클라이언트에게 전달한 메시지 · ' + F.ymd(s.sentAt) + '</b>' + esc(s.msg) + '</div>' : '') +
+      '<div id="moreBox"></div>' +
+    '</div>';
+  }
+  function order(x) { return { sub: 0, rev: 1, draft: 2, req: 2, dec: 3 }[x.status]; }
+
+  function bind(s) {
+    // 파트너 선택
+    var syncSend = function () { var b = $('#send'); if (!b) return; var n = card.querySelectorAll('input[name="pk"]:checked').length; b.disabled = !n; b.textContent = '견적 요청 보내기' + (n ? ' (' + n + ')' : ''); };
+    card.onchange = function (e) { if (e.target.name === 'pk') syncSend(); if (e.target.name === 'fw') syncFwd(); };
+    syncSend();
+    card.onclick = function (e) {
+      var t = e.target;
+      if (t.closest('#send')) {
+        var keys = [].map.call(card.querySelectorAll('input[name="pk"]:checked'), function (i) { return i.value; });
+        var names = keys.map(function (k) { return F.partner(k).org; }).join(', ');
+        var more = s.st !== 'review';
+        F.ask({ title: (more ? '추가 ' : '') + '견적 요청을 보낼까요?', desc: names + '에 견적 요청을 보냅니다. 요청을 받은 분석파트너만 의뢰 내용을 볼 수 있습니다.', label: false, yes: '요청 보내기' }, function () {
+          F.send(id, keys, more ? s.due : $('#due').value, more ? s.memo : $('#memo').value.trim());
+          OP.toast('견적 요청을 보냈습니다. (' + keys.length + '곳)'); render();
+        });
+      } else if (t.closest('#more')) {
+        $('#moreBox').innerHTML = pickHTML(s, true); syncSend(); $('#pickBlk').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (t.closest('#pickCancel')) {
+        $('#moreBox').innerHTML = '';
+      } else if (t.closest('[data-doc]')) {
+        var k = t.closest('[data-doc]').dataset.doc; F.showDoc(r, s.P[k].quote, k, F.partner(k).org + ' 견적서');
+      } else if (t.closest('[data-rev]')) {
+        var k2 = t.closest('[data-rev]').dataset.rev;
+        F.ask({ title: F.partner(k2).org + '에 수정 요청', desc: '수정 요청한 견적은 파트너가 다시 제출할 때까지 클라이언트에게 전달할 수 없습니다.', label: '수정 요청 내용', ph: '예) 데이터 분석 항목에 Pathway 분석을 포함해 다시 견적 부탁드립니다.', yes: '수정 요청', required: true }, function (v) {
+          F.revise(id, k2, v); OP.toast('수정 요청을 보냈습니다.'); render();
+        });
+      } else if (t.closest('#fwd')) {
+        var fk = [].map.call(card.querySelectorAll('input[name="fw"]:checked'), function (i) { return i.value; });
+        F.ask({ title: '견적 ' + fk.length + '건을 클라이언트에게 전달할까요?', desc: fk.map(function (k) { return F.partner(k).org; }).join(', ') + ' 견적을 그대로 전달합니다. 전달한 뒤에는 클라이언트가 견적을 비교하고 분석파트너를 선택합니다.', label: '클라이언트에게 남길 메시지 (선택)', ph: '예) 일정이 급하시면 ○○분석센터를 추천드립니다.', yes: '전달하기' }, function (v) {
+          F.forward(id, fk, v); OP.toast('클라이언트에게 견적을 전달했습니다.'); render(); window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+    };
+    syncFwd();
+  }
+  function syncFwd() {
+    var b = $('#fwd'); if (!b) return;
+    var n = card.querySelectorAll('input[name="fw"]:checked').length;
+    b.disabled = !n; b.textContent = n ? '견적 ' + n + '건 클라이언트에게 전달' : '전달할 견적을 선택해주세요';
+  }
+  render();
+})();
+</script>
+</body>
+</html>

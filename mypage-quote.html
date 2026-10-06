@@ -5,14 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>견적관리 · 마이페이지 · OmicsPharm</title>
-<!-- 마이페이지 > 견적관리 (분석파트너). 현재 홈페이지 견적서 작성 화면(mypage/estimate-write)을 새 디자인으로 옮긴 초안.
-     ?id=프로젝트번호 → [의뢰내용][견적서] 탭: 의뢰 요약 + 견적서 작성(고객사 / 공급자 / 제안가 / Notice / 임시저장·최종 제출)
-     ?id 없음 → 내가 작성·제출한 견적 목록. 데모 저장: localStorage op.quotes { 프로젝트id: {...} } -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261003b">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261003b">
-<script src="assets/common/site.js?v=20261003b"></script>
-<script src="assets/common/mypage.js?v=20261003b"></script>
-<script src="assets/common/projects-data.js?v=20261003b"></script>
+<!-- 마이페이지 > 견적관리 (분석파트너 전용). 현재 홈페이지 견적서 작성 화면(mypage/estimate-write)을 새 디자인으로 옮긴 초안.
+     ?rid=의뢰번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
+     ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
+     ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
+<link rel="stylesheet" href="assets/common/site.css?v=20261006a">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006a">
+<script src="assets/common/site.js?v=20261006a"></script>
+<script src="assets/common/mypage.js?v=20261006a"></script>
+<script src="assets/common/flow.js?v=20261006a"></script>
+<script src="assets/common/projects-data.js?v=20261006a"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -87,54 +89,19 @@
   .acts .btn.tertiary { border-color:var(--gray-300); background:#fff; color:var(--gray-500); }
   .acts .btn.tertiary:hover { background:var(--gray-50); color:var(--gray-600); }
 
-  /* 견적서 미리보기 (A4 문서) */
-  .pv { position:fixed; inset:0; z-index:100; display:flex; flex-direction:column; background:rgba(0,0,0,.55); }
-  .pv[hidden] { display:none; }
-  .pv-bar { flex:none; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 20px; background:#111; color:#fff; }
-  .pv-bar b { font-size:15px; font-weight:600; }
-  .pv-bar div { display:flex; gap:8px; }
-  .pv-bar button { height:36px; padding:0 14px; border-radius:8px; font-size:14px; font-weight:500; background:#fff; color:#111; }
-  .pv-bar button.x { background:#333; color:#fff; }
-  .pv-scroll { flex:1; overflow:auto; padding:32px 16px; }
-  .doc { width:794px; max-width:100%; min-height:1123px; margin:0 auto; padding:56px 56px 48px; background:#fff; color:#111; font-size:13px; line-height:20px; box-shadow:0 8px 32px rgba(0,0,0,.25); }
-  .doc-head { display:flex; align-items:center; justify-content:space-between; padding-bottom:14px; border-bottom:3px solid #111; }
-  .doc-head img { display:block; height:28px; width:auto; }
-  .doc-head h1 { font-size:28px; font-weight:800; line-height:28px; letter-spacing:.2em; } /* 로고 높이에 맞춤 */
-  .doc-meta { display:flex; justify-content:space-between; gap:16px; margin:16px 0 20px; font-size:12px; color:#444; }
-  .doc h2 { margin:22px 0 8px; font-size:14px; font-weight:700; }
-  .doc table { width:100%; border-collapse:collapse; table-layout:fixed; }
-  .doc th, .doc td { padding:7px 10px; border:1px solid #c9c9c9; vertical-align:middle; word-break:break-word; }
-  .doc th { background:#f2f4f3; font-weight:600; text-align:left; }
-  .doc .parties { display:flex; flex-direction:column; gap:16px; }
-  .doc .parties h3 { margin-bottom:6px; font-size:13px; font-weight:700; }
-  .doc .parties th { width:17%; }
-  .doc .it th { text-align:center; }
-  .doc .it td.r, .doc .tt td.r { text-align:right; white-space:nowrap; }
-  .doc .it td.c { text-align:center; }
-  .doc .it tr.sub td { background:#fafafa; font-weight:600; }
-  .doc .tt { margin-top:-1px; }
-  .doc .tt th { width:70%; text-align:right; }
-  .doc .tt tr.minus td { color:#d00; }
-  .doc .tt tr.final th, .doc .tt tr.final td { background:#eaf6f3; font-size:15px; font-weight:800; }
-  .doc .memo { min-height:72px; padding:10px 12px; border:1px solid #c9c9c9; white-space:pre-line; }
-  .doc .sign { display:flex; justify-content:flex-end; align-items:center; gap:12px; margin-top:28px; font-size:14px; }
-  .doc .sign b { font-size:15px; }
-  .doc .demo { color:#999; }
-  @media (max-width:640px) { .doc { padding:28px 20px; min-height:0; font-size:12px; } .doc-head h1 { font-size:22px; } .pv-scroll { padding:16px 8px; } }
-  @media print {
-    body > *:not(.pv) { display:none !important; }
-    .pv { position:static; background:none; }
-    .pv-bar { display:none; }
-    .pv-scroll { padding:0; overflow:visible; }
-    .doc { box-shadow:none; width:auto; min-height:0; padding:0; }
-    @page { size:A4; margin:16mm; }
-  }
-
   /* 목록 */
   .qlist { border-top:2px solid #000; }
   .qrow { display:flex; align-items:center; gap:16px; padding:16px 12px; border-bottom:1px solid var(--gray-200); }
   .qrow:hover { background:var(--gray-50); }
   .qrow .t { flex:1; min-width:0; font-size:16px; font-weight:600; line-height:22px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .qrow .t small { display:block; margin-top:2px; font-size:13px; font-weight:400; line-height:18px; color:var(--gray-500); }
+  .qrow .badge { flex:none; }
+  .qrow .m .due { font-style:normal; color:var(--orange-600); font-weight:500; }
+  .hint { margin-top:-4px; font-size:13px; line-height:18px; color:var(--gray-500); }
+  .weeks { display:flex; align-items:center; gap:8px; font-size:14px; }
+  .weeks .inp { width:90px; }
+  .req { color:var(--orange-600); }
+  #req { gap:20px; }
   .qrow .m { flex:none; font-size:13px; color:var(--gray-500); white-space:nowrap; }
   .qrow .p { flex:none; width:140px; text-align:right; font-weight:600; }
 
@@ -171,11 +138,11 @@
 <script>
 (function () {
   var me = OP.mypage('quote'); if (!me) return;
-  if (me.s.role === 'client') { location.replace('mypage.html'); return; } // 견적관리는 분석파트너·컨설턴트 전용 (클라이언트로 전환하면 대시보드로)
+  if (me.s.role !== 'partner') { location.replace(me.s.role === 'admin' ? 'mypage-request.html' : 'mypage.html'); return; } // 견적관리는 분석파트너 전용 (컨설턴트는 의뢰 관리)
   var $ = function (s, r) { return (r || document).querySelector(s); };
-  var esc = OP.my.esc;
+  var F = OP.flow, esc = F.esc;
   var P = OP_PROJECTS.DATA, card = $('#card');
-  // 견적은 계정별로 저장: op.quotes2 { 이메일: { 프로젝트id: {...} } } (예전 공용 저장분 op.quotes는 사용하지 않음)
+  // 프로젝트 찾기에서 직접 쓴 견적(예전 방식): op.quotes2 { 이메일: { 프로젝트번호: {...} } }
   var KEY = 'op.quotes2', ME = me.s.email;
   try { localStorage.removeItem('op.quotes'); } catch (e) {}
   var all = function () { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } };
@@ -183,58 +150,97 @@
   var write = function (v) { var a = all(); a[ME] = v; try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {} };
   var CUR = { KRW: '₩', USD: '$', JPY: '¥' };
   var money = function (n, c) { n = Math.round(n || 0); return (CUR[c] || '₩') + ' ' + n.toLocaleString('ko-KR'); };
-  var id = new URLSearchParams(location.search).get('id');
+  var qs = new URLSearchParams(location.search), rid = qs.get('rid'), id = qs.get('id');
   var x = id !== null ? P[+id] : null;
+  var dot = function (v) { return v ? String(v).replace(/-/g, '.') : '-'; };
+  var dleft = function (v) { var n = Math.ceil((new Date(v + 'T23:59:59') - Date.now()) / 864e5); return n < 0 ? '마감' : 'D-' + n; };
+  var BADGE = { '작성 대기': 'wait', '임시저장': 'wait', '수정 요청': 'red', '제출 완료': 'state', '클라이언트 검토 중': 'state', '선정': 'ok', '미선정': 'done', '거절': 'done' };
 
   // 미인증 분석파트너: 견적관리 이용 불가 (목록·작성 모두)
-  if (me.s.role === 'partner' && !OP.canQuote()) {
+  if (!OP.canQuote()) {
     card.innerHTML = '<div class="empty"><b>인증된 분석파트너만 견적서를 작성할 수 있습니다</b><p>' + OP.verifyHint() + '<br>인증 전에는 공개 프로젝트 열람만 가능합니다.</p>' + (OP.hasBizDoc() ? '<a class="btn lg" href="mypage-account.html">내 정보 관리에서 확인</a>' : '<a class="btn lg primary" href="mypage-account.html#doc">사업자등록증 올리기</a>') + '</div>';
     return;
   }
-  // ── 견적 목록 ──
-  if (!x) {
-    var Q = read(), ids = Object.keys(Q).sort(function (a, b) { return Q[b].at - Q[a].at; });
+  // ── 받은 견적 요청 목록 ──
+  if (!x && !rid) {
+    var IN = F.inbox(ME), Q = read(), cur = '전체';
+    var rows = IN.map(function (o) {
+      var t = F.pst(o.s, ME);
+      return { t: t, at: o.x.at, html: '<a class="qrow" href="mypage-quote.html?rid=' + encodeURIComponent(o.r.id) + '"><span class="badge ' + BADGE[t] + '">' + t + '</span>' +
+        '<span class="t">' + esc(o.r.title) + '<small>' + esc(o.r.svc) + ' · ' + esc(o.r.org || '-') + '</small></span>' +
+        '<span class="m">' + (/작성 대기|임시저장|수정 요청/.test(t) ? '<em class="due">마감 ' + dot(o.s.due).slice(5) + ' (' + dleft(o.s.due) + ')</em>' : '요청 ' + F.ymd(o.x.at)) + '</span>' +
+        '<span class="p">' + (o.x.quote && o.x.status !== 'req' ? money(F.total(o.x.quote).final, o.x.quote.cur) : '-') + '</span></a>' };
+    }).concat(Object.keys(Q).map(function (k) {
+      var q = Q[k], p = P[+k] || {}, t = q.submitted ? '제출 완료' : '임시저장';
+      return { t: t, at: q.at, self: 1, html: '<a class="qrow" href="mypage-quote.html?id=' + k + '"><span class="badge ' + BADGE[t] + '">' + t + '</span><span class="t">' + esc(p.title || '프로젝트') + '<small>프로젝트 찾기에서 직접 작성</small></span><span class="m">' + OP.my.ymd(q.at) + '</span><span class="p">' + money(q.final, q.cur) + '</span></a>' };
+    }));
+    var TABS = [['전체'], ['작성 필요', /작성 대기|임시저장|수정 요청/], ['제출 완료', /제출 완료|클라이언트 검토 중/], ['선정', /^선정/], ['종료', /미선정|거절/]];
+    var todoN = rows.filter(function (o) { return !o.self && TABS[1][1].test(o.t); }).length;
     card.innerHTML = '<div class="card-head"><h3>견적관리</h3></div>' +
-      (ids.length ? '<div class="qlist">' + ids.map(function (k) {
-        var q = Q[k], p = P[+k] || {};
-        return '<a class="qrow" href="mypage-quote.html?id=' + k + '"><span class="badge ' + (q.submitted ? 'state">제출 완료' : 'wait">임시저장') + '</span>' +
-          '<span class="t">' + esc(p.title || '프로젝트') + '</span><span class="m">' + OP.my.ymd(q.at) + '</span><span class="p">' + money(q.final, q.cur) + '</span></a>';
-      }).join('') + '</div>'
-      : '<div class="empty"><b>작성한 견적서가 없습니다</b><p>프로젝트 찾기에서 모집 중인 프로젝트의 [견적서 작성]을 눌러 견적을 제안해보세요.</p><a class="btn primary lg" href="projects.html">프로젝트 찾기</a></div>');
+      (todoN ? '<div class="ftodo warn"><div><b>작성이 필요한 견적 요청 ' + todoN + '건</b><p>견적 마감일 전에 견적서를 제출해주세요. 참여가 어려우면 [견적 거절]로 알려주세요.</p></div></div>' : '') +
+      '<div class="chips" id="chips" role="tablist"></div><div class="qlist" id="ql"></div>';
+    var draw = function () {
+      $('#chips').innerHTML = TABS.map(function (t) {
+        var n = rows.filter(function (o) { return !t[1] || t[1].test(o.t); }).length;
+        return '<button type="button" role="tab" data-t="' + t[0] + '"' + (cur === t[0] ? ' class="on" aria-selected="true"' : '') + '>' + t[0] + '<span>' + n + '</span></button>';
+      }).join('');
+      var re = (TABS.filter(function (t) { return t[0] === cur; })[0] || [])[1];
+      var L = rows.filter(function (o) { return !re || re.test(o.t); });
+      $('#ql').innerHTML = L.length ? L.map(function (o) { return o.html; }).join('')
+        : '<div class="empty"><b>' + (cur === '전체' ? '받은 견적 요청이 없습니다' : '해당하는 견적 요청이 없습니다') + '</b><p>OmicsPharm 컨설턴트가 분석 의뢰에 맞는 파트너로 선정해 견적을 요청하면 여기에 표시됩니다.</p></div>';
+    };
+    $('#chips').addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (b) { cur = b.dataset.t; draw(); } });
+    draw();
     return;
   }
 
-  // ── 견적서 작성 ──
-  var saved = read()[id] || null;
+  // ── 견적서 작성 ── (rid: 컨설턴트가 보낸 견적 요청 / id: 프로젝트 찾기에서 직접 작성)
+  var R, S, X, saved, locked = false, banner = '';
+  if (rid) {
+    R = F.req(rid); S = R && F.state(rid); X = S && S.P[ME];
+    if (!X) { location.replace('mypage-quote.html'); return; } // 요청받지 않은 의뢰는 볼 수 없음
+    saved = X.quote || null;
+    var t = F.pst(S, ME);
+    locked = !/작성 대기|임시저장|수정 요청/.test(t);
+    var B = {
+      '작성 대기': ['', '견적서를 작성해 제출해주세요.', '견적 마감일 ' + dot(S.due) + ' (' + dleft(S.due) + ')' + (S.memo ? '\n컨설턴트 메모: ' + S.memo : ''), 1],
+      '임시저장': ['', '임시저장된 견적서가 있습니다.', '견적 마감일 ' + dot(S.due) + ' (' + dleft(S.due) + ') 전에 최종 제출해주세요.' + (S.memo ? '\n컨설턴트 메모: ' + S.memo : ''), 1],
+      '수정 요청': ['warn', '컨설턴트가 견적 수정을 요청했습니다.', (X.rev ? X.rev.note : '') + '\n내용을 수정해 다시 제출해주세요.', 0],
+      '제출 완료': ['gray', '견적서를 제출했습니다.', 'OmicsPharm 컨설턴트가 검토한 뒤 클라이언트에게 전달합니다. 수정이 필요하면 알림으로 알려드립니다.', 0],
+      '클라이언트 검토 중': ['gray', '클라이언트가 견적을 검토하고 있습니다.', '컨설턴트가 견적을 클라이언트에게 전달했습니다. 선정 결과는 알림으로 알려드립니다.', 0],
+      '선정': ['', '프로젝트에 선정되었습니다.', '클라이언트가 이 견적을 선택해 매칭이 완료되었습니다. 프로젝트 관리에서 계약 단계를 확인해주세요.', 0],
+      '미선정': ['gray', '이번 견적은 선정되지 않았습니다.', '참여해주셔서 감사합니다.', 0],
+      '거절': ['gray', '견적 요청을 거절했습니다.', '거절 사유: ' + (X.dec ? X.dec.why : '-'), 0]
+    }[t];
+    banner = '<div class="ftodo ' + B[0] + '"><div><b>' + esc(B[1]) + '</b><p>' + esc(B[2]) + '</p></div>' +
+      (t === '선정' ? '<div class="acts"><a class="btn primary" href="mypage-project.html?id=' + encodeURIComponent(rid) + '">프로젝트 관리로 이동</a></div>' : B[3] ? '<div class="acts"><button type="button" class="btn" id="decline">견적 거절</button></div>' : '') + '</div>';
+  } else {
+    // 예전 방식: 프로젝트 찾기 목록 데이터를 의뢰처럼 보여줌
+    saved = read()[id] || null; locked = !!(saved && saved.submitted);
+    var lo = Math.max(50, Math.round(x.price * 0.85 / 10) * 10);
+    R = { id: 'P' + (x.id + 1), title: x.title, svc: x.cat, org: x.owner, samples: String(x.samples), due: x.due, budget: (lo * 10000).toLocaleString('ko-KR') + '원', open: x.priv ? '비공개' : '공개',
+      sections: [{ title: '시료정보', rows: [['Taxonomy (Source)', 'Human'], ['종류', '혈장'], ['시료 수', String(x.samples)]] }, { title: '요청서류 양식', rows: [['요청서류 양식', '국문 리포트, 결과 이미지, Raw 데이터']] }, { title: '기타 분석 요구사항', note: '시료는 계약 후 냉동 상태로 발송 예정입니다.\n분석 방법과 일정에 대한 제안을 함께 부탁드립니다.' }] };
+  }
   var acc = me.acc;
-  var dash = function (v) { return v ? v.replace(/\./g, '-') : '-'; };
-  var lo = Math.max(50, Math.round(x.price * 0.85 / 10) * 10);
 
   card.innerHTML =
     '<nav class="qtabs" role="tablist"><button type="button" class="on" data-go="req">의뢰내용</button><button type="button" data-go="quote">견적서</button></nav>' +
     // 의뢰내용
     '<section class="sec" id="req"><div class="phead">' +
-      '<div class="prow"><div class="badges"><span class="badge tag">' + esc(x.cat) + '</span><span class="badge state">의뢰확인</span>' + (x.priv ? '<span class="badge done">비공개</span>' : '') + '</div><span class="reg">등록일 : ' + dash(x.reg) + '</span></div>' +
-      '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-quote.html" aria-label="견적 목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(x.title) + '</h2>' +
-        '<span class="period"><b>모집기한</b>' + dash(x.from) + ' ~ ' + dash(x.to) + '<em>' + (x.open ? '모집중' : '모집마감') + '</em></span></div></div>' +
-      '<div class="summary">' +
-        '<div><img src="assets/find/ic-user.svg" alt="">' + esc(x.owner) + '</div>' +
-        '<div><img src="assets/find/ic-flask.svg" alt=""><em>샘플</em>' + x.samples + '개</div>' +
-        '<div><img src="assets/find/ic-timer.svg" alt=""><em>희망완료일</em>~' + x.due + '</div>' +
-        '<div><img src="assets/detail/ic-currency-krw.svg" alt=""><em>예상견적</em>' + (lo * 10000).toLocaleString('ko-KR') + '원</div>' +
-      '</div>' +
-      '<h4>시료정보</h4><dl class="kv"><div><dt>Taxonomy (Source)</dt><dd>Human</dd></div><div><dt>종류</dt><dd>혈장</dd></div><div><dt>시료 수</dt><dd>' + x.samples + '</dd></div></dl>' +
-      '<h4>요청서류 양식</h4><dl class="kv"><div><dt>요청서류 양식</dt><dd>국문 리포트, 결과 이미지, Raw 데이터</dd></div></dl>' +
-      '<h4>기타 분석 요구사항</h4><p class="note">시료는 계약 후 냉동 상태로 발송 예정입니다.\n분석 방법과 일정에 대한 제안을 함께 부탁드립니다.</p>' +
+      '<div class="prow"><div class="badges"><span class="badge tag">' + esc(R.svc) + '</span>' + (rid ? '<span class="badge ' + BADGE[F.pst(S, ME)] + '">' + F.pst(S, ME) + '</span>' : '') + (R.open === '비공개' ? '<span class="badge done">비공개</span>' : '') + '</div><span class="reg">' + (rid ? '견적 요청일 : ' + F.ymd(X.at) : '등록일 : ' + dot(x.reg)) + '</span></div>' +
+      '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-quote.html" aria-label="견적 목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(R.title) + '</h2>' +
+        (rid ? '<span class="period"><b>견적 마감</b>' + dot(S.due) + (locked ? '' : '<em>' + dleft(S.due) + '</em>') + '</span>' : '<span class="period"><b>모집기한</b>' + dot(x.from) + ' ~ ' + dot(x.to) + '<em>' + (x.open ? '모집중' : '모집마감') + '</em></span>') + '</div></div>' +
+      banner + F.reqHTML(R) +
     '</section>' +
     '<div class="divider"></div>' +
     // 견적서
-    '<section class="sec" id="quote"><h3>견적서 작성</h3>' +
+    '<section class="sec" id="quote"><h3>견적서 ' + (locked ? '' : '작성') + '</h3>' +
       '<h4>고객사</h4><div class="grid2">' +
-        '<div class="k">기업명</div><div>셀키</div><div class="k">대표자성명</div><div>-</div>' +
-        '<div class="k">연락처</div><div>+82 010-3456-7890</div><div class="k">사업자등록번호</div><div>-</div>' +
-        '<div class="k">담당자</div><div>셀키 컨설턴트</div><div class="k">이메일</div><div>admin@omicspharm.test</div>' +
+        '<div class="k">기업명</div><div>' + esc(R.org || '-') + '</div><div class="k">대표자성명</div><div>-</div>' +
+        '<div class="k">연락처</div><div>-</div><div class="k">사업자등록번호</div><div>-</div>' +
+        '<div class="k">담당자</div><div>' + esc(R.manager || '-') + '</div><div class="k">이메일</div><div>-</div>' +
         '<div class="k">주소</div><div class="wide">-</div></div>' +
+      '<p class="hint">고객사 연락처는 매칭이 완료된 뒤 OmicsPharm 컨설턴트를 통해 안내됩니다.</p>' +
       '<h4>공급자</h4><div class="grid2" id="supplier">' +
         '<div class="k">기업명</div><div><input class="inp" name="s_org"></div><div class="k">대표자성명</div><div><input class="inp" name="s_ceo"></div>' +
         '<div class="k">연락처</div><div><input class="inp" name="s_tel"></div><div class="k">사업자등록번호</div><div><input class="inp" name="s_biz" inputmode="numeric" placeholder="000-00-00000"></div>' +
@@ -250,18 +256,19 @@
         '<tr><td>VAT 10%</td><td id="tVat"></td></tr>' +
         '<tr class="final"><td>최종</td><td id="tFinal"></td></tr>' +
       '</tbody></table>' +
-      '<h4>Notice</h4><textarea class="inp" id="memo" placeholder="분석 방법, 소요 기간, 시료 발송 조건 등 클라이언트에게 전달할 내용을 입력해주세요."></textarea>' +
+      '<h4>분석 소요 기간 <span class="req">*</span></h4><label class="weeks">시료 수령 후 <input class="inp num" id="weeks" inputmode="numeric" placeholder="0"> 주 이내 결과 전달</label>' +
+      '<h4>Notice</h4><textarea class="inp" id="memo" placeholder="분석 방법, 시료 발송 조건 등 클라이언트에게 전달할 내용을 입력해주세요."></textarea>' +
       '<div class="acts"><button type="button" class="btn lg tertiary" id="saveTmp">임시저장</button>' +
-        '<div class="right"><button type="button" class="btn lg" id="preview">견적서 미리보기</button><button type="button" class="btn primary lg" id="submit"' + (x.open ? '' : ' disabled') + '>견적서 최종 제출</button></div></div>' +
+        '<div class="right"><button type="button" class="btn lg" id="preview">견적서 미리보기</button><button type="button" class="btn primary lg" id="submit"' + (rid || x.open ? '' : ' disabled') + '>' + (rid && X.status === 'rev' ? '수정 견적 제출' : '견적서 최종 제출') + '</button></div></div>' +
     '</section>';
 
   // 공급자: 저장본 → 없으면 내 계정 정보로 채움
-  var S = (saved && saved.supplier) || { s_org: acc.org || '', s_tel: acc.phone || '', s_mgr: acc.name || '', s_mail: me.s.email };
-  [].forEach.call(document.querySelectorAll('#supplier input'), function (i) { i.value = S[i.name] || ''; });
+  var Sup = (saved && saved.supplier) || { s_org: acc.org || '', s_tel: acc.phone || '', s_mgr: acc.name || '', s_mail: me.s.email };
+  [].forEach.call(document.querySelectorAll('#supplier input'), function (i) { i.value = Sup[i.name] || ''; });
 
   // 제안가: 시험명(그룹)마다 세부내용 여러 줄
-  var G = (saved && saved.groups) || [{ name: '', lines: [{ d: '', q: 1, u: 'EA', p: '' }] }];
-  var num = function (v) { return parseFloat(String(v).replace(/[^\d.]/g, '')) || 0; };
+  var G = (saved && saved.groups) ? JSON.parse(JSON.stringify(saved.groups)) : [{ name: '', lines: [{ d: '', q: 1, u: 'EA', p: '' }] }];
+  var num = F.num;
   function drawRows() {
     var cur = $('#cur').value, h = '';
     G.forEach(function (g, gi) {
@@ -278,7 +285,7 @@
       h += '<tr class="sub" data-g="' + gi + '"><td colspan="4" style="text-align:right">분석료 소계</td><td class="amt" data-subtotal>' + money(sub(g), cur) + '</td><td></td></tr>';
     });
     $('#rows').innerHTML = h;
-    calc();
+    calc(); if (locked) lock();
   }
   function sub(g) { return g.lines.reduce(function (s, l) { return s + num(l.q) * num(l.p); }, 0); }
   function calc() {
@@ -304,87 +311,51 @@
     else if (e.target.closest('[data-del-group]')) { G.splice(gi, 1); drawRows(); }
   });
   $('#addGroup').addEventListener('click', function () { G.push({ name: '', lines: [{ d: '', q: 1, u: 'EA', p: '' }] }); drawRows(); });
-  ['#sale', '#addSale'].forEach(function (s) { $(s).addEventListener('input', function () { this.value = this.value.replace(/\D/g, ''); calc(); }); });
+  ['#sale', '#addSale', '#weeks'].forEach(function (s) { $(s).addEventListener('input', function () { this.value = this.value.replace(/\D/g, ''); calc(); }); });
   $('#cur').addEventListener('change', calc);
 
-  if (saved) { $('#cur').value = saved.cur || 'KRW'; $('#sale').value = saved.sale || ''; $('#addSale').value = saved.addSale || ''; $('#memo').value = saved.memo || ''; }
+  if (saved) { $('#cur').value = saved.cur || 'KRW'; $('#sale').value = saved.sale || ''; $('#addSale').value = saved.addSale || ''; $('#memo').value = saved.memo || ''; $('#weeks').value = saved.weeks || ''; }
   drawRows();
 
   function collect(submitted) {
     var sup = {}; [].forEach.call(document.querySelectorAll('#supplier input'), function (i) { sup[i.name] = i.value.trim(); });
-    return { at: Date.now(), submitted: submitted, supplier: sup, groups: G, cur: $('#cur').value, sale: $('#sale').value, addSale: $('#addSale').value, memo: $('#memo').value, final: calc() };
+    return { at: Date.now(), submitted: submitted, supplier: sup, groups: G, cur: $('#cur').value, sale: $('#sale').value, addSale: $('#addSale').value, weeks: $('#weeks').value, memo: $('#memo').value, final: calc() };
   }
-  function save(submitted) { var all = read(); all[id] = collect(submitted); write(all); }
+  function save(submitted) {
+    if (rid) F.partnerSave(rid, ME, collect(submitted), submitted);
+    else { var a = read(); a[id] = collect(submitted); write(a); }
+  }
   $('#saveTmp').addEventListener('click', function () { save(false); OP.toast('임시저장되었습니다.'); });
   $('#submit').addEventListener('click', function () {
     var filled = G.some(function (g) { return g.name.trim() && g.lines.some(function (l) { return num(l.p) > 0; }); });
     if (!filled) { OP.toast('시험명과 단가를 1개 이상 입력해주세요.'); return; }
-    OP.my.confirm('견적서를 제출하시겠습니까?', '최종 제출한 견적은 OmicsPharm 컨설턴트에게 전달되며, 제출 후에는 수정할 수 없습니다.', '제출', function () {
-      save(true); OP.flash('견적서가 제출되었습니다.'); location.href = 'mypage-quote.html';
+    if (!num($('#weeks').value)) { OP.toast('분석 소요 기간을 입력해주세요.'); $('#weeks').focus(); return; }
+    var re = rid && X.status === 'rev';
+    OP.flow.ask({ title: re ? '수정한 견적을 제출하시겠습니까?' : '견적서를 제출하시겠습니까?', desc: '제출한 견적은 OmicsPharm 컨설턴트가 확인한 뒤 클라이언트에게 그대로 전달되며, 제출 후에는 수정할 수 없습니다.', label: false, yes: '제출' }, function () {
+      save(true); OP.flash(re ? '수정 견적이 제출되었습니다.' : '견적서가 제출되었습니다.'); location.href = 'mypage-quote.html';
     });
   });
-  if (saved && saved.submitted) { // 제출한 견적은 보기 전용
-    [].forEach.call(card.querySelectorAll('input, select, textarea, #rows button, #addGroup'), function (el) { el.disabled = true; });
-    $('#saveTmp').hidden = true; $('#submit').disabled = true; $('#submit').textContent = '제출 완료';
+  // 견적 거절
+  var dec = $('#decline');
+  if (dec) dec.addEventListener('click', function () {
+    OP.flow.ask({ title: '견적 요청을 거절하시겠습니까?', desc: '거절하면 이 의뢰에 견적을 제출할 수 없습니다. 사유는 OmicsPharm 컨설턴트에게 전달됩니다.', label: '거절 사유', ph: '예) 요청하신 기간에 장비 일정이 맞지 않습니다.', yes: '거절하기', required: true }, function (v) {
+      F.decline(rid, ME, v); OP.flash('견적 요청을 거절했습니다.'); location.href = 'mypage-quote.html';
+    });
+  });
+  function lock() { // 제출한 견적은 보기 전용
+    [].forEach.call(card.querySelectorAll('#quote input, #quote select, #quote textarea, #rows button, #addGroup'), function (el) { el.disabled = true; });
+    $('#saveTmp').hidden = true; $('#submit').hidden = true;
   }
 
-  // 견적서 미리보기: 지금 입력한 내용으로 A4 견적서 문서를 보여준다 (인쇄·PDF 저장 가능)
-  var pv = document.createElement('div');
-  pv.className = 'pv'; pv.hidden = true; pv.setAttribute('role', 'dialog'); pv.setAttribute('aria-modal', 'true'); pv.setAttribute('aria-label', '견적서 미리보기');
-  document.body.appendChild(pv);
-  function preview() {
-    var q = collect(!!(saved && saved.submitted)), cur = q.cur, sup = q.supplier, val = function (v) { return esc(v || '-'); };
-    var sum = q.groups.reduce(function (t, g) { return t + sub(g); }, 0), sale = num(q.sale), add = num(q.addSale);
-    var net = Math.max(0, sum - sale - add), vat = cur === 'KRW' ? Math.round(net * 0.1) : 0;
-    var today = new Date(), ymd = OP.my.ymd(today);
-    // 고객사·공급자: 견적서 양식과 같은 2열 표 (기업명/대표자성명, 연락처/사업자등록번호, 담당자/이메일, 주소)
-    var party = function (t, v) { return '<div><h3>' + t + '</h3><table><tr><th>기업명</th><td>' + val(v[0]) + '</td><th>대표자성명</th><td>' + val(v[1]) + '</td></tr><tr><th>연락처</th><td>' + val(v[2]) + '</td><th>사업자등록번호</th><td>' + val(v[3]) + '</td></tr><tr><th>담당자</th><td>' + val(v[4]) + '</td><th>이메일</th><td>' + val(v[5]) + '</td></tr><tr><th>주소</th><td colspan="3">' + val(v[6]) + '</td></tr></table></div>'; };
-    var no = 'Q-' + String(x.id + 1).padStart(4, '0') + '-' + ymd.replace(/\./g, '').slice(2);
-    var rows = q.groups.map(function (g) {
-      return g.lines.map(function (l, i) {
-        return '<tr>' + (i === 0 ? '<td rowspan="' + (g.lines.length + 1) + '">' + val(g.name) + '</td>' : '') +
-          '<td>' + val(l.d) + '</td><td class="c">' + esc(l.q || '') + '</td><td class="c">' + esc(l.u || '') + '</td><td class="r">' + money(num(l.p), cur) + '</td><td class="r">' + money(num(l.q) * num(l.p), cur) + '</td></tr>';
-      }).join('') + '<tr class="sub"><td colspan="4" style="text-align:right">소계</td><td class="r">' + money(sub(g), cur) + '</td></tr>';
-    }).join('');
-    pv.innerHTML =
-      '<div class="pv-bar"><b>견적서 미리보기</b><div><button type="button" id="pvPrint">인쇄 · PDF 저장</button><button type="button" class="x" id="pvClose">닫기</button></div></div>' +
-      '<div class="pv-scroll"><article class="doc">' +
-        '<div class="doc-head"><img src="assets/main/logo.svg" alt="OmicsPharm"><h1>견 적 서</h1></div>' +
-        '<div class="doc-meta"><span>견적번호 ' + no + '</span><span>견적일자 ' + ymd + '</span></div>' +
-        '<table><tr><th style="width:18%">프로젝트명</th><td>' + esc(x.title) + '</td></tr><tr><th>분석 분야</th><td>' + esc(x.cat) + ' · 시료 ' + x.samples + '개 · 희망완료일 ' + x.due + '</td></tr></table>' +
-        '<div class="parties" style="margin-top:16px">' +
-          party('고객사', ['셀키', '-', '+82 010-3456-7890', '-', '셀키 컨설턴트', 'admin@omicspharm.test', '-']) +
-          party('공급자', [sup.s_org, sup.s_ceo, sup.s_tel, sup.s_biz, sup.s_mgr, sup.s_mail, sup.s_addr]) +
-        '</div>' +
-        '<h2>제안가 <span style="font-weight:400;color:#666">(' + ({ KRW: '원화, 공급가 VAT 별도', USD: '달러', JPY: '엔화' })[cur] + ')</span></h2>' +
-        '<table class="it"><colgroup><col style="width:22%"><col><col style="width:9%"><col style="width:9%"><col style="width:15%"><col style="width:16%"></colgroup>' +
-          '<tr><th>시험명</th><th>세부내용</th><th>수량</th><th>Unit</th><th>단가</th><th>금액</th></tr>' + rows + '</table>' +
-        '<table class="tt"><tr><th>분석료 합계</th><td class="r">' + money(sum, cur) + '</td></tr>' +
-          (sale ? '<tr class="minus"><th>할인</th><td class="r">-' + money(sale, cur) + '</td></tr>' : '') +
-          (add ? '<tr class="minus"><th>추가 할인</th><td class="r">-' + money(add, cur) + '</td></tr>' : '') +
-          '<tr><th>분석료 총계</th><td class="r">' + money(net, cur) + '</td></tr>' +
-          (cur === 'KRW' ? '<tr><th>VAT 10%</th><td class="r">' + money(vat, cur) + '</td></tr>' : '') +
-          '<tr class="final"><th>최종 견적 금액</th><td class="r">' + money(net + vat, cur) + '</td></tr></table>' +
-        '<h2>Notice</h2><div class="memo">' + (q.memo ? esc(q.memo) : '<span class="demo">작성된 내용이 없습니다.</span>') + '</div>' +
-        '<div class="sign"><span>위와 같이 견적합니다.</span><b>' + val(sup.s_org) + '</b></div>' +
-      '</article></div>';
-    pv.hidden = false; document.body.style.overflow = 'hidden';
-    $('#pvClose').focus();
-  }
-  function closePv() { pv.hidden = true; document.body.style.overflow = ''; $('#preview').focus(); }
-  $('#preview').addEventListener('click', preview);
-  pv.addEventListener('click', function (e) {
-    if (e.target.closest('#pvClose') || e.target === pv) closePv();
-    else if (e.target.closest('#pvPrint')) window.print();
-  });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !pv.hidden) closePv(); });
+  // 견적서 미리보기: 지금 입력한 내용으로 A4 견적서 (컨설턴트·클라이언트가 보는 것과 같은 문서)
+  $('#preview').addEventListener('click', function () { F.showDoc(R, collect(locked), rid ? ME : '', '견적서 미리보기'); });
 
   // 탭: 해당 영역으로 스크롤 + 스크롤 위치 따라 표시
   var tabs = [].slice.call(card.querySelectorAll('.qtabs button'));
   card.querySelector('.qtabs').addEventListener('click', function (e) { var b = e.target.closest('[data-go]'); if (b) document.getElementById(b.dataset.go).scrollIntoView({ behavior: 'smooth' }); });
   function spy() { var on = document.getElementById('quote').getBoundingClientRect().top < 200 ? 'quote' : 'req'; tabs.forEach(function (b) { b.classList.toggle('on', b.dataset.go === on); }); }
   window.addEventListener('scroll', spy, { passive: true });
-  document.title = x.title + ' · 견적서 작성 · OmicsPharm';
+  document.title = R.title + ' · 견적서 · OmicsPharm';
   if (location.hash === '#quote') setTimeout(function () { document.getElementById('quote').scrollIntoView(); spy(); }, 50);
 })();
 </script>
