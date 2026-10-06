@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>OmicsPharm</title>
 <!-- Figma: [OmicsPharm] Renewal / 03_디자인(작업중) / 1440_시안1 (180:5300) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006s">
-<script src="assets/common/site.js?v=20261006s"></script>
-<script src="assets/common/mypage.js?v=20261006s"></script>
-<script src="assets/common/flow.js?v=20261006s"></script>
-<script src="assets/common/projects-data.js?v=20261006s"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006t">
+<script src="assets/common/site.js?v=20261006t"></script>
+<script src="assets/common/mypage.js?v=20261006t"></script>
+<script src="assets/common/flow.js?v=20261006t"></script>
+<script src="assets/common/projects-data.js?v=20261006t"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --teal-900:#004f4a;
@@ -239,6 +239,7 @@
     .feat-tw.fl::before, .feat-tw.fr::after { opacity:1; }
     .feat-tabs { flex-wrap:nowrap; gap:8px; padding:0 20px; overflow-x:auto; scrollbar-width:none; }
     .feat-tabs::-webkit-scrollbar { display:none; }
+    .feat-tabs { cursor:grab; user-select:none; -webkit-user-select:none; } .feat-tabs.drag { cursor:grabbing; } .feat-tabs.drag .feat-tab { pointer-events:none; }
     .feat-tab, .feat-tab.wide { flex:none; width:auto; padding:8px 14px; border:1px solid var(--gray-300); border-radius:99px; background:#fff; }
     .feat-tab .t { gap:6px; font-size:15px; line-height:22px; white-space:nowrap; }
     .feat-tab .t .ic { width:18px; height:18px; }
@@ -475,6 +476,13 @@
   const featSync = tab => { featDesc.innerHTML = tab.querySelector('.d').innerHTML.replace(/<br\s*\/?>/g, ' '); }; // 줄바꿈(<br>)은 띄어쓰기로
   const featEdges = () => { const max = featTabs.scrollWidth - featTabs.clientWidth; featTw.classList.toggle('fl', featTabs.scrollLeft > 2); featTw.classList.toggle('fr', featTabs.scrollLeft < max - 2); };
   featTabs.addEventListener('scroll', featEdges, { passive: true }); window.addEventListener('resize', featEdges);
+  // PC에서 좁은 화면일 때도 넘길 수 있게: 마우스 드래그 + 휠 (끌고 난 뒤의 클릭은 탭 선택으로 치지 않음)
+  let featDrag = null;
+  featTabs.addEventListener('wheel', e => { if (featTabs.scrollWidth > featTabs.clientWidth && Math.abs(e.deltaY) > Math.abs(e.deltaX)) { e.preventDefault(); featTabs.scrollLeft += e.deltaY; } }, { passive: false });
+  featTabs.addEventListener('mousedown', e => { if (featTabs.scrollWidth > featTabs.clientWidth) featDrag = { x: e.clientX, l: featTabs.scrollLeft, moved: false }; });
+  window.addEventListener('mousemove', e => { if (!featDrag) return; const dx = e.clientX - featDrag.x; if (Math.abs(dx) > 4) { featDrag.moved = true; featTabs.classList.add('drag'); } featTabs.scrollLeft = featDrag.l - dx; });
+  window.addEventListener('mouseup', () => { if (!featDrag) return; const moved = featDrag.moved; featTabs.classList.remove('drag'); featDrag = moved ? { moved: true, done: true } : null; if (moved) setTimeout(() => { featDrag = null; }, 0); });
+  featTabs.addEventListener('click', e => { if (featDrag && featDrag.done) { e.stopPropagation(); e.preventDefault(); } }, true);
   featSync(document.querySelector('.feat-tab.on')); featEdges();
   document.querySelectorAll('.feat-tab').forEach(tab => tab.addEventListener('click', () => {
     document.querySelectorAll('.feat-tab').forEach(t => t.classList.toggle('on', t === tab));
