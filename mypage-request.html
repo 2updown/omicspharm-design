@@ -9,11 +9,11 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=의뢰번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006j">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006j">
-<script src="assets/common/site.js?v=20261006j"></script>
-<script src="assets/common/mypage.js?v=20261006j"></script>
-<script src="assets/common/flow.js?v=20261006j"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006k">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006k">
+<script src="assets/common/site.js?v=20261006k"></script>
+<script src="assets/common/mypage.js?v=20261006k"></script>
+<script src="assets/common/flow.js?v=20261006k"></script>
 <style>
   /* 목록 */
   .rlist { display:flex; flex-direction:column; gap:12px; }
@@ -149,6 +149,70 @@
   .qmail .yes:disabled { background:var(--gray-200); color:var(--gray-400); cursor:not-allowed; }
   @media (max-width:640px) { .qmail .box { padding:20px 16px; } .qm-f { padding:16px; } .qm-f .row { flex-wrap:wrap; } .qm-f select { flex:1; min-width:0; } }
   details.req { border:1px solid var(--gray-200); border-radius:12px; }
+  /* ── 시안 B ── */
+  .pmb .draft { padding:2px 8px; border-radius:6px; background:#fff4ed; font-size:12px; font-weight:600; color:var(--orange-600); }
+  .b-search { display:flex; align-items:center; gap:10px; height:52px; padding:0 4px 0 18px; border:1px solid var(--gray-300); border-radius:999px; background:#fff; }
+  .b-search:focus-within { border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+  .b-search img { width:20px; height:20px; }
+  .b-search input { flex:1; min-width:0; border:0; outline:0; background:none; font:inherit; font-size:16px; }
+  .b-search input::-webkit-search-cancel-button { display:none; }
+  .b-search button { flex:none; height:44px; padding:0 32px; border-radius:999px; background:var(--gray-600); color:#fff; font-size:15px; font-weight:500; }
+  .b-tabs { display:flex; gap:4px; margin:0 -24px; padding:0 24px; border-bottom:1px solid var(--gray-200); overflow-x:auto; scrollbar-width:none; }
+  .b-tabs::-webkit-scrollbar { display:none; }
+  .b-tabs button { flex:none; display:flex; align-items:center; gap:6px; height:44px; padding:0 10px; border-bottom:2px solid transparent; margin-bottom:-1px; font-size:14px; font-weight:500; color:var(--gray-500); white-space:nowrap; }
+  .b-tabs button b { min-width:20px; padding:0 6px; border-radius:99px; background:var(--gray-100); font-size:12px; font-weight:600; line-height:20px; color:var(--gray-600); text-align:center; }
+  .b-tabs button[data-zero] { color:var(--gray-400); } .b-tabs button[data-zero] b { color:var(--gray-400); }
+  .b-tabs button:hover { color:#000; }
+  .b-tabs button.on { border-color:var(--teal-600); color:var(--teal-700); font-weight:700; } .b-tabs button.on b { background:var(--teal-600); color:#fff; }
+  .b-bar { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+  .b-dd { position:relative; }
+  .b-btn { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 12px 0 14px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font-size:14px; font-weight:500; color:var(--gray-700); white-space:nowrap; }
+  .b-btn i { width:16px; height:16px; background:url(assets/find/ic-chevron-down.svg) center/contain no-repeat; }
+  .b-btn:hover { border-color:var(--gray-400); }
+  .b-btn.set { border-color:var(--teal-600); background:var(--teal-50); color:var(--teal-700); }
+  .b-pop { position:absolute; top:calc(100% + 6px); left:0; z-index:20; display:flex; flex-direction:column; gap:2px; min-width:200px; padding:8px; border:1px solid var(--gray-200); border-radius:12px; background:#fff; box-shadow:0 8px 24px #0000001f; }
+  .b-pop[hidden] { display:none; }
+  .b-pop label { display:flex; align-items:center; gap:8px; height:36px; padding:0 8px; border-radius:6px; font-size:14px; white-space:nowrap; cursor:pointer; }
+  .b-pop label:hover { background:var(--gray-50); }
+  .b-pop input { width:16px; height:16px; accent-color:var(--teal-600); }
+  .b-pop .n { margin-left:auto; padding-left:12px; font-size:12px; color:var(--gray-400); }
+  .b-pop.wide { min-width:300px; gap:10px; padding:12px; }
+  .b-pop .dr { display:flex; align-items:center; gap:6px; } .b-pop .dr input { flex:1; width:auto; height:36px; padding:0 8px; border:1px solid var(--gray-300); border-radius:6px; font:inherit; font-size:13px; }
+  .b-pop .qd { display:flex; gap:6px; } .b-pop .qd button { flex:1; height:32px; border-radius:6px; background:var(--gray-100); font-size:13px; color:var(--gray-600); } .b-pop .qd button:hover { background:var(--gray-200); }
+  .b-sep { width:1px; height:20px; margin:0 4px; background:var(--gray-300); }
+  .b-flag { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 12px; border:1px dashed var(--gray-300); border-radius:99px; font-size:14px; font-weight:500; color:var(--gray-600); white-space:nowrap; }
+  .b-flag b { font-weight:700; color:var(--gray-400); }
+  .b-flag.hot b { color:var(--orange-600); }
+  .b-flag.on { border:1px solid var(--orange-600); background:#fff4ed; color:var(--orange-600); } .b-flag.on b { color:var(--orange-600); }
+  .b-applied { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:-8px; }
+  .b-applied .chip { display:inline-flex; align-items:center; gap:6px; height:28px; padding:0 8px 0 10px; border-radius:99px; background:var(--gray-100); font-size:13px; font-weight:500; color:var(--gray-700); }
+  .b-applied .chip i { font-style:normal; font-size:11px; color:var(--gray-500); }
+  .b-applied .chip:hover { background:var(--gray-200); }
+  .b-applied .tbtn { margin-left:4px; }
+  .b-head { display:flex; align-items:center; justify-content:space-between; padding-top:8px; border-top:1px solid var(--gray-200); }
+  .b-head .total { font-size:16px; font-weight:500; } .b-head .total b { color:var(--teal-600); }
+  .b-sort select { height:36px; padding:0 28px 0 8px; border:0; background:url(assets/find/ic-chevron-down.svg) right 4px center/16px no-repeat; font:inherit; font-size:14px; font-weight:500; appearance:none; -webkit-appearance:none; cursor:pointer; }
+  .b-list { display:flex; flex-direction:column; gap:12px; }
+  .lc { display:flex; flex-direction:column; gap:16px; padding:16px 12px; background:#fff; border:1px solid var(--gray-200); border-radius:12px; transition:border-color .15s, box-shadow .15s; }
+  .lc:hover { border-color:var(--teal-500); box-shadow:0 4px 8px #00000014, 0 0 2px #0000000a; }
+  .lc .head { display:flex; flex-direction:column; gap:16px; padding-bottom:12px; border-bottom:1px solid var(--gray-200); }
+  .lc .row1 { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .lc .badge.tag { border:0; box-shadow:inset 0 0 0 1px var(--teal-600); }
+  .lc .badge.stg { border:1px solid var(--blue-600); color:var(--blue-600); background:var(--blue-50); }
+  .lc .badge.open { border:0; background:var(--orange-600); color:#fff; } .lc .badge.closed { border:0; background:var(--gray-600); color:#fff; }
+  .lc .nx { flex:none; font-size:13px; font-weight:600; color:var(--teal-700); white-space:nowrap; } .lc .nx.hot { color:var(--orange-600); }
+  .lc h3 { font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; }
+  .lc .info { display:flex; flex-direction:column; gap:10px; }
+  .lc .foot { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .lc .reg { font-size:12px; line-height:18px; color:#9b9b9b; }
+  .lc .cbtns { display:flex; gap:6px; } .lc .qb { display:inline-flex; align-items:center; height:32px; padding:0 12px; border:1px solid var(--gray-400); border-radius:8px; background:#f3f2f2; font-size:13px; font-weight:500; color:var(--gray-700); white-space:nowrap; }
+  @media (max-width:640px) {
+    .b-tabs { margin:0 -16px; padding:0 16px; }
+    .b-search { height:48px; } .b-search button { padding:0 18px; height:40px; }
+    .b-bar { flex-wrap:nowrap; overflow-x:auto; margin:0 -16px; padding:0 16px 4px; scrollbar-width:none; } .b-bar::-webkit-scrollbar { display:none; }
+    .b-pop { position:fixed; left:16px; right:16px; top:auto; bottom:16px; }
+    .lc h3 { font-size:17px; line-height:24px; } .lc .row1 { flex-wrap:wrap; } .lc .foot { flex-direction:column; align-items:flex-start; }
+  }
   details.req > summary { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; font-size:16px; font-weight:600; cursor:pointer; list-style:none; }
   details.req > summary::-webkit-details-marker { display:none; }
   details.req > summary::after { content:""; width:20px; height:20px; background:url(assets/find/ic-chevron-down.svg) center/contain no-repeat; transition:transform .2s; }
@@ -212,6 +276,7 @@
 
   // ── 프로젝트 관리 목록 (컨설턴트) ── 의뢰접수부터 프로젝트 완료까지 한 목록에서 단계별로
   // 견적 중개 의뢰(flow.js) + 계약 이후 예시 프로젝트(mypage.js)
+  if (!id && new URLSearchParams(location.search).get('ui') === 'b') { listB(); return; } // 시안 B: 검색 + 단계 탭 + 필터 바 + 프로젝트 찾기 카드
   if (!id) {
     var STG = F.ADMIN_STAGES, cur = STG.indexOf(new URLSearchParams(location.search).get('stage')) > -1 ? new URLSearchParams(location.search).get('stage') : '전체';
     var ITEMS = F.requests().map(function (r) { var s = F.state(r.id); return { r: r, s: s, st: F.adminStage(r.id), at: r.at }; })
@@ -255,6 +320,123 @@
     });
     draw();
     return;
+  }
+
+  // ── 시안 B (반영 전 검토용, ?ui=b) ──
+  function listB() {
+    var STG = F.ADMIN_STAGES, CATS = ['단백체 분석', '대사체 분석', '유전체 분석', '전사체 분석', 'Olink 분석', '바이오의약품·ADC', '기타 분석'];
+    var EN = { Proteomics: '단백체 분석', Glycoproteomics: '단백체 분석', Metabolomics: '대사체 분석', Genomics: '유전체 분석', Transcriptomics: '전사체 분석', Olink: 'Olink 분석' };
+    var DAY = 864e5, now = Date.now();
+    // 공통 형태로 정리: 제목·서비스·단계·모집·등록일·우선검토
+    var ITEMS = F.requests().map(function (r) {
+      var s = F.state(r.id), c = cnt(s), st = F.adminStage(r.id);
+      return { href: 'mypage-request.html?id=' + encodeURIComponent(r.id), id: r.id, title: r.title, cat: CATS.indexOf(r.svc) > -1 ? r.svc : '기타 분석', st: st, open: F.open(r.id), at: r.at,
+        who: (r.org || '-') + (r.manager ? '(' + r.manager + ')' : ''), partner: s.pick ? F.partner(s.pick).org : '', samples: r.samples, due: r.due, period: (r.from || r.to) ? dot(r.from) + ' ~ ' + dot(r.to) : '-', priv: r.open === '비공개',
+        quotes: c.sub, all: c.all,
+        noQuote: !!s.ok && s.st !== 'matched' && !c.sub && now - s.ok > DAY * 3, // 장기 견적 미수신: 게시 후 3일 넘게 견적 0건
+        waitPick: s.st === 'sent', // 견적 채택 대기: 클라이언트에게 전달 후 선택 전
+        next: s.st === 'review' ? (s.ok ? '견적제안메일 발송 가능' : '의뢰 승인 필요') : s.st === 'quoting' ? (c.sub ? '견적 ' + c.sub + '건 도착 · 전달 가능' : '견적 대기 중') : s.st === 'sent' ? '클라이언트 선택 대기' : s.ct ? '' : '계약서 등록 필요',
+        urgent: (s.st === 'review' && !s.ok) || (s.st === 'matched' && !s.ct) };
+    }).concat(OP.my.partnerProjects().filter(function (p) { return !p.flow; }).map(function (p) {
+      return { href: 'mypage-project.html?id=' + encodeURIComponent(p.id), id: p.id, title: p.title, cat: EN[p.svc] || '기타 분석', st: F.P2A[p.stage], open: false, at: p.at,
+        who: p.client, partner: '○○분석센터', samples: String(p.samples), due: p.due, period: '-', quotes: 1, all: 1, next: p.qa ? 'Q&A ' + p.qa + '건' : '', amount: p.amount };
+    }));
+    var f = { q: '', st: '전체', cat: [], rec: '', from: '', to: '', noQuote: false, waitPick: false, sort: 'new' };
+    var qs = new URLSearchParams(location.search).get('stage'); if (STG.indexOf(qs) > -1) f.st = qs;
+    card.classList.add('pmb');
+    card.innerHTML =
+      '<div class="card-head"><h3>프로젝트 관리</h3><span class="draft">시안 B · 반영 전</span></div>' +
+      '<form class="b-search" id="bq" role="search"><img src="assets/find/ic-search.svg" alt=""><input type="search" id="bqIn" placeholder="클라이언트/분석파트너명, 의뢰명, 키워드 입력" autocomplete="off"><button type="submit">검색</button></form>' +
+      '<div class="b-tabs" id="bTabs" role="tablist"></div>' +
+      '<div class="b-bar"><div class="b-dd" data-dd="cat"><button type="button" class="b-btn" id="ddCat">분석 서비스<i></i></button><div class="b-pop" hidden>' + CATS.map(function (c) { return '<label><input type="checkbox" value="' + c + '">' + c + '<span class="n" data-cn="' + c + '"></span></label>'; }).join('') + '</div></div>' +
+        '<div class="b-dd" data-dd="rec"><button type="button" class="b-btn" id="ddRec">모집상태<i></i></button><div class="b-pop" hidden>' + [['', '전체'], ['open', '모집중'], ['closed', '모집완료']].map(function (o) { return '<label><input type="radio" name="rec" value="' + o[0] + '"' + (o[0] ? '' : ' checked') + '>' + o[1] + '</label>'; }).join('') + '</div></div>' +
+        '<div class="b-dd" data-dd="date"><button type="button" class="b-btn" id="ddDate">등록일<i></i></button><div class="b-pop wide" hidden><div class="dr"><input type="date" id="dFrom"><span>~</span><input type="date" id="dTo"></div><div class="qd">' + [[7, '최근 1주'], [30, '최근 1개월'], [90, '최근 3개월']].map(function (d) { return '<button type="button" data-days="' + d[0] + '">' + d[1] + '</button>'; }).join('') + '</div></div></div>' +
+        '<span class="b-sep"></span>' +
+        '<button type="button" class="b-flag" data-flag="noQuote">장기 견적 미수신<b id="fnq"></b></button>' +
+        '<button type="button" class="b-flag" data-flag="waitPick">견적 채택 대기<b id="fwp"></b></button></div>' +
+      '<div class="b-applied" id="bApplied" hidden></div>' +
+      '<div class="b-head"><span class="total" id="bTotal"></span><label class="b-sort"><select id="bSort" aria-label="정렬"><option value="new">최신등록순</option><option value="due">희망완료일순</option></select></label></div>' +
+      '<div class="b-list" id="bList"></div>' +
+      '<p class="demo-note">※ 검토용 시안입니다. 기존 화면: <a href="mypage-request.html" style="text-decoration:underline">프로젝트 관리 (현재)</a></p>';
+
+    function base(skip) { // skip: 이 조건은 빼고 거름 (각 필터의 개수 계산용)
+      var q = f.q.trim().toLowerCase();
+      return ITEMS.filter(function (o) {
+        if (q && [o.title, o.who, o.partner, o.id].join(' ').toLowerCase().indexOf(q) < 0) return false;
+        if (skip !== 'st' && f.st !== '전체' && o.st !== f.st) return false;
+        if (skip !== 'cat' && f.cat.length && f.cat.indexOf(o.cat) < 0) return false;
+        if (skip !== 'rec' && f.rec && (f.rec === 'open') !== o.open) return false;
+        if (f.from && o.at < new Date(f.from).getTime()) return false;
+        if (f.to && o.at > new Date(f.to).getTime() + DAY) return false;
+        if (skip !== 'flag' && f.noQuote && !o.noQuote) return false;
+        if (skip !== 'flag' && f.waitPick && !o.waitPick) return false;
+        return true;
+      });
+    }
+    function draw() {
+      var T = base('st');
+      $('#bTabs').innerHTML = ['전체'].concat(STG).map(function (t) {
+        var n = t === '전체' ? T.length : T.filter(function (o) { return o.st === t; }).length;
+        return '<button type="button" role="tab" data-st="' + t + '"' + (f.st === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b></button>';
+      }).join('');
+      var C = base('cat'); [].forEach.call(card.querySelectorAll('[data-cn]'), function (e) { e.textContent = C.filter(function (o) { return o.cat === e.dataset.cn; }).length; });
+      var G = base('flag');
+      $('#fnq').textContent = G.filter(function (o) { return o.noQuote; }).length; $('#fwp').textContent = G.filter(function (o) { return o.waitPick; }).length;
+      card.querySelector('[data-flag="noQuote"]').classList.toggle('on', f.noQuote); card.querySelector('[data-flag="waitPick"]').classList.toggle('on', f.waitPick);
+      card.querySelector('[data-flag="noQuote"]').classList.toggle('hot', +$('#fnq').textContent > 0); card.querySelector('[data-flag="waitPick"]').classList.toggle('hot', +$('#fwp').textContent > 0);
+      // 드롭다운 버튼에 고른 값 표시
+      $('#ddCat').firstChild.textContent = f.cat.length ? (f.cat.length === 1 ? f.cat[0] : '분석 서비스 ' + f.cat.length) : '분석 서비스';
+      $('#ddRec').firstChild.textContent = f.rec ? (f.rec === 'open' ? '모집중' : '모집완료') : '모집상태';
+      $('#ddDate').firstChild.textContent = f.from || f.to ? dot(f.from) + ' ~ ' + dot(f.to) : '등록일';
+      $('#ddCat').classList.toggle('set', !!f.cat.length); $('#ddRec').classList.toggle('set', !!f.rec); $('#ddDate').classList.toggle('set', !!(f.from || f.to));
+      // 적용된 조건
+      var A = f.cat.map(function (c) { return ['cat', c, c]; }).concat(f.rec ? [['rec', '', f.rec === 'open' ? '모집중' : '모집완료']] : []).concat(f.from || f.to ? [['date', '', '등록일 ' + dot(f.from) + ' ~ ' + dot(f.to)]] : [])
+        .concat(f.noQuote ? [['noQuote', '', '장기 견적 미수신']] : []).concat(f.waitPick ? [['waitPick', '', '견적 채택 대기']] : []).concat(f.q ? [['q', '', '"' + f.q + '"']] : []);
+      $('#bApplied').hidden = !A.length;
+      $('#bApplied').innerHTML = A.map(function (a) { return '<button type="button" class="chip" data-rm="' + a[0] + '" data-v="' + esc(a[1]) + '">' + esc(a[2]) + '<i aria-label="삭제">✕</i></button>'; }).join('') + '<button type="button" class="tbtn xs" id="bReset">필터 초기화</button>';
+      var L = base().sort(f.sort === 'due' ? function (a, b) { return new Date(a.due || '2100-01-01') - new Date(b.due || '2100-01-01'); } : function (a, b) { return b.at - a.at; });
+      $('#bTotal').innerHTML = '총 <b>' + L.length + '</b>건';
+      $('#bList').innerHTML = L.map(function (o) {
+        return '<a class="lc" href="' + o.href + '"><div class="head"><div class="row1"><div class="badges"><span class="badge tag">' + esc(o.cat) + '</span><span class="badge stg">' + o.st + '</span>' + (o.open ? '<span class="badge open">모집중</span>' : '<span class="badge closed">모집완료</span>') + (o.priv ? '<span class="badge lock">비공개</span>' : '') + '</div>' +
+            (o.next ? '<span class="nx' + (o.urgent ? ' hot' : '') + '">' + o.next + '</span>' : '') + '</div>' +
+          '<h3>' + esc(o.title) + '</h3></div>' +
+          '<div class="info"><div class="meta"><span><em>클라이언트</em>' + esc(o.who) + '</span>' + (o.partner ? '<span><em>분석파트너</em>' + esc(o.partner) + '</span>' : '') + '<span><em>샘플</em>' + (o.samples ? esc(o.samples) + '개' : '-') + '</span><span><em>희망완료일</em>' + dot(o.due) + '</span>' + (o.period !== '-' ? '<span><em>모집기한</em>' + o.period + '</span>' : '') + '</div>' +
+          '<div class="foot"><p class="reg">등록일 ' + F.ymd(o.at) + ' · ' + esc(o.id) + '</p><span class="cbtns"><span class="qb">견적서 (' + o.quotes + ')</span><span class="qb">Q&amp;A (0 / 0)</span></span></div></div></a>';
+      }).join('') || '<div class="empty"><b>조건에 맞는 프로젝트가 없습니다</b><p>필터를 바꾸거나 초기화해보세요.</p></div>';
+    }
+    var closePops = function (except) { [].forEach.call(card.querySelectorAll('.b-pop'), function (p) { if (p !== except) p.hidden = true; }); };
+    card.addEventListener('click', function (e) {
+      var t = e.target, dd = t.closest('.b-btn'), d;
+      if (dd) { var pop = dd.nextElementSibling; closePops(pop); pop.hidden = !pop.hidden; return; }
+      if ((d = t.closest('[data-st]'))) { f.st = d.dataset.st; draw(); return; }
+      if ((d = t.closest('[data-flag]'))) { f[d.dataset.flag] = !f[d.dataset.flag]; draw(); return; }
+      if ((d = t.closest('[data-days]'))) { f.from = F.iso(now - DAY * +d.dataset.days); f.to = F.iso(now); $('#dFrom').value = f.from; $('#dTo').value = f.to; draw(); return; }
+      if ((d = t.closest('[data-rm]'))) {
+        var k = d.dataset.rm;
+        if (k === 'cat') { f.cat = f.cat.filter(function (c) { return c !== d.dataset.v; }); sync(); }
+        else if (k === 'rec') { f.rec = ''; sync(); } else if (k === 'date') { f.from = f.to = ''; sync(); } else if (k === 'q') { f.q = ''; $('#bqIn').value = ''; } else f[k] = false;
+        draw(); return;
+      }
+      if (t.closest('#bReset')) { f = { q: '', st: f.st, cat: [], rec: '', from: '', to: '', noQuote: false, waitPick: false, sort: f.sort }; $('#bqIn').value = ''; sync(); draw(); return; }
+      if (!t.closest('.b-pop')) closePops();
+    });
+    document.addEventListener('click', function (e) { if (!e.target.closest('.b-dd')) closePops(); });
+    function sync() { // 팝오버 입력값을 f에 맞춤
+      [].forEach.call(card.querySelectorAll('[data-dd="cat"] input'), function (i) { i.checked = f.cat.indexOf(i.value) > -1; });
+      [].forEach.call(card.querySelectorAll('[name="rec"]'), function (i) { i.checked = i.value === f.rec; });
+      $('#dFrom').value = f.from; $('#dTo').value = f.to;
+    }
+    card.addEventListener('change', function (e) {
+      var t = e.target;
+      if (t.closest('[data-dd="cat"]')) f.cat = [].filter.call(card.querySelectorAll('[data-dd="cat"] input'), function (i) { return i.checked; }).map(function (i) { return i.value; });
+      else if (t.name === 'rec') f.rec = t.value;
+      else if (t.id === 'dFrom') f.from = t.value; else if (t.id === 'dTo') f.to = t.value;
+      else if (t.id === 'bSort') f.sort = t.value;
+      draw();
+    });
+    $('#bq').addEventListener('submit', function (e) { e.preventDefault(); f.q = $('#bqIn').value.trim(); draw(); });
+    draw();
+    var on = card.querySelector('.b-tabs .on'); if (on) on.scrollIntoView({ block: 'nearest', inline: 'center' });
   }
 
   // ── 상세 ──
