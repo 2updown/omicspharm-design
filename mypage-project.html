@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006w">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006w">
-<script src="assets/common/site.js?v=20261006w"></script>
-<script src="assets/common/mypage.js?v=20261006w"></script>
-<script src="assets/common/flow.js?v=20261006w"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006x">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006x">
+<script src="assets/common/site.js?v=20261006x"></script>
+<script src="assets/common/mypage.js?v=20261006x"></script>
+<script src="assets/common/flow.js?v=20261006x"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -238,7 +238,9 @@
 
   // 분석파트너: 셀키 매칭 후 계약된 프로젝트만 (계약 → 분석 → 보고서 등록 → 보고서 검토 → 보고서 승인 → 완료)
   function partnerView() {
-    var D = OP.my, STAGES = D.P_STAGES, ALL = D.partnerProjects();
+    // 분석파트너는 4단계(계약 → 분석 → 보고서 등록 → 완료). 보고서 검토·승인은 '보고서 등록'에 묶고 '확인 대기'로 표시. 컨설턴트는 6단계 그대로
+    var D = OP.my, ADM = OP.session().role === 'admin', STAGES = ADM ? D.P_STAGES : D.P4, ALL = D.partnerProjects();
+    var SG = function (x) { return ADM ? x.stage : D.pStage(x); };
     if (OP.isPartner() && !OP.partnerVerified()) { // 미인증: 매칭·계약된 프로젝트 없음
       $('.toprow').hidden = true;
       $('#project').outerHTML = '<div class="empty"><b>진행 중인 프로젝트가 없습니다</b><p>인증된 분석파트너만 프로젝트 매칭·계약이 가능합니다.<br>' + OP.verifyHint() + '</p>' + (OP.hasBizDoc() ? '<a class="btn lg" href="mypage-account.html">내 정보 관리에서 확인</a>' : '<a class="btn lg primary" href="mypage-account.html#doc">사업자등록증 올리기</a>') + '</div>';
@@ -247,19 +249,19 @@
     var pid = new URLSearchParams(location.search).get('id');
     var dotd = function (v) { return v ? v.replace(/-/g, '.') : '-'; };
     var dday = function (v) { var n = Math.round((new Date(v) - new Date(2026, 9, 1)) / 864e5); return n >= 0 ? '납기 D-' + String(n).padStart(2, '0') : '납기 ' + (-n) + '일 경과'; };
-    var stBadge = function (x) { return '<span class="badge ' + (x.stage === '완료' ? 'fin' : 'state') + '">' + x.stage + '</span>'; };
+    var stBadge = function (x) { return '<span class="badge ' + (x.stage === '완료' ? 'fin' : 'state') + '">' + SG(x) + '</span>' + (!ADM && D.pWaiting(x) ? '<span class="badge wait">확인 대기</span>' : ''); };
     $('.toprow').hidden = true;
 
     if (pid) {
       var x = ALL.filter(function (p) { return p.id === pid; })[0];
       if (!x) { location.replace('mypage-project.html'); return; }
-      var k = STAGES.indexOf(x.stage), FS = x.flow ? OP.flow.state(x.id) : null;
+      var k = STAGES.indexOf(SG(x)), FS = x.flow ? OP.flow.state(x.id) : null;
       var TODO = {
         '계약': x.flow ? ['계약서를 준비하고 있습니다', 'OmicsPharm 컨설턴트가 계약서를 등록하면 분석 단계로 넘어갑니다.', ''] : ['계약서를 확인해주세요', '계약 내용 확인 후 시료 수령 일정을 클라이언트와 협의합니다.', '계약서 확인'],
         '분석': ['분석이 진행 중입니다', '분석이 끝나면 결과보고서를 등록해주세요.', '진행 상황 공유'],
         '보고서 등록': ['결과보고서를 등록해주세요', '보고서를 등록하면 OmicsPharm이 검토합니다.', '결과보고서 등록'],
-        '보고서 검토': ['OmicsPharm이 보고서를 검토하고 있습니다', '수정 요청이 있으면 알림으로 알려드립니다.', ''],
-        '보고서 승인': ['클라이언트가 보고서를 확인하고 있습니다', '승인되면 프로젝트가 완료됩니다.', ''],
+        '보고서 검토': ['등록한 보고서를 OmicsPharm이 확인하고 있습니다', '수정이 필요하면 알림으로 알려드립니다.', ''],
+        '보고서 승인': ['등록한 보고서를 클라이언트가 확인하고 있습니다', '승인되면 프로젝트가 완료됩니다.', ''],
         '완료': ['프로젝트가 완료되었습니다', x.review ? '클라이언트가 남긴 리뷰를 확인해보세요.' : '수고하셨습니다.', x.review ? '리뷰 보기' : '']
       }[x.stage];
       $('#project').outerHTML =
@@ -269,7 +271,7 @@
           '<div class="prow"><h2 class="ptitle"><a class="back" href="' + (OP.session().role === 'admin' ? 'mypage-request.html' : 'mypage-project.html') + '" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(x.title) + '</h2>' +
             '<div class="period"><b>납기일</b><span>' + dotd(x.due) + '</span>' + (x.stage === '완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div></div>' +
         '</div>' +
-        '<ol class="stages" aria-label="진행 단계">' + STAGES.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
+        '<ol class="stages" aria-label="진행 단계" style="grid-template-columns:repeat(' + STAGES.length + ', minmax(0,1fr))">' + STAGES.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
         '<div class="todo"><div><b>' + TODO[0] + '</b><p>' + TODO[1] + '</p></div>' + (TODO[2] ? '<a class="btn primary" href="#" data-soon="' + TODO[2] + '">' + TODO[2] + '</a>' : '') + '</div>' +
         // 견적 중개로 매칭된 프로젝트: 컨설턴트가 올린 계약서
         (x.flow ? '<section class="sec"><h3>계약서</h3>' + (FS.ct ? OP.flow.contractListHTML(FS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) : '<p class="note" style="font-size:14px">OmicsPharm 컨설턴트가 계약서를 준비하고 있습니다. 등록되면 알림으로 알려드립니다.</p>') + '</section>' : '') +
@@ -283,7 +285,8 @@
       return;
     }
 
-    var st = { q: '', stage: STAGES.indexOf(new URLSearchParams(location.search).get('stage')) > -1 ? new URLSearchParams(location.search).get('stage') : '전체', sort: 'new', unread: false }; // 대시보드에서 단계 눌러 들어오면 그 단계만
+    var qstg = new URLSearchParams(location.search).get('stage'); if (!ADM && (qstg === '보고서 검토' || qstg === '보고서 승인')) qstg = '보고서 등록';
+    var st = { q: '', stage: STAGES.indexOf(qstg) > -1 ? qstg : '전체', sort: 'new', unread: false }; // 대시보드에서 단계 눌러 들어오면 그 단계만
     $('#project').outerHTML =
       '<form class="psearch" id="pq" role="search"><input type="search" id="pqIn" placeholder="프로젝트명을 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
       '<div class="pbar"><span class="total" id="pTotal"></span><label class="sort"><select id="pSort" aria-label="정렬"><option value="new">최신등록순</option><option value="due">납기임박순</option></select></label></div>' +
@@ -297,10 +300,10 @@
       var q = st.q.trim().toLowerCase();
       var base = ALL.filter(function (p) { return (!q || p.title.toLowerCase().indexOf(q) > -1) && (!st.unread || p.qa || p.review); });
       $('#pChips').innerHTML = ['전체'].concat(STAGES).map(function (t) {
-        var n = t === '전체' ? base.length : base.filter(function (p) { return p.stage === t; }).length;
+        var n = t === '전체' ? base.length : base.filter(function (p) { return SG(p) === t; }).length;
         return '<button type="button" role="tab" data-st="' + t + '"' + (st.stage === t ? ' class="on" aria-selected="true"' : '') + '>' + t + '<span>' + n + '</span></button>';
       }).join('');
-      var L = base.filter(function (p) { return st.stage === '전체' || p.stage === st.stage; })
+      var L = base.filter(function (p) { return st.stage === '전체' || SG(p) === st.stage; })
         .sort(st.sort === 'due' ? function (a, b) { return (a.stage === '완료') - (b.stage === '완료') || new Date(a.due) - new Date(b.due); } : function (a, b) { return b.at - a.at; });
       $('#pTotal').innerHTML = '총 <b>' + L.length + '</b>건';
       $('#pList').innerHTML = L.map(function (x) {

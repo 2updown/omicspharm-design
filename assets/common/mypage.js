@@ -44,6 +44,10 @@
 
   var D = {
     P_STAGES: P_STAGES,
+    // 분석파트너에게 보이는 단계: 보고서 검토·승인(컨설턴트·클라이언트가 처리)은 '보고서 등록'에 묶고 '확인 대기'로 표시
+    P4: ['계약', '분석', '보고서 등록', '완료'],
+    pStage: function (p) { return p.stage === '보고서 검토' || p.stage === '보고서 승인' ? '보고서 등록' : p.stage; },
+    pWaiting: function (p) { return p.stage === '보고서 검토' || p.stage === '보고서 승인'; },
     // 인증 분석파트너·컨설턴트만 (미인증은 매칭·계약된 프로젝트가 없음). 견적 중개로 매칭된 프로젝트(계약 단계)가 앞에 붙는다
     partnerProjects: function () {
       var s = OP.session(); if (!s || !(s.role === 'admin' || OP.partnerVerified())) return [];

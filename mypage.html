@@ -7,11 +7,11 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006w">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006w">
-<script src="assets/common/site.js?v=20261006w"></script>
-<script src="assets/common/mypage.js?v=20261006w"></script>
-<script src="assets/common/flow.js?v=20261006w"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006x">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006x">
+<script src="assets/common/site.js?v=20261006x"></script>
+<script src="assets/common/mypage.js?v=20261006x"></script>
+<script src="assets/common/flow.js?v=20261006x"></script>
 <style>
   .hello { flex-direction:row; align-items:center; justify-content:space-between; }
   .hello h2 { font-size:22px; font-weight:700; line-height:32px; letter-spacing:-.22px; }
@@ -26,6 +26,10 @@
   .flow b { font-size:28px; font-weight:700; line-height:36px; color:var(--gray-300); }
   .flow b.has { color:var(--teal-600); }
   .flow b.has.hot { color:var(--orange-600); }
+  .flow em { margin-top:-4px; font-style:normal; font-size:12px; line-height:16px; color:var(--orange-600); }
+  .flow > .sep { border-left:3px double var(--gray-300); } /* 견적 ║ 프로젝트 구분 */
+  .flow-end { align-self:flex-end; margin-top:-12px; font-size:13px; font-weight:500; color:var(--gray-500); }
+  .flow-end:hover { color:var(--teal-600); }
   .flow.wide { grid-template-columns:repeat(auto-fit, minmax(96px, 1fr)); }
   .flow.wide > * + * { border-left:0; } .flow.wide > * { border-right:1px solid var(--gray-200); border-bottom:1px solid var(--gray-200); margin:0 -1px -1px 0; }
   .flow span { font-size:14px; font-weight:500; line-height:20px; color:var(--gray-600); }
@@ -139,11 +143,6 @@
     pipe = ['프로젝트 진행 현황', 'mypage-request.html', F.ADMIN_STAGES.map(function (t) {
       return [t, AS.filter(function (x) { return x === t; }).length, '?stage=' + encodeURIComponent(t)];
     })];
-  } else if (!client && OP.canQuote()) {
-    var IN = F.inbox(me.s.email).map(function (o) { return F.pst(o.s, me.s.email); });
-    pipe = ['견적 요청 현황', 'mypage-quote.html', [['작성 필요', /작성 대기|임시저장|수정 요청/], ['제출 완료', /제출 완료|클라이언트 검토 중/], ['선정', /^선정/], ['종료', /미선정|거절/]].map(function (a) {
-      return [a[0], IN.filter(function (t) { return a[1].test(t); }).length, '?t=' + encodeURIComponent(a[0])];
-    })];
   }
   if (admin) { $('#flow').closest('.card').hidden = true; $('#pipe').classList.add('wide'); }
   if (pipe) {
@@ -156,19 +155,33 @@
 
   // 분석파트너: 셀키 매칭 후 계약된 프로젝트의 단계 (견적 요청·제출은 견적관리에서)
   var PP = D.partnerProjects();
-  var steps = client ? ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'] : D.P_STAGES;
-  // 클라이언트: 견적 중개 단계(의뢰접수 → 견적 비교 → 계약)까지 연결됨
-  var counts = client ? steps.map(function (t) { return P.filter(function (p) { return F.clientStage(p.id) === t; }).length; }) : steps.map(function (t) { return PP.filter(function (p) { return p.stage === t; }).length; });
-  $('#flow').style.setProperty('--n', steps.length);
-  $('#flow').innerHTML = steps.map(function (t, i) {
+  // 칸: [이름, 개수, 주소, 아래 작은 글, 주황 강조, 앞에 구분선]
+  var cells;
+  if (client) {
+    // 클라이언트: 견적 중개 단계(의뢰접수 → 견적 비교 → 계약 → 분석 진행)
+    cells = ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'].map(function (t) { return [t, P.filter(function (p) { return F.clientStage(p.id) === t; }).length, 'mypage-project.html?stage=' + encodeURIComponent(t)]; });
+  } else {
+    // 분석파트너: 견적(견적관리) ║ 프로젝트(프로젝트 관리). 보고서 검토·승인은 '보고서 등록'에 묶어 '확인 대기 n'
+    var IN = OP.canQuote() ? F.inbox(me.s.email).map(function (o) { return F.pst(o.s, me.s.email); }) : [];
+    var cnt = function (re) { return IN.filter(function (t) { return re.test(t); }).length; };
+    var wait = PP.filter(D.pWaiting).length;
+    cells = [['견적 작성', cnt(/작성 대기|임시저장|수정 요청/), 'mypage-quote.html?t=' + encodeURIComponent('작성 필요'), '', true],
+             ['견적 제출', cnt(/제출 완료|클라이언트 검토 중/), 'mypage-quote.html?t=' + encodeURIComponent('제출 완료')]]
+      .concat(D.P4.map(function (t, i) { return [t, PP.filter(function (p) { return D.pStage(p) === t; }).length, 'mypage-project.html?stage=' + encodeURIComponent(t), t === '보고서 등록' && wait ? '확인 대기 ' + wait : '', false, i === 0]; }));
+    var ended = cnt(/미선정|거절/);
+    if (ended) $('#flow').insertAdjacentHTML('afterend', '<a class="flow-end" href="mypage-quote.html?t=' + encodeURIComponent('종료') + '">미선정·거절 ' + ended + '건 ›</a>');
+  }
+  $('#flow').style.setProperty('--n', cells.length);
+  $('#flow').innerHTML = cells.map(function (c) {
     // 0건인 단계는 누를 수 없다
-    return counts[i] ? '<a href="mypage-project.html?stage=' + encodeURIComponent(t) + '"><b class="has">' + counts[i] + '</b><span>' + t + '</span></a>'
-                     : '<div aria-disabled="true"><b>0</b><span>' + t + '</span></div>';
+    var inner = '<b class="' + (c[1] ? 'has' + (c[4] ? ' hot' : '') : '') + '">' + c[1] + '</b><span>' + c[0] + '</span>' + (c[3] ? '<em>' + c[3] + '</em>' : '');
+    return c[1] ? '<a href="' + c[2] + '"' + (c[5] ? ' class="sep"' : '') + '>' + inner + '</a>' : '<div aria-disabled="true"' + (c[5] ? ' class="sep"' : '') + '>' + inner + '</div>';
   }).join('');
 
   if (!client && PP.length) {
     $('#plist').innerHTML = '<div class="plist">' + PP.slice(0, 3).map(function (p) {
-      return '<a href="mypage-project.html?id=' + p.id + '"><span class="badges"><span class="badge tag">' + esc(p.svc) + '</span><span class="badge ' + (p.stage === '완료' ? 'done' : 'state') + '">' + p.stage + '</span></span>' +
+      var ps = admin ? p.stage : D.pStage(p);
+      return '<a href="mypage-project.html?id=' + p.id + '"><span class="badges"><span class="badge tag">' + esc(p.svc) + '</span><span class="badge ' + (ps === '완료' ? 'done' : 'state') + '">' + ps + '</span>' + (!admin && D.pWaiting(p) ? '<span class="badge wait">확인 대기</span>' : '') + '</span>' +
         '<h4>' + esc(p.title) + '</h4><span class="dt">' + esc(p.client) + '</span></a>';
     }).join('') + '</div>';
   } else
