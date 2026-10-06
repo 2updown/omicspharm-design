@@ -6,7 +6,7 @@
    - 데모: 로그인 가능한 파트너는 partner@omicspharm.test 하나이고, 나머지 파트너는 요청을 받으면 바로 응답한다
    사용: mypage.js 다음에 불러오고 OP.flow.* 사용 */
 (function () {
-  var KEY = 'op.flow', VER = 1;
+  var KEY = 'op.flow', VER = 2;
   function read(k, f) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch (e) { return f; } }
   function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); };
@@ -77,10 +77,10 @@
   // S[의뢰id] = { st:'review'|'quoting'|'sent'|'matched', due, memo, reqAt, P:{ 파트너키:{ at, status:'req'|'draft'|'sub'|'rev'|'dec', quote, subAt, rev:{at,note}, revN, dec:{at,why}, fwd } }, sentAt, msg, pick, pickAt }
   function seed() {
     var r2 = DEMO_REQS[1], r3 = DEMO_REQS[2], S = {};
-    S[r2.id] = { st: 'quoting', reqAt: T0 - DAY * 3, due: '2026-10-10', memo: '시료 수가 많아 일정 제안을 함께 부탁드립니다.', P: {} };
+    S[r2.id] = { st: 'quoting', ok: T0 - DAY * 3.5, reqAt: T0 - DAY * 3, due: '2026-10-10', memo: '시료 수가 많아 일정 제안을 함께 부탁드립니다.', P: {} };
     S[r2.id].P[ME_PARTNER] = { at: T0 - DAY * 3, status: 'req' };
     ['p-bio', 'p-met'].forEach(function (k, i) { var p = partner(k); S[r2.id].P[k] = { at: T0 - DAY * 3, status: 'sub', quote: genQuote(p, r2), subAt: T0 - DAY * (2 - i) }; });
-    S[r3.id] = { st: 'sent', reqAt: T0 - DAY * 8, due: '2026-10-01', memo: '', P: {}, sentAt: T0 - DAY * 2, msg: '세 기관 모두 FFPE 시료 경험이 있습니다. 일정이 급하시면 △△바이오랩보다 ◇◇유전체센터를 추천드립니다.' };
+    S[r3.id] = { st: 'sent', ok: T0 - DAY * 8.5, reqAt: T0 - DAY * 8, due: '2026-10-01', memo: '', P: {}, sentAt: T0 - DAY * 2, msg: '세 기관 모두 FFPE 시료 경험이 있습니다. 일정이 급하시면 △△바이오랩보다 ◇◇유전체센터를 추천드립니다.' };
     [['p-gen', 1], ['p-omx', 1], ['p-bio', 0]].forEach(function (a, i) {
       var p = partner(a[0]); S[r3.id].P[a[0]] = a[1] ? { at: T0 - DAY * 8, status: 'sub', quote: genQuote(p, r3), subAt: T0 - DAY * (6 - i), fwd: true }
         : { at: T0 - DAY * 8, status: 'dec', dec: { at: T0 - DAY * 7, why: '해당 기간 시퀀싱 장비 일정이 모두 차 있습니다.' } };
@@ -112,6 +112,8 @@
       if (x.status === 'sub') return x.fwd && s.st === 'sent' ? '클라이언트 검토 중' : '제출 완료';
       return { req: '작성 대기', draft: '임시저장', rev: '수정 요청', dec: '거절' }[x.status];
     },
+    // 의뢰 승인: 컨설턴트가 의뢰서를 확인하고 승인 → 프로젝트로 등록(게시)
+    approve: function (id) { return put(id, function (s) { s.ok = Date.now(); }); },
     // 견적 요청 보내기 (추가 요청도 같은 함수)
     send: function (id, keys, due, memo) {
       var r = req(id);
@@ -170,35 +172,42 @@
     }
   };
 
-  // 알림 (역할별)
+  // 알림 (역할별) — 요구사항정의서 '20260210_내부프로세스_알림' 시트의 '마이페이지 > 알림 표시 텍스트' 기준
+  // k: 알림구분 (시트 이름 그대로). 시트에 없는 알림(수정 요청·거절·미선정)은 견적 중개 흐름에 맞춰 추가한 것
+  var josa = function (w, a, b) { var c = String(w).replace(/[^가-힣a-zA-Z0-9]+$/, '').slice(-1).charCodeAt(0); return w + (c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 ? a : b); };
+  var won = function (n) { return Math.round(n).toLocaleString('ko-KR') + '원'; };
+  var qname = function (x) { return ((x.revN || 0) + 1) + '차 견적서'; };
+  F.josa = josa;
   F.alarms = function () {
     var ses = OP.session(); if (!ses) return [];
     var L = [], d = db().S, R = requests(), role = ses.role;
-    var t = function (r) { return "'" + (r.title || r.id) + "'"; };
     R.forEach(function (r) {
-      var s = d[r.id] || { st: 'review', P: {} };
+      var s = d[r.id] || { st: 'review', P: {} }, nm = r.title || r.id, cl = r.org || '의뢰사';
       if (role === 'admin') {
         var href = 'mypage-request.html?id=' + encodeURIComponent(r.id);
-        L.push({ id: 'f-new-' + r.id, cat: 'project', at: r.at, t: t(r) + ' 새 의뢰가 접수되었습니다.', sub: '의뢰 내용을 검토하고 분석파트너에게 견적을 요청해주세요.', href: href });
+        L.push({ id: 'f-new-' + r.id, k: '의뢰접수', cat: 'project', at: r.at, t: cl + '의 ' + nm + ' 의뢰서가 접수 되었습니다. 확인 후 승인처리 해주세요.', href: href });
         Object.keys(s.P).forEach(function (k) {
           var x = s.P[k], o = partner(k).org;
-          if (x.subAt) L.push({ id: 'f-sub-' + r.id + k + (x.revN || 0), cat: 'project', at: x.subAt, t: o + '에서 ' + t(r) + ' 견적' + (x.revN ? '(수정본)' : '') + '을 제출했습니다.', href: href });
-          if (x.dec) L.push({ id: 'f-dec-' + r.id + k, cat: 'project', at: x.dec.at, t: o + '에서 ' + t(r) + ' 견적 요청을 거절했습니다.', sub: x.dec.why, href: href });
+          if (x.subAt && x.quote) L.push({ id: 'f-sub-' + r.id + k + (x.revN || 0), k: '견적등록', cat: 'project', at: x.subAt, t: o + '의 ' + qname(x) + '가 등록되었습니다.', sub: '프로젝트명: ' + nm + ' · 견적금액: ' + won(total(x.quote).final), href: href });
+          if (x.dec) L.push({ id: 'f-dec-' + r.id + k, k: '견적거절', cat: 'project', at: x.dec.at, t: josa(o, '이', '가') + ' ' + nm + ' 견적 요청을 거절했습니다.', sub: x.dec.why, href: href });
         });
-        if (s.pick) L.push({ id: 'f-pick-' + r.id, cat: 'project', at: s.pickAt, t: '클라이언트가 ' + t(r) + '에서 ' + partner(s.pick).org + ' 견적을 선택했습니다.', sub: '매칭이 완료되어 계약 단계로 넘어갔습니다.', href: href });
+        if (s.pick) L.push({ id: 'f-pick-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: josa(cl, '이', '가') + ' ' + nm + ' 프로젝트의 최종 견적을 확정 했습니다.', sub: '공급사: ' + partner(s.pick).org + ' · 견적금액: ' + won(total(s.P[s.pick].quote).final), href: href });
       } else if (role === 'partner') {
         var x = s.P[ses.email]; if (!x) return;
         var qh = 'mypage-quote.html?rid=' + encodeURIComponent(r.id);
-        L.push({ id: 'f-req-' + r.id, cat: 'project', at: x.at, t: t(r) + ' 견적 요청이 도착했습니다.', sub: '견적 마감일 ' + (s.due ? s.due.replace(/-/g, '.') : '-'), href: qh });
-        if (x.rev) L.push({ id: 'f-rev-' + r.id + x.revN, cat: 'project', at: x.rev.at, t: t(r) + ' 견적에 수정 요청이 있습니다.', sub: x.rev.note, href: qh });
+        L.push({ id: 'f-req-' + r.id, k: '견적제안', cat: 'project', at: x.at, t: nm + ' 프로젝트 검토 후 견적서를 작성해주세요.', sub: '견적 마감일: ' + (s.due ? s.due.replace(/-/g, '.') : '-'), href: qh });
+        if (x.rev) L.push({ id: 'f-rev-' + r.id + x.revN, k: '견적수정요청', cat: 'project', at: x.rev.at, t: nm + ' 프로젝트 견적서의 수정을 요청드립니다.', sub: x.rev.note, href: qh });
         if (s.st === 'matched' && x.status === 'sub') L.push(s.pick === ses.email
-          ? { id: 'f-win-' + r.id, cat: 'project', at: s.pickAt, t: t(r) + ' 프로젝트에 선정되어 매칭이 완료되었습니다.', sub: '프로젝트 관리에서 계약 내용을 확인해주세요.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) }
-          : { id: 'f-lose-' + r.id, cat: 'project', at: s.pickAt, t: t(r) + ' 견적은 이번에 선정되지 않았습니다.', sub: '참여해주셔서 감사합니다.', href: qh });
+          ? { id: 'f-win-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: nm + '의 견적이 최종 선정되었습니다.', sub: '견적서명: ' + qname(x) + ' · 견적금액: ' + won(total(x.quote).final), href: 'mypage-project.html?id=' + encodeURIComponent(r.id) }
+          : { id: 'f-lose-' + r.id, k: '견적미선정', cat: 'project', at: s.pickAt, t: nm + '의 견적은 이번에 선정되지 않았습니다.', sub: '참여해주셔서 감사합니다.', href: qh });
       } else if (role === 'client' && (!r.demo || ses.email === 'client@omicspharm.test')) {
         var ph = 'mypage-project.html?id=' + encodeURIComponent(r.id);
-        if (r.demo) L.push({ id: 'p-' + r.id, cat: 'project', at: r.at, t: t(r) + ' 프로젝트 의뢰가 접수되었습니다.', sub: '분석파트너의 견적이 도착하면 알려드릴게요.', href: ph });
-        if (s.sentAt) L.push({ id: 'f-arr-' + r.id, cat: 'project', at: s.sentAt, t: t(r) + ' 견적 ' + Object.keys(s.P).filter(function (k) { return s.P[k].fwd; }).length + '건이 도착했습니다.', sub: '견적을 비교하고 분석파트너를 선택해주세요.', href: ph + '&tab=quote' });
-        if (s.pick) L.push({ id: 'f-mat-' + r.id, cat: 'project', at: s.pickAt, t: t(r) + ' 프로젝트가 ' + partner(s.pick).org + '와 매칭되었습니다.', sub: '계약 진행을 위해 OmicsPharm 컨설턴트가 연락드릴 예정입니다.', href: ph });
+        if (s.ok) L.push({ id: 'f-ok-' + r.id, k: '의뢰승인', cat: 'project', at: s.ok, t: '의뢰하신 ' + nm + ' 프로젝트가 승인되어 등록되었습니다.', href: ph });
+        if (s.sentAt) {
+          var F2 = Object.keys(s.P).filter(function (k) { return s.P[k].fwd; }), A = F2.map(function (k) { return total(s.P[k].quote).final; });
+          L.push({ id: 'f-arr-' + r.id, k: '견적확인요청', cat: 'project', at: s.sentAt, t: '의뢰하신 ' + nm + ' 프로젝트에 대한 견적서 ' + F2.length + '건을 확인해주세요. 견적 관련 문의사항은 Q&A게시판을 통해서 문의해 주세요.',
+            sub: '견적금액: ' + (A.length > 1 ? won(Math.min.apply(0, A)) + ' ~ ' + won(Math.max.apply(0, A)) : won(A[0] || 0)), href: ph + '&tab=quote' });
+        }
       }
     });
     return L;

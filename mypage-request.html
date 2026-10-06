@@ -9,11 +9,11 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=의뢰번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006a">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006a">
-<script src="assets/common/site.js?v=20261006a"></script>
-<script src="assets/common/mypage.js?v=20261006a"></script>
-<script src="assets/common/flow.js?v=20261006a"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006b">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006b">
+<script src="assets/common/site.js?v=20261006b"></script>
+<script src="assets/common/mypage.js?v=20261006b"></script>
+<script src="assets/common/flow.js?v=20261006b"></script>
 <style>
   /* 목록 */
   .rlist { display:flex; flex-direction:column; gap:12px; }
@@ -170,7 +170,7 @@
     var TABS = [['전체'], ['검토 대기', 'review'], ['견적 수집 중', 'quoting'], ['클라이언트 검토', 'sent'], ['매칭 완료', 'matched']];
     var next = function (s) {
       var c = cnt(s);
-      if (s.st === 'review') return ['견적 요청 필요', 1];
+      if (s.st === 'review') return [s.ok ? '견적 요청 필요' : '의뢰 승인 필요', 1];
       if (s.st === 'quoting') return c.sub ? ['견적 ' + c.sub + '건 도착 · 전달 가능', 0] : ['견적 대기 중', 0];
       if (s.st === 'sent') return ['클라이언트 선택 대기', 0];
       return [F.partner(s.pick).org + ' 매칭', 0];
@@ -205,13 +205,14 @@
   var r = F.req(id);
   if (!r) { location.replace('mypage-request.html'); return; }
   document.title = r.title + ' · 의뢰 관리 · OmicsPharm';
-  var STEPS = ['의뢰 검토', '견적 요청', '견적 확인·전달', '클라이언트 선택', '매칭 완료'];
+  var STEPS = ['의뢰 승인', '견적 요청', '견적 확인·전달', '클라이언트 선택', '매칭 완료'];
 
   function render() {
     var s = F.state(id), c = cnt(s);
-    var k = { review: 0, quoting: c.sub ? 2 : 1, sent: 3, matched: 5 }[s.st];
+    var k = { review: s.ok ? 1 : 0, quoting: c.sub ? 2 : 1, sent: 3, matched: 5 }[s.st];
     var todo = {
-      review: ['', '의뢰 내용을 검토하고 견적을 요청할 분석파트너를 선택해주세요.', '분석 분야가 맞는 인증 파트너를 추천으로 표시했습니다.'],
+      review: s.ok ? ['', '견적을 요청할 분석파트너를 선택해주세요.', '의뢰가 승인되어 등록되었습니다 (' + F.ymd(s.ok) + '). 분석 분야가 맞는 인증 파트너를 추천으로 표시했습니다.']
+                   : ['warn', '의뢰서가 접수되었습니다. 확인 후 승인처리 해주세요.', '승인하면 프로젝트로 등록되고 의뢰사에게 \'의뢰승인\' 알림이 갑니다. 그다음 분석파트너에게 견적을 요청할 수 있습니다.'],
       quoting: c.sub ? ['', '도착한 견적을 확인하고 클라이언트에게 전달해주세요.', '수정이 필요한 견적은 [수정 요청]으로 파트너에게 돌려보낼 수 있습니다.']
                      : ['gray', '분석파트너의 견적을 기다리고 있습니다.', '견적 마감일 ' + dot(s.due) + ' · 견적이 도착하면 알림으로 알려드립니다.'],
       sent: ['gray', '클라이언트가 견적을 비교하고 있습니다.', '클라이언트가 분석파트너를 선택하면 매칭이 완료되고 계약 단계로 넘어갑니다.'],
@@ -227,8 +228,8 @@
       '</div>' +
       '<ol class="fsteps" style="--n:5" aria-label="진행 단계">' + STEPS.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
       '<div class="ftodo ' + todo[0] + '"><div><b>' + esc(todo[1]) + '</b><p>' + esc(todo[2]) + '</p></div>' +
-        (s.st === 'matched' ? '<div class="acts"><a class="btn primary" href="mypage-project.html?id=' + encodeURIComponent(id) + '">프로젝트 관리로 이동</a></div>' : '') + '</div>' +
-      (s.st === 'review' ? pickHTML(s, false) : quotesHTML(s)) +
+        (s.st === 'matched' ? '<div class="acts"><a class="btn primary" href="mypage-project.html?id=' + encodeURIComponent(id) + '">프로젝트 관리로 이동</a></div>' : s.st === 'review' && !s.ok ? '<div class="acts"><button type="button" class="btn primary" id="approve">의뢰 승인</button></div>' : '') + '</div>' +
+      (s.st === 'review' ? (s.ok ? pickHTML(s, false) : '') : quotesHTML(s)) +
       '<details class="req"' + (s.st === 'review' ? ' open' : '') + '><summary>의뢰 내용</summary><div class="in">' + F.reqHTML(r) + '</div></details>';
     bind(s);
   }
@@ -301,7 +302,11 @@
     syncSend();
     card.onclick = function (e) {
       var t = e.target;
-      if (t.closest('#send')) {
+      if (t.closest('#approve')) {
+        F.ask({ title: '의뢰를 승인할까요?', desc: '"' + r.title + '" 의뢰가 프로젝트로 등록되고, 의뢰사(' + (r.org || '-') + ')에게 승인 알림이 갑니다.', label: false, yes: '승인' }, function () {
+          F.approve(id); OP.toast('의뢰를 승인했습니다.'); render();
+        });
+      } else if (t.closest('#send')) {
         var keys = [].map.call(card.querySelectorAll('input[name="pk"]:checked'), function (i) { return i.value; });
         var names = keys.map(function (k) { return F.partner(k).org; }).join(', ');
         var more = s.st !== 'review';

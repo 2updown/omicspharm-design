@@ -73,20 +73,25 @@
     },
     alarms: function () {
       var readIds = read('op.alarmRead', []), L = [];
-      // 의뢰 접수 알림은 의뢰한 클라이언트에게만 (분석파트너는 셀키의 견적 요청을 받은 뒤에만 의뢰를 확인)
-      D.myProjects().forEach(function (p) {
-        if (p.demo) return; // 예시 의뢰 알림은 flow.js
-        L.push({ id: 'p-' + p.id, cat: 'project', at: p.at, t: "'" + (p.title || p.id) + "' 프로젝트 의뢰가 접수되었습니다.", sub: '분석파트너의 견적이 도착하면 알려드릴게요.', href: 'mypage-project.html?id=' + encodeURIComponent(p.id) });
-      });
+      // 프로젝트 알림은 요구사항정의서 '20260210_내부프로세스_알림' 기준 (의뢰~견적 단계는 flow.js, 계약 이후는 아래 예시 프로젝트)
+      // 의뢰접수 알림은 컨설턴트에게만 간다 (의뢰사는 '의뢰승인' 알림부터 받음)
       D.inquiries().forEach(function (q) {
         if (q.answer) L.push({ id: 'a-' + q.id, cat: 'inquiry', at: q.answer.at, t: "'" + q.title + "' 문의에 답변이 등록되었습니다.", href: 'mypage-inquiry.html?id=' + q.id });
         L.push({ id: 'q-' + q.id, cat: 'inquiry', at: q.at, t: "'" + q.title + "' 문의가 접수되었습니다.", href: 'mypage-inquiry.html?id=' + q.id });
       });
+      // 계약 이후 단계 (예시 프로젝트, 공급사 = ○○분석센터)
+      var ses = OP.session() || {}, adm = ses.role === 'admin', PS = P_STAGES;
+      var J = function (w, a, b) { return OP.flow ? OP.flow.josa(w, a, b) : w + a; };
       D.partnerProjects().forEach(function (p) {
         if (p.flow) return; // 견적 중개로 매칭된 프로젝트 알림은 flow.js
-        if (p.qa) L.push({ id: 'qa-' + p.id, cat: 'project', at: p.at + 864e5 * 10, t: "'" + p.title + "' 프로젝트에 새 Q&A " + p.qa + '건이 등록되었습니다.', href: 'mypage-project.html?id=' + p.id });
-        if (p.review) L.push({ id: 'rv-' + p.id, cat: 'project', at: new Date(2026, 7, 5).getTime(), t: "'" + p.title + "' 프로젝트에 리뷰가 등록되었습니다.", href: 'mypage-project.html?id=' + p.id });
-        if (p.stage === '계약') L.push({ id: 'ct-' + p.id, cat: 'project', at: p.at, t: "'" + p.title + "' 프로젝트가 매칭되어 계약 단계가 시작되었습니다.", href: 'mypage-project.html?id=' + p.id });
+        var i = PS.indexOf(p.stage), h = 'mypage-project.html?id=' + p.id, c0 = new Date(p.contract).getTime();
+        if (!adm && i === 0) L.push({ id: 'ct-' + p.id, k: '견적확정', cat: 'project', at: p.at, t: p.title + '의 견적이 최종 선정되었습니다.', sub: '견적금액: ' + p.amount, href: h });
+        if (!adm && i >= 1) L.push({ id: 'cf-' + p.id, k: '계약', cat: 'project', at: c0 + 864e5 * 3, t: p.title + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: h });
+        if (adm && i >= 3) L.push({ id: 'rr-' + p.id, k: '보고서 등록', cat: 'project', at: c0 + 864e5 * 40, t: J('○○분석센터', '이', '가') + ' ' + p.title + ' 프로젝트의 분석 결과 보고서를 등록 했습니다.', href: h });
+        if (adm && i === 5) L.push({ id: 'ra-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.client + '의 ' + p.title + ' 프로젝트 1차 결과보고서가 최종 승인 처리 되었습니다.', href: h });
+        if (!adm && i === 5) L.push({ id: 'rf-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.title + ' 프로젝트의 1차 결과보고서가 최종 확인 처리 되었습니다.', sub: p.title + ' 프로젝트가 최종 완료 처리 되었습니다.', href: h });
+        if (p.qa) L.push({ id: 'qa-' + p.id, k: 'Q&A', cat: 'project', at: p.at + 864e5 * 10, t: p.title + ' Q&A에 새로운 글이 등록 되었습니다.', sub: '문의제목: 시료 발송 일정 문의 · 작성자: ' + p.client, href: h });
+        if (!adm && p.review) L.push({ id: 'rv-' + p.id, k: '리뷰', cat: 'project', at: new Date(2026, 7, 5).getTime(), t: p.title + ' 프로젝트에 리뷰가 등록되었습니다.', href: h });
       });
       if (OP.flow) L = L.concat(OP.flow.alarms());
       L.push({ id: 'n-21', cat: 'notice', at: new Date(2026, 8, 28, 9, 0).getTime(), t: '[공지] OmicsPharm 서비스 리뉴얼 오픈 안내', href: 'notice-view.html?id=21&r=2' });
