@@ -9,11 +9,11 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=의뢰번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006h">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006h">
-<script src="assets/common/site.js?v=20261006h"></script>
-<script src="assets/common/mypage.js?v=20261006h"></script>
-<script src="assets/common/flow.js?v=20261006h"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006i">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006i">
+<script src="assets/common/site.js?v=20261006i"></script>
+<script src="assets/common/mypage.js?v=20261006i"></script>
+<script src="assets/common/flow.js?v=20261006i"></script>
 <style>
   /* 목록 */
   .rlist { display:flex; flex-direction:column; gap:12px; }
@@ -137,7 +137,7 @@
   .qm-tbl .ck { width:44px; } .qm-tbl input { width:18px; height:18px; accent-color:var(--teal-600); }
   .qm-tbl td.mail { word-break:break-all; } .qm-tbl td.svc { max-width:220px; }
   .qm-tbl tr.off td { color:var(--gray-400); }
-  .qm-tbl .st { font-weight:600; } .qm-tbl .st.no { color:#f00011; } .qm-tbl .st.ok { color:var(--teal-600); } .qm-tbl .st.gray { color:var(--gray-400); }
+  .qm-tbl .st { display:inline; padding:0; border:0; border-radius:0; background:none; font-weight:600; white-space:nowrap; } /* 상태는 글자만 (다른 .st 스타일 무시) */ .qm-tbl .st.no { color:#f00011; } .qm-tbl .st.ok { color:var(--teal-600); } .qm-tbl .st.gray { color:var(--gray-400); }
   .qm-tbl td.none { padding:40px 0; color:var(--gray-500); }
   .qm-pg { display:flex; justify-content:center; margin:24px 0; }
   .qm-pg span { display:flex; align-items:center; justify-content:center; width:40px; height:40px; border:1px solid var(--teal-600); color:var(--teal-700); font-weight:600; }
