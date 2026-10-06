@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>OmicsPharm</title>
 <!-- Figma: [OmicsPharm] Renewal / 03_디자인(작업중) / 1440_시안1 (180:5300) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006r">
-<script src="assets/common/site.js?v=20261006r"></script>
-<script src="assets/common/mypage.js?v=20261006r"></script>
-<script src="assets/common/flow.js?v=20261006r"></script>
-<script src="assets/common/projects-data.js?v=20261006r"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006s">
+<script src="assets/common/site.js?v=20261006s"></script>
+<script src="assets/common/mypage.js?v=20261006s"></script>
+<script src="assets/common/flow.js?v=20261006s"></script>
+<script src="assets/common/projects-data.js?v=20261006s"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --teal-900:#004f4a;
@@ -105,6 +105,7 @@
   .feat-tab.on .t { color:var(--teal-600); }
   .feat-tab.on .d { color:var(--black); }
   .feat-tab:not(.on):hover { color:var(--gray-500); }
+  .feat-desc { display:none; }
   .feat-view { position:relative; width:1075px; height:399.02px; border-radius:16px; }
   .feat-view .screen { position:absolute; top:2px; left:2px; right:2px; height:395.02px; border-radius:25px; background:var(--teal-900); overflow:hidden; }
   .feat-view .screen img { position:absolute; width:888px; height:421px; left:calc(50% + .5px); top:calc(50% + 3.99px); transform:translate(-50%,-50%); transition:opacity .25s; }
@@ -230,6 +231,20 @@
     .acard .img p br { display:none; }
     .acard .foot { padding:2px 4px 2px 6px; font-size:14px; line-height:20px; }
     .feat-view { height:220px; } .feat-view .screen { height:216px; } .feat-view .screen img { width:100%; height:auto; }
+    /* Feature 모바일: 제목만 넣은 탭을 가로로 넘기고, 고른 항목의 설명·이미지만 보여줌 */
+    .feat-in { gap:20px; padding:24px 20px; }
+    .feat-tw { position:relative; margin:0 -20px; }
+    .feat-tw::before, .feat-tw::after { content:""; position:absolute; top:0; bottom:0; z-index:1; width:40px; pointer-events:none; opacity:0; transition:opacity .15s; }
+    .feat-tw::before { left:0; background:linear-gradient(90deg, var(--gray-50) 30%, #fafafa00); } .feat-tw::after { right:0; background:linear-gradient(270deg, var(--gray-50) 30%, #fafafa00); }
+    .feat-tw.fl::before, .feat-tw.fr::after { opacity:1; }
+    .feat-tabs { flex-wrap:nowrap; gap:8px; padding:0 20px; overflow-x:auto; scrollbar-width:none; }
+    .feat-tabs::-webkit-scrollbar { display:none; }
+    .feat-tab, .feat-tab.wide { flex:none; width:auto; padding:8px 14px; border:1px solid var(--gray-300); border-radius:99px; background:#fff; }
+    .feat-tab .t { gap:6px; font-size:15px; line-height:22px; white-space:nowrap; }
+    .feat-tab .t .ic { width:18px; height:18px; }
+    .feat-tab .d { display:none; }
+    .feat-tab.on { border-color:var(--teal-600); background:var(--teal-50); }
+    .feat-desc { display:block; font-size:15px; font-weight:500; line-height:22px; color:var(--black); word-break:keep-all; }
   }
 
   /* 스크롤 등장 효과 (Conicorn 참고): 흐림+투명 상태에서 아래→위로 떠오르며 나타남 */
@@ -356,12 +371,13 @@
   </div>
   <div class="feat-box">
     <div class="feat-in">
-      <div class="feat-tabs" role="tablist">
+      <div class="feat-tw" id="featTw"><div class="feat-tabs" role="tablist">
         <button class="feat-tab on" role="tab" data-img="assets/main/features/feature-report.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-file-text.svg?v=2)"></span>AI 기반 보고서 작성</span><span class="d">분석 결과를 바탕으로 AI가<br>보고서 초안을 작성하고 필요한<br>부분은 바로 수정할 수 있습니다.</span></button>
         <button class="feat-tab" role="tab" data-img="assets/main/features/feature-interpret.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-list-magnifying-glass.svg)"></span>AI 기반 결과 해석</span><span class="d">기존 분석 결과를 검색·비교해<br>결과가 의미하는 바를<br>쉽게 해석할 수 있도록 돕습니다.</span></button>
         <button class="feat-tab" role="tab" data-img="assets/main/features/feature-matching.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-sparkle.svg)"></span>AI 파트너 매칭</span><span class="d">프로젝트의 분석 분야와 요구사항을<br>바탕으로 적합한 분석 파트너를<br>AI로 빠르게 추천합니다.</span></button>
         <button class="feat-tab wide" role="tab" data-img="assets/main/features/feature-support.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-chats.svg?v=2)"></span>AI 챗봇 기반 Customer Support</span><span class="d">프로젝트 의뢰부터 진행 상황까지<br>궁금한 점을 AI 챗봇이 언제든<br>빠르게 안내합니다.</span></button>
-      </div>
+      </div></div>
+      <p class="feat-desc" id="featDesc" aria-live="polite"></p><!-- 모바일: 고른 항목 설명만 -->
       <div class="feat-view"><div class="screen"><img id="featImg" src="assets/main/features/feature-report.svg" alt="AI 기반 보고서 작성 화면 예시"></div></div>
     </div>
   </div>
@@ -454,9 +470,16 @@
   }));
 
   // Feature 탭: 활성 표시 이동 + 기능별 이미지로 교체 (이미지는 임시)
-  const featImg = document.getElementById('featImg');
+  const featImg = document.getElementById('featImg'), featTabs = document.querySelector('.feat-tabs'), featTw = document.getElementById('featTw'), featDesc = document.getElementById('featDesc');
+  // 모바일: 고른 탭의 설명을 아래에 표시 + 탭 줄 가장자리 흐림(더 있음 표시)
+  const featSync = tab => { featDesc.innerHTML = tab.querySelector('.d').innerHTML.replace(/<br\s*\/?>/g, ' '); }; // 줄바꿈(<br>)은 띄어쓰기로
+  const featEdges = () => { const max = featTabs.scrollWidth - featTabs.clientWidth; featTw.classList.toggle('fl', featTabs.scrollLeft > 2); featTw.classList.toggle('fr', featTabs.scrollLeft < max - 2); };
+  featTabs.addEventListener('scroll', featEdges, { passive: true }); window.addEventListener('resize', featEdges);
+  featSync(document.querySelector('.feat-tab.on')); featEdges();
   document.querySelectorAll('.feat-tab').forEach(tab => tab.addEventListener('click', () => {
     document.querySelectorAll('.feat-tab').forEach(t => t.classList.toggle('on', t === tab));
+    featSync(tab);
+    if (featTabs.scrollWidth > featTabs.clientWidth) featTabs.scrollTo({ left: tab.offsetLeft - (featTabs.clientWidth - tab.offsetWidth) / 2, behavior: 'smooth' }); // 고른 탭을 가운데로
     if (featImg.getAttribute('src') === tab.dataset.img) return;
     featImg.classList.add('fade');
     setTimeout(() => { featImg.src = tab.dataset.img; featImg.alt = tab.querySelector('.t').textContent + ' 화면 예시'; featImg.classList.remove('fade'); }, 200);
