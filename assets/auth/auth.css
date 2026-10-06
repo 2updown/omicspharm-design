@@ -220,3 +220,11 @@ input { font:inherit; color:inherit; }
   .phone .input.cc { flex-basis:84px; }
   .brand-top { left:16px; top:20px; }
 }
+/* 인포박스 (Figma info_box 1440:21375): cool-gray 100 배경, 제목 Body/Small/M gray 500, 항목 Body/Small/R + 점 */
+.info-box { align-self:stretch; display:flex; flex-direction:column; gap:8px; padding:10px 12px; border-radius:12px; background:#f3f4f6; }
+.info-box .ib-t { font-size:14px; font-weight:500; line-height:20px; color:#6b7280; }
+.info-box ul { display:flex; flex-direction:column; gap:8px; margin:0; padding:0; list-style:none; }
+.info-box li { position:relative; padding-left:16px; font-size:14px; font-weight:400; line-height:20px; color:#000; word-break:keep-all; }
+.info-box li::before { content:""; position:absolute; left:3px; top:8px; width:4px; height:4px; border-radius:50%; background:currentColor; }
+.info-box a { color:inherit; text-decoration:underline; text-underline-offset:2px; word-break:break-all; }
+.info-box a:hover { color:var(--link); }
