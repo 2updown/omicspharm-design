@@ -127,7 +127,8 @@
       });
     },
     // 견적을 받을 수 있는 단계 (승인 후 ~ 클라이언트에게 전달 전)
-    open: function (id) { var s = state(id); return !!s.ok && (s.st === 'review' || s.st === 'quoting'); },
+    // 견적 모집 중: 승인 후 ~ 클라이언트가 견적을 확정하기 전 (견적을 전달한 뒤에도 계속 받음)
+    open: function (id) { var s = state(id); return !!s.ok && s.st !== 'matched'; },
     // 의뢰 승인: 컨설턴트가 의뢰서를 확인하고 승인 → 프로젝트로 등록(게시)
     approve: function (id) { return put(id, function (s) { s.ok = Date.now(); }); },
     // 견적 요청 보내기 (추가 요청도 같은 함수)
@@ -164,8 +165,14 @@
     },
     decline: function (id, k, why) { return put(id, function (s) { var x = s.P[k]; x.status = 'dec'; x.dec = { at: Date.now(), why: why }; }); },
     // 컨설턴트 → 클라이언트 전달
+    // 전달은 여러 번 가능 (나중에 도착한 견적을 추가로 전달). sends: 전달 기록
     forward: function (id, keys, msg) {
-      return put(id, function (s) { Object.keys(s.P).forEach(function (k) { s.P[k].fwd = keys.indexOf(k) > -1; }); s.st = 'sent'; s.sentAt = Date.now(); s.msg = msg; });
+      return put(id, function (s) {
+        keys.forEach(function (k) { s.P[k].fwd = true; });
+        s.sends = s.sends || (s.sentAt ? [{ at: s.sentAt, keys: Object.keys(s.P).filter(function (k) { return s.P[k].fwd && keys.indexOf(k) < 0; }), msg: s.msg }] : []);
+        s.sends.push({ at: Date.now(), keys: keys, msg: msg });
+        s.st = 'sent'; s.sentAt = s.sentAt || Date.now(); if (msg) s.msg = msg;
+      });
     },
     // 클라이언트 선택 → 매칭 완료
     pick: function (id, k) { return put(id, function (s) { s.st = 'matched'; s.pick = k; s.pickAt = Date.now(); }); },
@@ -236,11 +243,11 @@
         var ph = 'mypage-project.html?id=' + encodeURIComponent(r.id);
         if (s.ct) L.push({ id: 'f-ct-' + r.id, k: '계약', cat: 'project', at: s.ct.at, t: nm + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: ph + '&tab=contract' });
         if (s.ok) L.push({ id: 'f-ok-' + r.id, k: '의뢰승인', cat: 'project', at: s.ok, t: '의뢰하신 ' + nm + ' 프로젝트가 승인되어 등록되었습니다.', href: ph });
-        if (s.sentAt) {
-          var F2 = Object.keys(s.P).filter(function (k) { return s.P[k].fwd; }), A = F2.map(function (k) { return total(s.P[k].quote).final; });
-          L.push({ id: 'f-arr-' + r.id, k: '견적확인요청', cat: 'project', at: s.sentAt, t: '의뢰하신 ' + nm + ' 프로젝트에 대한 견적서 ' + F2.length + '건을 확인해주세요. 견적 관련 문의사항은 Q&A게시판을 통해서 문의해 주세요.',
+        (s.sends || (s.sentAt ? [{ at: s.sentAt, keys: Object.keys(s.P).filter(function (k) { return s.P[k].fwd; }) }] : [])).forEach(function (e, i) {
+          var A = e.keys.map(function (k) { return total(s.P[k].quote).final; });
+          L.push({ id: 'f-arr-' + r.id + (i ? '-' + i : ''), k: '견적확인요청', cat: 'project', at: e.at, t: '의뢰하신 ' + nm + ' 프로젝트에 대한 ' + (i ? '추가 ' : '') + '견적서 ' + e.keys.length + '건을 확인해주세요. 견적 관련 문의사항은 Q&A게시판을 통해서 문의해 주세요.',
             sub: '견적금액: ' + (A.length > 1 ? won(Math.min.apply(0, A)) + ' ~ ' + won(Math.max.apply(0, A)) : won(A[0] || 0)), href: ph + '&tab=quote' });
-        }
+        });
       }
     });
     // 삭제된 의뢰

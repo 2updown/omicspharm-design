@@ -9,11 +9,11 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=의뢰번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006g">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006g">
-<script src="assets/common/site.js?v=20261006g"></script>
-<script src="assets/common/mypage.js?v=20261006g"></script>
-<script src="assets/common/flow.js?v=20261006g"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006h">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006h">
+<script src="assets/common/site.js?v=20261006h"></script>
+<script src="assets/common/mypage.js?v=20261006h"></script>
+<script src="assets/common/flow.js?v=20261006h"></script>
 <style>
   /* 목록 */
   .rlist { display:flex; flex-direction:column; gap:12px; }
@@ -271,7 +271,7 @@
                    : ['warn', '의뢰서가 접수되었습니다. 확인 후 승인처리 해주세요.', '승인하면 프로젝트로 등록되고 의뢰사에게 \'의뢰승인\' 알림이 갑니다. 그다음 분석파트너에게 견적을 요청할 수 있습니다.'],
       quoting: c.sub ? ['', '도착한 견적을 확인하고 클라이언트에게 전달해주세요.', '수정이 필요한 견적은 [수정 요청]으로 파트너에게 돌려보낼 수 있습니다.']
                      : ['gray', '분석파트너의 견적을 기다리고 있습니다.', '견적 마감일 ' + dot(s.due) + ' · 견적이 도착하면 알림으로 알려드립니다.'],
-      sent: ['gray', '클라이언트가 견적을 비교하고 있습니다.', '클라이언트가 분석파트너를 선택하면 매칭이 완료되고 계약 단계로 넘어갑니다.'],
+      sent: ['gray', '클라이언트가 견적을 비교하고 있습니다.', '클라이언트가 견적을 확정하기 전까지 프로젝트는 계속 모집중입니다. 새로 도착한 견적은 확인 후 추가로 전달할 수 있습니다.'],
       matched: s.ct ? ['', '계약서 등록이 완료되었습니다.', F.partner(s.pick).org + ' · 계약 금액 ' + F.money(F.total(s.P[s.pick].quote).net) + ' (VAT 별도) · 분석 진행 단계로 넘어갔습니다.']
                     : ['warn', F.josa(r.org || '의뢰사', '이', '가') + ' ' + F.partner(s.pick).org + ' 견적을 확정했습니다. 계약서를 등록해주세요.', '기본 양식(셀키 분석서비스 의뢰서)으로 만들거나, 기관 자체 시험의뢰서를 파일로 올릴 수 있습니다.']
     }[s.st];
@@ -385,23 +385,23 @@
     var amt = function (k) { return F.total(s.P[k].quote).final; };
     var low = subs.length > 1 ? subs.reduce(function (a, b) { return amt(b) < amt(a) ? b : a; }) : null;
     var fast = subs.length > 1 ? subs.reduce(function (a, b) { return +s.P[b].quote.weeks < +s.P[a].quote.weeks ? b : a; }) : null;
-    var edit = s.st === 'quoting';
+    var edit = s.st === 'quoting' || s.st === 'sent'; // 클라이언트가 확정하기 전까지 견적 확인·추가 전달 가능
     var badge = function (k) {
       var t = F.pst(s, k);
       var cls = { '작성 대기': 'done', '임시저장': 'done', '제출 완료': 'state', '수정 요청': 'wait', '거절': 'red', '클라이언트 검토 중': 'state', '선정': 'ok', '미선정': 'done' }[t];
-      if (s.st !== 'quoting' && s.P[k].status === 'sub' && !s.P[k].fwd) { t = '전달 안 함'; cls = 'done'; }
+      if (s.st === 'matched' && s.P[k].status === 'sub' && !s.P[k].fwd) { t = '전달 안 함'; cls = 'done'; }
       return '<span class="badge ' + cls + '">' + t + '</span>';
     };
     var rows = keys.map(function (k) {
       var x = s.P[k], p = F.partner(k), q = x.quote, sub = x.status === 'sub';
       return '<div class="r' + (s.pick === k ? ' win' : '') + '">' +
-        (edit && sub ? '<input type="checkbox" name="fw" value="' + k + '" checked aria-label="' + esc(p.org) + ' 견적 전달">' : '<span>' + (s.st !== 'quoting' && x.fwd ? '✓' : '') + '</span>') +
+        (edit && sub && !x.fwd ? '<input type="checkbox" name="fw" value="' + k + '" checked aria-label="' + esc(p.org) + ' 견적 전달">' : '<span title="' + (x.fwd ? '클라이언트에게 전달함' : '') + '">' + (x.fwd ? '✓' : '') + '</span>') +
         '<div class="who"><b>' + esc(p.org) + '</b><span>' + (x.self ? '<i class="src self">직접 신청</i>' : '<i class="src">견적제안</i>') + md(x.at) + (x.revN ? ' · 수정 ' + x.revN + '회' : '') + '</span></div>' +
         '<div class="st">' + badge(k) + '</div>' +
         '<div class="amt">' + (sub ? F.money(F.total(q).final) + (k === low ? '<span class="hl">최저가</span>' : '') + '<small>VAT 포함</small>' : '-') + (sub ? '<span class="mob">· ' + esc(q.weeks || '-') + '주</span>' : '') + '</div>' +
         '<div class="wk">' + (sub ? esc(q.weeks || '-') + '주' + (k === fast ? '<span class="hl">최단</span>' : '') : '-') + '</div>' +
         '<div class="dt">' + (x.subAt && sub ? md(x.subAt) + ' 제출' : x.status === 'dec' ? md(x.dec.at) + ' 거절' : '마감 ' + dot(s.due).slice(5)) + '</div>' +
-        '<div class="act">' + (sub ? '<button type="button" class="btn" data-doc="' + k + '">견적서 보기</button>' + (edit ? '<button type="button" class="btn" data-rev="' + k + '">수정 요청</button>' : '') : '') + '</div>' +
+        '<div class="act">' + (sub ? '<button type="button" class="btn" data-doc="' + k + '">견적서 보기</button>' + (edit && !x.fwd ? '<button type="button" class="btn" data-rev="' + k + '">수정 요청</button>' : '') : '') + '</div>' +
         (x.status === 'rev' ? '<p class="note rev">수정 요청 · ' + md(x.rev.at) + ' — ' + esc(x.rev.note) + '</p>' : '') +
         (x.status === 'dec' ? '<p class="note">거절 사유 — ' + esc(x.dec.why) + '</p>' : '') +
       '</div>';
@@ -412,7 +412,7 @@
       '<div class="reqinfo"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>견적 마감</b> ' + dot(s.due || r.to) + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self; }).length + ' · 견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></div>' +
       (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적</span><span>소요</span><span>일자</span><span></span></div>' + rows + '</div>'
         : '<div class="qempty">아직 견적을 작성 중인 분석파트너가 없습니다.<br>인증 분석파트너는 프로젝트 찾기에서 직접 견적을 작성할 수 있고, [견적제안메일]로 적합한 기관에 요청할 수도 있습니다.</div>') +
-      (edit ? '<div class="bar"><p>체크한 견적을 수정 없이 그대로 클라이언트에게 전달합니다. 기관명도 함께 공개됩니다.</p><div class="acts"><button type="button" class="btn primary lg" id="fwd"></button></div></div>' : '') +
+      (edit && subs.some(function (k) { return !s.P[k].fwd; }) ? '<div class="bar"><p>체크한 견적을 수정 없이 그대로 클라이언트에게 전달합니다. 기관명도 함께 공개됩니다.' + (s.st === 'sent' ? ' 이미 전달한 견적(✓)에 추가됩니다.' : '') + '</p><div class="acts"><button type="button" class="btn primary lg" id="fwd"></button></div></div>' : '') +
       (s.msg && s.st !== 'quoting' ? '<div class="msg"><b>클라이언트에게 전달한 메시지 · ' + F.ymd(s.sentAt) + '</b>' + esc(s.msg) + '</div>' : '') +
     '</div>';
   }
@@ -457,7 +457,7 @@
   function syncFwd() {
     var b = $('#fwd'); if (!b) return;
     var n = card.querySelectorAll('input[name="fw"]:checked').length;
-    b.disabled = !n; b.textContent = n ? '견적 ' + n + '건 클라이언트에게 전달' : '전달할 견적을 선택해주세요';
+    b.disabled = !n; b.textContent = n ? '견적 ' + n + '건 클라이언트에게 ' + (F.state(id).st === 'sent' ? '추가 ' : '') + '전달' : '전달할 견적을 선택해주세요';
   }
   render();
   if (location.hash === '#quotes' && $('#quotes')) setTimeout(function () { $('#quotes').scrollIntoView({ block: 'start' }); }, 60); // 프로젝트 찾기 [견적서] 버튼으로 들어온 경우

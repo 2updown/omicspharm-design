@@ -59,7 +59,7 @@
     var r = o.r, okd = OP.flow.ymd(o.s.ok), cat = CATS.indexOf(r.svc) > -1 ? r.svc : CATS[CATS.length - 1];
     var x = { id: DATA.length, rid: r.id, cat: cat, title: r.title, samples: parseInt(r.samples, 10) || 0, price: BUD[r.budget] || 500, due: dot(r.due) || okd, from: dot(r.from) || okd, to: dot(r.to) || OP.flow.ymd(o.s.ok + 864e5 * 14), reg: okd, priv: r.open === '비공개', owner: '*****(' + (r.demo ? 'cli05' : 'client') + ')' };
     x.days = Math.round((d(x.to) - TODAY) / 864e5);
-    x.open = x.days >= 0 && OP.flow.open(r.id); // 클라이언트에게 견적을 전달하면 모집 마감
+    x.open = x.days >= 0 && OP.flow.open(r.id); // 모집기한 안 + 클라이언트가 견적을 확정하기 전까지 모집중
     DATA.push(x);
   });
   window.OP_PROJECTS = { CATS: CATS, DATA: DATA, date: d, url: function (x) { return 'omicspharm-project-detail-prot.html?id=' + x.id; } };
