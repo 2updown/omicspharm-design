@@ -9,11 +9,11 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=의뢰번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006m">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006m">
-<script src="assets/common/site.js?v=20261006m"></script>
-<script src="assets/common/mypage.js?v=20261006m"></script>
-<script src="assets/common/flow.js?v=20261006m"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006n">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006n">
+<script src="assets/common/site.js?v=20261006n"></script>
+<script src="assets/common/mypage.js?v=20261006n"></script>
+<script src="assets/common/flow.js?v=20261006n"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -144,7 +144,17 @@
   .b-search input { flex:1; min-width:0; border:0; outline:0; background:none; font:inherit; font-size:16px; }
   .b-search input::-webkit-search-cancel-button { display:none; }
   .b-search button { flex:none; height:44px; padding:0 32px; border-radius:999px; background:var(--gray-600); color:#fff; font-size:15px; font-weight:500; }
-  .b-tabs { display:flex; gap:4px; margin:0 -24px; padding:0 24px; border-bottom:1px solid var(--gray-200); overflow-x:auto; scrollbar-width:none; }
+  .b-tabw { position:relative; margin:0 -24px; border-bottom:1px solid var(--gray-200); }
+  .b-tabw::before, .b-tabw::after { content:""; position:absolute; top:0; bottom:1px; z-index:1; width:56px; pointer-events:none; opacity:0; transition:opacity .15s; }
+  .b-tabw::before { left:0; background:linear-gradient(90deg, #fff 40%, #fff0); } .b-tabw::after { right:0; background:linear-gradient(270deg, #fff 40%, #fff0); }
+  .b-tabw.fl::before, .b-tabw.fr::after { opacity:1; }
+  .b-arr { position:absolute; top:50%; z-index:2; display:flex; align-items:center; justify-content:center; width:32px; height:32px; margin-top:-16px; border:1px solid var(--gray-200); border-radius:50%; background:#fff; box-shadow:0 2px 6px #00000014; }
+  .b-arr[hidden] { display:none; }
+  .b-arr.l { left:12px; } .b-arr.r { right:12px; }
+  .b-arr:hover { border-color:var(--gray-300); background:var(--gray-50); }
+  .b-arr img { width:16px; height:16px; }
+  .b-tabs { display:flex; gap:4px; padding:0 24px; overflow-x:auto; scrollbar-width:none; cursor:grab; user-select:none; -webkit-user-select:none; scroll-behavior:auto; }
+  .b-tabs.drag { cursor:grabbing; } .b-tabs.drag button { pointer-events:none; }
   .b-tabs::-webkit-scrollbar { display:none; }
   .b-tabs button { flex:none; display:flex; align-items:center; gap:6px; height:44px; padding:0 10px; border-bottom:2px solid transparent; margin-bottom:-1px; font-size:14px; font-weight:500; color:var(--gray-500); white-space:nowrap; }
   .b-tabs button b { min-width:20px; padding:0 6px; border-radius:99px; background:var(--gray-100); font-size:12px; font-weight:600; line-height:20px; color:var(--gray-600); text-align:center; }
@@ -194,7 +204,8 @@
   .lc .reg { font-size:12px; line-height:18px; color:#9b9b9b; }
   .lc .cbtns { display:flex; gap:6px; } .lc .qb { display:inline-flex; align-items:center; height:32px; padding:0 12px; border:1px solid var(--gray-400); border-radius:8px; background:#f3f2f2; font-size:13px; font-weight:500; color:var(--gray-700); white-space:nowrap; }
   @media (max-width:640px) {
-    .b-tabs { margin:0 -16px; padding:0 16px; }
+    .b-tabw { margin:0 -16px; } .b-tabs { padding:0 16px; }
+    .b-arr { width:28px; height:28px; margin-top:-14px; } .b-arr.l { left:6px; } .b-arr.r { right:6px; }
     .b-search { height:48px; } .b-search button { padding:0 18px; height:40px; }
     .b-bar { flex-wrap:nowrap; overflow-x:auto; margin:0 -16px; padding:0 16px 4px; scrollbar-width:none; } .b-bar::-webkit-scrollbar { display:none; }
     .b-pop { position:fixed; left:16px; right:16px; top:auto; bottom:16px; }
@@ -288,7 +299,7 @@
     card.innerHTML =
       '<div class="card-head"><h3>프로젝트 관리</h3></div>' +
       '<form class="b-search" id="bq" role="search"><img src="assets/find/ic-search.svg" alt=""><input type="search" id="bqIn" placeholder="클라이언트/분석파트너명, 의뢰명, 키워드 입력" autocomplete="off"><button type="submit">검색</button></form>' +
-      '<div class="b-tabs" id="bTabs" role="tablist"></div>' +
+      '<div class="b-tabw" id="bTabW"><button type="button" class="b-arr l" data-arr="-1" aria-label="이전 단계 보기" hidden><img src="assets/find/ic-caret-left.svg" alt=""></button><div class="b-tabs" id="bTabs" role="tablist"></div><button type="button" class="b-arr r" data-arr="1" aria-label="다음 단계 보기" hidden><img src="assets/find/ic-caret-right.svg" alt=""></button></div>' +
       '<div class="b-bar"><div class="b-dd" data-dd="cat"><button type="button" class="b-btn" id="ddCat">분석 서비스<i></i></button><div class="b-pop" hidden>' + CATS.map(function (c) { return '<label><input type="checkbox" value="' + c + '">' + c + '<span class="n" data-cn="' + c + '"></span></label>'; }).join('') + '</div></div>' +
         '<div class="b-dd" data-dd="rec"><button type="button" class="b-btn" id="ddRec">모집상태<i></i></button><div class="b-pop" hidden>' + [['', '전체'], ['open', '모집중'], ['closed', '모집완료']].map(function (o) { return '<label><input type="radio" name="rec" value="' + o[0] + '"' + (o[0] ? '' : ' checked') + '>' + o[1] + '</label>'; }).join('') + '</div></div>' +
         '<div class="b-dd" data-dd="date"><button type="button" class="b-btn" id="ddDate">등록일<i></i></button><div class="b-pop wide" hidden><div class="dr"><input type="date" id="dFrom"><span>~</span><input type="date" id="dTo"></div><div class="qd">' + [[7, '최근 1주'], [30, '최근 1개월'], [90, '최근 3개월']].map(function (d) { return '<button type="button" data-days="' + d[0] + '">' + d[1] + '</button>'; }).join('') + '</div></div></div>' +
@@ -379,8 +390,26 @@
       OP.my.confirm('예시 데이터를 초기화할까요?', '견적 요청·제출·전달·선택·계약 기록이 처음 상태로 돌아갑니다. 이 브라우저에서 제출한 의뢰 내용은 그대로 남습니다.', '초기화', function () { F.reset(); OP.flash('예시 데이터를 초기화했습니다.'); location.reload(); });
     });
     $('#bq').addEventListener('submit', function (e) { e.preventDefault(); f.q = $('#bqIn').value.trim(); draw(); });
+    // 진행상태 탭 슬라이드: 양쪽 화살표 + 가장자리 흐림, 마우스 드래그·휠, 터치 스와이프
+    var tabs = $('#bTabs'), tw = $('#bTabW');
+    function edges() {
+      var max = tabs.scrollWidth - tabs.clientWidth;
+      var l = tabs.scrollLeft > 2, r = tabs.scrollLeft < max - 2;
+      tw.querySelector('.l').hidden = !l; tw.querySelector('.r').hidden = !r;
+      tw.classList.toggle('fl', l); tw.classList.toggle('fr', r);
+    }
+    tw.addEventListener('click', function (e) { var a = e.target.closest('[data-arr]'); if (a) tabs.scrollBy({ left: +a.dataset.arr * tabs.clientWidth * .6, behavior: 'smooth' }); });
+    tabs.addEventListener('scroll', edges, { passive: true });
+    window.addEventListener('resize', edges);
+    tabs.addEventListener('wheel', function (e) { if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && tabs.scrollWidth > tabs.clientWidth) { e.preventDefault(); tabs.scrollLeft += e.deltaY; } }, { passive: false });
+    var drag = null;
+    tabs.addEventListener('mousedown', function (e) { drag = { x: e.clientX, l: tabs.scrollLeft, moved: false }; });
+    window.addEventListener('mousemove', function (e) { if (!drag) return; var dx = e.clientX - drag.x; if (Math.abs(dx) > 4) { drag.moved = true; tabs.classList.add('drag'); } tabs.scrollLeft = drag.l - dx; });
+    window.addEventListener('mouseup', function () { if (drag && drag.moved) setTimeout(function () { tabs.classList.remove('drag'); }, 0); drag = drag && drag.moved ? { moved: true, end: 1 } : null; setTimeout(function () { drag = null; }, 0); });
+    tabs.addEventListener('click', function (e) { if (drag && drag.moved) { e.stopPropagation(); e.preventDefault(); } }, true); // 드래그 끝의 클릭은 탭 선택으로 치지 않음
     draw();
-    var on = card.querySelector('.b-tabs .on'); if (on) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+    var on = card.querySelector('.b-tabs .on'); if (on) tabs.scrollLeft = on.offsetLeft - (tabs.clientWidth - on.offsetWidth) / 2;
+    edges();
   }
 
   // ── 상세 ──
