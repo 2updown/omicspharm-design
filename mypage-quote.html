@@ -9,12 +9,12 @@
      ?rid=의뢰번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006d">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006d">
-<script src="assets/common/site.js?v=20261006d"></script>
-<script src="assets/common/mypage.js?v=20261006d"></script>
-<script src="assets/common/flow.js?v=20261006d"></script>
-<script src="assets/common/projects-data.js?v=20261006d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006e">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006e">
+<script src="assets/common/site.js?v=20261006e"></script>
+<script src="assets/common/mypage.js?v=20261006e"></script>
+<script src="assets/common/flow.js?v=20261006e"></script>
+<script src="assets/common/projects-data.js?v=20261006e"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -172,7 +172,7 @@
     var rows = IN.map(function (o) {
       var t = F.pst(o.s, ME);
       return { t: t, at: o.x.at, html: '<a class="qrow" href="mypage-quote.html?rid=' + encodeURIComponent(o.r.id) + '"><span class="badge ' + BADGE[t] + '">' + t + '</span>' +
-        '<span class="t">' + esc(o.r.title) + '<small>' + esc(o.r.svc) + ' · ' + esc(o.r.org || '-') + '</small></span>' +
+        '<span class="t">' + esc(o.r.title) + '<small>' + (o.x.self ? '직접 신청' : 'OmicsPharm 요청') + ' · ' + esc(o.r.svc) + ' · ' + esc(o.r.org || '-') + '</small></span>' +
         '<span class="m">' + (/작성 대기|임시저장|수정 요청/.test(t) ? '<em class="due">마감 ' + dot(o.s.due).slice(5) + ' (' + dleft(o.s.due) + ')</em>' : '요청 ' + F.ymd(o.x.at)) + '</span>' +
         '<span class="p">' + (o.x.quote && o.x.status !== 'req' ? money(F.total(o.x.quote).final, o.x.quote.cur) : '-') + '</span></a>' };
     }).concat(Object.keys(Q).map(function (k) {
@@ -192,7 +192,7 @@
       var re = (TABS.filter(function (t) { return t[0] === cur; })[0] || [])[1];
       var L = rows.filter(function (o) { return !re || re.test(o.t); });
       $('#ql').innerHTML = L.length ? L.map(function (o) { return o.html; }).join('')
-        : '<div class="empty"><b>' + (cur === '전체' ? '받은 견적 요청이 없습니다' : '해당하는 견적 요청이 없습니다') + '</b><p>OmicsPharm 컨설턴트가 분석 의뢰에 맞는 파트너로 선정해 견적을 요청하면 여기에 표시됩니다.</p></div>';
+        : '<div class="empty"><b>' + (cur === '전체' ? '받은 견적 요청이 없습니다' : '해당하는 견적 요청이 없습니다') + '</b><p>프로젝트 찾기에서 견적을 작성하거나, OmicsPharm 컨설턴트가 견적을 요청하면 여기에 표시됩니다.</p></div>' + (cur === '전체' ? '<div style="text-align:center"><a class="btn primary lg" href="projects.html">프로젝트 찾기</a></div>' : '');
     };
     $('#chips').addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (b) { cur = b.dataset.t; draw(); } });
     draw();
@@ -218,7 +218,7 @@
       '거절': ['gray', '견적 요청을 거절했습니다.', '거절 사유: ' + (X.dec ? X.dec.why : '-'), 0]
     }[t];
     banner = '<div class="ftodo ' + B[0] + '"><div><b>' + esc(B[1]) + '</b><p>' + esc(B[2]) + '</p></div>' +
-      (t === '선정' ? '<div class="acts"><a class="btn primary" href="mypage-project.html?id=' + encodeURIComponent(rid) + '">프로젝트 관리로 이동</a></div>' : B[3] ? '<div class="acts"><button type="button" class="btn" id="decline">견적 거절</button></div>' : '') + '</div>';
+      (t === '선정' ? '<div class="acts"><a class="btn primary" href="mypage-project.html?id=' + encodeURIComponent(rid) + '">프로젝트 관리로 이동</a></div>' : B[3] && !X.self ? '<div class="acts"><button type="button" class="btn" id="decline">견적 거절</button></div>' : '') + '</div>';
   } else {
     // 예전 방식: 프로젝트 찾기 목록 데이터를 의뢰처럼 보여줌
     saved = read()[id] || null; locked = !!(saved && saved.submitted);
@@ -231,7 +231,7 @@
   // 위: 의뢰 제목·상태·안내 (항상 보임) / 아래: [의뢰내용] [견적서 작성] 탭 중 하나만 보임
   var head = $('#head'); head.hidden = false;
   head.innerHTML = '<div class="phead">' +
-      '<div class="prow"><div class="badges"><span class="badge tag">' + esc(R.svc) + '</span>' + (rid ? '<span class="badge ' + BADGE[F.pst(S, ME)] + '">' + F.pst(S, ME) + '</span>' : '') + (R.open === '비공개' ? '<span class="badge done">비공개</span>' : '') + '</div><span class="reg">' + (rid ? '견적 요청일 : ' + F.ymd(X.at) : '등록일 : ' + dot(x.reg)) + '</span></div>' +
+      '<div class="prow"><div class="badges"><span class="badge tag">' + esc(R.svc) + '</span>' + (rid ? '<span class="badge ' + BADGE[F.pst(S, ME)] + '">' + F.pst(S, ME) + '</span>' : '') + (R.open === '비공개' ? '<span class="badge done">비공개</span>' : '') + '</div><span class="reg">' + (rid ? (X.self ? '견적 신청일 : ' : '견적 요청일 : ') + F.ymd(X.at) : '등록일 : ' + dot(x.reg)) + '</span></div>' +
       '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-quote.html" aria-label="견적 목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(R.title) + '</h2>' +
         (rid ? '<span class="period"><b>견적 마감</b>' + dot(S.due) + (locked ? '' : '<em>' + dleft(S.due) + '</em>') + '</span>' : '<span class="period"><b>모집기한</b>' + dot(x.from) + ' ~ ' + dot(x.to) + '<em>' + (x.open ? '모집중' : '모집마감') + '</em></span>') + '</div></div>' +
       banner;

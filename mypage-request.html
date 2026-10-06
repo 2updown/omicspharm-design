@@ -9,11 +9,11 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=의뢰번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006d">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006d">
-<script src="assets/common/site.js?v=20261006d"></script>
-<script src="assets/common/mypage.js?v=20261006d"></script>
-<script src="assets/common/flow.js?v=20261006d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006e">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006e">
+<script src="assets/common/site.js?v=20261006e"></script>
+<script src="assets/common/mypage.js?v=20261006e"></script>
+<script src="assets/common/flow.js?v=20261006e"></script>
 <style>
   /* 목록 */
   .rlist { display:flex; flex-direction:column; gap:12px; }
@@ -287,7 +287,7 @@
       .sort(function (a, b) { return (b.verified - a.verified) || (F.fits(b, r.svc) - F.fits(a, r.svc)) || b.done - a.done; });
     var due = F.iso(Date.now() + 864e5 * 5);
     return '<div class="blk" id="pickBlk">' +
-      '<div class="blk-h"><h3>' + (more ? '분석파트너 추가 요청' : '견적 요청할 분석파트너 선택') + '</h3><span class="sub">인증된 분석파트너만 선택할 수 있습니다.</span></div>' +
+      '<div class="blk-h"><h3>' + (more ? '분석파트너 추가 요청' : '견적 요청(추천)할 분석파트너 선택') + '</h3><span class="sub">인증된 분석파트너만 선택할 수 있습니다.</span></div>' +
       '<div class="pick"><div class="ph"><span></span><span>분석파트너</span><span>분석 분야</span><span>수행</span><span>소요</span></div>' +
       L.map(function (p) {
         var fit = F.fits(p, r.svc), off = !p.verified;
@@ -298,7 +298,7 @@
       }).join('') + '</div>' +
       (more ? '' : '<div class="form2"><label class="fld">견적 마감일<input type="date" id="due" value="' + due + '" min="' + F.iso(Date.now()) + '"></label>' +
         '<label class="fld">분석파트너에게 전달할 내용 (선택)<textarea id="memo" placeholder="예) 시료 수가 많아 일정 제안을 함께 부탁드립니다."></textarea></label></div>') +
-      '<div class="bar"><p>요청을 보내면 선택한 분석파트너만 의뢰 내용을 볼 수 있습니다.</p><div class="acts">' + (more ? '<button type="button" class="btn" id="pickCancel">취소</button>' : '') + '<button type="button" class="btn primary lg" id="send" disabled>견적 요청 보내기</button></div></div>' +
+      '<div class="bar"><p>게시된 의뢰는 인증 분석파트너 누구나 견적을 낼 수 있습니다. 적합해 보이는 기관에 요청하면 메일·알림으로 견적 작성을 안내합니다.</p><div class="acts">' + (more ? '<button type="button" class="btn" id="pickCancel">취소</button>' : '') + '<button type="button" class="btn primary lg" id="send" disabled>견적 요청 보내기</button></div></div>' +
     '</div>';
   }
 
@@ -320,7 +320,7 @@
       var x = s.P[k], p = F.partner(k), q = x.quote, sub = x.status === 'sub';
       return '<div class="r' + (s.pick === k ? ' win' : '') + '">' +
         (edit && sub ? '<input type="checkbox" name="fw" value="' + k + '" checked aria-label="' + esc(p.org) + ' 견적 전달">' : '<span>' + (s.st !== 'quoting' && x.fwd ? '✓' : '') + '</span>') +
-        '<div class="who"><b>' + esc(p.org) + '</b><span>요청 ' + md(x.at) + (x.revN ? ' · 수정 ' + x.revN + '회' : '') + '</span></div>' +
+        '<div class="who"><b>' + esc(p.org) + '</b><span>' + (x.self ? '직접 신청 ' : '요청 ') + md(x.at) + (x.revN ? ' · 수정 ' + x.revN + '회' : '') + '</span></div>' +
         '<div class="st">' + badge(k) + '</div>' +
         '<div class="amt">' + (sub ? F.money(F.total(q).final) + (k === low ? '<span class="hl">최저가</span>' : '') + '<small>VAT 포함</small>' : '-') + (sub ? '<span class="mob">· ' + esc(q.weeks || '-') + '주</span>' : '') + '</div>' +
         '<div class="wk">' + (sub ? esc(q.weeks || '-') + '주' + (k === fast ? '<span class="hl">최단</span>' : '') : '-') + '</div>' +
@@ -367,7 +367,7 @@
         var keys = [].map.call(card.querySelectorAll('input[name="pk"]:checked'), function (i) { return i.value; });
         var names = keys.map(function (k) { return F.partner(k).org; }).join(', ');
         var more = s.st !== 'review';
-        F.ask({ title: (more ? '추가 ' : '') + '견적 요청을 보낼까요?', desc: names + '에 견적 요청을 보냅니다. 요청을 받은 분석파트너만 의뢰 내용을 볼 수 있습니다.', label: false, yes: '요청 보내기' }, function () {
+        F.ask({ title: (more ? '추가 ' : '') + '견적 요청을 보낼까요?', desc: names + '에 견적 요청 메일과 알림을 보냅니다. [바로가기]를 누르면 이 의뢰의 견적서 작성 화면으로 이동합니다.', label: false, yes: '요청 보내기' }, function () {
           F.send(id, keys, more ? s.due : $('#due').value, more ? s.memo : $('#memo').value.trim());
           OP.toast('견적 요청을 보냈습니다. (' + keys.length + '곳)'); render();
         });

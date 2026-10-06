@@ -112,6 +112,16 @@
       if (x.status === 'sub') return x.fwd && s.st === 'sent' ? '클라이언트 검토 중' : '제출 완료';
       return { req: '작성 대기', draft: '임시저장', rev: '수정 요청', dec: '거절' }[x.status];
     },
+    // 분석파트너가 프로젝트 찾기에서 직접 견적 작성 시작 (컨설턴트 요청 없이)
+    apply: function (id, k) {
+      var r = req(id);
+      return put(id, function (s) {
+        if (!s.P[k]) s.P[k] = { at: Date.now(), status: 'req', self: true };
+        if (s.st === 'review') { s.st = 'quoting'; s.reqAt = Date.now(); s.due = s.due || r.to || iso(Date.now() + DAY * 14); }
+      });
+    },
+    // 견적을 받을 수 있는 단계 (승인 후 ~ 클라이언트에게 전달 전)
+    open: function (id) { var s = state(id); return !!s.ok && (s.st === 'review' || s.st === 'quoting'); },
     // 의뢰 승인: 컨설턴트가 의뢰서를 확인하고 승인 → 프로젝트로 등록(게시)
     approve: function (id) { return put(id, function (s) { s.ok = Date.now(); }); },
     // 견적 요청 보내기 (추가 요청도 같은 함수)
@@ -210,7 +220,7 @@
         var qh = 'mypage-quote.html?rid=' + encodeURIComponent(r.id);
         if (r.updatedAt && r.updatedAt > x.at) L.push({ id: 'f-ed-' + r.id + r.updatedAt, k: '의뢰수정', cat: 'project', at: r.updatedAt, t: nm + ' 프로젝트의 의뢰 내용이 수정되었습니다. 견적서 작성 전 변경 내용을 확인해주세요.', href: qh });
         if (s.ct && s.pick === ses.email) L.push({ id: 'f-ct-' + r.id, k: '계약', cat: 'project', at: s.ct.at, t: nm + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
-        L.push({ id: 'f-req-' + r.id, k: '견적제안', cat: 'project', at: x.at, t: nm + ' 프로젝트 검토 후 견적서를 작성해주세요.', sub: '견적 마감일: ' + (s.due ? s.due.replace(/-/g, '.') : '-'), href: qh });
+        if (!x.self) L.push({ id: 'f-req-' + r.id, k: '견적제안', cat: 'project', at: x.at, t: nm + ' 프로젝트 검토 후 견적서를 작성해주세요.', sub: '견적 마감일: ' + (s.due ? s.due.replace(/-/g, '.') : '-'), href: qh });
         if (x.rev) L.push({ id: 'f-rev-' + r.id + x.revN, k: '견적수정요청', cat: 'project', at: x.rev.at, t: nm + ' 프로젝트 견적서의 수정을 요청드립니다.', sub: x.rev.note, href: qh });
         if (s.st === 'matched' && x.status === 'sub') L.push(s.pick === ses.email
           ? { id: 'f-win-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: nm + '의 견적이 최종 선정되었습니다.', sub: '견적서명: ' + qname(x) + ' · 견적금액: ' + won(total(x.quote).final), href: 'mypage-project.html?id=' + encodeURIComponent(r.id) }

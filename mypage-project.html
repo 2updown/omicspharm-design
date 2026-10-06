@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006d">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006d">
-<script src="assets/common/site.js?v=20261006d"></script>
-<script src="assets/common/mypage.js?v=20261006d"></script>
-<script src="assets/common/flow.js?v=20261006d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006e">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006e">
+<script src="assets/common/site.js?v=20261006e"></script>
+<script src="assets/common/mypage.js?v=20261006e"></script>
+<script src="assets/common/flow.js?v=20261006e"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -380,10 +380,10 @@
     var T = {
       review: FS.ok ? ['', '의뢰가 승인되어 등록되었습니다.', 'OmicsPharm 컨설턴트가 의뢰에 맞는 분석파트너를 선정해 견적을 요청해드립니다.', '']
                     : ['gray', 'OmicsPharm 컨설턴트가 의뢰서를 확인하고 있습니다.', '승인되면 프로젝트로 등록되고 알림으로 알려드립니다.', ''],
-      quoting: ['gray', '분석파트너에게 견적을 받고 있습니다.', '분석파트너 ' + n + '곳에 견적을 요청했습니다. 견적이 모이면 컨설턴트가 확인해 전달해드립니다.', ''],
-      sent: ['warn', '견적 ' + FK.length + '건이 도착했습니다.', '견적을 비교하고 진행할 분석파트너를 선택해주세요.', '<button type="button" class="btn primary" data-open-quote>견적 비교하기</button>'],
-      matched: FS.ct ? ['', '계약서 최종본이 등록되었습니다.', F.partner(FS.pick).org + '에서 분석을 진행합니다. 계약정보 탭에서 계약서를 확인할 수 있습니다.', '<button type="button" class="btn" data-open-tab="contract">계약서 보기</button>']
-                     : ['', FS.pick ? F.partner(FS.pick).org + ' 견적을 확정했습니다.' : '', 'OmicsPharm 컨설턴트가 계약서를 준비하고 있습니다. 등록되면 알림으로 알려드립니다.', '<button type="button" class="btn" data-open-quote>선택한 견적 보기</button>']
+      quoting: ['gray', '분석파트너에게 견적을 받고 있습니다.', '현재 분석파트너 ' + n + '곳이 견적을 준비하고 있습니다. 견적이 모이면 컨설턴트가 확인해 전달해드립니다.', ''],
+      sent: ['warn', '견적 ' + FK.length + '건이 도착했습니다.', '견적을 비교하고 진행할 분석파트너를 선택해주세요.', ''],
+      matched: FS.ct ? ['', '계약서 최종본이 등록되었습니다.', F.partner(FS.pick).org + '에서 분석을 진행합니다.', '']
+                     : ['', FS.pick ? F.partner(FS.pick).org + ' 견적을 확정했습니다.' : '', 'OmicsPharm 컨설턴트가 계약서를 준비하고 있습니다. 등록되면 알림으로 알려드립니다.', '']
     }[FS.st];
     return '<div class="ftodo ' + T[0] + '"><div><b>' + esc(T[1]) + '</b><p>' + esc(T[2]) + '</p></div>' + (T[3] ? '<div class="acts">' + T[3] + '</div>' : '') + '</div>';
   }
@@ -391,7 +391,7 @@
   function drawQuotes() {
     var box = $('#tp-quote');
     if (!FK.length) {
-      box.innerHTML = '<div class="empty"><b>아직 도착한 견적이 없습니다</b><p>' + (FS.st === 'review' ? 'OmicsPharm 컨설턴트가 의뢰서를 승인한 뒤 분석파트너에게 견적을 요청합니다.' : '분석파트너 ' + Object.keys(FS.P).length + '곳에 견적을 요청했습니다. 견적이 도착하면 알림으로 알려드립니다.') + '</p></div>';
+      box.innerHTML = '<div class="empty"><b>아직 도착한 견적이 없습니다</b><p>' + (FS.st === 'review' && !FS.ok ? 'OmicsPharm 컨설턴트가 의뢰서를 승인하면 프로젝트 찾기에 게시되어 분석파트너의 견적을 받습니다.' : '분석파트너 ' + Object.keys(FS.P).length + '곳이 견적을 준비하고 있습니다. 견적은 컨설턴트가 확인한 뒤 전달해드리며, 도착하면 알림으로 알려드립니다.') + '</p></div>';
       return;
     }
     var amt = function (k) { return F.total(FS.P[k].quote).final; };
@@ -477,7 +477,9 @@
     if (c) { showTab(c.dataset.openTab); $('#tp-' + c.dataset.openTab).scrollIntoView({ behavior: 'smooth', block: 'start' }); }
     if (v) F.showContract(d, FS, v.dataset.ct);
   });
-  var qtab = new URLSearchParams(location.search).get('tab'); if (qtab === 'quote' || qtab === 'contract') showTab(qtab);
+  // 처음 보이는 탭은 단계에 맞춤: 의뢰접수 = 의뢰내용 / 견적 비교·견적 확정 = 견적서 / 계약서 등록 후 = 계약정보 (?tab= 이 있으면 그 탭)
+  var qtab = new URLSearchParams(location.search).get('tab');
+  showTab(qtab === 'req' || qtab === 'quote' || qtab === 'contract' ? qtab : FS.ct ? 'contract' : FS.st === 'sent' || FS.st === 'matched' ? 'quote' : 'req');
   if ($('#pDel')) $('#pDel').addEventListener('click', function () {
     OP.my.confirm('의뢰를 삭제하시겠습니까?', '"' + d.title + '" 의뢰가 삭제되며 복구할 수 없습니다.', '삭제', function () {
       OP.my.removeProject(d.id);

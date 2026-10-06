@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006d">
-<script src="assets/common/site.js?v=20261006d"></script>
-<script src="assets/common/mypage.js?v=20261006d"></script>
-<script src="assets/common/flow.js?v=20261006d"></script>
-<script src="assets/common/projects-data.js?v=20261006d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006e">
+<script src="assets/common/site.js?v=20261006e"></script>
+<script src="assets/common/mypage.js?v=20261006e"></script>
+<script src="assets/common/flow.js?v=20261006e"></script>
+<script src="assets/common/projects-data.js?v=20261006e"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -387,14 +387,18 @@
     var pn = $('.aside .panel');
     pn.id = 'quote';
     // OmicsPharm 의뢰(컨설턴트 승인 후 게시): 견적 요청을 받은 분석파트너만 견적서 작성
+    // OmicsPharm 의뢰(컨설턴트 승인 후 게시): 인증 분석파트너 누구나 견적 작성 가능. 이미 시작했거나 컨설턴트 요청을 받았으면 그 견적서로
     var fx = x.rid ? OP.flow.state(x.rid).P[OP.session().email] : null;
     pn.innerHTML = x.rid
-      ? (fx ? '<h3>견적 요청을 받은<br>프로젝트입니다</h3><a class="btn-filled" href="mypage-quote.html?rid=' + encodeURIComponent(x.rid) + '#quote">견적서 작성</a>'
-            : '<h3>OmicsPharm 컨설턴트가<br>견적을 요청하면<br>작성할 수 있습니다</h3><span class="btn-filled off" aria-disabled="true">견적서 작성</span>')
+      ? (fx ? '<h3>' + (fx.self ? '작성 중인 견적이<br>있습니다' : 'OmicsPharm이 견적을<br>요청한 프로젝트입니다') + '</h3><a class="btn-filled" href="mypage-quote.html?rid=' + encodeURIComponent(x.rid) + '#quote">견적서 ' + (fx.status === 'sub' ? '보기' : '작성') + '</a>'
+          : OP.flow.open(x.rid) ? '<h3>이 프로젝트에<br>견적을 제안해보세요</h3><a class="btn-filled" href="#" id="applyQ">견적서 작성</a>'
+          : '<h3>견적 접수가 마감된<br>프로젝트입니다</h3><span class="btn-filled off" aria-disabled="true">견적 마감</span>')
       : x.open
       ? '<h3>이 프로젝트에<br>견적을 제안해보세요</h3><a class="btn-filled" href="mypage-quote.html?id=' + x.id + '#quote">견적서 작성</a>'
       : '<h3>모집이 마감된<br>프로젝트입니다</h3><span class="btn-filled off" aria-disabled="true">모집 마감</span>';
   }
+  var ap = document.getElementById('applyQ');
+  if (ap) ap.addEventListener('click', function (e) { e.preventDefault(); OP.flow.apply(x.rid, OP.session().email); location.href = 'mypage-quote.html?rid=' + encodeURIComponent(x.rid) + '#quote'; });
   if (x.priv) {
     var st = $('[data-f="status"]');
     st.insertAdjacentHTML('afterend', '<span class="badge priv"><img src="assets/main/ic-lock-key.svg" alt="">비공개</span>');
