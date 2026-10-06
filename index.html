@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>OmicsPharm</title>
 <!-- Figma: [OmicsPharm] Renewal / 03_디자인(작업중) / 1440_시안1 (180:5300) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006o">
-<script src="assets/common/site.js?v=20261006o"></script>
-<script src="assets/common/mypage.js?v=20261006o"></script>
-<script src="assets/common/flow.js?v=20261006o"></script>
-<script src="assets/common/projects-data.js?v=20261006o"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006p">
+<script src="assets/common/site.js?v=20261006p"></script>
+<script src="assets/common/mypage.js?v=20261006p"></script>
+<script src="assets/common/flow.js?v=20261006p"></script>
+<script src="assets/common/projects-data.js?v=20261006p"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --teal-900:#004f4a;
@@ -97,7 +97,8 @@
     box-shadow:0 0 0 .5px #e4e5e9, 0 0 0 1px rgba(228,229,233,.6), 0 0 0 3.5px #f9f9fb, 0 0 0 4px #f3f4f7; }
   .feat-in { position:absolute; top:36px; left:calc(50% + .5px); transform:translateX(-50%); display:flex; flex-direction:column; gap:64px; }
   .feat-tabs { display:flex; gap:24px; }
-  .feat-tab { width:250.75px; display:flex; flex-direction:column; gap:12px; text-align:left; border-radius:12px; color:var(--gray-400); }
+  .feat-tab.wide { width:280px; } /* 제목이 긴 'AI 챗봇 기반 Customer Support' 한 줄 유지 (나머지 241 × 3 + 280 + 간격 72 = 1075) */
+  .feat-tab { width:241px; display:flex; flex-direction:column; gap:12px; text-align:left; border-radius:12px; color:var(--gray-400); }
   .feat-tab .t { display:flex; align-items:center; gap:8px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
   .feat-tab .t .ic { width:24px; height:24px; }
   .feat-tab .d { font-size:16px; font-weight:500; line-height:22px; }
@@ -345,7 +346,7 @@
   </div>
 </section>
 
-<!-- Feature 4개: 내용 미정, 레이아웃만 구성 -->
+<!-- Feature 4개: AI 보고서 작성·수정 / AI 결과 해석 / AI 파트너 매칭 / AI 챗봇 CS (이미지는 임시). 첫 번째 항목이 기본 -->
 <section class="sec features">
   <div class="sec-head">
     <div class="eyebrow"><img class="ic" src="assets/main/ic-rocket-launch.svg" alt="">Features</div>
@@ -355,12 +356,12 @@
   <div class="feat-box">
     <div class="feat-in">
       <div class="feat-tabs" role="tablist">
-        <button class="feat-tab" role="tab" data-img="assets/main/features/feature-request.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-list-magnifying-glass.svg)"></span>프로젝트 의뢰</span><span class="d">다양한 오믹스 분석 의뢰를 등록하고<br>프로젝트 목적, 일정, 조건에 맞는 상담을<br>시작할 수 있습니다.</span></button>
-        <button class="feat-tab" role="tab" data-img="assets/main/features/feature-manage.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-folders.svg)"></span>프로젝트 관리</span><span class="d">견적부터 일정, 시료, 산출물까지<br>분석 프로젝트의 전 과정을 한 곳에서<br>관리합니다.</span></button>
-        <button class="feat-tab on" role="tab" data-img="assets/main/features/feature-matching.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-sparkle.svg)"></span>AI 파트너 매칭</span><span class="d">프로젝트의 분석 분야와 요구사항을<br>바탕으로 적합한 분석 파트너를<br>AI로 빠르게 추천합니다.</span></button>
-        <button class="feat-tab" role="tab" data-img="assets/main/features/feature-report.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-file.svg)"></span>AI 보고서 작성</span><span class="d">분석 결과를 기반으로 핵심 내용을<br>정리해 명확하고 구조화된 보고서 작성을<br>지원합니다.</span></button>
+        <button class="feat-tab on" role="tab" data-img="assets/main/features/feature-report.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-file.svg)"></span>AI 기반 보고서 작성 및 수정</span><span class="d">분석 결과를 바탕으로 AI가<br>보고서 초안을 작성하고 필요한<br>부분은 바로 수정할 수 있습니다.</span></button>
+        <button class="feat-tab" role="tab" data-img="assets/main/features/feature-interpret.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-list-magnifying-glass.svg)"></span>AI 기반 결과 해석</span><span class="d">기존 분석 결과를 검색·비교해<br>결과가 의미하는 바를<br>쉽게 해석할 수 있도록 돕습니다.</span></button>
+        <button class="feat-tab" role="tab" data-img="assets/main/features/feature-matching.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-sparkle.svg)"></span>AI 파트너 매칭</span><span class="d">프로젝트의 분석 분야와 요구사항을<br>바탕으로 적합한 분석 파트너를<br>AI로 빠르게 추천합니다.</span></button>
+        <button class="feat-tab wide" role="tab" data-img="assets/main/features/feature-support.svg"><span class="t"><span class="ic" style="--src:url(assets/main/ic-chats.svg)"></span>AI 챗봇 기반 Customer Support</span><span class="d">프로젝트 의뢰부터 진행 상황까지<br>궁금한 점을 AI 챗봇이 언제든<br>빠르게 안내합니다.</span></button>
       </div>
-      <div class="feat-view"><div class="screen"><img id="featImg" src="assets/main/features/feature-matching.svg" alt="AI 파트너 매칭 화면 예시"></div></div>
+      <div class="feat-view"><div class="screen"><img id="featImg" src="assets/main/features/feature-report.svg" alt="AI 기반 보고서 작성 및 수정 화면 예시"></div></div>
     </div>
   </div>
 </section>
