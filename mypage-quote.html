@@ -9,12 +9,12 @@
      ?rid=의뢰번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006c">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006c">
-<script src="assets/common/site.js?v=20261006c"></script>
-<script src="assets/common/mypage.js?v=20261006c"></script>
-<script src="assets/common/flow.js?v=20261006c"></script>
-<script src="assets/common/projects-data.js?v=20261006c"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006d">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006d">
+<script src="assets/common/site.js?v=20261006d"></script>
+<script src="assets/common/mypage.js?v=20261006d"></script>
+<script src="assets/common/flow.js?v=20261006d"></script>
+<script src="assets/common/projects-data.js?v=20261006d"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -23,15 +23,8 @@
   .qhead-card { gap:16px; }
   #card .sec[hidden] { display:none; }
   .next { display:flex; justify-content:flex-end; padding-top:8px; }
-  /* 수량: 직접 입력 + ▲▼ */
-  .stepper { position:relative; }
-  .stepper .inp { padding-right:30px; }
-  .stepper .spin { position:absolute; top:3px; right:3px; bottom:3px; display:flex; flex-direction:column; width:22px; border-left:1px solid var(--gray-200); }
-  .stepper .spin button { flex:1; display:flex; align-items:center; justify-content:center; padding:0; border-radius:0 6px 0 0; }
-  .stepper .spin button + button { border-top:1px solid var(--gray-200); border-radius:0 0 6px 0; }
-  .stepper .spin button:hover { background:var(--gray-100); }
-  .stepper .spin button:disabled { opacity:.4; cursor:default; background:none; }
-  .stepper .spin img { width:12px; height:12px; }
+  /* 수량: 분석 의뢰 등록의 '총 시료 수'와 같은 숫자 입력 (직접 입력 + 브라우저 기본 ▲▼) */
+  .items .qty { padding:0 4px 0 12px; text-align:left; }
 
   /* 의뢰 요약 */
   .phead { display:flex; flex-direction:column; gap:12px; }
@@ -291,7 +284,7 @@
         h += '<tr data-g="' + gi + '" data-l="' + li + '">' +
           (li === 0 ? '<td class="name" rowspan="' + (g.lines.length + 1) + '"><div class="namebox"><input class="inp" data-k="name" value="' + esc(g.name) + '" placeholder="예) LC-MS/MS 정량 분석"><button type="button" class="linkbtn" data-add-line>+ 세부내용 추가</button>' + (G.length > 1 ? '<button type="button" class="linkbtn" data-del-group style="color:var(--gray-500)">시험 삭제</button>' : '') + '</div></td>' : '') +
           '<td><input class="inp" data-k="d" value="' + esc(l.d) + '" placeholder="세부내용"></td>' +
-          '<td><div class="stepper"><input class="inp num" data-k="q" inputmode="numeric" value="' + esc(l.q) + '" aria-label="수량"><span class="spin"><button type="button" data-step="1" aria-label="수량 늘리기"><img src="assets/find/ic-caret-up.svg" alt=""></button><button type="button" data-step="-1" aria-label="수량 줄이기"><img src="assets/find/ic-caret-down.svg" alt=""></button></span></div></td>' +
+          '<td><input type="number" class="inp qty" data-k="q" min="1" step="1" value="' + esc(l.q) + '" aria-label="수량"></td>' +
           '<td><input class="inp" data-k="u" value="' + esc(l.u) + '"></td>' +
           '<td><input class="inp num" data-k="p" inputmode="numeric" value="' + esc(l.p) + '" placeholder="0"></td>' +
           '<td class="amt" data-amt>' + money(num(l.q) * num(l.p), cur) + '</td>' +
@@ -321,11 +314,6 @@
   });
   $('#rows').addEventListener('click', function (e) {
     var tr = e.target.closest('tr'); if (!tr) return; var gi = +tr.dataset.g;
-    var stp = e.target.closest('[data-step]');
-    if (stp) { // 수량 ▲▼: 1 아래로는 내려가지 않음
-      var ln = G[gi].lines[tr.dataset.l], nv = Math.max(1, (parseInt(ln.q, 10) || 0) + (+stp.dataset.step));
-      ln.q = String(nv); tr.querySelector('[data-k="q"]').value = nv; calc(); return;
-    }
     if (e.target.closest('[data-add-line]')) { G[gi].lines.push({ d: '', q: 1, u: 'EA', p: '' }); drawRows(); }
     else if (e.target.closest('[data-del-line]')) { G[gi].lines.splice(+tr.dataset.l, 1); drawRows(); }
     else if (e.target.closest('[data-del-group]')) { G.splice(gi, 1); drawRows(); }
