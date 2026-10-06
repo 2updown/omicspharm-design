@@ -18,13 +18,14 @@
 
   // 분석파트너 목록 (svc: 의뢰 서비스명에 들어 있으면 '추천')
   var PARTNERS = [
-    { key: ME_PARTNER, org: '○○분석센터', svc: ['단백체', '대사체', '바이오의약품'], verified: true, done: 38, lead: '평균 6주', login: true },
-    { key: 'p-bio', org: '△△바이오랩', svc: ['단백체', 'Olink', '대사체'], verified: true, done: 52, lead: '평균 5주', rate: .92, weeks: 5 },
-    { key: 'p-omx', org: '□□오믹스', svc: ['전사체', '유전체', '단백체'], verified: true, done: 27, lead: '평균 7주', rate: 1.08, weeks: 7 },
-    { key: 'p-gen', org: '◇◇유전체센터', svc: ['유전체', '전사체'], verified: true, done: 64, lead: '평균 6주', rate: 1, weeks: 6 },
-    { key: 'p-met', org: '☆☆대사체연구소', svc: ['대사체', 'Olink'], verified: true, done: 19, lead: '평균 6주', rate: .97, weeks: 6 },
-    { key: 'p-adc', org: '◎◎바이오로직스', svc: ['바이오의약품', '단백체'], verified: true, done: 11, lead: '평균 8주', rate: 1.15, weeks: 8 },
-    { key: 'p-new', org: '▽▽랩', svc: ['단백체', '전사체'], verified: false, done: 0, lead: '-' }
+    // name·tel·mail: 견적제안메일 발송 목록용 (데모 값)
+    { key: ME_PARTNER, org: '○○분석센터', name: '김파트너', tel: '010-2345-6789', mail: ME_PARTNER, svc: ['단백체', '대사체', '바이오의약품'], verified: true, done: 38, lead: '평균 6주', login: true },
+    { key: 'p-bio', org: '△△바이오랩', name: '이담당', tel: '02-000-1001', mail: 'contact@biolab.test', svc: ['단백체', 'Olink', '대사체'], verified: true, done: 52, lead: '평균 5주', rate: .92, weeks: 5 },
+    { key: 'p-omx', org: '□□오믹스', name: '박담당', tel: '031-000-1002', mail: 'sales@omics.test', svc: ['전사체', '유전체', '단백체'], verified: true, done: 27, lead: '평균 7주', rate: 1.08, weeks: 7 },
+    { key: 'p-gen', org: '◇◇유전체센터', name: '최담당', tel: '042-000-1003', mail: 'info@genome.test', svc: ['유전체', '전사체'], verified: true, done: 64, lead: '평균 6주', rate: 1, weeks: 6 },
+    { key: 'p-met', org: '☆☆대사체연구소', name: '정담당', tel: '02-000-1004', mail: 'lab@metabo.test', svc: ['대사체', 'Olink'], verified: true, done: 19, lead: '평균 6주', rate: .97, weeks: 6 },
+    { key: 'p-adc', org: '◎◎바이오로직스', name: '한담당', tel: '032-000-1005', mail: 'bd@biologics.test', svc: ['바이오의약품', '단백체'], verified: true, done: 11, lead: '평균 8주', rate: 1.15, weeks: 8 },
+    { key: 'p-new', org: '▽▽랩', name: '오담당', tel: '010-0000-1006', mail: 'hello@newlab.test', svc: ['단백체', '전사체'], verified: false, done: 0, lead: '-' }
   ];
   var partner = function (k) { return PARTNERS.filter(function (p) { return p.key === k; })[0] || { key: k, org: k, svc: [] }; };
   var fits = function (p, svc) { return p.svc.some(function (s) { return String(svc || '').indexOf(s) > -1; }); };
@@ -103,6 +104,11 @@
     requests: requests, req: req, state: state, total: total, money: money, man: man, num: num, esc: esc, ymd: ymd, iso: iso,
     // 단계 이름
     ADMIN_ST: { review: '검토 대기', quoting: '견적 수집 중', sent: '클라이언트 검토', matched: '매칭 완료' },
+    // 컨설턴트 프로젝트 관리 단계 (요구사항정의서 '프로젝트상태' 시트 이름, 이름은 추후 맞출 예정)
+    ADMIN_STAGES: ['의뢰접수', '의뢰확인', '견적 협의', '계약 진행 중', '분석 진행 중', '보고서 등록', '보고서 검토', '보고서 승인', '프로젝트 완료'],
+    P2A: { '계약': '계약 진행 중', '분석': '분석 진행 중', '보고서 등록': '보고서 등록', '보고서 검토': '보고서 검토', '보고서 승인': '보고서 승인', '완료': '프로젝트 완료' },
+    adminStage: function (id) { var s = state(id); return s.ct ? '분석 진행 중' : s.st === 'matched' ? '계약 진행 중' : s.st === 'review' ? (s.ok ? '의뢰확인' : '의뢰접수') : '견적 협의'; },
+    quoteCount: function (id) { var s = state(id); return Object.keys(s.P).filter(function (k) { return s.P[k].status === 'sub'; }).length; },
     CLIENT_ST: { review: '의뢰접수', quoting: '의뢰접수', sent: '견적 비교', matched: '계약' }, // 계약서 등록 후에는 '분석 진행'
     CLIENT_STEPS: ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'],
     // 파트너 쪽에서 본 견적 상태
@@ -125,13 +131,14 @@
     // 의뢰 승인: 컨설턴트가 의뢰서를 확인하고 승인 → 프로젝트로 등록(게시)
     approve: function (id) { return put(id, function (s) { s.ok = Date.now(); }); },
     // 견적 요청 보내기 (추가 요청도 같은 함수)
-    send: function (id, keys, due, memo) {
+    // 견적제안메일 발송 (컨설턴트 추천): msg는 프로젝트 링크와 함께 메일로 전달
+    send: function (id, keys, due, msg) {
       var r = req(id);
       return put(id, function (s) {
-        if (s.st === 'review') { s.st = 'quoting'; s.reqAt = Date.now(); s.due = due; s.memo = memo; }
+        if (s.st === 'review') { s.st = 'quoting'; s.reqAt = Date.now(); s.due = s.due || due || r.to || iso(Date.now() + DAY * 14); }
         keys.forEach(function (k) {
           if (s.P[k]) return;
-          var p = partner(k), x = { at: Date.now(), status: 'req' };
+          var p = partner(k), x = { at: Date.now(), status: 'req', msg: msg || '' };
           if (!p.login) { // 가상 파트너는 바로 응답
             if (fits(p, r.svc)) { x.status = 'sub'; x.quote = genQuote(p, r); x.subAt = Date.now(); }
             else { x.status = 'dec'; x.dec = { at: Date.now(), why: '요청하신 분석 분야는 현재 수행이 어렵습니다.' }; }

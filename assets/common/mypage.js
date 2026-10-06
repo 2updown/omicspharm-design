@@ -1,5 +1,5 @@
 /* 마이페이지 공통 — 로그인 확인, 왼쪽 프로필·메뉴, 데모 데이터(이 브라우저 localStorage 기준)
-   메뉴: 대시보드 / 프로젝트 관리 / 문의내역 / 알림 / 내 정보 관리 (분석파트너 +견적관리, 컨설턴트 +의뢰 관리·클라이언트·분석파트너 관리·관리자 페이지)
+   메뉴: 대시보드 / 프로젝트 관리 / 문의내역 / 알림 / 내 정보 관리 (분석파트너 +견적관리, 컨설턴트 = 프로젝트 관리가 mypage-request.html +클라이언트·분석파트너 관리·관리자 페이지)
    (기존 '분석결과 관리'는 프로젝트 상세의 '결과보고서' 탭으로 통합)
    사용: <aside class="side" data-op-side></aside> + var me = OP.mypage('dash'); */
 (function () {
@@ -7,9 +7,8 @@
   // admin = 컨설턴트(셀키): 당분간 분석파트너와 같은 화면 + 관리 메뉴 추가 (메뉴는 바뀌거나 통폐합될 수 있음)
   var MENU = [
     ['dash', '대시보드', 'mypage.html'],
-    ['request', '의뢰 관리', 'mypage-request.html', ['admin']], // 컨설턴트: 의뢰 검토 → 견적 요청 → 견적 비교·전달 → 매칭
     ['quote', '견적관리', 'mypage-quote.html', ['partner']], // 분석파트너: 받은 견적 요청 → 견적서 작성·제출
-    ['project', '프로젝트 관리', 'mypage-project.html'],
+    ['project', '프로젝트 관리', 'mypage-project.html'], // 컨설턴트는 mypage-request.html (의뢰접수~완료 전 단계)
     ['inquiry', '문의내역', 'mypage-inquiry.html'],
     ['alarm', '알림', 'mypage-alarm.html'],
     ['account', '내 정보 관리', 'mypage-account.html'],
@@ -137,7 +136,8 @@
           '<b>' + esc(name) + ' 님</b><span>(' + esc(s.email) + ')</span>' + (org ? '<span>' + esc(org) + '</span>' : '') + '</div>' +
         '<nav class="menu" aria-label="마이페이지 메뉴">' + MENU.filter(function (m) { return !m[3] || m[3].indexOf(s.role) > -1; }).map(function (m) {
           var on = m[0] === key, label = m[1];
-          return '<a href="' + m[2] + '"' + (m[2] === '#' ? ' data-soon="' + label + '"' : '') + (on ? ' class="on" aria-current="page"' : '') + '>' + label +
+          var href = m[0] === 'project' && s.role === 'admin' ? 'mypage-request.html' : m[2];
+          return '<a href="' + href + '"' + (m[2] === '#' ? ' data-soon="' + label + '"' : '') + (on ? ' class="on" aria-current="page"' : '') + '>' + label +
             (m[0] === 'alarm' && n ? '<span class="cnt">' + n + '</span>' : '') + '</a>';
         }).join('') + '</nav>';
     }

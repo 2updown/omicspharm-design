@@ -7,11 +7,11 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006e">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006e">
-<script src="assets/common/site.js?v=20261006e"></script>
-<script src="assets/common/mypage.js?v=20261006e"></script>
-<script src="assets/common/flow.js?v=20261006e"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006g">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006g">
+<script src="assets/common/site.js?v=20261006g"></script>
+<script src="assets/common/mypage.js?v=20261006g"></script>
+<script src="assets/common/flow.js?v=20261006g"></script>
 <style>
   .hello { flex-direction:row; align-items:center; justify-content:space-between; }
   .hello h2 { font-size:22px; font-weight:700; line-height:32px; letter-spacing:-.22px; }
@@ -26,6 +26,8 @@
   .flow b { font-size:28px; font-weight:700; line-height:36px; color:var(--gray-300); }
   .flow b.has { color:var(--teal-600); }
   .flow b.has.hot { color:var(--orange-600); }
+  .flow.wide { grid-template-columns:repeat(auto-fit, minmax(96px, 1fr)); }
+  .flow.wide > * + * { border-left:0; } .flow.wide > * { border-right:1px solid var(--gray-200); border-bottom:1px solid var(--gray-200); margin:0 -1px -1px 0; }
   .flow span { font-size:14px; font-weight:500; line-height:20px; color:var(--gray-600); }
   .flow div span { color:var(--gray-400); }
 
@@ -126,15 +128,16 @@
   var F = OP.flow, admin = me.s.role === 'admin';
   $('#acts').innerHTML = client
     ? '<a class="btn" href="contact.html">문의하기</a><a class="btn primary" href="omicspharm-register.html">프로젝트 의뢰하기</a>'
-    : admin ? '<a class="btn" href="projects.html">프로젝트 찾기</a><a class="btn primary" href="mypage-request.html">의뢰 관리</a>'
+    : admin ? '<a class="btn" href="projects.html">프로젝트 찾기</a><a class="btn primary" href="mypage-request.html">프로젝트 관리</a>'
     : '<a class="btn" href="projects.html">프로젝트 찾기</a><a class="btn primary" href="mypage-quote.html">견적관리</a>';
 
   // 견적 중개 현황: 컨설턴트 = 의뢰 처리 단계, 분석파트너 = 받은 견적 요청 상태
   var pipe = null;
   if (admin) {
-    var R = F.requests();
-    pipe = ['의뢰 처리 현황', 'mypage-request.html', [['review', '검토 대기'], ['quoting', '견적 수집 중'], ['sent', '클라이언트 검토'], ['matched', '매칭 완료']].map(function (a) {
-      return [a[1], R.filter(function (r) { return F.state(r.id).st === a[0]; }).length, '?st=' + a[0]];
+    // 컨설턴트: 의뢰접수 ~ 프로젝트 완료 전 단계 (프로젝트 관리와 같은 단계)
+    var AS = F.requests().map(function (r) { return F.adminStage(r.id); }).concat(D.partnerProjects().filter(function (p) { return !p.flow; }).map(function (p) { return F.P2A[p.stage]; }));
+    pipe = ['프로젝트 진행 현황', 'mypage-request.html', F.ADMIN_STAGES.map(function (t) {
+      return [t, AS.filter(function (x) { return x === t; }).length, '?stage=' + encodeURIComponent(t)];
     })];
   } else if (!client && OP.canQuote()) {
     var IN = F.inbox(me.s.email).map(function (o) { return F.pst(o.s, me.s.email); });
@@ -142,6 +145,7 @@
       return [a[0], IN.filter(function (t) { return a[1].test(t); }).length, '?t=' + encodeURIComponent(a[0])];
     })];
   }
+  if (admin) { $('#flow').closest('.card').hidden = true; $('#pipe').classList.add('wide'); }
   if (pipe) {
     $('#pipeCard').hidden = false; $('#pipeH').textContent = pipe[0]; $('#pipeMore').href = pipe[1]; $('#pipeMore').textContent = '전체 보기';
     $('#pipe').style.setProperty('--n', pipe[2].length);

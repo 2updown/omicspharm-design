@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006e">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006e">
-<script src="assets/common/site.js?v=20261006e"></script>
-<script src="assets/common/mypage.js?v=20261006e"></script>
-<script src="assets/common/flow.js?v=20261006e"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006g">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006g">
+<script src="assets/common/site.js?v=20261006g"></script>
+<script src="assets/common/mypage.js?v=20261006g"></script>
+<script src="assets/common/flow.js?v=20261006g"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -228,6 +228,12 @@
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
   if (!OP.mypage('project')) return; // 로그인 확인 + 왼쪽 프로필·메뉴
 
+  // 컨설턴트: 프로젝트 관리 목록과 견적 중개 의뢰 상세는 mypage-request.html (계약 이후 예시 프로젝트 상세만 여기서)
+  if (OP.session().role === 'admin') {
+    var aq = new URLSearchParams(location.search), aid = aq.get('id');
+    if (!aid) { location.replace('mypage-request.html' + (aq.get('stage') ? '?stage=' + encodeURIComponent(OP.flow.P2A[aq.get('stage')] || aq.get('stage')) : '')); return; }
+    if (OP.flow.req(aid)) { location.replace('mypage-request.html?id=' + encodeURIComponent(aid)); return; }
+  }
   if (OP.session().role !== 'client') { partnerView(); return; } // 분석파트너·컨설턴트 같은 화면
 
   // 분석파트너: 셀키 매칭 후 계약된 프로젝트만 (계약 → 분석 → 보고서 등록 → 보고서 검토 → 보고서 승인 → 완료)
@@ -260,7 +266,7 @@
         '<div class="phead">' +
           '<div class="prow"><div class="badges"><span class="badge tag">' + esc(x.svc) + '</span>' + stBadge(x) + (x.qa ? '<span class="badge qa">Q&amp;A ' + x.qa + '</span>' : '') + '</div>' +
             '<span class="reg">계약일 ' + dotd(x.contract) + ' · 프로젝트 번호 ' + esc(x.id) + '</span></div>' +
-          '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-project.html" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(x.title) + '</h2>' +
+          '<div class="prow"><h2 class="ptitle"><a class="back" href="' + (OP.session().role === 'admin' ? 'mypage-request.html' : 'mypage-project.html') + '" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(x.title) + '</h2>' +
             '<div class="period"><b>납기일</b><span>' + dotd(x.due) + '</span>' + (x.stage === '완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div></div>' +
         '</div>' +
         '<ol class="stages" aria-label="진행 단계">' + STAGES.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
@@ -271,7 +277,7 @@
           [['클라이언트', x.client]].concat(x.partner && OP.session().role === 'admin' ? [['분석파트너', x.partner]] : []).concat([['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['계약 금액', x.amount + ' (VAT 별도)'], ['계약일', dotd(x.contract)], ['납기일', dotd(x.due)]])
             .map(function (r) { return '<div><dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') +
         '</dl></section></div>' +
-        (x.flow ? '<p class="demo-note">※ 견적 중개로 매칭된 프로젝트입니다. ' + (OP.session().role === 'admin' ? '<a href="mypage-request.html?id=' + encodeURIComponent(x.id) + '" style="text-decoration:underline">의뢰 관리에서 견적 내역 보기</a>' : '<a href="mypage-quote.html?rid=' + encodeURIComponent(x.id) + '" style="text-decoration:underline">제출한 견적서 보기</a>') + '</p>' : '<p class="demo-note">※ 화면 확인용 예시 프로젝트입니다.</p>');
+        (x.flow ? '<p class="demo-note">※ 견적 중개로 매칭된 프로젝트입니다. ' + (OP.session().role === 'admin' ? '<a href="mypage-request.html?id=' + encodeURIComponent(x.id) + '" style="text-decoration:underline">견적 내역 보기</a>' : '<a href="mypage-quote.html?rid=' + encodeURIComponent(x.id) + '" style="text-decoration:underline">제출한 견적서 보기</a>') + '</p>' : '<p class="demo-note">※ 화면 확인용 예시 프로젝트입니다.</p>');
       document.title = x.title + ' · 마이페이지 · OmicsPharm';
       document.addEventListener('click', function (e) { var b = e.target.closest('[data-ct]'); if (b) OP.flow.showContract(OP.flow.req(x.id), FS, b.dataset.ct); });
       return;
