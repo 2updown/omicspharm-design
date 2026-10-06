@@ -77,12 +77,16 @@
     verifyHint: function () { var s = OP.session(), a = (s && OP.account(s.email)) || {}; return a.bizDoc ? '제출하신 사업자등록증을 확인하고 있습니다. 확인이 끝나면 인증해 드립니다.' : '사업자등록증을 올리면 OmicsPharm이 기관·서비스 정보를 확인한 뒤 인증해 드립니다.'; },
     hasBizDoc: function () { var s = OP.session(), a = (s && OP.account(s.email)) || {}; return !!a.bizDoc; },
     UNVERIFIED_MSG: '인증된 분석파트너만 이용할 수 있습니다. OmicsPharm이 기관·서비스 정보를 확인한 뒤 인증해 드립니다.',
-    clientGate: function () { var s = OP.session(); return !s ? 'login' : s.role === 'client' ? 'ok' : 'deny'; },
+    // 가입 메일 인증 여부: 새로 가입한 계정은 mailOk:false로 시작 (데모 계정·기존 계정은 인증된 것으로 봄)
+    mailVerified: function (email) { var s = OP.session(); email = email || (s && s.email); var a = OP.account(email) || {}; return a.mailOk !== false; },
+    MAIL_MSG: '이메일 인증 후 이용할 수 있습니다. 가입하신 메일함에서 인증 메일을 확인해주세요.',
+    clientGate: function () { var s = OP.session(); return !s ? 'login' : s.role !== 'client' ? 'deny' : OP.mailVerified() ? 'ok' : 'mail'; },
     // 클라이언트 전용 페이지 맨 위에서 호출: 조건이 안 되면 로그인 또는 메인으로 돌려보낸다
     requireClient: function () {
       var g = OP.clientGate(), here = location.pathname.split('/').pop() || 'index.html';
       if (g === 'login') { location.replace('login.html?next=' + encodeURIComponent(here)); return false; }
       if (g === 'deny') { OP.flash(OP.CLIENT_ONLY_MSG); location.replace('index.html'); return false; }
+      if (g === 'mail') { OP.flash(OP.MAIL_MSG); location.replace(document.referrer && document.referrer.indexOf(location.host) > -1 && document.referrer.indexOf(here) < 0 ? document.referrer : 'index.html'); return false; } // 메일 인증 전 클라이언트
       return true;
     }
   };
@@ -280,6 +284,10 @@
                 (s.role === 'partner' ? '<p class="sub">인증 표시 (데모)</p><div>' + [[1, '인증'], [0, '미인증']].map(function (v) {
                   var on = OP.partnerVerified() === !!v[0];
                   return '<button type="button" data-op-verify="' + v[0] + '"' + (on ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + v[1] + '</button>';
+                }).join('') + '</div>' : '') +
+                (s.role === 'client' ? '<p class="sub">메일 인증 (데모)</p><div>' + [[1, '완료'], [0, '미완료']].map(function (v) {
+                  var on = OP.mailVerified() === !!v[0];
+                  return '<button type="button" data-op-mail="' + v[0] + '"' + (on ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + v[1] + '</button>';
                 }).join('') + '</div>' : '') + '</div>' +
               '<a href="mypage.html" role="menuitem">마이페이지</a>' +
               '<button type="button" data-op-logout role="menuitem">로그아웃</button>' +
@@ -393,8 +401,15 @@
       var g = OP.clientGate();
       if (g === 'login') { e.preventDefault(); location.href = 'login.html?next=' + encodeURIComponent(co.getAttribute('href')); return; }
       if (g === 'deny') { e.preventDefault(); OP.toast(OP.CLIENT_ONLY_MSG); return; }
+      if (g === 'mail') { e.preventDefault(); OP.toast(OP.MAIL_MSG); return; }
     }
     if (e.target.closest('[data-op-logout]')) { OP.logout(); location.href = 'index.html'; return; }
+    var mf = e.target.closest('[data-op-mail]');
+    if (mf) {
+      var mon = mf.getAttribute('data-op-mail') === '1', ms = OP.session();
+      if (ms && OP.mailVerified() !== mon) { OP.saveAccount(ms.email, { mailOk: mon }); location.reload(); }
+      return;
+    }
     var vf = e.target.closest('[data-op-verify]');
     if (vf) {
       var on = vf.getAttribute('data-op-verify') === '1', ss = OP.session();

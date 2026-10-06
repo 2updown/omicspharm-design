@@ -223,6 +223,11 @@
   /* 하단 버튼 */
   .bar{display:flex;align-items:center;gap:8px;margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
   .bar .save{display:none}
+  /* 사업자등록증 */
+  .docrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .docrow .dname{min-width:0;max-width:100%;padding:0 14px;height:40px;display:inline-flex;align-items:center;border:1px solid var(--n300);border-radius:var(--r-btn);background:#fff;font-size:14px;color:var(--n900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .docrow .dname.none{color:var(--ink4)}
+  .btn.sm{height:40px;font-size:14px;cursor:pointer}
   /* ===== Button (Figma: button_filled / outline / text) ===== */
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:4px;
     height:48px;padding:0 16px;border-radius:var(--r-btn);font-size:16px;font-weight:500;
@@ -537,8 +542,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261007k">
-<script src="assets/common/site.js?v=20261007k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007l">
+<script src="assets/common/site.js?v=20261007l"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -825,6 +830,10 @@
             <div class="opts"><label><input type="checkbox">Raw data</label><label data-svc-not="prot"><input type="checkbox">결과표</label><label data-svc-not="prot"><input type="checkbox">결과 이미지</label><label><input type="checkbox">국문 보고서</label><label><input type="checkbox">영문 보고서</label><label class="etc"><input type="checkbox" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div>
           <div class="field" data-req="choice"><div class="flabel">산출물 용도<span class="req">*</span></div><div class="fbody">
             <div class="opts"><label><input type="radio" name="purp">규제기관 제출용</label><label><input type="radio" name="purp">논문 학술용</label><label><input type="radio" name="purp">내부 연구용</label><label class="etc"><input type="radio" name="purp" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div>
+          <!-- 사업자등록증 (필수): 내 정보 관리에 올려 둔 파일이 있으면 자동으로 채움 -->
+          <div class="field" data-req="doc" id="docField"><div class="flabel">사업자등록증<span class="req">*</span></div><div class="fbody">
+            <div class="docrow"><span class="dname none" id="rDocName">등록된 파일 없음</span><label class="btn sm" for="rDocFile" id="rDocBtn">파일 선택</label><input type="file" id="rDocFile" accept=".pdf,.jpg,.jpeg,.png" hidden></div>
+            <p class="fhelp" id="rDocHelp"></p></div></div>
         </div>
       </div>
 
@@ -1091,6 +1100,7 @@
     var t=f.dataset.req, b=$('.fbody',f);
     if(t==='svc') return !!$('input[name="svc"]:checked');
     if(t==='verify') return VERIFIED;
+    if(t==='doc') return !!DOC;
     if(t==='tags') return TAGS.get().length>0 || $('#tgtIn').value.trim()!=='';
     if(t==='text') return $$('[data-v]',b).every(function(i){return i.value.trim()!==''});
     if(t==='any') return $$('input',b).some(function(i){return i.checked});  // 여러 목록 중 하나 이상 선택
@@ -1251,6 +1261,8 @@
   function submit(){
     var d=collectSubmission(), list=[];
     d.ver=FORM_VER; d.form=collect(); d.form.id=null; // 수정하기에서 입력값을 그대로 다시 불러오기 위해 보관
+    d.bizDoc=DOC;
+    var ss=OP.session(); if(ss&&DOC&&DOC!==DOC_SAVED) OP.saveAccount(ss.email,{bizDoc:DOC}); // 새로 올린 파일은 내 정보 관리에도 저장
     try{ list=JSON.parse(localStorage.getItem('op.submitted')||'[]'); }catch(e){}
     var k=EDIT?list.findIndex(function(x){return x.id===EDIT.id}):-1;
     if(k>-1){ d.id=EDIT.id; d.at=EDIT.at; d.updatedAt=Date.now(); list[k]=d; }
@@ -1270,6 +1282,23 @@
   }});
 
 
+
+  /* ── 사업자등록증 ── 내 정보 관리에 저장된 파일(acc.bizDoc)이 있으면 그대로 쓰고, 없으면 여기서 올려야 제출 가능 (데모: 파일 이름만 저장) */
+  var DOC='', DOC_SAVED='';
+  function showDoc(){
+    var n=$('#rDocName'); n.textContent=DOC||'등록된 파일 없음'; n.classList.toggle('none',!DOC);
+    $('#rDocBtn').textContent=DOC?'다른 파일로 변경':'파일 선택';
+    $('#rDocHelp').textContent=DOC&&DOC===DOC_SAVED?'내 정보 관리에 등록된 사업자등록증이 함께 제출됩니다.':DOC?'제출하면 내 정보 관리에도 저장됩니다.':'의뢰를 제출하려면 사업자등록증이 필요합니다. (PDF, JPG, PNG)';
+  }
+  (function(){
+    var ss=OP.session(), acc=ss?(OP.account(ss.email)||{}):{};
+    DOC=DOC_SAVED=acc.bizDoc||''; showDoc();
+    $('#rDocFile').addEventListener('change',function(){
+      var f=this.files[0]; if(!f) return;
+      if(!/\.(pdf|jpe?g|png)$/i.test(f.name)){ this.value=''; if(OP.toast) OP.toast('PDF, JPG, PNG 파일만 올릴 수 있습니다.'); return; }
+      DOC=f.name; showDoc(); if(typeof updateProg==='function') updateProg(); $('#docField').classList.remove('invalid');
+    });
+  })();
 
   /* ── 휴대폰 인증 ── */
   var VERIFIED=false, PHONE='', tick=null, code='';
@@ -1390,7 +1419,7 @@
     set:async function(v){ if(window.storage&&window.storage.set){try{await window.storage.set(KEY,JSON.stringify(v));return}catch(e){}} MEM[KEY]=v }
   };
   // 저장·복원은 순서(인덱스)로 맞추므로 '기타' 입력칸은 비활성 상태여도 포함 (빼면 체크 상태에 따라 순서가 어긋남)
-  function fields(){ return $$('.card input, .card select, .card textarea').filter(function(el){return !el.closest('#grpBody')&&(!el.disabled||el.classList.contains('etcin'))}) }
+  function fields(){ return $$('.card input, .card select, .card textarea').filter(function(el){return el.type!=='file'&&!el.closest('#grpBody')&&(!el.disabled||el.classList.contains('etcin'))}) } // 파일 입력(사업자등록증)은 값 복원 대상 아님
   function collect(){
     var T=0,D=0; for(var n=1;n<=MAX;n++){var st=stepStat(n); T+=st.total; D+=st.done}
     return { id:curId, title:($('#reqName').value.trim()||(svcName()||'새')+' 의뢰서'), svc:svcName()||'서비스 미선택',
