@@ -42,7 +42,9 @@
     },
     logout: function () { write(SES_KEY, null); },
     // 토스트 (Figma Toast 1120:43107): 안내 아이콘 + 문구 + 닫기
-    toast: function (msg) {
+    // 긴 안내는 toast_description (Figma 1120:43116): OP.toast('설명', { title: '타이틀', type: 'success'|'info' }) — 제목 + 설명 두 줄, 5초 표시
+    toast: function (msg, o) {
+      o = o || {};
       var el = document.querySelector('.op-toast');
       if (!el) {
         el = document.createElement('div'); el.className = 'op-toast'; el.setAttribute('role', 'status');
@@ -50,10 +52,15 @@
         el.querySelector('button').addEventListener('click', function () { clearTimeout(el._t); el.classList.remove('show'); });
         document.body.appendChild(el);
       }
-      el.querySelector('span').textContent = msg;
+      var desc = !!o.title;
+      el.classList.toggle('desc', desc);
+      el.querySelector('img').src = 'assets/common/ic-toast-' + (o.type === 'success' ? 'success' : 'info') + '.svg';
+      var sp = el.querySelector('span');
+      if (desc) { sp.innerHTML = '<b></b><i></i>'; sp.querySelector('b').textContent = o.title; sp.querySelector('i').textContent = msg; }
+      else sp.textContent = msg;
       el.classList.add('show');
       clearTimeout(el._t);
-      el._t = setTimeout(function () { el.classList.remove('show'); }, 3000);
+      el._t = setTimeout(function () { el.classList.remove('show'); }, desc ? 5000 : 3000);
     },
     // 페이지를 옮긴 뒤 띄울 토스트
     flash: function (msg) { try { sessionStorage.setItem('op.flash', msg); } catch (e) {} },

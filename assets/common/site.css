@@ -208,3 +208,8 @@ div.op-phone select:focus, div.op-phone input:focus { outline:0; border-color:va
 div.op-phone :disabled { background-color:var(--op-gray-100); color:var(--op-gray-400); cursor:default; opacity:1; -webkit-text-fill-color:var(--op-gray-400); }
 div.op-phone.bad input, div.op-phone.bad select { border-color:var(--op-red-600); }
 @media (max-width:480px) { .op-phone { gap:4px; } div.op-phone select { padding:0 26px 0 10px; background-position:right 8px center; } div.op-phone input { padding:0 8px; text-align:center; } }
+/* toast_description (Figma 1120:43116): 아이콘 위 정렬 + 제목(Body/Small/M) · 설명(Body/Small/R) 4px 간격 */
+.op-toast.desc { align-items:flex-start; padding:12px 16px; }
+.op-toast.desc span { display:flex; flex-direction:column; gap:4px; }
+.op-toast.desc span b { font-size:14px; font-weight:500; line-height:20px; }
+.op-toast.desc span i { font-style:normal; font-size:14px; font-weight:400; line-height:20px; word-break:break-all; }
