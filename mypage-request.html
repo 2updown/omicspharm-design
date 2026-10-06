@@ -9,11 +9,11 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=의뢰번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006k">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006k">
-<script src="assets/common/site.js?v=20261006k"></script>
-<script src="assets/common/mypage.js?v=20261006k"></script>
-<script src="assets/common/flow.js?v=20261006k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006l">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006l">
+<script src="assets/common/site.js?v=20261006l"></script>
+<script src="assets/common/mypage.js?v=20261006l"></script>
+<script src="assets/common/flow.js?v=20261006l"></script>
 <style>
   /* 목록 */
   .rlist { display:flex; flex-direction:column; gap:12px; }
@@ -274,9 +274,9 @@
     return { all: P.length, sub: P.filter(function (x) { return x.status === 'sub'; }).length, dec: P.filter(function (x) { return x.status === 'dec'; }).length, rev: P.filter(function (x) { return x.status === 'rev'; }).length };
   };
 
-  // ── 프로젝트 관리 목록 (컨설턴트) ── 의뢰접수부터 프로젝트 완료까지 한 목록에서 단계별로
+  // ── 예전 목록 (비교용, ?ui=a) ── 의뢰접수부터 프로젝트 완료까지 칩으로 단계별
   // 견적 중개 의뢰(flow.js) + 계약 이후 예시 프로젝트(mypage.js)
-  if (!id && new URLSearchParams(location.search).get('ui') === 'b') { listB(); return; } // 시안 B: 검색 + 단계 탭 + 필터 바 + 프로젝트 찾기 카드
+  if (!id && new URLSearchParams(location.search).get('ui') !== 'a') { listB(); return; } // 기본: 검색 + 단계 탭 + 필터 바 + 프로젝트 찾기 카드 (예전 칩 목록은 ?ui=a)
   if (!id) {
     var STG = F.ADMIN_STAGES, cur = STG.indexOf(new URLSearchParams(location.search).get('stage')) > -1 ? new URLSearchParams(location.search).get('stage') : '전체';
     var ITEMS = F.requests().map(function (r) { var s = F.state(r.id); return { r: r, s: s, st: F.adminStage(r.id), at: r.at }; })
@@ -322,7 +322,7 @@
     return;
   }
 
-  // ── 시안 B (반영 전 검토용, ?ui=b) ──
+  // ── 프로젝트 관리 목록 (기본) ──
   function listB() {
     var STG = F.ADMIN_STAGES, CATS = ['단백체 분석', '대사체 분석', '유전체 분석', '전사체 분석', 'Olink 분석', '바이오의약품·ADC', '기타 분석'];
     var EN = { Proteomics: '단백체 분석', Glycoproteomics: '단백체 분석', Metabolomics: '대사체 분석', Genomics: '유전체 분석', Transcriptomics: '전사체 분석', Olink: 'Olink 분석' };
@@ -345,7 +345,7 @@
     var qs = new URLSearchParams(location.search).get('stage'); if (STG.indexOf(qs) > -1) f.st = qs;
     card.classList.add('pmb');
     card.innerHTML =
-      '<div class="card-head"><h3>프로젝트 관리</h3><span class="draft">시안 B · 반영 전</span></div>' +
+      '<div class="card-head"><h3>프로젝트 관리</h3></div>' +
       '<form class="b-search" id="bq" role="search"><img src="assets/find/ic-search.svg" alt=""><input type="search" id="bqIn" placeholder="클라이언트/분석파트너명, 의뢰명, 키워드 입력" autocomplete="off"><button type="submit">검색</button></form>' +
       '<div class="b-tabs" id="bTabs" role="tablist"></div>' +
       '<div class="b-bar"><div class="b-dd" data-dd="cat"><button type="button" class="b-btn" id="ddCat">분석 서비스<i></i></button><div class="b-pop" hidden>' + CATS.map(function (c) { return '<label><input type="checkbox" value="' + c + '">' + c + '<span class="n" data-cn="' + c + '"></span></label>'; }).join('') + '</div></div>' +
@@ -357,7 +357,7 @@
       '<div class="b-applied" id="bApplied" hidden></div>' +
       '<div class="b-head"><span class="total" id="bTotal"></span><label class="b-sort"><select id="bSort" aria-label="정렬"><option value="new">최신등록순</option><option value="due">희망완료일순</option></select></label></div>' +
       '<div class="b-list" id="bList"></div>' +
-      '<p class="demo-note">※ 검토용 시안입니다. 기존 화면: <a href="mypage-request.html" style="text-decoration:underline">프로젝트 관리 (현재)</a></p>';
+      '<div class="demo-row"><span>※ 예시 프로젝트 + 이 브라우저에서 제출된 의뢰가 표시됩니다.</span><button type="button" id="reset">예시 데이터 초기화</button></div>';
 
     function base(skip) { // skip: 이 조건은 빼고 거름 (각 필터의 개수 계산용)
       var q = f.q.trim().toLowerCase();
@@ -433,6 +433,9 @@
       else if (t.id === 'dFrom') f.from = t.value; else if (t.id === 'dTo') f.to = t.value;
       else if (t.id === 'bSort') f.sort = t.value;
       draw();
+    });
+    $('#reset').addEventListener('click', function () {
+      OP.my.confirm('예시 데이터를 초기화할까요?', '견적 요청·제출·전달·선택·계약 기록이 처음 상태로 돌아갑니다. 이 브라우저에서 제출한 의뢰 내용은 그대로 남습니다.', '초기화', function () { F.reset(); OP.flash('예시 데이터를 초기화했습니다.'); location.reload(); });
     });
     $('#bq').addEventListener('submit', function (e) { e.preventDefault(); f.q = $('#bqIn').value.trim(); draw(); });
     draw();
