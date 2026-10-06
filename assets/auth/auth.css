@@ -185,11 +185,11 @@ input { font:inherit; color:inherit; }
 .resend { position:absolute; left:50%; bottom:25%; transform:translateX(-50%); width:400px; max-width:calc(100% - 32px); }
 .resend b { display:block; font-size:18px; font-weight:600; line-height:24px; color:var(--ink); }
 .resend a { display:inline-block; margin-top:12px; font-size:16px; font-weight:500; color:var(--teal-600); text-decoration:underline; text-underline-offset:3px; }
-.done { width:460px; max-width:100%; display:flex; flex-direction:column; align-items:center; gap:24px; text-align:center; }
+.done { width:520px; max-width:100%; display:flex; flex-direction:column; align-items:center; gap:24px; text-align:center; }
 .done .ok { width:48px; height:48px; border-radius:50%; background:var(--teal-600); display:flex; align-items:center; justify-content:center; }
 .done .ok i { width:24px; height:24px; background:#fff; -webkit-mask:url(ic-check.svg) center/contain no-repeat; mask:url(ic-check.svg) center/contain no-repeat; }
 .done h1 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; color:var(--ink); }
-.done p { font-size:16px; line-height:22px; color:var(--ink-2); }
+.done p { font-size:16px; line-height:22px; color:var(--ink-2); word-break:keep-all; }
 .done ul { width:520px; max-width:100%; padding:24px 32px; border-radius:8px; background:#eff4f2; text-align:left; display:flex; flex-direction:column; gap:6px; }
 .done li { font-size:16px; line-height:22px; margin-left:16px; }
 
@@ -228,3 +228,7 @@ input { font:inherit; color:inherit; }
 .info-box li::before { content:""; position:absolute; left:3px; top:8px; width:4px; height:4px; border-radius:50%; background:currentColor; }
 .info-box a { color:inherit; text-decoration:underline; text-underline-offset:2px; word-break:break-all; }
 .info-box a:hover { color:var(--link); }
+/* 가입 완료: 가입 이메일 확인 박스 (Figma infobox 1440:21573) */
+.done .mail-box { display:inline-flex; align-items:flex-start; gap:8px; padding:16px 12px; border:1px solid #e5e7eb; border-radius:8px; background:#f3f4f6; font-size:14px; line-height:20px; color:#000; text-align:left; word-break:break-all; }
+.done .mail-box img { flex:none; width:20px; height:20px; }
+.done .mail-box b { font-weight:500; }
