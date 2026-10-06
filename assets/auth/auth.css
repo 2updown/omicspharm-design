@@ -232,3 +232,5 @@ input { font:inherit; color:inherit; }
 .done .mail-box { display:inline-flex; align-items:flex-start; gap:8px; padding:16px 12px; border:1px solid #e5e7eb; border-radius:8px; background:#f3f4f6; font-size:14px; line-height:20px; color:#000; text-align:left; word-break:break-all; }
 .done .mail-box img { flex:none; width:20px; height:20px; }
 .done .mail-box b { font-weight:500; }
+/* 가입 완료 버튼: Figma 264px (좁은 화면에서는 화면 폭에 맞춤) */
+.done .btn-action { width:264px; max-width:100%; }
