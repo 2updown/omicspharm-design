@@ -9,30 +9,17 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=의뢰번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006l">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006l">
-<script src="assets/common/site.js?v=20261006l"></script>
-<script src="assets/common/mypage.js?v=20261006l"></script>
-<script src="assets/common/flow.js?v=20261006l"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006m">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006m">
+<script src="assets/common/site.js?v=20261006m"></script>
+<script src="assets/common/mypage.js?v=20261006m"></script>
+<script src="assets/common/flow.js?v=20261006m"></script>
 <style>
   /* 목록 */
-  .rlist { display:flex; flex-direction:column; gap:12px; }
-  .rcard { display:flex; flex-direction:column; gap:14px; padding:16px; background:#fff; border:1px solid var(--gray-200); border-radius:12px; transition:border-color .15s, box-shadow .15s; }
-  .rcard:hover { border-color:var(--teal-500); box-shadow:0 4px 8px #00000014, 0 0 2px #0000000a; }
-  .rcard .row1 { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-  .rcard .badges { display:flex; gap:6px; flex-wrap:wrap; }
-  .rcard h3 { font-size:18px; font-weight:600; line-height:26px; letter-spacing:-.18px; }
-  .rcard .next { flex:none; font-size:13px; font-weight:600; line-height:18px; color:var(--teal-700); white-space:nowrap; }
-  .rcard .next.urgent { color:var(--orange-600); }
-  .rcard .foot { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-top:12px; border-top:1px solid var(--gray-200); }
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
   .meta > span { display:inline-flex; align-items:center; gap:6px; white-space:nowrap; }
   .meta > span + span::before { content:""; height:14px; border-left:1px solid var(--gray-300); margin-right:2px; }
   .meta em { font-style:normal; color:var(--gray-500); }
-  .rcard .reg { font-size:12px; line-height:18px; color:var(--gray-400); white-space:nowrap; }
-  .prog { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--gray-600); white-space:nowrap; }
-  .prog i { display:block; width:72px; height:6px; border-radius:99px; background:var(--gray-200); overflow:hidden; }
-  .prog i b { display:block; height:100%; background:var(--teal-600); }
   .demo-row { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; line-height:18px; color:var(--gray-400); }
   .demo-row button { font-size:12px; color:var(--gray-500); text-decoration:underline; text-underline-offset:2px; }
 
@@ -239,10 +226,9 @@
     .form2 { grid-template-columns:1fr; }
   }
   @media (max-width:640px) {
-    .prow, .rcard .row1, .rcard .foot, .bar { flex-direction:column; align-items:flex-start; }
+    .prow, .bar { flex-direction:column; align-items:flex-start; }
     .bar .acts { width:100%; } .bar .acts .btn { flex:1; }
     .ptitle { font-size:18px; line-height:26px; }
-    .rcard h3 { font-size:16px; line-height:24px; }
     .qt .r { padding-left:4px; padding-right:4px; }
   }
 </style>
@@ -274,53 +260,8 @@
     return { all: P.length, sub: P.filter(function (x) { return x.status === 'sub'; }).length, dec: P.filter(function (x) { return x.status === 'dec'; }).length, rev: P.filter(function (x) { return x.status === 'rev'; }).length };
   };
 
-  // ── 예전 목록 (비교용, ?ui=a) ── 의뢰접수부터 프로젝트 완료까지 칩으로 단계별
-  // 견적 중개 의뢰(flow.js) + 계약 이후 예시 프로젝트(mypage.js)
-  if (!id && new URLSearchParams(location.search).get('ui') !== 'a') { listB(); return; } // 기본: 검색 + 단계 탭 + 필터 바 + 프로젝트 찾기 카드 (예전 칩 목록은 ?ui=a)
-  if (!id) {
-    var STG = F.ADMIN_STAGES, cur = STG.indexOf(new URLSearchParams(location.search).get('stage')) > -1 ? new URLSearchParams(location.search).get('stage') : '전체';
-    var ITEMS = F.requests().map(function (r) { var s = F.state(r.id); return { r: r, s: s, st: F.adminStage(r.id), at: r.at }; })
-      .concat(OP.my.partnerProjects().filter(function (p) { return !p.flow; }).map(function (p) { return { p: p, st: F.P2A[p.stage], at: p.at }; }));
-    var next = function (o) {
-      if (o.p) return [o.p.qa ? 'Q&A ' + o.p.qa + '건' : '', 0];
-      var s = o.s, c = cnt(s);
-      if (s.st === 'review') return [s.ok ? '견적제안메일 발송 가능' : '의뢰 승인 필요', !s.ok];
-      if (s.st === 'quoting') return c.sub ? ['견적 ' + c.sub + '건 도착 · 전달 가능', 0] : ['견적 대기 중', 0];
-      if (s.st === 'sent') return ['클라이언트 선택 대기', 0];
-      return s.ct ? [F.partner(s.pick).org, 0] : ['계약서 등록 필요', 1];
-    };
-    var stB = function (t) { return '<span class="badge ' + (t === '의뢰접수' ? 'wait' : t === '프로젝트 완료' ? 'done' : /계약|분석|보고서/.test(t) ? 'ok' : 'state') + '">' + t + '</span>'; };
-    card.innerHTML = '<div class="card-head"><h3>프로젝트 관리</h3></div><div class="chips" id="chips" role="tablist"></div><div class="rlist" id="rl"></div>' +
-      '<div class="demo-row"><span>※ 예시 프로젝트 + 이 브라우저에서 제출된 의뢰가 표시됩니다.</span><button type="button" id="reset">예시 데이터 초기화</button></div>';
-    var draw = function () {
-      $('#chips').innerHTML = ['전체'].concat(STG).map(function (t) {
-        var n = t === '전체' ? ITEMS.length : ITEMS.filter(function (o) { return o.st === t; }).length;
-        return '<button type="button" role="tab" data-t="' + t + '"' + (cur === t ? ' class="on" aria-selected="true"' : '') + '>' + t + '<span>' + n + '</span></button>';
-      }).join('');
-      var L = ITEMS.filter(function (o) { return cur === '전체' || o.st === cur; }).sort(function (a, b) { return b.at - a.at; });
-      $('#rl').innerHTML = L.map(function (o) {
-        var n = next(o);
-        if (o.p) { var p = o.p;
-          return '<a class="rcard" href="mypage-project.html?id=' + encodeURIComponent(p.id) + '">' +
-            '<div class="row1"><div class="badges"><span class="badge tag">' + esc(p.svc) + '</span>' + stB(o.st) + '</div><span class="next">' + n[0] + '</span></div>' +
-            '<h3>' + esc(p.title) + '</h3>' +
-            '<div class="foot"><div class="meta"><span>' + esc(p.client) + '</span><span><em>분석파트너</em>○○분석센터</span><span><em>계약금액</em>' + esc(p.amount) + '</span></div><span class="reg">계약 ' + dot(p.contract) + ' · ' + esc(p.id) + '</span></div></a>';
-        }
-        var r = o.r, s = o.s, c = cnt(s);
-        return '<a class="rcard" href="mypage-request.html?id=' + encodeURIComponent(r.id) + '">' +
-          '<div class="row1"><div class="badges"><span class="badge tag">' + esc(r.svc) + '</span>' + stB(o.st) + (r.open === '비공개' ? '<span class="badge lock">비공개</span>' : '') + '</div><span class="next' + (n[1] ? ' urgent' : '') + '">' + n[0] + '</span></div>' +
-          '<h3>' + esc(r.title) + '</h3>' +
-          '<div class="foot"><div class="meta"><span>' + esc((r.org || '-') + (r.manager ? '(' + r.manager + ')' : '')) + '</span><span><em>샘플</em>' + (r.samples ? esc(r.samples) + '개' : '-') + '</span><span><em>희망완료일</em>' + dot(r.due) + '</span></div>' +
-            (c.all ? '<span class="prog">견적 ' + c.sub + ' / ' + c.all + '<i><b style="width:' + Math.round((c.sub + c.dec) / c.all * 100) + '%"></b></i></span>' : '<span class="reg">접수 ' + F.ymd(r.at) + ' · ' + esc(r.id) + '</span>') + '</div></a>';
-      }).join('') || '<div class="empty"><b>' + cur + ' 단계의 프로젝트가 없습니다</b></div>';
-    };
-    $('#chips').addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (b) { cur = b.dataset.t; draw(); history.replaceState(null, '', cur === '전체' ? 'mypage-request.html' : '?stage=' + encodeURIComponent(cur)); } });
-    $('#reset').addEventListener('click', function () {
-      OP.my.confirm('예시 데이터를 초기화할까요?', '견적 요청·제출·전달·선택·계약 기록이 처음 상태로 돌아갑니다. 이 브라우저에서 제출한 의뢰 내용은 그대로 남습니다.', '초기화', function () { F.reset(); OP.flash('예시 데이터를 초기화했습니다.'); location.reload(); });
-    });
-    draw();
-    return;
-  }
+  // 프로젝트 관리 목록: 견적 중개 의뢰(flow.js) + 계약 이후 예시 프로젝트(mypage.js)
+  if (!id) { listB(); return; }
 
   // ── 프로젝트 관리 목록 (기본) ──
   function listB() {
