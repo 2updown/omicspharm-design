@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261007n">
-<script src="assets/common/site.js?v=20261007n"></script>
-<script src="assets/common/mypage.js?v=20261007n"></script>
-<script src="assets/common/flow.js?v=20261007n"></script>
-<script src="assets/common/projects-data.js?v=20261007n"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007p">
+<script src="assets/common/site.js?v=20261007p"></script>
+<script src="assets/common/mypage.js?v=20261007p"></script>
+<script src="assets/common/flow.js?v=20261007p"></script>
+<script src="assets/common/projects-data.js?v=20261007p"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -47,7 +47,12 @@
   .summary div { display:flex; align-items:center; gap:8px; font-size:14px; line-height:20px; }
   .summary img { width:20px; height:20px; filter:brightness(0); } /* 아이콘 색 검정으로 통일 */
   .summary em { font-style:normal; color:var(--gray-500); }
-  .price-hidden { color:var(--gray-400); cursor:help; } /* 가격 공개 범위 밖 */
+  .price-hidden { position:relative; color:var(--gray-400); cursor:help; } /* 가격 공개 범위 밖 */
+  /* 툴팁 (Figma tooltip 1424:14012): 위에 띄우고 꼬리는 아래 */
+  .price-hidden .tip { display:none; position:absolute; left:50%; bottom:calc(100% + 6px); transform:translateX(-50%); z-index:5; width:max-content; min-width:102px; max-width:242px; padding:4px 8px; border-radius:4px; background:#1b1b1b; color:#fff; font-size:14px; font-weight:500; line-height:20px; white-space:normal; text-align:center; word-break:keep-all; }
+  .price-hidden .tip::after { content:""; position:absolute; left:50%; top:100%; transform:translateX(-50%); border:3px solid transparent; border-bottom:0; border-top-color:#1b1b1b; }
+  .price-hidden:hover .tip, .price-hidden:focus-visible .tip { display:block; }
+  .price-hidden:focus:not(:focus-visible) { outline:none; }
   .summary .dday { color:var(--orange-600); }
 
   /* 탭 */
@@ -364,7 +369,11 @@
   // 가격 공개 범위 밖이면 희망가격·예상금액을 가림 (OP_PROJECTS.canSeePrice)
   if (!OP_PROJECTS.canSeePrice(x)) F.price = F.priceSp = '비공개';
   document.querySelectorAll('[data-f]').forEach(function (el) { el.textContent = F[el.dataset.f]; });
-  if (F.price === '비공개') document.querySelectorAll('[data-f="price"], [data-f="priceSp"]').forEach(function (el) { el.classList.add('price-hidden'); el.title = (OP.session() || {}).role === 'partner' ? '인증된 분석파트너만 비공개 프로젝트의 가격을 볼 수 있습니다.' : '프로젝트 가격은 의뢰한 클라이언트와 분석파트너에게만 공개됩니다.'; });
+  // 가격을 못 보는 경우는 클라이언트(본인 의뢰 제외)·비로그인뿐 (미인증 분석파트너는 비공개 프로젝트에 들어올 수 없음) → 툴팁(Figma 1424:14012)으로 이유 표시
+  if (F.price === '비공개') document.querySelectorAll('[data-f="price"], [data-f="priceSp"]').forEach(function (el) {
+    el.classList.add('price-hidden', 'tip-wrap'); el.tabIndex = 0;
+    el.insertAdjacentHTML('beforeend', '<span class="tip" role="tooltip">프로젝트 가격은 분석파트너에게만 공개됩니다.</span>');
+  });
   $('[data-f="status"]').className = 'badge ' + (x.open ? 'open' : 'closed');
   document.title = x.title + ' · OmicsPharm';
 
