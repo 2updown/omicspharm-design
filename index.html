@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>OmicsPharm</title>
 <!-- Figma: [OmicsPharm] Renewal / 03_디자인(작업중) / 1440_시안1 (180:5300) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006u">
-<script src="assets/common/site.js?v=20261006u"></script>
-<script src="assets/common/mypage.js?v=20261006u"></script>
-<script src="assets/common/flow.js?v=20261006u"></script>
-<script src="assets/common/projects-data.js?v=20261006u"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006v">
+<script src="assets/common/site.js?v=20261006v"></script>
+<script src="assets/common/mypage.js?v=20261006v"></script>
+<script src="assets/common/flow.js?v=20261006v"></script>
+<script src="assets/common/projects-data.js?v=20261006v"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --teal-900:#004f4a;
@@ -221,7 +221,14 @@
     .cta-sec.full .cta { min-height:0; padding:64px 16px; }
     .sec-head h2, .an-head h2, .cta h2 { font-size:28px; line-height:38px; }
     .sec-head .desc br, .cta p br { display:none; }
-    .proj-grid { grid-template-columns:1fr; }
+    /* 최근 프로젝트: 모바일 2열 × 4줄, 카드 글자·여백 축소 ('모집기한' 글자는 숨기고 날짜·상태만) */
+    .proj-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+    .pcard { gap:10px; padding:3px 3px 10px; }
+    .pcard .top { gap:8px; padding:12px 10px; }
+    .pcard h3 { height:44px; font-size:15px; line-height:22px; letter-spacing:-.15px; word-break:keep-all; }
+    .pcard .meta { gap:6px; padding:0 8px; font-size:12px; line-height:18px; }
+    .pcard .meta > span:first-child { display:none; }
+    .pcard .lock { width:18px; height:18px; }
     /* 제목·전체보기 한 줄, 설명은 아래 */
     .an-head { display:grid; grid-template-columns:1fr auto; align-items:center; column-gap:12px; }
     .an-head > div { display:contents; }
