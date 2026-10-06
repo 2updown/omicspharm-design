@@ -9,11 +9,11 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=의뢰번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006q">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006q">
-<script src="assets/common/site.js?v=20261006q"></script>
-<script src="assets/common/mypage.js?v=20261006q"></script>
-<script src="assets/common/flow.js?v=20261006q"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006r">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006r">
+<script src="assets/common/site.js?v=20261006r"></script>
+<script src="assets/common/mypage.js?v=20261006r"></script>
+<script src="assets/common/flow.js?v=20261006r"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -487,7 +487,7 @@
     var m = document.createElement('div');
     m.className = 'op-confirm qmail'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', '견적제안메일 발송');
     m.innerHTML = '<div class="box"><button type="button" class="qm-x" aria-label="닫기">×</button>' +
-      '<h3><img src="assets/main/ic-mail.svg" alt="" onerror="this.remove()">견적제안메일 발송</h3>' +
+      '<h3><img src="assets/main/ic-mail.svg?v=2" alt="" onerror="this.remove()">견적제안메일 발송</h3>' +
       '<div class="qm-f"><div class="row"><select id="qmSvc"><option value="">분석 서비스 전체</option>' + KEY.map(function (k) { return '<option value="' + k + '">' + svcName(k) + '</option>'; }).join('') + '</select>' +
         '<select id="qmOrg"><option value="">소속 전체</option>' + orgs.map(function (o) { return '<option>' + esc(o) + '</option>'; }).join('') + '</select></div>' +
         '<form class="row" id="qmForm"><input type="search" id="qmQ" placeholder="키워드 입력 (성함, 소속, 이메일)"><button type="submit">검색</button></form></div>' +
@@ -565,7 +565,7 @@
     }).join('');
     var c = cnt(s);
     return '<div class="blk" id="quotes">' +
-      '<div class="blk-h"><h3>견적서 확인 <span style="color:var(--teal-600)">' + c.sub + '</span> / ' + c.all + '</h3>' + (edit || s.st === 'review' ? '<button type="button" class="btn primary" id="more"><img src="assets/main/ic-mail.svg" alt="" onerror="this.remove()">견적제안메일</button>' : '') + '</div>' +
+      '<div class="blk-h"><h3>견적서 확인 <span style="color:var(--teal-600)">' + c.sub + '</span> / ' + c.all + '</h3>' + (edit || s.st === 'review' ? '<button type="button" class="btn primary" id="more"><img src="assets/main/ic-mail.svg?v=2" alt="" onerror="this.remove()">견적제안메일</button>' : '') + '</div>' +
       '<div class="reqinfo"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>견적 마감</b> ' + dot(s.due || r.to) + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self; }).length + ' · 견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></div>' +
       (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적</span><span>소요</span><span>일자</span><span></span></div>' + rows + '</div>'
         : '<div class="qempty">아직 견적을 작성 중인 분석파트너가 없습니다.<br>인증 분석파트너는 프로젝트 찾기에서 직접 견적을 작성할 수 있고, [견적제안메일]로 적합한 기관에 요청할 수도 있습니다.</div>') +
