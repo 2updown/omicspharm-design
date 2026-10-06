@@ -141,36 +141,36 @@ button { background:none; border:0; cursor:pointer; }
 .pv-bar button { height:36px; padding:0 14px; border-radius:8px; font-size:14px; font-weight:500; background:#fff; color:#111; }
 .pv-bar button.x { background:#333; color:#fff; }
 .pv-scroll { flex:1; overflow:auto; padding:32px 16px; }
-.doc { width:794px; max-width:100%; min-height:1123px; margin:0 auto; padding:56px 56px 48px; background:#fff; color:#111; font-size:13px; line-height:20px; box-shadow:0 8px 32px rgba(0,0,0,.25); }
+.pv .doc { width:794px; max-width:100%; min-height:1123px; margin:0 auto; padding:56px 56px 48px; background:#fff; color:#111; font-size:13px; line-height:20px; box-shadow:0 8px 32px rgba(0,0,0,.25); }
 .doc-head { display:flex; align-items:center; justify-content:space-between; padding-bottom:14px; border-bottom:3px solid #111; }
 .doc-head img { display:block; height:28px; width:auto; }
 .doc-head h1 { font-size:28px; font-weight:800; line-height:28px; letter-spacing:.2em; }
 .doc-meta { display:flex; justify-content:space-between; gap:16px; margin:16px 0 20px; font-size:12px; color:#444; }
-.doc h2 { margin:22px 0 8px; font-size:14px; font-weight:700; }
-.doc table { width:100%; border-collapse:collapse; table-layout:fixed; }
-.doc th, .doc td { padding:7px 10px; border:1px solid #c9c9c9; vertical-align:middle; word-break:break-word; }
-.doc th { background:#f2f4f3; font-weight:600; text-align:left; }
-.doc .parties { display:flex; flex-direction:column; gap:16px; }
-.doc .parties h3 { margin-bottom:6px; font-size:13px; font-weight:700; }
-.doc .parties th { width:17%; }
-.doc .it th { text-align:center; }
-.doc .it td.r, .doc .tt td.r { text-align:right; white-space:nowrap; }
-.doc .it td.c { text-align:center; }
-.doc .it tr.sub td { background:#fafafa; font-weight:600; }
-.doc .tt { margin-top:-1px; }
-.doc .tt th { width:70%; text-align:right; }
-.doc .tt tr.minus td { color:#d00; }
-.doc .tt tr.final th, .doc .tt tr.final td { background:#eaf6f3; font-size:15px; font-weight:800; }
-.doc .memo { min-height:72px; padding:10px 12px; border:1px solid #c9c9c9; white-space:pre-line; }
-.doc .sign { display:flex; justify-content:flex-end; align-items:center; gap:12px; margin-top:28px; font-size:14px; }
-.doc .sign b { font-size:15px; }
-.doc .demo { color:#999; }
+.pv .doc h2 { margin:22px 0 8px; font-size:14px; font-weight:700; }
+.pv .doc table { width:100%; border-collapse:collapse; table-layout:fixed; }
+.pv .doc th, .pv .doc td { padding:7px 10px; border:1px solid #c9c9c9; vertical-align:middle; word-break:break-word; }
+.pv .doc th { background:#f2f4f3; font-weight:600; text-align:left; }
+.pv .doc .parties { display:flex; flex-direction:column; gap:16px; }
+.pv .doc .parties h3 { margin-bottom:6px; font-size:13px; font-weight:700; }
+.pv .doc .parties th { width:17%; }
+.pv .doc .it th { text-align:center; }
+.pv .doc .it td.r, .pv .doc .tt td.r { text-align:right; white-space:nowrap; }
+.pv .doc .it td.c { text-align:center; }
+.pv .doc .it tr.sub td { background:#fafafa; font-weight:600; }
+.pv .doc .tt { margin-top:-1px; }
+.pv .doc .tt th { width:70%; text-align:right; }
+.pv .doc .tt tr.minus td { color:#d00; }
+.pv .doc .tt tr.final th, .pv .doc .tt tr.final td { background:#eaf6f3; font-size:15px; font-weight:800; }
+.pv .doc .memo { min-height:72px; padding:10px 12px; border:1px solid #c9c9c9; white-space:pre-line; }
+.pv .doc .sign { display:flex; justify-content:flex-end; align-items:center; gap:12px; margin-top:28px; font-size:14px; }
+.pv .doc .sign b { font-size:15px; }
+.pv .doc .demo { color:#999; }
 @media print {
   body > *:not(.pv) { display:none !important; }
   .pv { position:static; background:none; }
   .pv-bar { display:none; }
   .pv-scroll { padding:0; overflow:visible; }
-  .doc { box-shadow:none; width:auto; min-height:0; padding:0; }
+  .pv .doc { box-shadow:none; width:auto; min-height:0; padding:0; }
   @page { size:A4; margin:16mm; }
 }
 @media (max-width:960px) { .fsum { grid-template-columns:repeat(2, auto); justify-content:start; } .fkv dt { width:40%; } }
@@ -179,12 +179,12 @@ button { background:none; border:0; cursor:pointer; }
   .fkv > div { flex-direction:column; } .fkv dt { width:100%; }
   .fsteps { grid-template-columns:repeat(3, minmax(0,1fr)); row-gap:12px; }
   .ftodo { flex-direction:column; align-items:stretch; } .ftodo .acts .btn { flex:1; }
-  .doc { padding:28px 20px; min-height:0; font-size:12px; } .doc-head h1 { font-size:22px; } .pv-scroll { padding:16px 8px; }
+  .pv .doc { padding:28px 20px; min-height:0; font-size:12px; } .doc-head h1 { font-size:22px; } .pv-scroll { padding:16px 8px; }
 }
 /* 계약서 (셀키 분석서비스 의뢰서) */
 .pv-scroll .doc + .doc, .pv-scroll .attach-t + .doc { margin-top:24px; }
 .pv-scroll .attach-t { width:794px; max-width:100%; margin:32px auto 0; color:#fff; font-size:14px; font-weight:600; }
-.cdoc { min-height:0; }
+.pv .doc.cdoc { min-height:0; }
 .cdoc .c-brand { padding-bottom:10px; border-bottom:3px solid #111; font-size:22px; font-weight:800; letter-spacing:.35em; color:#0b6b62; }
 .cdoc .c-lead { margin:14px 0 16px; font-size:12px; line-height:19px; color:#444; }
 .cdoc .c-party th { width:14%; } .cdoc .c-party td { width:36%; }
