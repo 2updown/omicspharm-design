@@ -9,11 +9,11 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=의뢰번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261006i">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261006i">
-<script src="assets/common/site.js?v=20261006i"></script>
-<script src="assets/common/mypage.js?v=20261006i"></script>
-<script src="assets/common/flow.js?v=20261006i"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261006j">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261006j">
+<script src="assets/common/site.js?v=20261006j"></script>
+<script src="assets/common/mypage.js?v=20261006j"></script>
+<script src="assets/common/flow.js?v=20261006j"></script>
 <style>
   /* 목록 */
   .rlist { display:flex; flex-direction:column; gap:12px; }
@@ -137,7 +137,7 @@
   .qm-tbl .ck { width:44px; } .qm-tbl input { width:18px; height:18px; accent-color:var(--teal-600); }
   .qm-tbl td.mail { word-break:break-all; } .qm-tbl td.svc { max-width:220px; }
   .qm-tbl tr.off td { color:var(--gray-400); }
-  .qm-tbl .st { display:inline; padding:0; border:0; border-radius:0; background:none; font-weight:600; white-space:nowrap; } /* 상태는 글자만 (다른 .st 스타일 무시) */ .qm-tbl .st.no { color:#f00011; } .qm-tbl .st.ok { color:var(--teal-600); } .qm-tbl .st.gray { color:var(--gray-400); }
+
   .qm-tbl td.none { padding:40px 0; color:var(--gray-500); }
   .qm-pg { display:flex; justify-content:center; margin:24px 0; }
   .qm-pg span { display:flex; align-items:center; justify-content:center; width:40px; height:40px; border:1px solid var(--teal-600); color:var(--teal-700); font-weight:600; }
@@ -328,13 +328,12 @@
   function mailModal(s) {
     var KEY = ['단백체', '대사체', '유전체', '전사체', 'Olink', '바이오의약품'];
     var svcName = function (x) { return x === '바이오의약품' ? '바이오의약품 특성 분석' : x === 'Olink' ? 'Olink 분석' : x + ' 분석'; };
-    var mine = KEY.filter(function (k) { return r.svc.indexOf(k) > -1; })[0] || '';
     var orgs = F.PARTNERS.map(function (p) { return p.org; });
     var m = document.createElement('div');
     m.className = 'op-confirm qmail'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', '견적제안메일 발송');
     m.innerHTML = '<div class="box"><button type="button" class="qm-x" aria-label="닫기">×</button>' +
       '<h3><img src="assets/main/ic-mail.svg" alt="" onerror="this.remove()">견적제안메일 발송</h3>' +
-      '<div class="qm-f"><div class="row"><select id="qmSvc"><option value="">분석 서비스 전체</option>' + KEY.map(function (k) { return '<option value="' + k + '"' + (k === mine ? ' selected' : '') + '>' + svcName(k) + '</option>'; }).join('') + '</select>' +
+      '<div class="qm-f"><div class="row"><select id="qmSvc"><option value="">분석 서비스 전체</option>' + KEY.map(function (k) { return '<option value="' + k + '">' + svcName(k) + '</option>'; }).join('') + '</select>' +
         '<select id="qmOrg"><option value="">소속 전체</option>' + orgs.map(function (o) { return '<option>' + esc(o) + '</option>'; }).join('') + '</select></div>' +
         '<form class="row" id="qmForm"><input type="search" id="qmQ" placeholder="키워드 입력 (성함, 소속, 이메일)"><button type="submit">검색</button></form></div>' +
       '<p class="qm-cnt" id="qmCnt"></p>' +
@@ -343,7 +342,7 @@
       '<textarea id="qmMsg" placeholder="해당 프로젝트의 링크와 함께 메시지가 전달됩니다. 발송할 메시지를 입력하세요."></textarea>' +
       '<div class="btns"><button type="button" class="no">닫기</button><button type="button" class="yes go" id="qmSend" disabled>견적제안발송</button></div></div>';
     document.body.appendChild(m); document.body.style.overflow = 'hidden';
-    var q = { svc: mine, org: '', kw: '' };
+    var q = { svc: '', org: '', kw: '' }; // 기본: 분석 서비스 전체
     var draw = function () {
       var L = F.PARTNERS.filter(function (p) {
         var kw = q.kw.toLowerCase();
@@ -352,7 +351,8 @@
       m.querySelector('#qmCnt').innerHTML = '공급사 회원 리스트 (총 <b>' + L.length + '</b>건)';
       m.querySelector('#qmBody').innerHTML = L.map(function (p) {
         var sent = s.P[p.key] && !s.P[p.key].self, applied = s.P[p.key] && s.P[p.key].self, off = sent || applied || !p.verified;
-        var st = !p.verified ? '<span class="st gray">미인증</span>' : applied ? '<span class="st ok">직접 신청</span>' : sent ? '<span class="st ok">발송</span>' : '<span class="st no">미발송</span>';
+        // 상태: button_text (글자만 있는 버튼). 미발송을 누르면 그 행 선택
+        var st = !p.verified ? '<button type="button" class="tbtn xs" disabled>미인증</button>' : applied ? '<span class="tbtn xs primary">직접 신청</span>' : sent ? '<span class="tbtn xs primary">발송</span>' : '<button type="button" class="tbtn xs" data-pickrow="' + p.key + '">미발송</button>';
         return '<tr' + (off ? ' class="off"' : '') + '><td class="ck"><input type="checkbox" value="' + p.key + '"' + (off ? ' disabled' : '') + ' aria-label="' + esc(p.org) + ' 선택"></td><td>' + esc(p.name) + '</td><td>' + esc(p.org) + '</td><td>' + esc(p.tel) + '</td><td class="mail">' + esc(p.mail) + '</td><td class="svc">' + p.svc.map(svcName).join(', ') + '</td><td>' + st + '</td></tr>';
       }).join('') || '<tr><td colspan="7" class="none">조건에 맞는 공급사 회원이 없습니다.</td></tr>';
       sync();
@@ -368,6 +368,8 @@
     m.querySelector('#qmAll').onchange = function () { var on = this.checked; [].forEach.call(m.querySelectorAll('#qmBody input:not(:disabled)'), function (i) { i.checked = on; }); sync(); };
     m.querySelector('#qmBody').onchange = sync;
     m.addEventListener('click', function (e) {
+      var pr = e.target.closest('[data-pickrow]');
+      if (pr) { var cb = m.querySelector('#qmBody input[value="' + pr.dataset.pickrow + '"]'); cb.checked = !cb.checked; sync(); return; }
       if (e.target === m || e.target.closest('.no') || e.target.closest('.qm-x')) close();
       else if (e.target.closest('#qmSend') && !e.target.closest('#qmSend').disabled) {
         var keys = picked();

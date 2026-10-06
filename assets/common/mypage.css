@@ -204,3 +204,10 @@ button { background:none; border:0; cursor:pointer; }
 .ctrow2 span { font-size:13px; line-height:18px; color:var(--gray-500); }
 @media print { .pv-scroll .attach-t { display:none; } .pv-scroll .doc + .doc, .pv-scroll .attach-t + .doc { margin-top:0; page-break-before:always; } }
 @media (max-width:640px) { .ctrow2 { flex-direction:column; align-items:stretch; } .cdoc .need ul { columns:1; } }
+/* button_text (Figma 281:24596) Type=text — 글자만 있는 버튼. 기본 S(32)·16px, .xs = XS(24)·14px / .primary = teal */
+span.tbtn { cursor:default; }
+.tbtn { display:inline-flex; align-items:center; justify-content:center; gap:2px; height:32px; padding:0; border:0; border-radius:8px; background:none; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-500); white-space:nowrap; cursor:pointer; }
+.tbtn.xs { height:24px; font-size:14px; line-height:20px; }
+.tbtn:hover:not(:disabled) { color:var(--gray-700); }
+.tbtn.primary { color:var(--teal-600); } .tbtn.primary:hover:not(:disabled) { color:var(--teal-700); }
+.tbtn:disabled { color:var(--gray-400); cursor:default; }
