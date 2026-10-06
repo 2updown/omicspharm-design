@@ -7,11 +7,11 @@
 <title>내 정보 관리 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / (분석파트너) 분석 가능 서비스 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261007j">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261007j">
-<script src="assets/common/site.js?v=20261007j"></script>
-<script src="assets/common/mypage.js?v=20261007j"></script>
-<script src="assets/common/flow.js?v=20261007j"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007k">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261007k">
+<script src="assets/common/site.js?v=20261007k"></script>
+<script src="assets/common/mypage.js?v=20261007k"></script>
+<script src="assets/common/flow.js?v=20261007k"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -178,7 +178,8 @@
 (function () {
   var me = OP.mypage('account'); if (!me) return;
   var $ = function (s) { return document.querySelector(s); };
-  var email = me.s.email, acc = me.acc, partner = me.s.role === 'partner';
+  var email = me.s.email, acc = me.acc, partner = me.s.role === 'partner', client = me.s.role === 'client';
+  var hasDoc = partner || client; // 사업자등록증: 분석파트너(인증 검토용) · 클라이언트(프로젝트 등록 시 필요)
 
   // 비밀번호 재확인 (데모: 아무 값이나 입력하면 통과 — 화면에는 표시하지 않음)
   $('#fGate').addEventListener('submit', function (e) {
@@ -187,7 +188,7 @@
     if (!g.value) { err(g, '비밀번호를 입력해주세요.'); g.focus(); return; }
     $('#gate').hidden = true; $('#secure').hidden = false;
     $('#name').focus({ preventScroll: true });
-    if (location.hash === '#doc' && partner) $('#rowDoc').scrollIntoView({ behavior: 'smooth', block: 'center' }); // 미인증 안내의 [사업자등록증 올리기]에서 온 경우
+    if (location.hash === '#doc' && hasDoc) $('#rowDoc').scrollIntoView({ behavior: 'smooth', block: 'center' }); // 미인증 안내의 [사업자등록증 올리기]에서 온 경우
   });
   $('#gpw').focus();
 
@@ -234,18 +235,18 @@
   var PHN = OP.phoneField($('#phoneHost'), { value: acc.phone || '', id: 'ph' });
 
   var SVCS = ['Genomics', 'Transcriptomics', 'Proteomics', 'Metabolomics', 'Glycoproteomics', 'Olink', '바이오의약품 특성 분석', 'Bioinformatics'];
-  // 사업자등록증 (분석파트너): 가입 때 올리지 않았으면 여기서 올림 → 인증 검토 시작 (데모: 파일 이름만 저장)
+  // 사업자등록증: 분석파트너는 가입 때 올리지 않았으면 여기서 올림 → 인증 검토 시작. 클라이언트는 프로젝트 등록 때 필요해 미리 올려 둠 (데모: 파일 이름만 저장)
   var bizDoc = acc.bizDoc || '', savedDoc = bizDoc; // savedDoc: 계정에 저장된 파일 (인증 검토 대상)
   function showDoc() {
     var n = $('#docName'); n.classList.toggle('none', !bizDoc);
     n.innerHTML = '<span>' + OP.my.esc(bizDoc || '등록된 파일 없음') + '</span>';
     $('#docBtn').textContent = bizDoc ? '파일 변경' : '파일 선택'; $('#docDel').hidden = !bizDoc;
     // 인증 검토 중(저장된 파일이 있고 아직 미인증)에는 파일을 바꿀 수 없음
-    var review = !!savedDoc && bizDoc === savedDoc && !OP.partnerVerified();
+    var review = partner && !!savedDoc && bizDoc === savedDoc && !OP.partnerVerified();
     $('#docBtn').classList.toggle('off', review); $('#docBtn').setAttribute('aria-disabled', review); $('#docFile').disabled = review;
-    $('#docHelp').textContent = OP.partnerVerified() ? '인증이 완료된 기관의 사업자등록증입니다.' : review ? '인증 검토 중에는 파일을 변경할 수 없습니다. 다른 파일로 바꾸려면 삭제 후 다시 올려 주세요.' : bizDoc ? '저장하면 인증 검토에 사용됩니다.' : '인증 검토에 필요합니다. 올리면 OmicsPharm이 확인한 뒤 인증해 드립니다. (PDF, JPG, PNG)';
+    $('#docHelp').textContent = client ? (bizDoc ? '프로젝트 등록 시 이 파일이 함께 제출됩니다.' : '프로젝트 등록 시 필요합니다. 미리 올려 두면 의뢰할 때 다시 올리지 않아도 됩니다. (PDF, JPG, PNG)') : OP.partnerVerified() ? '인증이 완료된 기관의 사업자등록증입니다.' : review ? '인증 검토 중에는 파일을 변경할 수 없습니다. 다른 파일로 바꾸려면 삭제 후 다시 올려 주세요.' : bizDoc ? '저장하면 인증 검토에 사용됩니다.' : '인증 검토에 필요합니다. 올리면 OmicsPharm이 확인한 뒤 인증해 드립니다. (PDF, JPG, PNG)';
   }
-  if (partner) {
+  if (hasDoc) {
     $('#rowDoc').hidden = false; showDoc();
     $('#docFile').addEventListener('change', function () {
       var f = this.files[0]; this.value = ''; if (!f) return;
@@ -255,7 +256,7 @@
     $('#docDel').addEventListener('click', function () {
       if (!savedDoc || bizDoc !== savedDoc) { bizDoc = savedDoc; showDoc(); $('#docNote').hidden = true; return; } // 저장 전 고른 파일은 바로 취소
       // 저장된 파일: 확인 후 바로 삭제
-      OP.my.confirm('사업자등록증을 삭제하시겠습니까?', OP.partnerVerified() ? '삭제해도 인증 상태는 유지됩니다.' : '삭제하면 인증 검토가 중단됩니다. 인증을 받으려면 다시 올려 주세요.', '삭제', function () {
+      OP.my.confirm('사업자등록증을 삭제하시겠습니까?', client ? '삭제한 뒤 프로젝트를 등록하려면 다시 올려 주세요.' : OP.partnerVerified() ? '삭제해도 인증 상태는 유지됩니다.' : '삭제하면 인증 검토가 중단됩니다. 인증을 받으려면 다시 올려 주세요.', '삭제', function () {
         bizDoc = savedDoc = ''; OP.saveAccount(email, { bizDoc: '' }); showDoc(); $('#docNote').hidden = true; vrole();
         OP.toast('사업자등록증을 삭제했습니다.');
       });
@@ -284,10 +285,11 @@
     var pOk = PHN.valid(); PHN.el.classList.toggle('bad', !pOk); err(PHN.inputs[0], pOk ? '' : '휴대폰 번호를 정확히 입력해주세요.');
     if (!pOk) return;
     var data = { name: n.value.trim(), org: o.value.trim(), dept: $('#dept').value.trim(), phone: PHN.get(), photo: photo };
-    if (partner) { data.svcs = [].map.call(document.querySelectorAll('#svcs input:checked'), function (i) { return i.value; }); data.bizDoc = savedDoc = bizDoc; $('#docNote').hidden = true; }
+    if (partner) data.svcs = [].map.call(document.querySelectorAll('#svcs input:checked'), function (i) { return i.value; });
+    if (hasDoc) { data.bizDoc = savedDoc = bizDoc; $('#docNote').hidden = true; }
     OP.saveAccount(email, data);
     OP.saveOrg(data.org, data.dept);
-    refresh(); pending(false); vrole(); if (partner) showDoc();
+    refresh(); pending(false); vrole(); if (hasDoc) showDoc();
     OP.toast('회원 정보가 저장되었습니다.');
   });
 
