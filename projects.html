@@ -8,11 +8,11 @@
 <!-- Figma: Find Projects1-list (993:12559) · Find Projects1-grid (996:13677)
      카드: Project-list (974:7938) · Project-card Type=card (147:1266)
      B안: Find Projects2-list (831:3469) · Find Projects2-grid (977:9070) — 오른쪽을 흰 박스 하나로 묶고 행을 구분선으로 나열. 기존 목록형(A안)은 ?list=a 로 비교. 그리드형은 구분선 격자가 기본, 박스 안 카드형은 ?grid=a 로 비교 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261007l">
-<script src="assets/common/site.js?v=20261007l"></script>
-<script src="assets/common/mypage.js?v=20261007l"></script>
-<script src="assets/common/flow.js?v=20261007l"></script>
-<script src="assets/common/projects-data.js?v=20261007l"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007n">
+<script src="assets/common/site.js?v=20261007n"></script>
+<script src="assets/common/mypage.js?v=20261007n"></script>
+<script src="assets/common/flow.js?v=20261007n"></script>
+<script src="assets/common/projects-data.js?v=20261007n"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -254,7 +254,7 @@
         <div class="checks" id="cats"></div>
       </div>
       <div class="divider"></div>
-      <div class="group">
+      <div class="group" id="priceGroup">
         <div class="range-head"><b>예상금액</b><span id="rangeLabel"></span></div>
         <div class="range">
           <div class="track"></div><div class="fill" id="rangeFill"></div>
@@ -381,13 +381,16 @@
              : '<a class="gcard" href="' + OP_PROJECTS.url(x) + '">' + top + '<div class="rows">' + rows + '</div></a>';
   }
 
+  // 예상금액 필터는 분석파트너·컨설턴트만 (클라이언트·비로그인은 다른 프로젝트 가격을 볼 수 없음)
+  if (['partner', 'admin'].indexOf((OP.session() || {}).role) < 0) { var pg = document.getElementById('priceGroup'); pg.hidden = true; if (pg.previousElementSibling && pg.previousElementSibling.classList.contains('divider')) pg.previousElementSibling.hidden = true; }
   function filtered() {
     var q = state.q.trim().toLowerCase();
     var out = DATA.filter(function (x) {
       if (state.status === 'open' && !x.open) return false;
       if (state.status === 'closed' && x.open) return false;
       if (state.cats.length && state.cats.indexOf(x.cat) < 0) return false;
-      if (x.price < state.min || (state.max < 1000 && x.price > state.max)) return false;
+      // 가격을 볼 수 없는 프로젝트는 금액 필터에 쓰지 않음 (가격 노출 방지)
+      if (OP_PROJECTS.canSeePrice(x) && (x.price < state.min || (state.max < 1000 && x.price > state.max))) return false;
       if (state.hidePrivate && x.priv) return false;
       if (q && (x.title + ' ' + x.cat).toLowerCase().indexOf(q) < 0) return false;
       return true;

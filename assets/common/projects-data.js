@@ -62,5 +62,13 @@
     x.open = x.days >= 0 && OP.flow.open(r.id); // 모집기한 안 + 클라이언트가 견적을 확정하기 전까지 모집중
     DATA.push(x);
   });
-  window.OP_PROJECTS = { CATS: CATS, DATA: DATA, date: d, url: function (x) { return 'omicspharm-project-detail-prot.html?id=' + x.id; } };
+  // 가격(예상금액) 공개 범위: 컨설턴트 = 전부 / 인증 분석파트너 = 공개·비공개 / 미인증 분석파트너 = 공개만 / 클라이언트 = 본인 의뢰만 / 비로그인 = 없음
+  function canSeePrice(x) {
+    var s = window.OP && OP.session && OP.session();
+    if (!s) return false;
+    if (s.role === 'admin') return true;
+    if (s.role === 'partner') return !x.priv || OP.partnerVerified();
+    return !!(x.rid && OP.my && OP.my.myProjects().some(function (p) { return p.id === x.rid; }));
+  }
+  window.OP_PROJECTS = { canSeePrice: canSeePrice, CATS: CATS, DATA: DATA, date: d, url: function (x) { return 'omicspharm-project-detail-prot.html?id=' + x.id; } };
 })();
