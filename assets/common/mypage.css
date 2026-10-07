@@ -185,25 +185,33 @@ button { background:none; border:0; cursor:pointer; }
 .pv-scroll .doc + .doc, .pv-scroll .attach-t + .doc { margin-top:24px; }
 .pv-scroll .attach-t { width:794px; max-width:100%; margin:32px auto 0; color:#fff; font-size:14px; font-weight:600; }
 .pv .doc.cdoc { min-height:0; }
-.cdoc .c-brand { padding-bottom:10px; border-bottom:3px solid #111; font-size:22px; font-weight:800; letter-spacing:.35em; color:#0b6b62; }
-.cdoc .c-lead { margin:14px 0 16px; font-size:12px; line-height:19px; color:#444; }
-.cdoc .c-party th { width:14%; } .cdoc .c-party td { width:36%; }
-.cdoc .kv2 th { width:34%; }
-.cdoc .svc-t { margin:-2px 0 8px; font-weight:700; }
-.cdoc .blk-t { margin:12px 0 6px; font-weight:600; }
-.cdoc .it2 th { text-align:center; } .cdoc .it2 td.c { text-align:center; } .cdoc .it2 td.d { color:#555; font-size:12px; }
-.cdoc .y { color:#0b6b62; } .cdoc .n { color:#aaa; }
-.cdoc .need { padding:10px 14px; border:1px solid #c9c9c9; } .cdoc .need ul { margin:6px 0 0 18px; columns:2; font-size:12px; }
-.cdoc .c-sign-t { margin-top:28px; text-align:center; font-size:14px; font-weight:600; }
-.cdoc .c-date { margin-top:12px; text-align:center; }
-.cdoc .c-sign { margin-top:16px; text-align:right; font-size:14px; } .cdoc .c-sign b { margin:0 12px; }
+.cdoc .c-brand { padding:12px 0; background:#00857a; color:#fff; text-align:center; font-size:14px; font-weight:700; letter-spacing:.3em; }
+.cdoc .c-lead { margin:12px 0 0; font-size:14px; font-weight:700; line-height:26px; color:#111; }
+.cdoc .c-lead + .c-lead { margin-top:18px; }
+.cdoc h2 { font-weight:400 !important; font-size:14px !important; margin:26px 0 6px !important; }
+.cdoc .c-sub { margin-bottom:10px; font-size:13px; }
+.cdoc .kv2 th, .cdoc .kv2 td { border-color:#777; background:#fff; font-weight:400; }
+.cdoc .kv2 th { width:24%; text-align:center; }
+.cdoc .kv2.ctr td { text-align:center; }
+.cdoc .svc-t { margin:8px 0 12px; font-size:17px; font-weight:700; }
+.cdoc .it2 { margin-bottom:-1px; }
+.cdoc .it2 td { border-color:#777; vertical-align:middle; }
+.cdoc .it2 td.grp { width:24%; text-align:center; }
+.cdoc .it2 td.nm { width:29%; text-align:center; }
+.cdoc .it2 i { display:block; font-size:12px; line-height:18px; color:#333; }
+.cdoc .y { font-weight:700; font-style:italic; color:#111; } .cdoc .n { color:#e5484d; font-style:italic; }
+.cdoc .need-t { margin-top:32px !important; font-size:17px !important; font-weight:700 !important; }
+.cdoc .need { margin-top:16px; font-size:13px; line-height:24px; } .cdoc .need b { display:block; margin-bottom:4px; }
+.cdoc .c-sign-t { margin-top:36px; font-size:14px; }
+.cdoc .c-date { margin-top:20px; text-align:right; }
+.cdoc .c-sign { margin-top:20px; text-align:right; font-size:14px; } .cdoc .c-sign b { margin:0 12px; font-weight:400; }
 .cdoc.file .fileph { padding:80px 24px; text-align:center; } .cdoc.file .fileph b { font-size:16px; } .cdoc.file .fileph p { margin-top:8px; color:#666; }
 .ctlist { display:flex; flex-direction:column; border-top:2px solid #000; }
 .ctrow2 { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 12px; border-bottom:1px solid var(--gray-200); }
 .ctrow2 b { display:block; font-size:15px; font-weight:600; line-height:22px; }
 .ctrow2 span { font-size:13px; line-height:18px; color:var(--gray-500); }
 @media print { .pv-scroll .attach-t { display:none; } .pv-scroll .doc + .doc, .pv-scroll .attach-t + .doc { margin-top:0; page-break-before:always; } }
-@media (max-width:640px) { .ctrow2 { flex-direction:column; align-items:stretch; } .cdoc .need ul { columns:1; } }
+@media (max-width:640px) { .ctrow2 { flex-direction:column; align-items:stretch; } }
 /* button_text (Figma 281:24596) Type=text — 글자만 있는 버튼. 기본 S(32)·16px, .xs = XS(24)·14px / .primary = teal */
 span.tbtn { cursor:default; }
 .tbtn { display:inline-flex; align-items:center; justify-content:center; gap:2px; height:32px; padding:0; border:0; border-radius:8px; background:none; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-500); white-space:nowrap; cursor:pointer; }
@@ -212,3 +220,17 @@ span.tbtn { cursor:default; }
 .tbtn.primary { color:var(--teal-600); } .tbtn.primary:hover:not(:disabled) { color:var(--teal-700); }
 .tbtn:disabled { color:var(--gray-400); cursor:default; }
 .op-confirm.fask p { white-space:pre-line; overflow-wrap:anywhere; } /* 입력 모달 설명: 줄바꿈(파일 이름 + 안내) 유지 */
+/* 견적서 (셀키 분석서비스 의뢰서 '별첨 1. 분석 견적서' 양식) */
+.pv .qdoc .q-title { margin:4px 0 22px; font-size:24px; font-weight:700; line-height:32px; text-align:center; letter-spacing:0; }
+.pv .qdoc .q-h { margin:22px 0 8px; font-size:13px; font-weight:700; }
+.pv .qdoc .parties h3 { margin-bottom:8px; }
+.pv .qdoc table { border-top:2px solid #8fcbbd; }
+.pv .qdoc th, .pv .qdoc td { border-color:#dfe7e4; border-left:0; border-right:0; }
+.pv .qdoc .parties th { background:#eaf3f0; font-weight:600; }
+.pv .qdoc .it th { background:#eaf3f0; text-align:center; }
+.pv .qdoc .it td + td { border-left:1px solid #dfe7e4; }
+.pv .qdoc .it tr.sub td { background:#fff; font-weight:400; }
+.pv .qdoc .it td.tc { text-align:center; }
+.pv .qdoc .it tr.minus td { color:#e5484d; }
+.pv .qdoc .memo { min-height:0; padding:14px 18px; border:0; border-radius:8px; background:#eaf3f0; }
+.pv .qdoc .q-date { margin-top:18px; text-align:right; font-size:12px; font-weight:700; }

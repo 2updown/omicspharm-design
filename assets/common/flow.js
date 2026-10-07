@@ -329,28 +329,28 @@
     var rows = (q.groups || []).map(function (g) {
       return g.lines.map(function (l, i) {
         return '<tr>' + (i === 0 ? '<td rowspan="' + (g.lines.length + 1) + '">' + val(g.name) + '</td>' : '') + '<td>' + val(l.d) + '</td><td class="c">' + esc(l.q || '') + '</td><td class="c">' + esc(l.u || '') + '</td><td class="r">' + money(num(l.p), cur) + '</td><td class="r">' + money(num(l.q) * num(l.p), cur) + '</td></tr>';
-      }).join('') + '<tr class="sub"><td colspan="4" style="text-align:right">소계</td><td class="r">' + money(sub(g), cur) + '</td></tr>';
+      }).join('') + '<tr class="sub"><td colspan="4" style="text-align:right">분석료 소계</td><td class="r">' + money(sub(g), cur) + '</td></tr>';
     }).join('');
-    var d = ymd(q.subAt || q.at || Date.now());
-    return '<article class="doc">' +
-      '<div class="doc-head"><img src="assets/main/logo.svg" alt="OmicsPharm"><h1>견 적 서</h1></div>' +
-      '<div class="doc-meta"><span>견적번호 Q-' + esc(String(r.id).replace(/^(PRJ|REQ)-/, '')) + '-' + esc(String(k || '').replace(/@.*/, '').toUpperCase()) + '</span><span>견적일자 ' + d + '</span></div>' +
-      '<table><tr><th style="width:18%">프로젝트명</th><td>' + esc(r.title) + '</td></tr><tr><th>분석 분야</th><td>' + esc(r.svc) + ' · 시료 ' + esc(r.samples || '-') + '개' + (q.weeks ? ' · 소요 기간 ' + esc(q.weeks) + '주' : '') + '</td></tr></table>' +
-      '<div class="parties" style="margin-top:16px">' +
+    var d = ymd(q.subAt || q.at || Date.now()), x = (state(r.id).P || {})[k] || {}, n = (x.revN || 0) + 1;
+    // 셀키 분석서비스 의뢰서 '별첨 1. 분석 견적서' 양식: N차 견적서 · 고객사 · 공급자 · 제안가 · 합계 · Notice · 발행일
+    return '<article class="doc qdoc">' +
+      '<h1 class="q-title">' + n + '차 견적서</h1>' +
+      '<div class="parties">' +
         party('고객사', [r.org, '-', '-', '-', r.manager, '-', '-']) +
         party('공급자', [sup.s_org, sup.s_ceo, sup.s_tel, sup.s_biz, sup.s_mgr, sup.s_mail, sup.s_addr]) +
       '</div>' +
-      '<h2>제안가 <span style="font-weight:400;color:#666">(' + ({ KRW: '원화, 공급가 VAT 별도', USD: '달러', JPY: '엔화' })[cur] + ')</span></h2>' +
-      '<table class="it"><colgroup><col style="width:22%"><col><col style="width:9%"><col style="width:9%"><col style="width:15%"><col style="width:16%"></colgroup>' +
-        '<tr><th>시험명</th><th>세부내용</th><th>수량</th><th>Unit</th><th>단가</th><th>금액</th></tr>' + rows + '</table>' +
-      '<table class="tt"><tr><th>분석료 합계</th><td class="r">' + money(tt.sum, cur) + '</td></tr>' +
-        (num(q.sale) ? '<tr class="minus"><th>할인</th><td class="r">-' + money(num(q.sale), cur) + '</td></tr>' : '') +
-        (num(q.addSale) ? '<tr class="minus"><th>추가 할인</th><td class="r">-' + money(num(q.addSale), cur) + '</td></tr>' : '') +
-        '<tr><th>분석료 총계</th><td class="r">' + money(tt.net, cur) + '</td></tr>' +
-        (cur === 'KRW' ? '<tr><th>VAT 10%</th><td class="r">' + money(tt.vat, cur) + '</td></tr>' : '') +
-        '<tr class="final"><th>최종 견적 금액</th><td class="r">' + money(tt.final, cur) + '</td></tr></table>' +
-      '<h2>Notice</h2><div class="memo">' + (q.memo ? esc(q.memo) : '<span class="demo">작성된 내용이 없습니다.</span>') + '</div>' +
-      '<div class="sign"><span>위와 같이 견적합니다.</span><b>' + val(sup.s_org) + '</b></div>' +
+      '<h3 class="q-h">제안가' + (cur === 'KRW' ? '' : ' <span style="font-weight:400;color:#666">(' + ({ USD: '달러', JPY: '엔화' })[cur] + ')</span>') + '</h3>' +
+      '<table class="it"><colgroup><col style="width:20%"><col><col style="width:8%"><col style="width:11%"><col style="width:15%"><col style="width:16%"></colgroup>' +
+        '<tr><th>시험명</th><th>세부내용</th><th>수량</th><th>Unit</th><th>단가</th><th>금액</th></tr>' + rows +
+        '<tr><td colspan="5" class="tc">분석료 합계</td><td class="r">' + money(tt.sum, cur) + '</td></tr>' +
+        (num(q.sale) ? '<tr class="minus"><td colspan="5" class="tc">할인</td><td class="r">-' + money(num(q.sale), cur) + '</td></tr>' : '') +
+        (num(q.addSale) ? '<tr class="minus"><td colspan="5" class="tc">추가 할인</td><td class="r">-' + money(num(q.addSale), cur) + '</td></tr>' : '') +
+        '<tr><td colspan="5" class="tc">합계</td><td class="r">' + money(tt.net, cur) + '</td></tr>' +
+        (cur === 'KRW' ? '<tr><td colspan="5" class="tc">VAT 10%</td><td class="r">' + money(tt.vat, cur) + '</td></tr>' : '') +
+        '<tr><td colspan="5" class="tc">최종</td><td class="r">' + money(tt.final, cur) + '</td></tr>' +
+      '</table>' +
+      '<h3 class="q-h">Notice</h3><div class="memo">' + (q.memo ? esc(q.memo) : '<span class="demo">작성된 내용이 없습니다.</span>') + '</div>' +
+      '<p class="q-date">견적서 발행일 : ' + d + '</p>' +
     '</article>';
   };
   // 견적서 보기 창
@@ -420,21 +420,20 @@
     var yn = function (it) { return (it[3] && new RegExp(it[3], 'i').test(text)) || it[2] ? '<b class="y">유</b>' : '<span class="n">무</span>'; };
     var svcHTML = f ? f.blocks.map(function (b) {
       var on = f.blocks.length === 1 || (b.target ? targeted : !targeted) || k === '유전체';
-      var head = b.h ? '<p class="blk-t">(' + (on ? 'o' : '&nbsp;&nbsp;') + ') ' + esc(b.h) + '</p>' : '';
-      if (b.fields) return head + '<table class="kv2">' + b.fields.map(function (x, i) { return '<tr><th>' + esc(x) + '</th><td>' + (on && i === 0 ? esc(rowVal(r, /타겟|Target|대상/) || '-') : '-') + '</td></tr>'; }).join('') + '</table>';
-      return head + '<table class="it2"><tr><th>항목</th><th style="width:56px">선택</th><th>설명</th></tr>' + b.items.map(function (it) { return '<tr><td>' + esc(it[0]) + '</td><td class="c">' + (on ? yn(it) : '<span class="n">-</span>') + '</td><td class="d">' + esc(it[1]) + '</td></tr>'; }).join('') + '</table>';
+      var head = function (n) { return '<td class="grp" rowspan="' + n + '">(' + (on ? 'o' : '&nbsp;&nbsp;&nbsp;') + ') ' + esc(b.h || '') + '</td>'; };
+      if (b.fields) return '<table class="it2">' + b.fields.map(function (x, i) { return '<tr>' + (i === 0 ? head(b.fields.length) : '') + '<td class="nm">' + esc(x) + '</td><td>' + (on && i === 0 ? esc(rowVal(r, /타겟|Target|대상/) || '-') : '-') + '</td></tr>'; }).join('') + '</table>';
+      return '<table class="it2">' + b.items.map(function (it, i) { return '<tr>' + (i === 0 ? head(b.items.length) : '') + '<td class="nm">' + esc(it[0]) + '</td><td>' + (on ? yn(it) : '<span class="n">-</span>') + '<i>* ' + esc(it[1]) + '</i></td></tr>'; }).join('') + '</table>';
     }).join('') : '<table class="kv2">' + (r.sections || []).filter(function (x) { return x.rows; }).map(function (sec) { return sec.rows.map(function (x) { return '<tr><th>' + esc(x[0]) + '</th><td>' + esc(x[1]) + '</td></tr>'; }).join(''); }).join('') + '</table>';
-    var need = k === '바이오의약품' ? '바이오의약품 특성분석' : (k === '유전체' || k === '전사체') ? '유전체' : '단백체·대사체';
     var p = partner(s.pick), dt = new Date(s.ct ? s.ct.at : Date.now()), cl = side === 'client';
-    var who = cl ? [r.manager || '-', r.org || '-', '-'] : ['셀키 컨설턴트', '셀키에이아이', '02-3482-2743'];
+    var who = cl ? [r.manager || '-', r.org || '-', '-'] : ['셀키 컨설턴트', '셀키에이아이', '02-0000-0000'];
     return '<article class="doc cdoc">' +
-      '<div class="c-brand">C E L L K E Y</div>' +
+      '<div class="c-brand">CELLKEY</div>' +
       '<p class="c-lead">최첨단 분석 플랫폼과 전문성을 바탕으로,<br>한 차원 높은 정밀성과 효율성을 갖춘 프리미엄 바이오 분석 서비스를 제공합니다.</p>' +
-      '<table class="c-party"><tr><th>의뢰기관</th><td>' + esc(cl ? r.org || '-' : '셀키에이아이') + '</td><th>수행기관</th><td>' + esc(cl ? '셀키에이아이 (분석 수행: ' + p.org + ')' : p.org) + '</td></tr><tr><th>프로젝트</th><td colspan="3">' + esc(r.title) + ' (' + esc(r.id) + ')</td></tr></table>' +
-      '<h2>1. 의뢰자 정보</h2><table class="kv2"><tr><th>담당자</th><td>' + esc(who[0]) + '</td></tr><tr><th>소속</th><td>' + esc(who[1]) + '</td></tr><tr><th>연락처</th><td>' + esc(who[2]) + '</td></tr></table>' +
-      '<h2>2. 시료 정보</h2><table class="kv2"><tr><th>생물종</th><td>' + esc(rowVal(r, /Taxonomy|생물종/) || '-') + '</td></tr><tr><th>종류</th><td>' + esc(rowVal(r, /종류/) || '-') + '</td></tr><tr><th>시료 수</th><td>' + esc(r.samples || '-') + '</td></tr><tr><th>분석목적</th><td>' + esc(r.purpose || '-') + '</td></tr></table>' +
+      '<p class="c-lead">분석 항목과 세부 정보를 입력해 주시면, 셀키에이아이 분석 담당자가 신속하게 상담·답변 드립니다.</p>' +
+      '<h2>1. 의뢰자 정보</h2><p class="c-sub">의뢰자 정보를 작성해 주세요.</p><table class="kv2 ctr"><tr><th>담당자</th><td>' + esc(who[0]) + '</td></tr><tr><th>소속</th><td>' + esc(who[1]) + '</td></tr><tr><th>연락처</th><td>' + esc(who[2]) + '</td></tr></table>' +
+      '<h2>2. 시료 정보</h2><p class="c-sub">시료 정보를 작성해 주세요.</p><table class="kv2"><tr><th>Taxonomy (Source):</th><td>' + esc(rowVal(r, /Taxonomy|생물종/) || '-') + '</td></tr><tr><th>종류:</th><td>' + esc(rowVal(r, /종류/) || '-') + '</td></tr><tr><th>시료 수:</th><td>' + esc(r.samples || '-') + '</td></tr><tr><th>분석목적:</th><td>' + esc(r.purpose || '-') + '</td></tr></table>' +
       '<h2>3. 분석 서비스</h2><p class="svc-t">' + esc(f ? f.name : r.svc) + '</p>' + svcHTML +
-      '<h2>분석 유형별 샘플 요구량</h2><div class="need"><b>' + need + '</b><ul>' + NEED[need].map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>' +
+      '<h2 class="need-t">분석 유형별 샘플 요구량</h2>' + Object.keys(NEED).map(function (g) { return '<div class="need"><b>' + esc(g) + '</b>' + NEED[g].map(function (x) { return '<p>' + esc(x) + '</p>'; }).join('') + '</div>'; }).join('') +
       '<p class="c-sign-t">위와 같은 내용의 시험을 의뢰합니다.</p>' +
       '<p class="c-date">' + dt.getFullYear() + ' 년 &nbsp; ' + (dt.getMonth() + 1) + ' 월 &nbsp; ' + dt.getDate() + ' 일</p>' +
       '<p class="c-sign">의뢰 담당자: <b>' + esc(who[0]) + '</b> (서명)</p>' +

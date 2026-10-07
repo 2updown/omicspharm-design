@@ -7,11 +7,11 @@
 <title>내 정보 관리 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / (분석파트너) 분석 가능 서비스 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261008p">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261008p">
-<script src="assets/common/site.js?v=20261008p"></script>
-<script src="assets/common/mypage.js?v=20261008p"></script>
-<script src="assets/common/flow.js?v=20261008p"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261008s">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261008s">
+<script src="assets/common/site.js?v=20261008s"></script>
+<script src="assets/common/mypage.js?v=20261008s"></script>
+<script src="assets/common/flow.js?v=20261008s"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -137,7 +137,7 @@
           <div class="field"><label class="flabel" for="dept">부서·직책</label><div class="fbody"><input class="inp" id="dept" placeholder="부서 검색 또는 입력"></div></div>
           <div class="field"><label class="flabel" for="ph1">연락처<span class="req">*</span></label><div class="fbody"><div id="phoneHost" class="phwrap"></div></div></div>
           <div class="field" id="rowDoc" hidden><div class="flabel">사업자등록증</div><div class="fbody">
-            <div class="doc"><span class="fname" id="docName"></span><label class="btn" for="docFile" id="docBtn">파일 선택</label><button type="button" class="btn del" id="docDel" hidden>삭제</button>
+            <div class="doc"><span class="fname" id="docName"></span><span class="op-vchip ok" id="docBadge" hidden>인증됨</span><label class="btn" for="docFile" id="docBtn">파일 선택</label><button type="button" class="btn del" id="docDel" hidden>삭제</button>
               <input type="file" id="docFile" accept=".pdf,.jpg,.jpeg,.png"></div>
             <p class="help" id="docHelp"></p>
             <p class="note" id="docNote" hidden style="font-size:12px;line-height:18px;color:var(--teal-700);font-weight:500">아래 저장하기를 눌러야 반영됩니다.</p></div></div>
@@ -246,6 +246,7 @@
     // 클라이언트: 컨설턴트가 확인한 파일은 바로 바꿀 수 없음 → 바뀐 경우 삭제 후 다시 올림 (다시 확인 전으로)
     var cOk = client && !!savedDoc && bizDoc === savedDoc && OP.account(email).bizOk && OP.account(email).bizOkName === savedDoc;
     if (cOk) review = true;
+    $('#docBadge').hidden = !cOk;
     $('#docBtn').classList.toggle('off', review); $('#docBtn').setAttribute('aria-disabled', review); $('#docFile').disabled = review;
     $('#docHelp').textContent = cOk ? 'OmicsPharm 확인이 완료된 사업자등록증입니다. 프로젝트 등록 시 다시 올리지 않아도 됩니다. 내용이 바뀐 경우 삭제 후 다시 올려 주세요.' : client ? (bizDoc ? '프로젝트 등록 시 이 파일이 함께 제출됩니다.' : '프로젝트 등록 시 필요합니다. 미리 올려 두면 의뢰할 때 다시 올리지 않아도 됩니다. (PDF, JPG, PNG)') : OP.partnerVerified() ? '인증이 완료된 기관의 사업자등록증입니다.' : review ? '인증 검토 중에는 파일을 변경할 수 없습니다. 다른 파일로 바꾸려면 삭제 후 다시 올려 주세요.' : bizDoc ? '저장하면 인증 검토에 사용됩니다.' : '인증 검토에 필요합니다. 올리면 OmicsPharm이 확인한 뒤 인증해 드립니다. (PDF, JPG, PNG)';
   }
