@@ -18,39 +18,15 @@ input { font:inherit; color:inherit; }
 
 .auth { display:flex; min-height:100vh; }
 
-/* ── 왼쪽: login-bg ── */
+/* ── 왼쪽: login-bg (Figma 1475:13273) ── */
 /* 왼쪽 패널은 화면 높이에 고정(스크롤해도 그대로), 오른쪽만 길어지면 페이지가 스크롤된다 */
-.auth-bg { flex:1 1 0; min-width:0; padding:12px; background:linear-gradient(146.03deg, #ffd5a3 0%, #00d8bf 102.95%); position:sticky; top:0; height:100vh; align-self:flex-start; }
-.auth-card { position:relative; height:100%; background:#fff; border-radius:12px; overflow:hidden; }
-/* Figma 카드(696×1000) 비율 그대로 묶어서 패널 크기에 맞게 확대·축소 (auth.js가 --s 계산) */
-.auth-card .stage { position:absolute; left:50%; top:50%; width:696px; height:1000px; transform:translate(-50%,-50%) scale(var(--s, 1)); }
-.auth-card .ellipse { position:absolute; right:-498.58px; top:-458px; width:1074.584px; height:1070px; display:flex; align-items:center; justify-content:center; pointer-events:none; }
-.auth-card .ellipse img { width:803.187px; height:792.788px; transform:rotate(26.84deg); flex:none; }
-.auth-card .logo { position:absolute; top:98px; left:calc(50% + .5px); transform:translateX(-50%); width:219px; height:33px; overflow:hidden; }
-.auth-card .logo img { position:absolute; left:0; top:4.5px; width:219.334px; height:23.5px; }
-.hero-box { position:absolute; left:calc(50% + .5px); top:calc(50% - 142px); transform:translate(-50%,-50%); width:525px; height:334px; border-radius:12px; }
-.hero-box .bg { position:absolute; inset:0; border-radius:12px; overflow:hidden; background:#fff; }
-.hero-box .bg img { width:100%; height:100%; object-fit:cover; }
-.hero-box .bg::after { content:""; position:absolute; inset:0; background:linear-gradient(66.08deg, #fff 13.74%, rgba(255,255,255,0) 135.77%); }
-.hero-box h2 { position:absolute; left:30px; top:24px; font-size:24px; font-weight:600; line-height:32px; letter-spacing:-.24px; color:var(--teal-800); white-space:nowrap; }
-.hero-box p { position:absolute; left:30px; top:102px; font-size:12px; line-height:18px; letter-spacing:-.12px; white-space:nowrap; }
-.hero-box .glow { position:absolute; top:102px; width:580px; height:403px; opacity:.3; pointer-events:none; }
-.hero-box .glow.g1 { left:-155px; background:radial-gradient(183.4px 127.4px at 50% 50%, rgba(36,188,105,.8) 0%, rgba(36,188,105,0) 81.73%); }
-.hero-box .glow.g2 { left:2px;    background:radial-gradient(183.4px 127.4px at 50% 50%, rgba(36,97,188,.8) 0%, rgba(36,97,188,0) 81.73%); }
-.hero-box .glow.g3 { left:192px;  background:radial-gradient(183.4px 127.4px at 50% 50%, rgba(122,36,188,.8) 0%, rgba(122,36,188,0) 81.73%); }
-.hero-box .cards { position:absolute; left:74px; top:190px; display:flex; gap:9px; align-items:center; }
-.fcard { position:relative; width:150px; height:172px; border:2px solid #fff; border-radius:12px; overflow:hidden; }
-.fcard.w149 { width:149px; }
-.fcard .pic { position:absolute; left:calc(50% - 3.5px); width:157px; height:132px; transform:translate(-50%,-50%); overflow:hidden; }
-.fcard .pic img { position:absolute; left:0; top:0; width:100%; height:118.46%; }
-.fcard b { position:absolute; left:15px; right:4px; top:29px; font-size:16px; font-weight:700; line-height:22px; }
-.fcard.c1 { background:linear-gradient(146.37deg, #f6fdfc 6.71%, #f4fbfa 100.09%); } .fcard.c1 .pic { top:calc(50% + 20px); }
-.fcard.c2 { background:linear-gradient(146.2deg, #f5f9fd 6.71%, #e7f3fd 100.09%); } .fcard.c2 .pic { top:calc(50% + 33px); }
-.fcard.c3 { background:linear-gradient(146.37deg, #f8f7fd 6.71%, #f3f2fe 100.09%); } .fcard.c3 .pic { top:calc(50% + 36px); }
-.auth-card .tagline { position:absolute; left:calc(50% - .5px); top:calc(50% + 242px); transform:translate(-50%,-50%); width:437px; display:flex; flex-direction:column; gap:16px; align-items:center; text-align:center; }
+.auth-bg { flex:1 1 0; min-width:0; position:sticky; top:0; height:100vh; align-self:flex-start; overflow:hidden; background:#f4f7fa url(login-bg2.jpg) center/cover no-repeat; }
+/* Figma 720×1024 기준: 문구는 위에서 200px. 패널 크기에 맞춰 비율로 확대·축소 (auth.js가 --s 계산) */
+.auth-card { position:absolute; inset:0; }
+.auth-card .tagline { position:absolute; left:50%; top:calc(200 / 1024 * 100%); transform:translateX(-50%) scale(var(--s, 1)); transform-origin:top center; width:437px; display:flex; flex-direction:column; gap:16px; align-items:center; text-align:center; color:#000; }
 .auth-card .tagline h1 { font-size:40px; line-height:1.4; letter-spacing:-.16px; white-space:nowrap; font-weight:400; }
 .auth-card .tagline h1 b { font-weight:700; }
-.auth-card .tagline p { font-size:16px; line-height:22px; opacity:.7; }
+.auth-card .tagline p { font-size:16px; line-height:22px; opacity:.7; white-space:nowrap; }
 
 /* ── 오른쪽 폼 ── */
 .auth-main { flex:1 1 0; min-width:0; display:flex; align-items:center; justify-content:center; padding:40px 16px; overflow:hidden; position:relative; }

@@ -1,30 +1,16 @@
-/* 로그인·회원가입 공통: 왼쪽 비주얼 패널(login-bg 1148:48234)과 폼 도우미 */
+/* 로그인·회원가입 공통: 왼쪽 비주얼 패널(login-bg 1475:13273)과 폼 도우미 */
 (function () {
-  var P = 'assets/auth/';
   var BG =
-    '<div class="auth-card"><div class="stage">' +
-      '<div class="ellipse"><img src="' + P + 'ellipse.svg" alt=""></div>' +
-      '<a class="logo" href="index.html" aria-label="OmicsPharm 홈"><img src="' + P + 'logo.svg" alt="OmicsPharm"></a>' +
-      '<div class="hero-box">' +
-        '<div class="bg"><img src="' + P + 'lab-bg.png" alt=""></div>' +
-        '<h2>Accelerate<br>Your Research</h2>' +
-        '<p>Discover projects,<br>get matched with the right experts,<br>and turn research results into AI-powered reports.</p>' +
-        '<div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>' +
-        '<div class="cards">' +
-          '<div class="fcard c1"><div class="pic"><img src="' + P + 'card-search.png" alt=""></div><b>Project<br>Search</b></div>' +
-          '<div class="fcard c2 w149"><div class="pic"><img src="' + P + 'card-matching.png" alt=""></div><b>AI Partener<br>Matching</b></div>' +
-          '<div class="fcard c3"><div class="pic"><img src="' + P + 'card-report.png" alt=""></div><b>AI Report<br>Agent</b></div>' +
-        '</div>' +
-      '</div>' +
+    '<div class="auth-card">' +
       '<div class="tagline">' +
         '<h1>All Your Omics Research<br><b>In One Place</b></h1>' +
         '<p>Explore analysis projects, get matched with the right experts,<br>and generate AI-powered research reports<br>all on one integrated platform.</p>' +
       '</div>' +
-    '</div></div>';
+    '</div>';
 
-  // 비주얼(696×1000)을 패널 안에 잘리지 않게 꽉 맞춤: 가로·세로 중 작은 쪽 비율 사용 (최대 1.3배)
+  // Figma(720×1024) 기준 비율로 문구 크기 맞춤: 가로·세로 중 작은 쪽 비율 사용 (최대 1.3배)
   function fit(card) {
-    var s = Math.min(card.clientWidth / 696, card.clientHeight / 1000, 1.3);
+    var s = Math.min(card.clientWidth / 720, card.clientHeight / 1024, 1.3);
     card.style.setProperty('--s', s.toFixed(4));
   }
   function render() {
