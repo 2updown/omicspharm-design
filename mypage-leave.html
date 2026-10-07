@@ -7,11 +7,11 @@
 <title>회원 탈퇴 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 내 정보 관리 > 회원 탈퇴 (Figma 시안 없음, 레퍼런스 화면 구성: 탈퇴 안내 → 탈퇴 사유·개선사항 → 동의 → 취소/탈퇴).
      진행 중인 프로젝트·계약이 있으면 탈퇴 불가. 데모: 탈퇴하면 이 브라우저의 계정(op.accounts)을 지우고 로그아웃 (데모 계정은 로그아웃만) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261007r">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261007r">
-<script src="assets/common/site.js?v=20261007r"></script>
-<script src="assets/common/mypage.js?v=20261007r"></script>
-<script src="assets/common/flow.js?v=20261007r"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007s">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261007s">
+<script src="assets/common/site.js?v=20261007s"></script>
+<script src="assets/common/mypage.js?v=20261007s"></script>
+<script src="assets/common/flow.js?v=20261007s"></script>
 <style>
   .leave-card { gap:40px; }
   .sec h4 { margin-bottom:12px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
@@ -168,7 +168,7 @@
   if (role === 'admin') {
     lock('컨설턴트 계정은 탈퇴할 수 없습니다.', '컨설턴트 계정은 OmicsPharm 관리자가 발급·해지합니다. 계정 해지가 필요하면 관리자에게 요청해주세요.', '');
   } else if (ING.length) {
-    lock('진행 중인 프로젝트가 ' + ING.length + '건 있어 탈퇴할 수 없습니다.', '아래 프로젝트의 모든 절차(분석·결과 수령·계약)가 완료된 후 탈퇴할 수 있습니다.',
+    lock('진행 중인 프로젝트가 ' + ING.length + '건 있어 탈퇴할 수 없습니다.', '아래 프로젝트의 모든 절차(분석·결과 수령·계약)가 완료되거나 관리자 문의 후 탈퇴할 수 있습니다.',
       '<div class="rows">' + ING.slice(0, 3).map(function (p) { return '<div><span>' + esc(p.st) + '</span><a href="' + p.h + '">' + esc(p.t) + '</a></div>'; }).join('') + '</div>' +
       '<div class="acts"><a class="btn" href="mypage-project.html">프로젝트 관리로 이동</a>' +
       '<a class="demo" href="?free=1">데모: 진행 중 프로젝트가 없는 상태로 보기</a></div>');
