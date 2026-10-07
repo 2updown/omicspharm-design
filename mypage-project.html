@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261008t">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261008t">
-<script src="assets/common/site.js?v=20261008t"></script>
-<script src="assets/common/mypage.js?v=20261008t"></script>
-<script src="assets/common/flow.js?v=20261008t"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261008u">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261008u">
+<script src="assets/common/site.js?v=20261008u"></script>
+<script src="assets/common/mypage.js?v=20261008u"></script>
+<script src="assets/common/flow.js?v=20261008u"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -256,6 +256,15 @@
       var x = ALL.filter(function (p) { return p.id === pid; })[0];
       if (!x) { location.replace('mypage-project.html'); return; }
       var k = STAGES.indexOf(SG(x)), FS = x.flow ? OP.flow.state(x.id) : null;
+      // 예시 프로젝트(견적 중개 이전 데이터): 계약 금액으로 견적서를 만들고 셀키 기본 양식(의뢰서 + 별첨 견적서)으로 계약서를 보여줌
+      var CR = null, CS = null;
+      if (!x.flow) {
+        var SVCK = { Proteomics: '단백체 분석', Glycoproteomics: '단백체 분석', Metabolomics: '대사체 분석', Transcriptomics: '전사체 분석', Genomics: '유전체 분석', Olink: 'Olink 분석' };
+        var won = (parseFloat(String(x.amount).replace(/[^\d.]/g, '')) || 0) * 1e4, n = +x.samples || 1, me = OP.flow.ME_PARTNER;
+        CR = { id: x.id, title: x.title, svc: SVCK[x.svc] || x.svc, org: x.client, manager: '-', samples: String(x.samples), purpose: x.title, sections: [] };
+        CS = { pick: me, P: {}, ct: { at: new Date(x.contract).getTime(), client: { type: 'form' }, partner: { type: 'form' } } };
+        CS.P[me] = { quote: { cur: 'KRW', weeks: '', memo: '', subAt: new Date(x.contract).getTime(), supplier: { s_org: OP.flow.partner(me).org }, groups: [{ name: CR.svc, lines: [{ d: '시료 분석 및 결과 보고서', q: String(n), u: 'sample', p: String(Math.round(won / n)) }] }] } };
+      }
       var TODO = {
         '계약': x.flow ? ['계약서를 준비하고 있습니다', 'OmicsPharm 컨설턴트가 계약서를 등록하면 분석 단계로 넘어갑니다.', ''] : ['계약서를 확인해주세요', '계약 내용 확인 후 시료 수령 일정을 클라이언트와 협의합니다.', '계약서 확인'],
         '분석': ['분석이 진행 중입니다', '분석이 끝나면 결과보고서를 등록해주세요.', '진행 상황 공유'],
@@ -272,8 +281,9 @@
             '<div class="period"><b>납기일</b><span>' + dotd(x.due) + '</span>' + (x.stage === '완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div></div>' +
         '</div>' +
         '<ol class="stages" aria-label="진행 단계" style="grid-template-columns:repeat(' + STAGES.length + ', minmax(0,1fr))">' + STAGES.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
-        '<div class="todo"><div><b>' + TODO[0] + '</b><p>' + TODO[1] + '</p></div>' + (TODO[2] ? '<a class="btn primary" href="#" data-soon="' + TODO[2] + '">' + TODO[2] + '</a>' : '') + '</div>' +
+        '<div class="todo"><div><b>' + TODO[0] + '</b><p>' + TODO[1] + '</p></div>' + (TODO[2] ? (TODO[2] === '계약서 확인' && CS ? '<button type="button" class="btn primary" data-ct="partner">계약서 확인</button>' : '<a class="btn primary" href="#" data-soon="' + TODO[2] + '">' + TODO[2] + '</a>') : '') + '</div>' +
         // 견적 중개로 매칭된 프로젝트: 컨설턴트가 올린 계약서
+        (CS ? '<section class="sec"><h3>계약서</h3>' + OP.flow.contractListHTML(CS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) + '</section>' : '') +
         (x.flow ? '<section class="sec"><h3>계약서</h3>' + (FS.ct ? OP.flow.contractListHTML(FS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) : '<p class="note" style="font-size:14px">OmicsPharm 컨설턴트가 계약서를 준비하고 있습니다. 등록되면 알림으로 알려드립니다.</p>') + '</section>' : '') +
         '<div class="sections"><section class="sec"><h3>프로젝트 정보</h3><dl class="kv">' +
           [['클라이언트', x.client]].concat(x.partner && OP.session().role === 'admin' ? [['분석파트너', x.partner]] : []).concat([['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['계약 금액', x.amount + ' (VAT 별도)'], ['계약일', dotd(x.contract)], ['납기일', dotd(x.due)]])
@@ -281,7 +291,7 @@
         '</dl></section></div>' +
         (x.flow ? '<p class="demo-note">※ 견적 중개로 매칭된 프로젝트입니다. ' + (OP.session().role === 'admin' ? '<a href="mypage-request.html?id=' + encodeURIComponent(x.id) + '" style="text-decoration:underline">견적 내역 보기</a>' : '<a href="mypage-quote.html?rid=' + encodeURIComponent(x.id) + '" style="text-decoration:underline">제출한 견적서 보기</a>') + '</p>' : '<p class="demo-note">※ 화면 확인용 예시 프로젝트입니다.</p>');
       document.title = x.title + ' · 마이페이지 · OmicsPharm';
-      document.addEventListener('click', function (e) { var b = e.target.closest('[data-ct]'); if (b) OP.flow.showContract(OP.flow.req(x.id), FS, b.dataset.ct); });
+      document.addEventListener('click', function (e) { var b = e.target.closest('[data-ct]'); if (!b) return; e.preventDefault(); if (CS) OP.flow.showContract(CR, CS, b.dataset.ct); else OP.flow.showContract(OP.flow.req(x.id), FS, b.dataset.ct); });
       return;
     }
 
