@@ -211,3 +211,4 @@ span.tbtn { cursor:default; }
 .tbtn:hover:not(:disabled) { color:var(--gray-700); }
 .tbtn.primary { color:var(--teal-600); } .tbtn.primary:hover:not(:disabled) { color:var(--teal-700); }
 .tbtn:disabled { color:var(--gray-400); cursor:default; }
+.op-confirm.fask p { white-space:pre-line; overflow-wrap:anywhere; } /* 입력 모달 설명: 줄바꿈(파일 이름 + 안내) 유지 */
