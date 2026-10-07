@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261007x">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261007x">
-<script src="assets/common/site.js?v=20261007x"></script>
-<script src="assets/common/mypage.js?v=20261007x"></script>
-<script src="assets/common/flow.js?v=20261007x"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007y">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261007y">
+<script src="assets/common/site.js?v=20261007y"></script>
+<script src="assets/common/mypage.js?v=20261007y"></script>
+<script src="assets/common/flow.js?v=20261007y"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -394,6 +394,10 @@
       matched: FS.ct ? ['', '계약서 최종본이 등록되었습니다.', F.partner(FS.pick).org + '에서 분석을 진행합니다.', '']
                      : ['', FS.pick ? F.partner(FS.pick).org + ' 견적을 확정했습니다.' : '', 'OmicsPharm 컨설턴트가 계약서를 준비하고 있습니다. 등록되면 알림으로 알려드립니다.', '']
     }[FS.st];
+    // 사업자등록증 재제출 요청을 받았으면 (승인 전) 다시 올리기
+    var B = FS.biz || {};
+    if (FS.st === 'review' && !FS.ok && B.st === 'ask') T = ['warn', '사업자등록증을 다시 제출해주세요.', '사유: ' + B.note + '\n수정된 사업자등록증을 올리면 OmicsPharm 컨설턴트가 다시 확인한 뒤 승인해드립니다.', '<label class="btn primary" for="bizRe">사업자등록증 다시 올리기</label><input type="file" id="bizRe" accept=".pdf,.jpg,.jpeg,.png" hidden>'];
+    else if (FS.st === 'review' && !FS.ok && B.st === 're') T = ['gray', '다시 올린 사업자등록증을 확인하고 있습니다.', '승인되면 프로젝트로 등록되고 알림으로 알려드립니다.', ''];
     return '<div class="ftodo ' + T[0] + '"><div><b>' + esc(T[1]) + '</b><p>' + esc(T[2]) + '</p></div>' + (T[3] ? '<div class="acts">' + T[3] + '</div>' : '') + '</div>';
   }
   // 견적서 탭: 컨설턴트가 전달한 견적 비교 → 하나 선택
@@ -456,6 +460,7 @@
         '<div><dt>분석 서비스</dt><dd>' + esc(d.svc) + '</dd></div>' +
         (d.purpose ? '<div><dt>연구 내용 및 목적</dt><dd>' + esc(d.purpose) + '</dd></div>' : '') +
         (d.open ? '<div><dt>공개여부</dt><dd>' + esc(d.open) + '</dd></div>' : '') +
+        (F.bizName(d) ? '<div><dt>사업자등록증</dt><dd>' + esc(F.bizName(d)) + '</dd></div>' : '') +
       '</dl></section>' +
       (d.sections || []).map(function (sec) {
         if (sec.note) return '<section class="sec"><h3>' + esc(sec.title) + '</h3><p class="note">' + esc(sec.note) + '</p></section>';
@@ -489,6 +494,16 @@
   // 처음 보이는 탭은 단계에 맞춤: 의뢰접수 = 의뢰내용 / 견적 비교·견적 확정 = 견적서 / 계약서 등록 후 = 계약정보 (?tab= 이 있으면 그 탭)
   var qtab = new URLSearchParams(location.search).get('tab');
   showTab(qtab === 'req' || qtab === 'quote' || qtab === 'contract' ? qtab : FS.ct ? 'contract' : FS.st === 'sent' || FS.st === 'matched' ? 'quote' : 'req');
+  // 사업자등록증 다시 올리기: 이 의뢰의 파일로 저장하고 내 정보 관리에도 반영
+  if ($('#bizRe')) $('#bizRe').addEventListener('change', function () {
+    var f = this.files[0]; this.value = ''; if (!f) return;
+    if (!/\.(pdf|jpe?g|png)$/i.test(f.name)) { OP.toast('PDF, JPG, PNG 파일만 올릴 수 있습니다.'); return; }
+    var em = OP.session().email;
+    Promise.all([OP.files.put('biz:req:' + d.id, f), OP.files.put('biz:acc:' + em, f)]).then(function () {
+      OP.saveAccount(em, { bizDoc: f.name }); F.bizResubmit(d.id, f.name);
+      OP.flash('사업자등록증을 다시 제출했습니다.'); location.reload();
+    });
+  });
   if ($('#pDel')) $('#pDel').addEventListener('click', function () {
     OP.my.confirm('의뢰를 삭제하시겠습니까?', '"' + d.title + '" 의뢰가 삭제되며 복구할 수 없습니다.', '삭제', function () {
       OP.my.removeProject(d.id);

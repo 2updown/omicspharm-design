@@ -7,11 +7,11 @@
 <title>내 정보 관리 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / (분석파트너) 분석 가능 서비스 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261007x">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261007x">
-<script src="assets/common/site.js?v=20261007x"></script>
-<script src="assets/common/mypage.js?v=20261007x"></script>
-<script src="assets/common/flow.js?v=20261007x"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007y">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261007y">
+<script src="assets/common/site.js?v=20261007y"></script>
+<script src="assets/common/mypage.js?v=20261007y"></script>
+<script src="assets/common/flow.js?v=20261007y"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -236,7 +236,7 @@
 
   var SVCS = ['Genomics', 'Transcriptomics', 'Proteomics', 'Metabolomics', 'Glycoproteomics', 'Olink', '바이오의약품 특성 분석', 'Bioinformatics'];
   // 사업자등록증: 분석파트너는 가입 때 올리지 않았으면 여기서 올림 → 인증 검토 시작. 클라이언트는 프로젝트 등록 때 필요해 미리 올려 둠 (데모: 파일 이름만 저장)
-  var bizDoc = acc.bizDoc || '', savedDoc = bizDoc; // savedDoc: 계정에 저장된 파일 (인증 검토 대상)
+  var bizDoc = acc.bizDoc || '', savedDoc = bizDoc, bizFile = null; // savedDoc: 계정에 저장된 파일 (인증 검토 대상), bizFile: 저장 전 고른 파일 원본
   function showDoc() {
     var n = $('#docName'); n.classList.toggle('none', !bizDoc);
     n.innerHTML = '<span>' + OP.my.esc(bizDoc || '등록된 파일 없음') + '</span>';
@@ -251,13 +251,13 @@
     $('#docFile').addEventListener('change', function () {
       var f = this.files[0]; this.value = ''; if (!f) return;
       if (!/\.(pdf|jpe?g|png)$/i.test(f.name)) { OP.toast('PDF, JPG, PNG 파일만 올릴 수 있습니다.'); return; }
-      bizDoc = f.name; showDoc(); $('#docNote').hidden = false;
+      bizDoc = f.name; bizFile = f; showDoc(); $('#docNote').hidden = false;
     });
     $('#docDel').addEventListener('click', function () {
-      if (!savedDoc || bizDoc !== savedDoc) { bizDoc = savedDoc; showDoc(); $('#docNote').hidden = true; return; } // 저장 전 고른 파일은 바로 취소
+      if (!savedDoc || bizDoc !== savedDoc) { bizDoc = savedDoc; bizFile = null; showDoc(); $('#docNote').hidden = true; return; } // 저장 전 고른 파일은 바로 취소
       // 저장된 파일: 확인 후 바로 삭제
       OP.my.confirm('사업자등록증을 삭제하시겠습니까?', client ? '삭제한 뒤 프로젝트를 등록하려면 다시 올려 주세요.' : OP.partnerVerified() ? '삭제해도 인증 상태는 유지됩니다.' : '삭제하면 인증 검토가 중단됩니다. 인증을 받으려면 다시 올려 주세요.', '삭제', function () {
-        bizDoc = savedDoc = ''; OP.saveAccount(email, { bizDoc: '' }); showDoc(); $('#docNote').hidden = true; vrole();
+        bizDoc = savedDoc = ''; OP.saveAccount(email, { bizDoc: '' }); OP.files.del('biz:acc:' + email); showDoc(); $('#docNote').hidden = true; vrole();
         OP.toast('사업자등록증을 삭제했습니다.');
       });
     });
@@ -286,7 +286,7 @@
     if (!pOk) return;
     var data = { name: n.value.trim(), org: o.value.trim(), dept: $('#dept').value.trim(), phone: PHN.get(), photo: photo };
     if (partner) data.svcs = [].map.call(document.querySelectorAll('#svcs input:checked'), function (i) { return i.value; });
-    if (hasDoc) { data.bizDoc = savedDoc = bizDoc; $('#docNote').hidden = true; }
+    if (hasDoc) { data.bizDoc = savedDoc = bizDoc; $('#docNote').hidden = true; if (bizFile) { OP.files.put('biz:acc:' + email, bizFile); bizFile = null; } } // 원본은 컨설턴트가 의뢰 승인 때 확인
     OP.saveAccount(email, data);
     OP.saveOrg(data.org, data.dept);
     refresh(); pending(false); vrole(); if (hasDoc) showDoc();

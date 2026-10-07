@@ -542,8 +542,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261007x">
-<script src="assets/common/site.js?v=20261007x"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007y">
+<script src="assets/common/site.js?v=20261007y"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -1262,7 +1262,8 @@
     var d=collectSubmission(), list=[];
     d.ver=FORM_VER; d.form=collect(); d.form.id=null; // 수정하기에서 입력값을 그대로 다시 불러오기 위해 보관
     d.bizDoc=DOC;
-    var ss=OP.session(); if(ss&&DOC&&DOC!==DOC_SAVED) OP.saveAccount(ss.email,{bizDoc:DOC}); // 새로 올린 파일은 내 정보 관리에도 저장
+    var ss=OP.session(); if(ss) d.owner=ss.email;
+    var fp=null; if(ss&&DOC&&DOC!==DOC_SAVED){ OP.saveAccount(ss.email,{bizDoc:DOC}); if(DOC_FILE) fp=OP.files.put('biz:acc:'+ss.email,DOC_FILE); } // 새로 올린 파일은 내 정보 관리에도 저장 (원본은 컨설턴트 확인용)
     try{ list=JSON.parse(localStorage.getItem('op.submitted')||'[]'); }catch(e){}
     var k=EDIT?list.findIndex(function(x){return x.id===EDIT.id}):-1;
     if(k>-1){ d.id=EDIT.id; d.at=EDIT.at; d.updatedAt=Date.now(); list[k]=d; }
@@ -1270,7 +1271,8 @@
     try{ localStorage.setItem('op.submitted', JSON.stringify(list.slice(0,20))); }catch(e){}
     dirty=false;
     OP.flash(k>-1?'의뢰 내용이 수정되었습니다.':'분석 의뢰가 제출되었습니다.');
-    location.href='mypage-project.html?id='+encodeURIComponent(d.id);
+    var go=function(){ location.href='mypage-project.html?id='+encodeURIComponent(d.id); };
+    if(fp) fp.then(go,go); else go(); // 파일 저장이 끝난 뒤 이동
   }
   prev.onclick=function(){ if(cur>1){ clearErr(); cur--; render(); } };
   tabs.forEach(function(t){t.onclick=function(){
@@ -1284,7 +1286,7 @@
 
 
   /* ── 사업자등록증 ── 내 정보 관리에 저장된 파일(acc.bizDoc)이 있으면 그대로 쓰고, 없으면 여기서 올려야 제출 가능 (데모: 파일 이름만 저장) */
-  var DOC='', DOC_SAVED='';
+  var DOC='', DOC_SAVED='', DOC_FILE=null;
   function showDoc(){
     var n=$('#rDocName'); n.textContent=DOC||'등록된 파일 없음'; n.classList.toggle('none',!DOC);
     $('#rDocBtn').textContent=DOC?'다른 파일로 변경':'파일 선택';
@@ -1296,7 +1298,7 @@
     $('#rDocFile').addEventListener('change',function(){
       var f=this.files[0]; if(!f) return;
       if(!/\.(pdf|jpe?g|png)$/i.test(f.name)){ this.value=''; if(OP.toast) OP.toast('PDF, JPG, PNG 파일만 올릴 수 있습니다.'); return; }
-      DOC=f.name; showDoc(); if(typeof updateProg==='function') updateProg(); $('#docField').classList.remove('invalid');
+      DOC=f.name; DOC_FILE=f; showDoc(); if(typeof updateProg==='function') updateProg(); $('#docField').classList.remove('invalid');
     });
   })();
 

@@ -134,6 +134,25 @@
     if (!x || !dom || FREE_MAIL.indexOf(dom) > -1 || x.domains.indexOf(dom) < 0) return [];
     return Object.keys(x.depts).filter(function (d) { return x.depts[d] >= DEPT_MIN; });
   };
+  /* 업로드 파일 원본 보관 (데모): 이 브라우저 IndexedDB 'op-files'. OP.files.put(키, File) / get(키) → Promise
+     키: 'biz:acc:이메일' = 내 정보 관리의 사업자등록증, 'biz:req:의뢰번호' = 의뢰별로 다시 올린 사업자등록증 */
+  OP.files = (function () {
+    var dbp = null;
+    function open() {
+      if (!dbp) dbp = new Promise(function (ok, no) {
+        try { var q = indexedDB.open('op-files', 1); q.onupgradeneeded = function () { q.result.createObjectStore('f'); }; q.onsuccess = function () { ok(q.result); }; q.onerror = function () { no(q.error); }; } catch (e) { no(e); }
+      });
+      return dbp;
+    }
+    function run(mode, fn) {
+      return open().then(function (db) { return new Promise(function (ok, no) { var t = db.transaction('f', mode), st = t.objectStore('f'), q = fn(st); t.oncomplete = function () { ok(q && q.result); }; t.onerror = function () { no(t.error); }; }); }).catch(function () { return null; });
+    }
+    return {
+      put: function (k, f) { return run('readwrite', function (st) { return st.put(f, k); }); },
+      get: function (k) { return run('readonly', function (st) { return st.get(k); }); },
+      del: function (k) { return run('readwrite', function (st) { return st.delete(k); }); }
+    };
+  })();
   OP.saveOrg = function () {}; // 소속·부서는 계정 정보(op.accounts)에 저장된 값으로 집계 — 서버에서는 신규 소속을 '검수 대기'로 등록
   // 입력칸 아래 자동완성 목록. items(q) → [{v, sub}], 일치하는 항목이 없으면 '직접 추가'
   OP.combo = function (input, items, opt) {

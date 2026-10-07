@@ -33,16 +33,16 @@
   // 예시 의뢰 (클라이언트 데모 계정 client@omicspharm.test 소유) — 단계별로 하나씩
   var T0 = new Date(2026, 9, 6, 10, 0).getTime();
   var DEMO_REQS = [
-    { id: 'REQ-D3MO1', demo: true, at: T0 - DAY * 1, svc: '단백체 분석', title: '혈장 시료 TMT 정량 단백체 분석', org: '○○연구소', manager: '홍길동', bizDoc: '사업자등록증_○○연구소.pdf', samples: '20', due: '2026-12-18', from: '2026-10-05', to: '2026-10-19', budget: '1,000만원 이상', open: '공개',
+    { id: 'REQ-D3MO1', demo: true, at: T0 - DAY * 1, svc: '단백체 분석', title: '혈장 시료 TMT 정량 단백체 분석', org: '○○연구소', manager: '홍길동', bizDoc: '사업자등록증_○○연구소.pdf', owner: 'client@omicspharm.test', samples: '20', due: '2026-12-18', from: '2026-10-05', to: '2026-10-19', budget: '1,000만원 이상', open: '공개',
       purpose: '대조군 10명, 환자군 10명 혈장에서 차등 발현 단백질을 찾고, 후보 바이오마커를 선별하고자 합니다.',
       sections: [{ title: '시료 정보', rows: [['Taxonomy (Source)', 'Human'], ['시료 종류', '혈장'], ['시료 수', '20개 (대조군 10 · 환자군 10)'], ['보관 상태', '-80℃ 냉동']] },
         { title: '분석 요청', rows: [['분석 방법', 'TMT 16plex 정량'], ['고농도 단백질 제거', '필요 (Top14 depletion)'], ['원하는 결과', '차등 발현 단백질 목록, Pathway 분석']] },
         { title: '기타 분석 요구사항', note: '시료는 계약 후 드라이아이스로 발송 예정입니다. 분석 일정 제안 부탁드립니다.' }] },
-    { id: 'REQ-D3MO2', demo: true, at: T0 - DAY * 4, svc: '대사체 분석', title: '마우스 뇌 조직 비표적 대사체 프로파일링', org: '○○연구소', manager: '홍길동', bizDoc: '사업자등록증_○○연구소.pdf', samples: '24', due: '2026-12-31', from: '2026-10-02', to: '2026-10-16', budget: '500만~1,000만원', open: '비공개',
+    { id: 'REQ-D3MO2', demo: true, at: T0 - DAY * 4, svc: '대사체 분석', title: '마우스 뇌 조직 비표적 대사체 프로파일링', org: '○○연구소', manager: '홍길동', bizDoc: '사업자등록증_○○연구소.pdf', owner: 'client@omicspharm.test', samples: '24', due: '2026-12-31', from: '2026-10-02', to: '2026-10-16', budget: '500만~1,000만원', open: '비공개',
       purpose: '약물 투여군과 대조군 마우스 뇌 조직에서 대사체 변화를 확인하고자 합니다.',
       sections: [{ title: '시료 정보', rows: [['Taxonomy (Source)', 'Mouse'], ['시료 종류', '뇌 조직 (해마)'], ['시료 수', '24개 (3군 × 8)'], ['보관 상태', '-80℃ 냉동']] },
         { title: '분석 요청', rows: [['플랫폼', 'LC-MS (Untargeted)'], ['후속 분석', '대사 경로 분석']] }] },
-    { id: 'REQ-D3MO3', demo: true, at: T0 - DAY * 9, svc: '전사체 분석', title: '종양 조직 RNA-seq 차등 발현 분석', org: '○○연구소', manager: '홍길동', bizDoc: '사업자등록증_○○연구소.pdf', samples: '16', due: '2026-12-10', from: '2026-09-25', to: '2026-10-09', budget: '1,000만원 이상', open: '공개',
+    { id: 'REQ-D3MO3', demo: true, at: T0 - DAY * 9, svc: '전사체 분석', title: '종양 조직 RNA-seq 차등 발현 분석', org: '○○연구소', manager: '홍길동', bizDoc: '사업자등록증_○○연구소.pdf', owner: 'client@omicspharm.test', samples: '16', due: '2026-12-10', from: '2026-09-25', to: '2026-10-09', budget: '1,000만원 이상', open: '공개',
       purpose: '항암제 처리 전후 종양 조직의 유전자 발현 변화를 비교하고자 합니다.',
       sections: [{ title: '시료 정보', rows: [['Taxonomy (Source)', 'Human'], ['시료 종류', 'FFPE 종양 조직'], ['시료 수', '16개 (처리 전 8 · 후 8)']] },
         { title: '분석 요청', rows: [['시퀀싱', 'Total RNA-seq, PE150, 40M reads'], ['원하는 결과', 'DEG 목록, GSEA, 시각화 리포트']] }] }
@@ -131,6 +131,26 @@
     open: function (id) { var s = state(id); return !!s.ok && s.st !== 'matched'; },
     // 의뢰 승인: 컨설턴트가 의뢰서를 확인하고 승인 → 프로젝트로 등록(게시)
     approve: function (id) { return put(id, function (s) { s.ok = Date.now(); }); },
+    // 사업자등록증 (의뢰 승인 전 컨설턴트 확인): s.biz = { st:'ask'|'re', askAt, note, reAt, name }, s.bizSeen = 컨설턴트가 열어봤는지
+    // 파일 이름: 재제출한 파일 > 의뢰 제출 때 파일 (예시 의뢰는 클라이언트 데모 계정의 내 정보 관리 파일)
+    bizName: function (r) {
+      var b = state(r.id).biz; if (b && b.name) return b.name;
+      if (r.demo) { var a = OP.account('client@omicspharm.test') || {}; return a.bizDoc || r.bizDoc || ''; }
+      return r.bizDoc || '';
+    },
+    // 원본 파일 (OP.files): 재제출 파일 → 의뢰한 계정의 내 정보 관리 파일 순서로 찾고, 이름이 같을 때만 씀
+    bizFile: function (r) {
+      var nm = F.bizName(r), owner = r.demo ? 'client@omicspharm.test' : r.owner;
+      if (!OP.files) return Promise.resolve(null);
+      return OP.files.get('biz:req:' + r.id).then(function (f) {
+        if (f && f.name === nm) return f;
+        return owner ? OP.files.get('biz:acc:' + owner).then(function (g) { return g && g.name === nm ? g : null; }) : null;
+      });
+    },
+    bizSeen: function (id) { return !!state(id).bizSeen; },
+    bizMark: function (id) { put(id, function (s) { s.bizSeen = true; }); },
+    bizAsk: function (id, note) { put(id, function (s) { s.biz = { st: 'ask', askAt: Date.now(), note: note, name: (s.biz || {}).name }; s.bizSeen = false; }); },
+    bizResubmit: function (id, name) { put(id, function (s) { var b = s.biz || {}; s.biz = { st: 're', askAt: b.askAt, note: b.note, reAt: Date.now(), name: name }; s.bizSeen = false; }); },
     // 견적 요청 보내기 (추가 요청도 같은 함수)
     // 견적제안메일 발송 (컨설턴트 추천): msg는 프로젝트 링크와 함께 메일로 전달
     send: function (id, keys, due, msg) {
@@ -228,6 +248,7 @@
           if (x.dec) L.push({ id: 'f-dec-' + r.id + k, k: '견적거절', cat: 'project', at: x.dec.at, t: josa(o, '이', '가') + ' ' + nm + ' 견적 요청을 거절했습니다.', sub: x.dec.why, href: href });
         });
         if (r.updatedAt) L.push({ id: 'f-ed-' + r.id + r.updatedAt, k: '의뢰수정', cat: 'project', at: r.updatedAt, t: cl + '의 ' + nm + ' 의뢰서가 수정되었습니다. 변경 내용을 확인해주세요.', href: href });
+        if (s.biz && s.biz.reAt) L.push({ id: 'f-biz-re-' + r.id + s.biz.reAt, k: '사업자등록증재제출', cat: 'project', at: s.biz.reAt, t: cl + '의 ' + nm + ' 의뢰 사업자등록증이 다시 제출되었습니다. 확인 후 승인처리 해주세요.', href: href });
         if (s.pick) L.push({ id: 'f-pick-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: josa(cl, '이', '가') + ' ' + nm + ' 프로젝트의 최종 견적을 확정 했습니다.', sub: '공급사: ' + partner(s.pick).org + ' · 견적금액: ' + won(total(s.P[s.pick].quote).final), href: href });
       } else if (role === 'partner') {
         var x = s.P[ses.email]; if (!x) return;
@@ -243,6 +264,7 @@
         var ph = 'mypage-project.html?id=' + encodeURIComponent(r.id);
         if (s.ct) L.push({ id: 'f-ct-' + r.id, k: '계약', cat: 'project', at: s.ct.at, t: nm + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: ph + '&tab=contract' });
         if (s.ok) L.push({ id: 'f-ok-' + r.id, k: '의뢰승인', cat: 'project', at: s.ok, t: '의뢰하신 ' + nm + ' 프로젝트가 승인되어 등록되었습니다.', href: ph });
+        if (s.biz && s.biz.askAt) L.push({ id: 'f-biz-ask-' + r.id + s.biz.askAt, k: '사업자등록증재제출요청', cat: 'project', at: s.biz.askAt, t: '의뢰하신 ' + nm + ' 의뢰의 사업자등록증을 다시 제출해주세요.', sub: '사유: ' + s.biz.note, href: ph });
         (s.sends || (s.sentAt ? [{ at: s.sentAt, keys: Object.keys(s.P).filter(function (k) { return s.P[k].fwd; }) }] : [])).forEach(function (e, i) {
           var A = e.keys.map(function (k) { return total(s.P[k].quote).final; });
           L.push({ id: 'f-arr-' + r.id + (i ? '-' + i : ''), k: '견적확인요청', cat: 'project', at: e.at, t: '의뢰하신 ' + nm + ' 프로젝트에 대한 ' + (i ? '추가 ' : '') + '견적서 ' + e.keys.length + '건을 확인해주세요. 견적 관련 문의사항은 Q&A게시판을 통해서 문의해 주세요.',
