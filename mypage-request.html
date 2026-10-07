@@ -9,11 +9,11 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=의뢰번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261008c">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261008c">
-<script src="assets/common/site.js?v=20261008c"></script>
-<script src="assets/common/mypage.js?v=20261008c"></script>
-<script src="assets/common/flow.js?v=20261008c"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261008d">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261008d">
+<script src="assets/common/site.js?v=20261008d"></script>
+<script src="assets/common/mypage.js?v=20261008d"></script>
+<script src="assets/common/flow.js?v=20261008d"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -256,6 +256,8 @@
   .fdocs p { flex-basis:100%; margin-left:108px; font-size:12px; line-height:18px; color:var(--gray-500); white-space:pre-line; }
   .pv .bizfile { display:block; width:900px; max-width:100%; margin:0 auto; background:#fff; box-shadow:0 8px 24px rgba(0,0,0,.3); }
   iframe.bizfile { height:calc(100vh - 140px); border:0; }
+  .fdocs .demo-reset { font-size:12px; color:var(--gray-500); text-decoration:underline; text-underline-offset:2px; }
+  .fdocs .demo-reset:hover { color:var(--gray-700); }
   .pv-bar button.ok { background:var(--teal-600); color:#fff; }
   .pv .bizmiss { max-width:520px; margin:80px auto 0; padding:32px 24px; border-radius:12px; background:#fff; text-align:center; }
   .pv .bizmiss b { display:block; font-size:18px; font-weight:600; line-height:26px; }
@@ -486,7 +488,8 @@
     return '<div class="fdocs"><em>사업자등록증</em>' + chip +
       '<span class="fname"><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(nm) + '</span></span>' +
       '<span class="fbtns"><button type="button" class="btn" id="bizView">보기</button>' + (pre && !ask && !ok ? '<button type="button" class="btn" id="bizOk">확인 완료</button><button type="button" class="btn" id="bizAsk">재제출 요청</button>' : '') + '</span>' +
-      (note ? '<p>' + esc(note) + '</p>' : '') + '</div>';
+      (note ? '<p>' + esc(note) + '</p>' : '') +
+      (ok || b.st || s.bizSeen ? '<p><button type="button" class="demo-reset" id="bizReset">데모: 사업자등록증 확인 전으로 되돌리기</button></p>' : '') + '</div>';
   }
   // 미리보기: 의뢰사가 올린 원본(PDF·이미지)을 그대로 보여줌. 원본이 이 브라우저에 없으면(파일 이름만 저장된 예전 데이터) 안내
   function showBiz() {
@@ -666,6 +669,8 @@
         });
       } else if (t.closest('#bizView')) {
         showBiz();
+      } else if (t.closest('#bizReset')) {
+        F.bizReset(r); OP.toast(s.st === 'review' ? '사업자등록증 확인과 의뢰 승인을 처음 상태로 되돌렸습니다.' : '사업자등록증 확인을 처음 상태로 되돌렸습니다.'); render();
       } else if (t.closest('#bizOk')) {
         if (!F.bizSeen(id)) { OP.toast('사업자등록증을 열어 확인한 뒤 눌러주세요.'); $('#bizView').focus(); return; }
         bizOkDo();

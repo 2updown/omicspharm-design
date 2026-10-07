@@ -159,6 +159,11 @@
         return OP.files.get('biz:req:' + r.id).then(function (g) { return g && g.name === nm ? g : null; });
       });
     },
+    // 데모: 사업자등록증 확인을 처음 상태로 (계정 확인 완료·이 의뢰의 열람/재제출 기록, 아직 견적 요청 전이면 의뢰 승인도 취소)
+    bizReset: function (r) {
+      var o = F.bizOwner(r); if (o) OP.saveAccount(o, { bizOk: 0, bizOkName: '' });
+      put(r.id, function (s) { delete s.biz; delete s.bizSeen; if (s.st === 'review') delete s.ok; });
+    },
     bizSeen: function (id) { return !!state(id).bizSeen; },
     bizMark: function (id) { put(id, function (s) { s.bizSeen = true; }); },
     bizAsk: function (id, note) { put(id, function (s) { s.biz = { st: 'ask', askAt: Date.now(), note: note, name: (s.biz || {}).name }; s.bizSeen = false; }); },
