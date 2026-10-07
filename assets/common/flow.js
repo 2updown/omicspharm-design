@@ -35,17 +35,25 @@
   var DEMO_REQS = [
     { id: 'PRJ-2026-0043', demo: true, at: T0 - DAY * 1, svc: '단백체 분석', title: '혈장 시료 TMT 정량 단백체 분석', org: '○○연구소', manager: '홍길동', bizDoc: '사업자등록증_○○연구소.pdf', owner: 'client@omicspharm.test', samples: '20', due: '2026-12-18', from: '2026-10-05', to: '2026-10-19', budget: '1,000만원 이상', open: '공개',
       purpose: '대조군 10명, 환자군 10명 혈장에서 차등 발현 단백질을 찾고, 후보 바이오마커를 선별하고자 합니다.',
-      sections: [{ title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', '혈장'], ['시료 수', '20개 (대조군 10 · 환자군 10)'], ['보관 상태', '-80℃ 냉동']] },
-        { title: '분석 요청', rows: [['분석 방법', 'TMT 16plex 정량'], ['고농도 단백질 제거', '필요 (Top14 depletion)'], ['원하는 결과', '차등 발현 단백질 목록, Pathway 분석']] },
-        { title: '기타 분석 요구사항', note: '시료는 계약 후 드라이아이스로 발송 예정입니다. 분석 일정 제안 부탁드립니다.' }] },
+      sections: [{ title: '분석 서비스 : 단백체 분석', rows: [['분석 유형', 'Untargeted'], ['분석 목적', '단백질 발현 비교, 바이오마커 후보'], ['원하는 분석 결과', '상대정량, 군 간 비교, 차등단백질, Pathway'], ['통계 · 해석', 'PCA, Volcano plot, Enrichment']] },
+        { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', '혈장'], ['총 시료 수', '20개'], ['보관상태', '초저온 (-80℃)']] },
+        { title: '분석 그룹', rows: [['비교군 구성', '그룹 있음'], ['대조군', '대조군 · 10개'], ['실험군', '환자군 · 10개']] },
+        { title: '요구사항', rows: [['희망완료일', '2026-12-18'], ['일정 협의 가능 여부', '가능'], ['예상금액', '1,000만원 이상'], ['시료 전처리 기술', 'TMT'], ['분석 기술', 'DDA'], ['희망 장비', 'Orbitrap']] },
+        { title: '희망 산출물', rows: [['희망 산출물', 'Raw data, 국문 보고서'], ['산출물 용도', '논문 학술용']] },
+        { title: '추가 요청사항 및 후속 연구계획', note: '시료는 계약 후 드라이아이스로 발송 예정입니다. 분석 일정 제안 부탁드립니다.' }] },
     { id: 'PRJ-2026-0044', demo: true, at: T0 - DAY * 4, svc: '대사체 분석', title: '마우스 뇌 조직 비표적 대사체 프로파일링', org: '○○연구소', manager: '홍길동', bizDoc: '사업자등록증_○○연구소.pdf', owner: 'client@omicspharm.test', samples: '24', due: '2026-12-31', from: '2026-10-02', to: '2026-10-16', budget: '500만~1,000만원', open: '비공개',
       purpose: '약물 투여군과 대조군 마우스 뇌 조직에서 대사체 변화를 확인하고자 합니다.',
-      sections: [{ title: '시료 정보', rows: [['생물종', 'Mouse'], ['시료 종류', '뇌 조직 (해마)'], ['시료 수', '24개 (3군 × 8)'], ['보관 상태', '-80℃ 냉동']] },
-        { title: '분석 요청', rows: [['플랫폼', 'LC-MS (Untargeted)'], ['후속 분석', '대사 경로 분석']] }] },
+      sections: [{ title: '분석 서비스 : 대사체 분석', rows: [['분석 유형', 'Untargeted'], ['플랫폼', 'LC-MS'], ['측정 모드', 'Positive+Negative'], ['요청 분석 목적', '약물·처리 반응, 대사경로 변화']] },
+        { title: 'Untargeted', rows: [['원하는 분석 결과', '검출·동정, 상대정량, 차등 대사체, Pathway'], ['통계분석', 'PCA, Volcano plot, PLS-DA'], ['후속 분석', '없음']] },
+        { title: '시료 정보', rows: [['생물종', 'Mouse'], ['시료 종류', '조직'], ['총 시료 수', '24개'], ['보관상태', '초저온 (-80℃)']] },
+        { title: '분석 그룹', rows: [['비교군 구성', '그룹 있음'], ['대조군', '대조군 · 8개'], ['실험군', '저용량 · 8개'], ['실험군', '고용량 · 8개']] },
+        { title: '희망 산출물', rows: [['희망 산출물', 'Raw data, 결과표, 국문 보고서'], ['산출물 용도', '내부 연구용']] }] },
     { id: 'PRJ-2026-0045', demo: true, at: T0 - DAY * 9, svc: '전사체 분석', title: '종양 조직 RNA-seq 차등 발현 분석', org: '○○연구소', manager: '홍길동', bizDoc: '사업자등록증_○○연구소.pdf', owner: 'client@omicspharm.test', samples: '16', due: '2026-12-10', from: '2026-09-25', to: '2026-10-09', budget: '1,000만원 이상', open: '공개',
       purpose: '항암제 처리 전후 종양 조직의 유전자 발현 변화를 비교하고자 합니다.',
-      sections: [{ title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', 'FFPE 종양 조직'], ['시료 수', '16개 (처리 전 8 · 후 8)']] },
-        { title: '분석 요청', rows: [['시퀀싱', 'Total RNA-seq, PE150, 40M reads'], ['원하는 결과', 'DEG 목록, GSEA, 시각화 리포트']] }] }
+      sections: [{ title: '분석 서비스 : 전사체 분석', rows: [['분석 유형', '일반 전사체 발현'], ['일반 전사체 발현 · 분석 항목', 'Total RNA-seq, Low-input·FFPE RNA-seq'], ['연구 목적', '발현량 비교, Pathway 분석'], ['원하는 분석 결과', '유전자 발현량, DEG, Pathway'], ['참조정보', 'GRCh38'], ['핵산 추출 상태', '미추출 시료'], ['시료 상태', 'FFPE'], ['Library 유형', 'Stranded'], ['시퀀싱 방식', 'Paired-end']] },
+        { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', 'FFPE 조직'], ['총 시료 수', '16개'], ['보관상태', '냉장']] },
+        { title: '분석 그룹', rows: [['비교군 구성', '그룹 있음'], ['대조군', '처리 전 · 8개'], ['실험군', '처리 후 · 8개']] },
+        { title: '희망 산출물', rows: [['희망 산출물', 'FASTQ, Count matrix, DEG 결과표, 국문 보고서'], ['산출물 용도', '논문 학술용']] }] }
   ];
 
   // 가상 파트너 견적 (서비스·시료 수 기준으로 만든 예시)
@@ -385,45 +393,27 @@
   };
 
   // ── 계약서 (셀키 분석서비스 의뢰서 기본 양식) ──
-  // 회사 시험의뢰서(docx) 구성: 1. 의뢰자 정보 / 2. 시료 정보 / 3. 분석 서비스(의뢰한 서비스 항목만) / 분석 유형별 샘플 요구량 / 서명 / 별첨1. 분석 견적서
+  // 회사 시험의뢰서 구성: 1. 의뢰자 정보 / 2. 시료 정보 / 3. 분석 서비스(프로젝트 의뢰 때 입력한 분석 상세만) / 분석 유형별 샘플 요구량 / 서명 / 별첨1. 분석 견적서
   // 기관 자체 시험의뢰서를 쓰는 경우에는 파일 업로드로 대신한다
-  var Y = 1, N = 0;
-  var FORM = {
-    '단백체': { name: '단백체 분석 (Proteomics)', blocks: [
-      { h: 'Untargeted protein analysis', items: [['정성분석', '단백질 리스트 및 GO analysis를 제공해 드립니다.', Y], ['정량분석', '정량분석은 heatmap, volcano plot, foldchange 값을 제공합니다.', Y], ['통계처리 (p-value, volcano plot 등)', '통계 처리를 통한 비교 분석을 원하면 동일한 그룹의 시료 3개 이상 필요합니다.', Y, '통계|그룹|차등|DEG'], ['PTM', 'acetylation, methylation, phosphorylation, glycosylation', N, 'PTM|인산화|phospho|glyco|당화']] },
-      { h: 'Targeted protein analysis', target: 1, fields: ['Target protein name', 'Target peptide', '내부표준물 (stable-isotope labeled synthetic peptide)', '시료 내 예상되는 타겟 단백질 농도 (선택사항)'] }] },
-    '대사체': { name: '대사체 분석 (Metabolomics)', blocks: [
-      { h: 'Untargeted metabolite analysis', items: [['정성분석', '대사체 리스트를 제공해 드립니다.', Y], ['정량분석', '정량분석은 heatmap, volcano plot, foldchange 값을 제공합니다.', Y], ['통계처리 (p-value, volcano plot 등)', '통계 처리를 통한 비교 분석을 원하면 시료 3개 이상 반복 분석이 필요합니다.', Y, '통계|군|그룹']] },
-      { h: 'Targeted metabolite analysis', target: 1, fields: ['Target metabolite name'] }] },
-    '유전체': { name: '유전체 분석 (Genomics)', blocks: [
-      { h: 'Whole Genome / Whole Exome / Targeted Sequencing', items: [['WGS (Whole Genome Sequencing)', '전장 유전체 분석(30× 또는 90×), 변이(Variant) 전체 탐지 목적', N, 'WGS|전장'], ['WES (Whole Exome Sequencing)', '코딩 영역(Exon) 기반 변이 분석, 희귀질환·암 패널 분석에 최적', N, 'WES|Exome|엑솜'], ['Targeted Gene Panel', '선정된 유전자 패널 기반 변이 분석(예: 암패널, 희귀질환패널 등)', N, '패널|Panel'], ['Low-pass WGS / CNV sequencing', '저커버리지 WGS 기반 Copy number variation 분석', N, 'Low-pass']] },
-      { h: 'Library Preparation & Sequencing-Type Options', items: [['DNA Library preparation', '샘플 품질 QC 후 Library 제작', Y], ['PCR-free Library', 'Bias 최소화, 고품질 분석 목적', N, 'PCR-free'], ['Paired-end sequencing (PE150 등)', 'Illumina PE 기반 표준 시퀀싱 방식', Y], ['Long-read sequencing (PacBio / Oxford Nanopore)', '구조변이·길이 긴 영역 분석 (선택 사항)', N, 'Long-read|PacBio|Nanopore']] },
-      { h: 'Variant Calling & Bioinformatics', items: [['Alignment (BWA-MEM 등)', 'Reference genome과 매핑된 BAM 제공', Y], ['Variant Calling (SNV/INDEL)', 'GATK 기반 변이 리스트(VCF) 제공', Y], ['CNV 분석', 'Copy number variation 분석', N, 'CNV'], ['SV 분석', '구조변이 (inversion, deletion, translocation)', N, 'SV|구조변이'], ['Annotation Report', 'ClinVar, dbSNP, gnomAD 기반 해석', Y], ['Filtering Options', 'Pathogenic / likely pathogenic / novel variant 분류', N, 'Filtering|pathogenic']] }] },
-    '전사체': { name: '유전체 분석 (Genomics) — RNA analysis', blocks: [
-      { h: 'RNA analysis', items: [['RNA-seq (mRNA profiling)', '전사체 기반 유전자 발현량 분석', Y], ['Small RNA-seq (miRNA 등)', 'miRNA, siRNA, piRNA 등 200 nt 이하 small RNA 발현 분석', N, 'miRNA|small RNA'], ['Transcript isoform 분석', 'long-read 이용 시 정확도 향상', N, 'isoform'], ['Differential expression(DGE) 분석', 'DESeq2 / edgeR 기반 DEG 리스트 제공', Y, 'DEG|차등'], ['Functional pathway 분석', 'GO, KEGG pathway 제공', N, 'GSEA|pathway|Pathway|경로']] }] },
-    '바이오의약품': { name: '바이오의약품 특성분석 (Biopharmaceutical Characterization)', blocks: [
-      { h: '', items: [['Intact Mass', '항체 및 ADC의 전체 분자량 확인', N, 'Intact'], ['Peptide mapping fingerprinting', '단백질의 아미노산 서열 및 변형 확인', N, 'Peptide mapping|펩타이드 매핑'], ['Full length sequencing', '항체의 전체 서열 확인', N, 'Full length'], ['N/C terminal determination', '단백질 N말단 및 C말단의 서열 확인', N, '말단|terminal'], ['Amino acid composition', '단백질의 아미노산 조성 분석', N, '아미노산 조성'], ['Extinction Coefficient', '단백질의 광학적 흡광도 계수 측정', N, 'Extinction'],
-        ['Modification (Oxidation, deamidation)', '산화 및 탈아미드화 같은 화학적 변형 확인', N, '산화|Oxidation|deamidation'], ['Disulfide bond', '이황화 결합 위치와 상태 확인', N, 'Disulfide|이황화'], ['Free thiol', 'Free thiol 그룹 존재 여부 확인', N, 'thiol'], ['Monosaccharide composition', '단당류 구성 분석', N, '단당류'], ['Sialic acid composition', '시알산의 조성 및 함량 분석', N, '시알산|Sialic'], ['N-linked glycan profile', 'N-연결 당구조 분석', N, 'N-glycan|N-linked|glycan'], ['O-linked glycan profile', 'O-연결 당구조 분석', N, 'O-linked'],
-        ['N-Glycosylation site', 'N-당화 위치 분석', N, 'N-Glycosylation'], ['O-Glycosylation site', 'O-당화 위치 분석', N, 'O-Glycosylation'], ['UV', '자외선 흡광도 분석', N, 'UV'], ['Fluorescence', '형광 특성 분석', N, 'Fluorescence|형광'], ['Circular dichroism', '단백질의 이차 구조 분석', N, 'dichroism|CD'], ['Differential Scanning Calorimetry', '단백질 열 안정성 분석', N, 'DSC|열 안정'], ['FT-IR', '단백질의 구조 분석', N, 'FT-IR'], ['Dynamic Light Scattering', '입자 크기 및 분포 분석', N, 'DLS|Light Scattering'], ['SEC-UPLC', '단백질의 분자량 분포 확인', N, 'SEC'],
-        ['ADC - DAR (Drug-to-Antibody Ratio)', '약물 대 항체 비율 분석', N, 'DAR'], ['ADC - Total antibody', 'Peptide를 이용한 항체 정량 분석', N, 'Total antibody'], ['ADC - Antibody-drug conjugation', '항체와 연결된 drug (linker+payload) 분석', N, 'conjugation|payload'], ['ADC - Free payload', '비결합 약물의 존재 확인', N, 'Free payload']] }] }
-  };
   var NEED = {
     '단백체·대사체': ['정제 단백질: 100 μg 이상', '혈액: 30 μL 이상', 'Cell: 1×10⁷ cells 이상', 'CM: 2 mL 이상', 'EV: 5×10⁹ particles 이상', '조직: protein 100 μg 이상'],
     '유전체': ['gDNA: 500 ng+ (≥20 ng/µL) 이상', '혈액(EDTA): 1–3 mL 이상', 'Cell: 1×10⁶ cells 이상', '조직: 10–20 mg 이상', 'FFPE: 3–5 sections', 'RNA: 100 ng+ (RIN≥7) 이상', 'Long-read DNA: 5–10 µg 이상'],
     '바이오의약품 특성분석': ['단백질의약품 시료: 1 mg 이상 (분석 항목에 따라 변동)']
   };
-  var formKey = function (svc) { return ['단백체', '대사체', '유전체', '전사체', '바이오의약품'].filter(function (k) { return String(svc).indexOf(k) > -1; })[0] || ''; };
   var rowVal = function (r, re) { var v = ''; (r.sections || []).forEach(function (sec) { (sec.rows || []).forEach(function (x) { if (re.test(x[0])) v = v || x[1]; }); }); return v; };
   F.contractHTML = function (r, s, side) {
-    var k = formKey(r.svc), f = FORM[k], text = [r.title, r.purpose].concat((r.sections || []).map(function (sec) { return (sec.rows || []).map(function (x) { return x.join(' '); }).join(' ') + (sec.note || ''); })).join(' ');
-    var targeted = /표적|Target|타겟/i.test(text) && !/비표적|Untargeted/i.test(text);
-    var yn = function (it) { return (it[3] && new RegExp(it[3], 'i').test(text)) || it[2] ? '<b class="y">유</b>' : '<span class="n">무</span>'; };
-    var svcHTML = f ? f.blocks.map(function (b) {
-      var on = f.blocks.length === 1 || (b.target ? targeted : !targeted) || k === '유전체';
-      var head = function (n) { return '<td class="grp" rowspan="' + n + '">(' + (on ? 'o' : '&nbsp;&nbsp;&nbsp;') + ') ' + esc(b.h || '') + '</td>'; };
-      if (b.fields) return '<table class="it2">' + b.fields.map(function (x, i) { return '<tr>' + (i === 0 ? head(b.fields.length) : '') + '<td class="nm">' + esc(x) + '</td><td>' + (on && i === 0 ? esc(rowVal(r, /타겟|Target|대상/) || '-') : '-') + '</td></tr>'; }).join('') + '</table>';
-      return '<table class="it2">' + b.items.map(function (it, i) { return '<tr>' + (i === 0 ? head(b.items.length) : '') + '<td class="nm">' + esc(it[0]) + '</td><td>' + (on ? yn(it) : '<span class="n">-</span>') + '<i>* ' + esc(it[1]) + '</i></td></tr>'; }).join('') + '</table>';
-    }).join('') : '<table class="kv2">' + (r.sections || []).filter(function (x) { return x.rows; }).map(function (sec) { return sec.rows.map(function (x) { return '<tr><th>' + esc(x[0]) + '</th><td>' + esc(x[1]) + '</td></tr>'; }).join(''); }).join('') + '</table>';
+    // 3. 분석 서비스: 프로젝트 의뢰 때 입력한 '분석 상세' 단계 값(조건부 Targeted·PTM 등 포함) + 요청 기술만, 원본 의뢰서처럼 [구분 | 항목 | 입력값]
+    var TITLE = { '단백체': '단백체 분석 (Proteomics)', '대사체': '대사체 분석 (Metabolomics)', '유전체': '유전체 분석 (Genomics)', '전사체': '전사체 분석 (Transcriptomics)', 'Olink': 'Olink 분석', '바이오의약품': '바이오의약품·ADC 분석' };
+    var tk = Object.keys(TITLE).filter(function (t) { return String(r.svc).indexOf(t) > -1; })[0];
+    var SUB = ['Targeted', 'Untargeted', 'PTM', 'ADC 상세 정보'], TECH = /^(시료 전처리 기술|분석 기술|희망 장비|요청 기술)/;
+    var groups = (r.sections || []).filter(function (sec) { return sec.rows && (/^분석 서비스/.test(sec.title) || SUB.indexOf(sec.title) > -1); })
+      .map(function (sec) { return [/^분석 서비스/.test(sec.title) ? String(r.svc).replace(/·ADC$/, '') : sec.title, sec.rows.filter(function (x) { return !TECH.test(x[0]); })]; });
+    var tech = []; (r.sections || []).forEach(function (sec) { (sec.rows || []).forEach(function (x) { if (TECH.test(x[0])) tech.push(x); }); });
+    if (tech.length) groups.push(['요청 기술', tech]);
+    groups = groups.filter(function (g) { return g[1].length; });
+    var svcHTML = groups.length ? groups.map(function (g) {
+      return '<table class="it2">' + g[1].map(function (x, i) { return '<tr>' + (i === 0 ? '<td class="grp" rowspan="' + g[1].length + '">' + esc(g[0]) + '</td>' : '') + '<td class="nm">' + esc(x[0]) + '</td><td>' + esc(x[1]) + '</td></tr>'; }).join('') + '</table>';
+    }).join('') : '<table class="it2"><tr><td class="grp">' + esc(r.svc) + '</td><td>-</td></tr></table>';
     var p = partner(s.pick), dt = new Date(s.ct ? s.ct.at : Date.now()), cl = side === 'client';
     var who = cl ? [r.manager || '-', r.org || '-', '-'] : ['셀키 컨설턴트', '셀키에이아이', '02-0000-0000'];
     return '<article class="doc cdoc">' +
@@ -432,7 +422,7 @@
       '<p class="c-lead">분석 항목과 세부 정보를 입력해 주시면, 셀키에이아이 분석 담당자가 신속하게 상담·답변 드립니다.</p>' +
       '<h2>1. 의뢰자 정보</h2><p class="c-sub">의뢰자 정보를 작성해 주세요.</p><table class="kv2 ctr"><tr><th>담당자</th><td>' + esc(who[0]) + '</td></tr><tr><th>소속</th><td>' + esc(who[1]) + '</td></tr><tr><th>연락처</th><td>' + esc(who[2]) + '</td></tr></table>' +
       '<h2>2. 시료 정보</h2><p class="c-sub">시료 정보를 작성해 주세요.</p><table class="kv2"><tr><th>Taxonomy (Source):</th><td>' + esc(rowVal(r, /Taxonomy|생물종/) || '-') + '</td></tr><tr><th>종류:</th><td>' + esc(rowVal(r, /종류/) || '-') + '</td></tr><tr><th>시료 수:</th><td>' + esc(r.samples || '-') + '</td></tr><tr><th>분석목적:</th><td>' + esc(r.purpose || '-') + '</td></tr></table>' +
-      '<h2>3. 분석 서비스</h2><p class="svc-t">' + esc(f ? f.name : r.svc) + '</p>' + svcHTML +
+      '<h2>3. 분석 서비스</h2><p class="svc-t">' + esc(tk ? TITLE[tk] : r.svc) + '</p>' + svcHTML +
       '<h2 class="need-t">분석 유형별 샘플 요구량</h2>' + Object.keys(NEED).map(function (g) { return '<div class="need"><b>' + esc(g) + '</b>' + NEED[g].map(function (x) { return '<p>' + esc(x) + '</p>'; }).join('') + '</div>'; }).join('') +
       '<p class="c-sign-t">위와 같은 내용의 시험을 의뢰합니다.</p>' +
       '<p class="c-date">' + dt.getFullYear() + ' 년 &nbsp; ' + (dt.getMonth() + 1) + ' 월 &nbsp; ' + dt.getDate() + ' 일</p>' +
