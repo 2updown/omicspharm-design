@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261008n">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261008n">
-<script src="assets/common/site.js?v=20261008n"></script>
-<script src="assets/common/mypage.js?v=20261008n"></script>
-<script src="assets/common/flow.js?v=20261008n"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261008o">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261008o">
+<script src="assets/common/site.js?v=20261008o"></script>
+<script src="assets/common/mypage.js?v=20261008o"></script>
+<script src="assets/common/flow.js?v=20261008o"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -350,7 +350,7 @@
           '<span><em>샘플</em>' + (x.samples ? esc(x.samples) + '개' : '-') + '</span>' +
           '<span><em>희망완료일</em>' + dot(x.due) + '</span>' +
           '<span><em>모집 기한</em>' + (x.from || x.to ? dot(x.from) + ' ~ ' + dot(x.to) : '-') + '</span>' +
-        '</div><p class="reg">등록일 ' + ymd(x.at) + ' · 의뢰번호 ' + esc(x.id) + '</p></div></a>';
+        '</div><p class="reg">등록일 ' + ymd(x.at) + ' · 프로젝트 번호 ' + esc(x.id) + '</p></div></a>';
     };
     $('.toprow').hidden = true; // 탭·문의하기는 프로젝트 상세에서만
     // 단계 필터 (대시보드 진행 현황에서 ?stage=단계 로 들어오면 그 단계만)
@@ -370,7 +370,7 @@
     return;
   }
 
-  if (id && !d && list.length) { location.replace('mypage-project.html'); return; } // 없는 의뢰번호면 목록으로
+  if (id && !d && list.length) { location.replace('mypage-project.html'); return; } // 없는 프로젝트 번호면 목록으로
   if (!d && partner) {
     $('.toprow').hidden = true;
     $('#project').innerHTML = '<div class="empty"><b>받은 견적 요청이 없습니다</b><p>OmicsPharm이 분석 의뢰에 맞는 파트너로 선정해 견적을 요청하면 여기에서 의뢰 내용을 확인하고 견적을 보낼 수 있습니다.</p></div>';
@@ -442,7 +442,7 @@
   var html =
     '<div class="phead">' +
       '<div class="prow"><div class="badges"><span class="badge tag">' + esc(d.svc) + '</span>' + stB(d.id) + '</div>' +
-        '<span class="reg">등록일 ' + ymd(d.at) + (d.updatedAt ? ' · 수정일 ' + ymd(d.updatedAt) : '') + ' · 의뢰번호 ' + esc(d.id) + '</span></div>' +
+        '<span class="reg">등록일 ' + ymd(d.at) + (d.updatedAt ? ' · 수정일 ' + ymd(d.updatedAt) : '') + ' · 프로젝트 번호 ' + esc(d.id) + '</span></div>' +
       '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-project.html" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(d.title) + '</h2>' +
         ((d.from || d.to) && sk === 0 ? '<div class="period"><b>모집기한</b><span>' + dot(d.from) + ' ~ ' + dot(d.to) + '</span><em>' + (closed ? '모집마감' : '모집중') + '</em></div>' : '') + '</div>' +
     '</div>' +

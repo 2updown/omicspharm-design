@@ -542,8 +542,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261008n">
-<script src="assets/common/site.js?v=20261008n"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261008o">
+<script src="assets/common/site.js?v=20261008o"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -1237,13 +1237,19 @@
     var chk=function(name){ var i=$('input[name="'+name+'"]:checked'); return i?subTxt(i.parentNode):''; };
     var inputs=$$('.step[data-step="1"] input[type=text]:disabled');
     return {
-      id:'REQ-'+Date.now().toString(36).toUpperCase(), at:Date.now(),
+      id:nextNo(), at:Date.now(),
       svc:svcName()||'분석 서비스 미선택', title:$('#reqName').value.trim()||'제목 없는 의뢰',
       purpose:($('.step[data-step="1"] textarea')||{}).value||'', open:chk('sec'),
       manager:inputs[0]?inputs[0].value:'', org:inputs[1]?inputs[1].value:'',
       samples:$('#totalN').value, due:$('#dueDate').value, from:$('#rFrom').value, to:$('#rTo').value, budget:chk('bud'),
       sections:sections
     };
+  }
+  // 프로젝트 번호: PRJ-연도-일련번호 (형식 미확정). 예시 프로젝트(0001~0042)·예시 의뢰(0043~0045) 다음 번호부터, 이 브라우저에서 제출한 의뢰까지 세어 이어 붙임
+  function nextNo(){
+    var y=new Date().getFullYear(), L=[]; try{ L=JSON.parse(localStorage.getItem('op.submitted')||'[]'); }catch(e){}
+    var max=45; L.forEach(function(x){ var m=/^PRJ-(\d{4})-(\d+)$/.exec(x.id||''); if(m && +m[1]===y) max=Math.max(max,+m[2]); });
+    return 'PRJ-'+y+'-'+('000'+(max+1)).slice(-4);
   }
   function submit(){
     var d=collectSubmission(), list=[];
@@ -1508,7 +1514,7 @@
   }
 
   markPhone(); drawSmp();
-  // 수정 모드: 마이페이지 프로젝트 상세의 [수정하기] → ?edit=의뢰번호
+  // 수정 모드: 마이페이지 프로젝트 상세의 [수정하기] → ?edit=프로젝트 번호
   if(EDIT){
     $('.crumb .ptitle').textContent='분석 의뢰 수정';
     $('.crumb .back').lastChild.textContent='의뢰 상세로 돌아가기';

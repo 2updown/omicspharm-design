@@ -70,7 +70,7 @@
     if (s.role === 'partner') return !x.priv || OP.partnerVerified();
     return !!(x.rid && OP.my && OP.my.myProjects().some(function (p) { return p.id === x.rid; }));
   }
-  // 프로젝트 번호 (상세 화면 표시 · 프로젝트 찾기 검색 공통). 의뢰가 승인돼 게시된 프로젝트는 마이페이지와 같은 의뢰번호(REQ-…)를 그대로 씀
+  // 프로젝트 번호 (상세 화면 표시 · 프로젝트 찾기 검색 공통). 의뢰가 승인돼 게시된 프로젝트는 마이페이지와 같은 번호(PRJ-연도-일련번호)를 그대로 씀
   function no(x) { return x.rid || 'PRJ-2026-' + String(x.id + 1).padStart(4, '0'); }
   window.OP_PROJECTS = { canSeePrice: canSeePrice, no: no, CATS: CATS, DATA: DATA, date: d, url: function (x) { return 'omicspharm-project-detail-prot.html?id=' + x.id; } };
 })();

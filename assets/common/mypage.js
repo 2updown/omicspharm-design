@@ -34,12 +34,12 @@
   // 분석파트너 프로젝트 관리 예시: 셀키 매칭 후 계약된 프로젝트만 (계약 → 분석 → 보고서 등록 → 보고서 검토 → 보고서 승인 → 완료)
   var P_STAGES = ['계약', '분석', '보고서 등록', '보고서 검토', '보고서 승인', '완료'];
   var PARTNER_DEMO = [
-    { id: 'PRJ-2609C1', svc: 'Glycoproteomics', stage: '계약', title: '항체 의약품 N-glycan 당쇄 프로파일링', client: '○○바이오', samples: 6, amount: '920만원', contract: '2026-09-26', due: '2026-12-05', at: new Date(2026, 8, 26).getTime(), qa: 0 },
-    { id: 'PRJ-2609A7', svc: 'Metabolomics', stage: '분석', title: '대장암 환자 혈청 대사체 프로파일링', client: '○○대학교 의과대학', samples: 48, amount: '1,850만원', contract: '2026-09-12', due: '2026-11-20', at: new Date(2026, 8, 12).getTime(), qa: 1 },
-    { id: 'PRJ-2608B3', svc: 'Transcriptomics', stage: '보고서 등록', title: '마우스 간 조직 RNA-seq 발현 차이 분석', client: '○○연구소', samples: 24, amount: '1,200만원', contract: '2026-08-04', due: '2026-10-10', at: new Date(2026, 7, 4).getTime(), qa: 0 },
-    { id: 'PRJ-2607D2', svc: 'Olink', stage: '보고서 검토', title: '혈장 Olink Target 96 염증 패널 분석', client: '○○병원', samples: 80, amount: '2,400만원', contract: '2026-07-21', due: '2026-09-30', at: new Date(2026, 6, 21).getTime(), qa: 2 },
-    { id: 'PRJ-2607E5', svc: 'Genomics', stage: '보고서 승인', title: '세포주 전장 유전체 변이 분석 (WGS)', client: '○○제약', samples: 12, amount: '1,560만원', contract: '2026-07-02', due: '2026-09-15', at: new Date(2026, 6, 2).getTime(), qa: 0 },
-    { id: 'PRJ-2605F8', svc: 'Proteomics', stage: '완료', title: '인슐린 유사체 LC-MS 펩타이드 매핑', client: '○○바이오로직스', samples: 4, amount: '680만원', contract: '2026-05-18', due: '2026-07-31', at: new Date(2026, 4, 18).getTime(), qa: 0, review: 1 }
+    { id: 'PRJ-2026-0037', svc: 'Glycoproteomics', stage: '계약', title: '항체 의약품 N-glycan 당쇄 프로파일링', client: '○○바이오', samples: 6, amount: '920만원', contract: '2026-09-26', due: '2026-12-05', at: new Date(2026, 8, 26).getTime(), qa: 0 },
+    { id: 'PRJ-2026-0038', svc: 'Metabolomics', stage: '분석', title: '대장암 환자 혈청 대사체 프로파일링', client: '○○대학교 의과대학', samples: 48, amount: '1,850만원', contract: '2026-09-12', due: '2026-11-20', at: new Date(2026, 8, 12).getTime(), qa: 1 },
+    { id: 'PRJ-2026-0039', svc: 'Transcriptomics', stage: '보고서 등록', title: '마우스 간 조직 RNA-seq 발현 차이 분석', client: '○○연구소', samples: 24, amount: '1,200만원', contract: '2026-08-04', due: '2026-10-10', at: new Date(2026, 7, 4).getTime(), qa: 0 },
+    { id: 'PRJ-2026-0040', svc: 'Olink', stage: '보고서 검토', title: '혈장 Olink Target 96 염증 패널 분석', client: '○○병원', samples: 80, amount: '2,400만원', contract: '2026-07-21', due: '2026-09-30', at: new Date(2026, 6, 21).getTime(), qa: 2 },
+    { id: 'PRJ-2026-0041', svc: 'Genomics', stage: '보고서 승인', title: '세포주 전장 유전체 변이 분석 (WGS)', client: '○○제약', samples: 12, amount: '1,560만원', contract: '2026-07-02', due: '2026-09-15', at: new Date(2026, 6, 2).getTime(), qa: 0 },
+    { id: 'PRJ-2026-0042', svc: 'Proteomics', stage: '완료', title: '인슐린 유사체 LC-MS 펩타이드 매핑', client: '○○바이오로직스', samples: 4, amount: '680만원', contract: '2026-05-18', due: '2026-07-31', at: new Date(2026, 4, 18).getTime(), qa: 0, review: 1 }
   ];
 
   var D = {

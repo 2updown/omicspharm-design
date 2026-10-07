@@ -135,7 +135,7 @@
     return Object.keys(x.depts).filter(function (d) { return x.depts[d] >= DEPT_MIN; });
   };
   /* 업로드 파일 원본 보관 (데모): 이 브라우저 IndexedDB 'op-files'. OP.files.put(키, File) / get(키) → Promise
-     키: 'biz:acc:이메일' = 내 정보 관리의 사업자등록증, 'biz:req:의뢰번호' = 의뢰별로 다시 올린 사업자등록증 */
+     키: 'biz:acc:이메일' = 내 정보 관리의 사업자등록증, 'biz:req:프로젝트 번호' = 의뢰별로 다시 올린 사업자등록증 */
   OP.files = (function () {
     var dbp = null;
     function open() {
