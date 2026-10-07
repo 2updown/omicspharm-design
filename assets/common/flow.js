@@ -35,16 +35,16 @@
   var DEMO_REQS = [
     { id: 'REQ-D3MO1', demo: true, at: T0 - DAY * 1, svc: '단백체 분석', title: '혈장 시료 TMT 정량 단백체 분석', org: '○○연구소', manager: '홍길동', bizDoc: '사업자등록증_○○연구소.pdf', owner: 'client@omicspharm.test', samples: '20', due: '2026-12-18', from: '2026-10-05', to: '2026-10-19', budget: '1,000만원 이상', open: '공개',
       purpose: '대조군 10명, 환자군 10명 혈장에서 차등 발현 단백질을 찾고, 후보 바이오마커를 선별하고자 합니다.',
-      sections: [{ title: '시료 정보', rows: [['Taxonomy (Source)', 'Human'], ['시료 종류', '혈장'], ['시료 수', '20개 (대조군 10 · 환자군 10)'], ['보관 상태', '-80℃ 냉동']] },
+      sections: [{ title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', '혈장'], ['시료 수', '20개 (대조군 10 · 환자군 10)'], ['보관 상태', '-80℃ 냉동']] },
         { title: '분석 요청', rows: [['분석 방법', 'TMT 16plex 정량'], ['고농도 단백질 제거', '필요 (Top14 depletion)'], ['원하는 결과', '차등 발현 단백질 목록, Pathway 분석']] },
         { title: '기타 분석 요구사항', note: '시료는 계약 후 드라이아이스로 발송 예정입니다. 분석 일정 제안 부탁드립니다.' }] },
     { id: 'REQ-D3MO2', demo: true, at: T0 - DAY * 4, svc: '대사체 분석', title: '마우스 뇌 조직 비표적 대사체 프로파일링', org: '○○연구소', manager: '홍길동', bizDoc: '사업자등록증_○○연구소.pdf', owner: 'client@omicspharm.test', samples: '24', due: '2026-12-31', from: '2026-10-02', to: '2026-10-16', budget: '500만~1,000만원', open: '비공개',
       purpose: '약물 투여군과 대조군 마우스 뇌 조직에서 대사체 변화를 확인하고자 합니다.',
-      sections: [{ title: '시료 정보', rows: [['Taxonomy (Source)', 'Mouse'], ['시료 종류', '뇌 조직 (해마)'], ['시료 수', '24개 (3군 × 8)'], ['보관 상태', '-80℃ 냉동']] },
+      sections: [{ title: '시료 정보', rows: [['생물종', 'Mouse'], ['시료 종류', '뇌 조직 (해마)'], ['시료 수', '24개 (3군 × 8)'], ['보관 상태', '-80℃ 냉동']] },
         { title: '분석 요청', rows: [['플랫폼', 'LC-MS (Untargeted)'], ['후속 분석', '대사 경로 분석']] }] },
     { id: 'REQ-D3MO3', demo: true, at: T0 - DAY * 9, svc: '전사체 분석', title: '종양 조직 RNA-seq 차등 발현 분석', org: '○○연구소', manager: '홍길동', bizDoc: '사업자등록증_○○연구소.pdf', owner: 'client@omicspharm.test', samples: '16', due: '2026-12-10', from: '2026-09-25', to: '2026-10-09', budget: '1,000만원 이상', open: '공개',
       purpose: '항암제 처리 전후 종양 조직의 유전자 발현 변화를 비교하고자 합니다.',
-      sections: [{ title: '시료 정보', rows: [['Taxonomy (Source)', 'Human'], ['시료 종류', 'FFPE 종양 조직'], ['시료 수', '16개 (처리 전 8 · 후 8)']] },
+      sections: [{ title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', 'FFPE 종양 조직'], ['시료 수', '16개 (처리 전 8 · 후 8)']] },
         { title: '분석 요청', rows: [['시퀀싱', 'Total RNA-seq, PE150, 40M reads'], ['원하는 결과', 'DEG 목록, GSEA, 시각화 리포트']] }] }
   ];
 
@@ -432,7 +432,7 @@
       '<p class="c-lead">최첨단 분석 플랫폼과 전문성을 바탕으로,<br>한 차원 높은 정밀성과 효율성을 갖춘 프리미엄 바이오 분석 서비스를 제공합니다.</p>' +
       '<table class="c-party"><tr><th>의뢰기관</th><td>' + esc(cl ? r.org || '-' : '셀키에이아이') + '</td><th>수행기관</th><td>' + esc(cl ? '셀키에이아이 (분석 수행: ' + p.org + ')' : p.org) + '</td></tr><tr><th>프로젝트</th><td colspan="3">' + esc(r.title) + ' (' + esc(r.id) + ')</td></tr></table>' +
       '<h2>1. 의뢰자 정보</h2><table class="kv2"><tr><th>담당자</th><td>' + esc(who[0]) + '</td></tr><tr><th>소속</th><td>' + esc(who[1]) + '</td></tr><tr><th>연락처</th><td>' + esc(who[2]) + '</td></tr></table>' +
-      '<h2>2. 시료 정보</h2><table class="kv2"><tr><th>Taxonomy (Source)</th><td>' + esc(rowVal(r, /Taxonomy/) || '-') + '</td></tr><tr><th>종류</th><td>' + esc(rowVal(r, /종류/) || '-') + '</td></tr><tr><th>시료 수</th><td>' + esc(r.samples || '-') + '</td></tr><tr><th>분석목적</th><td>' + esc(r.purpose || '-') + '</td></tr></table>' +
+      '<h2>2. 시료 정보</h2><table class="kv2"><tr><th>생물종</th><td>' + esc(rowVal(r, /Taxonomy|생물종/) || '-') + '</td></tr><tr><th>종류</th><td>' + esc(rowVal(r, /종류/) || '-') + '</td></tr><tr><th>시료 수</th><td>' + esc(r.samples || '-') + '</td></tr><tr><th>분석목적</th><td>' + esc(r.purpose || '-') + '</td></tr></table>' +
       '<h2>3. 분석 서비스</h2><p class="svc-t">' + esc(f ? f.name : r.svc) + '</p>' + svcHTML +
       '<h2>분석 유형별 샘플 요구량</h2><div class="need"><b>' + need + '</b><ul>' + NEED[need].map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>' +
       '<p class="c-sign-t">위와 같은 내용의 시험을 의뢰합니다.</p>' +

@@ -542,8 +542,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261008k">
-<script src="assets/common/site.js?v=20261008k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261008l">
+<script src="assets/common/site.js?v=20261008l"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -675,7 +675,7 @@
       <div class="sec cond" id="g-ptm">
         <h2>PTM</h2>
         <div class="tbl">
-          <div class="field" data-req="choice"><div class="flabel">PTM 항목<span class="req">*</span></div><div class="fbody">
+          <div class="field" data-req="choice"><div class="flabel">PTM 분석 항목<span class="req">*</span></div><div class="fbody">
             <div class="opts"><label><input type="checkbox" name="ptm">Phosphorylation</label><label><input type="checkbox" name="ptm">Glycosylation</label><label><input type="checkbox" name="ptm">Acetylation</label><label><input type="checkbox" name="ptm">Methylation</label><label><input type="checkbox" name="ptm">Ubiquitination</label><label class="etc"><input type="checkbox" name="ptm" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div>
         </div>
       </div>
@@ -744,7 +744,7 @@
       <div class="sec">
         <h2>시료 정보</h2>
         <div class="tbl">
-          <div class="field" data-req="choice"><div class="flabel">Taxonomy (Source)<span class="req">*</span></div><div class="fbody">
+          <div class="field" data-req="choice"><div class="flabel">생물종<span class="req">*</span></div><div class="fbody">
             <div class="opts"><label><input type="checkbox">Human</label><label><input type="checkbox">Mouse</label><label><input type="checkbox">Rat</label><label><input type="checkbox">Rabbit</label><label><input type="checkbox">Pig</label><label><input type="checkbox">Dog</label><label><input type="checkbox">Hamster</label><label><input type="checkbox">Zebrafish</label><label><input type="checkbox">Drosophila</label><label><input type="checkbox">C. elegans</label><label><input type="checkbox">Bacteria</label><label><input type="checkbox">Yeast</label><label><input type="checkbox">Plant</label><label><input type="checkbox">Virus</label><label class="etc"><input type="checkbox" data-etc>기타</label><input type="text" class="etcin" placeholder="생물종 직접 입력"></div></div></div>
           <div class="field" data-req="choice"><div class="flabel">시료 종류<span class="req">*</span></div><div class="fbody">
             <div class="opts" id="spcOpts">
@@ -789,7 +789,7 @@
       <div class="sec">
         <h2>요구사항</h2>
         <div class="tbl">
-          <div class="field"><div class="flabel">분석 희망국가</div><div class="fbody"><select class="w-m"><option>대한민국</option><option>미국</option><option>일본</option></select></div></div>
+          <div class="field"><div class="flabel">희망국가</div><div class="fbody"><div class="opts"><label><input type="radio" name="cty">대한민국</label><label><input type="radio" name="cty">미국</label><label><input type="radio" name="cty">일본</label><label class="etc"><input type="radio" name="cty" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div>
           <div class="field" data-req="text"><div class="flabel">희망완료일<span class="req">*</span></div><div class="fbody"><input type="date" class="w-m" id="dueDate" data-v></div></div>
           <div class="field" data-req="choice"><div class="flabel">일정 협의 가능 여부<span class="req">*</span></div><div class="fbody">
             <div class="opts"><label><input type="radio" name="nego">가능</label><label><input type="radio" name="nego">불가능</label></div>
