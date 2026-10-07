@@ -226,7 +226,10 @@
       var d = db().S;
       return requests().filter(function (r) { return d[r.id] && d[r.id].ok; }).map(function (r) { return { r: r, s: d[r.id] }; });
     },
-    reset: function () { try { localStorage.removeItem(KEY); localStorage.removeItem('op.alarmRead'); } catch (e) {} },
+    reset: function () {
+      try { localStorage.removeItem(KEY); localStorage.removeItem('op.alarmRead'); } catch (e) {}
+      var A = OP.accounts(); Object.keys(A).forEach(function (k) { if (A[k].bizOk) OP.saveAccount(k, { bizOk: 0, bizOkName: '' }); }); // 사업자등록증 확인 완료도 처음 상태로 (올린 파일은 유지)
+    },
     // 클라이언트 단계
     clientStage: function (id) { var s = state(id); return s.ct ? '분석 진행' : F.CLIENT_ST[s.st]; },
     // 분석파트너가 받은 견적 요청
