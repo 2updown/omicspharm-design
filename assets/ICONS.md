@@ -16,6 +16,8 @@
 | `auth/ic-paperclip.svg` | Paperclip | Phosphor (Figma에서 내보냄) |
 | `auth/ic-plus.svg` | plus | Phosphor (Figma 레이어 이름만 다름) |
 | `auth/ic-warning-circle.svg` | WarningCircle | Phosphor (Figma에서 내보냄) |
+| `common/ic-info.svg` · `common/ic-info-gray.svg` | Info | Phosphor (Figma infobox 아이콘, 검정=마스크용 / 회색 #374151) |
+| `common/ic-warning.svg` | Warning | Phosphor (Figma infobox warning 아이콘, 마스크용) |
 | `common/ic-toast-close.svg` | x-close | Phosphor (Figma 레이어 이름만 다름) |
 | `common/ic-toast-info.svg` | info-circle | Phosphor (Figma 레이어 이름만 다름) |
 | `detail/ic-caret-left-20.svg` | CaretLeft | Phosphor (Figma에서 내보냄) |

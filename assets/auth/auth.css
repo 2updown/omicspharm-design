@@ -229,17 +229,18 @@ input { font:inherit; color:inherit; }
 .info-box a { color:inherit; text-decoration:underline; text-underline-offset:2px; word-break:break-all; }
 .info-box a:hover { color:var(--link); }
 /* 가입 완료: 가입 이메일 확인 박스 (Figma infobox 1440:21573) */
-.done .mail-box { display:inline-flex; align-items:flex-start; gap:8px; padding:16px 12px; border:1px solid #e5e7eb; border-radius:8px; background:#f3f4f6; font-size:14px; line-height:20px; color:#000; text-align:left; word-break:break-all; }
+.done .mail-box { display:inline-flex; align-items:flex-start; gap:4px; padding:16px 12px; border:1px solid #e5e5e5; border-radius:8px; background:#f5f5f5; font-size:14px; line-height:20px; color:#000; text-align:left; word-break:break-all; }
 .done .mail-box img { flex:none; width:20px; height:20px; }
 .done .mail-box b { font-weight:500; }
 /* 가입 완료 버튼: Figma 264px (좁은 화면에서는 화면 폭에 맞춤) */
 .done .btn-action { width:264px; max-width:100%; }
 /* 분석파트너 가입 완료: 인증 안내 박스 (Figma infobox blue) + 버튼 2개 */
 .done .doc-box { display:flex; flex-direction:column; align-items:center; gap:12px; padding:16px 12px; border:1px solid #b8dcff; border-radius:8px; background:#edf6ff; }
-.done .doc-box b { font-size:14px; font-weight:500; line-height:20px; color:#004fe0; }
+.done .doc-box b { display:flex; align-items:flex-start; gap:4px; font-size:14px; font-weight:500; line-height:20px; color:#004fe0; }
+.done .doc-box b::before { content:""; flex:none; width:20px; height:20px; background:#004fe0; -webkit-mask:url(../common/ic-info.svg) center/contain no-repeat; mask:url(../common/ic-info.svg) center/contain no-repeat; } /* infobox highlight: 아이콘 + 4px + 제목 */
 .done .doc-box ul { width:auto; padding:0; list-style:none; margin:0; background:none; border-radius:0; gap:8px; }
 .done .doc-box li { position:relative; margin:0; padding-left:16px; font-size:14px; line-height:20px; color:#000; word-break:keep-all; }
-.done .doc-box li::before { content:""; position:absolute; left:4px; top:8px; width:4px; height:4px; border-radius:50%; background:currentColor; }
+.done .doc-box li::before { content:""; position:absolute; left:4px; top:8px; width:4px; height:4px; border-radius:50%; background:#525252; }
 .done .done-btns { display:flex; justify-content:center; gap:12px; margin-top:16px; }
 .done .done-btns .btn-action { width:264px; }
 .done .btn-action.line { border:1px solid var(--teal-600); background:#fff; color:var(--teal-600); }

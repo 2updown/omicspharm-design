@@ -7,32 +7,24 @@
 <title>회원 탈퇴 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 내 정보 관리 > 회원 탈퇴 (Figma 시안 없음, 레퍼런스 화면 구성: 탈퇴 안내 → 탈퇴 사유·개선사항 → 동의 → 취소/탈퇴).
      진행 중인 프로젝트·계약이 있으면 탈퇴 불가. 데모: 탈퇴하면 이 브라우저의 계정(op.accounts)을 지우고 로그아웃 (데모 계정은 로그아웃만) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261007q">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261007q">
-<script src="assets/common/site.js?v=20261007q"></script>
-<script src="assets/common/mypage.js?v=20261007q"></script>
-<script src="assets/common/flow.js?v=20261007q"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007r">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261007r">
+<script src="assets/common/site.js?v=20261007r"></script>
+<script src="assets/common/mypage.js?v=20261007r"></script>
+<script src="assets/common/flow.js?v=20261007r"></script>
 <style>
   .leave-card { gap:40px; }
   .sec h4 { margin-bottom:12px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
-  /* 탈퇴 안내 (infobox gray) */
-  .notice { display:flex; flex-direction:column; gap:8px; padding:16px 20px; border:1px solid var(--gray-200); border-radius:8px; background:var(--gray-100); }
-  .notice li { position:relative; padding-left:16px; font-size:14px; line-height:20px; color:var(--gray-700); word-break:keep-all; list-style:none; }
-  .notice li::before { content:""; position:absolute; left:4px; top:8px; width:4px; height:4px; border-radius:50%; background:currentColor; }
-  .notice li.strong { font-weight:600; color:#000; text-decoration:underline; text-underline-offset:3px; }
-
-  /* 진행 중인 프로젝트가 있을 때 (infobox red) */
-  .block { display:flex; flex-direction:column; gap:12px; padding:16px 20px; border:1px solid #fecdca; border-radius:8px; background:#fef3f2; }
-  .block b { display:flex; align-items:center; gap:8px; font-size:15px; font-weight:600; line-height:22px; color:var(--red-600); }
-  .block b img { width:20px; height:20px; }
-  .block p { font-size:14px; line-height:20px; color:var(--gray-700); word-break:keep-all; }
-  .block ul { display:flex; flex-direction:column; gap:6px; }
-  .block li { display:flex; align-items:center; gap:8px; font-size:14px; line-height:20px; list-style:none; min-width:0; }
-  .block li span { flex:none; height:22px; padding:0 8px; border-radius:4px; background:#fff; border:1px solid var(--gray-200); font-size:12px; line-height:20px; color:var(--gray-600); }
-  .block li a { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#000; }
-  .block li a:hover { text-decoration:underline; }
-  .block .acts { display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
-  .block .demo { font-size:12px; color:var(--gray-500); text-decoration:underline; text-underline-offset:2px; }
+  /* 탈퇴 안내 = infobox default, 진행 중 프로젝트 = infobox warning (site.css .op-ibox) */
+  .op-ibox { align-self:stretch; }
+  .op-ibox li.strong { font-weight:600; text-decoration:underline; text-underline-offset:3px; }
+  .op-ibox .rows { display:flex; flex-direction:column; gap:6px; width:100%; }
+  .op-ibox .rows div { display:flex; align-items:center; gap:8px; min-width:0; font-size:14px; line-height:20px; }
+  .op-ibox .rows span { flex:none; height:22px; padding:0 8px; border-radius:4px; background:#fff; border:1px solid #ffc7c9; font-size:12px; line-height:20px; color:var(--gray-600); }
+  .op-ibox .rows a { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#000; }
+  .op-ibox .rows a:hover { text-decoration:underline; }
+  .op-ibox .acts { display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
+  .op-ibox .demo { font-size:12px; color:var(--gray-500); text-decoration:underline; text-underline-offset:2px; }
 
   /* 표 형식 입력 (내 정보 관리와 동일) */
   .tbl { border-top:2px solid #000; }
@@ -96,12 +88,12 @@
     <section class="card leave-card">
       <div class="card-head"><h3>회원 탈퇴</h3></div>
 
-      <div class="sec">
-        <h4>탈퇴 전 확인해주세요</h4>
-        <ul class="notice" id="notice"></ul>
+      <div class="op-ibox">
+        <p class="t">탈퇴 전 확인해주세요</p>
+        <ul id="notice"></ul>
       </div>
 
-      <div class="block" id="block" hidden></div>
+      <div class="op-ibox warn" id="block" hidden></div>
 
       <form id="fLeave" novalidate>
         <fieldset id="fs" style="display:flex;flex-direction:column;gap:24px">
@@ -177,13 +169,13 @@
     lock('컨설턴트 계정은 탈퇴할 수 없습니다.', '컨설턴트 계정은 OmicsPharm 관리자가 발급·해지합니다. 계정 해지가 필요하면 관리자에게 요청해주세요.', '');
   } else if (ING.length) {
     lock('진행 중인 프로젝트가 ' + ING.length + '건 있어 탈퇴할 수 없습니다.', '아래 프로젝트의 모든 절차(분석·결과 수령·계약)가 완료된 후 탈퇴할 수 있습니다.',
-      '<ul>' + ING.slice(0, 3).map(function (p) { return '<li><span>' + esc(p.st) + '</span><a href="' + p.h + '">' + esc(p.t) + '</a></li>'; }).join('') + '</ul>' +
+      '<div class="rows">' + ING.slice(0, 3).map(function (p) { return '<div><span>' + esc(p.st) + '</span><a href="' + p.h + '">' + esc(p.t) + '</a></div>'; }).join('') + '</div>' +
       '<div class="acts"><a class="btn" href="mypage-project.html">프로젝트 관리로 이동</a>' +
       '<a class="demo" href="?free=1">데모: 진행 중 프로젝트가 없는 상태로 보기</a></div>');
   }
   function lock(title, desc, more) {
     $('#block').hidden = false;
-    $('#block').innerHTML = '<b><img src="assets/auth/ic-warning-circle.svg" alt="">' + esc(title) + '</b><p>' + esc(desc) + '</p>' + more;
+    $('#block').innerHTML = '<p class="t">' + esc(title) + '</p><ul><li>' + esc(desc) + '</li></ul>' + more;
     $('#fs').disabled = true; $('#go').disabled = true;
   }
 

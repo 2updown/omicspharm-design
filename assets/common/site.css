@@ -213,3 +213,18 @@ div.op-phone.bad input, div.op-phone.bad select { border-color:var(--op-red-600)
 .op-toast.desc span { display:flex; flex-direction:column; gap:4px; }
 .op-toast.desc span b { font-size:14px; font-weight:500; line-height:20px; }
 .op-toast.desc span i { font-style:normal; font-size:14px; font-weight:400; line-height:20px; word-break:break-all; }
+
+/* infobox (Figma 1153:52097): Style default(회색)·highlight(파랑)·warning(빨강) × Type default(제목+목록)·simple(한 줄)
+   제목 = 아이콘 20px + 4px + Body/Small/M, 목록 = 점 칸 12px + 4px + Body/Small/R, 줄 간격 8px, 제목~목록 12px
+   <div class="op-ibox warn"><p class="t">제목</p><ul><li>…</li></ul></div> */
+.op-ibox { display:flex; flex-direction:column; align-items:flex-start; gap:12px; padding:16px 12px; border:1px solid #e5e5e5; border-radius:8px; background:#f5f5f5; text-align:left; --ib:#374151; --ibt:#000; --ibi:url(ic-info.svg); }
+.op-ibox.simple { gap:8px; }
+.op-ibox.hl { border-color:#b8dcff; background:#edf6ff; --ib:#004fe0; --ibt:#004fe0; }
+.op-ibox.warn { border-color:#ffc7c9; background:#fff1f2; --ib:#ca0008; --ibt:#ca0008; --ibi:url(ic-warning.svg); }
+.op-ibox > .t { display:flex; align-items:flex-start; gap:4px; font-size:14px; font-weight:500; line-height:20px; color:var(--ibt); word-break:keep-all; }
+.op-ibox.simple > .t { font-weight:400; }
+.op-ibox > .t::before { content:""; flex:none; width:20px; height:20px; background:var(--ib); -webkit-mask:var(--ibi) center/contain no-repeat; mask:var(--ibi) center/contain no-repeat; }
+.op-ibox ul { display:flex; flex-direction:column; gap:8px; width:100%; margin:0; padding:0; list-style:none; }
+.op-ibox li { position:relative; padding-left:16px; font-size:14px; font-weight:400; line-height:20px; color:#000; word-break:keep-all; list-style:none; }
+.op-ibox li::before { content:""; position:absolute; left:4px; top:8px; width:4px; height:4px; border-radius:50%; background:#525252; }
+.op-ibox[hidden] { display:none; }
