@@ -7,11 +7,11 @@
 <title>내 정보 관리 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / (분석파트너) 분석 가능 서비스 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261007y">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261007y">
-<script src="assets/common/site.js?v=20261007y"></script>
-<script src="assets/common/mypage.js?v=20261007y"></script>
-<script src="assets/common/flow.js?v=20261007y"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007z">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261007z">
+<script src="assets/common/site.js?v=20261007z"></script>
+<script src="assets/common/mypage.js?v=20261007z"></script>
+<script src="assets/common/flow.js?v=20261007z"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -243,8 +243,11 @@
     $('#docBtn').textContent = bizDoc ? '파일 변경' : '파일 선택'; $('#docDel').hidden = !bizDoc;
     // 인증 검토 중(저장된 파일이 있고 아직 미인증)에는 파일을 바꿀 수 없음
     var review = partner && !!savedDoc && bizDoc === savedDoc && !OP.partnerVerified();
+    // 클라이언트: 컨설턴트가 확인한 파일은 바로 바꿀 수 없음 → 바뀐 경우 삭제 후 다시 올림 (다시 확인 전으로)
+    var cOk = client && !!savedDoc && bizDoc === savedDoc && OP.account(email).bizOk && OP.account(email).bizOkName === savedDoc;
+    if (cOk) review = true;
     $('#docBtn').classList.toggle('off', review); $('#docBtn').setAttribute('aria-disabled', review); $('#docFile').disabled = review;
-    $('#docHelp').textContent = client ? (bizDoc ? '프로젝트 등록 시 이 파일이 함께 제출됩니다.' : '프로젝트 등록 시 필요합니다. 미리 올려 두면 의뢰할 때 다시 올리지 않아도 됩니다. (PDF, JPG, PNG)') : OP.partnerVerified() ? '인증이 완료된 기관의 사업자등록증입니다.' : review ? '인증 검토 중에는 파일을 변경할 수 없습니다. 다른 파일로 바꾸려면 삭제 후 다시 올려 주세요.' : bizDoc ? '저장하면 인증 검토에 사용됩니다.' : '인증 검토에 필요합니다. 올리면 OmicsPharm이 확인한 뒤 인증해 드립니다. (PDF, JPG, PNG)';
+    $('#docHelp').textContent = cOk ? 'OmicsPharm 확인이 완료된 사업자등록증입니다. 프로젝트 등록 시 다시 올리지 않아도 됩니다. 내용이 바뀐 경우 삭제 후 다시 올려 주세요.' : client ? (bizDoc ? '프로젝트 등록 시 이 파일이 함께 제출됩니다.' : '프로젝트 등록 시 필요합니다. 미리 올려 두면 의뢰할 때 다시 올리지 않아도 됩니다. (PDF, JPG, PNG)') : OP.partnerVerified() ? '인증이 완료된 기관의 사업자등록증입니다.' : review ? '인증 검토 중에는 파일을 변경할 수 없습니다. 다른 파일로 바꾸려면 삭제 후 다시 올려 주세요.' : bizDoc ? '저장하면 인증 검토에 사용됩니다.' : '인증 검토에 필요합니다. 올리면 OmicsPharm이 확인한 뒤 인증해 드립니다. (PDF, JPG, PNG)';
   }
   if (hasDoc) {
     $('#rowDoc').hidden = false; showDoc();
@@ -256,8 +259,8 @@
     $('#docDel').addEventListener('click', function () {
       if (!savedDoc || bizDoc !== savedDoc) { bizDoc = savedDoc; bizFile = null; showDoc(); $('#docNote').hidden = true; return; } // 저장 전 고른 파일은 바로 취소
       // 저장된 파일: 확인 후 바로 삭제
-      OP.my.confirm('사업자등록증을 삭제하시겠습니까?', client ? '삭제한 뒤 프로젝트를 등록하려면 다시 올려 주세요.' : OP.partnerVerified() ? '삭제해도 인증 상태는 유지됩니다.' : '삭제하면 인증 검토가 중단됩니다. 인증을 받으려면 다시 올려 주세요.', '삭제', function () {
-        bizDoc = savedDoc = ''; OP.saveAccount(email, { bizDoc: '' }); OP.files.del('biz:acc:' + email); showDoc(); $('#docNote').hidden = true; vrole();
+      OP.my.confirm('사업자등록증을 삭제하시겠습니까?', client ? '삭제한 뒤 프로젝트를 등록하려면 다시 올려 주세요. 새로 올린 파일은 OmicsPharm이 다시 확인합니다.' : OP.partnerVerified() ? '삭제해도 인증 상태는 유지됩니다.' : '삭제하면 인증 검토가 중단됩니다. 인증을 받으려면 다시 올려 주세요.', '삭제', function () {
+        bizDoc = savedDoc = ''; OP.saveAccount(email, { bizDoc: '', bizOk: 0, bizOkName: '' }); OP.files.del('biz:acc:' + email); showDoc(); $('#docNote').hidden = true; vrole();
         OP.toast('사업자등록증을 삭제했습니다.');
       });
     });

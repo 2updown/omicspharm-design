@@ -131,20 +131,23 @@
     open: function (id) { var s = state(id); return !!s.ok && s.st !== 'matched'; },
     // 의뢰 승인: 컨설턴트가 의뢰서를 확인하고 승인 → 프로젝트로 등록(게시)
     approve: function (id) { return put(id, function (s) { s.ok = Date.now(); }); },
-    // 사업자등록증 (의뢰 승인 전 컨설턴트 확인): s.biz = { st:'ask'|'re', askAt, note, reAt, name }, s.bizSeen = 컨설턴트가 열어봤는지
-    // 파일 이름: 재제출한 파일 > 의뢰 제출 때 파일 (예시 의뢰는 클라이언트 데모 계정의 내 정보 관리 파일)
+    // 사업자등록증: 계정 단위로 한 번 확인 (컨설턴트가 첫 의뢰를 승인할 때 확인 완료 → acc.bizOk·bizOkName)
+    // 확인된 뒤에는 의뢰마다 다시 확인하지 않음. 클라이언트가 내 정보 관리에서 삭제 후 다시 올리면 파일 이름이 바뀌어 다시 '확인 전'
+    // 의뢰별 재제출 요청: s.biz = { st:'ask'|'re', askAt, note, reAt, name }, s.bizSeen = 이번 의뢰에서 컨설턴트가 열어봤는지
+    bizOwner: function (r) { return r.demo ? 'client@omicspharm.test' : r.owner || ''; },
     bizName: function (r) {
-      var b = state(r.id).biz; if (b && b.name) return b.name;
-      if (r.demo) { var a = OP.account('client@omicspharm.test') || {}; return a.bizDoc || r.bizDoc || ''; }
-      return r.bizDoc || '';
+      var o = F.bizOwner(r), a = o ? OP.account(o) || {} : {}, b = state(r.id).biz || {};
+      return a.bizDoc || b.name || (o ? '' : r.bizDoc) || '';
     },
-    // 원본 파일 (OP.files): 재제출 파일 → 의뢰한 계정의 내 정보 관리 파일 순서로 찾고, 이름이 같을 때만 씀
+    bizOk: function (r) { var o = F.bizOwner(r), a = o ? OP.account(o) || {} : {}, nm = F.bizName(r); return nm && a.bizOk && a.bizOkName === nm ? a.bizOk : 0; },
+    bizConfirm: function (r) { var o = F.bizOwner(r), nm = F.bizName(r); if (o && nm) OP.saveAccount(o, { bizOk: Date.now(), bizOkName: nm }); },
+    // 원본 파일 (OP.files): 계정 파일 → 의뢰별로 다시 올린 파일 순서로 찾고, 이름이 같을 때만 씀
     bizFile: function (r) {
-      var nm = F.bizName(r), owner = r.demo ? 'client@omicspharm.test' : r.owner;
+      var nm = F.bizName(r), o = F.bizOwner(r);
       if (!OP.files) return Promise.resolve(null);
-      return OP.files.get('biz:req:' + r.id).then(function (f) {
+      return (o ? OP.files.get('biz:acc:' + o) : Promise.resolve(null)).then(function (f) {
         if (f && f.name === nm) return f;
-        return owner ? OP.files.get('biz:acc:' + owner).then(function (g) { return g && g.name === nm ? g : null; }) : null;
+        return OP.files.get('biz:req:' + r.id).then(function (g) { return g && g.name === nm ? g : null; });
       });
     },
     bizSeen: function (id) { return !!state(id).bizSeen; },

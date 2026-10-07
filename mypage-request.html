@@ -9,11 +9,11 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=의뢰번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261007y">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261007y">
-<script src="assets/common/site.js?v=20261007y"></script>
-<script src="assets/common/mypage.js?v=20261007y"></script>
-<script src="assets/common/flow.js?v=20261007y"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007z">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261007z">
+<script src="assets/common/site.js?v=20261007z"></script>
+<script src="assets/common/mypage.js?v=20261007z"></script>
+<script src="assets/common/flow.js?v=20261007z"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -256,16 +256,11 @@
   .fdocs p { flex-basis:100%; margin-left:108px; font-size:12px; line-height:18px; color:var(--gray-500); white-space:pre-line; }
   .pv .bizfile { display:block; width:900px; max-width:100%; margin:0 auto; background:#fff; box-shadow:0 8px 24px rgba(0,0,0,.3); }
   iframe.bizfile { height:calc(100vh - 140px); border:0; }
-  .pv .doc.biz { min-height:0; padding:64px 72px; font-size:15px; line-height:24px; }
-  .pv .doc.biz h1 { margin-bottom:6px; font-size:28px; font-weight:800; letter-spacing:8px; text-align:center; }
-  .pv .doc.biz .kind { margin-bottom:28px; text-align:center; color:#555; }
-  .pv .doc.biz dl { display:grid; grid-template-columns:150px 1fr; border-top:2px solid #111; }
-  .pv .doc.biz dt, .pv .doc.biz dd { padding:10px 12px; border-bottom:1px solid #d5d5d5; }
-  .pv .doc.biz dt { background:#f6f6f6; font-weight:600; }
-  .pv .doc.biz .issuer { display:flex; align-items:center; justify-content:flex-end; gap:16px; margin-top:40px; font-size:18px; font-weight:700; }
-  .pv .doc.biz .seal { width:56px; height:56px; border:2px solid #d33; border-radius:6px; color:#d33; font-size:12px; line-height:16px; display:flex; align-items:center; justify-content:center; text-align:center; transform:rotate(-6deg); }
+  .pv .bizmiss { max-width:520px; margin:80px auto 0; padding:32px 24px; border-radius:12px; background:#fff; text-align:center; }
+  .pv .bizmiss b { display:block; font-size:18px; font-weight:600; line-height:26px; }
+  .pv .bizmiss p { margin-top:8px; font-size:14px; line-height:22px; color:var(--gray-600); }
   .pv .demo-note { margin:0 auto 12px; max-width:794px; font-size:13px; color:#ddd; text-align:center; }
-  @media (max-width:640px) { .fdocs { padding:12px 14px; } .fdocs p { margin-left:0; } .fdocs .fbtns { margin-left:0; } .pv .doc.biz { padding:32px 20px; } .pv .doc.biz dl { grid-template-columns:110px 1fr; } }
+  @media (max-width:640px) { .fdocs { padding:12px 14px; } .fdocs p { margin-left:0; } .fdocs .fbtns { margin-left:0; } }
 </style>
 </head>
 <body>
@@ -475,21 +470,24 @@
   }
 
   // 계약서 등록 (견적 확정 후): 클라이언트·분석파트너 계약서 각각 기본 양식 또는 기관 양식 파일
-  // 제출 서류: 의뢰사가 의뢰 등록 때 낸 사업자등록증 (컨설턴트만 봄 · 분석파트너에게는 전달하지 않음)
-  // 승인 전에는 [보기]로 한 번 열어봐야 승인할 수 있음. 내용이 맞지 않으면 [재제출 요청] → 의뢰사가 다시 올리면 다시 확인
+  // 제출 서류: 의뢰사 계정의 사업자등록증 (컨설턴트만 봄 · 분석파트너에게는 전달하지 않음)
+  // 계정 단위로 한 번만 확인: 확인 전이면 [보기]로 열어본 뒤 승인 → 승인과 함께 '확인 완료'. 이미 확인된 파일이면 바로 승인 가능
+  // 내용이 맞지 않으면 [재제출 요청] → 의뢰사가 다시 올리면 다시 확인
   function bizHTML(s) {
-    var pre = s.st === 'review' && !s.ok, nm = F.bizName(r), b = s.biz || {}, ask = b.st === 'ask', seen = s.bizSeen;
+    var pre = s.st === 'review' && !s.ok, nm = F.bizName(r), b = s.biz || {}, ask = b.st === 'ask', ok = F.bizOk(r);
     if (!nm) return '<div class="fdocs"><em>사업자등록증</em><span class="chip none">미제출</span><span class="fname"><span>제출된 파일이 없습니다.</span></span>' +
-      (pre ? '<p>사업자등록증 제출 전에 접수된 의뢰입니다. 의뢰사에 사업자등록증을 요청한 뒤 승인해주세요.</p>' : '') + '</div>';
-    var chip = ask ? '<span class="chip none">재제출 요청</span>' : !pre || seen ? '<span class="chip ok">확인 완료</span>' : '<span class="chip">' + (b.st === 're' ? '재제출 · 확인 전' : '확인 전') + '</span>';
+      (pre ? '<p>의뢰사 계정에 사업자등록증이 없습니다. 재제출을 요청하거나 의뢰사에 안내한 뒤 승인해주세요.</p>' : '') +
+      (pre && !ask ? '<span class="fbtns"><button type="button" class="btn" id="bizAsk">제출 요청</button></span>' : '') + '</div>';
+    var chip = ask ? '<span class="chip none">재제출 요청</span>' : ok ? '<span class="chip ok">확인 완료</span>' : '<span class="chip">' + (b.st === 're' ? '재제출 · 확인 전' : '확인 전') + '</span>';
     var note = ask ? '재제출 요청 ' + F.ymd(b.askAt) + ' · 사유: ' + b.note + '\n의뢰사가 다시 올리면 알림으로 알려드립니다.'
-      : pre ? (b.st === 're' ? '의뢰사가 ' + F.ymd(b.reAt) + '에 다시 올린 파일입니다. (이전 요청 사유: ' + b.note + ')\n' : '') + '상호·대표자·사업자등록번호가 의뢰 정보와 맞는지 확인한 뒤 승인해주세요. 맞지 않으면 재제출을 요청할 수 있습니다. 분석파트너에게는 공개되지 않습니다.' : '';
+      : ok ? F.ymd(ok) + '에 확인된 사업자등록증입니다. 의뢰사가 파일을 바꾸기 전까지 다시 확인하지 않아도 됩니다.'
+      : pre ? (b.st === 're' ? '의뢰사가 ' + F.ymd(b.reAt) + '에 다시 올린 파일입니다. (이전 요청 사유: ' + b.note + ')\n' : '') + '상호·대표자·사업자등록번호가 의뢰 정보와 맞는지 확인한 뒤 승인해주세요. 승인하면 이 계정의 사업자등록증은 확인 완료로 처리됩니다. 분석파트너에게는 공개되지 않습니다.' : '';
     return '<div class="fdocs"><em>사업자등록증</em>' + chip +
       '<span class="fname"><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(nm) + '</span></span>' +
-      '<span class="fbtns"><button type="button" class="btn" id="bizView">보기</button>' + (pre && !ask ? '<button type="button" class="btn" id="bizAsk">재제출 요청</button>' : '') + '</span>' +
+      '<span class="fbtns"><button type="button" class="btn" id="bizView">보기</button>' + (pre && !ask && !ok ? '<button type="button" class="btn" id="bizAsk">재제출 요청</button>' : '') + '</span>' +
       (note ? '<p>' + esc(note) + '</p>' : '') + '</div>';
   }
-  // 미리보기: 의뢰사가 올린 원본(PDF·이미지)을 그대로 보여줌. 원본이 이 브라우저에 없으면(이름만 있는 예전 데이터) 예시 양식
+  // 미리보기: 의뢰사가 올린 원본(PDF·이미지)을 그대로 보여줌. 원본이 이 브라우저에 없으면(파일 이름만 저장된 예전 데이터) 안내
   function showBiz() {
     var nm = F.bizName(r), url = '';
     var pv = document.createElement('div');
@@ -499,23 +497,19 @@
     var key = function (e) { if (e.key === 'Escape') close(); };
     pv.addEventListener('click', function (e) {
       if (e.target.closest('[data-close]') || e.target === pv) close();
-      else if (e.target.closest('[data-dl]')) { if (url) { var a = document.createElement('a'); a.href = url; a.download = nm; a.click(); } else OP.toast('원본 파일이 없는 예시입니다.'); }
+      else if (e.target.closest('[data-dl]')) { if (url) { var a = document.createElement('a'); a.href = url; a.download = nm; a.click(); } else OP.toast('원본 파일이 없어 다운로드할 수 없습니다.'); }
     });
     document.addEventListener('keydown', key);
     document.body.appendChild(pv); document.body.style.overflow = 'hidden'; pv.querySelector('[data-close]').focus();
     F.bizMark(id);
     F.bizFile(r).then(function (f) {
-      var box = pv.querySelector('.pv-scroll'), d = new Date(r.at || Date.now());
+      var box = pv.querySelector('.pv-scroll');
       if (f) {
         url = URL.createObjectURL(f);
         box.innerHTML = /pdf$/i.test(f.type) || /\.pdf$/i.test(f.name) ? '<iframe class="bizfile" src="' + url + '" title="' + esc(nm) + '"></iframe>' : '<img class="bizfile" src="' + url + '" alt="' + esc(nm) + '">';
         return;
       }
-      box.innerHTML = '<p class="demo-note">원본 파일이 이 브라우저에 없어 예시 양식을 보여드립니다. 내 정보 관리나 의뢰 등록에서 파일을 다시 올리면 원본이 그대로 표시됩니다.</p>' +
-        '<article class="doc biz"><h1>사업자등록증</h1><p class="kind">( 법인사업자 )</p><dl>' +
-          '<dt>등록번호</dt><dd>000-00-00000</dd><dt>법인명(단체명)</dt><dd>' + esc(r.org || '-') + '</dd><dt>대표자</dt><dd>' + esc(r.manager || '홍길동') + '</dd>' +
-          '<dt>개업연월일</dt><dd>2015년 03월 02일</dd><dt>사업장 소재지</dt><dd>○○시 ○○구 ○○로 00</dd><dt>사업의 종류</dt><dd>업태: 서비스업 · 종목: 연구개발</dd>' +
-        '</dl><div class="issuer"><span>' + d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 · ○○세무서장</span><span class="seal">세무서장<br>인</span></div></article>';
+      box.innerHTML = '<div class="bizmiss"><b>원본 파일이 없습니다</b><p>파일 이름만 저장된 이전 데이터입니다.<br>클라이언트 계정의 내 정보 관리에서 사업자등록증을 다시 올리면 여기에 원본이 그대로 표시됩니다.<br>(프로토타입: 같은 브라우저에서 올린 파일만 볼 수 있습니다)</p></div>';
     });
   }
 
@@ -663,14 +657,14 @@
       } else if (t.closest('#bizView')) {
         showBiz();
       } else if (t.closest('#bizAsk')) {
-        F.ask({ title: '사업자등록증 재제출을 요청할까요?', desc: '의뢰사(' + (r.org || '-') + ')에게 재제출 요청 알림이 갑니다. 다시 올리면 알림으로 알려드립니다.', label: '요청 사유', ph: '예) 상호가 의뢰 기관명과 다릅니다. / 파일이 흐려 사업자등록번호를 확인할 수 없습니다.', yes: '요청하기', required: true }, function (v) {
+        F.ask({ title: '사업자등록증 ' + (F.bizName(r) ? '재제출' : '제출') + '을 요청할까요?', desc: '의뢰사(' + (r.org || '-') + ')에게 요청 알림이 갑니다. 다시 올리면 알림으로 알려드립니다.', label: '요청 사유', ph: '예) 상호가 의뢰 기관명과 다릅니다. / 파일이 흐려 사업자등록번호를 확인할 수 없습니다.', yes: '요청하기', required: true }, function (v) {
           F.bizAsk(id, v); OP.toast('사업자등록증 재제출을 요청했습니다.'); render();
         });
       } else if (t.closest('#approve')) {
         if ((s.biz || {}).st === 'ask') { OP.toast('사업자등록증 재제출을 기다리고 있습니다.'); return; }
-        if (F.bizName(r) && !s.bizSeen) { OP.toast('사업자등록증을 먼저 확인해주세요.'); var bv = $('#bizView'); if (bv) bv.focus(); return; }
+        if (F.bizName(r) && !F.bizOk(r) && !s.bizSeen) { OP.toast('사업자등록증을 먼저 확인해주세요.'); var bv = $('#bizView'); if (bv) bv.focus(); return; }
         F.ask({ title: '의뢰를 승인할까요?', desc: '"' + r.title + '" 의뢰가 프로젝트로 등록되고, 의뢰사(' + (r.org || '-') + ')에게 승인 알림이 갑니다.', label: false, yes: '승인' }, function () {
-          F.approve(id); OP.toast('의뢰를 승인했습니다.'); render();
+          F.approve(id); F.bizConfirm(r); OP.toast('의뢰를 승인했습니다.'); render(); // 승인 = 사업자등록증 확인 완료 (계정 단위)
         });
       } else if (t.closest('#more')) {
         mailModal(s);

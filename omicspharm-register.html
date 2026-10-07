@@ -542,8 +542,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261007y">
-<script src="assets/common/site.js?v=20261007y"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007z">
+<script src="assets/common/site.js?v=20261007z"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -1290,6 +1290,9 @@
   function showDoc(){
     var n=$('#rDocName'); n.textContent=DOC||'등록된 파일 없음'; n.classList.toggle('none',!DOC);
     $('#rDocBtn').textContent=DOC?'다른 파일로 변경':'파일 선택';
+    var ss=OP.session(), acc=ss?(OP.account(ss.email)||{}):{}, ok=DOC&&DOC===DOC_SAVED&&acc.bizOk&&acc.bizOkName===DOC; // 확인 완료된 파일은 여기서 바꾸지 않음 (내 정보 관리에서 삭제 후 다시 올림)
+    $('#rDocBtn').style.display=ok?'none':'';
+    if(ok){ $('#rDocHelp').textContent='OmicsPharm 확인이 완료된 사업자등록증이 함께 제출됩니다. 내용이 바뀐 경우 내 정보 관리에서 삭제 후 다시 올려 주세요.'; return; }
     $('#rDocHelp').textContent=DOC&&DOC===DOC_SAVED?'내 정보 관리에 등록된 사업자등록증이 함께 제출됩니다.':DOC?'제출하면 내 정보 관리에도 저장됩니다.':'의뢰를 제출하려면 사업자등록증이 필요합니다. (PDF, JPG, PNG)';
   }
   (function(){
