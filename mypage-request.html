@@ -9,11 +9,11 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=의뢰번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261007w">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261007w">
-<script src="assets/common/site.js?v=20261007w"></script>
-<script src="assets/common/mypage.js?v=20261007w"></script>
-<script src="assets/common/flow.js?v=20261007w"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007x">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261007x">
+<script src="assets/common/site.js?v=20261007x"></script>
+<script src="assets/common/mypage.js?v=20261007x"></script>
+<script src="assets/common/flow.js?v=20261007x"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -242,6 +242,27 @@
     .ptitle { font-size:18px; line-height:26px; }
     .qt .r { padding-left:4px; padding-right:4px; }
   }
+  /* 제출 서류 (사업자등록증): 의뢰 승인 전 확인 */
+  .fdocs { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:14px 20px; border:1px solid var(--gray-200); border-radius:8px; }
+  .fdocs > em { flex:none; width:96px; font-style:normal; font-size:14px; font-weight:600; line-height:20px; }
+  .fdocs .fname { display:inline-flex; align-items:center; gap:6px; min-width:0; max-width:340px; font-size:14px; line-height:20px; color:var(--gray-700); }
+  .fdocs .fname img { flex:none; width:18px; height:18px; opacity:.7; }
+  .fdocs .fname span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .fdocs .chip { flex:none; height:24px; padding:0 8px; border-radius:4px; font-size:12px; font-weight:500; line-height:24px; background:#fff4ed; color:var(--orange-600); }
+  .fdocs .chip.ok { background:var(--teal-50); color:var(--teal-700); }
+  .fdocs .chip.none { background:#fff1f2; color:#ca0008; }
+  .fdocs .btn { height:32px; padding:0 12px; margin-left:auto; }
+  .fdocs p { flex-basis:100%; margin-left:108px; font-size:12px; line-height:18px; color:var(--gray-500); }
+  .pv .doc.biz { min-height:0; padding:64px 72px; font-size:15px; line-height:24px; }
+  .pv .doc.biz h1 { margin-bottom:6px; font-size:28px; font-weight:800; letter-spacing:8px; text-align:center; }
+  .pv .doc.biz .kind { margin-bottom:28px; text-align:center; color:#555; }
+  .pv .doc.biz dl { display:grid; grid-template-columns:150px 1fr; border-top:2px solid #111; }
+  .pv .doc.biz dt, .pv .doc.biz dd { padding:10px 12px; border-bottom:1px solid #d5d5d5; }
+  .pv .doc.biz dt { background:#f6f6f6; font-weight:600; }
+  .pv .doc.biz .issuer { display:flex; align-items:center; justify-content:flex-end; gap:16px; margin-top:40px; font-size:18px; font-weight:700; }
+  .pv .doc.biz .seal { width:56px; height:56px; border:2px solid #d33; border-radius:6px; color:#d33; font-size:12px; line-height:16px; display:flex; align-items:center; justify-content:center; text-align:center; transform:rotate(-6deg); }
+  .pv .demo-note { margin:0 auto 12px; max-width:794px; font-size:13px; color:#ddd; text-align:center; }
+  @media (max-width:640px) { .fdocs { padding:12px 14px; } .fdocs p { margin-left:0; } .fdocs .btn { margin-left:0; } .pv .doc.biz { padding:32px 20px; } .pv .doc.biz dl { grid-template-columns:110px 1fr; } }
 </style>
 </head>
 <body>
@@ -441,6 +462,7 @@
       '<ol class="fsteps" style="--n:5" aria-label="진행 단계">' + STEPS.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
       '<div class="ftodo ' + todo[0] + '"><div><b>' + esc(todo[1]) + '</b><p>' + esc(todo[2]) + '</p></div>' +
         (s.st === 'review' && !s.ok ? '<div class="acts"><button type="button" class="btn primary" id="approve">의뢰 승인</button></div>' : '') + '</div>' +
+      bizHTML(s) +
       (s.st === 'matched' ? contractHTML(s) : '') +
       (s.st === 'review' && !s.ok ? '' : quotesHTML(s)) +
       '<details class="req"' + (s.st === 'review' ? ' open' : '') + '><summary>의뢰 내용</summary><div class="in">' + F.reqHTML(r) + '</div></details>';
@@ -448,6 +470,37 @@
   }
 
   // 계약서 등록 (견적 확정 후): 클라이언트·분석파트너 계약서 각각 기본 양식 또는 기관 양식 파일
+  // 제출 서류: 의뢰사가 의뢰 등록 때 낸 사업자등록증 (컨설턴트만 봄 · 분석파트너에게는 전달하지 않음)
+  // 승인 전에는 [보기]로 한 번 열어봐야 승인할 수 있음 (데모: 이 브라우저 localStorage 'op.bizSeen')
+  function bizSeen() { try { return (JSON.parse(localStorage.getItem('op.bizSeen') || '[]')).indexOf(id) > -1; } catch (e) { return false; } }
+  function markBiz() { try { var L = JSON.parse(localStorage.getItem('op.bizSeen') || '[]'); if (L.indexOf(id) < 0) { L.push(id); localStorage.setItem('op.bizSeen', JSON.stringify(L)); } } catch (e) {} }
+  function bizHTML(s) {
+    var pre = s.st === 'review' && !s.ok, seen = bizSeen();
+    if (!r.bizDoc) return '<div class="fdocs"><em>사업자등록증</em><span class="chip none">미제출</span><span class="fname"><span>제출된 파일이 없습니다.</span></span>' +
+      (pre ? '<p>사업자등록증 제출 전에 접수된 의뢰입니다. 의뢰사에 사업자등록증을 요청한 뒤 승인해주세요.</p>' : '') + '</div>';
+    return '<div class="fdocs"><em>사업자등록증</em>' +
+      '<span class="chip' + (seen || !pre ? ' ok">확인 완료' : '">확인 전') + '</span>' +
+      '<span class="fname"><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(r.bizDoc) + '</span></span>' +
+      '<button type="button" class="btn" id="bizView">보기</button>' +
+      (pre ? '<p>상호·대표자·사업자등록번호가 의뢰 정보와 맞는지 확인한 뒤 승인해주세요. 분석파트너에게는 공개되지 않습니다.</p>' : '') + '</div>';
+  }
+  function showBiz() {
+    var pv = document.createElement('div'), d = new Date(r.at || Date.now());
+    pv.className = 'pv'; pv.setAttribute('role', 'dialog'); pv.setAttribute('aria-modal', 'true'); pv.setAttribute('aria-label', '사업자등록증');
+    pv.innerHTML = '<div class="pv-bar"><b>사업자등록증 · ' + esc(r.bizDoc) + '</b><div><button type="button" data-dl>다운로드</button><button type="button" class="x" data-close>닫기</button></div></div>' +
+      '<div class="pv-scroll"><p class="demo-note">프로토타입 미리보기 · 실제 서비스에서는 의뢰사가 올린 파일(PDF·이미지)이 그대로 표시됩니다.</p>' +
+      '<article class="doc biz"><h1>사업자등록증</h1><p class="kind">( 법인사업자 )</p><dl>' +
+        '<dt>등록번호</dt><dd>000-00-00000</dd><dt>법인명(단체명)</dt><dd>' + esc(r.org || '-') + '</dd><dt>대표자</dt><dd>' + esc(r.manager || '홍길동') + '</dd>' +
+        '<dt>개업연월일</dt><dd>2015년 03월 02일</dd><dt>사업장 소재지</dt><dd>○○시 ○○구 ○○로 00</dd><dt>사업의 종류</dt><dd>업태: 서비스업 · 종목: 연구개발</dd>' +
+      '</dl><div class="issuer"><span>' + d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 · ○○세무서장</span><span class="seal">세무서장<br>인</span></div></article></div>';
+    var close = function () { pv.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', key); render(); };
+    var key = function (e) { if (e.key === 'Escape') close(); };
+    pv.addEventListener('click', function (e) { if (e.target.closest('[data-close]') || e.target === pv) close(); else if (e.target.closest('[data-dl]')) OP.toast('데모: 실제 서비스에서는 원본 파일이 다운로드됩니다.'); });
+    document.addEventListener('keydown', key);
+    document.body.appendChild(pv); document.body.style.overflow = 'hidden'; pv.querySelector('[data-close]').focus();
+    markBiz();
+  }
+
   function contractHTML(s) {
     if (s.ct) return '<div class="blk"><div class="blk-h"><h3>계약서</h3><span class="sub">클라이언트와 분석파트너에게 계약서 최종본 등록 알림이 전달되었습니다.</span></div>' + F.contractListHTML(s, ['client', 'partner']) + '</div>';
     var row = function (side, t, who) {
@@ -589,7 +642,10 @@
         F.ask({ title: '계약서를 등록할까요?', desc: '클라이언트(' + (r.org || '-') + ')와 분석파트너(' + F.partner(s.pick).org + ')에게 계약서 최종본 등록 알림이 가고, 프로젝트가 분석 진행 단계로 넘어갑니다.', label: false, yes: '등록' }, function () {
           F.contract(id, c); OP.toast('계약서를 등록했습니다.'); render();
         });
+      } else if (t.closest('#bizView')) {
+        showBiz();
       } else if (t.closest('#approve')) {
+        if (r.bizDoc && !bizSeen()) { OP.toast('사업자등록증을 먼저 확인해주세요.'); var bv = $('#bizView'); if (bv) bv.focus(); return; }
         F.ask({ title: '의뢰를 승인할까요?', desc: '"' + r.title + '" 의뢰가 프로젝트로 등록되고, 의뢰사(' + (r.org || '-') + ')에게 승인 알림이 갑니다.', label: false, yes: '승인' }, function () {
           F.approve(id); OP.toast('의뢰를 승인했습니다.'); render();
         });
