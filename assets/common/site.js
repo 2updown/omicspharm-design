@@ -62,8 +62,8 @@
       clearTimeout(el._t);
       el._t = setTimeout(function () { el.classList.remove('show'); }, desc ? 5000 : 3000);
     },
-    // 페이지를 옮긴 뒤 띄울 토스트
-    flash: function (msg) { try { sessionStorage.setItem('op.flash', msg); } catch (e) {} },
+    // 페이지를 옮긴 뒤 띄울 토스트 (o = OP.toast 옵션: { title, type })
+    flash: function (msg, o) { try { sessionStorage.setItem('op.flash', o ? JSON.stringify({ m: msg, o: o }) : msg); } catch (e) {} },
     CLIENT_ONLY_MSG: '의뢰자(클라이언트)만 프로젝트를 등록할 수 있습니다.',
     // 클라이언트 전용 화면 진입 판단: 'ok' | 'login' | 'deny'
     /* 프로젝트 열람 권한: 비공개 프로젝트는 인증 분석파트너·컨설턴트만 열람. 클라이언트·비로그인·미인증 분석파트너는 불가 */
@@ -472,7 +472,9 @@
 
   function showFlash() {
     var m = null; try { m = sessionStorage.getItem('op.flash'); sessionStorage.removeItem('op.flash'); } catch (e) {}
-    if (m) OP.toast(m);
+    if (!m) return;
+    if (m.charAt(0) === '{') { try { var f = JSON.parse(m); OP.toast(f.m, f.o); return; } catch (e2) {} }
+    OP.toast(m);
   }
   // GNB 배경: 맨 위에서는 반투명, 조금이라도 내리면 흰색
   function syncGnb() {
