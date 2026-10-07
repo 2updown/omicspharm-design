@@ -8,11 +8,11 @@
 <!-- Figma: Find Projects1-list (993:12559) · Find Projects1-grid (996:13677)
      카드: Project-list (974:7938) · Project-card Type=card (147:1266)
      B안: Find Projects2-list (831:3469) · Find Projects2-grid (977:9070) — 오른쪽을 흰 박스 하나로 묶고 행을 구분선으로 나열. 기존 목록형(A안)은 ?list=a 로 비교. 그리드형은 구분선 격자가 기본, 박스 안 카드형은 ?grid=a 로 비교 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261008l">
-<script src="assets/common/site.js?v=20261008l"></script>
-<script src="assets/common/mypage.js?v=20261008l"></script>
-<script src="assets/common/flow.js?v=20261008l"></script>
-<script src="assets/common/projects-data.js?v=20261008l"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261008m">
+<script src="assets/common/site.js?v=20261008m"></script>
+<script src="assets/common/mypage.js?v=20261008m"></script>
+<script src="assets/common/flow.js?v=20261008m"></script>
+<script src="assets/common/projects-data.js?v=20261008m"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -275,7 +275,7 @@
   </aside>
 
   <div class="main">
-    <label class="search"><input id="q" type="search" placeholder="프로젝트 제목, 키워드, 연구분야 등을 검색해보세요." aria-label="프로젝트 검색"><img src="assets/find/ic-search.svg" alt=""></label>
+    <label class="search"><input id="q" type="search" placeholder="프로젝트 제목, 프로젝트 번호, 연구분야 등을 검색해보세요." aria-label="프로젝트 검색"><img src="assets/find/ic-search.svg" alt=""></label>
     <div class="results">
       <div class="toolbar">
         <span class="total" id="total"></span>
@@ -392,7 +392,8 @@
       // 가격을 볼 수 없는 프로젝트는 금액 필터에 쓰지 않음 (가격 노출 방지)
       if (OP_PROJECTS.canSeePrice(x) && (x.price < state.min || (state.max < 1000 && x.price > state.max))) return false;
       if (state.hidePrivate && x.priv) return false;
-      if (q && (x.title + ' ' + x.cat).toLowerCase().indexOf(q) < 0) return false;
+      // 제목·연구분야 또는 프로젝트 번호 (PRJ-2026-0012, 2026-0012, 0012처럼 일부나 하이픈 없이도 검색)
+      if (q && (x.title + ' ' + x.cat).toLowerCase().indexOf(q) < 0 && OP_PROJECTS.no(x).toLowerCase().replace(/-/g, '').indexOf(q.replace(/[-\s]/g, '')) < 0) return false;
       return true;
     });
     var by = {

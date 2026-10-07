@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261008l">
-<script src="assets/common/site.js?v=20261008l"></script>
-<script src="assets/common/mypage.js?v=20261008l"></script>
-<script src="assets/common/flow.js?v=20261008l"></script>
-<script src="assets/common/projects-data.js?v=20261008l"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261008m">
+<script src="assets/common/site.js?v=20261008m"></script>
+<script src="assets/common/mypage.js?v=20261008m"></script>
+<script src="assets/common/flow.js?v=20261008m"></script>
+<script src="assets/common/projects-data.js?v=20261008m"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -362,7 +362,7 @@
   var won = function (n) { return n.toLocaleString('ko-KR') + '만'; };
   var lo = x.id === 0 ? 500 : Math.max(50, Math.round(x.price * 0.7 / 50) * 50), hi = x.id === 0 ? 1000 : Math.round(x.price * 1.3 / 50) * 50;
   var F = {
-    reg: x.reg, no: 'PRJ-2026-' + String(x.id + 1).padStart(4, '0'), cat: x.cat, title: x.title, owner: x.owner,
+    reg: x.reg, no: OP_PROJECTS.no(x), cat: x.cat, title: x.title, owner: x.owner,
     status: x.open ? '모집중' : '모집마감', period: x.from + ' ~ ' + x.to, dday: x.open ? '・D-' + x.days : '・마감',
     samples: x.samples + '개', due: x.due, dueDash: x.due.replace(/\./g, '-'), price: won(lo) + '~' + won(hi) + '원', priceSp: won(lo) + ' ~ ' + won(hi) + '원'
   };

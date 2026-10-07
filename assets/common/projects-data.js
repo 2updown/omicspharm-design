@@ -70,5 +70,7 @@
     if (s.role === 'partner') return !x.priv || OP.partnerVerified();
     return !!(x.rid && OP.my && OP.my.myProjects().some(function (p) { return p.id === x.rid; }));
   }
-  window.OP_PROJECTS = { canSeePrice: canSeePrice, CATS: CATS, DATA: DATA, date: d, url: function (x) { return 'omicspharm-project-detail-prot.html?id=' + x.id; } };
+  // 프로젝트 번호 (상세 화면 표시 · 프로젝트 찾기 검색 공통)
+  function no(x) { return 'PRJ-2026-' + String(x.id + 1).padStart(4, '0'); }
+  window.OP_PROJECTS = { canSeePrice: canSeePrice, no: no, CATS: CATS, DATA: DATA, date: d, url: function (x) { return 'omicspharm-project-detail-prot.html?id=' + x.id; } };
 })();
