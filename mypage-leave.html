@@ -7,11 +7,11 @@
 <title>회원 탈퇴 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 내 정보 관리 > 회원 탈퇴 (Figma 시안 없음, 레퍼런스 화면 구성: 탈퇴 안내 → 탈퇴 사유·개선사항 → 동의 → 취소/탈퇴).
      진행 중인 프로젝트·계약이 있으면 탈퇴 불가. 데모: 탈퇴하면 이 브라우저의 계정(op.accounts)을 지우고 로그아웃 (데모 계정은 로그아웃만) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261007v">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261007v">
-<script src="assets/common/site.js?v=20261007v"></script>
-<script src="assets/common/mypage.js?v=20261007v"></script>
-<script src="assets/common/flow.js?v=20261007v"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007w">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261007w">
+<script src="assets/common/site.js?v=20261007w"></script>
+<script src="assets/common/mypage.js?v=20261007w"></script>
+<script src="assets/common/flow.js?v=20261007w"></script>
 <style>
   .leave-card { gap:40px; }
   .sec h4 { margin-bottom:12px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
@@ -213,7 +213,7 @@
       // 데모: 가입한 계정은 지우고, 데모 계정(SEED)은 로그아웃만
       try { var all = JSON.parse(localStorage.getItem('op.accounts') || '{}'); if (!/@omicspharm\.test$/.test(email)) { delete all[email]; localStorage.setItem('op.accounts', JSON.stringify(all)); } } catch (e2) {}
       OP.logout();
-      OP.flash('그동안 OmicsPharm을 이용해 주셔서 감사합니다.', { title: '회원 탈퇴 완료', type: 'success' });
+      OP.flash('그동안 OmicsPharm을 이용해 주셔서 감사합니다.', { title: '회원 탈퇴 완료', type: 'info' });
       location.replace('index.html');
     });
   });
