@@ -220,17 +220,3 @@ span.tbtn { cursor:default; }
 .tbtn.primary { color:var(--teal-600); } .tbtn.primary:hover:not(:disabled) { color:var(--teal-700); }
 .tbtn:disabled { color:var(--gray-400); cursor:default; }
 .op-confirm.fask p { white-space:pre-line; overflow-wrap:anywhere; } /* 입력 모달 설명: 줄바꿈(파일 이름 + 안내) 유지 */
-/* 견적서 (셀키 분석서비스 의뢰서 '별첨 1. 분석 견적서' 양식) */
-.pv .qdoc .q-title { margin:4px 0 22px; font-size:24px; font-weight:700; line-height:32px; text-align:center; letter-spacing:0; }
-.pv .qdoc .q-h { margin:22px 0 8px; font-size:13px; font-weight:700; }
-.pv .qdoc .parties h3 { margin-bottom:8px; }
-.pv .qdoc table { border-top:2px solid #8fcbbd; }
-.pv .qdoc th, .pv .qdoc td { border-color:#dfe7e4; border-left:0; border-right:0; }
-.pv .qdoc .parties th { background:#eaf3f0; font-weight:600; }
-.pv .qdoc .it th { background:#eaf3f0; text-align:center; }
-.pv .qdoc .it td + td { border-left:1px solid #dfe7e4; }
-.pv .qdoc .it tr.sub td { background:#fff; font-weight:400; }
-.pv .qdoc .it td.tc { text-align:center; }
-.pv .qdoc .it tr.minus td { color:#e5484d; }
-.pv .qdoc .memo { min-height:0; padding:14px 18px; border:0; border-radius:8px; background:#eaf3f0; }
-.pv .qdoc .q-date { margin-top:18px; text-align:right; font-size:12px; font-weight:700; }
