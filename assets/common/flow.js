@@ -134,7 +134,16 @@
     // 사업자등록증: 계정 단위로 한 번 확인 (컨설턴트가 첫 의뢰를 승인할 때 확인 완료 → acc.bizOk·bizOkName)
     // 확인된 뒤에는 의뢰마다 다시 확인하지 않음. 클라이언트가 내 정보 관리에서 삭제 후 다시 올리면 파일 이름이 바뀌어 다시 '확인 전'
     // 의뢰별 재제출 요청: s.biz = { st:'ask'|'re', askAt, note, reAt, name }, s.bizSeen = 이번 의뢰에서 컨설턴트가 열어봤는지
-    bizOwner: function (r) { return r.demo ? 'client@omicspharm.test' : r.owner || ''; },
+    // 의뢰한 계정: 예시 의뢰 = 클라이언트 데모 계정, 제출한 의뢰 = r.owner. 계정 정보 없이 저장된 예전 의뢰는 소속·담당자 또는 파일 이름이 같은 클라이언트 계정으로 찾음
+    bizOwner: function (r) {
+      if (r.demo) return 'client@omicspharm.test';
+      if (r.owner) return r.owner;
+      var A = OP.accounts(), K = Object.keys(A).filter(function (k) { return A[k].role === 'client'; });
+      var hit = K.filter(function (k) { return r.bizDoc && A[k].bizDoc === r.bizDoc; })[0] ||
+        K.filter(function (k) { return r.org && A[k].org === r.org && (!r.manager || A[k].name === r.manager); })[0] ||
+        (K.length === 1 ? K[0] : '');
+      return hit || '';
+    },
     bizName: function (r) {
       var o = F.bizOwner(r), a = o ? OP.account(o) || {} : {}, b = state(r.id).biz || {};
       return a.bizDoc || b.name || (o ? '' : r.bizDoc) || '';
