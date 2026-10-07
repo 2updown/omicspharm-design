@@ -42,6 +42,13 @@
     { id: 'PRJ-2026-0042', svc: 'Proteomics', stage: '완료', title: '인슐린 유사체 LC-MS 펩타이드 매핑', client: '○○바이오로직스', samples: 4, amount: '680만원', contract: '2026-05-18', due: '2026-07-31', at: new Date(2026, 4, 18).getTime(), qa: 0, review: 1 }
   ];
 
+  // 의뢰 번호가 바뀌면 그 의뢰의 견적 중개 기록(op.flow)과 다시 올린 사업자등록증 파일도 새 번호로 옮김
+  function renumber(a, b) {
+    var f = read('op.flow', null);
+    if (f && f.S && f.S[a]) { f.S[b] = f.S[a]; delete f.S[a]; write('op.flow', f); }
+    if (window.OP && OP.files) OP.files.get('biz:req:' + a).then(function (x) { if (x) OP.files.put('biz:req:' + b, x).then(function () { OP.files.del('biz:req:' + a); }); });
+  }
+
   var D = {
     P_STAGES: P_STAGES,
     // 분석파트너에게 보이는 단계: 보고서 검토·승인(컨설턴트·클라이언트가 처리)은 '보고서 등록'에 묶고 '확인 대기'로 표시
@@ -57,8 +64,16 @@
     esc: esc, ymd: ymd, ymdhm: ymdhm,
     // 이전 양식(V4 입력 기준 이전)으로 제출된 의뢰는 정리하고 V4 양식 의뢰만 보여줌
     projects: function () {
-      var L = read('op.submitted', []), V = L.filter(function (p) { return p.ver === 4; });
-      if (V.length !== L.length) write('op.submitted', V);
+      var L = read('op.submitted', []), V = L.filter(function (p) { return p.ver === 4; }), changed = V.length !== L.length;
+      // 예전 번호(REQ-…)로 제출된 의뢰는 프로젝트 번호(PRJ-연도-일련번호)로 바꿈: 등록 순서대로 기존 번호(예시 0045까지) 다음부터
+      var re = /^PRJ-\d{4}-(\d+)$/, max = 45;
+      V.forEach(function (p) { var m = re.exec(p.id || ''); if (m) max = Math.max(max, +m[1]); });
+      V.slice().sort(function (a, b) { return a.at - b.at; }).forEach(function (p) {
+        if (re.test(p.id || '')) return;
+        var old = p.id; p.id = 'PRJ-' + new Date(p.at || Date.now()).getFullYear() + '-' + ('000' + (++max)).slice(-4);
+        renumber(old, p.id); changed = true;
+      });
+      if (changed) write('op.submitted', V);
       return V;
     },
     // 로그인한 계정이 보낸 문의만 (+ 클라이언트에게는 답변 완료 예시 1건)
