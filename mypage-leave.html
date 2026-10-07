@@ -7,11 +7,11 @@
 <title>회원 탈퇴 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 내 정보 관리 > 회원 탈퇴 (Figma 시안 없음, 레퍼런스 화면 구성: 탈퇴 안내 → 탈퇴 사유·개선사항 → 동의 → 취소/탈퇴).
      진행 중인 프로젝트·계약이 있으면 탈퇴 불가. 데모: 탈퇴하면 이 브라우저의 계정(op.accounts)을 지우고 로그아웃 (데모 계정은 로그아웃만) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261007s">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261007s">
-<script src="assets/common/site.js?v=20261007s"></script>
-<script src="assets/common/mypage.js?v=20261007s"></script>
-<script src="assets/common/flow.js?v=20261007s"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007t">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261007t">
+<script src="assets/common/site.js?v=20261007t"></script>
+<script src="assets/common/mypage.js?v=20261007t"></script>
+<script src="assets/common/flow.js?v=20261007t"></script>
 <style>
   .leave-card { gap:40px; }
   .sec h4 { margin-bottom:12px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
@@ -102,7 +102,6 @@
             <div class="tbl">
               <div class="field"><div class="flabel">탈퇴 사유<span class="req">*</span></div><div class="fbody">
                 <div class="reasons" id="reasons" role="group" aria-label="탈퇴 사유 (복수 선택)"></div>
-                <p class="help">해당하는 항목을 모두 선택해주세요.</p>
               </div></div>
               <div class="field"><label class="flabel" for="memo">개선사항<span class="req" id="memoReq" hidden>*</span></label><div class="fbody">
                 <textarea id="memo" maxlength="500" placeholder="OmicsPharm 이용 중 불편했던 점이나 개선되었으면 하는 점을 남겨주세요."></textarea>
@@ -117,7 +116,6 @@
 
           <div class="agree">
             <label class="check"><input type="checkbox" id="ag1"><i></i><span>회원 탈퇴 안내를 모두 확인하였으며, 탈퇴에 동의합니다. <span class="req">(필수)</span></span></label>
-            <label class="check"><input type="checkbox" id="ag2"><i></i><span>탈퇴 후 프로젝트 자료(결과보고서·견적서·계약서)를 열람할 수 없음에 동의합니다. <span class="req">(필수)</span></span></label>
           </div>
         </fieldset>
 
@@ -192,7 +190,7 @@
   });
   $('#memo').addEventListener('input', function () { $('#memoN').textContent = this.value.length; if (this.value.trim()) { this.classList.remove('bad'); err(this.parentNode, ''); } });
   $('#pw').addEventListener('input', function () { this.classList.remove('bad'); err(this.parentNode, ''); });
-  $('.agree').addEventListener('change', function () { if ($('#ag1').checked && $('#ag2').checked) err($('.agree'), ''); });
+  $('.agree').addEventListener('change', function () { if ($('#ag1').checked) err($('.agree'), ''); });
 
   $('#fLeave').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -203,7 +201,7 @@
     mark($('#reasons input'), $('#reasons').parentNode, picked.length ? '' : '탈퇴 사유를 1개 이상 선택해주세요.');
     mark(memo, memo.parentNode, etc() && !memo.value.trim() ? '기타 사유를 입력해주세요.' : '');
     mark(pw, pw.parentNode, !pw.value ? '비밀번호를 입력해주세요.' : cur && pw.value !== cur ? '비밀번호가 일치하지 않습니다.' : '');
-    mark($('#ag1'), $('.agree'), $('#ag1').checked && $('#ag2').checked ? '' : '필수 항목에 모두 동의해주세요.');
+    mark($('#ag1'), $('.agree'), $('#ag1').checked ? '' : '탈퇴 안내에 동의해주세요.');
     if (first) { first.focus(); return; }
     OP.my.confirm('정말 탈퇴하시겠습니까?', '탈퇴하면 계정과 프로젝트 자료를 복구할 수 없습니다.', '탈퇴', function () {
       // 데모: 가입한 계정은 지우고, 데모 계정(SEED)은 로그아웃만
