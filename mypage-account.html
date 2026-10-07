@@ -7,11 +7,11 @@
 <title>내 정보 관리 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / (분석파트너) 분석 가능 서비스 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261007p">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261007p">
-<script src="assets/common/site.js?v=20261007p"></script>
-<script src="assets/common/mypage.js?v=20261007p"></script>
-<script src="assets/common/flow.js?v=20261007p"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261007q">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261007q">
+<script src="assets/common/site.js?v=20261007q"></script>
+<script src="assets/common/mypage.js?v=20261007q"></script>
+<script src="assets/common/flow.js?v=20261007q"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -164,9 +164,9 @@
       <div class="prefs" id="prefs"></div>
     </section>
 
-    <div class="leave">
-      <p>탈퇴하면 진행 중인 프로젝트와 문의 내역을 더 이상 확인할 수 없습니다.</p>
-      <a href="#" data-soon="회원 탈퇴">회원 탈퇴</a>
+    <div class="leave" id="leave">
+      <p>탈퇴하면 계정 정보와 프로젝트 자료를 복구할 수 없습니다. 진행 중인 프로젝트가 있으면 완료 후 탈퇴할 수 있습니다.</p>
+      <a href="mypage-leave.html">회원 탈퇴</a>
     </div>
     </div>
   </div>

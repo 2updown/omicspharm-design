@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
+<title>회원 탈퇴 · 마이페이지 · OmicsPharm</title>
+<!-- 마이페이지 > 내 정보 관리 > 회원 탈퇴 (Figma 시안 없음, 레퍼런스 화면 구성: 탈퇴 안내 → 탈퇴 사유·개선사항 → 동의 → 취소/탈퇴).
+     진행 중인 프로젝트·계약이 있으면 탈퇴 불가. 데모: 탈퇴하면 이 브라우저의 계정(op.accounts)을 지우고 로그아웃 (데모 계정은 로그아웃만) -->
+<link rel="stylesheet" href="assets/common/site.css?v=20261007q">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261007q">
+<script src="assets/common/site.js?v=20261007q"></script>
+<script src="assets/common/mypage.js?v=20261007q"></script>
+<script src="assets/common/flow.js?v=20261007q"></script>
+<style>
+  .leave-card { gap:40px; }
+  .sec h4 { margin-bottom:12px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
+  /* 탈퇴 안내 (infobox gray) */
+  .notice { display:flex; flex-direction:column; gap:8px; padding:16px 20px; border:1px solid var(--gray-200); border-radius:8px; background:var(--gray-100); }
+  .notice li { position:relative; padding-left:16px; font-size:14px; line-height:20px; color:var(--gray-700); word-break:keep-all; list-style:none; }
+  .notice li::before { content:""; position:absolute; left:4px; top:8px; width:4px; height:4px; border-radius:50%; background:currentColor; }
+  .notice li.strong { font-weight:600; color:#000; text-decoration:underline; text-underline-offset:3px; }
+
+  /* 진행 중인 프로젝트가 있을 때 (infobox red) */
+  .block { display:flex; flex-direction:column; gap:12px; padding:16px 20px; border:1px solid #fecdca; border-radius:8px; background:#fef3f2; }
+  .block b { display:flex; align-items:center; gap:8px; font-size:15px; font-weight:600; line-height:22px; color:var(--red-600); }
+  .block b img { width:20px; height:20px; }
+  .block p { font-size:14px; line-height:20px; color:var(--gray-700); word-break:keep-all; }
+  .block ul { display:flex; flex-direction:column; gap:6px; }
+  .block li { display:flex; align-items:center; gap:8px; font-size:14px; line-height:20px; list-style:none; min-width:0; }
+  .block li span { flex:none; height:22px; padding:0 8px; border-radius:4px; background:#fff; border:1px solid var(--gray-200); font-size:12px; line-height:20px; color:var(--gray-600); }
+  .block li a { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#000; }
+  .block li a:hover { text-decoration:underline; }
+  .block .acts { display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
+  .block .demo { font-size:12px; color:var(--gray-500); text-decoration:underline; text-underline-offset:2px; }
+
+  /* 표 형식 입력 (내 정보 관리와 동일) */
+  .tbl { border-top:2px solid #000; }
+  .field { display:grid; grid-template-columns:200px 1fr; border-bottom:1px solid var(--gray-200); }
+  .flabel { display:flex; align-items:center; padding:12px 18px; background:var(--gray-100); font-size:14px; font-weight:500; line-height:20px; }
+  .flabel .req { color:var(--red-600); margin-left:2px; }
+  .fbody { display:flex; flex-direction:column; justify-content:center; gap:6px; padding:12px; min-width:0; }
+  .reasons { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:4px 24px; }
+  .inp, textarea { width:100%; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font:inherit; font-size:14px; line-height:20px; }
+  .inp { max-width:420px; height:40px; padding:0 12px; }
+  textarea { min-height:140px; padding:10px 12px; resize:vertical; }
+  .inp:focus, textarea:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+  .bad, .reasons.bad { border-color:var(--red-600); }
+  .help { font-size:12px; line-height:18px; color:var(--gray-500); }
+  .cnt { align-self:flex-end; font-size:12px; color:var(--gray-500); }
+  .msg { font-size:12px; line-height:18px; color:var(--red-600); }
+
+  /* 체크박스 (회원가입과 같은 컴포넌트) */
+  .check { position:relative; display:inline-flex; align-items:center; gap:8px; min-height:36px; font-size:14px; line-height:20px; cursor:pointer; user-select:none; }
+  .check input { position:absolute; opacity:0; width:0; height:0; }
+  .check i { width:20px; height:20px; flex:none; background:url(assets/auth/checkbox-off.svg) center/contain no-repeat; }
+  .check input:checked + i { background-image:url(assets/auth/checkbox-on.svg); }
+  .check input:focus-visible + i { outline:2px solid var(--teal-600); outline-offset:2px; border-radius:4px; }
+  .check input:disabled ~ * { opacity:.5; }
+  .agree { display:flex; flex-direction:column; gap:2px; padding:0 4px; }
+  .agree .check { align-items:flex-start; padding:8px 0; min-height:0; }
+  .agree .check i { margin-top:0; }
+  .agree .req { color:var(--gray-500); }
+  .agree .msg { padding-left:28px; }
+
+  .btns { display:flex; justify-content:center; gap:12px; }
+  .btns .btn { width:160px; }
+  .btn.danger { border-color:#f00011; background:#f00011; color:#fff; }
+  .btn.danger:hover { background:#ca0008; border-color:#ca0008; }
+  .btn:disabled { opacity:.4; cursor:default; pointer-events:none; }
+  fieldset { min-width:0; margin:0; padding:0; border:0; }
+  fieldset:disabled { opacity:.55; }
+
+  @media (max-width:640px) {
+    .leave-card { gap:28px; }
+    .field { grid-template-columns:1fr; }
+    .flabel { padding:10px 12px; }
+    .fbody { padding:10px 0 14px; }
+    .reasons { grid-template-columns:1fr; }
+    .inp { max-width:none; }
+    .btns .btn { flex:1; width:auto; }
+  }
+</style>
+</head>
+<body>
+<div data-op-gnb></div>
+
+<section class="page-head"><div class="in">
+  <h1>마이페이지</h1>
+</div></section>
+
+<main class="body"><div class="in">
+  <aside class="side" data-op-side></aside>
+
+  <div class="main">
+    <section class="card leave-card">
+      <div class="card-head"><h3>회원 탈퇴</h3></div>
+
+      <div class="sec">
+        <h4>탈퇴 전 확인해주세요</h4>
+        <ul class="notice" id="notice"></ul>
+      </div>
+
+      <div class="block" id="block" hidden></div>
+
+      <form id="fLeave" novalidate>
+        <fieldset id="fs" style="display:flex;flex-direction:column;gap:24px">
+          <div class="sec">
+            <h4>탈퇴 사유</h4>
+            <div class="tbl">
+              <div class="field"><div class="flabel">탈퇴 사유<span class="req">*</span></div><div class="fbody">
+                <div class="reasons" id="reasons" role="group" aria-label="탈퇴 사유 (복수 선택)"></div>
+                <p class="help">해당하는 항목을 모두 선택해주세요.</p>
+              </div></div>
+              <div class="field"><label class="flabel" for="memo">개선사항<span class="req" id="memoReq" hidden>*</span></label><div class="fbody">
+                <textarea id="memo" maxlength="500" placeholder="OmicsPharm 이용 중 불편했던 점이나 개선되었으면 하는 점을 남겨주세요."></textarea>
+                <span class="cnt"><span id="memoN">0</span>/500</span>
+              </div></div>
+              <div class="field"><label class="flabel" for="pw">비밀번호 확인<span class="req">*</span></label><div class="fbody">
+                <input class="inp" id="pw" type="password" autocomplete="current-password" placeholder="현재 비밀번호">
+                <p class="help">본인 확인을 위해 비밀번호를 입력해주세요.</p>
+              </div></div>
+            </div>
+          </div>
+
+          <div class="agree">
+            <label class="check"><input type="checkbox" id="ag1"><i></i><span>회원 탈퇴 안내를 모두 확인하였으며, 탈퇴에 동의합니다. <span class="req">(필수)</span></span></label>
+            <label class="check"><input type="checkbox" id="ag2"><i></i><span>탈퇴 후 프로젝트 자료(결과보고서·견적서·계약서)를 열람할 수 없음에 동의합니다. <span class="req">(필수)</span></span></label>
+          </div>
+        </fieldset>
+
+        <div class="btns" style="margin-top:40px">
+          <a class="btn lg" href="mypage-account.html">취소</a>
+          <button type="submit" class="btn lg danger" id="go">탈퇴하기</button>
+        </div>
+      </form>
+    </section>
+  </div>
+</div></main>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var me = OP.mypage('account'); if (!me) return;
+  var $ = function (s) { return document.querySelector(s); };
+  var esc = OP.my.esc, email = me.s.email, role = me.s.role, partner = role === 'partner';
+
+  // 탈퇴 안내 (회원 유형별)
+  var N = [
+    '탈퇴 후 계정 정보(이메일, 이름, 소속, 연락처, 사업자등록증)는 삭제되며 복구할 수 없습니다.',
+    '진행 중인 프로젝트(의뢰 접수·견적 협의·계약·분석·보고서 단계) 또는 계약이 있는 경우, 모든 절차가 완료된 후 탈퇴할 수 있습니다.',
+    '작성한 문의 및 프로젝트 Q&amp;A 글은 자동으로 삭제되지 않으므로, 삭제가 필요한 콘텐츠는 탈퇴 전에 직접 삭제해주세요.',
+    '결과보고서, 견적서, 계약서 등 프로젝트 자료는 탈퇴 후 열람·다운로드할 수 없으니 필요한 자료는 미리 저장해주세요.'
+  ];
+  if (partner) N.push('분석파트너 인증 정보와 제출한 견적서 이력이 함께 삭제되며, 다시 가입하면 인증을 새로 받아야 합니다.');
+  N.push('관계 법령에 따라 계약·거래 기록은 정해진 기간 동안 보관되며, 부정 이용 방지를 위해 탈퇴 후 일정 기간 같은 이메일로 재가입이 제한될 수 있습니다.');
+  $('#notice').innerHTML = N.map(function (t) { return '<li>' + t + '</li>'; }).join('') +
+    '<li class="strong">회원 탈퇴 후에는 이전 계정 및 프로젝트 데이터를 복구할 수 없습니다.</li>';
+
+  // 탈퇴 사유 (복수 선택)
+  var R = ['원하는 분석 서비스가 없음', '견적 가격이 맞지 않음', partner ? '받는 견적 요청이 적음' : '분석파트너 매칭·견적이 느림',
+    partner ? '정산·계약 절차가 불편함' : '분석 결과·보고서 품질 불만', '이용 빈도가 낮음', '사이트 이용이 불편함', '개인정보 유출 우려', '기타 (직접 입력)'];
+  $('#reasons').innerHTML = R.map(function (t, i) {
+    return '<label class="check"><input type="checkbox" value="' + esc(t) + '"' + (i === R.length - 1 ? ' data-etc' : '') + '><i></i><span>' + esc(t) + '</span></label>';
+  }).join('');
+
+  // 진행 중인 프로젝트 확인: 클라이언트 = 내가 의뢰한 프로젝트, 분석파트너 = 매칭·계약된 프로젝트 중 완료 전
+  // 데모 계정은 예시 프로젝트가 있어 항상 막히므로 ?free=1 로 '진행 중 프로젝트 없음' 상태를 볼 수 있게 함
+  var free = /[?&]free=1/.test(location.search);
+  var ING = free ? [] : role === 'client'
+    ? OP.my.myProjects().map(function (r) { return { id: r.id, t: r.title, st: OP.flow ? OP.flow.clientStage(r.id) : '진행 중', h: 'mypage-project.html?id=' + r.id }; })
+    : partner ? OP.my.partnerProjects().filter(function (p) { return p.stage !== '완료'; }).map(function (p) { return { id: p.id, t: p.title, st: OP.my.pStage(p), h: 'mypage-project.html?id=' + p.id }; })
+    : [];
+
+  if (role === 'admin') {
+    lock('컨설턴트 계정은 탈퇴할 수 없습니다.', '컨설턴트 계정은 OmicsPharm 관리자가 발급·해지합니다. 계정 해지가 필요하면 관리자에게 요청해주세요.', '');
+  } else if (ING.length) {
+    lock('진행 중인 프로젝트가 ' + ING.length + '건 있어 탈퇴할 수 없습니다.', '아래 프로젝트의 모든 절차(분석·결과 수령·계약)가 완료된 후 탈퇴할 수 있습니다.',
+      '<ul>' + ING.slice(0, 3).map(function (p) { return '<li><span>' + esc(p.st) + '</span><a href="' + p.h + '">' + esc(p.t) + '</a></li>'; }).join('') + '</ul>' +
+      '<div class="acts"><a class="btn" href="mypage-project.html">프로젝트 관리로 이동</a>' +
+      '<a class="demo" href="?free=1">데모: 진행 중 프로젝트가 없는 상태로 보기</a></div>');
+  }
+  function lock(title, desc, more) {
+    $('#block').hidden = false;
+    $('#block').innerHTML = '<b><img src="assets/auth/ic-warning-circle.svg" alt="">' + esc(title) + '</b><p>' + esc(desc) + '</p>' + more;
+    $('#fs').disabled = true; $('#go').disabled = true;
+  }
+
+  function err(box, msg) {
+    var m = box.querySelector(':scope > .msg');
+    if (!msg) { if (m) m.remove(); return; }
+    if (!m) { m = document.createElement('p'); m.className = 'msg'; box.appendChild(m); }
+    m.textContent = msg;
+  }
+  var etc = function () { return $('#reasons [data-etc]').checked; };
+  $('#reasons').addEventListener('change', function () {
+    $('#memoReq').hidden = !etc();
+    if (document.querySelector('#reasons input:checked')) err($('#reasons').parentNode, '');
+  });
+  $('#memo').addEventListener('input', function () { $('#memoN').textContent = this.value.length; if (this.value.trim()) { this.classList.remove('bad'); err(this.parentNode, ''); } });
+  $('#pw').addEventListener('input', function () { this.classList.remove('bad'); err(this.parentNode, ''); });
+  $('.agree').addEventListener('change', function () { if ($('#ag1').checked && $('#ag2').checked) err($('.agree'), ''); });
+
+  $('#fLeave').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if ($('#go').disabled) return;
+    var picked = [].map.call(document.querySelectorAll('#reasons input:checked'), function (i) { return i.value; });
+    var memo = $('#memo'), pw = $('#pw'), first = null, cur = (OP.account(email) || {}).pw;
+    var mark = function (el, box, msg) { if (el && el.classList) el.classList.toggle('bad', !!msg); err(box, msg); if (msg && !first) first = el; };
+    mark($('#reasons input'), $('#reasons').parentNode, picked.length ? '' : '탈퇴 사유를 1개 이상 선택해주세요.');
+    mark(memo, memo.parentNode, etc() && !memo.value.trim() ? '기타 사유를 입력해주세요.' : '');
+    mark(pw, pw.parentNode, !pw.value ? '비밀번호를 입력해주세요.' : cur && pw.value !== cur ? '비밀번호가 일치하지 않습니다.' : '');
+    mark($('#ag1'), $('.agree'), $('#ag1').checked && $('#ag2').checked ? '' : '필수 항목에 모두 동의해주세요.');
+    if (first) { first.focus(); return; }
+    OP.my.confirm('정말 탈퇴하시겠습니까?', '탈퇴하면 계정과 프로젝트 자료를 복구할 수 없습니다.', '탈퇴', function () {
+      // 데모: 가입한 계정은 지우고, 데모 계정(SEED)은 로그아웃만
+      try { var all = JSON.parse(localStorage.getItem('op.accounts') || '{}'); if (!/@omicspharm\.test$/.test(email)) { delete all[email]; localStorage.setItem('op.accounts', JSON.stringify(all)); } } catch (e2) {}
+      OP.logout();
+      OP.flash('회원 탈퇴가 완료되었습니다. 그동안 OmicsPharm을 이용해 주셔서 감사합니다.');
+      location.replace('index.html');
+    });
+  });
+})();
+</script>
+</body>
+</html>
