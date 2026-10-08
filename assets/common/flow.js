@@ -6,7 +6,7 @@
    - 데모: 로그인 가능한 파트너는 partner@omicspharm.test 하나이고, 나머지 파트너는 요청을 받으면 바로 응답한다
    사용: mypage.js 다음에 불러오고 OP.flow.* 사용 */
 (function () {
-  var KEY = 'op.flow', VER = 4; // 3: 프로젝트 번호 통일 (PRJ-연도-일련번호), 4: 분석파트너 예시 0046·0047 추가
+  var KEY = 'op.flow', VER = 5; // 3: 프로젝트 번호 통일 (PRJ-연도-일련번호), 4: 분석파트너 예시 0046·0047 추가, 5: 예시 견적 단위 EA
   function read(k, f) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch (e) { return f; } }
   function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); };
@@ -78,8 +78,8 @@
     var n = parseInt(r.samples, 10) || 12, rate = (p.rate || 1) * (k || 1);
     var prep = Math.round(unit * .35 * rate / 1000) * 1000, run = Math.round(unit * .65 * rate / 1000) * 1000, data = Math.round(n * unit * .18 * rate / 10000) * 10000;
     var groups = [
-      { name: r.svc.replace(' 분석', '') + ' 분석', lines: [{ d: '시료 전처리 및 QC', q: n, u: 'sample', p: prep }, { d: '기기 분석', q: n, u: 'sample', p: run }] },
-      { name: '데이터 분석', lines: [{ d: '통계 분석 및 결과 리포트', q: 1, u: '식', p: data }] }
+      { name: r.svc.replace(' 분석', '') + ' 분석', lines: [{ d: '시료 전처리 및 QC', q: n, u: 'EA', p: prep }, { d: '기기 분석', q: n, u: 'EA', p: run }] },
+      { name: '데이터 분석', lines: [{ d: '통계 분석 및 결과 리포트', q: 1, u: 'EA', p: data }] }
     ];
     var q = { at: Date.now(), cur: 'KRW', groups: groups, sale: p.rate < 1 ? String(Math.round(n * unit * .03 / 10000) * 10000) : '', addSale: '', weeks: String(p.weeks || 6),
       supplier: { s_org: p.org, s_ceo: '-', s_tel: '-', s_biz: '-', s_mgr: p.org + ' 담당자', s_mail: '-', s_addr: '-' },
@@ -124,7 +124,12 @@
   // 버전 3 → 4: 진행하던 기록은 그대로 두고 새 예시(0046·0047)만 추가
   function db() {
     var d = read(KEY, null);
-    if (d && d.v === 3) { var n = seed().S; Object.keys(n).forEach(function (k) { if (!d.S[k]) d.S[k] = n[k]; }); d.v = VER; write(KEY, d); }
+    if (d && d.v === 3) { var n = seed().S; Object.keys(n).forEach(function (k) { if (!d.S[k]) d.S[k] = n[k]; }); d.v = 4; }
+    // 4 → 5: 예시 견적의 단위(sample·식)를 EA로
+    if (d && d.v === 4) {
+      Object.keys(d.S).forEach(function (id) { var P = d.S[id].P || {}; Object.keys(P).forEach(function (k) { var q = P[k].quote; (q && q.groups || []).forEach(function (g) { g.lines.forEach(function (l) { if (l.u === 'sample' || l.u === '식' || l.u === 1) l.u = 'EA'; }); }); }); });
+      d.v = VER; write(KEY, d);
+    }
     if (!d || d.v !== VER) { d = seed(); write(KEY, d); }
     d.X = d.X || []; return d;
   }
