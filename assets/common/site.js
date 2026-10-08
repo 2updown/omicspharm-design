@@ -413,6 +413,16 @@
   }
 
   document.addEventListener('click', function (e) {
+    // 주소 검색: 실제 서비스는 주소 검색 API(예: 우편번호 서비스)로 고르고, 직접 입력은 막는다(readonly).
+    // 프로토타입은 안내 토스트만 띄우고, 비어 있으면 예시 주소를 넣어 다음 단계로 진행할 수 있게 함
+    var ad = e.target.closest('[data-addr]');
+    if (ad) {
+      e.preventDefault();
+      var box = ad.closest('[data-addr-box]'), inp = box && box.querySelector('input');
+      if (inp && !inp.value) { inp.value = '서울특별시 ○○구 ○○로 00'; inp.dispatchEvent(new Event('input', { bubbles: true })); }
+      OP.toast('실제 서비스에서는 주소 검색 API로 주소를 선택합니다. 데모에서는 예시 주소를 넣었습니다.', { title: '주소 검색', type: 'info' });
+      return;
+    }
     var soon = e.target.closest('[data-soon]');
     if (soon) { e.preventDefault(); OP.toast("'" + soon.getAttribute('data-soon') + "' 화면은 준비 중입니다."); return; }
     // 프로젝트 등록(의뢰)은 클라이언트만: 비로그인 → 로그인 화면, 파트너·관리자 → 안내

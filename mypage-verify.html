@@ -7,11 +7,11 @@
 <title>파트너 인증 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > (분석파트너 카드) 파트너 인증 (Figma 시안 없음, 위시켓 '신원 인증' 구성 참고).
      인증 상태 안내 / 인증 절차 / 기관 정보 + 사업자등록증. 데모: 저장은 이 브라우저 localStorage(op.accounts)와 IndexedDB(op-files)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261009s">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261009s">
-<script src="assets/common/site.js?v=20261009s"></script>
-<script src="assets/common/mypage.js?v=20261009s"></script>
-<script src="assets/common/flow.js?v=20261009s"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261009t">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261009t">
+<script src="assets/common/site.js?v=20261009t"></script>
+<script src="assets/common/mypage.js?v=20261009t"></script>
+<script src="assets/common/flow.js?v=20261009t"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .op-vchip { margin-left:8px; }
@@ -92,7 +92,7 @@
           <div class="field"><div class="flabel">기관명</div><div class="fbody"><p class="val"><span id="vOrg"></span><small><a href="mypage-account.html">내 정보 관리</a>에서 수정할 수 있습니다.</small></p></div></div>
           <div class="field"><label class="flabel" for="ceo">대표자명<span class="req">*</span></label><div class="fbody"><input class="inp" id="ceo" placeholder="이름" autocomplete="off"></div></div>
           <div class="field"><label class="flabel" for="bizno">사업자등록번호<span class="req">*</span></label><div class="fbody"><input class="inp" id="bizno" inputmode="numeric" placeholder="000-00-00000" maxlength="12" autocomplete="off"></div></div>
-          <div class="field"><label class="flabel" for="addr">주소<span class="req">*</span></label><div class="fbody"><div class="addr" style="max-width:420px"><input class="inp" id="addr" placeholder="예) 세화로 168, 도산대로 33" autocomplete="off"><button type="button" class="btn line" data-soon="주소 검색">검색</button></div></div></div>
+          <div class="field"><label class="flabel" for="addr">주소<span class="req">*</span></label><div class="fbody"><div class="addr" style="max-width:420px" data-addr-box><input class="inp" id="addr" placeholder="예) 세화로 168, 도산대로 33" readonly data-addr><button type="button" class="btn line" data-addr>검색</button></div></div></div>
           <div class="field"><div class="flabel">사업자등록증<span class="req">*</span></div><div class="fbody">
             <div class="doc"><span class="fname" id="docName"></span><label class="btn" for="docFile" id="docBtn">파일 선택</label><button type="button" class="btn del" id="docDel" hidden>삭제</button>
               <input type="file" id="docFile" accept=".pdf,.jpg,.jpeg,.png"></div>

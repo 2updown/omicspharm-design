@@ -9,12 +9,12 @@
      ?rid=프로젝트 번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261009s">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261009s">
-<script src="assets/common/site.js?v=20261009s"></script>
-<script src="assets/common/mypage.js?v=20261009s"></script>
-<script src="assets/common/flow.js?v=20261009s"></script>
-<script src="assets/common/projects-data.js?v=20261009s"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261009t">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261009t">
+<script src="assets/common/site.js?v=20261009t"></script>
+<script src="assets/common/mypage.js?v=20261009t"></script>
+<script src="assets/common/flow.js?v=20261009t"></script>
+<script src="assets/common/projects-data.js?v=20261009t"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -274,7 +274,7 @@
         '<div class="k">기업명</div><div><input class="inp" name="s_org"></div><div class="k">대표자성명</div><div><input class="inp" name="s_ceo"></div>' +
         '<div class="k">연락처</div><div><input class="inp" name="s_tel"></div><div class="k">사업자등록번호</div><div><input class="inp" name="s_biz" inputmode="numeric" placeholder="000-00-00000"></div>' +
         '<div class="k">담당자</div><div><input class="inp" name="s_mgr"></div><div class="k">이메일</div><div><input class="inp" name="s_mail" type="email"></div>' +
-        '<div class="k">주소</div><div class="wide"><div class="addr"><input class="inp" name="s_addr" placeholder="예) 세화로 168, 도산대로 33"><button type="button" class="btn line" data-soon="주소 검색">검색</button></div></div></div>' +
+        '<div class="k">주소</div><div class="wide"><div class="addr" data-addr-box><input class="inp" name="s_addr" placeholder="예) 세화로 168, 도산대로 33" readonly data-addr><button type="button" class="btn line" data-addr>검색</button></div></div></div>' +
       '<div class="prow"><h4>제안가</h4><label class="unit">금액 단위 <select id="cur"><option value="KRW">원화, 공급가 (VAT 별도)</option><option value="USD">달러</option><option value="JPY">엔화</option></select></label></div>' +
       '<div class="tblwrap"><table class="items"><thead><tr><th>시험명<button type="button" class="add" id="addGroup">추가</button></th><th>세부내용</th><th class="c-qty">수량</th><th class="c-unit">Unit</th><th class="c-price">단가</th><th>금액</th><th class="c-del"></th></tr></thead><tbody id="rows"></tbody></table></div>' +
       '<table class="totals"><tbody>' +

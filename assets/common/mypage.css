@@ -76,6 +76,7 @@ button { background:none; border:0; cursor:pointer; }
 .addr { display:flex; gap:8px; width:100%; }
 .addr .inp { flex:1; min-width:0; max-width:none; }
 .addr .btn { flex:none; min-width:64px; }
+.addr .inp[readonly] { cursor:pointer; }
 .chips { display:flex; gap:8px; flex-wrap:wrap; }
 .chips button { height:36px; padding:0 14px; border-radius:99px; background:var(--gray-100); font-size:14px; font-weight:500; line-height:20px; color:var(--gray-500); }
 .chips button:hover { color:#000; }
