@@ -30,6 +30,8 @@ button { background:none; border:0; cursor:pointer; }
 .menu .gh .cnt { font-weight:600; }
 .menu .grp.open .gh i { transform:rotate(180deg); }
 .menu .sub { display:none; flex-direction:column; }
+/* 마지막이 하위 메뉴(42px)면 아래 여백이 위(대시보드 48px)보다 3px 좁아 보여서 보정 → 위·아래 글자까지 거리 동일 */
+.menu > .grp:last-child .sub { padding-bottom:3px; }
 .menu .grp.open .sub { display:flex; }
 .menu .sub a { height:42px; padding-left:28px; font-size:15px; }
 /* 최상위 항목(묶음·단일 메뉴) 사이 구분선 */
@@ -51,7 +53,7 @@ button { background:none; border:0; cursor:pointer; }
 .menu a { display:flex; align-items:center; gap:8px; height:48px; padding:0 16px; border-radius:8px; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-500); }
 .menu a:hover { background:var(--gray-50); color:#000; }
 .menu a.on { color:var(--teal-600); font-weight:600; }
-.menu a .cnt, .menu .gh .cnt { margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:99px; background:var(--orange-600); color:#fff; font-size:12px; font-weight:600; line-height:20px; text-align:center; }
+.menu a .cnt, .menu .gh .cnt { margin-left:4px; min-width:20px; height:20px; padding:0 6px; border-radius:99px; background:var(--orange-600); color:#fff; font-size:12px; font-weight:600; line-height:20px; text-align:center; }
 
 /* 오른쪽 */
 .main { flex:1; min-width:0; display:flex; flex-direction:column; gap:24px; }
