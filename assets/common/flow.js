@@ -78,8 +78,8 @@
     var n = parseInt(r.samples, 10) || 12, rate = (p.rate || 1) * (k || 1);
     var prep = Math.round(unit * .35 * rate / 1000) * 1000, run = Math.round(unit * .65 * rate / 1000) * 1000, data = Math.round(n * unit * .18 * rate / 10000) * 10000;
     var groups = [
-      { name: r.svc.replace(' 분석', '') + ' 분석', lines: [{ d: '시료 전처리 및 QC', q: n, u: 1, p: prep }, { d: '기기 분석', q: n, u: 1, p: run }] },
-      { name: '데이터 분석', lines: [{ d: '통계 분석 및 결과 리포트', q: 1, u: 1, p: data }] }
+      { name: r.svc.replace(' 분석', '') + ' 분석', lines: [{ d: '시료 전처리 및 QC', q: n, u: 'sample', p: prep }, { d: '기기 분석', q: n, u: 'sample', p: run }] },
+      { name: '데이터 분석', lines: [{ d: '통계 분석 및 결과 리포트', q: 1, u: '식', p: data }] }
     ];
     var q = { at: Date.now(), cur: 'KRW', groups: groups, sale: p.rate < 1 ? String(Math.round(n * unit * .03 / 10000) * 10000) : '', addSale: '', weeks: String(p.weeks || 6),
       supplier: { s_org: p.org, s_ceo: '-', s_tel: '-', s_biz: '-', s_mgr: p.org + ' 담당자', s_mail: '-', s_addr: '-' },

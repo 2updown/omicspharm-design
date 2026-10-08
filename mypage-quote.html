@@ -9,12 +9,12 @@
      ?rid=프로젝트 번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261009g">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261009g">
-<script src="assets/common/site.js?v=20261009g"></script>
-<script src="assets/common/mypage.js?v=20261009g"></script>
-<script src="assets/common/flow.js?v=20261009g"></script>
-<script src="assets/common/projects-data.js?v=20261009g"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261009h">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261009h">
+<script src="assets/common/site.js?v=20261009h"></script>
+<script src="assets/common/mypage.js?v=20261009h"></script>
+<script src="assets/common/flow.js?v=20261009h"></script>
+<script src="assets/common/projects-data.js?v=20261009h"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -291,7 +291,7 @@
   [].forEach.call(document.querySelectorAll('#supplier input'), function (i) { i.value = Sup[i.name] || ''; });
 
   // 제안가: 시험명(그룹)마다 세부내용 여러 줄
-  var G = (saved && saved.groups) ? JSON.parse(JSON.stringify(saved.groups)) : [{ name: '', lines: [{ d: '', q: 1, u: 1, p: '' }] }];
+  var G = (saved && saved.groups) ? JSON.parse(JSON.stringify(saved.groups)) : [{ name: '', lines: [{ d: '', q: 1, u: 'EA', p: '' }] }];
   var num = F.num;
   function drawRows() {
     var cur = $('#cur').value, h = '';
@@ -301,7 +301,7 @@
           (li === 0 ? '<td class="name" rowspan="' + (g.lines.length + 1) + '"><div class="namebox"><input class="inp" data-k="name" value="' + esc(g.name) + '" placeholder="예) LC-MS/MS 정량 분석"><button type="button" class="linkbtn" data-add-line>+ 세부내용 추가</button>' + (G.length > 1 ? '<button type="button" class="linkbtn" data-del-group style="color:var(--gray-500)">시험 삭제</button>' : '') + '</div></td>' : '') +
           '<td><textarea class="inp grow" data-k="d" rows="1" placeholder="세부내용">' + esc(l.d) + '</textarea></td>' +
           '<td><input type="number" class="inp qty" data-k="q" min="1" step="1" value="' + esc(l.q) + '" aria-label="수량"></td>' +
-          '<td><input type="number" class="inp qty" data-k="u" min="1" step="1" value="' + esc(/^\d+$/.test(String(l.u)) ? l.u : 1) + '" aria-label="Unit"></td>' +
+          '<td><input class="inp" data-k="u" value="' + esc(l.u) + '"></td>' +
           '<td><input class="inp num" data-k="p" inputmode="numeric" value="' + esc(l.p) + '" placeholder="0"></td>' +
           '<td class="amt" data-amt>' + money(num(l.q) * num(l.p), cur) + '</td>' +
           '<td>' + (g.lines.length > 1 ? '<button type="button" class="del" data-del-line aria-label="이 줄 삭제">×</button>' : '') + '</td></tr>';
@@ -328,16 +328,16 @@
     var i = e.target, tr = i.closest('tr'); if (!i.dataset.k || !tr) return;
     var g = G[tr.dataset.g];
     if (i.dataset.k === 'name') g.name = i.value;
-    else { if (i.dataset.k === 'q' || i.dataset.k === 'u' || i.dataset.k === 'p') i.value = i.value.replace(/[^\d.]/g, ''); if (i.dataset.k === 'd') grow(i); g.lines[tr.dataset.l][i.dataset.k] = i.value; }
+    else { if (i.dataset.k === 'q' || i.dataset.k === 'p') i.value = i.value.replace(/[^\d.]/g, ''); if (i.dataset.k === 'd') grow(i); g.lines[tr.dataset.l][i.dataset.k] = i.value; }
     calc();
   });
   $('#rows').addEventListener('click', function (e) {
     var tr = e.target.closest('tr'); if (!tr) return; var gi = +tr.dataset.g;
-    if (e.target.closest('[data-add-line]')) { G[gi].lines.push({ d: '', q: 1, u: 1, p: '' }); drawRows(); }
+    if (e.target.closest('[data-add-line]')) { G[gi].lines.push({ d: '', q: 1, u: 'EA', p: '' }); drawRows(); }
     else if (e.target.closest('[data-del-line]')) { G[gi].lines.splice(+tr.dataset.l, 1); drawRows(); }
     else if (e.target.closest('[data-del-group]')) { G.splice(gi, 1); drawRows(); }
   });
-  $('#addGroup').addEventListener('click', function () { G.push({ name: '', lines: [{ d: '', q: 1, u: 1, p: '' }] }); drawRows(); });
+  $('#addGroup').addEventListener('click', function () { G.push({ name: '', lines: [{ d: '', q: 1, u: 'EA', p: '' }] }); drawRows(); });
   ['#sale', '#addSale', '#weeks'].forEach(function (s) { $(s).addEventListener('input', function () { this.value = this.value.replace(/\D/g, ''); calc(); }); });
   $('#cur').addEventListener('change', calc);
 
