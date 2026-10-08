@@ -29,7 +29,7 @@ button { background:none; border:0; cursor:pointer; }
 .menu .gh .cnt + i { margin-left:8px; }
 .menu .gh .cnt { font-weight:600; }
 .menu .grp.open .gh i { transform:rotate(180deg); }
-.menu .sub { display:none; flex-direction:column; padding-bottom:4px; }
+.menu .sub { display:none; flex-direction:column; }
 .menu .grp.open .sub { display:flex; }
 .menu .sub a { height:42px; padding-left:28px; font-size:15px; }
 /* 최상위 항목(묶음·단일 메뉴) 사이 구분선 */
