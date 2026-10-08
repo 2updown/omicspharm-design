@@ -543,8 +543,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261009b">
-<script src="assets/common/site.js?v=20261009b"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261009c">
+<script src="assets/common/site.js?v=20261009c"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -1249,7 +1249,7 @@
   // 프로젝트 번호: PRJ-연도-일련번호 (형식 미확정). 예시 프로젝트(0001~0042)·예시 의뢰(0043~0045) 다음 번호부터, 이 브라우저에서 제출한 의뢰까지 세어 이어 붙임
   function nextNo(){
     var y=new Date().getFullYear(), L=[]; try{ L=JSON.parse(localStorage.getItem('op.submitted')||'[]'); }catch(e){}
-    var max=45; L.forEach(function(x){ var m=/^PRJ-(\d{4})-(\d+)$/.exec(x.id||''); if(m && +m[1]===y) max=Math.max(max,+m[2]); });
+    var max=47; L.forEach(function(x){ var m=/^PRJ-(\d{4})-(\d+)$/.exec(x.id||''); if(m && +m[1]===y) max=Math.max(max,+m[2]); });
     return 'PRJ-'+y+'-'+('000'+(max+1)).slice(-4);
   }
   function submit(){

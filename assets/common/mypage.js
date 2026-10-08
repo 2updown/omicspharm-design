@@ -65,11 +65,11 @@
     // 이전 양식(V4 입력 기준 이전)으로 제출된 의뢰는 정리하고 V4 양식 의뢰만 보여줌
     projects: function () {
       var L = read('op.submitted', []), V = L.filter(function (p) { return p.ver === 4; }), changed = V.length !== L.length;
-      // 예전 번호(REQ-…)로 제출된 의뢰는 프로젝트 번호(PRJ-연도-일련번호)로 바꿈: 등록 순서대로 기존 번호(예시 0045까지) 다음부터
-      var re = /^PRJ-\d{4}-(\d+)$/, max = 45;
-      V.forEach(function (p) { var m = re.exec(p.id || ''); if (m) max = Math.max(max, +m[1]); });
+      // 예전 번호(REQ-…)나 예시와 겹치는 번호(0047 이하)로 제출된 의뢰는 예시(0047까지) 다음 번호로 바꿈
+      var re = /^PRJ-\d{4}-(\d+)$/, max = 47, ok = function (p) { var m = re.exec(p.id || ''); return m && +m[1] > 47; };
+      V.forEach(function (p) { if (ok(p)) max = Math.max(max, +re.exec(p.id)[1]); });
       V.slice().sort(function (a, b) { return a.at - b.at; }).forEach(function (p) {
-        if (re.test(p.id || '')) return;
+        if (ok(p)) return;
         var old = p.id; p.id = 'PRJ-' + new Date(p.at || Date.now()).getFullYear() + '-' + ('000' + (++max)).slice(-4);
         renumber(old, p.id); changed = true;
       });

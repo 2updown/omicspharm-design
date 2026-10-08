@@ -6,7 +6,7 @@
    - 데모: 로그인 가능한 파트너는 partner@omicspharm.test 하나이고, 나머지 파트너는 요청을 받으면 바로 응답한다
    사용: mypage.js 다음에 불러오고 OP.flow.* 사용 */
 (function () {
-  var KEY = 'op.flow', VER = 3; // 3: 프로젝트 번호 통일 (PRJ-연도-일련번호)
+  var KEY = 'op.flow', VER = 4; // 3: 프로젝트 번호 통일 (PRJ-연도-일련번호), 4: 분석파트너 예시 0046·0047 추가
   function read(k, f) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch (e) { return f; } }
   function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); };
@@ -53,7 +53,22 @@
       sections: [{ title: '분석 서비스 : 전사체 분석', rows: [['분석 유형', '일반 전사체 발현'], ['일반 전사체 발현 · 분석 항목', 'Total RNA-seq, Low-input·FFPE RNA-seq'], ['연구 목적', '발현량 비교, Pathway 분석'], ['원하는 분석 결과', '유전자 발현량, DEG, Pathway'], ['참조정보', 'GRCh38'], ['핵산 추출 상태', '미추출 시료'], ['시료 상태', 'FFPE'], ['Library 유형', 'Stranded'], ['시퀀싱 방식', 'Paired-end']] },
         { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', 'FFPE 조직'], ['총 시료 수', '16개'], ['보관상태', '냉장']] },
         { title: '분석 그룹', rows: [['비교군 구성', '그룹 있음'], ['대조군', '처리 전 · 8개'], ['실험군', '처리 후 · 8개']] },
-        { title: '희망 산출물', rows: [['희망 산출물', 'FASTQ, Count matrix, DEG 결과표, 국문 보고서'], ['산출물 용도', '논문 학술용']] }] }
+        { title: '희망 산출물', rows: [['희망 산출물', 'FASTQ, Count matrix, DEG 결과표, 국문 보고서'], ['산출물 용도', '논문 학술용']] }] },
+    // 분석파트너 데모(partner@omicspharm.test)용: 임시저장 1건, 제출 완료 1건
+    { id: 'PRJ-2026-0046', demo: true, at: T0 - DAY * 3, svc: '단백체 분석', title: '세포 배양액 분비 단백질 Label-free 정량 분석', org: '○○연구소', manager: '홍길동', bizDoc: '사업자등록증_○○연구소.pdf', owner: 'client@omicspharm.test', samples: '12', due: '2026-12-24', from: '2026-10-03', to: '2026-10-17', budget: '500만~1,000만원', open: '공개',
+      purpose: '약물 처리 전후 세포 배양액에서 분비 단백질 변화를 확인하고자 합니다.',
+      sections: [{ title: '분석 서비스 : 단백체 분석', rows: [['분석 유형', 'Untargeted'], ['분석 목적', '단백질 발현 비교'], ['원하는 분석 결과', '상대정량, 군 간 비교, 차등단백질'], ['통계 · 해석', 'PCA, Volcano plot']] },
+        { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', '세포 배양액'], ['총 시료 수', '12개'], ['보관상태', '초저온 (-80℃)']] },
+        { title: '분석 그룹', rows: [['비교군 구성', '그룹 있음'], ['대조군', '처리 전 · 6개'], ['실험군', '처리 후 · 6개']] },
+        { title: '요구사항', rows: [['희망완료일', '2026-12-24'], ['일정 협의 가능 여부', '가능'], ['예상금액', '500만~1,000만원'], ['시료 전처리 기술', 'Label-free'], ['분석 기술', 'DIA']] },
+        { title: '희망 산출물', rows: [['희망 산출물', 'Raw data, 결과표, 국문 보고서'], ['산출물 용도', '내부 연구용']] }] },
+    { id: 'PRJ-2026-0047', demo: true, at: T0 - DAY * 6, svc: '대사체 분석', title: '혈청 아미노산 표적 대사체 절대정량', org: '○○연구소', manager: '홍길동', bizDoc: '사업자등록증_○○연구소.pdf', owner: 'client@omicspharm.test', samples: '30', due: '2026-12-15', from: '2026-09-30', to: '2026-10-14', budget: '500만원 미만', open: '비공개',
+      purpose: '식이 중재 전후 혈청 아미노산 농도 변화를 정량하고자 합니다.',
+      sections: [{ title: '분석 서비스 : 대사체 분석', rows: [['분석 유형', 'Targeted'], ['플랫폼', 'LC-MS/MS'], ['요청 분석 목적', '바이오마커 정량']] },
+        { title: 'Targeted', rows: [['표적 패널', 'Amino acid·BCAA'], ['표적 대사체명', 'Leucine, Isoleucine, Valine, Glutamine'], ['정량 방식', '절대정량'], ['내부표준물질 준비', '미보유'], ['검량선용 표준물질 보유', '확인 필요']] },
+        { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', '혈청'], ['총 시료 수', '30개'], ['보관상태', '초저온 (-80℃)']] },
+        { title: '분석 그룹', rows: [['비교군 구성', '그룹 있음'], ['대조군', '중재 전 · 15개'], ['실험군', '중재 후 · 15개']] },
+        { title: '희망 산출물', rows: [['희망 산출물', '결과표, 국문 보고서'], ['산출물 용도', '논문 학술용']] }] }
   ];
 
   // 가상 파트너 견적 (서비스·시료 수 기준으로 만든 예시)
@@ -96,9 +111,23 @@
     });
     // 전달된 견적 하나는 수정 요청을 한 번 거친 것으로
     S[r3.id].P['p-omx'].revN = 1;
+    // 분석파트너 데모: 0046은 임시저장, 0047은 제출 완료(컨설턴트 확인 전)
+    var r4 = DEMO_REQS[3], r5 = DEMO_REQS[4], me = partner(ME_PARTNER);
+    S[r4.id] = { st: 'quoting', ok: T0 - DAY * 2.5, reqAt: T0 - DAY * 2, due: '2026-10-16', memo: '', P: {} };
+    S[r4.id].P[ME_PARTNER] = { at: T0 - DAY * 2, status: 'draft', quote: genQuote(me, r4) };
+    S[r4.id].P['p-adc'] = { at: T0 - DAY * 2, status: 'sub', quote: genQuote(partner('p-adc'), r4), subAt: T0 - DAY };
+    S[r5.id] = { st: 'quoting', ok: T0 - DAY * 5.5, reqAt: T0 - DAY * 5, due: '2026-10-12', memo: '절대정량이 가능한 기관 위주로 요청드립니다.', P: {} };
+    S[r5.id].P[ME_PARTNER] = { at: T0 - DAY * 5, status: 'sub', quote: genQuote(me, r5), subAt: T0 - DAY * 3 };
+    S[r5.id].P['p-met'] = { at: T0 - DAY * 5, status: 'sub', quote: genQuote(partner('p-met'), r5), subAt: T0 - DAY * 4 };
     return { v: VER, S: S };
   }
-  function db() { var d = read(KEY, null); if (!d || d.v !== VER) { d = seed(); write(KEY, d); } d.X = d.X || []; return d; }
+  // 버전 3 → 4: 진행하던 기록은 그대로 두고 새 예시(0046·0047)만 추가
+  function db() {
+    var d = read(KEY, null);
+    if (d && d.v === 3) { var n = seed().S; Object.keys(n).forEach(function (k) { if (!d.S[k]) d.S[k] = n[k]; }); d.v = VER; write(KEY, d); }
+    if (!d || d.v !== VER) { d = seed(); write(KEY, d); }
+    d.X = d.X || []; return d;
+  }
   function save(d) { write(KEY, d); }
   function state(id) { return db().S[id] || { st: 'review', P: {} }; }
   function put(id, fn) { var d = db(), s = d.S[id] || { st: 'review', P: {} }; fn(s); d.S[id] = s; save(d); return s; }
