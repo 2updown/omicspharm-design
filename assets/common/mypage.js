@@ -7,7 +7,7 @@
   // [키, 이름, 주소, 보이는 유형(없으면 모두)]
   // admin = 컨설턴트(셀키): 당분간 분석파트너와 같은 화면 + 관리 메뉴 추가 (메뉴는 바뀌거나 통폐합될 수 있음)
   // [키, 이름, 주소, 보이는 유형(없으면 모두), 묶음]
-  // 묶음별 드롭다운(기본 모두 펼침, 누르면 접힘). 보이는 메뉴가 1개뿐인 묶음은 묶음 없이 그 메뉴만 보임
+  // 묶음별 드롭다운(기본 모두 펼침, 접으면 마이페이지 안에서는 계속 접힘). 보이는 메뉴가 1개뿐인 묶음은 묶음 없이 그 메뉴만 보임
   var MENU = [
     ['dash', '대시보드', 'mypage.html'],
     ['quote', '견적관리', 'mypage-quote.html', ['partner'], 'prj'], // 분석파트너: 받은 견적 요청 → 견적서 작성·제출
@@ -161,6 +161,8 @@
           (m[0] === 'alarm' && n ? '<span class="cnt">' + n + '</span>' : '') +
           (m[0] === 'verify' && !OP.partnerVerified() ? '<span class="op-vchip">미인증</span>' : '') + '</a>';
       };
+      // 접은 묶음: 마이페이지 안에서 이동하는 동안만 유지 (계정 전환·마이페이지 밖으로 나가면 site.js가 지워서 다시 모두 펼침)
+      var fold = {}; try { fold = JSON.parse(sessionStorage.getItem('op.menuFold') || '{}'); } catch (e) {}
       var mine = MENU.filter(function (m) { return !m[3] || m[3].indexOf(s.role) > -1; }), done = {}, html = '';
       mine.forEach(function (m) {
         var g = m[4];
@@ -168,7 +170,7 @@
         if (done[g]) return; done[g] = 1;
         var L = mine.filter(function (x) { return x[4] === g; });
         if (L.length === 1) { html += link(L[0]); return; }
-        var shut = false; // 화면을 열 때는 항상 모두 펼침 (접기는 그 화면에서만)
+        var shut = !!fold[g];
         html += '<div class="grp' + (shut ? '' : ' open') + '" data-g="' + g + '"><button type="button" class="gh" aria-expanded="' + !shut + '">' + GROUP[g] + '<i aria-hidden="true"></i></button>' +
           '<div class="sub">' + L.map(link).join('') + '</div></div>';
       });
@@ -185,6 +187,7 @@
           var b = e.target.closest('.gh'); if (!b) return;
           var g = b.parentNode, open = !g.classList.contains('open');
           g.classList.toggle('open', open); b.setAttribute('aria-expanded', open);
+          try { var f = JSON.parse(sessionStorage.getItem('op.menuFold') || '{}'); if (open) delete f[g.dataset.g]; else f[g.dataset.g] = 1; sessionStorage.setItem('op.menuFold', JSON.stringify(f)); } catch (e2) {}
         });
       }
     }

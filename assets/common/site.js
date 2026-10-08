@@ -412,6 +412,9 @@
     if (window.ResizeObserver) new ResizeObserver(queueFooter).observe(document.body);
   }
 
+  // 마이페이지 밖 화면에 들어오면 접어 둔 마이페이지 메뉴 기록을 지움 (다시 들어가면 모두 펼침)
+  if (!/mypage[\w-]*\.html/.test(location.pathname)) { try { sessionStorage.removeItem('op.menuFold'); } catch (e6) {} }
+
   document.addEventListener('click', function (e) {
     // 주소 검색: 실제 서비스는 주소 검색 API(예: 우편번호 서비스)로 고르고, 직접 입력은 막는다(readonly).
     // 프로토타입은 안내 토스트만 띄우고, 비어 있으면 예시 주소를 넣어 다음 단계로 진행할 수 있게 함
@@ -450,6 +453,7 @@
     if (as) {
       var role = as.getAttribute('data-op-as'), cur = OP.session();
       if (cur && cur.role === role) { closeDropdowns(); return; }
+      try { sessionStorage.removeItem('op.menuFold'); } catch (e5) {} // 계정이 바뀌면 마이페이지 메뉴는 다시 모두 펼침
       OP.login(role + '@omicspharm.test'); // 데모 계정 (SEED)
       OP.flash(ROLE_LABEL[role] + ' 화면으로 전환했습니다.');
       // 마이페이지 안에서 바꾸면 대시보드로 (역할마다 메뉴가 달라서), 클라이언트 전용 화면(프로젝트 의뢰)에서 다른 역할로 바꿔도 대시보드로
