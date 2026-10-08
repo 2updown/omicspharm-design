@@ -15,7 +15,7 @@ button { background:none; border:0; cursor:pointer; }
 .page-head .in, .body > .in { max-width:1320px; margin:0 auto; }
 .page-head h1 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; } /* Display/Large/B (모바일 Display/Small/B 28/36) */
 .page-head p { margin-top:12px; font-size:16px; line-height:22px; }
-.body { padding:20px 60px 60px; }
+.body { padding:0 60px 60px; }
 .body > .in { display:flex; gap:24px; align-items:flex-start; }
 
 /* 왼쪽: 프로필 + 메뉴 */
@@ -116,7 +116,7 @@ button { background:none; border:0; cursor:pointer; }
 @media (max-width:640px) {
   .page-head { padding:24px 16px; }
   .page-head h1 { font-size:28px; line-height:36px; letter-spacing:-.28px; }
-  .body { padding:8px 16px 48px; }
+  .body { padding:0 16px 48px; }
   .card { padding:16px; gap:16px; }
 }
 
