@@ -17,6 +17,8 @@
   function render() {
     document.querySelectorAll('[data-auth-bg]').forEach(function (el) {
       el.classList.add('auth-bg'); el.innerHTML = BG;
+      // 좁은 화면(좌측 패널 숨김)에서 보이는 홈 로고
+      el.insertAdjacentHTML('afterend', '<a class="m-logo" href="index.html" aria-label="OmicsPharm 홈"><img src="assets/auth/logo-bg.svg" alt="OmicsPharm"></a>');
       var card = el.querySelector('.auth-card');
       fit(card);
       if (window.ResizeObserver) new ResizeObserver(function () { fit(card); }).observe(card);
