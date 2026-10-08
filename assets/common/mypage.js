@@ -1,25 +1,27 @@
 /* 마이페이지 공통 — 로그인 확인, 왼쪽 프로필·메뉴, 데모 데이터(이 브라우저 localStorage 기준)
-   메뉴: 대시보드 / 프로젝트 관리 / 문의내역 / 알림 / 내 정보 관리 (분석파트너 +견적관리, 컨설턴트 = 프로젝트 관리가 mypage-request.html +클라이언트·분석파트너 관리·관리자 페이지)
+   메뉴: 대시보드 / 프로젝트(견적관리·프로젝트 관리) / 문의·알림 / 회원정보(내 정보 관리, 분석파트너 +파트너 인증·분석 서비스 정보) / 관리(컨설턴트)
+   컨설턴트의 프로젝트 관리는 mypage-request.html
    (기존 '분석결과 관리'는 프로젝트 상세의 '결과보고서' 탭으로 통합)
    사용: <aside class="side" data-op-side></aside> + var me = OP.mypage('dash'); */
 (function () {
   // [키, 이름, 주소, 보이는 유형(없으면 모두)]
   // admin = 컨설턴트(셀키): 당분간 분석파트너와 같은 화면 + 관리 메뉴 추가 (메뉴는 바뀌거나 통폐합될 수 있음)
+  // [키, 이름, 주소, 보이는 유형(없으면 모두), 묶음]
+  // 묶음별 드롭다운(펼침/접힘). 보이는 메뉴가 1개뿐인 묶음은 묶음 없이 그 메뉴만 보임
   var MENU = [
     ['dash', '대시보드', 'mypage.html'],
-    ['quote', '견적관리', 'mypage-quote.html', ['partner']], // 분석파트너: 받은 견적 요청 → 견적서 작성·제출
-    ['project', '프로젝트 관리', 'mypage-project.html'], // 컨설턴트는 mypage-request.html (의뢰접수~완료 전 단계)
-    ['inquiry', '문의내역', 'mypage-inquiry.html'],
-    ['alarm', '알림', 'mypage-alarm.html'],
-    ['account', '내 정보 관리', 'mypage-account.html'],
-    // 아래 카드: 역할 전용 메뉴 (5번째 값 2)
-    ['verify', '파트너 인증', 'mypage-verify.html', ['partner'], 2],
-    ['service', '분석 서비스 정보', 'mypage-service.html', ['partner'], 2],
-    ['clients', '클라이언트 관리', '#', ['admin'], 2],
-    ['partners', '분석파트너 관리', '#', ['admin'], 2],
-    ['admin', '관리자 페이지', '#', ['admin'], 2]
+    ['quote', '견적관리', 'mypage-quote.html', ['partner'], 'prj'], // 분석파트너: 받은 견적 요청 → 견적서 작성·제출
+    ['project', '프로젝트 관리', 'mypage-project.html', null, 'prj'], // 컨설턴트는 mypage-request.html (의뢰접수~완료 전 단계)
+    ['inquiry', '문의내역', 'mypage-inquiry.html', null, 'talk'],
+    ['alarm', '알림', 'mypage-alarm.html', null, 'talk'],
+    ['account', '내 정보 관리', 'mypage-account.html', null, 'me'],
+    ['verify', '파트너 인증', 'mypage-verify.html', ['partner'], 'me'],
+    ['service', '분석 서비스 정보', 'mypage-service.html', ['partner'], 'me'],
+    ['clients', '클라이언트 관리', '#', ['admin'], 'mgmt'],
+    ['partners', '분석파트너 관리', '#', ['admin'], 'mgmt'],
+    ['admin', '관리자 페이지', '#', ['admin'], 'mgmt']
   ];
-  var MENU2_TITLE = { partner: '분석파트너', admin: '컨설턴트' };
+  var GROUP = { prj: '프로젝트', talk: '문의 · 알림', me: '회원정보', mgmt: '관리' };
   function read(k, f) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch (e) { return f; } }
   function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); };
@@ -152,24 +154,43 @@
     var side = document.querySelector('[data-op-side]');
     if (side) {
       var n = D.unread();
-      var links = function (grp) {
-        return MENU.filter(function (m) { return (m[4] || 1) === grp && (!m[3] || m[3].indexOf(s.role) > -1); }).map(function (m) {
-          var on = m[0] === key, label = m[1];
-          var href = m[0] === 'project' && s.role === 'admin' ? 'mypage-request.html' : m[2];
-          return '<a href="' + href + '"' + (m[2] === '#' ? ' data-soon="' + label + '"' : '') + (on ? ' class="on" aria-current="page"' : '') + '>' + label +
-            (m[0] === 'alarm' && n ? '<span class="cnt">' + n + '</span>' : '') +
-            (m[0] === 'verify' && !OP.partnerVerified() ? '<span class="op-vchip">미인증</span>' : '') + '</a>';
-        }).join('');
+      var fold = read('op.menuFold', {}); // 접어 둔 묶음 (이 브라우저에 기억)
+      var link = function (m) {
+        var on = m[0] === key, label = m[1];
+        var href = m[0] === 'project' && s.role === 'admin' ? 'mypage-request.html' : m[2];
+        return '<a href="' + href + '"' + (m[2] === '#' ? ' data-soon="' + label + '"' : '') + (on ? ' class="on" aria-current="page"' : '') + '>' + label +
+          (m[0] === 'alarm' && n ? '<span class="cnt">' + n + '</span>' : '') +
+          (m[0] === 'verify' && !OP.partnerVerified() ? '<span class="op-vchip">미인증</span>' : '') + '</a>';
       };
+      var mine = MENU.filter(function (m) { return !m[3] || m[3].indexOf(s.role) > -1; }), done = {}, html = '';
+      mine.forEach(function (m) {
+        var g = m[4];
+        if (!g) { html += link(m); return; }
+        if (done[g]) return; done[g] = 1;
+        var L = mine.filter(function (x) { return x[4] === g; });
+        if (L.length === 1) { html += link(L[0]); return; }
+        var cur = L.some(function (x) { return x[0] === key; }), shut = fold[g] && !cur; // 지금 보는 메뉴가 있는 묶음은 항상 펼침
+        var cnt = g === 'talk' && n ? '<span class="cnt">' + n + '</span>' : '';
+        html += '<div class="grp' + (shut ? '' : ' open') + '" data-g="' + g + '"><button type="button" class="gh" aria-expanded="' + !shut + '">' + GROUP[g] + (shut ? cnt : '') + '<i aria-hidden="true"></i></button>' +
+          '<div class="sub">' + L.map(link).join('') + '</div></div>';
+      });
       side.innerHTML =
         '<div class="me"><img src="' + esc(acc.photo || 'assets/main/user-icon.svg?v=2') + '" alt="">' +
           '<span class="roles"><span class="role">' + esc(OP.ROLE_LABEL[s.role] || '') + '</span>' +
             (s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '') + '</span>' +
           '<b>' + esc(name) + ' 님</b><span>(' + esc(s.email) + ')</span>' + (org ? '<span>' + esc(org) + '</span>' : '') + '</div>' +
-        '<nav class="menu" aria-label="마이페이지 메뉴">' + links(1) + '</nav>';
-      var m2 = links(2);
-      side.innerHTML = '<div class="side-card">' + side.innerHTML + '</div>' +
-        (m2 ? '<div class="side-card"><p class="side-ttl">' + esc(MENU2_TITLE[s.role] || '') + '</p><nav class="menu" aria-label="' + esc(MENU2_TITLE[s.role] || '') + ' 메뉴">' + m2 + '</nav></div>' : '');
+        '<nav class="menu" aria-label="마이페이지 메뉴">' + html + '</nav>';
+      if (!side.dataset.bound) {
+        side.dataset.bound = 1;
+        side.addEventListener('click', function (e) {
+          var b = e.target.closest('.gh'); if (!b) return;
+          var g = b.parentNode, open = !g.classList.contains('open');
+          g.classList.toggle('open', open); b.setAttribute('aria-expanded', open);
+          var c = b.querySelector('.cnt'); if (c) c.remove();
+          if (!open && g.dataset.g === 'talk' && n) b.insertBefore(Object.assign(document.createElement('span'), { className: 'cnt', textContent: n }), b.querySelector('i'));
+          var f = read('op.menuFold', {}); if (open) delete f[g.dataset.g]; else f[g.dataset.g] = 1; write('op.menuFold', f);
+        });
+      }
     }
     return { s: s, acc: acc, name: name, org: org };
   };
