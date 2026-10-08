@@ -452,8 +452,8 @@
       if (cur && cur.role === role) { closeDropdowns(); return; }
       OP.login(role + '@omicspharm.test'); // 데모 계정 (SEED)
       OP.flash(ROLE_LABEL[role] + ' 화면으로 전환했습니다.');
-      // 클라이언트 전용 화면(프로젝트 의뢰)에서 분석파트너로 바꾸면 마이페이지로
-      if (role !== 'client' && /omicspharm-register\.html/.test(location.pathname)) location.href = 'mypage.html';
+      // 마이페이지 안에서 바꾸면 대시보드로 (역할마다 메뉴가 달라서), 클라이언트 전용 화면(프로젝트 의뢰)에서 다른 역할로 바꿔도 대시보드로
+      if (/mypage[\w-]*\.html/.test(location.pathname) || (role !== 'client' && /omicspharm-register\.html/.test(location.pathname))) location.href = 'mypage.html';
       else location.reload();
       return;
     }

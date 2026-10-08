@@ -7,7 +7,7 @@
   // [키, 이름, 주소, 보이는 유형(없으면 모두)]
   // admin = 컨설턴트(셀키): 당분간 분석파트너와 같은 화면 + 관리 메뉴 추가 (메뉴는 바뀌거나 통폐합될 수 있음)
   // [키, 이름, 주소, 보이는 유형(없으면 모두), 묶음]
-  // 묶음별 드롭다운(펼침/접힘). 보이는 메뉴가 1개뿐인 묶음은 묶음 없이 그 메뉴만 보임
+  // 묶음별 드롭다운(기본 모두 펼침, 누르면 접힘). 보이는 메뉴가 1개뿐인 묶음은 묶음 없이 그 메뉴만 보임
   var MENU = [
     ['dash', '대시보드', 'mypage.html'],
     ['quote', '견적관리', 'mypage-quote.html', ['partner'], 'prj'], // 분석파트너: 받은 견적 요청 → 견적서 작성·제출
@@ -154,7 +154,6 @@
     var side = document.querySelector('[data-op-side]');
     if (side) {
       var n = D.unread();
-      var fold = read('op.menuFold', {}); // 접어 둔 묶음 (이 브라우저에 기억)
       var link = function (m) {
         var on = m[0] === key, label = m[1];
         var href = m[0] === 'project' && s.role === 'admin' ? 'mypage-request.html' : m[2];
@@ -169,7 +168,7 @@
         if (done[g]) return; done[g] = 1;
         var L = mine.filter(function (x) { return x[4] === g; });
         if (L.length === 1) { html += link(L[0]); return; }
-        var cur = L.some(function (x) { return x[0] === key; }), shut = fold[g] && !cur; // 지금 보는 메뉴가 있는 묶음은 항상 펼침
+        var shut = false; // 화면을 열 때는 항상 모두 펼침 (접기는 그 화면에서만)
         html += '<div class="grp' + (shut ? '' : ' open') + '" data-g="' + g + '"><button type="button" class="gh" aria-expanded="' + !shut + '">' + GROUP[g] + '<i aria-hidden="true"></i></button>' +
           '<div class="sub">' + L.map(link).join('') + '</div></div>';
       });
@@ -185,7 +184,6 @@
           var b = e.target.closest('.gh'); if (!b) return;
           var g = b.parentNode, open = !g.classList.contains('open');
           g.classList.toggle('open', open); b.setAttribute('aria-expanded', open);
-          var f = read('op.menuFold', {}); if (open) delete f[g.dataset.g]; else f[g.dataset.g] = 1; write('op.menuFold', f);
         });
       }
     }
