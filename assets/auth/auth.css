@@ -10,7 +10,7 @@
 }
 * { box-sizing:border-box; margin:0; padding:0; }
 html, body { height:100%; }
-body { background:var(--gray-50); color:#000; font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+body { background:#fff; color:#000; font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
 a { color:inherit; text-decoration:none; }
 button { font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
 input { font:inherit; color:inherit; }
@@ -21,9 +21,12 @@ input { font:inherit; color:inherit; }
 /* ── 왼쪽: login-bg (Figma 1475:13273) ── */
 /* 왼쪽 패널은 화면 높이에 고정(스크롤해도 그대로), 오른쪽만 길어지면 페이지가 스크롤된다 */
 .auth-bg { flex:1 1 0; min-width:0; position:sticky; top:0; height:100vh; align-self:flex-start; overflow:hidden; background:#f4f7fa url(login-bg2.jpg?v=2) center/cover no-repeat; }
-/* Figma 720×1024 기준: 문구는 위에서 200px. 패널 크기에 맞춰 비율로 확대·축소 (auth.js가 --s 계산) */
+/* Figma 720×1024 기준: 로고+문구는 위에서 100px. 패널 크기에 맞춰 비율로 확대·축소 (auth.js가 --s 계산) */
 .auth-card { position:absolute; inset:0; }
-.auth-card .tagline { position:absolute; left:50%; top:calc(200 / 1024 * 100%); transform:translateX(-50%) scale(var(--s, 1)); transform-origin:top center; width:437px; display:flex; flex-direction:column; gap:16px; align-items:center; text-align:center; color:#000; }
+.auth-card .stack { position:absolute; left:50%; top:calc(100 / 1024 * 100%); transform:translateX(-50%) scale(var(--s, 1)); transform-origin:top center; display:flex; flex-direction:column; gap:61px; align-items:center; }
+.auth-card .logo { display:block; width:190px; height:20px; }
+.auth-card .logo img { display:block; width:100%; height:100%; }
+.auth-card .tagline { width:437px; display:flex; flex-direction:column; gap:16px; align-items:center; text-align:center; color:#000; }
 .auth-card .tagline h1 { font-size:40px; line-height:1.4; letter-spacing:-.16px; white-space:nowrap; font-weight:400; }
 .auth-card .tagline h1 b { font-weight:700; }
 .auth-card .tagline p { font-size:16px; line-height:22px; opacity:.7; white-space:nowrap; }

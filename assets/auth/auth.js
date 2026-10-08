@@ -1,12 +1,13 @@
 /* 로그인·회원가입 공통: 왼쪽 비주얼 패널(login-bg 1475:13273)과 폼 도우미 */
 (function () {
   var BG =
-    '<div class="auth-card">' +
+    '<div class="auth-card"><div class="stack">' +
+      '<a class="logo" href="index.html" aria-label="OmicsPharm 홈"><img src="assets/auth/logo-bg.svg" alt="OmicsPharm"></a>' +
       '<div class="tagline">' +
         '<h1>All Your Omics Research<br><b>In One Place</b></h1>' +
         '<p>Explore analysis projects, get matched with the right experts,<br>and generate AI-powered research reports<br>all on one integrated platform.</p>' +
       '</div>' +
-    '</div>';
+    '</div></div>';
 
   // Figma(720×1024) 기준 비율로 문구 크기 맞춤: 가로·세로 중 작은 쪽 비율 사용 (최대 1.3배)
   function fit(card) {
