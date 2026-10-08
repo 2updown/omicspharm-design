@@ -41,7 +41,7 @@ button { background:none; border:0; cursor:pointer; }
 .me img { width:56px; height:56px; margin-bottom:8px; border-radius:50%; object-fit:cover; }
 .me .roles { display:flex; align-items:center; margin-bottom:4px; }
 .me .roles .role { margin-bottom:0; }
-.me .roles .op-vchip { margin-left:4px; }
+.me .roles .op-vchip { margin-left:4px; font-size:12px; line-height:18px; } /* .me span(14px/20px)을 덮어 역할 배지와 같은 높이 */
 .me .role { padding:2px 8px; border-radius:8px; border:1px solid var(--teal-600); color:var(--teal-600); font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; margin-bottom:4px; }
 .me b { font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
 .me span { font-size:14px; line-height:20px; color:var(--gray-500); word-break:break-all; }
