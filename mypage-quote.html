@@ -9,12 +9,12 @@
      ?rid=프로젝트 번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261009j">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261009j">
-<script src="assets/common/site.js?v=20261009j"></script>
-<script src="assets/common/mypage.js?v=20261009j"></script>
-<script src="assets/common/flow.js?v=20261009j"></script>
-<script src="assets/common/projects-data.js?v=20261009j"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261009k">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261009k">
+<script src="assets/common/site.js?v=20261009k"></script>
+<script src="assets/common/mypage.js?v=20261009k"></script>
+<script src="assets/common/flow.js?v=20261009k"></script>
+<script src="assets/common/projects-data.js?v=20261009k"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -111,6 +111,7 @@
   .qrow .badge { flex:none; }
   .qrow .m .due { font-style:normal; color:var(--orange-600); font-weight:500; }
   .qrow .m.st { font-size:14px; font-weight:500; color:var(--gray-700); }
+  .qrow .m.st .due { margin-left:8px; font-size:13px; }
   .hint { margin-top:-4px; font-size:13px; line-height:18px; color:var(--gray-500); }
   .weeks { display:flex; align-items:center; gap:8px; font-size:14px; }
   .weeks .inp { width:90px; }
@@ -176,14 +177,14 @@
   }
   // ── 받은 견적 요청 목록 ──
   if (!x && !rid) {
-    // 왼쪽 배지: 견적이 들어온 경로 (컨설턴트 추천 / 프로젝트 찾기에서 직접 신청), 오른쪽: 견적 상태
-    var SRC = function (self) { return self ? '<span class="badge done">직접 신청</span>' : '<span class="badge tag">추천</span>'; };
+    // 왼쪽 배지: 견적이 들어온 경로 (컨설턴트 매칭 추천 / 프로젝트 찾기에서 직접 신청), 오른쪽: 견적 상태 + 제출 전이면 마감일
+    var SRC = function (self) { return self ? '<span class="badge done">직접 신청</span>' : '<span class="badge tag">매칭 추천</span>'; };
     var IN = F.inbox(ME), Q = read(), cur = new URLSearchParams(location.search).get('t') || '전체'; // 대시보드에서 상태 눌러 들어오면 그 상태만
     var rows = IN.map(function (o) {
       var t = F.pst(o.s, ME);
       return { t: t, at: o.x.at, html: '<div class="qrow"><a class="cover" href="mypage-quote.html?rid=' + encodeURIComponent(o.r.id) + '" aria-label="' + esc(o.r.title) + '"></a>' + SRC(o.x.self) +
         '<span class="t">' + esc(o.r.title) + '<small>' + esc(o.r.svc) + ' · ' + esc(o.r.org || '-') + '</small></span>' +
-        '<span class="m st">' + t + '</span>' +
+        '<span class="m st">' + t.replace('작성 대기', '작성대기') + (/작성 대기|임시저장|수정 요청/.test(t) ? '<em class="due">마감 ' + dot(o.s.due).slice(5) + ' (' + dleft(o.s.due) + ')</em>' : '') + '</span>' +
         '<span class="x">' + (t === '임시저장' ? '<button type="button" data-del-rid="' + esc(o.r.id) + '" data-title="' + esc(o.r.title) + '" aria-label="임시저장 삭제" title="임시저장 삭제"><i></i></button>' : '') + '</span></div>' };
     }).concat(Object.keys(Q).map(function (k) {
       var q = Q[k], p = P[+k] || {}, t = q.submitted ? '제출 완료' : '임시저장';
