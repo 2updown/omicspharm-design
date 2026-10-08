@@ -32,7 +32,8 @@ button { background:none; border:0; cursor:pointer; }
 .menu .sub { display:none; flex-direction:column; padding-bottom:4px; }
 .menu .grp.open .sub { display:flex; }
 .menu .sub a { height:42px; padding-left:28px; font-size:15px; }
-.menu .grp + a { border-top:1px solid var(--gray-100); margin-top:4px; }
+/* 최상위 항목(묶음·단일 메뉴) 사이 구분선 */
+.menu .grp + a, .side .menu > a + a { border-top:1px solid var(--gray-100); margin-top:4px; border-radius:0; }
 /* 묶음 없는 단일 메뉴(대시보드 등)는 묶음 머리와 같은 크기·색 */
 .side .menu > a { font-size:16px; font-weight:600; color:#000; }
 .side .menu > a.on { color:var(--teal-600); }
@@ -99,7 +100,7 @@ button { background:none; border:0; cursor:pointer; }
   .menu .gh { display:none; }
   .menu .sub, .menu .grp .sub { display:contents; }
   .menu .sub a { height:40px; padding:0 14px; font-size:15px; }
-  .menu .grp + a { border-top:0; margin-top:0; }
+  .menu .grp + a, .side .menu > a + a { border-top:0; margin-top:0; border-radius:8px; }
   .me { flex-direction:row; flex-wrap:wrap; justify-content:flex-start; gap:4px 8px; padding:16px 20px; text-align:left; }
   .me img { width:40px; height:40px; margin:0; }
   .me .role { margin:0; }
