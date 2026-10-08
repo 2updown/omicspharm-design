@@ -5,13 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>내 정보 관리 · 마이페이지 · OmicsPharm</title>
-<!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / (분석파트너) 분석 가능 서비스 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
+<!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
+     분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261009o">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261009o">
-<script src="assets/common/site.js?v=20261009o"></script>
-<script src="assets/common/mypage.js?v=20261009o"></script>
-<script src="assets/common/flow.js?v=20261009o"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261009p">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261009p">
+<script src="assets/common/site.js?v=20261009p"></script>
+<script src="assets/common/mypage.js?v=20261009p"></script>
+<script src="assets/common/flow.js?v=20261009p"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -141,7 +142,6 @@
               <input type="file" id="docFile" accept=".pdf,.jpg,.jpeg,.png"></div>
             <p class="help" id="docHelp"></p>
             <p class="note" id="docNote" hidden style="font-size:12px;line-height:18px;color:var(--teal-700);font-weight:500">아래 저장하기를 눌러야 반영됩니다.</p></div></div>
-          <div class="field" id="rowSvc" hidden><div class="flabel">분석 가능 서비스</div><div class="fbody"><div class="svcs" id="svcs"></div><p class="help">선택한 분야의 새 프로젝트가 등록되면 알려드립니다.</p></div></div>
         </div>
         <div class="actions"><button type="submit" class="btn primary lg">저장하기</button></div>
       </form>
@@ -179,7 +179,7 @@
   var me = OP.mypage('account'); if (!me) return;
   var $ = function (s) { return document.querySelector(s); };
   var email = me.s.email, acc = me.acc, partner = me.s.role === 'partner', client = me.s.role === 'client';
-  var hasDoc = partner || client; // 사업자등록증: 분석파트너(인증 검토용) · 클라이언트(프로젝트 등록 시 필요)
+  var hasDoc = client; // 사업자등록증: 클라이언트(프로젝트 등록 시 필요). 분석파트너는 [파트너 인증] 메뉴에서
 
   // 비밀번호 재확인 (데모: 아무 값이나 입력하면 통과 — 화면에는 표시하지 않음)
   $('#fGate').addEventListener('submit', function (e) {
@@ -226,7 +226,7 @@
   function vrole() {
   $('#vRole').innerHTML = OP.my.esc(OP.ROLE_LABEL[me.s.role] || '') +
     (me.s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' +
-      '<small>' + (OP.partnerVerified() ? '기관·서비스 정보 확인이 완료된 분석파트너입니다.' : OP.verifyHint()) + '</small>'
+      '<small>' + (OP.partnerVerified() ? '기관·서비스 정보 확인이 완료된 분석파트너입니다.' : '<a href="mypage-verify.html" style="color:var(--teal-700);text-decoration:underline">파트너 인증</a>에서 사업자등록증을 올리면 인증을 받을 수 있습니다.') + '</small>'
       : '<small>회원 유형은 변경할 수 없습니다.</small>');
   }
   vrole();
@@ -234,7 +234,6 @@
   $('#name').value = acc.name || ''; $('#org').value = acc.org || me.org || ''; $('#dept').value = acc.dept || '';
   var PHN = OP.phoneField($('#phoneHost'), { value: acc.phone || '', id: 'ph' });
 
-  var SVCS = ['Genomics', 'Transcriptomics', 'Proteomics', 'Metabolomics', 'Glycoproteomics', 'Olink', '바이오의약품 특성 분석', 'Bioinformatics'];
   // 사업자등록증: 분석파트너는 가입 때 올리지 않았으면 여기서 올림 → 인증 검토 시작. 클라이언트는 프로젝트 등록 때 필요해 미리 올려 둠 (데모: 파일 이름만 저장)
   var bizDoc = acc.bizDoc || '', savedDoc = bizDoc, bizFile = null; // savedDoc: 계정에 저장된 파일 (인증 검토 대상), bizFile: 저장 전 고른 파일 원본
   function showDoc() {
@@ -266,11 +265,6 @@
       });
     });
   }
-  if (partner) {
-    $('#rowSvc').hidden = false;
-    var mine = acc.svcs || [];
-    $('#svcs').innerHTML = SVCS.map(function (v) { return '<label><input type="checkbox" value="' + v + '"' + (mine.indexOf(v) > -1 ? ' checked' : '') + '>' + v + '</label>'; }).join('');
-  }
 
   function err(input, msg) {
     var box = input.closest('.fbody, .gfield'), m = box.querySelector('.msg');
@@ -289,7 +283,6 @@
     var pOk = PHN.valid(); PHN.el.classList.toggle('bad', !pOk); err(PHN.inputs[0], pOk ? '' : '휴대폰 번호를 정확히 입력해주세요.');
     if (!pOk) return;
     var data = { name: n.value.trim(), org: o.value.trim(), dept: $('#dept').value.trim(), phone: PHN.get(), photo: photo };
-    if (partner) data.svcs = [].map.call(document.querySelectorAll('#svcs input:checked'), function (i) { return i.value; });
     if (hasDoc) { data.bizDoc = savedDoc = bizDoc; $('#docNote').hidden = true; if (bizFile) { OP.files.put('biz:acc:' + email, bizFile); bizFile = null; } } // 원본은 컨설턴트가 의뢰 승인 때 확인
     OP.saveAccount(email, data);
     OP.saveOrg(data.org, data.dept);

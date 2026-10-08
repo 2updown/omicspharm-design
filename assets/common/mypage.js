@@ -12,10 +12,14 @@
     ['inquiry', '문의내역', 'mypage-inquiry.html'],
     ['alarm', '알림', 'mypage-alarm.html'],
     ['account', '내 정보 관리', 'mypage-account.html'],
-    ['clients', '클라이언트 관리', '#', ['admin']],
-    ['partners', '분석파트너 관리', '#', ['admin']],
-    ['admin', '관리자 페이지', '#', ['admin']]
+    // 아래 카드: 역할 전용 메뉴 (5번째 값 2)
+    ['verify', '파트너 인증', 'mypage-verify.html', ['partner'], 2],
+    ['service', '분석 서비스 정보', 'mypage-service.html', ['partner'], 2],
+    ['clients', '클라이언트 관리', '#', ['admin'], 2],
+    ['partners', '분석파트너 관리', '#', ['admin'], 2],
+    ['admin', '관리자 페이지', '#', ['admin'], 2]
   ];
+  var MENU2_TITLE = { partner: '분석파트너', admin: '컨설턴트' };
   function read(k, f) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch (e) { return f; } }
   function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); };
@@ -148,17 +152,24 @@
     var side = document.querySelector('[data-op-side]');
     if (side) {
       var n = D.unread();
+      var links = function (grp) {
+        return MENU.filter(function (m) { return (m[4] || 1) === grp && (!m[3] || m[3].indexOf(s.role) > -1); }).map(function (m) {
+          var on = m[0] === key, label = m[1];
+          var href = m[0] === 'project' && s.role === 'admin' ? 'mypage-request.html' : m[2];
+          return '<a href="' + href + '"' + (m[2] === '#' ? ' data-soon="' + label + '"' : '') + (on ? ' class="on" aria-current="page"' : '') + '>' + label +
+            (m[0] === 'alarm' && n ? '<span class="cnt">' + n + '</span>' : '') +
+            (m[0] === 'verify' && !OP.partnerVerified() ? '<span class="op-vchip">미인증</span>' : '') + '</a>';
+        }).join('');
+      };
       side.innerHTML =
         '<div class="me"><img src="' + esc(acc.photo || 'assets/main/user-icon.svg?v=2') + '" alt="">' +
           '<span class="roles"><span class="role">' + esc(OP.ROLE_LABEL[s.role] || '') + '</span>' +
             (s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '') + '</span>' +
           '<b>' + esc(name) + ' 님</b><span>(' + esc(s.email) + ')</span>' + (org ? '<span>' + esc(org) + '</span>' : '') + '</div>' +
-        '<nav class="menu" aria-label="마이페이지 메뉴">' + MENU.filter(function (m) { return !m[3] || m[3].indexOf(s.role) > -1; }).map(function (m) {
-          var on = m[0] === key, label = m[1];
-          var href = m[0] === 'project' && s.role === 'admin' ? 'mypage-request.html' : m[2];
-          return '<a href="' + href + '"' + (m[2] === '#' ? ' data-soon="' + label + '"' : '') + (on ? ' class="on" aria-current="page"' : '') + '>' + label +
-            (m[0] === 'alarm' && n ? '<span class="cnt">' + n + '</span>' : '') + '</a>';
-        }).join('') + '</nav>';
+        '<nav class="menu" aria-label="마이페이지 메뉴">' + links(1) + '</nav>';
+      var m2 = links(2);
+      side.innerHTML = '<div class="side-card">' + side.innerHTML + '</div>' +
+        (m2 ? '<div class="side-card"><p class="side-ttl">' + esc(MENU2_TITLE[s.role] || '') + '</p><nav class="menu" aria-label="' + esc(MENU2_TITLE[s.role] || '') + ' 메뉴">' + m2 + '</nav></div>' : '');
     }
     return { s: s, acc: acc, name: name, org: org };
   };

@@ -19,7 +19,11 @@ button { background:none; border:0; cursor:pointer; }
 .body > .in { display:flex; gap:24px; align-items:flex-start; }
 
 /* 왼쪽: 프로필 + 메뉴 */
-.side { width:343px; flex:none; background:#fff; border:1px solid var(--gray-200); border-radius:16px; position:sticky; top:94px; }
+.side { width:343px; flex:none; display:flex; flex-direction:column; gap:16px; position:sticky; top:94px; }
+.side-card { background:#fff; border:1px solid var(--gray-200); border-radius:16px; }
+/* 아래 카드: 역할 전용 메뉴 (분석파트너·컨설턴트) */
+.side-ttl { padding:20px 28px 0; font-size:14px; font-weight:600; line-height:20px; color:var(--gray-700); }
+.menu a .op-vchip { margin-left:auto; }
 .me { display:flex; flex-direction:column; align-items:center; gap:4px; padding:28px 24px 24px; border-bottom:1px solid var(--gray-200); text-align:center; }
 .me img { width:56px; height:56px; margin-bottom:8px; border-radius:50%; object-fit:cover; }
 .me .roles { display:flex; align-items:center; margin-bottom:4px; }
@@ -69,7 +73,8 @@ button { background:none; border:0; cursor:pointer; }
 @media (max-width:1180px) { .page-head, .body { padding-left:24px; padding-right:24px; } }
 @media (max-width:960px) {
   .body > .in { flex-direction:column; align-items:stretch; }
-  .side { width:100%; position:static; }
+  .side { width:100%; position:static; gap:12px; }
+  .side-ttl { display:none; }
   .me { flex-direction:row; flex-wrap:wrap; justify-content:flex-start; gap:4px 8px; padding:16px 20px; text-align:left; }
   .me img { width:40px; height:40px; margin:0; }
   .me .role { margin:0; }

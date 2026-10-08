@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
+<title>분석 서비스 정보 · 마이페이지 · OmicsPharm</title>
+<!-- 마이페이지 > (분석파트너 카드) 분석 서비스 정보 (Figma 시안 없음).
+     회원가입 '추가 정보 입력'에서 고른 대표 서비스(서비스·수행 상태·표준 소요 기간)를 보고, 서비스를 더 등록·수정·삭제한다.
+     데모: 저장은 이 브라우저 localStorage(op.accounts의 services)에만 된다 -->
+<link rel="stylesheet" href="assets/common/site.css?v=20261009p">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261009p">
+<script src="assets/common/site.js?v=20261009p"></script>
+<script src="assets/common/mypage.js?v=20261009p"></script>
+<script src="assets/common/flow.js?v=20261009p"></script>
+<style>
+  .card form { display:flex; flex-direction:column; gap:20px; }
+  .card-head .cnt { margin-left:6px; color:var(--teal-600); }
+  .items { display:flex; flex-direction:column; gap:20px; }
+  .item-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .item-head b { font-size:15px; font-weight:600; line-height:22px; }
+  .item-head button { font-size:13px; font-weight:500; color:var(--gray-500); text-decoration:underline; text-underline-offset:3px; }
+  .item-head button:hover { color:var(--red-600); }
+  /* 표 형식 입력 (내 정보 관리와 동일) */
+  .tbl { border-top:2px solid #000; }
+  .field { display:grid; grid-template-columns:200px 1fr; border-bottom:1px solid var(--gray-200); }
+  .flabel { display:flex; align-items:center; padding:12px 18px; background:var(--gray-100); font-size:14px; font-weight:500; line-height:20px; }
+  .flabel .req { color:var(--red-600); margin-left:2px; }
+  .fbody { display:flex; flex-direction:column; justify-content:center; gap:6px; padding:8px 12px; min-width:0; }
+  .inp { height:40px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font-size:14px; line-height:20px; }
+  .inp:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+  .inp.etc { width:100%; max-width:300px; }
+  .inp.day { width:72px; text-align:center; }
+  .days { display:flex; align-items:center; gap:8px; font-size:14px; }
+  .help { font-size:12px; line-height:18px; color:var(--gray-500); }
+  .msg { font-size:12px; line-height:18px; color:var(--red-600); }
+  /* 선택 칩 (내 정보 관리 .svcs와 동일) */
+  .chips2 { display:flex; flex-wrap:wrap; gap:8px; padding:4px 0; }
+  .chips2 label { display:inline-flex; align-items:center; height:36px; padding:0 14px; border:1px solid var(--gray-300); border-radius:8px; font-size:14px; cursor:pointer; }
+  .chips2 input { position:absolute; opacity:0; pointer-events:none; }
+  .chips2 label:has(input:checked) { border-color:var(--teal-600); background:var(--teal-50); color:var(--teal-700); font-weight:500; }
+  .chips2 label:has(input:focus-visible) { box-shadow:0 0 0 3px #00786e33; }
+  .add { align-self:flex-start; }
+  .actions { display:flex; justify-content:flex-end; }
+  .empty-s { padding:32px 16px; border:1px dashed var(--gray-300); border-radius:12px; text-align:center; font-size:14px; color:var(--gray-500); }
+  @media (max-width:640px) {
+    .field { grid-template-columns:1fr; }
+    .flabel { padding:10px 12px; }
+    .fbody { padding:10px 0 14px; }
+    .actions .btn { width:100%; }
+  }
+</style>
+</head>
+<body>
+<div data-op-gnb></div>
+
+<section class="page-head"><div class="in">
+  <h1>마이페이지</h1>
+</div></section>
+
+<main class="body"><div class="in">
+  <aside class="side" data-op-side></aside>
+
+  <div class="main">
+    <section class="card">
+      <div class="card-head"><h3>분석 서비스 정보<span class="cnt" id="cnt"></span></h3></div>
+      <div class="op-ibox simple"><p class="t">등록한 서비스는 관련 프로젝트 추천과 OmicsPharm 컨설턴트의 매칭 추천에 활용됩니다.</p></div>
+      <form id="fSvc" novalidate>
+        <div class="items" id="items"></div>
+        <button type="button" class="btn add" id="add">+ 서비스 추가</button>
+        <div class="actions"><button type="submit" class="btn primary lg">저장하기</button></div>
+      </form>
+    </section>
+  </div>
+</div></main>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var me = OP.mypage('service'); if (!me) return;
+  if (me.s.role !== 'partner') { location.replace('mypage.html'); return; } // 분석파트너 전용
+  var $ = function (s) { return document.querySelector(s); };
+  var email = me.s.email, esc = OP.my.esc;
+  // 회원가입 '추가 정보 입력'과 같은 선택지
+  var SVC = ['단백체', 'Olink', '대사체', '유전체', '전사체', '바이오의약품·ADC', '기타'];
+  var ST = ['즉시 수행 가능', '사전협의 필요'];
+  var L = JSON.parse(JSON.stringify(me.acc.services || []));
+  var uid = 0;
+
+  function chips(name, list, cur) {
+    return '<div class="chips2">' + list.map(function (v) { return '<label><input type="radio" name="' + name + '" value="' + esc(v) + '"' + (v === cur ? ' checked' : '') + '>' + esc(v) + '</label>'; }).join('') + '</div>';
+  }
+  function draw() {
+    $('#cnt').textContent = L.length ? L.length : '';
+    $('#items').innerHTML = L.length ? L.map(function (o, i) {
+      var n = 'x' + (uid++), etc = SVC.indexOf(o.svc) < 0 && o.svc ? o.svc : '';
+      var sel = etc ? '기타' : o.svc;
+      return '<div class="item" data-i="' + i + '"><div class="item-head"><b>서비스 ' + (i + 1) + (i === 0 ? ' (대표)' : '') + '</b><button type="button" data-del>삭제</button></div>' +
+        '<div class="tbl">' +
+          '<div class="field"><div class="flabel">서비스<span class="req">*</span></div><div class="fbody">' + chips(n + 's', SVC, sel) +
+            '<input class="inp etc" data-k="etc" placeholder="서비스명 직접 입력" value="' + esc(etc) + '"' + (sel === '기타' ? '' : ' hidden') + '></div></div>' +
+          '<div class="field"><div class="flabel">수행 상태<span class="req">*</span></div><div class="fbody">' + chips(n + 't', ST, o.st) + '</div></div>' +
+          '<div class="field"><div class="flabel">표준 소요 기간</div><div class="fbody"><div class="days"><input class="inp day" data-k="from" inputmode="numeric" value="' + esc(o.from || '') + '" aria-label="최소 소요 영업일"><span>~</span><input class="inp day" data-k="to" inputmode="numeric" value="' + esc(o.to || '') + '" aria-label="최대 소요 영업일"><span>영업일</span></div>' +
+            '<p class="help">일반적인 의뢰 기준입니다. 실제 일정은 내용에 따라 협의합니다.</p></div></div>' +
+        '</div></div>';
+    }).join('') : '<div class="empty-s">등록된 분석 서비스가 없습니다. [+ 서비스 추가]로 제공하는 서비스를 등록해 주세요.</div>';
+  }
+  // 화면 입력값 → L
+  function pull() {
+    [].forEach.call(document.querySelectorAll('#items .item'), function (el) {
+      var o = L[+el.dataset.i], s = el.querySelector('input[name$="s"]:checked'), t = el.querySelector('input[name$="t"]:checked');
+      o.svc = s ? (s.value === '기타' ? (el.querySelector('[data-k=etc]').value.trim() || '기타') : s.value) : '';
+      o.st = t ? t.value : '';
+      o.from = el.querySelector('[data-k=from]').value; o.to = el.querySelector('[data-k=to]').value;
+    });
+  }
+  draw();
+  $('#items').addEventListener('change', function (e) {
+    if (/s$/.test(e.target.name || '')) { var etc = e.target.closest('.fbody').querySelector('[data-k=etc]'); etc.hidden = e.target.value !== '기타'; if (!etc.hidden) etc.focus(); }
+  });
+  $('#items').addEventListener('input', function (e) { if (e.target.classList.contains('day')) e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3); });
+  $('#items').addEventListener('click', function (e) {
+    if (!e.target.closest('[data-del]')) return;
+    pull(); L.splice(+e.target.closest('.item').dataset.i, 1); draw();
+  });
+  $('#add').addEventListener('click', function () { pull(); L.push({ svc: '', st: '', from: '', to: '' }); draw(); var all = document.querySelectorAll('#items .item'); all[all.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+
+  $('#fSvc').addEventListener('submit', function (e) {
+    e.preventDefault(); pull();
+    var bad = L.filter(function (o) { return !o.svc || !o.st; }).length;
+    if (bad) { OP.toast('서비스와 수행 상태를 모두 선택해주세요.'); return; }
+    var names = L.map(function (o) { return o.svc; });
+    if (names.some(function (v, i) { return names.indexOf(v) !== i; })) { OP.toast('같은 서비스가 두 번 등록되어 있습니다.'); return; }
+    if (L.some(function (o) { return o.from && o.to && +o.from > +o.to; })) { OP.toast('표준 소요 기간을 다시 확인해주세요. 최소 기간이 최대 기간보다 깁니다.'); return; }
+    OP.saveAccount(email, { services: L });
+    draw(); OP.toast('분석 서비스 정보가 저장되었습니다.');
+  });
+})();
+</script>
+</body>
+</html>

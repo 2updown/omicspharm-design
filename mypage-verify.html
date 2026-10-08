@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
+<title>파트너 인증 · 마이페이지 · OmicsPharm</title>
+<!-- 마이페이지 > (분석파트너 카드) 파트너 인증 (Figma 시안 없음, 위시켓 '신원 인증' 구성 참고).
+     인증 상태 안내 / 인증 절차 / 기관 정보 + 사업자등록증. 데모: 저장은 이 브라우저 localStorage(op.accounts)와 IndexedDB(op-files)에만 된다 -->
+<link rel="stylesheet" href="assets/common/site.css?v=20261009p">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261009p">
+<script src="assets/common/site.js?v=20261009p"></script>
+<script src="assets/common/mypage.js?v=20261009p"></script>
+<script src="assets/common/flow.js?v=20261009p"></script>
+<style>
+  .card form { display:flex; flex-direction:column; gap:20px; }
+  .card-head .op-vchip { margin-left:8px; }
+  /* 인증 절차 */
+  .vsteps { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin:0; padding:0; list-style:none; }
+  .vsteps li { display:flex; flex-direction:column; gap:4px; padding:16px; border:1px solid var(--gray-200); border-radius:12px; background:#fff; }
+  .vsteps li b { display:flex; align-items:center; gap:8px; font-size:15px; font-weight:600; line-height:22px; }
+  .vsteps li b i { display:grid; place-items:center; width:22px; height:22px; border-radius:50%; background:var(--gray-200); color:var(--gray-600); font-size:12px; font-style:normal; }
+  .vsteps li span { font-size:13px; line-height:18px; color:var(--gray-500); word-break:keep-all; }
+  .vsteps li.done b i { background:var(--teal-600); color:#fff; }
+  .vsteps li.on { border-color:var(--teal-600); background:var(--teal-50); }
+  .vsteps li.on b { color:var(--teal-700); }
+  .vsteps li.on b i { background:var(--teal-600); color:#fff; }
+  .perks { font-size:13px; line-height:18px; color:var(--gray-500); }
+  .perks b { color:var(--gray-700); font-weight:500; }
+  /* 표 형식 입력 (내 정보 관리와 동일) */
+  .tbl { border-top:2px solid #000; }
+  .field { display:grid; grid-template-columns:200px 1fr; border-bottom:1px solid var(--gray-200); }
+  .flabel { display:flex; align-items:center; padding:12px 18px; background:var(--gray-100); font-size:14px; font-weight:500; line-height:20px; }
+  .flabel .req { color:var(--red-600); margin-left:2px; }
+  .fbody { display:flex; flex-direction:column; justify-content:center; gap:6px; padding:8px 12px; min-width:0; }
+  .fbody .val { font-size:14px; line-height:20px; padding:0 4px; }
+  .fbody .val small { margin-left:8px; font-size:12px; color:var(--gray-500); }
+  .fbody .val small a { color:var(--teal-700); text-decoration:underline; text-underline-offset:2px; }
+  .inp { width:100%; max-width:420px; height:40px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font-size:14px; line-height:20px; }
+  .inp:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+  .inp.bad { border-color:var(--red-600); }
+  .help { font-size:12px; line-height:18px; color:var(--gray-500); }
+  .msg { font-size:12px; line-height:18px; color:var(--red-600); }
+  .note { font-size:12px; line-height:18px; color:var(--teal-700); font-weight:500; }
+  .actions { display:flex; justify-content:flex-end; }
+  /* 사업자등록증 */
+  .doc { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .doc .fname { display:inline-flex; align-items:center; gap:6px; min-width:0; max-width:300px; height:40px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; background:var(--gray-50); font-size:14px; color:var(--gray-700); }
+  .doc .fname span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .doc .fname.none { color:var(--gray-400); background:#fff; }
+  .doc .btn { height:40px; padding:0 14px; }
+  .doc input[type=file] { display:none; }
+  .doc .btn.del { border-color:var(--red-600); color:var(--red-600); background:#fff; }
+  .doc .btn.del:hover { background:#fef3f2; }
+  .doc .btn.off { opacity:.4; pointer-events:none; cursor:default; } /* 인증 검토 중: 파일 변경 불가 */
+  @media (max-width:640px) {
+    .vsteps { grid-template-columns:1fr; }
+    .field { grid-template-columns:1fr; }
+    .flabel { padding:10px 12px; }
+    .fbody { padding:10px 0 14px; }
+    .inp { max-width:none; }
+    .actions .btn { width:100%; }
+  }
+</style>
+</head>
+<body>
+<div data-op-gnb></div>
+
+<section class="page-head"><div class="in">
+  <h1>마이페이지</h1>
+</div></section>
+
+<main class="body"><div class="in">
+  <aside class="side" data-op-side></aside>
+
+  <div class="main">
+    <section class="card">
+      <div class="card-head"><h3>파트너 인증<span id="stChip"></span></h3></div>
+      <div class="op-ibox" id="stBox"></div>
+      <ol class="vsteps" id="steps">
+        <li><b><i>1</i>사업자등록증 등록</b><span>기관 정보와 사업자등록증을 올려 주세요.</span></li>
+        <li><b><i>2</i>인증 검토</b><span>OmicsPharm이 기관·서비스 정보를 확인합니다. 결과는 메일과 알림으로 알려드립니다.</span></li>
+        <li><b><i>3</i>인증 완료</b><span>견적서 작성과 비공개 프로젝트 열람이 가능해집니다.</span></li>
+      </ol>
+      <p class="perks"><b>인증 후 이용 가능</b> · 견적서 작성·제출 · 비공개 프로젝트 열람 · 프로젝트 매칭·계약</p>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h3>기관 정보</h3></div>
+      <form id="fBiz" novalidate>
+        <div class="tbl">
+          <div class="field"><div class="flabel">기관명</div><div class="fbody"><p class="val"><span id="vOrg"></span><small><a href="mypage-account.html">내 정보 관리</a>에서 수정할 수 있습니다.</small></p></div></div>
+          <div class="field"><label class="flabel" for="ceo">대표자명<span class="req">*</span></label><div class="fbody"><input class="inp" id="ceo" placeholder="이름" autocomplete="off"></div></div>
+          <div class="field"><label class="flabel" for="bizno">사업자등록번호<span class="req">*</span></label><div class="fbody"><input class="inp" id="bizno" inputmode="numeric" placeholder="000-00-00000" maxlength="12" autocomplete="off"></div></div>
+          <div class="field"><label class="flabel" for="addr">주소<span class="req">*</span></label><div class="fbody"><input class="inp" id="addr" placeholder="예) 세화로 168, 도산대로 33" autocomplete="off"></div></div>
+          <div class="field"><div class="flabel">사업자등록증<span class="req">*</span></div><div class="fbody">
+            <div class="doc"><span class="fname" id="docName"></span><label class="btn" for="docFile" id="docBtn">파일 선택</label><button type="button" class="btn del" id="docDel" hidden>삭제</button>
+              <input type="file" id="docFile" accept=".pdf,.jpg,.jpeg,.png"></div>
+            <p class="help" id="docHelp"></p>
+            <p class="note" id="docNote" hidden>아래 저장하기를 눌러야 반영됩니다.</p></div></div>
+        </div>
+        <div class="actions"><button type="submit" class="btn primary lg" id="save">저장하기</button></div>
+      </form>
+    </section>
+  </div>
+</div></main>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var me = OP.mypage('verify'); if (!me) return;
+  if (me.s.role !== 'partner') { location.replace('mypage.html'); return; } // 분석파트너 전용
+  var $ = function (s) { return document.querySelector(s); };
+  var email = me.s.email, acc = me.acc, esc = OP.my.esc;
+
+  // 인증 상태: none(서류 없음) → review(검토 중) → ok(인증 완료)
+  function stage() { var a = OP.account(email) || {}; return OP.partnerVerified() ? 'ok' : a.bizDoc ? 'review' : 'none'; }
+  function drawState() {
+    var st = stage(), B = $('#stBox');
+    $('#stChip').innerHTML = '<span class="op-vchip' + (st === 'ok' ? ' ok">인증' : '">미인증') + '</span>';
+    var T = {
+      none: ['warn', '아직 인증되지 않은 분석파트너입니다.', ['아래에서 기관 정보와 사업자등록증을 올리면 인증 검토가 시작됩니다.', '인증 전에는 공개 프로젝트 열람만 가능합니다.']],
+      review: ['', '인증 검토 중입니다.', ['제출하신 사업자등록증을 확인하고 있습니다. 결과는 메일과 알림으로 알려드립니다.', '검토 중에는 사업자등록증을 바꿀 수 없습니다. 다른 파일로 바꾸려면 삭제 후 다시 올려 주세요.']],
+      ok: ['hl', '인증이 완료된 분석파트너입니다.', ['견적서 작성·제출, 비공개 프로젝트 열람, 프로젝트 매칭·계약을 이용할 수 있습니다.', '기관명·주소 등 정보가 바뀐 경우 아래에서 수정해 주세요.']]
+    }[st];
+    B.className = 'op-ibox' + (T[0] ? ' ' + T[0] : '');
+    B.innerHTML = '<p class="t">' + T[1] + '</p><ul>' + T[2].map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>';
+    var cur = { none: 0, review: 1, ok: 2 }[st];
+    [].forEach.call(document.querySelectorAll('#steps li'), function (li, i) { li.className = i < cur ? 'done' : i === cur ? 'on' : ''; });
+    if (st === 'ok') document.querySelectorAll('#steps li')[2].className = 'on';
+  }
+
+  $('#vOrg').textContent = acc.org || '-';
+  $('#ceo').value = acc.ceo || ''; $('#bizno').value = acc.bizno || ''; $('#addr').value = acc.addr || '';
+  $('#bizno').addEventListener('input', function () { // 000-00-00000
+    var d = this.value.replace(/\D/g, '').slice(0, 10);
+    this.value = d.length > 5 ? d.slice(0, 3) + '-' + d.slice(3, 5) + '-' + d.slice(5) : d.length > 3 ? d.slice(0, 3) + '-' + d.slice(3) : d;
+  });
+
+  // 사업자등록증 (내 정보 관리에서 옮겨 옴): 검토 중에는 변경 불가, 삭제 후 다시 올림
+  var bizDoc = acc.bizDoc || '', savedDoc = bizDoc, bizFile = null;
+  function showDoc() {
+    var n = $('#docName'); n.classList.toggle('none', !bizDoc);
+    n.innerHTML = '<span>' + esc(bizDoc || '등록된 파일 없음') + '</span>';
+    $('#docBtn').textContent = bizDoc ? '파일 변경' : '파일 선택'; $('#docDel').hidden = !bizDoc;
+    var review = !!savedDoc && bizDoc === savedDoc && !OP.partnerVerified();
+    $('#docBtn').classList.toggle('off', review); $('#docBtn').setAttribute('aria-disabled', review); $('#docFile').disabled = review;
+    $('#docHelp').textContent = OP.partnerVerified() ? '인증이 완료된 기관의 사업자등록증입니다.' : review ? '인증 검토 중에는 파일을 변경할 수 없습니다.' : bizDoc ? '저장하면 인증 검토가 시작됩니다.' : 'PDF, JPG, PNG 파일을 올려 주세요.';
+  }
+  showDoc(); drawState();
+  $('#docFile').addEventListener('change', function () {
+    var f = this.files[0]; this.value = ''; if (!f) return;
+    if (!/\.(pdf|jpe?g|png)$/i.test(f.name)) { OP.toast('PDF, JPG, PNG 파일만 올릴 수 있습니다.'); return; }
+    bizDoc = f.name; bizFile = f; showDoc(); $('#docNote').hidden = false; err($('#docBtn'), '');
+  });
+  $('#docDel').addEventListener('click', function () {
+    if (!savedDoc || bizDoc !== savedDoc) { bizDoc = savedDoc; bizFile = null; showDoc(); $('#docNote').hidden = true; return; } // 저장 전 고른 파일은 바로 취소
+    OP.my.confirm('사업자등록증을 삭제하시겠습니까?', OP.partnerVerified() ? '삭제해도 인증 상태는 유지됩니다.' : '삭제하면 인증 검토가 중단됩니다. 인증을 받으려면 다시 올려 주세요.', '삭제', function () {
+      bizDoc = savedDoc = ''; OP.saveAccount(email, { bizDoc: '' }); OP.files.del('biz:acc:' + email); showDoc(); drawState(); OP.mypage('verify'); $('#docNote').hidden = true;
+      OP.toast('사업자등록증을 삭제했습니다.');
+    });
+  });
+
+  function err(input, msg) {
+    var box = input.closest('.fbody'), m = box.querySelector('.msg');
+    if (input.classList.contains('inp')) input.classList.toggle('bad', !!msg);
+    if (!msg) { if (m) m.remove(); return; }
+    if (!m) { m = document.createElement('p'); m.className = 'msg'; box.appendChild(m); }
+    m.textContent = msg;
+  }
+  $('#fBiz').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var c = $('#ceo'), b = $('#bizno'), a = $('#addr'), ok = true;
+    err(c, c.value.trim() ? '' : '대표자명을 입력해주세요.'); ok = ok && !!c.value.trim();
+    var bOk = /^\d{3}-\d{2}-\d{5}$/.test(b.value); err(b, bOk ? '' : '사업자등록번호 10자리를 입력해주세요.'); ok = ok && bOk;
+    err(a, a.value.trim() ? '' : '주소를 입력해주세요.'); ok = ok && !!a.value.trim();
+    err($('#docBtn'), bizDoc ? '' : '사업자등록증을 올려 주세요.'); ok = ok && !!bizDoc;
+    if (!ok) return;
+    var started = !OP.partnerVerified() && bizDoc !== (OP.account(email) || {}).bizDoc; // 새 파일 → 인증 검토 시작
+    OP.saveAccount(email, { ceo: c.value.trim(), bizno: b.value, addr: a.value.trim(), bizDoc: bizDoc });
+    if (bizFile) { OP.files.put('biz:acc:' + email, bizFile); bizFile = null; }
+    savedDoc = bizDoc; $('#docNote').hidden = true; showDoc(); drawState(); OP.mypage('verify');
+    OP.toast(started ? '인증 검토를 요청했습니다.' : '기관 정보가 저장되었습니다.');
+  });
+})();
+</script>
+</body>
+</html>

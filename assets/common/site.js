@@ -8,7 +8,8 @@
   var DEMO_PW = 'Demo@1234';
   var SEED = {
     'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true, name: '홍길동', org: '○○연구소', phone: '+82 010-1234-5678', bizDoc: '사업자등록증_○○연구소.pdf', bizOk: 1788220800000, bizOkName: '사업자등록증_○○연구소.pdf' }, // 예시 클라이언트: 사업자등록증 확인(인증) 완료 상태
-    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '○○분석센터', phone: '+82 010-2345-6789', verified: true, bizDoc: '사업자등록증_○○분석센터.pdf' },
+    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '○○분석센터', phone: '+82 010-2345-6789', verified: true, bizDoc: '사업자등록증_○○분석센터.pdf', ceo: '홍길동', bizno: '000-00-00000', addr: '서울특별시 ○○구 ○○로 00',
+      services: [{ svc: '단백체', st: '즉시 수행 가능', from: '20', to: '30' }, { svc: '대사체', st: '즉시 수행 가능', from: '15', to: '25' }, { svc: '바이오의약품·ADC', st: '사전협의 필요', from: '30', to: '45' }] },
     'admin@omicspharm.test':   { role: 'admin',   pw: DEMO_PW, profileDone: true, name: '셀키 컨설턴트', org: '셀키', phone: '+82 010-3456-7890' }
   };
   var ROLE_LABEL = { client: '클라이언트', partner: '분석파트너', admin: '컨설턴트' }; // admin = 셀키 컨설턴트
