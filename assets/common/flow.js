@@ -237,6 +237,8 @@
     partnerSave: function (id, k, quote, submit) {
       return put(id, function (s) { var x = s.P[k]; if (!x) return; x.quote = quote; if (submit) { x.status = 'sub'; x.subAt = Date.now(); } else if (x.status === 'req') x.status = 'draft'; });
     },
+    // 임시저장 삭제: 요청받은 견적은 '작성 대기'로, 직접 신청한 견적은 신청 자체를 지움
+    discard: function (id, k) { return put(id, function (s) { var x = s.P[k]; if (!x || x.status !== 'draft') return; if (x.self) delete s.P[k]; else { x.status = 'req'; delete x.quote; } }); },
     decline: function (id, k, why) { return put(id, function (s) { var x = s.P[k]; x.status = 'dec'; x.dec = { at: Date.now(), why: why }; }); },
     // 컨설턴트 → 클라이언트 전달
     // 전달은 여러 번 가능 (나중에 도착한 견적을 추가로 전달). sends: 전달 기록

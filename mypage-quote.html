@@ -9,12 +9,12 @@
      ?rid=프로젝트 번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261009c">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261009c">
-<script src="assets/common/site.js?v=20261009c"></script>
-<script src="assets/common/mypage.js?v=20261009c"></script>
-<script src="assets/common/flow.js?v=20261009c"></script>
-<script src="assets/common/projects-data.js?v=20261009c"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261009d">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261009d">
+<script src="assets/common/site.js?v=20261009d"></script>
+<script src="assets/common/mypage.js?v=20261009d"></script>
+<script src="assets/common/flow.js?v=20261009d"></script>
+<script src="assets/common/projects-data.js?v=20261009d"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -96,7 +96,11 @@
 
   /* 목록 */
   .qlist { border-top:2px solid #000; }
-  .qrow { display:flex; align-items:center; gap:16px; padding:16px 12px; border-bottom:1px solid var(--gray-200); }
+  .qrow { position:relative; display:flex; align-items:center; gap:16px; padding:16px 12px; border-bottom:1px solid var(--gray-200); }
+  .qrow .cover { position:absolute; inset:0; }
+  .qrow .x { flex:none; width:52px; text-align:right; }
+  .qrow .x button { position:relative; z-index:1; height:32px; padding:0 10px; border:1px solid var(--gray-300); border-radius:6px; background:#fff; font-size:13px; color:var(--gray-700); }
+  .qrow .x button:hover { border-color:var(--gray-500); color:#000; }
   .qrow:hover { background:var(--gray-50); }
   .qrow .t { flex:1; min-width:0; font-size:16px; font-weight:600; line-height:22px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .qrow .t small { display:block; margin-top:2px; font-size:13px; font-weight:400; line-height:18px; color:var(--gray-500); }
@@ -108,7 +112,6 @@
   .req { color:var(--orange-600); }
   #req { gap:20px; }
   .qrow .m { flex:none; font-size:13px; color:var(--gray-500); white-space:nowrap; }
-  .qrow .p { flex:none; width:140px; text-align:right; font-weight:600; }
 
   @media (max-width:900px) {
     .grid2 { grid-template-columns:110px 1fr; }
@@ -124,7 +127,7 @@
     .totals td:last-child { width:auto; }
     .acts { flex-direction:column-reverse; align-items:stretch; }
     .acts .btn { min-width:0; } .acts .right .btn { flex:1; }
-    .qrow { flex-wrap:wrap; gap:4px 12px; } .qrow .t { flex-basis:100%; } .qrow .p { width:auto; margin-left:auto; }
+    .qrow { flex-wrap:wrap; gap:4px 12px; } .qrow .t { flex-basis:100%; } .qrow .x { width:auto; margin-left:auto; }
   }
 </style>
 </head>
@@ -171,13 +174,13 @@
     var IN = F.inbox(ME), Q = read(), cur = new URLSearchParams(location.search).get('t') || '전체'; // 대시보드에서 상태 눌러 들어오면 그 상태만
     var rows = IN.map(function (o) {
       var t = F.pst(o.s, ME);
-      return { t: t, at: o.x.at, html: '<a class="qrow" href="mypage-quote.html?rid=' + encodeURIComponent(o.r.id) + '"><span class="badge ' + BADGE[t] + '">' + t + '</span>' +
+      return { t: t, at: o.x.at, html: '<div class="qrow"><a class="cover" href="mypage-quote.html?rid=' + encodeURIComponent(o.r.id) + '" aria-label="' + esc(o.r.title) + '"></a><span class="badge ' + BADGE[t] + '">' + t + '</span>' +
         '<span class="t">' + esc(o.r.title) + '<small>' + (o.x.self ? '직접 신청' : 'OmicsPharm 요청') + ' · ' + esc(o.r.svc) + ' · ' + esc(o.r.org || '-') + '</small></span>' +
         '<span class="m">' + (/작성 대기|임시저장|수정 요청/.test(t) ? '<em class="due">마감 ' + dot(o.s.due).slice(5) + ' (' + dleft(o.s.due) + ')</em>' : '요청 ' + F.ymd(o.x.at)) + '</span>' +
-        '<span class="p">' + (o.x.quote && o.x.status !== 'req' ? money(F.total(o.x.quote).final, o.x.quote.cur) : '-') + '</span></a>' };
+        '<span class="x">' + (t === '임시저장' ? '<button type="button" data-del-rid="' + esc(o.r.id) + '" data-title="' + esc(o.r.title) + '">삭제</button>' : '') + '</span></div>' };
     }).concat(Object.keys(Q).map(function (k) {
       var q = Q[k], p = P[+k] || {}, t = q.submitted ? '제출 완료' : '임시저장';
-      return { t: t, at: q.at, self: 1, html: '<a class="qrow" href="mypage-quote.html?id=' + k + '"><span class="badge ' + BADGE[t] + '">' + t + '</span><span class="t">' + esc(p.title || '프로젝트') + '<small>프로젝트 찾기에서 직접 작성</small></span><span class="m">' + OP.my.ymd(q.at) + '</span><span class="p">' + money(q.final, q.cur) + '</span></a>' };
+      return { t: t, at: q.at, self: 1, html: '<div class="qrow"><a class="cover" href="mypage-quote.html?id=' + k + '" aria-label="' + esc(p.title || '프로젝트') + '"></a><span class="badge ' + BADGE[t] + '">' + t + '</span><span class="t">' + esc(p.title || '프로젝트') + '<small>프로젝트 찾기에서 직접 작성</small></span><span class="m">' + OP.my.ymd(q.at) + '</span><span class="x">' + (t === '임시저장' ? '<button type="button" data-del-id="' + k + '" data-title="' + esc(p.title || '프로젝트') + '">삭제</button>' : '') + '</span></div>' };
     }));
     var TABS = [['전체'], ['작성 필요', /작성 대기|임시저장|수정 요청/], ['제출 완료', /제출 완료|클라이언트 검토 중/], ['선정', /^선정/], ['종료', /미선정|거절/]];
     var todoN = rows.filter(function (o) { return !o.self && TABS[1][1].test(o.t); }).length;
@@ -195,6 +198,15 @@
         : '<div class="empty"><b>' + (cur === '전체' ? '받은 견적 요청이 없습니다' : '해당하는 견적 요청이 없습니다') + '</b><p>프로젝트 찾기에서 견적을 작성하거나, OmicsPharm 컨설턴트가 견적을 요청하면 여기에 표시됩니다.</p></div>' + (cur === '전체' ? '<div style="text-align:center"><a class="btn primary lg" href="projects.html">프로젝트 찾기</a></div>' : '');
     };
     $('#chips').addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (b) { cur = b.dataset.t; draw(); } });
+    // 임시저장 삭제: 요청받은 견적은 '작성 대기'로 돌아가고, 직접 작성한 견적은 목록에서 빠짐
+    $('#ql').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-del-rid], [data-del-id]'); if (!b) return;
+      e.preventDefault();
+      OP.flow.ask({ title: '임시저장한 견적서를 삭제하시겠습니까?', desc: '\'' + b.dataset.title + '\'\n작성한 내용은 복구할 수 없습니다.' + (b.dataset.delRid ? ' 견적 요청은 남아 있어 마감일 전까지 다시 작성할 수 있습니다.' : ''), label: false, yes: '삭제' }, function () {
+        if (b.dataset.delRid) F.discard(b.dataset.delRid, ME); else { var a = read(); delete a[b.dataset.delId]; write(a); }
+        OP.flash('임시저장한 견적서를 삭제했습니다.'); location.reload();
+      });
+    });
     draw();
     return;
   }
