@@ -9,12 +9,12 @@
      ?rid=프로젝트 번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261009d">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261009d">
-<script src="assets/common/site.js?v=20261009d"></script>
-<script src="assets/common/mypage.js?v=20261009d"></script>
-<script src="assets/common/flow.js?v=20261009d"></script>
-<script src="assets/common/projects-data.js?v=20261009d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261009e">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261009e">
+<script src="assets/common/site.js?v=20261009e"></script>
+<script src="assets/common/mypage.js?v=20261009e"></script>
+<script src="assets/common/flow.js?v=20261009e"></script>
+<script src="assets/common/projects-data.js?v=20261009e"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -98,9 +98,12 @@
   .qlist { border-top:2px solid #000; }
   .qrow { position:relative; display:flex; align-items:center; gap:16px; padding:16px 12px; border-bottom:1px solid var(--gray-200); }
   .qrow .cover { position:absolute; inset:0; }
-  .qrow .x { flex:none; width:52px; text-align:right; }
-  .qrow .x button { position:relative; z-index:1; height:32px; padding:0 10px; border:1px solid var(--gray-300); border-radius:6px; background:#fff; font-size:13px; color:var(--gray-700); }
-  .qrow .x button:hover { border-color:var(--gray-500); color:#000; }
+  .qrow .x { flex:none; width:36px; display:flex; justify-content:flex-end; }
+  /* button_icon (281:24707) · tertiary · S(36), 아이콘 20 */
+  .qrow .x button { position:relative; z-index:1; width:36px; height:36px; display:grid; place-items:center; border:1px solid var(--gray-300); border-radius:8px; background:#fff; }
+  .qrow .x button i { width:20px; height:20px; background:#737373; -webkit-mask:url(assets/common/ic-trash.svg) center/contain no-repeat; mask:url(assets/common/ic-trash.svg) center/contain no-repeat; }
+  .qrow .x button:hover { border-color:var(--gray-400); }
+  .qrow .x button:hover i { background:#525252; }
   .qrow:hover { background:var(--gray-50); }
   .qrow .t { flex:1; min-width:0; font-size:16px; font-weight:600; line-height:22px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .qrow .t small { display:block; margin-top:2px; font-size:13px; font-weight:400; line-height:18px; color:var(--gray-500); }
@@ -177,10 +180,10 @@
       return { t: t, at: o.x.at, html: '<div class="qrow"><a class="cover" href="mypage-quote.html?rid=' + encodeURIComponent(o.r.id) + '" aria-label="' + esc(o.r.title) + '"></a><span class="badge ' + BADGE[t] + '">' + t + '</span>' +
         '<span class="t">' + esc(o.r.title) + '<small>' + (o.x.self ? '직접 신청' : 'OmicsPharm 요청') + ' · ' + esc(o.r.svc) + ' · ' + esc(o.r.org || '-') + '</small></span>' +
         '<span class="m">' + (/작성 대기|임시저장|수정 요청/.test(t) ? '<em class="due">마감 ' + dot(o.s.due).slice(5) + ' (' + dleft(o.s.due) + ')</em>' : '요청 ' + F.ymd(o.x.at)) + '</span>' +
-        '<span class="x">' + (t === '임시저장' ? '<button type="button" data-del-rid="' + esc(o.r.id) + '" data-title="' + esc(o.r.title) + '">삭제</button>' : '') + '</span></div>' };
+        '<span class="x">' + (t === '임시저장' ? '<button type="button" data-del-rid="' + esc(o.r.id) + '" data-title="' + esc(o.r.title) + '" aria-label="임시저장 삭제" title="임시저장 삭제"><i></i></button>' : '') + '</span></div>' };
     }).concat(Object.keys(Q).map(function (k) {
       var q = Q[k], p = P[+k] || {}, t = q.submitted ? '제출 완료' : '임시저장';
-      return { t: t, at: q.at, self: 1, html: '<div class="qrow"><a class="cover" href="mypage-quote.html?id=' + k + '" aria-label="' + esc(p.title || '프로젝트') + '"></a><span class="badge ' + BADGE[t] + '">' + t + '</span><span class="t">' + esc(p.title || '프로젝트') + '<small>프로젝트 찾기에서 직접 작성</small></span><span class="m">' + OP.my.ymd(q.at) + '</span><span class="x">' + (t === '임시저장' ? '<button type="button" data-del-id="' + k + '" data-title="' + esc(p.title || '프로젝트') + '">삭제</button>' : '') + '</span></div>' };
+      return { t: t, at: q.at, self: 1, html: '<div class="qrow"><a class="cover" href="mypage-quote.html?id=' + k + '" aria-label="' + esc(p.title || '프로젝트') + '"></a><span class="badge ' + BADGE[t] + '">' + t + '</span><span class="t">' + esc(p.title || '프로젝트') + '<small>프로젝트 찾기에서 직접 작성</small></span><span class="m">' + OP.my.ymd(q.at) + '</span><span class="x">' + (t === '임시저장' ? '<button type="button" data-del-id="' + k + '" data-title="' + esc(p.title || '프로젝트') + '" aria-label="임시저장 삭제" title="임시저장 삭제"><i></i></button>' : '') + '</span></div>' };
     }));
     var TABS = [['전체'], ['작성 필요', /작성 대기|임시저장|수정 요청/], ['제출 완료', /제출 완료|클라이언트 검토 중/], ['선정', /^선정/], ['종료', /미선정|거절/]];
     var todoN = rows.filter(function (o) { return !o.self && TABS[1][1].test(o.t); }).length;
