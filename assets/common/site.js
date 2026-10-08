@@ -295,7 +295,7 @@
             '<button type="button" aria-haspopup="menu" aria-label="내 계정"><img src="' + ((OP.account(s.email) || {}).photo || A + 'user-icon.svg?v=2') + '" alt=""></button>' +
             '<div class="op-user-menu" role="menu">' +
               '<div class="who"><b>' + s.email.replace(/</g, '&lt;') + '</b><span>' + (ROLE_LABEL[s.role] || '') + '</span>' +
-                (s.role === 'partner' ? '<span class="vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '') + '</div>' +
+                (!OP.mailVerified() && s.role !== 'admin' ? '<span class="vchip">메일 미인증</span>' : s.role === 'partner' ? '<span class="vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '') + '</div>' +
               // 프로토타입 확인용: 로그아웃 없이 데모 계정으로 유형 전환
               '<div class="op-switch"><p>화면 전환 (데모)</p><div>' +
                 [['client', '클라이언트'], ['partner', '분석파트너'], ['admin', '컨설턴트']].map(function (r) {
@@ -305,7 +305,7 @@
                   var on = OP.partnerVerified() === !!v[0];
                   return '<button type="button" data-op-verify="' + v[0] + '"' + (on ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + v[1] + '</button>';
                 }).join('') + '</div>' : '') +
-                (s.role === 'client' ? '<p class="sub">메일 인증 (데모)</p><div>' + [[1, '완료'], [0, '미완료']].map(function (v) {
+                (s.role !== 'admin' ? '<p class="sub">메일 인증 (데모)</p><div>' + [[1, '완료'], [0, '미완료']].map(function (v) {
                   var on = OP.mailVerified() === !!v[0];
                   return '<button type="button" data-op-mail="' + v[0] + '"' + (on ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + v[1] + '</button>';
                 }).join('') + '</div>' : '') + '</div>' +

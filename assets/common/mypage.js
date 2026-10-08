@@ -175,7 +175,8 @@
       side.innerHTML =
         '<div class="me"><img src="' + esc(acc.photo || 'assets/main/user-icon.svg?v=2') + '" alt="">' +
           '<span class="roles"><span class="role">' + esc(OP.ROLE_LABEL[s.role] || '') + '</span>' +
-            (s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '') + '</span>' +
+            // 메일 인증 전: '메일 미인증'만 (분석파트너 기관 인증은 메일 인증 다음 단계), 메일 인증 후: 분석파트너만 기관 인증 여부
+            (!OP.mailVerified() && s.role !== 'admin' ? '<span class="op-vchip">메일 미인증</span>' : s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '') + '</span>' +
           '<b>' + esc(name) + ' 님</b><span>(' + esc(s.email) + ')</span>' + (org ? '<span>' + esc(org) + '</span>' : '') + '</div>' +
         '<nav class="menu" aria-label="마이페이지 메뉴">' + html + '</nav>';
       if (!side.dataset.bound) {
