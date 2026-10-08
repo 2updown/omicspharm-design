@@ -22,7 +22,12 @@ input { font:inherit; color:inherit; }
 /* 왼쪽 패널은 화면 높이에 고정(스크롤해도 그대로), 오른쪽만 길어지면 페이지가 스크롤된다 */
 .auth-bg { flex:1 1 0; min-width:0; position:sticky; top:0; height:100vh; align-self:flex-start; overflow:hidden; background:#f4f7fa url(login-bg2.jpg?v=2) center/cover no-repeat; }
 /* Figma 720×1024 기준: 로고는 좌측 상단(53,40), 문구는 위에서 181px. 패널 크기에 맞춰 비율로 확대·축소 (auth.js가 --s 계산) */
+.auth-bg.green { background-image:url(login-bg-green.jpg); }
 .auth-card { position:absolute; inset:0; }
+/* 배경 비교 스위치(테스트용) */
+.bg-switch { position:absolute; left:50%; bottom:20px; transform:translateX(-50%); display:flex; gap:2px; padding:3px; border-radius:999px; background:rgba(255,255,255,.7); backdrop-filter:blur(6px); box-shadow:0 1px 4px rgba(0,0,0,.08); }
+.bg-switch button { height:28px; padding:0 14px; border-radius:999px; font-size:13px; font-weight:500; color:var(--gray-600, #666); }
+.bg-switch button.on { background:#fff; color:#000; box-shadow:0 1px 2px rgba(0,0,0,.12); }
 .auth-card .logo { position:absolute; left:calc(53px * var(--s, 1)); top:calc(40px * var(--s, 1)); width:calc(115px * var(--s, 1)); height:calc(12px * var(--s, 1)); z-index:1; }
 .auth-card .logo img { display:block; width:100%; height:100%; }
 .auth-card .tagline { position:absolute; left:50%; top:calc(181 / 1024 * 100%); transform:translateX(-50%) scale(var(--s, 1)); transform-origin:top center; width:437px; display:flex; flex-direction:column; gap:16px; align-items:center; text-align:center; color:#000; }

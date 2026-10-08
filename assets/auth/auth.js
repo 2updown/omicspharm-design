@@ -7,6 +7,7 @@
         '<h1>All Your Omics Research<br><b>In One Place</b></h1>' +
         '<p>Explore analysis projects, get matched with the right experts,<br>and generate AI-powered research reports<br>all on one integrated platform.</p>' +
       '</div>' +
+      '<div class="bg-switch" role="group" aria-label="배경 비교(테스트)"><button type="button" data-bg="blue">Blue</button><button type="button" data-bg="green">Green</button></div>' +
     '</div>';
 
   // Figma(720×1024) 기준 비율로 문구 크기 맞춤: 가로·세로 중 작은 쪽 비율 사용 (최대 1.3배)
@@ -20,6 +21,16 @@
       // 좁은 화면(좌측 패널 숨김)에서 보이는 홈 로고
       el.insertAdjacentHTML('afterend', '<a class="m-logo" href="index.html" aria-label="OmicsPharm 홈"><img src="assets/auth/logo-bg.svg" alt="OmicsPharm"></a>');
       var card = el.querySelector('.auth-card');
+      // 배경 비교용(테스트): ?bg=green 또는 패널 하단 스위치, 선택은 브라우저에 기억
+      var bg = new URLSearchParams(location.search).get('bg'); try { if (bg) localStorage.setItem('op.authBg', bg); else bg = localStorage.getItem('op.authBg'); } catch (e) {}
+      function setBg(v) {
+        v = v === 'green' ? 'green' : 'blue';
+        el.classList.toggle('green', v === 'green');
+        el.querySelectorAll('[data-bg]').forEach(function (b) { b.classList.toggle('on', b.dataset.bg === v); });
+        try { localStorage.setItem('op.authBg', v); } catch (e) {}
+      }
+      setBg(bg);
+      el.querySelectorAll('[data-bg]').forEach(function (b) { b.addEventListener('click', function () { setBg(b.dataset.bg); }); });
       fit(card);
       if (window.ResizeObserver) new ResizeObserver(function () { fit(card); }).observe(card);
       else window.addEventListener('resize', function () { fit(card); });
