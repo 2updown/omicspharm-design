@@ -1,5 +1,5 @@
 /* 마이페이지 공통 — 로그인 확인, 왼쪽 프로필·메뉴, 데모 데이터(이 브라우저 localStorage 기준)
-   메뉴: 대시보드 / 프로젝트(견적관리·프로젝트 관리) / 문의·알림 / 회원정보(내 정보 관리, 분석파트너 +파트너 인증·분석 서비스 정보) / 관리(컨설턴트)
+   메뉴: 대시보드 / 프로젝트(견적관리·프로젝트 관리) / 문의내역 / 알림 / 회원정보(내 정보 관리, 분석파트너 +파트너 인증·분석 서비스 정보) / 관리(컨설턴트)
    컨설턴트의 프로젝트 관리는 mypage-request.html
    (기존 '분석결과 관리'는 프로젝트 상세의 '결과보고서' 탭으로 통합)
    사용: <aside class="side" data-op-side></aside> + var me = OP.mypage('dash'); */
@@ -12,8 +12,8 @@
     ['dash', '대시보드', 'mypage.html'],
     ['quote', '견적관리', 'mypage-quote.html', ['partner'], 'prj'], // 분석파트너: 받은 견적 요청 → 견적서 작성·제출
     ['project', '프로젝트 관리', 'mypage-project.html', null, 'prj'], // 컨설턴트는 mypage-request.html (의뢰접수~완료 전 단계)
-    ['inquiry', '문의내역', 'mypage-inquiry.html', null, 'talk'],
-    ['alarm', '알림', 'mypage-alarm.html', null, 'talk'],
+    ['inquiry', '문의내역', 'mypage-inquiry.html'],
+    ['alarm', '알림', 'mypage-alarm.html'], // 알림은 묶지 않고 최상위에 (안 읽은 수가 항상 보이게)
     ['account', '내 정보 관리', 'mypage-account.html', null, 'me'],
     ['verify', '파트너 인증', 'mypage-verify.html', ['partner'], 'me'],
     ['service', '분석 서비스 정보', 'mypage-service.html', ['partner'], 'me'],
@@ -21,7 +21,7 @@
     ['partners', '분석파트너 관리', '#', ['admin'], 'mgmt'],
     ['admin', '관리자 페이지', '#', ['admin'], 'mgmt']
   ];
-  var GROUP = { prj: '프로젝트', talk: '문의 · 알림', me: '회원정보', mgmt: '관리' };
+  var GROUP = { prj: '프로젝트', me: '회원정보', mgmt: '관리' };
   function read(k, f) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch (e) { return f; } }
   function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); };
@@ -170,8 +170,7 @@
         var L = mine.filter(function (x) { return x[4] === g; });
         if (L.length === 1) { html += link(L[0]); return; }
         var cur = L.some(function (x) { return x[0] === key; }), shut = fold[g] && !cur; // 지금 보는 메뉴가 있는 묶음은 항상 펼침
-        var cnt = g === 'talk' && n ? '<span class="cnt">' + n + '</span>' : '';
-        html += '<div class="grp' + (shut ? '' : ' open') + '" data-g="' + g + '"><button type="button" class="gh" aria-expanded="' + !shut + '">' + GROUP[g] + (shut ? cnt : '') + '<i aria-hidden="true"></i></button>' +
+        html += '<div class="grp' + (shut ? '' : ' open') + '" data-g="' + g + '"><button type="button" class="gh" aria-expanded="' + !shut + '">' + GROUP[g] + '<i aria-hidden="true"></i></button>' +
           '<div class="sub">' + L.map(link).join('') + '</div></div>';
       });
       side.innerHTML =
@@ -186,8 +185,6 @@
           var b = e.target.closest('.gh'); if (!b) return;
           var g = b.parentNode, open = !g.classList.contains('open');
           g.classList.toggle('open', open); b.setAttribute('aria-expanded', open);
-          var c = b.querySelector('.cnt'); if (c) c.remove();
-          if (!open && g.dataset.g === 'talk' && n) b.insertBefore(Object.assign(document.createElement('span'), { className: 'cnt', textContent: n }), b.querySelector('i'));
           var f = read('op.menuFold', {}); if (open) delete f[g.dataset.g]; else f[g.dataset.g] = 1; write('op.menuFold', f);
         });
       }
