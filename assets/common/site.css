@@ -149,7 +149,7 @@
 }
 
 /* ── Toast ── */
-.op-toast { position:fixed; left:50%; bottom:40px; transform:translate(-50%, 20px); opacity:0; visibility:hidden; z-index:100; display:flex; align-items:center; gap:8px;
+.op-toast { position:fixed; left:50%; bottom:40px; transform:translate(-50%, 20px); opacity:0; visibility:hidden; z-index:300; display:flex; align-items:center; gap:8px;
   width:max-content; max-width:min(600px, calc(100vw - 32px)); min-height:54px; padding:8px 16px; border-radius:12px; background:var(--op-toast); color:#fff;
   font-family:var(--op-font); font-size:14px; font-weight:400; line-height:20px; transition:opacity .2s, transform .2s, visibility .2s; }
 .op-toast > img { flex:none; width:20px; height:20px; }

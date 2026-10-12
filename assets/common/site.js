@@ -94,12 +94,12 @@
         '<h3 id="opGateT">파트너 인증을 위한<br>필수 정보를 등록해주세요</h3>' +
         '<p>인증이 완료되면 견적서 작성·제출, 비공개 프로젝트 열람,<br>프로젝트 매칭·계약을 이용할 수 있습니다.</p>' +
         '<div class="bar"><span class="gtip">인증 필수 정보 <b>' + pct + '%</b> 완료</span><span class="fill" style="width:' + pct + '%"></span></div>' +
-        '<div class="list">' + (mail ? '' : '<a class="gi" href="mypage-account.html#mail"><i class="pl"></i>이메일 인증<i class="go"></i></a>') + item(true, '파트너 정보 등록') +
+        '<div class="list">' + (mail ? '' : '<button type="button" class="gi" data-gate-mail><i class="pl"></i>이메일 인증<i class="go"></i></button>') + item(true, '파트너 정보 등록') +
           (mail ? item(false, '사업자등록증 업로드', 'mypage-verify.html') : '<span class="gi off"><i class="pl"></i>사업자등록증 업로드<i class="go"></i></span>') + // 메일 인증 전에는 업로드 비활성
           '<a class="gi opt" href="mypage-service.html"><i class="pl"></i>제공 분석 서비스 입력<span class="tag">선택</span><i class="go"></i></a></div></div>';
       var close = function () { m.remove(); document.removeEventListener('keydown', key); };
       var key = function (e) { if (e.key === 'Escape') close(); };
-      m.addEventListener('click', function (e) { if (e.target === m || e.target.closest('.x')) close(); });
+      m.addEventListener('click', function (e) { if (e.target === m || e.target.closest('.x')) close(); else if (e.target.closest('[data-gate-mail]')) OP.toast('인증 메일을 다시 보냈습니다. 메일함을 확인해 주세요.'); });
       document.addEventListener('keydown', key);
       document.body.appendChild(m); m.querySelector('.x').focus();
     },
