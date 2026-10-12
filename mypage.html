@@ -7,11 +7,11 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261012a">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261012a">
-<script src="assets/common/site.js?v=20261012a"></script>
-<script src="assets/common/mypage.js?v=20261012a"></script>
-<script src="assets/common/flow.js?v=20261012a"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261012b">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261012b">
+<script src="assets/common/site.js?v=20261012b"></script>
+<script src="assets/common/mypage.js?v=20261012b"></script>
+<script src="assets/common/flow.js?v=20261012b"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -30,6 +30,33 @@
   .flow div span { color:var(--gray-400); }
 
   .grid2 { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:24px; }
+
+  /* 테스트 B (컨설턴트, ?ui=b): 처리할 일 + 3개 구간 요약 */
+  .todo4 { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:12px; }
+  .todo4 > * { display:flex; flex-direction:column; gap:4px; padding:16px 18px; border:1px solid var(--gray-200); border-radius:12px; background:#fff; }
+  .todo4 a:hover { border-color:var(--teal-600); }
+  .todo4 b { font-size:28px; font-weight:700; line-height:36px; color:var(--gray-300); }
+  .todo4 a b { color:var(--orange-600); }
+  .todo4 span { font-size:14px; font-weight:600; line-height:20px; color:#000; }
+  .todo4 small { font-size:12px; line-height:18px; color:var(--gray-500); }
+  .todo4 div span { color:var(--gray-400); }
+  .phase { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)) 120px; border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; margin-top:16px; }
+  .phase > * + * { border-left:1px solid var(--gray-200); }
+  .phase .ph { padding:16px 18px; display:flex; flex-direction:column; gap:10px; }
+  .phase .ph-h { display:flex; align-items:baseline; justify-content:space-between; }
+  .phase .ph-h span { font-size:14px; font-weight:600; color:#000; }
+  .phase .ph-h b { font-size:24px; font-weight:700; line-height:32px; color:var(--teal-600); }
+  .phase .ph-h b.zero { color:var(--gray-300); }
+  .phase ul { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:4px; }
+  .phase li a, .phase li span.off { display:flex; justify-content:space-between; font-size:13px; line-height:20px; color:var(--gray-600); }
+  .phase li a:hover { color:var(--teal-700); }
+  .phase li span.off { color:var(--gray-400); }
+  .phase .done { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; background:var(--gray-50); }
+  .phase .done b { font-size:24px; font-weight:700; line-height:32px; color:var(--gray-600); }
+  .phase .done span { font-size:13px; color:var(--gray-500); }
+  .sec-t { margin:20px 0 10px; font-size:14px; font-weight:600; color:var(--gray-700); }
+  .sec-t:first-child { margin-top:0; }
+  @media (max-width:900px) { .todo4 { grid-template-columns:repeat(2, minmax(0,1fr)); } .phase { grid-template-columns:1fr; } .phase > * + * { border-left:0; border-top:1px solid var(--gray-200); } }
 
   /* 최근 프로젝트 */
   .plist { display:flex; flex-direction:column; }
@@ -126,6 +153,32 @@
     })];
   }
   if (admin) { $('#flow').closest('.card').hidden = true; $('#pipe').classList.add('wide'); }
+  // 테스트 B: 컨설턴트 진행 현황을 '지금 처리할 일 4칸' + '3개 구간(견적 중개 · 계약·분석 · 보고서) + 완료'로 (?ui=b, 기본 화면은 그대로)
+  if (admin && new URLSearchParams(location.search).get('ui') === 'b') {
+    var cntOf = function (t) { return AS.filter(function (x) { return x === t; }).length; };
+    var R = F.requests();
+    var unsent = R.filter(function (r) { var st = F.state(r.id); return (st.st === 'quoting' || st.st === 'sent') && Object.keys(st.P).some(function (k) { return st.P[k].status === 'sub' && !st.P[k].fwd; }); }).length;
+    var go = function (t) { return 'mypage-request.html?stage=' + encodeURIComponent(t); };
+    var TODO = [
+      ['의뢰 승인 대기', cntOf('의뢰접수'), go('의뢰접수'), '사업자등록증 확인 후 승인'],
+      ['견적 전달 대기', unsent, go('견적 협의'), '도착한 견적을 클라이언트에게 전달'],
+      ['계약서 등록 대기', cntOf('계약 진행 중'), go('계약 진행 중'), '클라이언트·분석파트너 계약서 등록'],
+      ['보고서 검토 대기', cntOf('보고서 검토'), go('보고서 검토'), '분석파트너가 등록한 보고서 확인']
+    ];
+    var PH = [['견적 중개', ['의뢰접수', '의뢰확인', '견적 협의']], ['계약 · 분석', ['계약 진행 중', '분석 진행 중']], ['보고서', ['보고서 등록', '보고서 검토', '보고서 승인']]];
+    var tile = function (t) { var inner = '<b>' + t[1] + '</b><span>' + t[0] + '</span><small>' + t[3] + '</small>'; return t[1] ? '<a href="' + t[2] + '">' + inner + '</a>' : '<div aria-disabled="true">' + inner + '</div>'; };
+    var total = AS.filter(function (x) { return x !== '프로젝트 완료'; }).length;
+    $('#pipeCard').hidden = false; $('#pipeH').textContent = '프로젝트 진행 현황'; $('#pipeMore').href = 'mypage-request.html'; $('#pipeMore').textContent = '전체 보기';
+    $('#pipe').className = '';
+    $('#pipe').innerHTML = '<p class="sec-t">지금 처리할 일</p><div class="todo4">' + TODO.map(tile).join('') + '</div>' +
+      '<p class="sec-t">전체 현황 · 진행 중 ' + total + '건</p><div class="phase">' + PH.map(function (g) {
+        var n = g[1].reduce(function (a, t) { return a + cntOf(t); }, 0);
+        return '<div class="ph"><div class="ph-h"><span>' + g[0] + '</span><b' + (n ? '' : ' class="zero"') + '>' + n + '</b></div><ul>' + g[1].map(function (t) {
+          var c = cntOf(t); return '<li>' + (c ? '<a href="' + go(t) + '"><span>' + t + '</span><span>' + c + '</span></a>' : '<span class="off"><span>' + t + '</span><span>0</span></span>') + '</li>';
+        }).join('') + '</ul></div>';
+      }).join('') + '<a class="done" href="' + go('프로젝트 완료') + '"><b>' + cntOf('프로젝트 완료') + '</b><span>프로젝트 완료</span></a></div>';
+    pipe = null;
+  }
   if (pipe) {
     $('#pipeCard').hidden = false; $('#pipeH').textContent = pipe[0]; $('#pipeMore').href = pipe[1]; $('#pipeMore').textContent = '전체 보기';
     $('#pipe').style.setProperty('--n', pipe[2].length);
