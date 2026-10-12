@@ -7,21 +7,20 @@
 <title>파트너 인증 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > (분석파트너 카드) 파트너 인증 (Figma 시안 없음, 위시켓 '신원 인증' 구성 참고).
      인증 상태 안내 / 인증 절차 / 기관 정보 + 사업자등록증. 데모: 저장은 이 브라우저 localStorage(op.accounts)와 IndexedDB(op-files)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261012h">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261012h">
-<script src="assets/common/site.js?v=20261012h"></script>
-<script src="assets/common/mypage.js?v=20261012h"></script>
-<script src="assets/common/flow.js?v=20261012h"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261012i">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261012i">
+<script src="assets/common/site.js?v=20261012i"></script>
+<script src="assets/common/mypage.js?v=20261012i"></script>
+<script src="assets/common/flow.js?v=20261012i"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .op-vchip { margin-left:8px; }
-  /* 인증 절차: 아이콘(원형 배경) + 제목 + 설명, 가운데 정렬 3칸. 지나온·현재 단계는 teal, 남은 단계는 회색 */
+  /* 인증 절차: 아이콘(회색 원 + 청록 아이콘) + 제목 + 설명, 가운데 정렬 3칸. 끝난 단계는 원 오른쪽 아래에 체크 배지 */
   .vsteps { display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin:8px 0 0; padding:0; list-style:none; }
   .vsteps li { display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; }
-  .vsteps li i { display:grid; place-items:center; width:80px; height:80px; margin-bottom:10px; border-radius:50%; background:var(--gray-100); }
-  .vsteps li i::before { content:""; width:40px; height:40px; background:var(--gray-400); -webkit-mask:var(--ic) center/contain no-repeat; mask:var(--ic) center/contain no-repeat; }
-  .vsteps li.done i, .vsteps li.on i { background:var(--teal-50); }
-  .vsteps li.done i::before, .vsteps li.on i::before { background:var(--teal-600); }
+  .vsteps li i { position:relative; display:grid; place-items:center; width:80px; height:80px; margin-bottom:10px; border-radius:50%; background:var(--gray-100); }
+  .vsteps li i::before { content:""; width:40px; height:40px; background:var(--teal-600); -webkit-mask:var(--ic) center/contain no-repeat; mask:var(--ic) center/contain no-repeat; }
+  .vsteps li.done i::after { content:""; position:absolute; right:-2px; bottom:-2px; width:26px; height:26px; border:2px solid #fff; border-radius:50%; background:var(--teal-600) url(assets/verify/ic-check-white.svg) center/14px no-repeat; }
   .vsteps li b { font-size:18px; font-weight:600; line-height:26px; color:#000; }
   .vsteps li span { font-size:15px; line-height:24px; color:var(--gray-600); word-break:keep-all; }
   /* 표 형식 입력 (내 정보 관리와 동일) */
@@ -127,8 +126,8 @@
     B.className = 'op-ibox' + (T[0] ? ' ' + T[0] : '');
     B.innerHTML = '<p class="t">' + T[1] + '</p><ul>' + T[2].map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>';
     var cur = { none: 0, review: 1, ok: 2 }[st];
-    [].forEach.call(document.querySelectorAll('#steps li'), function (li, i) { li.className = i < cur ? 'done' : i === cur ? 'on' : ''; });
-    if (st === 'ok') document.querySelectorAll('#steps li')[2].className = 'on';
+    // 끝난 단계에 체크: 검토 중이면 1단계, 인증 완료면 1~3단계 모두
+    [].forEach.call(document.querySelectorAll('#steps li'), function (li, i) { li.className = st === 'ok' || i < cur ? 'done' : ''; });
   }
 
   $('#vOrg').textContent = acc.org || '-';
