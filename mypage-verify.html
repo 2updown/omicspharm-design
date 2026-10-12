@@ -7,26 +7,23 @@
 <title>파트너 인증 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > (분석파트너 카드) 파트너 인증 (Figma 시안 없음, 위시켓 '신원 인증' 구성 참고).
      인증 상태 안내 / 인증 절차 / 기관 정보 + 사업자등록증. 데모: 저장은 이 브라우저 localStorage(op.accounts)와 IndexedDB(op-files)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261012g">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261012g">
-<script src="assets/common/site.js?v=20261012g"></script>
-<script src="assets/common/mypage.js?v=20261012g"></script>
-<script src="assets/common/flow.js?v=20261012g"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261012h">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261012h">
+<script src="assets/common/site.js?v=20261012h"></script>
+<script src="assets/common/mypage.js?v=20261012h"></script>
+<script src="assets/common/flow.js?v=20261012h"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .op-vchip { margin-left:8px; }
-  /* 인증 절차 */
-  .vsteps { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin:0; padding:0; list-style:none; }
-  .vsteps li { display:flex; flex-direction:column; gap:4px; padding:16px; border:1px solid var(--gray-200); border-radius:12px; background:#fff; }
-  .vsteps li b { display:flex; align-items:center; gap:8px; font-size:15px; font-weight:600; line-height:22px; }
-  .vsteps li b i { display:grid; place-items:center; width:22px; height:22px; border-radius:50%; background:var(--gray-200); color:var(--gray-600); font-size:12px; font-style:normal; }
-  .vsteps li span { font-size:13px; line-height:18px; color:var(--gray-500); word-break:keep-all; }
-  .vsteps li.done b i { background:var(--teal-600); color:#fff; }
-  .vsteps li.on { border-color:var(--teal-600); background:var(--teal-50); }
-  .vsteps li.on b { color:var(--teal-700); }
-  .vsteps li.on b i { background:var(--teal-600); color:#fff; }
-  .perks { font-size:13px; line-height:18px; color:var(--gray-500); }
-  .perks b { color:var(--gray-700); font-weight:500; }
+  /* 인증 절차: 아이콘(원형 배경) + 제목 + 설명, 가운데 정렬 3칸. 지나온·현재 단계는 teal, 남은 단계는 회색 */
+  .vsteps { display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin:8px 0 0; padding:0; list-style:none; }
+  .vsteps li { display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; }
+  .vsteps li i { display:grid; place-items:center; width:80px; height:80px; margin-bottom:10px; border-radius:50%; background:var(--gray-100); }
+  .vsteps li i::before { content:""; width:40px; height:40px; background:var(--gray-400); -webkit-mask:var(--ic) center/contain no-repeat; mask:var(--ic) center/contain no-repeat; }
+  .vsteps li.done i, .vsteps li.on i { background:var(--teal-50); }
+  .vsteps li.done i::before, .vsteps li.on i::before { background:var(--teal-600); }
+  .vsteps li b { font-size:18px; font-weight:600; line-height:26px; color:#000; }
+  .vsteps li span { font-size:15px; line-height:24px; color:var(--gray-600); word-break:keep-all; }
   /* 표 형식 입력 (내 정보 관리와 동일) */
   .tbl { border-top:2px solid #000; }
   .field { display:grid; grid-template-columns:200px 1fr; border-bottom:1px solid var(--gray-200); }
@@ -81,11 +78,10 @@
       <div class="card-head"><h3>파트너 인증<span id="stChip"></span></h3></div>
       <div class="op-ibox" id="stBox"></div>
       <ol class="vsteps" id="steps">
-        <li><b><i>1</i>사업자등록증 등록</b><span>기관 정보와 사업자등록증을 올려 주세요.</span></li>
-        <li><b><i>2</i>인증 검토</b><span>OmicsPharm이 기관·서비스 정보를 확인합니다. 결과는 메일과 알림으로 알려드립니다.</span></li>
-        <li><b><i>3</i>인증 완료</b><span>견적서 작성과 비공개 프로젝트 열람이 가능해집니다.</span></li>
+        <li><i style="--ic:url(assets/verify/ic-file-arrow-up.svg)"></i><b>사업자등록증 등록</b><span>기관 정보와 사업자등록증을<br>올려 주세요.</span></li>
+        <li><i style="--ic:url(assets/verify/ic-magnifying-glass.svg)"></i><b>인증 검토</b><span>OmicsPharm이 기관·서비스 정보를<br>확인하고 결과를 알려드립니다.</span></li>
+        <li><i style="--ic:url(assets/verify/ic-seal-check.svg)"></i><b>인증 완료</b><span>견적서 작성과 비공개 프로젝트<br>열람이 가능해집니다.</span></li>
       </ol>
-      <p class="perks"><b>인증 후 이용 가능</b> · 견적서 작성·제출 · 비공개 프로젝트 열람 · 프로젝트 매칭·계약</p>
     </section>
 
     <section class="card">
