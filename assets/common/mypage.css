@@ -30,7 +30,7 @@ button { background:none; border:0; cursor:pointer; }
 .menu .grp.open .gh i { transform:rotate(180deg); }
 .menu .sub { display:none; flex-direction:column; }
 .menu .grp.open .sub { display:flex; }
-.menu .sub a { height:42px; padding-left:28px; font-size:15px; }
+.menu .sub a { height:42px; padding-left:28px; font-size:16px; } /* 상위와 같은 16px, 굵기·색·들여쓰기로 구분 */
 /* 최상위 항목(묶음·단일 메뉴) 사이 구분선 */
 /* 메뉴 위 구분선: 묶음과 같은 간격(선 위·아래 4px). 선을 링크 밖(::before)에 그려 hover 배경이 선에 붙지 않게 */
 .menu .grp + a, .side .menu > a + a { position:relative; margin-top:9px; }
