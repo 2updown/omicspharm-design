@@ -157,13 +157,16 @@
     if (side) {
       var n = D.unread();
       // 새 소식 'N' 배지 (Figma badge_number new 605:41276): 안 읽은 알림이 가리키는 메뉴 옆에 표시. 알림은 안 읽은 게 하나라도 있으면
+      // 견적관리·프로젝트 관리·문의내역은 그 메뉴에 들어가면 배지가 사라짐 (알림 목록의 읽음 상태와는 따로 op.menuSeen에 기록)
       var NEW = { alarm: n > 0 }, NB = '<span class="nb" aria-label="새 소식">N</span>';
+      var seen = read('op.menuSeen', []), seenAdd = [];
+      var menuOf = function (h) { return /mypage-quote/.test(h) ? 'quote' : /mypage-(project|request)/.test(h) ? 'project' : /mypage-inquiry/.test(h) ? 'inquiry' : ''; };
       D.alarms().forEach(function (a) {
-        if (a.read || !a.href) return;
-        if (/mypage-quote/.test(a.href)) NEW.quote = 1;
-        else if (/mypage-(project|request)/.test(a.href)) NEW.project = 1;
-        else if (/mypage-inquiry/.test(a.href)) NEW.inquiry = 1;
+        if (a.read || !a.href || seen.indexOf(a.id) > -1) return;
+        var mk = menuOf(a.href); if (!mk) return;
+        if (mk === key) seenAdd.push(a.id); else NEW[mk] = 1;
       });
+      if (seenAdd.length) write('op.menuSeen', seen.concat(seenAdd));
       var link = function (m) {
         var on = m[0] === key, label = m[1];
         var href = m[0] === 'project' && s.role === 'admin' ? 'mypage-request.html' : m[2];
