@@ -56,6 +56,8 @@
   }
 
   var D = {
+    // 예시 프로젝트의 영문 서비스명 → 의뢰 폼과 같은 한글 서비스명 (클라이언트 화면과 같은 배지)
+    svcKo: function (v) { return { Proteomics: '단백체 분석', Glycoproteomics: '단백체 분석', Metabolomics: '대사체 분석', Genomics: '유전체 분석', Transcriptomics: '전사체 분석', Olink: 'Olink 분석' }[v] || v; },
     P_STAGES: P_STAGES,
     // 분석파트너에게 보이는 단계: 보고서 검토·승인(컨설턴트·클라이언트가 처리)은 '보고서 등록'에 묶고 '확인 대기'로 표시
     P4: ['계약', '분석', '보고서 등록', '완료'],
@@ -154,12 +156,19 @@
     var side = document.querySelector('[data-op-side]');
     if (side) {
       var n = D.unread();
+      // 새 소식 'N' 배지 (Figma badge_number new 605:41276): 안 읽은 알림이 가리키는 메뉴 옆에 표시. 알림은 안 읽은 게 하나라도 있으면
+      var NEW = { alarm: n > 0 }, NB = '<span class="nb" aria-label="새 소식">N</span>';
+      D.alarms().forEach(function (a) {
+        if (a.read || !a.href) return;
+        if (/mypage-quote/.test(a.href)) NEW.quote = 1;
+        else if (/mypage-(project|request)/.test(a.href)) NEW.project = 1;
+        else if (/mypage-inquiry/.test(a.href)) NEW.inquiry = 1;
+      });
       var link = function (m) {
         var on = m[0] === key, label = m[1];
         var href = m[0] === 'project' && s.role === 'admin' ? 'mypage-request.html' : m[2];
         return '<a href="' + href + '"' + (m[2] === '#' ? ' data-soon="' + label + '"' : '') + (on ? ' class="on" aria-current="page"' : '') + '>' + label +
-          (m[0] === 'alarm' && n ? '<span class="cnt">' + n + '</span>' : '') +
-          (m[0] === 'verify' && !OP.partnerVerified() ? '<span class="op-vchip">미인증</span>' : '') + '</a>';
+          (NEW[m[0]] ? NB : '') + '</a>';
       };
       // 접은 묶음: 마이페이지 안에서 이동하는 동안만 유지 (계정 전환·마이페이지 밖으로 나가면 site.js가 지워서 다시 모두 펼침)
       var fold = {}; try { fold = JSON.parse(sessionStorage.getItem('op.menuFold') || '{}'); } catch (e) {}
@@ -171,7 +180,7 @@
         var L = mine.filter(function (x) { return x[4] === g; });
         if (L.length === 1) { html += link(L[0]); return; }
         var shut = !!fold[g];
-        html += '<div class="grp' + (shut ? '' : ' open') + '" data-g="' + g + '"><button type="button" class="gh" aria-expanded="' + !shut + '">' + GROUP[g] + '<i aria-hidden="true"></i></button>' +
+        html += '<div class="grp' + (shut ? '' : ' open') + '" data-g="' + g + '"><button type="button" class="gh" aria-expanded="' + !shut + '">' + GROUP[g] + (shut && L.some(function (x) { return NEW[x[0]]; }) ? NB : '') + '<i aria-hidden="true"></i></button>' +
           '<div class="sub">' + L.map(link).join('') + '</div></div>';
       });
       side.innerHTML =

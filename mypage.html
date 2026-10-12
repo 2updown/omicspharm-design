@@ -7,11 +7,11 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261013q">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261013q">
-<script src="assets/common/site.js?v=20261013q"></script>
-<script src="assets/common/mypage.js?v=20261013q"></script>
-<script src="assets/common/flow.js?v=20261013q"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261013s">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261013s">
+<script src="assets/common/site.js?v=20261013s"></script>
+<script src="assets/common/mypage.js?v=20261013s"></script>
+<script src="assets/common/flow.js?v=20261013s"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -177,10 +177,9 @@
     // 분석파트너: 견적(견적관리) → 프로젝트(프로젝트 관리). 보고서 검토·승인은 '보고서 등록'에 묶어 '확인 대기 n'
     var IN = OP.canQuote() ? F.inbox(me.s.email).map(function (o) { return F.pst(o.s, me.s.email); }) : [];
     var cnt = function (re) { return IN.filter(function (t) { return re.test(t); }).length; };
-    var wait = PP.filter(D.pWaiting).length;
     cells = [['견적 작성', cnt(/작성 대기|임시저장|수정 요청/), 'mypage-quote.html?t=' + encodeURIComponent('작성 필요'), '', true],
              ['견적 제출', cnt(/제출 완료|클라이언트 검토 중/), 'mypage-quote.html?t=' + encodeURIComponent('제출 완료')]]
-      .concat(D.P4.map(function (t, i) { return [t, PP.filter(function (p) { return D.pStage(p) === t; }).length, 'mypage-project.html?stage=' + encodeURIComponent(t), t === '보고서 등록' && wait ? '확인 대기 ' + wait : '']; }));
+      .concat(D.P4.map(function (t, i) { return [t, PP.filter(function (p) { return D.pStage(p) === t; }).length, 'mypage-project.html?stage=' + encodeURIComponent(t)]; }));
     var ended = cnt(/미선정|거절/);
     if (ended) $('#flow').insertAdjacentHTML('afterend', '<a class="flow-end" href="mypage-quote.html?t=' + encodeURIComponent('종료') + '">미선정·거절 ' + ended + '건 ›</a>');
   }
@@ -193,7 +192,7 @@
   if (!client && PP.length) {
     $('#plist').innerHTML = '<div class="plist">' + PP.slice(0, 3).map(function (p) {
       var ps = admin ? p.stage : D.pStage(p);
-      return '<a href="mypage-project.html?id=' + p.id + '"><span class="badges"><span class="badge tag">' + esc(p.svc) + '</span><span class="badge ' + (ps === '완료' ? 'done' : 'state') + '">' + ps + '</span>' + (!admin && D.pWaiting(p) ? '<span class="badge wait">확인 대기</span>' : '') + '</span>' +
+      return '<a href="mypage-project.html?id=' + p.id + '"><span class="badges"><span class="badge tag">' + esc(D.svcKo(p.svc)) + '</span><span class="badge ' + (ps === '완료' ? 'done' : 'state') + '">' + ps + '</span>' + (!admin && D.pWaiting(p) ? '<span class="badge wait">확인 대기</span>' : '') + '</span>' +
         '<h4>' + esc(p.title) + '</h4><span class="dt">' + esc(p.client) + '</span></a>';
     }).join('') + '</div>';
   } else
