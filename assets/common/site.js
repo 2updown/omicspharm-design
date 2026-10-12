@@ -93,7 +93,7 @@
         '<h3 id="opGateT">파트너 인증을 위한<br>필수 정보를 등록해주세요</h3>' +
         '<p>' + (doc ? '제출하신 사업자등록증을 OmicsPharm이 확인하고 있습니다.<br>' : '') + '인증이 완료되면 견적서 작성·제출, 비공개 프로젝트 열람,<br>프로젝트 매칭·계약을 이용할 수 있습니다.</p>' +
         '<div class="bar"><span class="tip" style="left:' + pct + '%"><i class="ck"></i>인증 필수 정보 <b>' + pct + '% 완료</b></span><span class="fill" style="width:' + pct + '%"></span></div>' +
-        '<div class="list">' + item(true, '파트너 정보 등록') + item(doc, '사업자등록증 업로드', 'mypage-verify.html', doc ? '검토 중' : '') +
+        '<div class="list">' + item(true, '파트너 정보 등록') + item(doc, '사업자등록증 업로드', 'mypage-verify.html') +
           '<a class="gi opt" href="mypage-service.html"><i class="' + (svc ? 'ck' : 'pl') + '"></i>제공 분석 서비스 ' + (svc ? '수정' : '입력') + '<span class="tag">선택</span><i class="go"></i></a>' +
           '<p class="optp">제공 분석 서비스를 입력하면 OmicsPharm이 맞는 프로젝트를 먼저 추천해 드립니다.</p></div></div>';
       var close = function () { m.remove(); document.removeEventListener('keydown', key); };
