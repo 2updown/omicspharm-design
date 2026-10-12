@@ -7,11 +7,11 @@
 <title>파트너 인증 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > (분석파트너 카드) 파트너 인증 (Figma 시안 없음, 위시켓 '신원 인증' 구성 참고).
      인증 상태 안내 / 인증 절차 / 기관 정보 + 사업자등록증. 데모: 저장은 이 브라우저 localStorage(op.accounts)와 IndexedDB(op-files)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261012n">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261012n">
-<script src="assets/common/site.js?v=20261012n"></script>
-<script src="assets/common/mypage.js?v=20261012n"></script>
-<script src="assets/common/flow.js?v=20261012n"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261012o">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261012o">
+<script src="assets/common/site.js?v=20261012o"></script>
+<script src="assets/common/mypage.js?v=20261012o"></script>
+<script src="assets/common/flow.js?v=20261012o"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .op-vchip { margin-left:8px; }
@@ -19,6 +19,9 @@
   .vsteps { display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin:8px 0 0; padding:0; list-style:none; }
   .vsteps li { display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; }
   .vsteps li img { width:112px; height:112px; margin-bottom:6px; }
+  /* 단계 사이 연결: 이미지 높이 가운데에 짧고 연한 점선 (두 칸 사이 가운데) */
+  .vsteps li { position:relative; }
+  .vsteps li:not(:last-child)::after { content:""; position:absolute; top:56px; left:calc(100% + 8px - 28px); width:56px; border-top:2px dashed var(--gray-300); }
   .vsteps li b { font-size:18px; font-weight:600; line-height:26px; color:#000; }
   .vsteps li span { font-size:15px; line-height:24px; color:var(--gray-600); word-break:keep-all; }
   /* 표 형식 입력 (내 정보 관리와 동일) */
@@ -52,6 +55,7 @@
   .inp[disabled] { background:var(--gray-50); color:var(--gray-700); -webkit-text-fill-color:var(--gray-700); opacity:1; cursor:default; }
   @media (max-width:640px) {
     .vsteps { grid-template-columns:1fr; }
+    .vsteps li:not(:last-child)::after { display:none; }
     .field { grid-template-columns:1fr; }
     .flabel { padding:10px 12px; }
     .fbody { padding:10px 0 14px; }
