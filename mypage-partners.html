@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
+<title>분석파트너 관리 · 마이페이지 · OmicsPharm</title>
+<!-- 마이페이지 > (컨설턴트) 관리 > 분석파트너 관리 (Figma 시안 없음).
+     파트너 인증 검토: 목록(상태별) → 상세(기관 정보 · 사업자등록증 [보기] [인증 완료] [재제출 요청]).
+     재제출 요청은 클라이언트 사업자등록증 재제출 요청(mypage-request.html)과 같은 방식. 규칙: docs/partner-verification.md
+     데모: 로그인 가능한 분석파트너(partner@omicspharm.test)는 계정 값(op.accounts)을, 가상 파트너는 op.partnerReview를 바꾼다 -->
+<link rel="stylesheet" href="assets/common/site.css?v=20261014b">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261014b">
+<script src="assets/common/site.js?v=20261014b"></script>
+<script src="assets/common/mypage.js?v=20261014b"></script>
+<script src="assets/common/flow.js?v=20261014b"></script>
+<style>
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chips button { height:36px; padding:0 14px; border-radius:99px; border:1px solid var(--gray-300); background:#fff; font-size:14px; font-weight:500; color:var(--gray-600); }
+  .chips button span { margin-left:6px; color:var(--gray-400); }
+  .chips button.on { border-color:var(--teal-600); background:var(--teal-600); color:#fff; }
+  .chips button.on span { color:#fff; opacity:.8; }
+  .plist2 { border-top:2px solid #000; }
+  .prow2 { position:relative; display:flex; align-items:center; gap:16px; padding:16px 12px; border-bottom:1px solid var(--gray-200); }
+  .prow2:hover { background:var(--gray-50); }
+  .prow2 .cover { position:absolute; inset:0; }
+  .prow2 .t { flex:1; min-width:0; font-size:16px; font-weight:600; line-height:22px; }
+  .prow2 .t small { display:block; margin-top:2px; font-size:13px; font-weight:400; line-height:18px; color:var(--gray-500); }
+  .prow2 .m { flex:none; width:120px; font-size:13px; color:var(--gray-500); text-align:right; }
+  .st { flex:none; display:inline-flex; align-items:center; height:24px; padding:0 8px; border-radius:8px; font-size:12px; font-weight:500; border:1px solid; }
+  .st.review { color:#0065f4; border-color:#bcd6ff; background:#edf6ff; }
+  .st.ask { color:#ca0008; border-color:#ffc7c9; background:#fff1f2; }
+  .st.ok { color:var(--teal-700); border-color:var(--teal-600); background:#fff; }
+  .st.wait { color:var(--gray-600); border-color:var(--gray-300); background:var(--gray-100); }
+  .empty2 { padding:48px 16px; text-align:center; font-size:14px; color:var(--gray-500); }
+  /* 상세 */
+  .dhead { display:flex; align-items:center; gap:8px; }
+  .dhead a { display:grid; place-items:center; width:28px; height:28px; }
+  .dhead a img { width:20px; height:20px; }
+  .dhead h3 { font-size:20px; font-weight:700; line-height:28px; }
+  .tbl { border-top:2px solid #000; }
+  .field { display:grid; grid-template-columns:180px 1fr; border-bottom:1px solid var(--gray-200); }
+  .flabel { display:flex; align-items:center; padding:12px 18px; background:var(--gray-100); font-size:14px; font-weight:500; }
+  .fbody { display:flex; flex-direction:column; justify-content:center; gap:8px; padding:10px 14px; min-width:0; font-size:14px; line-height:20px; }
+  .doc2 { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+  .doc2 .fname { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; background:var(--gray-50); color:var(--gray-700); }
+  .doc2 .fname img { width:16px; height:16px; opacity:.6; }
+  .doc2 .btn { height:36px; padding:0 14px; }
+  .note2 { font-size:13px; line-height:20px; color:var(--gray-600); white-space:pre-line; }
+  .demo-reset { font-size:12px; color:var(--teal-700); text-decoration:underline; text-underline-offset:3px; }
+  .svc2 { display:flex; flex-wrap:wrap; gap:6px; }
+  .svc2 span { padding:2px 8px; border:1px solid var(--gray-300); border-radius:8px; font-size:12px; color:var(--gray-700); }
+  .pv-bar button.ok { background:var(--teal-600); color:#fff; }
+  .bizfile { display:block; max-width:880px; width:100%; margin:0 auto; background:#fff; }
+  iframe.bizfile { height:80vh; border:0; }
+  .demo-file { max-width:560px; margin:40px auto; padding:48px 24px; border-radius:12px; background:#fff; text-align:center; font-size:14px; line-height:22px; color:var(--gray-600); }
+  @media (max-width:640px) {
+    .prow2 { flex-wrap:wrap; gap:6px 12px; } .prow2 .t { flex-basis:100%; order:2; } .prow2 .m { width:auto; margin-left:auto; }
+    .field { grid-template-columns:1fr; } .flabel { padding:10px 12px; } .fbody { padding:10px 0 14px; }
+  }
+</style>
+</head>
+<body>
+<div data-op-gnb></div>
+
+<section class="page-head"><div class="in">
+  <h1>마이페이지</h1>
+</div></section>
+
+<main class="body"><div class="in">
+  <aside class="side" data-op-side></aside>
+  <div class="main"><section class="card" id="card"></section></div>
+</div></main>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var me = OP.mypage('partners'); if (!me) return;
+  if (me.s.role !== 'admin') { location.replace('mypage.html'); return; } // 컨설턴트 전용
+  var F = OP.flow, esc = OP.my.esc, $ = function (s) { return document.querySelector(s); };
+  var ymd = function (t) { return t ? F.ymd(t) : '-'; };
+  var KEY = 'op.partnerReview';
+  var rv = function () { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } };
+  var setRv = function (k, v) { var a = rv(); a[k] = v; try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {} };
+  var T0 = new Date(2026, 9, 8).getTime();
+
+  // 상태: none(미제출) · mail(검토 대기: 메일 미인증) · review(검토 중) · ask(재제출 요청) · ok(인증 완료)
+  var LABEL = { none: '미제출', mail: '검토 대기', review: '검토 중', ask: '재제출 요청', ok: '인증 완료' };
+  var CLS = { none: 'wait', mail: 'wait', review: 'review', ask: 'ask', ok: 'ok' };
+  function list() {
+    return F.PARTNERS.map(function (p, i) {
+      var o = { key: p.key, org: p.org, name: p.name, mail: p.mail, tel: p.tel, svc: p.svc, at: T0 - 864e5 * (30 + i * 9) };
+      if (p.login) { // 실제 로그인 가능한 데모 분석파트너: 계정 값 기준
+        var a = OP.account(p.key) || {};
+        o.org = a.org || p.org; o.name = a.name || p.name; o.tel = a.phone || p.tel; o.ceo = a.ceo; o.bizno = a.bizno; o.addr = a.addr; o.doc = a.bizDoc; o.mailOk = a.mailOk !== false;
+        o.svc = (a.services || []).map(function (x) { return x.svc; }).filter(Boolean); if (!o.svc.length) o.svc = p.svc;
+        o.ask = a.bizAsk || null; o.okAt = a.bizOkAt || (a.verified ? T0 - 864e5 * 20 : 0); o.real = true; o.at = a.bizAt || o.at;
+        o.st = a.verified ? 'ok' : o.ask ? 'ask' : !o.doc ? 'none' : o.mailOk ? 'review' : 'mail';
+      } else { // 가상 파트너: 인증 파트너는 인증 완료, 미인증(▽▽랩)은 검토 중으로 시작 + 컨설턴트 처리 기록(op.partnerReview)
+        var r = rv()[p.key] || {};
+        o.ceo = '홍길동'; o.bizno = '000-00-00000'; o.addr = '서울특별시 ○○구 ○○로 00'; o.doc = '사업자등록증_' + p.org + '.pdf'; o.mailOk = true;
+        o.st = r.st || (p.verified ? 'ok' : 'review'); o.ask = r.st === 'ask' ? r.ask : null; o.okAt = r.okAt || (p.verified ? T0 - 864e5 * (60 + i * 5) : 0);
+      }
+      return o;
+    });
+  }
+  var qs = new URLSearchParams(location.search), key = qs.get('key');
+  if (key) detail(key); else drawList();
+
+  // ── 목록 ──
+  function drawList() {
+    var L = list(), cur = qs.get('st') || 'review';
+    var TABS = [['review', '인증 검토', ['review']], ['ask', '재제출 요청', ['ask']], ['ok', '인증 완료', ['ok']], ['etc', '미제출·검토 대기', ['none', 'mail']], ['all', '전체', null]];
+    $('#card').innerHTML = '<div class="card-head"><h3>분석파트너 관리</h3></div><div class="chips" id="chips"></div><div class="plist2" id="pl"></div>';
+    var draw = function () {
+      $('#chips').innerHTML = TABS.map(function (t) {
+        var n = L.filter(function (o) { return !t[2] || t[2].indexOf(o.st) > -1; }).length;
+        return '<button type="button" data-t="' + t[0] + '"' + (cur === t[0] ? ' class="on"' : '') + '>' + t[1] + '<span>' + n + '</span></button>';
+      }).join('');
+      var tab = TABS.filter(function (t) { return t[0] === cur; })[0];
+      var R = L.filter(function (o) { return !tab[2] || tab[2].indexOf(o.st) > -1; });
+      $('#pl').innerHTML = R.length ? R.map(function (o) {
+        return '<div class="prow2"><a class="cover" href="mypage-partners.html?key=' + encodeURIComponent(o.key) + '" aria-label="' + esc(o.org) + '"></a>' +
+          '<span class="st ' + CLS[o.st] + '">' + LABEL[o.st] + '</span>' +
+          '<span class="t">' + esc(o.org) + '<small>' + esc(o.name || '-') + ' · ' + esc(o.mail || '-') + ' · ' + esc((o.svc || []).join(', ')) + '</small></span>' +
+          '<span class="m">' + (o.st === 'ok' ? '인증 ' + ymd(o.okAt) : o.st === 'ask' ? '요청 ' + ymd(o.ask && o.ask.at) : '신청 ' + ymd(o.at)) + '</span></div>';
+      }).join('') : '<div class="empty2">해당하는 분석파트너가 없습니다.</div>';
+    };
+    $('#chips').addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (!b) return; cur = b.dataset.t; history.replaceState(null, '', '?st=' + cur); draw(); });
+    draw();
+  }
+
+  // ── 상세 ──
+  function detail(k) {
+    var o = list().filter(function (x) { return x.key === k; })[0];
+    if (!o) { location.replace('mypage-partners.html'); return; }
+    var act = o.st === 'review'; // 검토 중일 때만 [인증 완료] [재제출 요청]
+    var note = o.st === 'ask' ? '재제출 요청 ' + ymd(o.ask.at) + ' · 사유: ' + o.ask.note + '\n분석파트너가 다시 올리면 알림으로 알려드립니다.'
+      : o.st === 'ok' ? ymd(o.okAt) + '에 인증된 분석파트너입니다.'
+      : o.st === 'mail' ? '사업자등록증은 올렸지만 이메일 인증 전입니다. 이메일 인증을 마치면 인증 검토 목록에 올라옵니다.'
+      : o.st === 'none' ? '사업자등록증을 아직 올리지 않았습니다.' : '';
+    var row = function (l, v) { return '<div class="field"><div class="flabel">' + l + '</div><div class="fbody">' + v + '</div></div>'; };
+    $('#card').innerHTML =
+      '<div class="card-head"><div class="dhead"><a href="mypage-partners.html" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>' + esc(o.org) + '</h3><span class="st ' + CLS[o.st] + '">' + LABEL[o.st] + '</span></div></div>' +
+      '<div class="tbl">' +
+        row('기관명', esc(o.org)) + row('대표자명', esc(o.ceo || '-')) + row('사업자등록번호', esc(o.bizno || '-')) + row('주소', esc(o.addr || '-')) +
+        row('담당자', esc(o.name || '-') + ' · ' + esc(o.tel || '-')) + row('이메일', esc(o.mail || '-') + (o.mailOk ? '' : ' <span class="op-vchip">메일 미인증</span>')) +
+        row('제공 분석 서비스', '<div class="svc2">' + (o.svc || []).map(function (v) { return '<span>' + esc(v) + '</span>'; }).join('') + '</div>') +
+        row('사업자등록증', o.doc
+          ? '<div class="doc2"><span class="fname"><img src="assets/auth/ic-paperclip.svg" alt="">' + esc(o.doc) + '</span><button type="button" class="btn" id="view">보기</button>' +
+            (act ? '<button type="button" class="btn primary" id="okBtn">인증 완료</button><button type="button" class="btn" id="askBtn">재제출 요청</button>' : '') + '</div>' +
+            (note ? '<p class="note2">' + esc(note) + '</p>' : '') +
+            (o.st !== 'review' ? '<p><button type="button" class="demo-reset" id="reset">데모: 인증 검토 중으로 되돌리기</button></p>' : '')
+          : '<p class="note2">' + esc(note) + '</p>') +
+      '</div>';
+    if ($('#view')) $('#view').addEventListener('click', function () { preview(o, act); });
+    if ($('#okBtn')) $('#okBtn').addEventListener('click', function () { okDo(o); });
+    if ($('#askBtn')) $('#askBtn').addEventListener('click', function () { askDo(o); });
+    if ($('#reset')) $('#reset').addEventListener('click', function () {
+      if (o.real) OP.saveAccount(o.key, { verified: false, bizAsk: null, mailOk: true, bizDoc: o.doc || '사업자등록증_' + o.org + '.pdf' });
+      else setRv(o.key, { st: 'review' });
+      OP.toast('인증 검토 중으로 되돌렸습니다.'); detail(o.key);
+    });
+  }
+  function okDo(o) {
+    OP.my.confirm(o.org + '을(를) 인증하시겠습니까?', '인증되면 견적서 작성·제출, 비공개 프로젝트 열람, 프로젝트 매칭·계약을 이용할 수 있고 분석파트너에게 알림이 갑니다.', '인증 완료', function () {
+      if (o.real) OP.saveAccount(o.key, { verified: true, bizAsk: null, bizOkAt: Date.now() });
+      else setRv(o.key, { st: 'ok', okAt: Date.now() });
+      OP.toast(o.org + '을(를) 인증했습니다.'); detail(o.key);
+    });
+  }
+  function askDo(o) {
+    F.ask({ title: '사업자등록증 재제출을 요청하시겠습니까?', desc: o.org + '에 알림이 가고, 파트너 인증 화면에 사유가 표시됩니다. 다시 올리면 인증 검토 목록에 다시 올라옵니다.', label: '요청 사유', ph: '예) 사업자등록증 이미지가 흐려 등록번호를 확인할 수 없습니다.', yes: '재제출 요청', required: true }, function (v) {
+      var ask = { at: Date.now(), note: v };
+      if (o.real) OP.saveAccount(o.key, { verified: false, bizAsk: ask });
+      else setRv(o.key, { st: 'ask', ask: ask });
+      OP.toast('재제출을 요청했습니다.'); detail(o.key);
+    });
+  }
+  // 미리보기: 데모 분석파트너가 올린 원본(이 브라우저 IndexedDB)이 있으면 그대로, 없으면 안내
+  function preview(o, act) {
+    var pv = document.createElement('div'), url = '';
+    pv.className = 'pv'; pv.setAttribute('role', 'dialog'); pv.setAttribute('aria-modal', 'true'); pv.setAttribute('aria-label', '사업자등록증');
+    pv.innerHTML = '<div class="pv-bar"><b>사업자등록증 · ' + esc(o.doc) + '</b><div>' + (act ? '<button type="button" class="ok" data-ok>인증 완료</button><button type="button" data-ask>재제출 요청</button>' : '') + '<button type="button" class="x" data-close>닫기</button></div></div><div class="pv-scroll"><p class="demo-file">불러오는 중…</p></div>';
+    var close = function () { pv.remove(); if (url) URL.revokeObjectURL(url); document.body.style.overflow = ''; document.removeEventListener('keydown', key); };
+    var key = function (e) { if (e.key === 'Escape') close(); };
+    pv.addEventListener('click', function (e) {
+      if (e.target.closest('[data-close]') || e.target === pv) close();
+      else if (e.target.closest('[data-ok]')) { close(); okDo(o); }
+      else if (e.target.closest('[data-ask]')) { close(); askDo(o); }
+    });
+    document.addEventListener('keydown', key);
+    document.body.appendChild(pv); document.body.style.overflow = 'hidden'; pv.querySelector('[data-close]').focus();
+    (o.real && OP.files ? OP.files.get('biz:acc:' + o.key) : Promise.resolve(null)).then(function (f) {
+      var box = pv.querySelector('.pv-scroll');
+      if (f) { url = URL.createObjectURL(f); box.innerHTML = /pdf$/i.test(f.type) || /\.pdf$/i.test(f.name) ? '<iframe class="bizfile" src="' + url + '" title="' + esc(o.doc) + '"></iframe>' : '<img class="bizfile" src="' + url + '" alt="' + esc(o.doc) + '">'; }
+      else box.innerHTML = '<div class="demo-file">예시 데이터라 원본 파일이 없습니다.<br>분석파트너가 파트너 인증 화면에서 올린 파일은 여기에서 그대로 보입니다.</div>';
+    });
+  }
+})();
+</script>
+</body>
+</html>

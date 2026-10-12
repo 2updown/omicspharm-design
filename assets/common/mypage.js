@@ -18,7 +18,7 @@
     ['verify', '파트너 인증', 'mypage-verify.html', ['partner'], 'me'],
     ['service', '분석 서비스 정보', 'mypage-service.html', ['partner'], 'me'],
     ['clients', '클라이언트 관리', '#', ['admin'], 'mgmt'],
-    ['partners', '분석파트너 관리', '#', ['admin'], 'mgmt'],
+    ['partners', '분석파트너 관리', 'mypage-partners.html', ['admin'], 'mgmt'], // 파트너 인증 검토 (인증 완료 / 재제출 요청)
     ['admin', '관리자 페이지', '#', ['admin'], 'mgmt']
   ];
   var GROUP = { prj: '프로젝트', me: '회원정보', mgmt: '관리' };
@@ -118,6 +118,12 @@
         if (!adm && i === 5) L.push({ id: 'rf-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.title + ' 프로젝트의 1차 결과보고서가 최종 확인 처리 되었습니다.', sub: p.title + ' 프로젝트가 최종 완료 처리 되었습니다.', href: h });
         if (p.qa) L.push({ id: 'qa-' + p.id, k: 'Q&A', cat: 'project', at: p.at + 864e5 * 10, t: p.title + ' Q&A에 새로운 글이 등록 되었습니다.', sub: '문의제목: 시료 발송 일정 문의 · 작성자: ' + p.client, href: h });
       });
+      // 파트너 인증 결과 (분석파트너): 재제출 요청 / 인증 완료
+      if (ses.role === 'partner') {
+        var pa = OP.account(ses.email) || {};
+        if (pa.bizAsk && !pa.verified) L.push({ id: 'pv-ask-' + pa.bizAsk.at, k: '사업자등록증재제출요청', cat: 'project', at: pa.bizAsk.at, t: '파트너 인증을 위해 사업자등록증을 다시 제출해주세요.', sub: '사유: ' + pa.bizAsk.note, href: 'mypage-verify.html' });
+        if (pa.verified && pa.bizOkAt) L.push({ id: 'pv-ok-' + pa.bizOkAt, k: '파트너인증', cat: 'project', at: pa.bizOkAt, t: '파트너 인증이 완료되었습니다. 견적서 작성과 비공개 프로젝트 열람이 가능합니다.', href: 'mypage-verify.html' });
+      }
       if (OP.flow) L = L.concat(OP.flow.alarms());
       L.push({ id: 'n-21', cat: 'notice', at: new Date(2026, 8, 28, 9, 0).getTime(), t: '[공지] OmicsPharm 서비스 리뉴얼 오픈 안내', href: 'notice-view.html?id=21&r=2' });
       L.push({ id: 'n-20', cat: 'notice', at: new Date(2026, 8, 15, 9, 0).getTime(), t: '[공지] 개인정보처리방침 변경 안내', href: 'notice-view.html?id=20&r=2' });
