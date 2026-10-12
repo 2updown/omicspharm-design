@@ -7,11 +7,11 @@
 <title>파트너 인증 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > (분석파트너 카드) 파트너 인증 (Figma 시안 없음, 위시켓 '신원 인증' 구성 참고).
      인증 상태 안내 / 인증 절차 / 기관 정보 + 사업자등록증. 데모: 저장은 이 브라우저 localStorage(op.accounts)와 IndexedDB(op-files)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261013j">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261013j">
-<script src="assets/common/site.js?v=20261013j"></script>
-<script src="assets/common/mypage.js?v=20261013j"></script>
-<script src="assets/common/flow.js?v=20261013j"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261013k">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261013k">
+<script src="assets/common/site.js?v=20261013k"></script>
+<script src="assets/common/mypage.js?v=20261013k"></script>
+<script src="assets/common/flow.js?v=20261013k"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .op-vchip { margin-left:8px; }
@@ -101,6 +101,7 @@
         </div>
         <div class="actions"><button type="submit" class="btn primary lg" id="save">저장하기</button></div>
       </form>
+      <div class="op-ibox warn simple" id="mailBox" hidden><p class="t"><span>이메일 인증 후 파트너 인증을 요청할 수 있습니다. 가입하신 메일함에서 인증 메일을 확인해 주세요.</span></p></div>
       <div class="op-ibox simple" id="lockBox" hidden><p class="t"><span>인증된 기관 정보는 계약에 사용되어 직접 수정할 수 없습니다. 변경이 필요하면 <a href="contact.html?type=service">문의하기</a>로 알려 주세요.</span></p></div>
     </section>
   </div>
@@ -152,10 +153,18 @@
     $('#docBtn').hidden = false; $('#docHelp').hidden = false;
     $('#docBtn').textContent = bizDoc ? '파일 변경' : '파일 선택'; $('#docDel').hidden = !bizDoc;
     var review = !!savedDoc && bizDoc === savedDoc;
-    $('#docBtn').classList.toggle('off', review); $('#docBtn').setAttribute('aria-disabled', review); $('#docFile').disabled = review;
+    var lock = review || !OP.mailVerified(); // 메일 인증 전에도 파일 선택 막음
+    $('#docBtn').classList.toggle('off', lock); $('#docBtn').setAttribute('aria-disabled', lock); $('#docFile').disabled = lock;
     $('#docHelp').textContent = review ? '인증 검토 중에는 파일을 변경할 수 없습니다.' : bizDoc ? '저장하면 인증 검토가 시작됩니다.' : 'PDF, JPG, PNG 파일을 올려 주세요.';
   }
   showDoc(); drawState();
+  // 메일 인증 전: 사업자등록증 올리기·저장 막음 (인증 요청 불가)
+  var MAIL = OP.mailVerified();
+  if (!MAIL && !V()) {
+    $('#mailBox').hidden = false;
+    $('#docBtn').classList.add('off'); $('#docBtn').setAttribute('aria-disabled', true); $('#docFile').disabled = true;
+    $('#save').disabled = true;
+  }
   $('#docFile').addEventListener('change', function () {
     var f = this.files[0]; this.value = ''; if (!f) return;
     if (!/\.(pdf|jpe?g|png)$/i.test(f.name)) { OP.toast('PDF, JPG, PNG 파일만 올릴 수 있습니다.'); return; }

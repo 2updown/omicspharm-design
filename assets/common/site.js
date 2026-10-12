@@ -81,8 +81,9 @@
     verifyGate: function () {
       var old = document.querySelector('.op-gate'); if (old) old.remove();
       var s = OP.session(), a = (s && OP.account(s.email)) || {};
-      // 진행률: 필수 2개(파트너 정보 · 사업자등록증 인증) 기준 0 / 50%. 100%는 인증 완료(= 이 팝업이 뜨지 않음)라 업로드만 하고 검토 중이면 50% 유지
-      var pct = (a.profileDone === false ? 0 : 50) + (OP.partnerVerified() ? 50 : 0);
+      var mail = a.mailOk !== false, prof = a.profileDone !== false;
+      // 필수 3개(이메일 인증 · 파트너 정보 · 사업자등록증 인증) 중 완료 비율. 100%는 인증 완료라 팝업에는 0·33·67%만 보임
+      var pct = OP.partnerVerified() ? 100 : Math.round(((mail ? 1 : 0) + (prof ? 1 : 0)) / 3 * 100);
       var item = function (done, label, href, sub) {
         return done ? '<span class="gi done"><i class="ck"></i>' + label + (sub ? '<em>' + sub + '</em>' : '') + '</span>'
           : '<a class="gi" href="' + href + '"><i class="pl"></i>' + label + '<i class="go"></i></a>';
@@ -93,11 +94,12 @@
         '<h3 id="opGateT">파트너 인증을 위한<br>필수 정보를 등록해주세요</h3>' +
         '<p>인증이 완료되면 견적서 작성·제출, 비공개 프로젝트 열람,<br>프로젝트 매칭·계약을 이용할 수 있습니다.</p>' +
         '<div class="bar"><span class="gtip">인증 필수 정보 <b>' + pct + '%</b> 완료</span><span class="fill" style="width:' + pct + '%"></span></div>' +
-        '<div class="list">' + item(true, '파트너 정보 등록') + item(false, '사업자등록증 업로드', 'mypage-verify.html') +
+        '<div class="list">' + (mail ? '' : '<button type="button" class="gi" data-gate-mail><i class="pl"></i>이메일 인증<i class="go"></i></button>') + item(true, '파트너 정보 등록') +
+          (mail ? item(false, '사업자등록증 업로드', 'mypage-verify.html') : '<span class="gi off"><i class="pl"></i>사업자등록증 업로드<i class="go"></i></span>') + // 메일 인증 전에는 업로드 비활성
           '<a class="gi opt" href="mypage-service.html"><i class="pl"></i>제공 분석 서비스 입력<span class="tag">선택</span><i class="go"></i></a></div></div>';
       var close = function () { m.remove(); document.removeEventListener('keydown', key); };
       var key = function (e) { if (e.key === 'Escape') close(); };
-      m.addEventListener('click', function (e) { if (e.target === m || e.target.closest('.x')) close(); });
+      m.addEventListener('click', function (e) { if (e.target === m || e.target.closest('.x')) close(); else if (e.target.closest('[data-gate-mail]')) OP.toast('인증 메일을 다시 보냈습니다. 메일함을 확인해 주세요.'); });
       document.addEventListener('keydown', key);
       document.body.appendChild(m); m.querySelector('.x').focus();
     },
