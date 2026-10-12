@@ -255,4 +255,4 @@ div.op-phone.bad input, div.op-phone.bad select { border-color:var(--op-red-600)
 .op-gate .gi .go { -webkit-mask:url(../auth/ic-caret-right.svg) center/contain no-repeat; mask:url(../auth/ic-caret-right.svg) center/contain no-repeat; }
 .op-gate .gi.opt { border-color:#d4d4d4; color:#404040; } /* 선택 항목: 회색 아웃라인 */
 .op-gate a.gi.opt:hover { background:#fafafa; border-color:#a3a3a3; }
-.op-gate .gi .tag { padding:2px 8px; border-radius:8px; background:#fafafa; color:#525252; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; } /* badge_basic gray tertiary (605:41261) */
+.op-gate .gi .tag { padding:1px 7px; border:1px solid #525252; border-radius:8px; color:#525252; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; } /* badge_basic gray outline (605:41259) */
