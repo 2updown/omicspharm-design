@@ -75,7 +75,7 @@
     canQuote: function () { return OP.partnerVerified(); },
     isPartner: function () { var s = OP.session(); return !!s && s.role === 'partner'; },
     // 미인증 분석파트너 안내: 사업자등록증을 아직 안 올렸으면 업로드 안내, 올렸으면 확인 중 안내
-    verifyHint: function () { var s = OP.session(), a = (s && OP.account(s.email)) || {}; return a.bizDoc ? '제출하신 사업자등록증을 확인하고 있습니다. 확인이 끝나면 인증해 드립니다.' : '사업자등록증을 올리면 OmicsPharm이 기관·서비스 정보를 확인한 뒤 인증해 드립니다.'; },
+    verifyHint: function () { var s = OP.session(), a = (s && OP.account(s.email)) || {}; return a.bizDoc ? (a.mailOk === false ? '이메일 인증을 완료하면 제출하신 사업자등록증 확인을 시작합니다.' : '제출하신 사업자등록증을 확인하고 있습니다. 확인이 끝나면 인증해 드립니다.') : '사업자등록증을 올리면 OmicsPharm이 기관·서비스 정보를 확인한 뒤 인증해 드립니다.'; },
     // 미인증 분석파트너가 견적서 작성을 누르면 띄우는 인증 안내 팝업 (위시켓 '프로젝트 지원이 처음이신가요?' 참고)
     // 필수: 기본 정보(가입 시) + 사업자등록증. 제공 분석 서비스는 선택(매칭 추천용)이라 진행률에 넣지 않음
     verifyGate: function () {
@@ -95,7 +95,7 @@
         '<p>인증이 완료되면 견적서 작성·제출, 비공개 프로젝트 열람,<br>프로젝트 매칭·계약을 이용할 수 있습니다.</p>' +
         '<div class="bar"><span class="gtip">인증 필수 정보 <b>' + pct + '%</b> 완료</span><span class="fill" style="width:' + pct + '%"></span></div>' +
         '<div class="list">' + (mail ? '' : '<button type="button" class="gi" data-gate-mail><i class="pl"></i>이메일 인증<i class="go"></i></button>') + item(true, '파트너 정보 등록') +
-          (mail ? item(false, '사업자등록증 업로드', 'mypage-verify.html') : '<span class="gi off"><i class="pl"></i>사업자등록증 업로드<i class="go"></i></span>') + // 메일 인증 전에는 업로드 비활성
+          item(false, '사업자등록증 업로드', 'mypage-verify.html') + // 메일 인증 전에도 업로드 가능 (검토는 메일 인증 후)
           '<a class="gi opt" href="mypage-service.html"><i class="pl"></i>제공 분석 서비스 입력<span class="tag">선택</span><i class="go"></i></a></div></div>';
       var close = function () { m.remove(); document.removeEventListener('keydown', key); };
       var key = function (e) { if (e.key === 'Escape') close(); };

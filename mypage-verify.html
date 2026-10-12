@@ -7,11 +7,11 @@
 <title>파트너 인증 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > (분석파트너 카드) 파트너 인증 (Figma 시안 없음, 위시켓 '신원 인증' 구성 참고).
      인증 상태 안내 / 인증 절차 / 기관 정보 + 사업자등록증. 데모: 저장은 이 브라우저 localStorage(op.accounts)와 IndexedDB(op-files)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261013x">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261013x">
-<script src="assets/common/site.js?v=20261013x"></script>
-<script src="assets/common/mypage.js?v=20261013x"></script>
-<script src="assets/common/flow.js?v=20261013x"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261013z">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261013z">
+<script src="assets/common/site.js?v=20261013z"></script>
+<script src="assets/common/mypage.js?v=20261013z"></script>
+<script src="assets/common/flow.js?v=20261013z"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .op-vchip { margin-left:8px; }
@@ -99,7 +99,7 @@
             <p class="help" id="docHelp"></p>
             <p class="note" id="docNote" hidden>아래 저장하기를 눌러야 반영됩니다.</p></div></div>
         </div>
-        <div class="op-ibox warn simple" id="mailBox" hidden><p class="t"><span>이메일 인증 후 파트너 인증을 요청할 수 있습니다. 가입하신 메일함에서 인증 메일을 확인해 주세요.</span></p></div>
+        <div class="op-ibox warn simple" id="mailBox" hidden><p class="t"><span>이메일 인증을 완료해야 인증 검토가 시작됩니다. 가입하신 메일함에서 인증 메일을 확인해 주세요.</span></p></div>
         <div class="actions"><button type="submit" class="btn primary lg" id="save">저장하기</button></div>
       </form>
       <div class="op-ibox simple" id="lockBox" hidden><p class="t"><span>인증된 기관 정보는 계약에 사용되어 직접 수정할 수 없습니다. 변경이 필요하면 <a href="contact.html?type=service">문의하기</a>로 알려 주세요.</span></p></div>
@@ -117,12 +117,15 @@
   var email = me.s.email, acc = me.acc, esc = OP.my.esc;
 
   // 인증 상태: none(서류 없음) → review(검토 중) → ok(인증 완료)
-  function stage() { var a = OP.account(email) || {}; return OP.partnerVerified() ? 'ok' : a.bizDoc ? 'review' : 'none'; }
+  // 인증 상태: none(서류 없음) → mail(서류는 올렸지만 메일 인증 전 = 검토 대기) → review(검토 중) → ok(인증 완료)
+  function stage() { var a = OP.account(email) || {}; return OP.partnerVerified() ? 'ok' : a.bizDoc ? (OP.mailVerified() ? 'review' : 'mail') : 'none'; }
   function drawState() {
     var st = stage(), B = $('#stBox');
+    $('#mailBox').hidden = !(st === 'none' && !OP.mailVerified()); // 메일 미인증 안내 (서류를 올린 뒤에는 위 상태 안내가 대신함)
     $('#stChip').innerHTML = '<span class="op-vchip' + (st === 'ok' ? ' ok">인증' : '">미인증') + '</span>';
     var T = {
       none: ['warn', '아직 인증되지 않은 분석파트너입니다.', ['아래에서 기관 정보와 사업자등록증을 올리면 인증 검토가 시작됩니다.', '인증 전에는 공개 프로젝트 열람만 가능합니다.']],
+      mail: ['warn', '이메일 인증 후 인증 검토가 시작됩니다.', ['사업자등록증이 등록되었습니다. 이메일 인증을 완료하면 OmicsPharm이 확인을 시작합니다.', '가입하신 메일함에서 인증 메일을 확인해 주세요.']],
       review: ['', '인증 검토 중입니다.', ['제출하신 사업자등록증을 확인하고 있습니다. 결과는 메일과 알림으로 알려드립니다.', '검토 중에는 사업자등록증을 바꿀 수 없습니다. 다른 파일로 바꾸려면 삭제 후 다시 올려 주세요.']],
       ok: ['hl', '인증이 완료된 분석파트너입니다.', ['견적서 작성·제출, 비공개 프로젝트 열람, 프로젝트 매칭·계약을 이용할 수 있습니다.', '상호·주소 등 기관 정보가 바뀐 경우 문의하기로 알려 주세요.']]
     }[st];
@@ -153,20 +156,15 @@
     $('#docBtn').hidden = false; $('#docHelp').hidden = false;
     $('#docBtn').textContent = bizDoc ? '파일 변경' : '파일 선택'; $('#docDel').hidden = !bizDoc;
     var review = !!savedDoc && bizDoc === savedDoc;
-    var lock = review || !OP.mailVerified(); // 메일 인증 전에도 파일 선택 막음
+    review = review && OP.mailVerified(); // 메일 인증 전(검토 대기)에는 파일을 바꿀 수 있음
+    var lock = review;
     $('#docBtn').classList.toggle('off', lock); $('#docBtn').setAttribute('aria-disabled', lock); $('#docFile').disabled = lock;
-    $('#docHelp').textContent = review ? '인증 검토 중에는 파일을 변경할 수 없습니다.' : bizDoc ? '저장하면 인증 검토가 시작됩니다.' : 'PDF, JPG, PNG 파일을 올려 주세요.';
+    var waitMail = !OP.mailVerified() && !!bizDoc && bizDoc === savedDoc; // 올려 두었고 메일 인증 대기
+    $('#docHelp').textContent = review ? '인증 검토 중에는 파일을 변경할 수 없습니다.' : waitMail ? '이메일 인증을 완료하면 인증 검토가 시작됩니다.' : bizDoc ? (OP.mailVerified() ? '저장하면 인증 검토가 시작됩니다.' : '저장해 두면 이메일 인증 후 인증 검토가 시작됩니다.') : 'PDF, JPG, PNG 파일을 올려 주세요.';
   }
   showDoc(); drawState();
   // 메일 인증 전: 사업자등록증 올리기·저장 막음 (인증 요청 불가)
-  var MAIL = OP.mailVerified();
-  if (!MAIL && !V()) { // 메일 인증 전: 기관 정보·사업자등록증 입력과 저장을 모두 막음
-    $('#mailBox').hidden = false;
-    ['#ceo', '#bizno', '#addr'].forEach(function (k) { $(k).disabled = true; });
-    document.querySelector('.addr .btn').disabled = true;
-    $('#docBtn').classList.add('off'); $('#docBtn').setAttribute('aria-disabled', true); $('#docFile').disabled = true; $('#docDel').hidden = true;
-    $('#save').disabled = true;
-  }
+  // 메일 인증 전에도 입력·업로드·저장은 가능 (회원가입과 같음). 인증 검토는 메일 인증 후 시작 → 표 아래 안내
   $('#docFile').addEventListener('change', function () {
     var f = this.files[0]; this.value = ''; if (!f) return;
     if (!/\.(pdf|jpe?g|png)$/i.test(f.name)) { OP.toast('PDF, JPG, PNG 파일만 올릴 수 있습니다.'); return; }
@@ -197,7 +195,7 @@
     if (!ok) return;
     if (V()) return; // 인증 후에는 저장 없음 (보기 전용)
     var data = { ceo: c.value.trim(), bizno: b.value, addr: a.value.trim(), bizDoc: bizDoc };
-    var msg = bizDoc !== (OP.account(email) || {}).bizDoc ? '인증 검토를 요청했습니다.' : '기관 정보가 저장되었습니다.'; // 새 파일 → 인증 검토 시작
+    var msg = bizDoc !== (OP.account(email) || {}).bizDoc ? (OP.mailVerified() ? '인증 검토를 요청했습니다.' : '저장되었습니다. 이메일 인증을 완료하면 인증 검토가 시작됩니다.') : '기관 정보가 저장되었습니다.'; // 새 파일 → 인증 검토 시작 (메일 인증 후)
     if (bizFile) { OP.files.put('biz:acc:' + email, bizFile); bizFile = null; }
     savedDoc = bizDoc;
     OP.saveAccount(email, data);
