@@ -7,11 +7,11 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261013p">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261013p">
-<script src="assets/common/site.js?v=20261013p"></script>
-<script src="assets/common/mypage.js?v=20261013p"></script>
-<script src="assets/common/flow.js?v=20261013p"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261013q">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261013q">
+<script src="assets/common/site.js?v=20261013q"></script>
+<script src="assets/common/mypage.js?v=20261013q"></script>
+<script src="assets/common/flow.js?v=20261013q"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -40,12 +40,12 @@
   .fg h4 { font-size:16px; font-weight:700; line-height:22px; text-align:center; color:var(--fc); }
   .fg .cells { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); gap:8px; flex:1; }
   .fg .cells > * { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:14px 6px; border-radius:8px; background:var(--fb); text-align:center; }
-  .fg .cells a:hover { box-shadow:inset 0 0 0 1px var(--fc); }
+  .fg .cells a:hover { box-shadow:inset 0 0 0 1px var(--fs); } /* hover 테두리는 묶음 색의 연한 단계 */
   .fg .cells span { font-size:13px; font-weight:500; line-height:18px; color:var(--gray-700); word-break:keep-all; }
   .fg .cells b { font-size:20px; font-weight:700; line-height:28px; color:#000; }
   .fg .cells a b { color:var(--fc); }
   .fg .cells em { font-style:normal; font-size:12px; line-height:16px; color:var(--orange-600); }
-  .fg.red { --fc:#f00011; --fb:#fff5f5; } .fg.teal { --fc:var(--teal-600); --fb:#f2fbf9; } .fg.gray { --fc:#000; --fb:#f7f7f7; } .fg.blue { --fc:#0065f4; --fb:#f2f7ff; }
+  .fg.red { --fc:#f00011; --fb:#fff5f5; --fs:#ffc7c9; } .fg.teal { --fc:var(--teal-600); --fb:#f2fbf9; --fs:#a6e3d9; } .fg.gray { --fc:#000; --fb:#f7f7f7; --fs:#d4d4d4; } .fg.blue { --fc:#0065f4; --fb:#f2f7ff; --fs:#b8dcff; }
   @media (max-width:900px) { .fgrid { grid-template-columns:1fr !important; } }
 
 
