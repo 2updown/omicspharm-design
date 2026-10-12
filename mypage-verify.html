@@ -7,11 +7,11 @@
 <title>파트너 인증 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > (분석파트너 카드) 파트너 인증 (Figma 시안 없음, 위시켓 '신원 인증' 구성 참고).
      인증 상태 안내 / 인증 절차 / 기관 정보 + 사업자등록증. 데모: 저장은 이 브라우저 localStorage(op.accounts)와 IndexedDB(op-files)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261013w">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261013w">
-<script src="assets/common/site.js?v=20261013w"></script>
-<script src="assets/common/mypage.js?v=20261013w"></script>
-<script src="assets/common/flow.js?v=20261013w"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261013x">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261013x">
+<script src="assets/common/site.js?v=20261013x"></script>
+<script src="assets/common/mypage.js?v=20261013x"></script>
+<script src="assets/common/flow.js?v=20261013x"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .op-vchip { margin-left:8px; }
@@ -49,7 +49,7 @@
   .doc input[type=file] { display:none; }
   .doc .btn.del { border-color:var(--red-600); color:var(--red-600); background:#fff; }
   .doc .btn.del:hover { background:#fef3f2; }
-  .doc .btn.off { opacity:.4; pointer-events:none; cursor:default; } /* 인증 검토 중: 파일 변경 불가 */
+  .doc .btn.off { background:var(--gray-100); border-color:var(--gray-200); color:var(--gray-400); pointer-events:none; cursor:default; } /* 인증 검토 중: 파일 변경 불가 */
   /* 인증 완료: 기관 정보 보기 전용 */
   #lockBox a { color:inherit; font-weight:600; text-decoration:underline; text-underline-offset:3px; }
   .inp[disabled] { background:var(--gray-50); color:var(--gray-700); -webkit-text-fill-color:var(--gray-700); opacity:1; cursor:default; }
@@ -99,9 +99,9 @@
             <p class="help" id="docHelp"></p>
             <p class="note" id="docNote" hidden>아래 저장하기를 눌러야 반영됩니다.</p></div></div>
         </div>
+        <div class="op-ibox warn simple" id="mailBox" hidden><p class="t"><span>이메일 인증 후 파트너 인증을 요청할 수 있습니다. 가입하신 메일함에서 인증 메일을 확인해 주세요.</span></p></div>
         <div class="actions"><button type="submit" class="btn primary lg" id="save">저장하기</button></div>
       </form>
-      <div class="op-ibox warn simple" id="mailBox" hidden><p class="t"><span>이메일 인증 후 파트너 인증을 요청할 수 있습니다. 가입하신 메일함에서 인증 메일을 확인해 주세요.</span></p></div>
       <div class="op-ibox simple" id="lockBox" hidden><p class="t"><span>인증된 기관 정보는 계약에 사용되어 직접 수정할 수 없습니다. 변경이 필요하면 <a href="contact.html?type=service">문의하기</a>로 알려 주세요.</span></p></div>
     </section>
   </div>
@@ -160,9 +160,11 @@
   showDoc(); drawState();
   // 메일 인증 전: 사업자등록증 올리기·저장 막음 (인증 요청 불가)
   var MAIL = OP.mailVerified();
-  if (!MAIL && !V()) {
+  if (!MAIL && !V()) { // 메일 인증 전: 기관 정보·사업자등록증 입력과 저장을 모두 막음
     $('#mailBox').hidden = false;
-    $('#docBtn').classList.add('off'); $('#docBtn').setAttribute('aria-disabled', true); $('#docFile').disabled = true;
+    ['#ceo', '#bizno', '#addr'].forEach(function (k) { $(k).disabled = true; });
+    document.querySelector('.addr .btn').disabled = true;
+    $('#docBtn').classList.add('off'); $('#docBtn').setAttribute('aria-disabled', true); $('#docFile').disabled = true; $('#docDel').hidden = true;
     $('#save').disabled = true;
   }
   $('#docFile').addEventListener('change', function () {
