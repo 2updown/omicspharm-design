@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
+<title>클라이언트 관리 · 마이페이지 · OmicsPharm</title>
+<!-- 마이페이지 > (컨설턴트) 관리 > 클라이언트 관리 (Figma 시안 없음, 기존 사이트 컨설턴트 마이페이지 구성 기준).
+     목록(소속 · 검색 / No · 소속 · 부서 · 성함 · 닉네임 · 이메일 · 연락처 · 의뢰 프로젝트 · 상세보기) → 상세('○○ 프로젝트 리스트': 기본 정보 + 프로젝트 표).
+     예시 클라이언트는 모두 가상 값. 데모 클라이언트(client@omicspharm.test)는 이 브라우저의 의뢰도 함께 보임 -->
+<link rel="stylesheet" href="assets/common/site.css?v=20261014d">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261014d">
+<script src="assets/common/site.js?v=20261014d"></script>
+<script src="assets/common/projects-data.js?v=20261014d"></script>
+<script src="assets/common/mypage.js?v=20261014d"></script>
+<script src="assets/common/flow.js?v=20261014d"></script>
+<script src="assets/common/manage.js?v=20261014d"></script>
+</head>
+<body>
+<div data-op-gnb></div>
+
+<section class="page-head"><div class="in">
+  <h1>마이페이지</h1>
+</div></section>
+
+<main class="body"><div class="in">
+  <aside class="side" data-op-side></aside>
+  <div class="main"><section class="card" id="card"></section></div>
+</div></main>
+
+<div data-op-footer></div>
+
+<script>
+(function () {
+  var me = OP.mypage('clients'); if (!me) return;
+  if (me.s.role !== 'admin') { location.replace('mypage.html'); return; } // 컨설턴트 전용
+  var M = OP.manage, esc = M.esc, F = OP.flow, $ = function (s) { return document.querySelector(s); };
+
+  // 예시 클라이언트 (가상). 닉네임은 프로젝트 찾기 예시 데이터의 의뢰자 ID와 연결
+  var DEMO = OP.account('client@omicspharm.test') || {};
+  var CL = [
+    { nick: 'cli05', email: 'client@omicspharm.test', org: DEMO.org || '○○연구소', dept: DEMO.dept || '연구실', name: DEMO.name || '홍길동', tel: DEMO.phone || '010-0000-0000', job: '연구원', country: 'SOUTH KOREA', field: '단백체 · 대사체', demo: true },
+    { nick: 'user01', email: 'user01@example.test', org: '○○대학교 의과대학', dept: '의생명연구실', name: '김○○', tel: '010-0000-0001', job: '교수', country: 'SOUTH KOREA', field: '임상 바이오마커' },
+    { nick: 'lab01', email: 'lab01@example.test', org: '△△바이오', dept: 'R&D센터', name: '이○○', tel: '010-0000-0002', job: '책임연구원', country: 'SOUTH KOREA', field: '바이오의약품' },
+    { nick: 'bio02', email: 'bio02@example.test', org: '□□제약', dept: '신약연구소', name: '박○○', tel: '010-0000-0003', job: '선임연구원', country: 'SOUTH KOREA', field: '단백체' },
+    { nick: 'res03', email: 'res03@example.test', org: '◇◇연구원', dept: '오믹스팀', name: '최○○', tel: '010-0000-0004', job: '연구원', country: 'SOUTH KOREA', field: '유전체 · 전사체' },
+    { nick: 'omx04', email: 'omx04@example.test', org: '☆☆병원', dept: '임상연구센터', name: '정○○', tel: '010-0000-0005', job: '연구간호사', country: 'SOUTH KOREA', field: '대사체' }
+  ];
+  function projectsOf(c) {
+    var L = OP_PROJECTS.DATA.filter(function (x) { return x.owner === '*****(' + c.nick + ')' && !x.rid; }).map(M.fromData);
+    if (c.demo) L = F.requests().filter(function (r) { return (r.owner || '') === c.email || r.demo; }).map(M.fromReq).concat(L);
+    return L.sort(function (a, b) { return String(b.reg).localeCompare(String(a.reg)); });
+  }
+  var key = new URLSearchParams(location.search).get('nick');
+  if (key) detail(key); else list();
+
+  function list() {
+    var orgs = CL.map(function (c) { return c.org; });
+    $('#card').innerHTML = '<div class="card-head"><h3>클라이언트 관리</h3></div>' +
+      '<div class="mg-filter"><select class="mg-sel" id="fOrg"><option value="">소속</option>' + orgs.map(function (o) { return '<option>' + esc(o) + '</option>'; }).join('') + '</select>' +
+        '<div class="mg-q"><input type="search" id="fQ" placeholder="부서, 성함, 닉네임, 연락처 검색"><button type="button" class="btn" id="go">검색</button></div></div>' +
+      '<p class="mg-total">총 <b id="n">0</b>건</p>' +
+      '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">No</th><th>소속</th><th>부서</th><th>성함</th><th>닉네임</th><th>이메일</th><th>연락처</th><th class="c">의뢰 프로젝트</th><th class="c">프로젝트 관리</th></tr></thead><tbody id="tb"></tbody></table></div>';
+    var draw = function () {
+      var o = $('#fOrg').value, q = $('#fQ').value.trim();
+      var L = CL.filter(function (c) { return (!o || c.org === o) && (!q || [c.dept, c.name, c.nick, c.tel].join(' ').indexOf(q) > -1); });
+      $('#n').textContent = L.length;
+      $('#tb').innerHTML = L.length ? L.map(function (c, i) {
+        return '<tr><td class="c">' + (L.length - i) + '</td><td class="t">' + esc(c.org) + '</td><td>' + esc(c.dept) + '</td><td>' + esc(c.name) + '</td><td>' + esc(c.nick) + '</td><td class="mail">' + esc(c.email) + '</td><td>' + esc(c.tel) + '</td>' +
+          '<td class="c">' + projectsOf(c).length + '</td><td class="c"><a class="mg-view" href="mypage-clients.html?nick=' + encodeURIComponent(c.nick) + '">상세보기</a></td></tr>';
+      }).join('') : '<tr><td colspan="9" class="mg-empty">검색 결과가 없습니다.</td></tr>';
+    };
+    $('#fOrg').addEventListener('change', draw); $('#go').addEventListener('click', draw);
+    $('#fQ').addEventListener('keydown', function (e) { if (e.key === 'Enter') draw(); });
+    draw();
+  }
+
+  function detail(nick) {
+    var c = CL.filter(function (x) { return x.nick === nick; })[0];
+    if (!c) { location.replace('mypage-clients.html'); return; }
+    var kv = function (k, v) { return '<div class="k">' + k + '</div><div>' + esc(v || '-') + '</div>'; };
+    $('#card').innerHTML =
+      '<div class="mg-head"><a href="mypage-clients.html" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3><em>' + esc(c.org) + '</em> 프로젝트 리스트</h3></div>' +
+      '<p class="mg-sub">클라이언트 기본 정보</p>' +
+      '<div class="mg-info">' + kv('이메일', c.email) + kv('소속', c.org) + kv('부서', c.dept) + kv('연락처', c.tel) + kv('담당업무', c.job) + kv('닉네임', c.nick) + kv('국가', c.country) + kv('연구분야', c.field) + '</div>' +
+      '<div id="pt"></div>';
+    M.projTable($('#pt'), projectsOf(c));
+  }
+})();
+</script>
+</body>
+</html>

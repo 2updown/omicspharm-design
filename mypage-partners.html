@@ -9,11 +9,13 @@
      파트너 인증 검토: 목록(상태별) → 상세(기관 정보 · 사업자등록증 [보기] [인증 완료] [재제출 요청]).
      재제출 요청은 클라이언트 사업자등록증 재제출 요청(mypage-request.html)과 같은 방식. 규칙: docs/partner-verification.md
      데모: 로그인 가능한 분석파트너(partner@omicspharm.test)는 계정 값(op.accounts)을, 가상 파트너는 op.partnerReview를 바꾼다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261014b">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261014b">
-<script src="assets/common/site.js?v=20261014b"></script>
-<script src="assets/common/mypage.js?v=20261014b"></script>
-<script src="assets/common/flow.js?v=20261014b"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261014d">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261014d">
+<script src="assets/common/site.js?v=20261014d"></script>
+<script src="assets/common/projects-data.js?v=20261014d"></script>
+<script src="assets/common/mypage.js?v=20261014d"></script>
+<script src="assets/common/flow.js?v=20261014d"></script>
+<script src="assets/common/manage.js?v=20261014d"></script>
 <style>
   .chips { display:flex; flex-wrap:wrap; gap:8px; }
   .chips button { height:36px; padding:0 14px; border-radius:99px; border:1px solid var(--gray-300); background:#fff; font-size:14px; font-weight:500; color:var(--gray-600); }
@@ -27,7 +29,7 @@
   .prow2 .t { flex:1; min-width:0; font-size:16px; font-weight:600; line-height:22px; }
   .prow2 .t small { display:block; margin-top:2px; font-size:13px; font-weight:400; line-height:18px; color:var(--gray-500); }
   .prow2 .m { flex:none; width:120px; font-size:13px; color:var(--gray-500); text-align:right; }
-  .st { flex:none; display:inline-flex; align-items:center; height:24px; padding:0 8px; border-radius:8px; font-size:12px; font-weight:500; border:1px solid; }
+  .st { flex:none; white-space:nowrap; display:inline-flex; align-items:center; height:24px; padding:0 8px; border-radius:8px; font-size:12px; font-weight:500; border:1px solid; }
   .st.review { color:#0065f4; border-color:#bcd6ff; background:#edf6ff; }
   .st.ask { color:#ca0008; border-color:#ffc7c9; background:#fff1f2; }
   .st.ok { color:var(--teal-700); border-color:var(--teal-600); background:#fff; }
@@ -90,10 +92,10 @@
   var CLS = { none: 'wait', mail: 'wait', review: 'review', ask: 'ask', ok: 'ok' };
   function list() {
     return F.PARTNERS.map(function (p, i) {
-      var o = { key: p.key, org: p.org, name: p.name, mail: p.mail, tel: p.tel, svc: p.svc, at: T0 - 864e5 * (30 + i * 9) };
+      var o = { key: p.key, org: p.org, name: p.name, mail: p.mail, tel: p.tel, svc: p.svc, at: T0 - 864e5 * (30 + i * 9), dept: ['분석팀', '연구소', 'Bio R&D센터', '오믹스분석팀', '분석서비스팀', '바이오분석실', '연구개발팀'][i % 7], job: '분석 서비스 담당', country: 'SOUTH KOREA' };
       if (p.login) { // 실제 로그인 가능한 데모 분석파트너: 계정 값 기준
         var a = OP.account(p.key) || {};
-        o.org = a.org || p.org; o.name = a.name || p.name; o.tel = a.phone || p.tel; o.ceo = a.ceo; o.bizno = a.bizno; o.addr = a.addr; o.doc = a.bizDoc; o.mailOk = a.mailOk !== false;
+        o.org = a.org || p.org; o.name = a.name || p.name; o.dept = a.dept || o.dept; o.tel = a.phone || p.tel; o.ceo = a.ceo; o.bizno = a.bizno; o.addr = a.addr; o.doc = a.bizDoc; o.mailOk = a.mailOk !== false;
         o.svc = (a.services || []).map(function (x) { return x.svc; }).filter(Boolean); if (!o.svc.length) o.svc = p.svc;
         o.ask = a.bizAsk || null; o.okAt = a.bizOkAt || (a.verified ? T0 - 864e5 * 20 : 0); o.real = true; o.at = a.bizAt || o.at;
         o.st = a.verified ? 'ok' : o.ask ? 'ask' : !o.doc ? 'none' : o.mailOk ? 'review' : 'mail';
@@ -105,29 +107,43 @@
       return o;
     });
   }
+  // 이 분석파트너의 프로젝트: 견적 요청·제출한 의뢰 + (데모 분석파트너) 계약 이후 예시 프로젝트
+  function projectsOf(o) {
+    var L = F.requests().filter(function (r) { return F.state(r.id).P[o.key]; }).map(OP.manage.fromReq);
+    if (o.real) L = L.concat(OP.my.partnerProjects().filter(function (p) { return !p.flow; }).map(OP.manage.fromPartner));
+    return L;
+  }
+  var SVCK = { '단백체': '단백체 분석', '대사체': '대사체 분석', '유전체': '유전체 분석', '전사체': '전사체 분석', 'Olink': 'Olink 분석', '바이오의약품': '바이오의약품·ADC 분석', '바이오의약품·ADC': '바이오의약품·ADC 분석' };
+  var svcTxt = function (o) { return (o.svc || []).map(function (v) { return SVCK[v] || v; }).join(', '); };
   var qs = new URLSearchParams(location.search), key = qs.get('key');
   if (key) detail(key); else drawList();
 
   // ── 목록 ──
   function drawList() {
-    var L = list(), cur = qs.get('st') || 'review';
-    var TABS = [['review', '인증 검토', ['review']], ['ask', '재제출 요청', ['ask']], ['ok', '인증 완료', ['ok']], ['etc', '미제출·검토 대기', ['none', 'mail']], ['all', '전체', null]];
-    $('#card').innerHTML = '<div class="card-head"><h3>분석파트너 관리</h3></div><div class="chips" id="chips"></div><div class="plist2" id="pl"></div>';
+    var L = list(), cur = qs.get('st') || 'all';
+    var TABS = [['all', '전체', null], ['review', '인증 검토', ['review']], ['ask', '재제출 요청', ['ask']], ['ok', '인증 완료', ['ok']], ['etc', '미제출·검토 대기', ['none', 'mail']]];
+    $('#card').innerHTML = '<div class="card-head"><h3>분석파트너 관리</h3></div><div class="chips" id="chips"></div>' +
+      '<div class="mg-filter"><select class="mg-sel" id="fSvc"><option value="">분석 서비스</option>' + OP.manage.SVCS.map(function (v) { return '<option>' + v + '</option>'; }).join('') + '</select>' +
+        '<select class="mg-sel" id="fOrg"><option value="">소속</option>' + L.map(function (o) { return '<option>' + esc(o.org) + '</option>'; }).join('') + '</select>' +
+        '<div class="mg-q"><input type="search" id="fQ" placeholder="부서, 성함, 닉네임, 연락처 검색"><button type="button" class="btn" id="go">검색</button></div></div>' +
+      '<p class="mg-total">총 <b id="n">0</b>건</p>' +
+      '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">No</th><th>분석 서비스</th><th>소속</th><th>부서</th><th>성명</th><th>이메일</th><th>연락처</th><th class="c">진행 프로젝트</th><th class="c">인증 상태</th><th class="c">프로젝트 관리</th></tr></thead><tbody id="tb"></tbody></table></div>';
     var draw = function () {
       $('#chips').innerHTML = TABS.map(function (t) {
         var n = L.filter(function (o) { return !t[2] || t[2].indexOf(o.st) > -1; }).length;
         return '<button type="button" data-t="' + t[0] + '"' + (cur === t[0] ? ' class="on"' : '') + '>' + t[1] + '<span>' + n + '</span></button>';
       }).join('');
-      var tab = TABS.filter(function (t) { return t[0] === cur; })[0];
-      var R = L.filter(function (o) { return !tab[2] || tab[2].indexOf(o.st) > -1; });
-      $('#pl').innerHTML = R.length ? R.map(function (o) {
-        return '<div class="prow2"><a class="cover" href="mypage-partners.html?key=' + encodeURIComponent(o.key) + '" aria-label="' + esc(o.org) + '"></a>' +
-          '<span class="st ' + CLS[o.st] + '">' + LABEL[o.st] + '</span>' +
-          '<span class="t">' + esc(o.org) + '<small>' + esc(o.name || '-') + ' · ' + esc(o.mail || '-') + ' · ' + esc((o.svc || []).join(', ')) + '</small></span>' +
-          '<span class="m">' + (o.st === 'ok' ? '인증 ' + ymd(o.okAt) : o.st === 'ask' ? '요청 ' + ymd(o.ask && o.ask.at) : '신청 ' + ymd(o.at)) + '</span></div>';
-      }).join('') : '<div class="empty2">해당하는 분석파트너가 없습니다.</div>';
+      var tab = TABS.filter(function (t) { return t[0] === cur; })[0], sv = $('#fSvc').value, og = $('#fOrg').value, q = $('#fQ').value.trim();
+      var R = L.filter(function (o) { return (!tab[2] || tab[2].indexOf(o.st) > -1) && (!sv || svcTxt(o).indexOf(sv) > -1) && (!og || o.org === og) && (!q || [o.dept, o.name, o.tel].join(' ').indexOf(q) > -1); });
+      $('#n').textContent = R.length;
+      $('#tb').innerHTML = R.length ? R.map(function (o, i) {
+        return '<tr><td class="c">' + (R.length - i) + '</td><td>' + esc(svcTxt(o)) + '</td><td class="t">' + esc(o.org) + '</td><td>' + esc(o.dept || '-') + '</td><td>' + esc(o.name || '-') + '</td><td class="mail">' + esc(o.mail || '-') + '</td><td>' + esc(o.tel || '-') + '</td>' +
+          '<td class="c">' + projectsOf(o).length + '</td><td class="c"><span class="st ' + CLS[o.st] + '">' + LABEL[o.st] + '</span></td><td class="c"><a class="mg-view" href="mypage-partners.html?key=' + encodeURIComponent(o.key) + '">상세보기</a></td></tr>';
+      }).join('') : '<tr><td colspan="10" class="mg-empty">해당하는 분석파트너가 없습니다.</td></tr>';
     };
     $('#chips').addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (!b) return; cur = b.dataset.t; history.replaceState(null, '', '?st=' + cur); draw(); });
+    ['#fSvc', '#fOrg'].forEach(function (k) { $(k).addEventListener('change', draw); }); $('#go').addEventListener('click', draw);
+    $('#fQ').addEventListener('keydown', function (e) { if (e.key === 'Enter') draw(); });
     draw();
   }
 
@@ -141,11 +157,14 @@
       : o.st === 'mail' ? '사업자등록증은 올렸지만 이메일 인증 전입니다. 이메일 인증을 마치면 인증 검토 목록에 올라옵니다.'
       : o.st === 'none' ? '사업자등록증을 아직 올리지 않았습니다.' : '';
     var row = function (l, v) { return '<div class="field"><div class="flabel">' + l + '</div><div class="fbody">' + v + '</div></div>'; };
+    var kv = function (k, v) { return '<div class="k">' + k + '</div><div>' + v + '</div>'; };
     $('#card').innerHTML =
-      '<div class="card-head"><div class="dhead"><a href="mypage-partners.html" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>' + esc(o.org) + '</h3><span class="st ' + CLS[o.st] + '">' + LABEL[o.st] + '</span></div></div>' +
+      '<div class="mg-head"><a href="mypage-partners.html" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3><em>' + esc(o.org) + '</em> 프로젝트 리스트</h3><span class="st ' + CLS[o.st] + '">' + LABEL[o.st] + '</span></div>' +
+      '<p class="mg-sub">분석파트너 기본 정보</p>' +
+      '<div class="mg-info">' + kv('이메일', esc(o.mail || '-') + (o.mailOk ? '' : ' <span class="op-vchip">메일 미인증</span>')) + kv('소속', esc(o.org)) + kv('부서', esc(o.dept || '-')) + kv('연락처', esc(o.tel || '-')) + kv('담당업무', esc(o.job || '-')) + kv('국가', esc(o.country || '-')) + '</div>' +
+      '<p class="mg-sub">파트너 인증</p>' +
       '<div class="tbl">' +
-        row('기관명', esc(o.org)) + row('대표자명', esc(o.ceo || '-')) + row('사업자등록번호', esc(o.bizno || '-')) + row('주소', esc(o.addr || '-')) +
-        row('담당자', esc(o.name || '-') + ' · ' + esc(o.tel || '-')) + row('이메일', esc(o.mail || '-') + (o.mailOk ? '' : ' <span class="op-vchip">메일 미인증</span>')) +
+        row('대표자명', esc(o.ceo || '-')) + row('사업자등록번호', esc(o.bizno || '-')) + row('주소', esc(o.addr || '-')) +
         row('제공 분석 서비스', '<div class="svc2">' + (o.svc || []).map(function (v) { return '<span>' + esc(v) + '</span>'; }).join('') + '</div>') +
         row('사업자등록증', o.doc
           ? '<div class="doc2"><span class="fname"><img src="assets/auth/ic-paperclip.svg" alt="">' + esc(o.doc) + '</span><button type="button" class="btn" id="view">보기</button>' +
@@ -153,7 +172,9 @@
             (note ? '<p class="note2">' + esc(note) + '</p>' : '') +
             (o.st !== 'review' ? '<p><button type="button" class="demo-reset" id="reset">데모: 인증 검토 중으로 되돌리기</button></p>' : '')
           : '<p class="note2">' + esc(note) + '</p>') +
-      '</div>';
+      '</div>' +
+      '<p class="mg-sub">프로젝트</p><div id="pt"></div>';
+    OP.manage.projTable($('#pt'), projectsOf(o));
     if ($('#view')) $('#view').addEventListener('click', function () { preview(o, act); });
     if ($('#okBtn')) $('#okBtn').addEventListener('click', function () { okDo(o); });
     if ($('#askBtn')) $('#askBtn').addEventListener('click', function () { askDo(o); });

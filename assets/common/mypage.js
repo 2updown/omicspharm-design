@@ -17,9 +17,9 @@
     ['account', '내 정보 관리', 'mypage-account.html', null, 'me'],
     ['verify', '파트너 인증', 'mypage-verify.html', ['partner'], 'me'],
     ['service', '분석 서비스 정보', 'mypage-service.html', ['partner'], 'me'],
-    ['clients', '클라이언트 관리', '#', ['admin'], 'mgmt'],
+    ['clients', '클라이언트 관리', 'mypage-clients.html', ['admin'], 'mgmt'],
     ['partners', '분석파트너 관리', 'mypage-partners.html', ['admin'], 'mgmt'], // 파트너 인증 검토 (인증 완료 / 재제출 요청)
-    ['admin', '관리자 페이지', '#', ['admin'], 'mgmt']
+    ['admin', '관리자 페이지', 'https://omicspharm.com/admin', ['admin'], 'mgmt'] // 백오피스(새 탭)
   ];
   var GROUP = { prj: '프로젝트', me: '회원정보', mgmt: '관리' };
   function read(k, f) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch (e) { return f; } }
@@ -176,7 +176,7 @@
       var link = function (m) {
         var on = m[0] === key, label = m[1];
         var href = m[0] === 'project' && s.role === 'admin' ? 'mypage-request.html' : m[2];
-        return '<a href="' + href + '"' + (m[2] === '#' ? ' data-soon="' + label + '"' : '') + (on ? ' class="on" aria-current="page"' : '') + '>' + label +
+        return '<a href="' + href + '"' + (m[2] === '#' ? ' data-soon="' + label + '"' : '') + (/^https?:/.test(href) ? ' target="_blank" rel="noopener"' : '') + (on ? ' class="on" aria-current="page"' : '') + '>' + label +
           (NEW[m[0]] ? NB : '') + '</a>';
       };
       // 접은 묶음: 마이페이지 안에서 이동하는 동안만 유지 (계정 전환·마이페이지 밖으로 나가면 site.js가 지워서 다시 모두 펼침)
