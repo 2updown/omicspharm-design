@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261012r">
-<script src="assets/common/site.js?v=20261012r"></script>
-<script src="assets/common/mypage.js?v=20261012r"></script>
-<script src="assets/common/flow.js?v=20261012r"></script>
-<script src="assets/common/projects-data.js?v=20261012r"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261012s">
+<script src="assets/common/site.js?v=20261012s"></script>
+<script src="assets/common/mypage.js?v=20261012s"></script>
+<script src="assets/common/flow.js?v=20261012s"></script>
+<script src="assets/common/projects-data.js?v=20261012s"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -87,6 +87,7 @@
   .panel h3 { font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
   .btn-filled { display:flex; align-items:center; justify-content:center; height:48px; border-radius:8px; background:var(--teal-600); color:#fff; font-size:16px; font-weight:500; line-height:22px; }
   .btn-filled:hover { background:var(--teal-700); }
+  .btn-filled.done { background:var(--gray-500); } .btn-filled.done:hover { background:var(--gray-600); } /* 제출 완료: button_filled tertiary */
   .panel.nav { padding:12px 24px; flex-direction:row; align-items:center; justify-content:space-between; gap:0; }
   .panel.nav a { display:flex; align-items:center; gap:2px; height:48px; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-500); }
   .panel.nav a:hover { color:#000; }
@@ -403,7 +404,7 @@
     // OmicsPharm 의뢰(컨설턴트 승인 후 게시): 인증 분석파트너 누구나 견적 작성 가능. 이미 시작했거나 컨설턴트 요청을 받았으면 그 견적서로
     var fx = x.rid ? OP.flow.state(x.rid).P[OP.session().email] : null;
     pn.innerHTML = x.rid
-      ? (fx ? '<h3>' + (fx.self ? '작성 중인 견적이<br>있습니다' : 'OmicsPharm이 견적을<br>요청한 프로젝트입니다') + '</h3><a class="btn-filled" href="mypage-quote.html?rid=' + encodeURIComponent(x.rid) + '#quote">견적서 ' + (/^(req|draft|rev)$/.test(fx.status) ? '제출' : '보기') + '</a>'
+      ? (fx ? '<h3>' + (fx.self ? '작성 중인 견적이<br>있습니다' : 'OmicsPharm이 견적을<br>요청한 프로젝트입니다') + '</h3>' + (/^(req|draft|rev)$/.test(fx.status) ? '<a class="btn-filled" href="mypage-quote.html?rid=' + encodeURIComponent(x.rid) + '#quote">견적서 작성</a>' : '<a class="btn-filled done" href="mypage-quote.html?rid=' + encodeURIComponent(x.rid) + '#quote">견적서 제출 완료</a>')
           : OP.flow.open(x.rid) ? '<h3>이 프로젝트에<br>견적을 제안해보세요</h3><a class="btn-filled" href="#" id="applyQ">견적서 작성</a>'
           : '<h3>견적 접수가 마감된<br>프로젝트입니다</h3><span class="btn-filled off" aria-disabled="true">견적 마감</span>')
       : x.open
