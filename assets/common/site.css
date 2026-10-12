@@ -252,7 +252,7 @@ div.op-phone.bad input, div.op-phone.bad select { border-color:var(--op-red-600)
 .op-gate .gi .ck, .op-gate .bar .tip .ck { -webkit-mask:url(../auth/ic-check.svg) center/contain no-repeat; mask:url(../auth/ic-check.svg) center/contain no-repeat; }
 .op-gate .gi.done .ck { background:var(--op-teal-500); }
 .op-gate .gi .go { -webkit-mask:url(../auth/ic-caret-right.svg) center/contain no-repeat; mask:url(../auth/ic-caret-right.svg) center/contain no-repeat; }
-.op-gate .opt { margin-top:6px; font-size:14px; font-weight:500; color:#404040; }
-.op-gate .opt span { color:#a3a3a3; font-weight:400; }
-.op-gate .opt:hover { color:var(--op-teal-700); }
-.op-gate .optp { margin:-6px 0 0; font-size:12px; line-height:18px; color:#737373; }
+.op-gate .gi.opt { border-color:#d4d4d4; color:#404040; } /* 선택 항목: 회색 아웃라인 */
+.op-gate a.gi.opt:hover { background:#fafafa; border-color:#a3a3a3; }
+.op-gate .gi .tag { padding:1px 6px; border-radius:6px; background:#f5f5f5; color:#737373; font-size:12px; font-weight:500; line-height:18px; }
+.op-gate .optp { margin:0; font-size:12px; line-height:18px; color:#737373; word-break:keep-all; }

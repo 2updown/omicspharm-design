@@ -88,13 +88,14 @@
       };
       var m = document.createElement('div');
       m.className = 'op-gate'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-labelledby', 'opGateT');
+      var svc = ((a.services || []).length > 0); // 제공 분석 서비스: 선택 항목 (진행률 제외)
       m.innerHTML = '<div class="box"><button type="button" class="x" aria-label="닫기"></button>' +
-        '<h3 id="opGateT">' + (doc ? '파트너 인증을 확인하고 있습니다' : '견적서 작성이 처음이신가요?') + '</h3>' +
-        '<p>' + (doc ? '제출하신 사업자등록증을 OmicsPharm이 확인하고 있습니다.<br>인증이 완료되면 견적서를 작성할 수 있습니다.' : '견적서를 작성하려면 파트너 인증이 필요합니다.<br>사업자등록증을 올리면 OmicsPharm이 확인한 뒤 인증해 드립니다.') + '</p>' +
+        '<h3 id="opGateT">파트너 인증을 위한<br>필수 정보를 등록해주세요</h3>' +
+        '<p>' + (doc ? '제출하신 사업자등록증을 OmicsPharm이 확인하고 있습니다.<br>' : '') + '인증이 완료되면 견적서 작성·제출, 비공개 프로젝트 열람,<br>프로젝트 매칭·계약을 이용할 수 있습니다.</p>' +
         '<div class="bar"><span class="tip" style="left:' + pct + '%"><i class="ck"></i>인증 필수 정보 <b>' + pct + '% 완료</b></span><span class="fill" style="width:' + pct + '%"></span></div>' +
         '<div class="list">' + item(true, '파트너 정보 등록') + item(doc, '사업자등록증 업로드', 'mypage-verify.html', doc ? '검토 중' : '') +
-          '<a class="opt" href="mypage-service.html">+ 제공 분석 서비스 입력 <span>(선택)</span> ›</a>' +
-          '<p class="optp">입력하면 OmicsPharm이 맞는 프로젝트를 먼저 추천해 드립니다.</p></div></div>';
+          '<a class="gi opt" href="mypage-service.html"><i class="' + (svc ? 'ck' : 'pl') + '"></i>제공 분석 서비스 ' + (svc ? '수정' : '입력') + '<span class="tag">선택</span><i class="go"></i></a>' +
+          '<p class="optp">제공 분석 서비스를 입력하면 OmicsPharm이 맞는 프로젝트를 먼저 추천해 드립니다.</p></div></div>';
       var close = function () { m.remove(); document.removeEventListener('keydown', key); };
       var key = function (e) { if (e.key === 'Escape') close(); };
       m.addEventListener('click', function (e) { if (e.target === m || e.target.closest('.x')) close(); });
