@@ -233,7 +233,9 @@ div.op-phone.bad input, div.op-phone.bad select { border-color:var(--op-red-600)
 /* 인증 안내 팝업 (미인증 분석파트너가 견적서 작성을 누를 때, OP.verifyGate) */
 .op-gate { position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; padding:24px; background:rgba(0,0,0,.5); }
 .op-gate .box { position:relative; width:100%; max-width:440px; border-radius:16px; background:#fff; overflow:hidden; box-shadow:0 16px 40px rgba(0,0,0,.14); text-align:center; }
-.op-gate .x { position:absolute; top:16px; right:16px; width:28px; height:28px; background:url(ic-toast-close.svg) center/20px no-repeat; border:0; cursor:pointer; }
+.op-gate .x { position:absolute; top:16px; right:16px; width:28px; height:28px; border:0; border-radius:6px; background:none; cursor:pointer; }
+.op-gate .x::before { content:""; position:absolute; inset:4px; background:#737373; -webkit-mask:url(../main/ic-x.svg) center/contain no-repeat; mask:url(../main/ic-x.svg) center/contain no-repeat; } /* Phosphor X */
+.op-gate .x:hover::before { background:#404040; }
 .op-gate h3 { margin:40px 24px 0; font-size:20px; font-weight:700; line-height:28px; color:#000; }
 .op-gate .box > p { margin:12px 24px 0; font-size:14px; line-height:22px; color:var(--op-gray-600, #525252); word-break:keep-all; }
 .op-gate .bar { position:relative; height:6px; margin-top:52px; background:#f0f0f0; }
