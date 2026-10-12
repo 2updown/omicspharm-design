@@ -7,11 +7,11 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261013h">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261013h">
-<script src="assets/common/site.js?v=20261013h"></script>
-<script src="assets/common/mypage.js?v=20261013h"></script>
-<script src="assets/common/flow.js?v=20261013h"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261013j">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261013j">
+<script src="assets/common/site.js?v=20261013j"></script>
+<script src="assets/common/mypage.js?v=20261013j"></script>
+<script src="assets/common/flow.js?v=20261013j"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -30,6 +30,20 @@
   .flow div span { color:var(--gray-400); }
 
   .grid2 { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:24px; }
+
+  /* 진행 현황 (묶음형): 묶음 카드마다 색 제목 + 연한 색 칸(단계 이름 · n건). 칸 수만큼 너비 비율 */
+  .fgrid { display:grid; gap:12px; }
+  .fg { display:flex; flex-direction:column; gap:12px; padding:16px; border:1px solid var(--gray-200); border-radius:12px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.04); min-width:0; }
+  .fg h4 { font-size:16px; font-weight:700; line-height:22px; text-align:center; color:var(--fc); }
+  .fg .cells { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); gap:8px; flex:1; }
+  .fg .cells > * { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; min-height:96px; padding:16px 6px; border-radius:8px; background:var(--fb); text-align:center; }
+  .fg .cells a:hover { box-shadow:inset 0 0 0 1px var(--fc); }
+  .fg .cells span { font-size:13px; font-weight:500; line-height:18px; color:var(--gray-700); word-break:keep-all; }
+  .fg .cells b { font-size:20px; font-weight:700; line-height:28px; color:#000; }
+  .fg .cells a b { color:var(--fc); }
+  .fg .cells em { font-style:normal; font-size:12px; line-height:16px; color:var(--orange-600); }
+  .fg.red { --fc:#f00011; --fb:#fff5f5; } .fg.teal { --fc:var(--teal-600); --fb:#f2fbf9; } .fg.gray { --fc:#000; --fb:#f7f7f7; } .fg.blue { --fc:#0065f4; --fb:#f2f7ff; }
+  @media (max-width:900px) { .fgrid { grid-template-columns:1fr !important; } }
 
   /* 테스트 B (컨설턴트, ?ui=b): 처리할 일 + 3개 구간 요약 */
   .todo4 { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:12px; }
@@ -142,6 +156,18 @@
   var P = D.myProjects();
 
   var F = OP.flow, admin = me.s.role === 'admin';
+  // 진행 현황 묶음형 그리기: G = [[묶음 이름, 색, [[단계, 건수, 주소, 아래 작은 글], …]], …]
+  function groupFlow(el, G) {
+    el.className = 'fgrid';
+    el.style.gridTemplateColumns = G.map(function (g) { return g[2].length + 'fr'; }).join(' ');
+    el.innerHTML = G.map(function (g) {
+      return '<div class="fg ' + g[1] + '"><h4>' + g[0] + '</h4><div class="cells">' + g[2].map(function (c) {
+        var inner = '<span>' + c[0] + '</span><b>' + c[1] + '건</b>' + (c[3] ? '<em>' + c[3] + '</em>' : '');
+        return c[1] ? '<a href="' + c[2] + '">' + inner + '</a>' : '<div aria-disabled="true">' + inner + '</div>'; // 0건은 누를 수 없음
+      }).join('') + '</div></div>';
+    }).join('');
+  }
+  var pick = function (cells, names) { return names.map(function (n) { return cells.filter(function (c) { return c[0] === n; })[0]; }); };
 
   // 견적 중개 현황: 컨설턴트 = 의뢰 처리 단계, 분석파트너 = 받은 견적 요청 상태
   var pipe = null;
@@ -181,10 +207,12 @@
   }
   if (pipe) {
     $('#pipeCard').hidden = false; $('#pipeH').textContent = pipe[0]; $('#pipeMore').href = pipe[1]; $('#pipeMore').textContent = '전체 보기';
-    $('#pipe').style.setProperty('--n', pipe[2].length);
-    $('#pipe').innerHTML = pipe[2].map(function (a, i) {
-      return a[1] ? '<a href="' + pipe[1] + a[2] + '"><b class="has' + (i === 0 ? ' hot' : '') + '">' + a[1] + '</b><span>' + a[0] + '</span></a>' : '<div aria-disabled="true"><b>0</b><span>' + a[0] + '</span></div>';
-    }).join('');
+    var AC = pipe[2].map(function (a) { return [a[0], a[1], pipe[1] + a[2]]; });
+    var SHORT = { '계약 진행 중': '계약 진행', '분석 진행 중': '분석 진행', '프로젝트 완료': '완료' }; // 칸이 좁아 표시 이름만 짧게 (묶음 제목이 맥락)
+    groupFlow($('#pipe'), [['견적 중개', 'red', pick(AC, ['의뢰접수', '의뢰확인', '견적 협의'])], ['계약 · 분석', 'teal', pick(AC, ['계약 진행 중', '분석 진행 중'])],
+      ['보고서', 'gray', pick(AC, ['보고서 등록', '보고서 검토', '보고서 승인'])], ['완료', 'blue', pick(AC, ['프로젝트 완료'])]].map(function (g) {
+        return [g[0], g[1], g[2].map(function (c) { return [SHORT[c[0]] || c[0], c[1], c[2]]; })];
+      }));
   }
 
   // 분석파트너: 셀키 매칭 후 계약된 프로젝트의 단계 (견적 요청·제출은 견적관리에서)
@@ -205,12 +233,11 @@
     var ended = cnt(/미선정|거절/);
     if (ended) $('#flow').insertAdjacentHTML('afterend', '<a class="flow-end" href="mypage-quote.html?t=' + encodeURIComponent('종료') + '">미선정·거절 ' + ended + '건 ›</a>');
   }
-  $('#flow').style.setProperty('--n', cells.length);
-  $('#flow').innerHTML = cells.map(function (c) {
-    // 0건인 단계는 누를 수 없다
-    var inner = '<b class="' + (c[1] ? 'has' + (c[4] ? ' hot' : '') : '') + '">' + c[1] + '</b><span>' + c[0] + '</span>' + (c[3] ? '<em>' + c[3] + '</em>' : '');
-    return c[1] ? '<a href="' + c[2] + '">' + inner + '</a>' : '<div aria-disabled="true">' + inner + '</div>';
-  }).join('');
+  // 묶음: 클라이언트 = 견적(의뢰접수·견적 비교) / 진행(계약·분석 진행) / 완료(결과 수령)
+  //       분석파트너 = 견적(작성·제출) / 프로젝트 진행(계약·분석) / 보고서(보고서 등록) / 완료
+  groupFlow($('#flow'), client
+    ? [['견적', 'red', pick(cells, ['의뢰접수', '견적 비교'])], ['진행', 'teal', pick(cells, ['계약', '분석 진행'])], ['완료', 'blue', pick(cells, ['결과 수령'])]]
+    : [['견적', 'red', pick(cells, ['견적 작성', '견적 제출'])], ['프로젝트 진행', 'teal', pick(cells, ['계약', '분석'])], ['보고서', 'gray', pick(cells, ['보고서 등록'])], ['완료', 'blue', pick(cells, ['완료'])]]);
 
   if (!client && PP.length) {
     $('#plist').innerHTML = '<div class="plist">' + PP.slice(0, 3).map(function (p) {
