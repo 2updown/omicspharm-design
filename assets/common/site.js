@@ -89,13 +89,12 @@
       };
       var m = document.createElement('div');
       m.className = 'op-gate'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-labelledby', 'opGateT');
-      var svc = ((a.services || []).length > 0); // 제공 분석 서비스: 선택 항목 (진행률 제외)
       m.innerHTML = '<div class="box"><button type="button" class="x" aria-label="닫기"></button>' +
         '<h3 id="opGateT">파트너 인증을 위한<br>필수 정보를 등록해주세요</h3>' +
         '<p>인증이 완료되면 견적서 작성·제출, 비공개 프로젝트 열람,<br>프로젝트 매칭·계약을 이용할 수 있습니다.</p>' +
         '<div class="bar"><span class="gtip">인증 필수 정보 <b>' + pct + '%</b> 완료</span><span class="fill" style="width:' + pct + '%"></span></div>' +
         '<div class="list">' + item(true, '파트너 정보 등록') + item(false, '사업자등록증 업로드', 'mypage-verify.html') +
-          '<a class="gi opt" href="mypage-service.html"><i class="' + (svc ? 'ck' : 'pl') + '"></i>제공 분석 서비스 ' + (svc ? '수정' : '입력') + '<span class="tag">선택</span><i class="go"></i></a></div></div>';
+          '<a class="gi opt" href="mypage-service.html"><i class="pl"></i>제공 분석 서비스 입력<span class="tag">선택</span><i class="go"></i></a></div></div>';
       var close = function () { m.remove(); document.removeEventListener('keydown', key); };
       var key = function (e) { if (e.key === 'Escape') close(); };
       m.addEventListener('click', function (e) { if (e.target === m || e.target.closest('.x')) close(); });
