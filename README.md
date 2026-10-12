@@ -30,3 +30,8 @@ OmicsPharm 리뉴얼 프로토타입. `main`에 push하면 GitHub Pages로 자�
 | 관리자 (셀키) | `admin@omicspharm.test` | `Demo@1234` |
 
 로그인하면 헤더 오른쪽이 알림·사용자 아이콘으로 바뀝니다. 계정별 메뉴 차이는 아직 미정이라 세 계정 모두 같은 헤더를 씁니다.
+
+## 핸드오프 문서
+
+- [분석파트너 인증 · 이메일 인증 규칙](docs/partner-verification.md)
+- [아이콘 출처 · 직접 제작 이미지](assets/ICONS.md)
