@@ -76,6 +76,31 @@
     isPartner: function () { var s = OP.session(); return !!s && s.role === 'partner'; },
     // 미인증 분석파트너 안내: 사업자등록증을 아직 안 올렸으면 업로드 안내, 올렸으면 확인 중 안내
     verifyHint: function () { var s = OP.session(), a = (s && OP.account(s.email)) || {}; return a.bizDoc ? '제출하신 사업자등록증을 확인하고 있습니다. 확인이 끝나면 인증해 드립니다.' : '사업자등록증을 올리면 OmicsPharm이 기관·서비스 정보를 확인한 뒤 인증해 드립니다.'; },
+    // 미인증 분석파트너가 견적서 작성을 누르면 띄우는 인증 안내 팝업 (위시켓 '프로젝트 지원이 처음이신가요?' 참고)
+    // 필수: 기본 정보(가입 시) + 사업자등록증. 제공 분석 서비스는 선택(매칭 추천용)이라 진행률에 넣지 않음
+    verifyGate: function () {
+      var old = document.querySelector('.op-gate'); if (old) old.remove();
+      var s = OP.session(), a = (s && OP.account(s.email)) || {}, doc = !!a.bizDoc;
+      var pct = doc ? 100 : 50, A = 'assets/';
+      var item = function (done, label, href, sub) {
+        return done ? '<span class="gi done"><i class="ck"></i>' + label + (sub ? '<em>' + sub + '</em>' : '') + '</span>'
+          : '<a class="gi" href="' + href + '"><i class="pl"></i>' + label + '<i class="go"></i></a>';
+      };
+      var m = document.createElement('div');
+      m.className = 'op-gate'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-labelledby', 'opGateT');
+      m.innerHTML = '<div class="box"><button type="button" class="x" aria-label="닫기"></button>' +
+        '<h3 id="opGateT">' + (doc ? '파트너 인증을 확인하고 있습니다' : '견적서 작성이 처음이신가요?') + '</h3>' +
+        '<p>' + (doc ? '제출하신 사업자등록증을 OmicsPharm이 확인하고 있습니다.<br>인증이 완료되면 견적서를 작성할 수 있습니다.' : '견적서를 작성하려면 파트너 인증이 필요합니다.<br>사업자등록증을 올리면 OmicsPharm이 확인한 뒤 인증해 드립니다.') + '</p>' +
+        '<div class="bar"><span class="tip" style="left:' + pct + '%"><i class="ck"></i>인증 필수 정보 <b>' + pct + '% 완료</b></span><span class="fill" style="width:' + pct + '%"></span></div>' +
+        '<div class="list">' + item(true, '파트너 정보 등록') + item(doc, '사업자등록증 업로드', 'mypage-verify.html', doc ? '검토 중' : '') +
+          '<a class="opt" href="mypage-service.html">+ 제공 분석 서비스 입력 <span>(선택)</span> ›</a>' +
+          '<p class="optp">입력하면 OmicsPharm이 맞는 프로젝트를 먼저 추천해 드립니다.</p></div></div>';
+      var close = function () { m.remove(); document.removeEventListener('keydown', key); };
+      var key = function (e) { if (e.key === 'Escape') close(); };
+      m.addEventListener('click', function (e) { if (e.target === m || e.target.closest('.x')) close(); });
+      document.addEventListener('keydown', key);
+      document.body.appendChild(m); m.querySelector('.x').focus();
+    },
     hasBizDoc: function () { var s = OP.session(), a = (s && OP.account(s.email)) || {}; return !!a.bizDoc; },
     UNVERIFIED_MSG: '인증된 분석파트너만 이용할 수 있습니다. OmicsPharm이 기관·서비스 정보를 확인한 뒤 인증해 드립니다.',
     // 가입 메일 인증 여부: 새로 가입한 계정은 mailOk:false로 시작 (데모 계정·기존 계정은 인증된 것으로 봄)

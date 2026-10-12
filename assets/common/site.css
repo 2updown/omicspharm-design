@@ -229,3 +229,30 @@ div.op-phone.bad input, div.op-phone.bad select { border-color:var(--op-red-600)
 .op-ibox li { position:relative; padding-left:16px; font-size:14px; font-weight:400; line-height:20px; color:#000; word-break:keep-all; list-style:none; }
 .op-ibox li::before { content:""; position:absolute; left:4px; top:8px; width:4px; height:4px; border-radius:50%; background:#525252; }
 .op-ibox[hidden] { display:none; }
+
+/* 인증 안내 팝업 (미인증 분석파트너가 견적서 작성을 누를 때, OP.verifyGate) */
+.op-gate { position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; padding:24px; background:rgba(0,0,0,.5); }
+.op-gate .box { position:relative; width:100%; max-width:440px; border-radius:16px; background:#fff; overflow:hidden; box-shadow:0 16px 40px rgba(0,0,0,.14); text-align:center; }
+.op-gate .x { position:absolute; top:16px; right:16px; width:28px; height:28px; background:url(ic-toast-close.svg) center/20px no-repeat; border:0; cursor:pointer; }
+.op-gate h3 { margin:40px 24px 0; font-size:20px; font-weight:700; line-height:28px; color:#000; }
+.op-gate .box > p { margin:12px 24px 0; font-size:14px; line-height:22px; color:var(--op-gray-600, #525252); word-break:keep-all; }
+.op-gate .bar { position:relative; height:6px; margin-top:52px; background:#f0f0f0; }
+.op-gate .bar .fill { position:absolute; left:0; top:0; bottom:0; background:var(--op-teal-600); }
+.op-gate .bar .tip { position:absolute; bottom:14px; transform:translateX(-50%); display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:99px; background:#404040; color:#fff; font-size:12px; line-height:18px; white-space:nowrap; }
+.op-gate .bar .tip::after { content:""; position:absolute; left:50%; bottom:-4px; margin-left:-4px; border:4px solid transparent; border-bottom:0; border-top-color:#404040; }
+.op-gate .bar .tip[style*="100%"] { transform:translateX(-100%); } .op-gate .bar .tip[style*="100%"]::after { left:auto; right:12px; }
+.op-gate .bar .tip .ck { width:14px; height:14px; border-radius:50%; background:var(--op-teal-500); }
+.op-gate .list { display:flex; flex-direction:column; gap:10px; padding:24px 28px 28px; background:#f6faf9; }
+.op-gate .gi { display:flex; align-items:center; justify-content:center; gap:6px; height:48px; border-radius:8px; border:1px solid var(--op-teal-600); background:#fff; color:var(--op-teal-600); font-size:15px; font-weight:500; }
+.op-gate a.gi:hover { background:#f0fbf8; }
+.op-gate .gi.done { border-color:#e5e5e5; color:#a3a3a3; }
+.op-gate .gi em { font-style:normal; font-size:13px; color:var(--op-teal-600); }
+.op-gate .gi i { width:14px; height:14px; background:currentColor; }
+.op-gate .gi .pl { -webkit-mask:url(../auth/ic-plus.svg) center/contain no-repeat; mask:url(../auth/ic-plus.svg) center/contain no-repeat; }
+.op-gate .gi .ck, .op-gate .bar .tip .ck { -webkit-mask:url(../auth/ic-check.svg) center/contain no-repeat; mask:url(../auth/ic-check.svg) center/contain no-repeat; }
+.op-gate .gi.done .ck { background:var(--op-teal-500); }
+.op-gate .gi .go { -webkit-mask:url(../auth/ic-caret-right.svg) center/contain no-repeat; mask:url(../auth/ic-caret-right.svg) center/contain no-repeat; }
+.op-gate .opt { margin-top:6px; font-size:14px; font-weight:500; color:#404040; }
+.op-gate .opt span { color:#a3a3a3; font-weight:400; }
+.op-gate .opt:hover { color:var(--op-teal-700); }
+.op-gate .optp { margin:-6px 0 0; font-size:12px; line-height:18px; color:#737373; }
