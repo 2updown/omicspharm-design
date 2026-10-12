@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
+<title>OmicsPharm Admin</title>
+<!-- 백오피스 어드민 (프로토타입). 기존 백오피스(omicspharm.com/admin) 구성 기준, 별도 디자인 없이 깔끔한 관리 화면.
+     메뉴: 관리자 메인 / 설정(기본설정·팝업·배너·약관) / 컨텐츠 관리(메뉴·헤더·하단) / 게시판 관리 / 회원(리스트·탈퇴·접속이력·등급) / 알림 설정(메일 발송 로그·알림톡 발송 내역)
+     빠진 메뉴: SEO 설정, 모듈 관리 (2026-10-14 기준, 확정 아님). 분석파트너 인증 처리는 컨설턴트 마이페이지 > 분석파트너 관리.
+     화면 이동: admin.html#페이지키. 예시 값은 모두 가상 -->
+<link rel="stylesheet" href="assets/common/site.css?v=20261014e">
+<script src="assets/common/site.js?v=20261014e"></script>
+<style>
+  :root { --nav:#1b2440; --nav2:#141b33; --line:#e5e7eb; --bg:#f3f4f6; --ink:#111827; --mute:#6b7280; --acc:#1d3a8a; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; font-size:14px; color:var(--ink); background:var(--bg); -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; } button, input, select, textarea { font:inherit; color:inherit; }
+  .app { display:flex; min-height:100vh; }
+  /* 사이드바 */
+  .nav { width:210px; flex:none; background:var(--nav); color:#c7cde0; position:sticky; top:0; height:100vh; overflow:auto; }
+  .nav .brand { padding:20px 16px; text-align:center; color:#fff; font-weight:700; font-size:15px; line-height:20px; }
+  .nav .brand small { display:block; font-size:12px; font-weight:500; opacity:.7; }
+  .nav ul { list-style:none; }
+  .nav .g > a { display:flex; align-items:center; gap:10px; height:42px; padding:0 18px; font-size:14px; font-weight:500; }
+  .nav .g > a:hover, .nav .g.open > a { background:var(--nav2); color:#fff; }
+  .nav .g > a i { margin-left:auto; font-style:normal; font-size:11px; opacity:.6; transition:transform .15s; }
+  .nav .g.open > a i { transform:rotate(90deg); }
+  .nav .sub { display:none; padding:4px 0 8px; background:var(--nav2); }
+  .nav .g.open .sub { display:block; }
+  .nav .sub a { display:block; padding:8px 18px 8px 40px; font-size:13px; color:#9aa3bd; }
+  .nav .sub a:hover { color:#fff; }
+  .nav .sub a.on, .nav .g > a.on { color:#fff; }
+  .nav .sub a.on::before { content:"· "; }
+  /* 상단 바 */
+  .wrap { flex:1; min-width:0; display:flex; flex-direction:column; }
+  .top { height:56px; display:flex; align-items:center; gap:10px; padding:0 24px; background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; }
+  .top select { height:32px; padding:0 10px; border:1px solid var(--line); border-radius:4px; background:#fff; font-size:13px; }
+  .top .site { display:inline-flex; align-items:center; height:32px; padding:0 12px; border-radius:4px; background:var(--acc); color:#fff; font-size:13px; font-weight:500; }
+  .top .me { margin-left:auto; font-size:13px; color:var(--mute); }
+  .top .out { height:32px; padding:0 12px; border:1px solid var(--line); border-radius:4px; background:#fff; font-size:13px; cursor:pointer; }
+  main { padding:24px; display:flex; flex-direction:column; gap:20px; }
+  h1 { font-size:20px; font-weight:700; }
+  .box { background:#fff; border:1px solid var(--line); padding:24px; display:flex; flex-direction:column; gap:16px; }
+  .box h2 { font-size:16px; font-weight:700; padding-left:10px; border-left:3px solid var(--ink); line-height:16px; }
+  .row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .row.end { justify-content:flex-end; }
+  .in { height:34px; padding:0 10px; border:1px solid var(--line); border-radius:4px; background:#fff; font-size:13px; }
+  .btn { height:34px; padding:0 14px; border:1px solid var(--line); border-radius:4px; background:#fff; font-size:13px; cursor:pointer; }
+  .btn.dark { background:#111; border-color:#111; color:#fff; }
+  .btn.blue { background:var(--acc); border-color:var(--acc); color:#fff; }
+  /* 표 */
+  .tw { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { height:38px; padding:0 10px; background:#f9fafb; border-top:1px solid var(--line); border-bottom:1px solid var(--line); font-weight:500; color:#374151; text-align:center; white-space:nowrap; }
+  td { padding:10px; border-bottom:1px solid var(--line); text-align:center; vertical-align:middle; word-break:keep-all; }
+  td.l { text-align:left; } td.pre { white-space:pre-line; text-align:left; max-width:320px; color:#374151; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:12px; background:#eef2ff; color:var(--acc); }
+  .tag.gray { background:#f3f4f6; color:var(--mute); } .tag.red { background:#fef2f2; color:#b91c1c; } .tag.green { background:#ecfdf5; color:#047857; }
+  .total { font-size:13px; color:var(--mute); } .total b { color:var(--ink); }
+  .pager { display:flex; justify-content:center; gap:4px; }
+  .pager span { display:grid; place-items:center; width:30px; height:30px; border:1px solid var(--line); border-radius:4px; font-size:12px; background:#fff; }
+  .pager span.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  /* 폼 */
+  .form { display:grid; grid-template-columns:160px 1fr; border-top:1px solid var(--line); }
+  .form > * { padding:10px 12px; border-bottom:1px solid var(--line); }
+  .form .k { background:#f9fafb; font-weight:500; display:flex; align-items:center; }
+  .form .in { width:100%; max-width:420px; }
+  /* 대시보드 차트 */
+  .charts { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:20px; }
+  .chart h3 { font-size:13px; font-weight:500; margin-bottom:8px; color:#374151; }
+  .chart .area { height:140px; border-bottom:1px solid var(--line); position:relative; }
+  .bars { display:flex; flex-direction:column; justify-content:space-around; height:140px; }
+  .bars div { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--mute); }
+  .bars div span { width:64px; flex:none; text-align:right; }
+  .bars div i { height:12px; border-radius:2px; background:#e8a26a; }
+  .bars.v i { background:#7f8fd6; }
+  .donut { width:120px; height:120px; margin:10px auto 0; border-radius:50%; background:conic-gradient(#e8a26a 0 64%, #e46b6b 64% 100%); position:relative; }
+  .donut::after { content:""; position:absolute; inset:30px; border-radius:50%; background:#fff; }
+  .legend { display:flex; gap:10px; justify-content:center; margin-top:8px; font-size:11px; color:var(--mute); }
+  .legend i { display:inline-block; width:10px; height:10px; margin-right:4px; vertical-align:-1px; }
+  .empty { padding:40px; text-align:center; color:var(--mute); }
+  .note { font-size:12px; color:var(--mute); }
+  @media (max-width:1100px) { .charts { grid-template-columns:repeat(2, minmax(0,1fr)); } }
+  @media (max-width:800px) { .nav { display:none; } .form { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="nav" id="nav"></nav>
+  <div class="wrap">
+    <header class="top">
+      <select aria-label="관리언어"><option>관리언어-한국어</option><option>English</option></select>
+      <a class="site" href="index.html" target="_blank" rel="noopener">⌂ 내 사이트 바로가기</a>
+      <span class="me" id="me"></span>
+      <button type="button" class="out" id="out">로그아웃</button>
+    </header>
+    <main id="main"></main>
+  </div>
+</div>
+
+<script>
+(function () {
+  var s = OP.session();
+  if (!s || s.role !== 'admin') { location.replace('login.html?next=admin.html'); return; } // 컨설턴트(관리자) 전용
+  var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); };
+  var $ = function (q) { return document.querySelector(q); };
+  $('#me').textContent = '👤 ' + ((OP.account(s.email) || {}).name || '컨설턴트');
+  $('#out').addEventListener('click', function () { OP.logout(); location.href = 'index.html'; });
+
+  // 메뉴 (SEO 설정 · 모듈 관리 제외)
+  var NAV = [
+    ['dash', '관리자 메인'],
+    ['설정', [['basic', '기본설정'], ['popup', '팝업'], ['banner', '배너'], ['terms', '약관']]],
+    ['컨텐츠 관리', [['menu', '메뉴 관리'], ['header', '헤더 관리'], ['footer', '하단 관리']]],
+    ['게시판 관리', [['boards', '게시판 관리']]],
+    ['회원', [['members', '회원 리스트'], ['left', '탈퇴 회원 리스트'], ['logins', '회원 접속이력'], ['grades', '등급 관리']]],
+    ['알림 설정', [['mails', '메일 발송 로그'], ['talks', '알림톡 발송 내역']]]
+  ];
+  var TITLE = {}; NAV.forEach(function (n) { if (typeof n[1] === 'string') TITLE[n[0]] = n[1]; else n[1].forEach(function (x) { TITLE[x[0]] = x[1]; }); });
+
+  // 표 그리기: cols = [[제목, 키, 'l'|'pre'(정렬)]], rows = [{}]
+  function table(cols, rows) {
+    return '<p class="total">총 <b>' + rows.length + '</b>건</p><div class="tw"><table><thead><tr>' + cols.map(function (c) { return '<th>' + c[0] + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      (rows.length ? rows.map(function (r) { return '<tr>' + cols.map(function (c) { var v = r[c[1]]; return '<td' + (c[2] ? ' class="' + c[2] + '"' : '') + '>' + (c[3] ? v : esc(v)) + '</td>'; }).join('') + '</tr>'; }).join('')
+        : '<tr><td colspan="' + cols.length + '" class="empty">데이터가 없습니다.</td></tr>') +
+      '</tbody></table></div><div class="pager"><span class="on">1</span></div>';
+  }
+  var search = function (ph, extra) { return '<div class="row">' + (extra || '') + '<input class="in" style="width:240px" placeholder="' + ph + '"><button type="button" class="btn dark" data-soon="검색">검색</button></div>'; };
+  var box = function (t, body) { return '<section class="box">' + (t ? '<h2>' + t + '</h2>' : '') + body + '</section>'; };
+  var tag = function (t, c) { return '<span class="tag ' + (c || '') + '">' + esc(t) + '</span>'; };
+
+  // 예시 회원 (가상)
+  var MEM = [
+    ['client@omicspharm.test', '홍길동', '○○연구소', '클라이언트', '일반', '2026.09.01'],
+    ['partner@omicspharm.test', '김파트너', '○○분석센터', '분석파트너', '인증', '2026.09.01'],
+    ['user01@example.test', '김○○', '○○대학교 의과대학', '클라이언트', '일반', '2026.09.17'],
+    ['lab01@example.test', '이○○', '△△바이오', '클라이언트', '일반', '2026.09.20'],
+    ['contact@biolab.test', '이담당', '△△바이오랩', '분석파트너', '인증', '2026.08.11'],
+    ['hello@newlab.test', '오담당', '▽▽랩', '분석파트너', '미인증', '2026.10.02'],
+    ['admin@omicspharm.test', '셀키 컨설턴트', '셀키', '컨설턴트', '관리자', '2026.08.01']
+  ].map(function (m, i) { return { no: 7 - i, mail: m[0], name: m[1], org: m[2], role: m[3], grade: m[4], at: m[5] }; });
+
+  var PAGES = {
+    dash: function () {
+      var days = ['10.05', '10.06', '10.07', '10.08', '10.09', '10.10', '10.11', '10.12'], v = [9, 26, 22, 23, 15, 14, 11, 20];
+      var max = 30, pts = v.map(function (n, i) { return (i * (100 / (v.length - 1))).toFixed(1) + ',' + (100 - n / max * 100).toFixed(1); }).join(' ');
+      var bar = function (L, cls) { var m = Math.max.apply(null, L.map(function (x) { return x[1]; })); return '<div class="bars ' + (cls || '') + '">' + L.map(function (x) { return '<div><span>' + x[0] + '</span><i style="width:' + Math.round(x[1] / m * 100) + '%"></i></div>'; }).join('') + '</div>'; };
+      var Q = [
+        { name: '김○○', org: '○○바이오', tel: '010-0000-0001', mail: 'q1@example.test', title: '웨비나 링크 재전달 요청', body: '금일 진행되는 웨비나를 신청하였으나\n참석 링크를 받지 못했습니다.\n다시 전달해주실 수 있을까요?', file: '', at: '2026/10/12 13:19' },
+        { name: '이○○', org: '△△제약', tel: '010-0000-0002', mail: 'q2@example.test', title: '재조합 단백질 봉입률 분석 가능 여부', body: '리포좀에 봉입된 재조합 단백질의\n봉입률 분석이 가능한지 문의드립니다.\n시료 정보는 첨부드립니다.', file: '시료정보.pdf', at: '2026/10/01 14:45' }
+      ];
+      return '<h1>대시보드</h1>' +
+        box('방문자', '<div class="row end"><input class="in" type="date" value="2026-10-05"> ~ <input class="in" type="date" value="2026-10-12"><button type="button" class="btn dark" data-soon="방문자 검색">검색</button></div>' +
+          '<div class="charts">' +
+            '<div class="chart"><h3>방문자수</h3><div class="area"><svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%"><polyline points="' + pts + '" fill="none" stroke="#5b8fd6" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg></div><div class="legend"><span>' + days[0] + ' ~ ' + days[days.length - 1] + '</span></div></div>' +
+            '<div class="chart"><h3>브라우저별</h3>' + bar([['Chrome', 112], ['Safari', 38], ['Edge', 21], ['기타', 6]]) + '</div>' +
+            '<div class="chart"><h3>접속기기별</h3><div class="donut"></div><div class="legend"><span><i style="background:#e8a26a"></i>PC 64%</span><span><i style="background:#e46b6b"></i>Mobile 36%</span></div></div>' +
+            '<div class="chart"><h3>해상도별</h3>' + bar([['1920×1080', 58], ['1440×900', 31], ['1536×864', 22], ['390×844', 18], ['기타', 9]], 'v') + '</div>' +
+          '</div>') +
+        box('문의 관리', '<p style="font-weight:500">상담하기</p>' + table([['성함', 'name'], ['소속', 'org'], ['연락처', 'tel'], ['이메일', 'mail'], ['제목', 'title', 'l'], ['문의내용', 'body', 'pre'], ['첨부파일', 'file'], ['등록일', 'at']], Q));
+    },
+    basic: function () {
+      var f = function (k, v) { return '<div class="k">' + k + '</div><div><input class="in" value="' + esc(v) + '"></div>'; };
+      return '<h1>기본설정</h1>' + box('사이트 정보', '<div class="form">' + f('사이트명', 'OmicsPharm') + f('대표 이메일', 'help@omicspharm.test') + f('대표 전화', '02-0000-0000') + f('사업자등록번호', '000-00-00000') + f('주소', '서울특별시 ○○구 ○○로 00') + '</div><div class="row end"><button type="button" class="btn blue" data-soon="저장">저장</button></div>');
+    },
+    popup: function () { return '<h1>팝업</h1>' + box('', '<div class="row end"><button type="button" class="btn blue" data-soon="팝업 등록">팝업 등록</button></div>' + table([['No', 'no'], ['제목', 't', 'l'], ['노출 기간', 'p'], ['노출 위치', 'w'], ['상태', 's', '', 1]], [{ no: 2, t: '서비스 리뉴얼 오픈 안내', p: '2026.10.01 ~ 2026.10.31', w: '메인', s: tag('노출', 'green') }, { no: 1, t: '추석 연휴 고객센터 운영 안내', p: '2026.09.20 ~ 2026.10.05', w: '메인', s: tag('종료', 'gray') }])); },
+    banner: function () { return '<h1>배너</h1>' + box('', '<div class="row end"><button type="button" class="btn blue" data-soon="배너 등록">배너 등록</button></div>' + table([['No', 'no'], ['배너명', 't', 'l'], ['위치', 'w'], ['링크', 'l'], ['순서', 'o'], ['상태', 's', '', 1]], [{ no: 2, t: '메인 히어로', w: '메인 상단', l: '/projects.html', o: 1, s: tag('노출', 'green') }, { no: 1, t: '이용 가이드', w: '메인 중단', l: '/guide.html', o: 2, s: tag('노출', 'green') }])); },
+    terms: function () { return '<h1>약관</h1>' + box('', table([['No', 'no'], ['약관명', 't', 'l'], ['시행일', 'd'], ['수정일', 'u'], ['관리', 'm', '', 1]], [{ no: 3, t: '이용약관', d: '2026.10.01', u: '2026.09.25', m: '<button class="btn" data-soon="약관 수정">수정</button>' }, { no: 2, t: '개인정보 처리방침', d: '2026.10.01', u: '2026.09.25', m: '<button class="btn" data-soon="약관 수정">수정</button>' }, { no: 1, t: '마케팅 정보 수신 동의', d: '2026.10.01', u: '2026.09.25', m: '<button class="btn" data-soon="약관 수정">수정</button>' }])); },
+    menu: function () { return '<h1>메뉴 관리</h1>' + box('GNB 메뉴', table([['순서', 'o'], ['메뉴명', 't', 'l'], ['연결 주소', 'u', 'l'], ['노출', 's', '', 1]], [['프로젝트 의뢰', '/omicspharm-register.html'], ['프로젝트 찾기', '/projects.html'], ['커뮤니티', '/notice.html'], ['서비스 소개', '/service.html'], ['고객지원', '/faq.html']].map(function (m, i) { return { o: i + 1, t: m[0], u: m[1], s: tag('노출', 'green') }; }))); },
+    header: function () { return '<h1>헤더 관리</h1>' + box('헤더', '<div class="form"><div class="k">로고</div><div>OmicsPharm 로고 (190×20)</div><div class="k">언어 선택</div><div>KOR · ENG</div><div class="k">알림 아이콘</div><div>로그인 시 노출</div></div>'); },
+    footer: function () { return '<h1>하단 관리</h1>' + box('하단 정보', '<div class="form"><div class="k">회사명</div><div>CellKey AI Co., Ltd.</div><div class="k">사업자등록번호</div><div>000-00-00000</div><div class="k">주소</div><div>서울특별시 ○○구 ○○로 00</div><div class="k">SNS</div><div>Naver Blog · LinkedIn</div></div>'); },
+    boards: function () { return '<h1>게시판 관리</h1>' + box('', '<div class="row end"><button type="button" class="btn blue" data-soon="게시판 추가">게시판 추가</button></div>' + table([['No', 'no'], ['게시판명', 't', 'l'], ['유형', 'k'], ['게시글 수', 'n'], ['쓰기 권한', 'w']], [['공지사항', '목록형', 21, '관리자'], ['FAQ', '아코디언', 32, '관리자'], ['블로그', '카드형', 12, '관리자'], ['문의하기', '1:1', 48, '회원']].map(function (b, i) { return { no: 4 - i, t: b[0], k: b[1], n: b[2], w: b[3] }; }))); },
+    members: function () { return '<h1>회원 리스트</h1>' + box('', search('이메일, 이름, 소속 검색', '<select class="in"><option>회원 유형 전체</option><option>클라이언트</option><option>분석파트너</option><option>컨설턴트</option></select>') + table([['No', 'no'], ['이메일', 'mail', 'l'], ['이름', 'name'], ['소속', 'org'], ['회원 유형', 'role'], ['등급', 'grade'], ['가입일', 'at']], MEM)); },
+    left: function () { return '<h1>탈퇴 회원 리스트</h1>' + box('', search('이메일 검색') + table([['No', 'no'], ['이메일', 'mail', 'l'], ['회원 유형', 'role'], ['탈퇴 사유', 'why', 'l'], ['탈퇴일', 'at']], [{ no: 2, mail: 'old01@example.test', role: '클라이언트', why: '서비스 이용 빈도가 낮음', at: '2026.10.03' }, { no: 1, mail: 'old02@example.test', role: '분석파트너', why: '기타 (사업 종료)', at: '2026.09.21' }])); },
+    logins: function () { return '<h1>회원 접속이력</h1>' + box('', search('이메일 검색', '<input class="in" type="date" value="2026-10-01"> ~ <input class="in" type="date" value="2026-10-12">') + table([['No', 'no'], ['이메일', 'mail', 'l'], ['접속 일시', 'at'], ['IP', 'ip'], ['기기', 'dev']], MEM.slice(0, 5).map(function (m, i) { return { no: 5 - i, mail: m.mail, at: '2026.10.' + (12 - i) + ' 09:' + (10 + i * 7), ip: '000.000.0.' + (10 + i), dev: i % 2 ? 'Mobile' : 'PC' }; }))); },
+    grades: function () { return '<h1>등급 관리</h1>' + box('', table([['등급', 'g'], ['대상', 't', 'l'], ['권한', 'p', 'l']], [{ g: '관리자', t: '컨설턴트', p: '백오피스 · 컨설턴트 마이페이지 전체' }, { g: '인증', t: '인증 분석파트너', p: '견적서 작성 · 비공개 프로젝트 열람 · 매칭 · 계약' }, { g: '미인증', t: '미인증 분석파트너', p: '공개 프로젝트 열람' }, { g: '일반', t: '클라이언트', p: '프로젝트 의뢰 · 견적 비교 · 계약' }]) + '<p class="note">분석파트너 인증 처리는 컨설턴트 마이페이지 &gt; 분석파트너 관리에서 합니다.</p>'); },
+    mails: function () { return '<h1>메일 발송 로그</h1>' + box('', search('수신자, 제목 검색') + table([['No', 'no'], ['수신자', 'to', 'l'], ['제목', 't', 'l'], ['발송 일시', 'at'], ['결과', 'r', '', 1]], [{ no: 3, to: 'partner@omicspharm.test', t: '[OmicsPharm] 견적 요청이 도착했습니다', at: '2026.10.10 10:02', r: tag('성공', 'green') }, { no: 2, to: 'client@omicspharm.test', t: '[OmicsPharm] 의뢰하신 프로젝트가 승인되었습니다', at: '2026.10.06 15:40', r: tag('성공', 'green') }, { no: 1, to: 'old02@example.test', t: '[OmicsPharm] 이메일 인증 안내', at: '2026.09.20 11:21', r: tag('실패', 'red') }])); },
+    talks: function () { return '<h1>알림톡 발송 내역</h1>' + box('', search('수신 번호 검색') + table([['No', 'no'], ['수신 번호', 'to'], ['템플릿', 't', 'l'], ['발송 일시', 'at'], ['결과', 'r', '', 1]], [{ no: 2, to: '010-0000-0001', t: '견적 도착 안내', at: '2026.10.10 10:02', r: tag('성공', 'green') }, { no: 1, to: '010-0000-0002', t: '계약서 등록 안내', at: '2026.10.08 16:20', r: tag('성공', 'green') }])); }
+  };
+
+  function nav(cur) {
+    $('#nav').innerHTML = '<div class="brand">오믹스팜<small>admin</small></div><ul>' + NAV.map(function (n) {
+      if (typeof n[1] === 'string') return '<li class="g"><a href="#' + n[0] + '"' + (cur === n[0] ? ' class="on"' : '') + '>▦ ' + n[1] + '<i>›</i></a></li>';
+      var open = n[1].some(function (x) { return x[0] === cur; });
+      return '<li class="g' + (open ? ' open' : '') + '"><a href="#" data-g>' + n[0] + '<i>›</i></a><div class="sub">' + n[1].map(function (x) { return '<a href="#' + x[0] + '"' + (cur === x[0] ? ' class="on"' : '') + '>' + x[1] + '</a>'; }).join('') + '</div></li>';
+    }).join('') + '</ul>';
+  }
+  $('#nav').addEventListener('click', function (e) { var g = e.target.closest('[data-g]'); if (g) { e.preventDefault(); g.parentNode.classList.toggle('open'); } });
+  function route() {
+    var k = location.hash.slice(1) || 'dash'; if (!PAGES[k]) k = 'dash';
+    nav(k); $('#main').innerHTML = PAGES[k](); document.title = TITLE[k] + ' · OmicsPharm Admin'; scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', route); route();
+})();
+</script>
+</body>
+</html>

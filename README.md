@@ -15,6 +15,7 @@ OmicsPharm 리뉴얼 프로토타입. `main`에 push하면 GitHub Pages로 자�
 | `omicspharm-project-detail-prot.html` | 프로젝트 상세 | 공통 헤더·푸터 |
 | `login.html`, `find-password.html` | 로그인, 비밀번호 찾기 | 풀페이지 |
 | `signup.html`, `signup-form.html?type=client\|partner` | 회원 유형 선택, 가입 단계 | 풀페이지 |
+| `admin.html` | 백오피스 어드민 (컨설턴트 전용, 기존 백오피스 구성 · SEO 설정·모듈 관리 제외) | 자체 레이아웃 |
 | `omicspharm-wireframe-v5.html` | 분석의뢰 등록 와이어프레임 v5 (참고) | — |
 
 공통 헤더·푸터는 `assets/common/site.js`가 `<div data-op-gnb>` / `<div data-op-footer>` 자리에 그립니다.
