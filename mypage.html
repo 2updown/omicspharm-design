@@ -7,17 +7,12 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261010h">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261010h">
-<script src="assets/common/site.js?v=20261010h"></script>
-<script src="assets/common/mypage.js?v=20261010h"></script>
-<script src="assets/common/flow.js?v=20261010h"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261012a">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261012a">
+<script src="assets/common/site.js?v=20261012a"></script>
+<script src="assets/common/mypage.js?v=20261012a"></script>
+<script src="assets/common/flow.js?v=20261012a"></script>
 <style>
-  .hello { flex-direction:row; align-items:center; justify-content:space-between; }
-  .hello h2 { font-size:22px; font-weight:700; line-height:32px; letter-spacing:-.22px; }
-  .hello p { margin-top:4px; font-size:14px; line-height:20px; color:var(--gray-500); }
-  .hello .acts { display:flex; gap:8px; }
-
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
   .flow > * { position:relative; display:flex; flex-direction:column; align-items:center; gap:6px; padding:20px 8px; text-align:center; }
@@ -60,8 +55,6 @@
 
   @media (max-width:1180px) { .grid2 { grid-template-columns:minmax(0,1fr); } }
   @media (max-width:640px) {
-    .hello { flex-direction:column; align-items:flex-start; }
-    .hello .acts { width:100%; } .hello .acts .btn { flex:1; }
     .flow { grid-template-columns:repeat(3, minmax(0,1fr)); }
     .flow > :nth-child(4) { border-left:0; }
     .flow > :nth-child(n+4) { border-top:1px solid var(--gray-200); }
@@ -84,11 +77,6 @@
   <aside class="side" data-op-side></aside>
 
   <div class="main">
-    <section class="card hello">
-      <div><h2 id="hi"></h2><p id="hiSub"></p></div>
-      <div class="acts" id="acts"></div>
-    </section>
-
     <section class="card" id="pipeCard" hidden>
       <div class="card-head"><h3 id="pipeH"></h3><a class="more" id="pipeMore"></a></div>
       <div class="flow" id="pipe"></div>
@@ -126,13 +114,7 @@
   var client = me.s.role === 'client';
   var P = D.myProjects();
 
-  $('#hi').textContent = me.name + ' 님, 안녕하세요.';
-  $('#hiSub').textContent = client ? '진행 중인 프로젝트와 새 소식을 확인해보세요.' : '진행 중인 프로젝트와 새 소식을 확인해보세요.';
   var F = OP.flow, admin = me.s.role === 'admin';
-  $('#acts').innerHTML = client
-    ? '<a class="btn" href="contact.html">문의하기</a><a class="btn primary" href="omicspharm-register.html" data-client-only>프로젝트 의뢰하기</a>'
-    : admin ? '<a class="btn" href="projects.html">프로젝트 찾기</a><a class="btn primary" href="mypage-request.html">프로젝트 관리</a>'
-    : '<a class="btn" href="projects.html">프로젝트 찾기</a><a class="btn primary" href="mypage-quote.html">견적관리</a>';
 
   // 견적 중개 현황: 컨설턴트 = 의뢰 처리 단계, 분석파트너 = 받은 견적 요청 상태
   var pipe = null;
