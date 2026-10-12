@@ -7,11 +7,11 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261013k">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261013k">
-<script src="assets/common/site.js?v=20261013k"></script>
-<script src="assets/common/mypage.js?v=20261013k"></script>
-<script src="assets/common/flow.js?v=20261013k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261013l">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261013l">
+<script src="assets/common/site.js?v=20261013l"></script>
+<script src="assets/common/mypage.js?v=20261013l"></script>
+<script src="assets/common/flow.js?v=20261013l"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -33,11 +33,11 @@
 
   /* 진행 현황 (묶음형): 묶음 카드마다 색 제목 + 연한 색 칸(단계 이름 · n건). 칸 수만큼 너비 비율 */
   .fgrid { display:grid; gap:12px; }
-  .fg { display:flex; flex-direction:column; gap:12px; padding:16px; border:1px solid var(--gray-200); border-radius:12px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.04); min-width:0; }
+  .fg { display:flex; flex-direction:column; gap:8px; padding:14px 12px; border:1px solid var(--gray-200); border-radius:12px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.04); min-width:0; }
   .fg h4 { font-size:16px; font-weight:700; line-height:22px; text-align:center; color:var(--fc); }
   .fg .cells { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); gap:8px; flex:1; }
-  .fg .cells > * { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; min-height:96px; padding:16px 6px; border-radius:8px; background:var(--fb); text-align:center; }
-  .fg .cells a:hover { box-shadow:inset 0 0 0 1px var(--fc); }
+  .fg .cells > * { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:4px; border-radius:8px; text-align:center; } /* 안쪽 칸은 상자 없이 */
+  .fg .cells a:hover { background:var(--fb); }
   .fg .cells span { font-size:13px; font-weight:500; line-height:18px; color:var(--gray-700); word-break:keep-all; }
   .fg .cells b { font-size:20px; font-weight:700; line-height:28px; color:#000; }
   .fg .cells a b { color:var(--fc); }

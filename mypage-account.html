@@ -8,11 +8,11 @@
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261013k">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261013k">
-<script src="assets/common/site.js?v=20261013k"></script>
-<script src="assets/common/mypage.js?v=20261013k"></script>
-<script src="assets/common/flow.js?v=20261013k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261013l">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261013l">
+<script src="assets/common/site.js?v=20261013l"></script>
+<script src="assets/common/mypage.js?v=20261013l"></script>
+<script src="assets/common/flow.js?v=20261013l"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -81,6 +81,9 @@
   .doc .btn.del:hover { background:#fef3f2; }
   .doc .btn.off { opacity:.4; pointer-events:none; cursor:default; } /* 인증 검토 중: 파일 변경 불가 */
   #rowDoc { scroll-margin-top:120px; }
+  .mailrow { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+  .mailrow .op-vchip { margin-left:0; }
+  .mailrow .btn { height:32px; padding:0 12px; font-size:13px; }
   #docLock a { color:inherit; font-weight:600; text-decoration:underline; text-underline-offset:3px; }
 
   .leave { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 24px; border:1px solid var(--gray-200); border-radius:16px; background:#fff; }
@@ -132,7 +135,7 @@
                 <p class="note" id="pNote" hidden>아래 저장하기를 눌러야 변경한 사진이 반영됩니다.</p></div>
               <input type="file" id="pFile" accept="image/png,image/jpeg,image/webp"></div>
           </div></div>
-          <div class="field"><div class="flabel">이메일(아이디)</div><div class="fbody"><p class="val" id="vEmail"></p></div></div>
+          <div class="field" id="rowMail"><div class="flabel">이메일(아이디)</div><div class="fbody"><div class="mailrow"><p class="val" id="vEmail"></p><span class="op-vchip" id="mailChip" hidden>메일 미인증</span><button type="button" class="btn line" id="mailResend" hidden>인증 메일 다시 보내기</button></div><p class="help" id="mailHelp" hidden>가입하신 메일함에서 인증 메일을 확인해 주세요. 메일이 오지 않았다면 스팸함도 확인해 주세요.</p></div></div>
           <div class="field"><div class="flabel">회원 유형</div><div class="fbody"><p class="val" id="vRole"></p></div></div>
           <div class="field"><label class="flabel" for="name">이름<span class="req">*</span></label><div class="fbody"><input class="inp" id="name" autocomplete="name"></div></div>
           <div class="field"><label class="flabel" for="org">소속(기관·회사)<span class="req">*</span></label><div class="fbody"><input class="inp" id="org" placeholder="소속 검색 또는 입력"></div></div>
@@ -191,6 +194,7 @@
     $('#gate').hidden = true; $('#secure').hidden = false;
     $('#name').focus({ preventScroll: true });
     if (location.hash === '#doc' && hasDoc) $('#rowDoc').scrollIntoView({ behavior: 'smooth', block: 'center' }); // 미인증 안내의 [사업자등록증 올리기]에서 온 경우
+    if (location.hash === '#mail') $('#rowMail').scrollIntoView({ behavior: 'smooth', block: 'center' }); // 인증 안내 팝업의 [이메일 인증]에서 온 경우
   });
   $('#gpw').focus();
 
@@ -225,6 +229,11 @@
   }
 
   $('#vEmail').textContent = email;
+  // 메일 인증 전: 미인증 표시 + [인증 메일 다시 보내기] (로그인은 열려 있고 기능만 제한되므로 여기서 재발송)
+  if (!OP.mailVerified() && me.s.role !== 'admin') {
+    $('#mailChip').hidden = false; $('#mailResend').hidden = false; $('#mailHelp').hidden = false;
+    $('#mailResend').addEventListener('click', function () { OP.toast('인증 메일을 다시 보냈습니다. 메일함을 확인해 주세요.'); });
+  }
   function vrole() {
   $('#vRole').innerHTML = OP.my.esc(OP.ROLE_LABEL[me.s.role] || '') +
     (me.s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' +
