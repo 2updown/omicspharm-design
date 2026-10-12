@@ -1,6 +1,5 @@
 <!-- 파트너 인증 절차 안내 일러스트 ② 인증 검토 (직접 제작, 아이콘 아님) -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <circle cx="60" cy="60" r="50" fill="#EEF8F6" stroke="none"/>
   <rect x="30" y="28" width="42" height="54" rx="4" fill="#fff" stroke="#222" stroke-width="3"/>
   <path d="M38 40h22M38 48h26M38 56h14" stroke="#222" stroke-width="3"/>
   <path d="M75 75l13 13" stroke="#222" stroke-width="9"/>

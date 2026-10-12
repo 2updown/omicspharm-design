@@ -1,6 +1,5 @@
 <!-- 파트너 인증 절차 안내 일러스트 ① 사업자등록증 등록 (직접 제작, 아이콘 아님) -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <circle cx="60" cy="60" r="50" fill="#EEF8F6" stroke="none"/>
   <path d="M38 26h30l14 14v50a4 4 0 0 1-4 4H38a4 4 0 0 1-4-4V30a4 4 0 0 1 4-4z" fill="#fff" stroke="#222" stroke-width="3"/>
   <path d="M68 26v10a4 4 0 0 0 4 4h10" stroke="#222" stroke-width="3"/>
   <rect x="41" y="46" width="14" height="10" rx="2" fill="#F5C451" stroke="#222" stroke-width="2.5"/>
