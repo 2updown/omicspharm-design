@@ -70,3 +70,14 @@
 | `service/ic-target.svg` | - | Phosphor (Figma에서 내보냄, 레이어 이름 없음) |
 
 ※ 사이트의 아이콘은 모두 Phosphor Icons 기반입니다. Figma에서 내보낸 파일은 레이어 이름이 Phosphor 이름과 다를 수 있습니다 (예: x-close = X, search-md = MagnifyingGlass, chevron-down = CaretDown, info-circle = Info).
+
+# 직접 제작 이미지 (아이콘 아님)
+
+Phosphor 아이콘이 아니라 프로토타입용으로 직접 만든 SVG 이미지입니다. 이 저장소에만 원본이 있으니 핸드오프할 때 이 목록을 함께 전달합니다. (Figma에서 받은 PNG·JPG는 Figma 원본 참고)
+
+| 파일 | 쓰이는 화면 | 비고 |
+|---|---|---|
+| `verify/step1.svg` · `verify/step2.svg` · `verify/step3.svg` | 마이페이지 > 파트너 인증 > 인증 절차 3단계 | 안내 일러스트 (등록 · 검토 · 완료) |
+| `guide/tip-org.svg` · `guide/tip-private.svg` · `guide/tip-qna.svg` · `guide/tip-split.svg` | 이용 가이드 > TIP 카드 | 카드 일러스트 |
+| `main/features/feature-report.svg` · `feature-interpret.svg` · `feature-matching.svg` · `feature-support.svg` | 메인 > Features 4개 항목 | **임시 이미지** — 실제 화면·디자인 확정 후 교체 |
+| `main/features/feature-manage.svg` · `feature-request.svg` | 사용 안 함 | 예전 Features 구성용 (삭제 가능) |
