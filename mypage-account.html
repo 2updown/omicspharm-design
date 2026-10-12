@@ -8,11 +8,11 @@
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261012o">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261012o">
-<script src="assets/common/site.js?v=20261012o"></script>
-<script src="assets/common/mypage.js?v=20261012o"></script>
-<script src="assets/common/flow.js?v=20261012o"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261012p">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261012p">
+<script src="assets/common/site.js?v=20261012p"></script>
+<script src="assets/common/mypage.js?v=20261012p"></script>
+<script src="assets/common/flow.js?v=20261012p"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -53,7 +53,7 @@
   /* 비밀번호 재확인 */
   .gate { align-items:center; padding:56px 24px; text-align:center; }
   .gate .lock { display:flex; align-items:center; justify-content:center; }
-  .gate .lock svg { width:40px; height:40px; }
+  .gate .lock img { width:40px; height:40px; }
   .gfield { display:flex; flex-direction:column; gap:6px; }
   .gate h3 { font-size:20px; font-weight:700; line-height:28px; letter-spacing:-.2px; }
   .gate p { margin-top:-16px; font-size:14px; line-height:20px; color:var(--gray-500); }
@@ -111,7 +111,7 @@
   <div class="main">
 
     <section class="card gate" id="gate">
-      <span class="lock"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#404040" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.2" fill="#404040"/></svg></span>
+      <span class="lock"><img src="assets/account/ic-lock.svg" alt="" width="40" height="40"></span>
       <h3>비밀번호 재확인</h3>
       <p>회원님의 정보를 안전하게 보호하기 위해 비밀번호를 한 번 더 입력해주세요.</p>
       <form id="fGate" novalidate>

@@ -8,6 +8,7 @@
 
 | 파일 | 아이콘 이름 | 출처 |
 |---|---|---|
+| `account/ic-lock.svg` | Lock | Phosphor (내 정보 관리 비밀번호 재확인, #404040) |
 | `auth/ic-caret-right.svg` | CaretRight | Phosphor (Figma에서 내보냄) |
 | `auth/ic-check-circle.svg` | CheckCircle | Phosphor (Figma에서 내보냄) |
 | `auth/ic-check.svg` | Check | Phosphor (Figma에서 내보냄) |
