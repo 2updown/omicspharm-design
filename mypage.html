@@ -7,11 +7,11 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261013n">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261013n">
-<script src="assets/common/site.js?v=20261013n"></script>
-<script src="assets/common/mypage.js?v=20261013n"></script>
-<script src="assets/common/flow.js?v=20261013n"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261013o">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261013o">
+<script src="assets/common/site.js?v=20261013o"></script>
+<script src="assets/common/mypage.js?v=20261013o"></script>
+<script src="assets/common/flow.js?v=20261013o"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -33,7 +33,10 @@
 
   /* 진행 현황 (묶음형): 묶음 카드마다 색 제목 + 연한 색 칸(단계 이름 · n건). 칸 수만큼 너비 비율 */
   .fgrid { display:grid; gap:12px; }
-  .fg { display:flex; flex-direction:column; gap:10px; min-width:0; } /* 묶음: 테두리 없이 제목 + 색 칸 */
+  .fg { display:flex; flex-direction:column; gap:10px; padding:14px 12px; border:1px solid var(--gray-200); border-radius:12px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.04); min-width:0; } /* 묶음 카드 */
+  /* 진행 현황은 바깥 큰 상자 없이 제목 + 묶음 카드 (레퍼런스처럼) */
+  .card.bare { padding:0; gap:14px; background:none; border:0; border-radius:0; }
+  .card.bare .card-head h3 { font-size:22px; font-weight:700; line-height:30px; letter-spacing:-.22px; }
   .fg h4 { font-size:16px; font-weight:700; line-height:22px; text-align:center; color:var(--fc); }
   .fg .cells { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); gap:8px; flex:1; }
   .fg .cells > * { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:14px 6px; border-radius:8px; background:var(--fb); text-align:center; }
@@ -118,12 +121,12 @@
   <aside class="side" data-op-side></aside>
 
   <div class="main">
-    <section class="card" id="pipeCard" hidden>
+    <section class="card bare" id="pipeCard" hidden>
       <div class="card-head"><h3 id="pipeH"></h3><a class="more" id="pipeMore"></a></div>
       <div class="flow" id="pipe"></div>
     </section>
 
-    <section class="card">
+    <section class="card bare">
       <div class="card-head"><h3>프로젝트 진행 현황</h3><a class="more" href="mypage-project.html">전체 보기</a></div>
       <div class="flow" id="flow"></div>
     </section>
