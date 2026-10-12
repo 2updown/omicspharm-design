@@ -19,7 +19,7 @@
     ['service', '분석 서비스 정보', 'mypage-service.html', ['partner'], 'me'],
     ['clients', '클라이언트 관리', 'mypage-clients.html', ['admin'], 'mgmt'],
     ['partners', '분석파트너 관리', 'mypage-partners.html', ['admin'], 'mgmt'], // 파트너 인증 검토 (인증 완료 / 재제출 요청)
-    ['admin', '관리자 페이지', 'admin.html', ['admin']] // 백오피스 어드민 (프로토타입, 기존 omicspharm.com/admin 구성). 묶음 밖 맨 아래 단일 메뉴
+    ['admin', '관리자 페이지 (화면 예시)', 'admin.html', ['admin']] // 백오피스 어드민 (프로토타입, 기존 omicspharm.com/admin 구성). 묶음 밖 맨 아래 단일 메뉴
   ];
   var GROUP = { prj: '프로젝트', me: '회원정보', mgmt: '파트너 관리' };
   function read(k, f) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch (e) { return f; } }
