@@ -80,7 +80,7 @@
     // 필수: 기본 정보(가입 시) + 사업자등록증. 제공 분석 서비스는 선택(매칭 추천용)이라 진행률에 넣지 않음
     verifyGate: function () {
       var old = document.querySelector('.op-gate'); if (old) old.remove();
-      var s = OP.session(), a = (s && OP.account(s.email)) || {}, doc = !!a.bizDoc;
+      var s = OP.session(), a = (s && OP.account(s.email)) || {};
       // 진행률: 필수 2개(파트너 정보 · 사업자등록증 인증) 기준 0 / 50%. 100%는 인증 완료(= 이 팝업이 뜨지 않음)라 업로드만 하고 검토 중이면 50% 유지
       var pct = (a.profileDone === false ? 0 : 50) + (OP.partnerVerified() ? 50 : 0);
       var item = function (done, label, href, sub) {
@@ -94,7 +94,7 @@
         '<h3 id="opGateT">파트너 인증을 위한<br>필수 정보를 등록해주세요</h3>' +
         '<p>인증이 완료되면 견적서 작성·제출, 비공개 프로젝트 열람,<br>프로젝트 매칭·계약을 이용할 수 있습니다.</p>' +
         '<div class="bar"><span class="gtip">인증 필수 정보 <b>' + pct + '%</b> 완료</span><span class="fill" style="width:' + pct + '%"></span></div>' +
-        '<div class="list">' + item(true, '파트너 정보 등록') + item(doc, '사업자등록증 업로드', 'mypage-verify.html') +
+        '<div class="list">' + item(true, '파트너 정보 등록') + item(false, '사업자등록증 업로드', 'mypage-verify.html') +
           '<a class="gi opt" href="mypage-service.html"><i class="' + (svc ? 'ck' : 'pl') + '"></i>제공 분석 서비스 ' + (svc ? '수정' : '입력') + '<span class="tag">선택</span><i class="go"></i></a></div></div>';
       var close = function () { m.remove(); document.removeEventListener('keydown', key); };
       var key = function (e) { if (e.key === 'Escape') close(); };
