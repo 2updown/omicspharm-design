@@ -168,7 +168,7 @@
       // 견적관리·프로젝트 관리·문의내역은 그 메뉴에 들어가면 배지가 사라짐 (알림 목록의 읽음 상태와는 따로 op.menuSeen에 기록)
       var NEW = { alarm: n > 0 }, NB = '<span class="nb" aria-label="새 소식">N</span>';
       var seen = read('op.menuSeen', []), seenAdd = [];
-      var menuOf = function (h) { return /mypage-quote/.test(h) ? 'quote' : /mypage-(project|request)/.test(h) ? 'project' : /mypage-inquiry/.test(h) ? 'inquiry' : ''; };
+      var menuOf = function (h) { return /mypage-quote/.test(h) ? 'quote' : /mypage-(project|request)/.test(h) ? 'project' : /mypage-inquiry/.test(h) ? 'inquiry' : /mypage-service/.test(h) ? 'service' : ''; }; // service: 컨설턴트의 분석 서비스 정보 입력 요청
       D.alarms().forEach(function (a) {
         if (a.read || !a.href || seen.indexOf(a.id) > -1) return;
         var mk = menuOf(a.href); if (!mk) return;
