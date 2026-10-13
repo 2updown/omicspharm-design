@@ -290,18 +290,25 @@
         '<div class="op-dr-sub">' + m.items.map(function (t) { return '<a ' + link(t) + '>' + t + '</a>'; }).join('') + '</div>' +
       '</div>';
     }).join('');
-    // 기존 오믹스팜 모바일 메뉴처럼 한 줄씩 꽉 찬 목록 (언어·알림·마이페이지·계정 정보는 제외)
-    var account = s
-      ? '<button type="button" class="op-dr-link" data-op-logout>로그아웃</button>'
-      : '<div class="op-dr-auth"><a class="op-dr-btn line" href="login.html">로그인</a><a class="op-dr-btn" href="signup.html">가입하기</a></div>';
-    return '<div class="op-drawer" id="opDrawer" hidden>' +
+    // 한 줄씩 꽉 찬 목록. 로그인하면 맨 위에 내 정보(프로필 · 마이페이지 · 내 정보 관리), 맨 아래에 작은 로그아웃 (위시켓 모바일 메뉴 참고)
+    var me = '';
+    if (s) {
+      var acc = OP.account(s.email) || {}, nm = (acc.name || s.email.split('@')[0]).replace(/</g, '&lt;');
+      var chip = !OP.mailVerified() && s.role !== 'admin' ? '<span class="op-vchip">메일 미인증</span>' : s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '';
+      var unread = OP.my && OP.my.unread ? OP.my.unread() : 0;
+      me = '<div class="op-dr-me">' +
+        '<div class="who"><img src="' + (acc.photo || A + 'user-icon.svg?v=2') + '" alt=""><div><b>' + nm + ' 님</b><span class="role">' + (ROLE_LABEL[s.role] || '') + '</span>' + chip + '<small>' + s.email.replace(/</g, '&lt;') + '</small></div>' +
+          '<a class="bell" href="mypage-alarm.html" aria-label="알림"><img src="' + A + 'ic-bell.svg?v=2" alt="">' + (unread ? '<i></i>' : '') + '</a></div>' +
+        '<div class="btns"><a class="op-dr-btn line" href="mypage.html">마이페이지</a><a class="op-dr-btn soft" href="mypage-account.html">내 정보 관리</a></div></div>';
+    }
+    return '<div class="op-drawer" id="opDrawer" hidden>' + me +
       '<nav class="op-dr-nav" aria-label="전체 메뉴">' +
         '<a class="op-dr-link" href="omicspharm-register.html" data-client-only>프로젝트 의뢰</a>' +
         '<a class="op-dr-link" href="projects.html">프로젝트 찾기</a>' +
         groups +
-        (s ? account : '') +
       '</nav>' +
-      (s ? '' : account) +
+      (s ? '<div class="op-dr-foot"><button type="button" data-op-logout>로그아웃</button></div>'
+         : '<div class="op-dr-auth"><a class="op-dr-btn line" href="login.html">로그인</a><a class="op-dr-btn" href="signup.html">가입하기</a></div>') +
     '</div>';
   }
   var BURGER = '<button type="button" class="op-burger" aria-controls="opDrawer" aria-expanded="false" aria-label="메뉴 열기"><img class="i-open" src="' + A + 'ic-list.svg" alt=""><img class="i-close" src="' + A + 'ic-x.svg" alt=""></button>';

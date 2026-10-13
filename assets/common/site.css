@@ -110,6 +110,24 @@
 .op-dr-auth { display:flex; gap:8px; padding:20px; }
 .op-dr-btn { flex:1; display:flex; align-items:center; justify-content:center; height:48px; border-radius:8px; background:#000; color:#fff !important; font-size:16px; font-weight:500; }
 .op-dr-btn.line { background:#fff; color:#000 !important; border:1px solid var(--op-gray-300); }
+/* 모바일 메뉴 맨 위 내 정보 (로그인) */
+.op-dr-me { display:flex; flex-direction:column; gap:16px; padding:20px; background:var(--op-gray-50); border-bottom:1px solid var(--op-gray-200); }
+.op-dr-me .who { display:flex; align-items:center; gap:12px; }
+.op-dr-me .who > img { width:48px; height:48px; flex:none; border-radius:50%; object-fit:cover; }
+.op-dr-me .who > div { flex:1; min-width:0; display:flex; flex-wrap:wrap; align-items:center; gap:4px 6px; }
+.op-dr-me .who b { font-size:17px; font-weight:600; line-height:24px; }
+.op-dr-me .who .role { padding:2px 8px; border-radius:8px; border:1px solid var(--op-teal-600); color:var(--op-teal-600); font-size:12px; font-weight:500; line-height:16px; }
+.op-dr-me .who .op-vchip { margin-left:0; }
+.op-dr-me .who small { flex-basis:100%; font-size:13px; line-height:18px; color:var(--op-gray-500); word-break:break-all; }
+.op-dr-me .bell { position:relative; flex:none; display:flex; align-items:center; justify-content:center; width:40px; height:40px; }
+.op-dr-me .bell img { width:24px; height:24px; }
+.op-dr-me .bell i { position:absolute; top:8px; right:9px; width:6px; height:6px; border-radius:50%; background:#f00011; }
+.op-dr-me .btns { display:flex; flex-direction:column; gap:8px; }
+.op-dr-me .op-dr-btn { flex:none; height:44px; font-size:15px; }
+.op-dr-btn.soft { background:var(--op-teal-50, #edfefa); color:var(--op-teal-700, #00786e) !important; border:1px solid #a6e3d9; }
+/* 맨 아래 작은 로그아웃 */
+.op-dr-foot { padding:20px; }
+.op-drawer .op-dr-foot button { font-size:13px; line-height:18px; color:var(--op-gray-500); }
 
 /* ── Footer ── */
 .op-footer { background:var(--op-bg-green); border-top:1px solid var(--op-gray-300); padding:0 60px; font-family:var(--op-font); color:#000; -webkit-font-smoothing:antialiased; }
