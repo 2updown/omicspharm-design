@@ -220,8 +220,9 @@
           var href = m[0] === 'project' && s.role === 'admin' ? 'mypage-request.html' : m[2];
           return '<a href="' + href + '"' + (m[2] === '#' ? ' data-soon="' + m[1] + '"' : '') + (m[0] === key ? ' class="on" aria-current="page"' : '') + '>' + m[1] + (side.querySelector('a[href="' + href + '"] .nb') ? NB : '') + '</a>';
         }).join('');
-        ph.insertAdjacentHTML('afterbegin', '<a class="m-back" href="mypage.html"><img src="assets/detail/ic-caret-left.svg" alt="">마이페이지</a>');
-        ph.insertAdjacentHTML('afterend', '<nav class="m-tabs" aria-label="마이페이지 메뉴"><div>' + tabs + '</div></nav>');
+        // '‹ 마이페이지'와 탭을 한 덩어리로 (등장 효과도 같이). site.js 등장 효과에서 빼고 여기서 직접 붙임
+        ph.insertAdjacentHTML('afterbegin', '<div class="m-head op-enter" data-op-skip-enter><a class="m-back" href="mypage.html"><img src="assets/detail/ic-caret-left.svg" alt="">마이페이지</a>' +
+          '<nav class="m-tabs" aria-label="마이페이지 메뉴"><div>' + tabs + '</div></nav></div>');
         var mt = document.querySelector('.m-tabs > div'), on = mt.querySelector('.on');
         if (on) mt.scrollLeft = on.offsetLeft - (mt.clientWidth - on.offsetWidth) / 2; // 지금 메뉴를 가운데로
       }
