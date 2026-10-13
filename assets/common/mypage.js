@@ -122,6 +122,8 @@
       if (ses.role === 'partner') {
         var pa = OP.account(ses.email) || {};
         if (pa.bizAsk && !pa.verified) L.push({ id: 'pv-ask-' + pa.bizAsk.at, k: '사업자등록증재제출요청', cat: 'project', at: pa.bizAsk.at, t: '파트너 인증을 위해 사업자등록증을 다시 제출해주세요.', sub: '사유: ' + pa.bizAsk.note, href: 'mypage-verify.html' });
+        var sa = OP.flow && OP.flow.svcAsked(ses.email);
+        if (sa) L.push({ id: 'svc-ask-' + sa, k: '분석서비스정보요청', cat: 'project', at: sa, t: '분석 서비스 정보를 입력해주세요.', sub: '견적 확인과 프로젝트 매칭에 활용됩니다. 회원정보 > 분석 서비스 정보에서 입력할 수 있습니다.', href: 'mypage-service.html' });
         if (pa.verified && pa.bizOkAt) L.push({ id: 'pv-ok-' + pa.bizOkAt, k: '파트너인증', cat: 'project', at: pa.bizOkAt, t: '파트너 인증이 완료되었습니다. 견적서 작성과 비공개 프로젝트 열람이 가능합니다.', href: 'mypage-verify.html' });
       }
       if (OP.flow) L = L.concat(OP.flow.alarms());

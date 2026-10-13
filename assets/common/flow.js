@@ -24,10 +24,15 @@
     { key: 'p-omx', org: '□□오믹스', name: '박담당', tel: '031-000-1002', mail: 'sales@omics.test', svc: ['전사체', '유전체', '단백체'], verified: true, done: 27, lead: '평균 7주', rate: 1.08, weeks: 7 },
     { key: 'p-gen', org: '◇◇유전체센터', name: '최담당', tel: '042-000-1003', mail: 'info@genome.test', svc: ['유전체', '전사체'], verified: true, done: 64, lead: '평균 6주', rate: 1, weeks: 6 },
     { key: 'p-met', org: '☆☆대사체연구소', name: '정담당', tel: '02-000-1004', mail: 'lab@metabo.test', svc: ['대사체', 'Olink'], verified: true, done: 19, lead: '평균 6주', rate: .97, weeks: 6 },
-    { key: 'p-adc', org: '◎◎바이오로직스', name: '한담당', tel: '032-000-1005', mail: 'bd@biologics.test', svc: ['바이오의약품', '단백체'], verified: true, done: 11, lead: '평균 8주', rate: 1.15, weeks: 8 },
+    { key: 'p-adc', org: '◎◎바이오로직스', name: '한담당', tel: '032-000-1005', mail: 'bd@biologics.test', svc: ['바이오의약품', '단백체'], verified: true, done: 11, lead: '평균 8주', rate: 1.15, weeks: 8, svcInfo: false }, // svcInfo:false = 분석 서비스 정보 미입력 예시
     { key: 'p-new', org: '▽▽랩', name: '오담당', tel: '010-0000-1006', mail: 'hello@newlab.test', svc: ['단백체', '전사체'], verified: false, done: 0, lead: '-' }
   ];
   var partner = function (k) { return PARTNERS.filter(function (p) { return p.key === k; })[0] || { key: k, org: k, svc: [] }; };
+  // 분석 서비스 정보 입력 여부: 가입 계정은 회원정보 > 분석 서비스 정보 기준, 예시 파트너는 svcInfo 값
+  var svcInfo = function (k) { var a = OP.account && OP.account(k); return a && a.role === 'partner' ? !!(a.services || []).length : partner(k).svcInfo !== false; };
+  // 컨설턴트의 분석 서비스 정보 입력 요청 (견적 확인 중, 안내만 · 견적 전달은 막지 않음) { 파트너 키: 요청 시각 }
+  var svcAsked = function (k) { return read('op.svcAsk', {})[k] || 0; };
+  var svcAsk = function (k) { var m = read('op.svcAsk', {}); m[k] = Date.now(); write('op.svcAsk', m); };
   var fits = function (p, svc) { return p.svc.some(function (s) { return String(svc || '').indexOf(s) > -1; }); };
 
   // 예시 의뢰 (클라이언트 데모 계정 client@omicspharm.test 소유) — 단계별로 하나씩
@@ -142,7 +147,7 @@
   function req(id) { return requests().filter(function (r) { return r.id === id; })[0] || null; }
 
   var F = {
-    PARTNERS: PARTNERS, partner: partner, fits: fits, ME_PARTNER: ME_PARTNER,
+    PARTNERS: PARTNERS, partner: partner, fits: fits, ME_PARTNER: ME_PARTNER, svcInfo: svcInfo, svcAsked: svcAsked, svcAsk: svcAsk,
     requests: requests, req: req, state: state, total: total, money: money, man: man, num: num, esc: esc, ymd: ymd, iso: iso,
     // 단계 이름
     ADMIN_ST: { review: '검토 대기', quoting: '견적 수집 중', sent: '클라이언트 검토', matched: '매칭 완료' },

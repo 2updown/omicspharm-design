@@ -8,11 +8,11 @@
 <!-- 마이페이지 > (분석파트너 카드) 분석 서비스 정보 (Figma 시안 없음).
      회원가입 '추가 정보 입력'에서 고른 대표 서비스(서비스·수행 상태·표준 소요 기간)를 보고, 서비스를 더 등록·수정·삭제한다.
      데모: 저장은 이 브라우저 localStorage(op.accounts의 services)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261014o">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261014o">
-<script src="assets/common/site.js?v=20261014o"></script>
-<script src="assets/common/mypage.js?v=20261014o"></script>
-<script src="assets/common/flow.js?v=20261014o"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261014p">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261014p">
+<script src="assets/common/site.js?v=20261014p"></script>
+<script src="assets/common/mypage.js?v=20261014p"></script>
+<script src="assets/common/flow.js?v=20261014p"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .cnt { margin-left:6px; color:var(--teal-600); }
@@ -64,7 +64,8 @@
   <div class="main">
     <section class="card">
       <div class="card-head"><h3>분석 서비스 정보<span class="cnt" id="cnt"></span></h3></div>
-      <div class="op-ibox simple"><p class="t">등록한 서비스는 관련 프로젝트 추천과 OmicsPharm 컨설턴트의 매칭 추천에 활용됩니다.</p></div>
+      <div class="op-ibox warn simple" id="askBox" hidden><p class="t"><span>OmicsPharm이 분석 서비스 정보 입력을 요청했습니다. 제공하는 서비스를 등록해 주세요.</span></p></div>
+      <div class="op-ibox simple"><p class="t">등록한 서비스는 견적 확인과 OmicsPharm 컨설턴트의 프로젝트 매칭에 활용됩니다.</p></div>
       <form id="fSvc" novalidate>
         <div class="items" id="items"></div>
         <button type="button" class="btn add" id="add">+ 서비스 추가</button>
@@ -86,12 +87,13 @@
   var SVC = ['단백체', 'Olink', '대사체', '유전체', '전사체', '바이오의약품·ADC', '기타'];
   var ST = ['즉시 수행 가능', '사전협의 필요'];
   var L = JSON.parse(JSON.stringify(me.acc.services || []));
-  var uid = 0;
+  var uid = 0, saved = L.length > 0;
 
   function chips(name, list, cur) {
     return '<div class="chips2">' + list.map(function (v) { return '<label><input type="radio" name="' + name + '" value="' + esc(v) + '"' + (v === cur ? ' checked' : '') + '>' + esc(v) + '</label>'; }).join('') + '</div>';
   }
   function draw() {
+    $('#askBox').hidden = !(OP.flow && OP.flow.svcAsked(email)) || saved; // 컨설턴트 요청을 받았고 아직 저장된 서비스가 없을 때
     $('#cnt').textContent = L.length ? L.length : '';
     $('#items').innerHTML = L.length ? L.map(function (o, i) {
       var n = 'x' + (uid++), etc = SVC.indexOf(o.svc) < 0 && o.svc ? o.svc : '';
@@ -133,7 +135,7 @@
     var names = L.map(function (o) { return o.svc; });
     if (names.some(function (v, i) { return names.indexOf(v) !== i; })) { OP.toast('같은 서비스가 두 번 등록되어 있습니다.'); return; }
     if (L.some(function (o) { return o.from && o.to && +o.from > +o.to; })) { OP.toast('표준 소요 기간을 다시 확인해주세요. 최소 기간이 최대 기간보다 깁니다.'); return; }
-    OP.saveAccount(email, { services: L });
+    OP.saveAccount(email, { services: L }); saved = L.length > 0;
     draw(); OP.toast('분석 서비스 정보가 저장되었습니다.');
   });
 })();

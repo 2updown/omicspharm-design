@@ -9,11 +9,11 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=프로젝트 번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261014o">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261014o">
-<script src="assets/common/site.js?v=20261014o"></script>
-<script src="assets/common/mypage.js?v=20261014o"></script>
-<script src="assets/common/flow.js?v=20261014o"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261014p">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261014p">
+<script src="assets/common/site.js?v=20261014p"></script>
+<script src="assets/common/mypage.js?v=20261014p"></script>
+<script src="assets/common/flow.js?v=20261014p"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -76,6 +76,9 @@
   .qt .r input { width:18px; height:18px; accent-color:var(--teal-600); }
   .qt .who b { display:block; font-size:15px; font-weight:600; line-height:22px; }
   .qt .who span { font-size:12px; line-height:18px; color:var(--gray-500); }
+  .qt .who .svcm { display:flex; align-items:center; gap:6px; margin-top:2px; font-size:12px; line-height:18px; color:var(--orange-600); }
+  .qt .who .svcm .tbtn { height:18px; font-size:12px; line-height:18px; }
+  .qt .who .svcm em { font-style:normal; color:var(--gray-500); }
   .qt .amt { text-align:right; font-weight:600; white-space:nowrap; }
   .qt .amt small { display:block; font-size:12px; font-weight:400; color:var(--gray-500); }
   .qt .wk { text-align:right; white-space:nowrap; }
@@ -631,7 +634,7 @@
       var x = s.P[k], p = F.partner(k), q = x.quote, sub = x.status === 'sub';
       return '<div class="r' + (s.pick === k ? ' win' : '') + '">' +
         (edit && sub && !x.fwd ? '<input type="checkbox" name="fw" value="' + k + '" checked aria-label="' + esc(p.org) + ' 견적 전달">' : '<span title="' + (x.fwd ? '클라이언트에게 전달함' : '') + '">' + (x.fwd ? '✓' : '') + '</span>') +
-        '<div class="who"><b>' + esc(p.org) + '</b><span>' + (x.self ? '<i class="src self">직접 신청</i>' : '<i class="src">견적제안</i>') + md(x.at) + (x.revN ? ' · 수정 ' + x.revN + '회' : '') + '</span></div>' +
+        '<div class="who"><b>' + esc(p.org) + '</b><span>' + (x.self ? '<i class="src self">직접 신청</i>' : '<i class="src">견적제안</i>') + md(x.at) + (x.revN ? ' · 수정 ' + x.revN + '회' : '') + '</span>' + svcMiss(k) + '</div>' +
         '<div class="st">' + badge(k) + '</div>' +
         '<div class="amt">' + (sub ? F.money(F.total(q).final) + (k === low ? '<span class="hl">최저가</span>' : '') + '<small>VAT 포함</small>' : '-') + (sub ? '<span class="mob">· ' + esc(q.weeks || '-') + '주</span>' : '') + '</div>' +
         '<div class="wk">' + (sub ? esc(q.weeks || '-') + '주' + (k === fast ? '<span class="hl">최단</span>' : '') : '-') + '</div>' +
@@ -650,6 +653,12 @@
       (edit && subs.some(function (k) { return !s.P[k].fwd; }) ? '<div class="bar"><p>체크한 견적을 수정 없이 그대로 클라이언트에게 전달합니다. 기관명도 함께 공개됩니다.' + (s.st === 'sent' ? ' 이미 전달한 견적(✓)에 추가됩니다.' : '') + '</p><div class="acts"><button type="button" class="btn primary lg" id="fwd"></button></div></div>' : '') +
       (s.msg && s.st !== 'quoting' ? '<div class="msg"><b>클라이언트에게 전달한 메시지 · ' + F.ymd(s.sentAt) + '</b>' + esc(s.msg) + '</div>' : '') +
     '</div>';
+  }
+  // 분석 서비스 정보 미입력 파트너: 견적 확인 중에 입력 요청 (안내만, 견적 전달은 그대로 가능)
+  function svcMiss(k) {
+    if (F.svcInfo(k)) return '';
+    var at = F.svcAsked(k);
+    return '<p class="svcm">분석 서비스 정보 미입력' + (at ? ' <em>· ' + md(at) + ' 입력 요청함</em>' : ' <button type="button" class="tbtn xs primary" data-svcask="' + k + '">입력 요청</button>') + '</p>';
   }
   function order(x) { return { sub: 0, rev: 1, draft: 2, req: 2, dec: 3 }[x.status]; }
 
@@ -682,6 +691,9 @@
         F.ask({ title: '의뢰를 승인할까요?', desc: '"' + r.title + '" 의뢰가 프로젝트로 등록되고, 의뢰사(' + (r.org || '-') + ')에게 승인 알림이 갑니다.', label: false, yes: '승인' }, function () {
           F.approve(id); OP.toast('의뢰를 승인했습니다.'); render();
         });
+      } else if (t.closest('[data-svcask]')) {
+        var sk = t.closest('[data-svcask]').dataset.svcask;
+        F.svcAsk(sk); OP.toast(F.partner(sk).org + '에 분석 서비스 정보 입력을 요청했습니다.'); render();
       } else if (t.closest('#more')) {
         mailModal(s);
       } else if (t.closest('[data-doc]')) {

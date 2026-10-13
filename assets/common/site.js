@@ -68,16 +68,16 @@
     CLIENT_ONLY_MSG: '의뢰자(클라이언트)만 프로젝트를 등록할 수 있습니다.',
     // 클라이언트 전용 화면 진입 판단: 'ok' | 'login' | 'deny'
     /* 프로젝트 열람 권한: 비공개 프로젝트는 인증 분석파트너·컨설턴트만 열람. 클라이언트·비로그인·미인증 분석파트너는 불가 */
-    // 분석파트너 인증 여부 (표시용. 관리자가 기관·서비스 정보를 확인한 뒤 설정 — 가입 여부와 별도 관리)
+    // 분석파트너 인증 여부 (표시용. 관리자가 사업자등록증을 확인한 뒤 설정 — 가입 여부와 별도 관리)
     partnerVerified: function (email) { var s = OP.session(); email = email || (s && s.email); var a = OP.account(email) || {}; return a.role === 'partner' && !!a.verified; },
     // 미인증 분석파트너: 공개 프로젝트만 열람, 견적서 작성 불가 / 인증 분석파트너·컨설턴트: 비공개 열람
     canSeePrivate: function () { var s = OP.session(); return !!s && (s.role === 'admin' || OP.partnerVerified()); },
     canQuote: function () { return OP.partnerVerified(); },
     isPartner: function () { var s = OP.session(); return !!s && s.role === 'partner'; },
     // 미인증 분석파트너 안내: 사업자등록증을 아직 안 올렸으면 업로드 안내, 올렸으면 확인 중 안내
-    verifyHint: function () { var s = OP.session(), a = (s && OP.account(s.email)) || {}; return a.bizDoc ? (a.mailOk === false ? '이메일 인증을 완료하면 제출하신 사업자등록증 확인을 시작합니다.' : '제출하신 사업자등록증을 확인하고 있습니다. 확인이 끝나면 인증해 드립니다.') : '사업자등록증을 올리면 OmicsPharm이 기관·서비스 정보를 확인한 뒤 인증해 드립니다.'; },
+    verifyHint: function () { var s = OP.session(), a = (s && OP.account(s.email)) || {}; return a.bizDoc ? (a.mailOk === false ? '이메일 인증을 완료하면 제출하신 사업자등록증 확인을 시작합니다.' : '제출하신 사업자등록증을 확인하고 있습니다. 확인이 끝나면 인증해 드립니다.') : '사업자등록증을 올리면 OmicsPharm이 확인한 뒤 인증해 드립니다.'; },
     // 미인증 분석파트너가 견적서 작성을 누르면 띄우는 인증 안내 팝업 (위시켓 '프로젝트 지원이 처음이신가요?' 참고)
-    // 필수: 기본 정보(가입 시) + 사업자등록증. 제공 분석 서비스는 선택(매칭 추천용)이라 진행률에 넣지 않음
+    // 필수: 기본 정보(가입 시) + 사업자등록증. 분석 서비스 정보는 인증과 무관 (견적 제출 후 컨설턴트가 입력 요청)
     verifyGate: function () {
       var old = document.querySelector('.op-gate'); if (old) old.remove();
       var s = OP.session(), a = (s && OP.account(s.email)) || {};
@@ -95,8 +95,7 @@
         '<p>인증이 완료되면 견적서 작성·제출, 비공개 프로젝트 열람,<br>프로젝트 매칭·계약을 이용할 수 있습니다.</p>' +
         '<div class="bar"><span class="gtip">인증 필수 정보 <b>' + pct + '%</b> 완료</span><span class="fill" style="width:' + pct + '%"></span></div>' +
         '<div class="list">' + (mail ? '' : '<button type="button" class="gi" data-gate-mail><i class="pl"></i>이메일 인증<i class="go"></i></button>') + item(true, '파트너 정보 등록') +
-          item(false, '사업자등록증 업로드', 'mypage-verify.html') + // 메일 인증 전에도 업로드 가능 (검토는 메일 인증 후)
-          '<a class="gi opt" href="mypage-service.html"><i class="pl"></i>제공 분석 서비스 입력<span class="tag">선택</span><i class="go"></i></a></div></div>';
+          item(false, '사업자등록증 업로드', 'mypage-verify.html') + '</div></div>'; // 메일 인증 전에도 업로드 가능 (검토는 메일 인증 후)
       var close = function () { m.remove(); document.removeEventListener('keydown', key); };
       var key = function (e) { if (e.key === 'Escape') close(); };
       m.addEventListener('click', function (e) { if (e.target === m || e.target.closest('.x')) close(); else if (e.target.closest('[data-gate-mail]')) OP.toast('인증 메일을 다시 보냈습니다. 메일함을 확인해 주세요.'); });
@@ -104,7 +103,7 @@
       document.body.appendChild(m); m.querySelector('.x').focus();
     },
     hasBizDoc: function () { var s = OP.session(), a = (s && OP.account(s.email)) || {}; return !!a.bizDoc; },
-    UNVERIFIED_MSG: '인증된 분석파트너만 이용할 수 있습니다. OmicsPharm이 기관·서비스 정보를 확인한 뒤 인증해 드립니다.',
+    UNVERIFIED_MSG: '인증된 분석파트너만 이용할 수 있습니다. OmicsPharm이 사업자등록증을 확인한 뒤 인증해 드립니다.',
     // 가입 메일 인증 여부: 새로 가입한 계정은 mailOk:false로 시작 (데모 계정·기존 계정은 인증된 것으로 봄)
     mailVerified: function (email) { var s = OP.session(); email = email || (s && s.email); var a = OP.account(email) || {}; return a.mailOk !== false; },
     MAIL_MSG: '이메일 인증 후 이용할 수 있습니다. 가입하신 메일함에서 인증 메일을 확인해주세요.',
