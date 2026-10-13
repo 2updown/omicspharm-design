@@ -11,12 +11,12 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261015r">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261015r">
-<script src="assets/common/site.js?v=20261015r"></script>
-<script src="assets/common/mypage.js?v=20261015r"></script>
-<script src="assets/common/svc-spec.js?v=20261015r"></script>
-<script src="assets/common/flow.js?v=20261015r"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261015s">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261015s">
+<script src="assets/common/site.js?v=20261015s"></script>
+<script src="assets/common/mypage.js?v=20261015s"></script>
+<script src="assets/common/svc-spec.js?v=20261015s"></script>
+<script src="assets/common/flow.js?v=20261015s"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -577,7 +577,7 @@
       '</div>' +
       '<ol class="fsteps" style="--n:5" aria-label="진행 단계">' + STEPS.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
       '<div class="ftodo ' + todo[0] + '"><div><b>' + esc(todo[1]) + '</b><p>' + esc(todo[2]) + '</p></div>' +
-        (s.st === 'review' && !s.ok && !bizWait ? '<div class="acts"><button type="button" class="btn primary" id="approve">의뢰 승인</button></div>' : '') + '</div>' +
+        (s.st === 'review' && !s.ok && !bizWait ? '<div class="acts"><button type="button" class="btn primary" id="approve"' + (F.bizName(r) ? '' : ' disabled title="사업자등록증이 제출되어야 승인할 수 있습니다."') + '>의뢰 승인</button></div>' : '') + '</div>' +
       (s.ok ? '' : bizHTML(s)) + // 사업자등록증은 승인 전에만 위에, 승인 뒤에는 의뢰 내용 바로 위로
       (s.st === 'matched' ? contractHTML(s) : '') +
       (s.st === 'review' && !s.ok ? '' : quotesHTML(s)) +
@@ -593,7 +593,7 @@
   function bizHTML(s) {
     var pre = s.st === 'review' && !s.ok, nm = F.bizName(r), b = s.biz || {}, ask = b.st === 'ask', ok = F.bizOk(r);
     if (!nm) return '<div class="fdocs"><em>사업자등록증</em><span class="chip none">미제출</span><span class="fname"><span>제출된 파일이 없습니다.</span></span>' +
-      (pre ? '<p>의뢰사 계정에 사업자등록증이 없습니다. 재제출을 요청하거나 의뢰사에 안내한 뒤 승인해주세요.</p>' : '') +
+      (pre ? '<p>의뢰사 계정에 사업자등록증이 없어 승인할 수 없습니다. 제출을 요청해주세요. 제출되면 확인 후 승인할 수 있습니다.</p>' : '') +
       (pre && !ask ? '<span class="fbtns"><button type="button" class="btn" id="bizAsk">제출 요청</button></span>' : '') + '</div>';
     // 승인 뒤(견적 협의~)는 이미 확인을 마친 의뢰사: 확인 전/재제출 상태와 데모 되돌리기를 보이지 않음
     if (!pre) return '<div class="fdocs"><em>사업자등록증</em><span class="chip ok">확인 완료</span>' +
@@ -818,6 +818,7 @@
       } else if (t.closest('#bizAsk')) {
         bizAskDo();
       } else if (t.closest('#approve')) {
+        if (!F.bizName(r)) return; // 사업자등록증 미제출: 버튼 비활성
         if ((s.biz || {}).st === 'ask') { OP.toast('사업자등록증 재제출을 기다리고 있습니다.'); return; }
         if (F.bizName(r) && !F.bizOk(r)) { OP.toast('사업자등록증 확인 완료 후 승인할 수 있습니다.'); var bv = $('#bizView'); if (bv) bv.focus(); return; }
         F.ask({ title: '의뢰를 승인할까요?', desc: '"' + r.title + '" 의뢰가 프로젝트로 등록되고, 의뢰사(' + (r.org || '-') + ')에게 승인 알림이 갑니다.', label: false, yes: '승인' }, function () {
