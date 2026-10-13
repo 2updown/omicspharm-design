@@ -9,12 +9,12 @@
      회원가입 '추가 정보 입력'에서 고른 대표 서비스를 보고, 서비스를 더 등록·수정·삭제한다.
      서비스를 고르면 R&D 사례작성 v5 공급자 입력 항목(assets/common/svc-spec.js)이 펼쳐짐. 같은 서비스를 여러 번 등록 = 수행 조건 나누기
      데모: 저장은 이 브라우저 localStorage(op.accounts의 services)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261014s">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261014s">
-<script src="assets/common/site.js?v=20261014s"></script>
-<script src="assets/common/mypage.js?v=20261014s"></script>
-<script src="assets/common/flow.js?v=20261014s"></script>
-<script src="assets/common/svc-spec.js?v=20261014s"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261014t">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261014t">
+<script src="assets/common/site.js?v=20261014t"></script>
+<script src="assets/common/mypage.js?v=20261014t"></script>
+<script src="assets/common/flow.js?v=20261014t"></script>
+<script src="assets/common/svc-spec.js?v=20261014t"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .cnt { margin-left:6px; color:var(--teal-600); }
@@ -36,19 +36,18 @@
   .days { display:flex; align-items:center; gap:8px; font-size:14px; }
   .help { font-size:12px; line-height:18px; color:var(--gray-500); }
   .msg { font-size:12px; line-height:18px; color:var(--red-600); }
-  /* 선택 칩 (내 정보 관리 .svcs와 동일) */
-  .chips2 { display:flex; flex-wrap:wrap; gap:8px; padding:4px 0; }
-  .chips2 label { display:inline-flex; align-items:center; height:36px; padding:0 14px; border:1px solid var(--gray-300); border-radius:8px; font-size:14px; cursor:pointer; }
-  .chips2 input { position:absolute; opacity:0; pointer-events:none; }
-  .chips2 label:has(input:checked) { border-color:var(--teal-600); background:var(--teal-50); color:var(--teal-700); font-weight:500; }
-  .chips2 label:has(input:focus-visible) { box-shadow:0 0 0 3px #00786e33; }
+  /* 체크박스 · 라디오 (프로젝트 의뢰 폼 .opts와 동일, checkbox_item S20) */
+  .opts { display:flex; flex-wrap:wrap; column-gap:12px; row-gap:12px; padding:6px 0; }
+  .opts label { display:inline-flex; align-items:center; gap:8px; font-size:14px; line-height:20px; cursor:pointer; }
+  .opts input { appearance:none; -webkit-appearance:none; width:20px; height:20px; margin:0; flex:none; cursor:pointer; background:url(assets/auth/checkbox-off.svg) center/contain no-repeat; }
+  .opts input:checked { background-image:url(assets/auth/checkbox-on.svg); }
+  .opts input[type=radio] { border-radius:50%; background:#fff; border:1.5px solid var(--gray-300); }
+  .opts input[type=radio]:checked { border:0; background:var(--teal-600) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.2l2.6 2.6L14 7.4' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/20px no-repeat; }
+  .opts input:focus-visible { outline:2px solid var(--teal-600); outline-offset:2px; }
   .add { align-self:flex-start; }
   .actions { display:flex; justify-content:flex-end; }
   .sec { padding:14px 0 6px; font-size:13px; font-weight:600; line-height:18px; color:#000; border-bottom:1px solid var(--gray-200); }
   .flabel { flex-wrap:wrap; gap:4px 6px; }
-  .flabel .all { height:20px; font-size:12px; line-height:18px; color:var(--teal-600); }
-  .chips2.sm { gap:6px; }
-  .chips2.sm label { height:32px; padding:0 10px; font-size:13px; }
   .inp.ta { width:100%; height:auto; padding:10px 12px; resize:vertical; font:inherit; font-size:14px; }
   .field.err .flabel { color:var(--red-600); }
   .field.err .fbody { box-shadow:inset 3px 0 0 var(--red-600); }
@@ -104,7 +103,7 @@
   var uid = 0, saved = L.length > 0;
 
   function chips(name, list, cur) {
-    return '<div class="chips2">' + list.map(function (v) { return '<label><input type="radio" name="' + name + '" value="' + esc(v) + '"' + (v === cur ? ' checked' : '') + '>' + esc(v) + '</label>'; }).join('') + '</div>';
+    return '<div class="opts">' + list.map(function (v) { return '<label><input type="radio" name="' + name + '" value="' + esc(v) + '"' + (v === cur ? ' checked' : '') + '>' + esc(v) + '</label>'; }).join('') + '</div>';
   }
   var val = function (o, id) { return MAP[id] ? o[MAP[id]] : (o.f || {})[id]; };
   var shown = function (o, fd) { if (!fd.when) return true; var v = [].concat(val(o, fd.when.field) || []); return fd.when.values.some(function (w) { return v.indexOf(w) > -1; }); };
@@ -122,13 +121,12 @@
     if (fd.type === 'text') return row(fd.label, fd.required, '<textarea class="inp ta" data-text="' + id + '" rows="2" placeholder="예) Orbitrap Exploris 480">' + esc(cur || '') + '</textarea>' + (fd.help ? '<p class="help">' + esc(fd.help) + '</p>' : ''), id);
     var multi = fd.type === 'multi', on = [].concat(cur || []), opts = fd.options.concat(fd.other ? ['기타'] : []);
     var many = multi && fd.options.length > 8;
-    var body = '<div class="chips2' + (many ? ' sm' : '') + '">' + opts.map(function (v) {
+    var body = '<div class="opts">' + (many ? '<label><input type="checkbox" data-all="' + id + '"' + (fd.options.every(function (v) { return on.indexOf(v) > -1; }) ? ' checked' : '') + '>전체</label>' : '') + opts.map(function (v) {
       return '<label><input type="' + (multi ? 'checkbox' : 'radio') + '" name="' + n + '-' + id + '" data-f="' + id + '" value="' + esc(v) + '"' + (on.indexOf(v) > -1 ? ' checked' : '') + '>' + esc(v) + '</label>';
     }).join('') + '</div>' +
       (fd.other ? '<input class="inp etc" data-x="' + id + '" placeholder="기타 지원 내용을 구체적으로 적어주세요" value="' + esc((o.x || {})[id] || '') + '"' + (on.indexOf('기타') > -1 ? '' : ' hidden') + '>' : '') +
       (fd.help ? '<p class="help">' + esc(fd.help) + '</p>' : '');
-    var lab = esc(fd.label) + (many ? '<button type="button" class="tbtn xs all" data-all="' + id + '">전체 선택</button>' : '');
-    return row(lab, fd.required, body, id);
+    return row(esc(fd.label), fd.required, body, id);
   }
   function itemHTML(o, i) {
     var n = 'x' + (uid++), etc = SVC.indexOf(o.svc) < 0 && o.svc ? o.svc : '';
@@ -175,13 +173,13 @@
     var t = e.target;
     if (/-svc$/.test(t.name || '')) { pull(); draw(); return; } // 서비스 선택 → 그 서비스 항목 펼침
     if (t.dataset.f && DEP[t.dataset.f]) { pull(); draw(); return; } // 조건부 항목 다시 그림
+    if (t.dataset.all) { [].forEach.call(t.closest('.opts').querySelectorAll('input[data-f]:not([value="기타"])'), function (i) { i.checked = t.checked; }); } // '전체' = 기타 뺀 모든 항목
+    else if (t.dataset.f && t.type === 'checkbox') { var ab = t.closest('.opts').querySelector('[data-all]'); if (ab) ab.checked = ![].some.call(t.closest('.opts').querySelectorAll('input[data-f]:not([value="기타"])'), function (i) { return !i.checked; }); }
     if (t.dataset.f && t.value === '기타') { var x = t.closest('.fbody').querySelector('[data-x]'); if (x) { x.hidden = !t.checked; if (t.checked) x.focus(); } }
     var f = t.closest('.field'); if (f) f.classList.remove('err');
   });
   $('#items').addEventListener('input', function (e) { if (e.target.classList.contains('day')) e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3); });
   $('#items').addEventListener('click', function (e) {
-    var all = e.target.closest('[data-all]');
-    if (all) { var box = all.closest('.field'), ins = box.querySelectorAll('input[data-f]:not([value="기타"])'), on = [].some.call(ins, function (i) { return !i.checked; }); [].forEach.call(ins, function (i) { i.checked = on; }); all.textContent = on ? '전체 해제' : '전체 선택'; box.classList.remove('err'); return; }
     if (!e.target.closest('[data-del]')) return;
     pull(); L.splice(+e.target.closest('.item').dataset.i, 1); draw();
   });
