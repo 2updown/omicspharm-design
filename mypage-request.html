@@ -11,12 +11,12 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261015q">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261015q">
-<script src="assets/common/site.js?v=20261015q"></script>
-<script src="assets/common/mypage.js?v=20261015q"></script>
-<script src="assets/common/svc-spec.js?v=20261015q"></script>
-<script src="assets/common/flow.js?v=20261015q"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261015r">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261015r">
+<script src="assets/common/site.js?v=20261015r"></script>
+<script src="assets/common/mypage.js?v=20261015r"></script>
+<script src="assets/common/svc-spec.js?v=20261015r"></script>
+<script src="assets/common/flow.js?v=20261015r"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -595,6 +595,11 @@
     if (!nm) return '<div class="fdocs"><em>사업자등록증</em><span class="chip none">미제출</span><span class="fname"><span>제출된 파일이 없습니다.</span></span>' +
       (pre ? '<p>의뢰사 계정에 사업자등록증이 없습니다. 재제출을 요청하거나 의뢰사에 안내한 뒤 승인해주세요.</p>' : '') +
       (pre && !ask ? '<span class="fbtns"><button type="button" class="btn" id="bizAsk">제출 요청</button></span>' : '') + '</div>';
+    // 승인 뒤(견적 협의~)는 이미 확인을 마친 의뢰사: 확인 전/재제출 상태와 데모 되돌리기를 보이지 않음
+    if (!pre) return '<div class="fdocs"><em>사업자등록증</em><span class="chip ok">확인 완료</span>' +
+      '<span class="fname"><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(nm) + '</span></span>' +
+      '<span class="fbtns"><button type="button" class="btn" id="bizView">보기</button></span>' +
+      (ok ? '<p>' + F.ymd(ok) + '에 확인된 사업자등록증입니다.</p>' : '') + '</div>';
     var chip = ask ? '<span class="chip none">재제출 요청</span>' : ok ? '<span class="chip ok">확인 완료</span>' : '<span class="chip">' + (b.st === 're' ? '재제출' : '확인 전') + '</span>';
     var note = ask ? '재제출 요청 ' + F.ymd(b.askAt) + ' · 사유: ' + b.note + '\n의뢰사가 다시 올리면 알림으로 알려드립니다.'
       : ok ? F.ymd(ok) + '에 확인된 사업자등록증입니다. 의뢰사가 파일을 바꾸기 전까지 다시 확인하지 않아도 됩니다.'
