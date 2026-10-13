@@ -11,11 +11,11 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=프로젝트 번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261014p">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261014p">
-<script src="assets/common/site.js?v=20261014p"></script>
-<script src="assets/common/mypage.js?v=20261014p"></script>
-<script src="assets/common/flow.js?v=20261014p"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261014q">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261014q">
+<script src="assets/common/site.js?v=20261014q"></script>
+<script src="assets/common/mypage.js?v=20261014q"></script>
+<script src="assets/common/flow.js?v=20261014q"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -778,7 +778,9 @@
         });
       } else if (t.closest('[data-svcask]')) {
         var sk = t.closest('[data-svcask]').dataset.svcask;
-        F.svcAsk(sk); OP.toast(F.partner(sk).org + '에 분석 서비스 정보 입력을 요청했습니다.'); render();
+        F.ask({ title: F.partner(sk).org + '에 분석 서비스 정보 입력을 요청할까요?', desc: '분석파트너에게 알림이 가고, 회원정보 > 분석 서비스 정보 화면에 입력 안내가 표시됩니다. 입력하지 않아도 견적 전달은 그대로 할 수 있습니다.', label: false, yes: '요청하기' }, function () {
+          F.svcAsk(sk); OP.toast(F.partner(sk).org + '에 분석 서비스 정보 입력을 요청했습니다.'); render();
+        });
       } else if (t.closest('#more')) {
         mailModal(s);
       } else if (t.closest('#agtMail')) {

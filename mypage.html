@@ -7,11 +7,11 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261014p">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261014p">
-<script src="assets/common/site.js?v=20261014p"></script>
-<script src="assets/common/mypage.js?v=20261014p"></script>
-<script src="assets/common/flow.js?v=20261014p"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261014q">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261014q">
+<script src="assets/common/site.js?v=20261014q"></script>
+<script src="assets/common/mypage.js?v=20261014q"></script>
+<script src="assets/common/flow.js?v=20261014q"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -203,7 +203,7 @@
           '<h4>' + esc(p.title) + '</h4><span class="dt">' + D.ymd(p.at) + '</span></a>';
       }).join('') + '</div>'
     : '<div class="empty"><b>' + (client ? '의뢰한 프로젝트가 없습니다' : '진행 중인 프로젝트가 없습니다') + '</b>' +
-      '<p>' + (client ? '분석 의뢰를 등록하면 분석파트너들의 견적을 비교해 받아볼 수 있습니다.' : !OP.partnerVerified() && OP.isPartner() ? '인증된 분석파트너만 프로젝트 매칭·계약이 가능합니다. OmicsPharm이 사업자등록증을 확인한 뒤 인증해 드립니다.' : 'OmicsPharm이 분석 의뢰에 맞는 파트너로 선정해 견적을 요청하면 여기에서 확인할 수 있습니다.') + '</p>' +
+      '<p>' + (client ? '분석 의뢰를 등록하면 분석파트너들의 견적을 비교해 받아볼 수 있습니다.' : !OP.partnerVerified() && OP.isPartner() ? '인증된 분석파트너만 프로젝트 매칭·계약이 가능합니다. OmicsPharm이 기관 정보 및 사업자등록증을 확인한 뒤 인증해 드립니다.' : 'OmicsPharm이 분석 의뢰에 맞는 파트너로 선정해 견적을 요청하면 여기에서 확인할 수 있습니다.') + '</p>' +
       (client ? '<a class="btn primary lg" href="omicspharm-register.html" data-client-only>프로젝트 의뢰하기</a>' : '') + '</div>';
 
   var A = D.alarms().slice(0, 4);

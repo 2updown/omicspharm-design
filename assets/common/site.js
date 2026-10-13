@@ -4,12 +4,13 @@
    - 관리자(셀키)는 가입할 수 없고 아래 데모 계정으로만 로그인한다.
    - <div data-op-gnb="메뉴키"></div>, <div data-op-footer></div> 자리에 공통 헤더/푸터를 그린다. */
 (function () {
+  var SEED_SVC = [{ svc: '단백체', st: '즉시 수행 가능', from: '20', to: '30' }, { svc: '대사체', st: '즉시 수행 가능', from: '15', to: '25' }, { svc: '바이오의약품·ADC', st: '사전협의 필요', from: '30', to: '45' }]; // 데모 분석파트너의 분석 서비스 정보
   var ACC_KEY = 'op.accounts', SES_KEY = 'op.session';
   var DEMO_PW = 'Demo@1234';
   var SEED = {
     'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true, name: '홍길동', org: '○○연구소', phone: '+82 010-1234-5678', bizDoc: '사업자등록증_○○연구소.pdf', bizOk: 1788220800000, bizOkName: '사업자등록증_○○연구소.pdf' }, // 예시 클라이언트: 사업자등록증 확인(인증) 완료 상태
     'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '○○분석센터', phone: '+82 010-2345-6789', verified: true, bizDoc: '사업자등록증_○○분석센터.pdf', ceo: '홍길동', bizno: '000-00-00000', addr: '서울특별시 ○○구 ○○로 00',
-      services: [{ svc: '단백체', st: '즉시 수행 가능', from: '20', to: '30' }, { svc: '대사체', st: '즉시 수행 가능', from: '15', to: '25' }, { svc: '바이오의약품·ADC', st: '사전협의 필요', from: '30', to: '45' }] },
+      services: SEED_SVC },
     'admin@omicspharm.test':   { role: 'admin',   pw: DEMO_PW, profileDone: true, name: '셀키 컨설턴트', org: '셀키', phone: '+82 010-3456-7890' }
   };
   var ROLE_LABEL = { client: '클라이언트', partner: '분석파트너', admin: '컨설턴트' }; // admin = 셀키 컨설턴트
@@ -68,16 +69,16 @@
     CLIENT_ONLY_MSG: '의뢰자(클라이언트)만 프로젝트를 등록할 수 있습니다.',
     // 클라이언트 전용 화면 진입 판단: 'ok' | 'login' | 'deny'
     /* 프로젝트 열람 권한: 비공개 프로젝트는 인증 분석파트너·컨설턴트만 열람. 클라이언트·비로그인·미인증 분석파트너는 불가 */
-    // 분석파트너 인증 여부 (표시용. 관리자가 사업자등록증을 확인한 뒤 설정 — 가입 여부와 별도 관리)
+    // 분석파트너 인증 여부 (표시용. 관리자가 기관 정보 및 사업자등록증을 확인한 뒤 설정 — 가입 여부와 별도 관리)
     partnerVerified: function (email) { var s = OP.session(); email = email || (s && s.email); var a = OP.account(email) || {}; return a.role === 'partner' && !!a.verified; },
     // 미인증 분석파트너: 공개 프로젝트만 열람, 견적서 작성 불가 / 인증 분석파트너·컨설턴트: 비공개 열람
     canSeePrivate: function () { var s = OP.session(); return !!s && (s.role === 'admin' || OP.partnerVerified()); },
     canQuote: function () { return OP.partnerVerified(); },
     isPartner: function () { var s = OP.session(); return !!s && s.role === 'partner'; },
     // 미인증 분석파트너 안내: 사업자등록증을 아직 안 올렸으면 업로드 안내, 올렸으면 확인 중 안내
-    verifyHint: function () { var s = OP.session(), a = (s && OP.account(s.email)) || {}; return a.bizDoc ? (a.mailOk === false ? '이메일 인증을 완료하면 제출하신 사업자등록증 확인을 시작합니다.' : '제출하신 사업자등록증을 확인하고 있습니다. 확인이 끝나면 인증해 드립니다.') : '사업자등록증을 올리면 OmicsPharm이 확인한 뒤 인증해 드립니다.'; },
+    verifyHint: function () { var s = OP.session(), a = (s && OP.account(s.email)) || {}; return a.bizDoc ? (a.mailOk === false ? '이메일 인증을 완료하면 제출하신 사업자등록증 확인을 시작합니다.' : '제출하신 사업자등록증을 확인하고 있습니다. 확인이 끝나면 인증해 드립니다.') : '사업자등록증을 올리면 OmicsPharm이 기관 정보 및 사업자등록증을 확인한 뒤 인증해 드립니다.'; },
     // 미인증 분석파트너가 견적서 작성을 누르면 띄우는 인증 안내 팝업 (위시켓 '프로젝트 지원이 처음이신가요?' 참고)
-    // 필수: 기본 정보(가입 시) + 사업자등록증. 분석 서비스 정보는 인증과 무관 (견적 제출 후 컨설턴트가 입력 요청)
+    // 필수: 기본 정보(가입 시) + 사업자등록증. 제공 분석 서비스는 선택이라 진행률에 넣지 않음 (견적 제출 후 컨설턴트가 입력 요청)
     verifyGate: function () {
       var old = document.querySelector('.op-gate'); if (old) old.remove();
       var s = OP.session(), a = (s && OP.account(s.email)) || {};
@@ -95,7 +96,8 @@
         '<p>인증이 완료되면 견적서 작성·제출, 비공개 프로젝트 열람,<br>프로젝트 매칭·계약을 이용할 수 있습니다.</p>' +
         '<div class="bar"><span class="gtip">인증 필수 정보 <b>' + pct + '%</b> 완료</span><span class="fill" style="width:' + pct + '%"></span></div>' +
         '<div class="list">' + (mail ? '' : '<button type="button" class="gi" data-gate-mail><i class="pl"></i>이메일 인증<i class="go"></i></button>') + item(true, '파트너 정보 등록') +
-          item(false, '사업자등록증 업로드', 'mypage-verify.html') + '</div></div>'; // 메일 인증 전에도 업로드 가능 (검토는 메일 인증 후)
+          item(false, '사업자등록증 업로드', 'mypage-verify.html') + // 메일 인증 전에도 업로드 가능 (검토는 메일 인증 후)
+          '<a class="gi opt" href="mypage-service.html"><i class="pl"></i>제공 분석 서비스 입력<span class="tag">선택</span><i class="go"></i></a></div></div>';
       var close = function () { m.remove(); document.removeEventListener('keydown', key); };
       var key = function (e) { if (e.key === 'Escape') close(); };
       m.addEventListener('click', function (e) { if (e.target === m || e.target.closest('.x')) close(); else if (e.target.closest('[data-gate-mail]')) OP.toast('인증 메일을 다시 보냈습니다. 메일함을 확인해 주세요.'); });
@@ -103,7 +105,7 @@
       document.body.appendChild(m); m.querySelector('.x').focus();
     },
     hasBizDoc: function () { var s = OP.session(), a = (s && OP.account(s.email)) || {}; return !!a.bizDoc; },
-    UNVERIFIED_MSG: '인증된 분석파트너만 이용할 수 있습니다. OmicsPharm이 사업자등록증을 확인한 뒤 인증해 드립니다.',
+    UNVERIFIED_MSG: '인증된 분석파트너만 이용할 수 있습니다. OmicsPharm이 기관 정보 및 사업자등록증을 확인한 뒤 인증해 드립니다.',
     // 가입 메일 인증 여부: 새로 가입한 계정은 mailOk:false로 시작 (데모 계정·기존 계정은 인증된 것으로 봄)
     mailVerified: function (email) { var s = OP.session(); email = email || (s && s.email); var a = OP.account(email) || {}; return a.mailOk !== false; },
     MAIL_MSG: '이메일 인증 후 이용할 수 있습니다. 가입하신 메일함에서 인증 메일을 확인해주세요.',
@@ -331,6 +333,10 @@
                   var on = OP.partnerVerified() === !!v[0];
                   return '<button type="button" data-op-verify="' + v[0] + '"' + (on ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + v[1] + '</button>';
                 }).join('') + '</div>' : '') +
+                (s.role === 'partner' ? '<p class="sub">분석 서비스 정보 (데모)</p><div>' + [[1, '입력'], [0, '미입력']].map(function (v) {
+                  var on = !!((OP.account(s.email) || {}).services || []).length === !!v[0];
+                  return '<button type="button" data-op-svc="' + v[0] + '"' + (on ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + v[1] + '</button>';
+                }).join('') + '</div>' : '') +
                 (s.role !== 'admin' ? '<p class="sub">메일 인증 (데모)</p><div>' + [[1, '완료'], [0, '미완료']].map(function (v) {
                   var on = OP.mailVerified() === !!v[0];
                   return '<button type="button" data-op-mail="' + v[0] + '"' + (on ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + v[1] + '</button>';
@@ -463,6 +469,13 @@
       if (g === 'mail') { e.preventDefault(); OP.toast(OP.MAIL_MSG); return; }
     }
     if (e.target.closest('[data-op-logout]')) { OP.logout(); location.href = 'index.html'; return; }
+    // 데모: 분석 서비스 정보 입력/미입력 전환 (미입력으로 바꿀 때 기존 값은 svcBak에 보관했다가 되돌림)
+    var sf = e.target.closest('[data-op-svc]');
+    if (sf) {
+      var son = sf.getAttribute('data-op-svc') === '1', ss = OP.session(), sa = OP.account(ss.email) || {}, has = !!(sa.services || []).length;
+      if (son !== has) { OP.saveAccount(ss.email, son ? { services: sa.svcBak && sa.svcBak.length ? sa.svcBak : SEED_SVC } : { svcBak: sa.services, services: [] }); location.reload(); }
+      return;
+    }
     var mf = e.target.closest('[data-op-mail]');
     if (mf) {
       var mon = mf.getAttribute('data-op-mail') === '1', ms = OP.session();
