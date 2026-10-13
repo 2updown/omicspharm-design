@@ -50,7 +50,7 @@ button { background:none; border:0; cursor:pointer; }
 .menu a { display:flex; align-items:center; gap:8px; height:48px; padding:0 16px; border-radius:8px; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-500); }
 .menu a:hover { background:var(--gray-50); color:#000; }
 .menu a.on { color:var(--teal-600); font-weight:600; }
-.menu .nb, .mnav .nb { flex:none; display:grid; place-items:center; margin-left:0; width:16px; height:16px; padding:0; border-radius:50%; background:#f00011; color:#fff; font-size:10px; font-weight:600; line-height:16px; letter-spacing:-.12px; text-align:center; } /* badge_number new (605:41276), 16×16 원형, 메뉴 글자와 8px(a의 gap) */
+.menu .nb { flex:none; display:grid; place-items:center; margin-left:0; width:16px; height:16px; padding:0; border-radius:50%; background:#f00011; color:#fff; font-size:10px; font-weight:600; line-height:16px; letter-spacing:-.12px; text-align:center; } /* badge_number new (605:41276), 16×16 원형, 메뉴 글자와 8px(a의 gap) */
 
 /* 오른쪽 */
 .main { flex:1; min-width:0; display:flex; flex-direction:column; gap:24px; }
@@ -95,37 +95,10 @@ button { background:none; border:0; cursor:pointer; }
 .empty .btn { margin-top:24px; }
 
 @media (max-width:1180px) { .page-head, .body { padding-left:24px; padding-right:24px; } }
-/* 모바일 메뉴 (≤960px에서만 보임) */
-.mnav { display:none; }
+/* 좁은 화면(≤960px): 왼쪽 카드를 본문 위로 (PC와 같은 카드 · 프로필 · 세로 메뉴, 너비만 꽉 차게) */
 @media (max-width:960px) {
   .body > .in { flex-direction:column; align-items:stretch; }
-  .side { width:100%; position:static; border:0; border-radius:0; background:none; }
-  .side .me, .side .menu { display:none !important; }
-  .mnav { display:flex; flex-direction:column; gap:12px; padding-bottom:16px; border-bottom:1px solid var(--gray-200); }
-  .mnav .mt, .mnav .ms { display:flex; align-items:center; overflow-x:auto; scrollbar-width:none; white-space:nowrap; }
-  .mnav .mt::-webkit-scrollbar, .mnav .ms::-webkit-scrollbar { display:none; }
-  .mnav .mt a { position:relative; display:inline-flex; align-items:center; gap:4px; flex:none; padding:0 8px; font-size:16px; font-weight:600; line-height:26px; color:var(--gray-400); }
-  .mnav .mt a:first-child { padding-left:0; }
-  .mnav .mt a + a::before { content:""; position:absolute; left:0; top:7px; height:12px; border-left:1px solid var(--gray-300); }
-  .mnav .mt a.on { color:#000; }
-  .mnav .ms { gap:8px; }
-  .mnav .ms a { display:inline-flex; align-items:center; gap:4px; flex:none; height:36px; padding:0 14px; border:1px solid var(--gray-300); border-radius:999px; background:#fff; font-size:14px; font-weight:500; color:var(--gray-500); }
-  .mnav .ms a.on { border-color:#1b1d1f; background:#1b1d1f; color:#fff; }
-  .mnav .nb { margin-left:2px; }
-  .mnav .mt a { gap:2px; }
-  /* 좁은 화면: 묶음 없이 한 줄 가로 스크롤 */
-  .menu .grp, .menu .grp.open { display:contents; }
-  .menu .gh { display:none; }
-  .menu .sub, .menu .grp .sub { display:contents; }
-  .menu .sub a { height:40px; padding:0 14px; font-size:15px; }
-  .menu .grp + a, .side .menu > a + a { margin-top:0; }
-  .menu .grp + a::before, .side .menu > a + a::before { display:none; }
-  .me { flex-direction:row; flex-wrap:wrap; justify-content:flex-start; gap:4px 8px; padding:16px 20px; text-align:left; }
-  .me img { width:40px; height:40px; margin:0; }
-  .me .role { margin:0; }
-  .menu { flex-direction:row; overflow-x:auto; scrollbar-width:none; padding:8px; }
-  .menu::-webkit-scrollbar { display:none; }
-  .menu a { flex:none; height:40px; padding:0 14px; font-size:15px; }
+  .side { width:100%; position:static; }
 }
 @media (max-width:640px) {
   .page-head { padding:24px 16px; }

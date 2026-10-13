@@ -184,18 +184,12 @@
       // 접은 묶음: 마이페이지 안에서 이동하는 동안만 유지 (계정 전환·마이페이지 밖으로 나가면 site.js가 지워서 다시 모두 펼침)
       var fold = {}; try { fold = JSON.parse(sessionStorage.getItem('op.menuFold') || '{}'); } catch (e) {}
       var mine = MENU.filter(function (m) { return !m[3] || m[3].indexOf(s.role) > -1; }), done = {}, html = '';
-      // 모바일(≤960px) 메뉴: 1줄 = 최상위(단일 메뉴·묶음 이름) 글자 탭, 2줄 = 지금 묶음의 하위 메뉴 알약 탭 (cafe24 Experts 마이페이지 참고)
-      var tops = [], subs = '';
-      var hrefOf = function (m) { return m[0] === 'project' && s.role === 'admin' ? 'mypage-request.html' : m[2]; };
       mine.forEach(function (m) {
         var g = m[4];
-        if (!g) { html += link(m); tops.push({ on: m[0] === key, href: hrefOf(m), soon: m[2] === '#' ? m[1] : '', label: m[1], n: NEW[m[0]] }); return; }
+        if (!g) { html += link(m); return; }
         if (done[g]) return; done[g] = 1;
         var L = mine.filter(function (x) { return x[4] === g; });
-        if (L.length === 1) { html += link(L[0]); tops.push({ on: L[0][0] === key, href: hrefOf(L[0]), label: L[0][1], n: NEW[L[0][0]] }); return; }
-        var gon = L.some(function (x) { return x[0] === key; });
-        tops.push({ on: gon, href: hrefOf(L[0]), label: GROUP[g], n: L.some(function (x) { return NEW[x[0]]; }) });
-        if (gon) subs = L.map(function (x) { return '<a href="' + hrefOf(x) + '"' + (x[0] === key ? ' class="on" aria-current="page"' : '') + '>' + x[1] + (NEW[x[0]] ? NB : '') + '</a>'; }).join('');
+        if (L.length === 1) { html += link(L[0]); return; }
         var shut = !!fold[g];
         html += '<div class="grp' + (shut ? '' : ' open') + '" data-g="' + g + '"><button type="button" class="gh" aria-expanded="' + !shut + '">' + GROUP[g] + (shut && L.some(function (x) { return NEW[x[0]]; }) ? NB : '') + '<i aria-hidden="true"></i></button>' +
           '<div class="sub">' + L.map(link).join('') + '</div></div>';
@@ -206,11 +200,7 @@
             // 메일 인증 전: '메일 미인증'만 (분석파트너 기관 인증은 메일 인증 다음 단계), 메일 인증 후: 분석파트너만 기관 인증 여부
             (!OP.mailVerified() && s.role !== 'admin' ? '<span class="op-vchip">메일 미인증</span>' : s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '') + '</span>' +
           '<b>' + esc(name) + ' 님</b><span>(' + esc(s.email) + ')</span>' + (org ? '<span>' + esc(org) + '</span>' : '') + '</div>' +
-        '<nav class="menu" aria-label="마이페이지 메뉴">' + html + '</nav>' +
-        '<nav class="mnav" aria-label="마이페이지 메뉴"><div class="mt">' + tops.map(function (t) {
-          return '<a href="' + t.href + '"' + (t.soon ? ' data-soon="' + t.soon + '"' : '') + (t.on ? ' class="on" aria-current="page"' : '') + '>' + t.label + (t.n ? NB : '') + '</a>';
-        }).join('') + '</div>' + (subs ? '<div class="ms">' + subs + '</div>' : '') + '</nav>';
-      [].forEach.call(side.querySelectorAll('.mnav .on'), function (o) { var w = o.parentNode; if (o.offsetLeft + o.offsetWidth > w.clientWidth) w.scrollLeft = o.offsetLeft + o.offsetWidth - w.clientWidth + 16; }); // 지금 메뉴가 화면 밖이면 보이게
+        '<nav class="menu" aria-label="마이페이지 메뉴">' + html + '</nav>';
       if (!side.dataset.bound) {
         side.dataset.bound = 1;
         side.addEventListener('click', function (e) {
