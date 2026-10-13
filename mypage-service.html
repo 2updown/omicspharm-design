@@ -9,12 +9,12 @@
      회원가입 '추가 정보 입력'에서 고른 대표 서비스를 보고, 서비스를 더 등록·수정·삭제한다.
      서비스를 고르면 R&D 사례작성 v5 공급자 입력 항목(assets/common/svc-spec.js)이 펼쳐짐. 같은 서비스를 여러 번 등록 = 수행 조건 나누기
      데모: 저장은 이 브라우저 localStorage(op.accounts의 services)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261014t">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261014t">
-<script src="assets/common/site.js?v=20261014t"></script>
-<script src="assets/common/mypage.js?v=20261014t"></script>
-<script src="assets/common/flow.js?v=20261014t"></script>
-<script src="assets/common/svc-spec.js?v=20261014t"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261014u">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261014u">
+<script src="assets/common/site.js?v=20261014u"></script>
+<script src="assets/common/mypage.js?v=20261014u"></script>
+<script src="assets/common/flow.js?v=20261014u"></script>
+<script src="assets/common/svc-spec.js?v=20261014u"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .cnt { margin-left:6px; color:var(--teal-600); }
@@ -22,7 +22,9 @@
   .item-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
   .item-head b { font-size:15px; font-weight:600; line-height:22px; }
   .item-head button { font-size:13px; font-weight:500; color:var(--gray-500); text-decoration:underline; text-underline-offset:3px; }
-  .item-head button:hover { color:var(--red-600); }
+  .item-head .acts { display:flex; align-items:center; gap:12px; }
+  .item-head button[data-copy]:hover { color:var(--teal-700); }
+  .item-head button[data-del]:hover { color:var(--red-600); }
   /* 표 형식 입력 (내 정보 관리와 동일) */
   .tbl { border-top:2px solid #000; }
   .field { display:grid; grid-template-columns:200px 1fr; border-bottom:1px solid var(--gray-200); }
@@ -132,7 +134,7 @@
     var n = 'x' + (uid++), etc = SVC.indexOf(o.svc) < 0 && o.svc ? o.svc : '';
     var sel = etc ? '기타' : o.svc, sp = SPEC[sel];
     var same = L.filter(function (x, j) { return j <= i && x.svc === o.svc && o.svc; }).length, dup = o.svc && L.filter(function (x) { return x.svc === o.svc; }).length > 1;
-    var h = '<div class="item" data-i="' + i + '"><div class="item-head"><b>서비스 ' + (i + 1) + (o.svc ? ' · ' + esc(o.svc) : '') + (dup ? ' · 수행 조건 ' + same : '') + '</b><button type="button" data-del>삭제</button></div>' +
+    var h = '<div class="item" data-i="' + i + '"><div class="item-head"><b>서비스 ' + (i + 1) + (o.svc ? ' · ' + esc(o.svc) : '') + (dup ? ' · 수행 조건 ' + same : '') + '</b><span class="acts">' + (o.svc ? '<button type="button" data-copy>복사</button>' : '') + '<button type="button" data-del>삭제</button></span></div>' +
       '<div class="tbl">' + row('서비스', true, chips(n + '-svc', SVC, sel) + '<input class="inp etc" data-k="etc" placeholder="서비스명 직접 입력" value="' + esc(etc) + '"' + (sel === '기타' ? '' : ' hidden') + '>');
     if (sp) {
       var sec = '';
@@ -180,8 +182,19 @@
   });
   $('#items').addEventListener('input', function (e) { if (e.target.classList.contains('day')) e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3); });
   $('#items').addEventListener('click', function (e) {
-    if (!e.target.closest('[data-del]')) return;
-    pull(); L.splice(+e.target.closest('.item').dataset.i, 1); draw();
+    var it = e.target.closest('.item'); if (!it) return;
+    var i = +it.dataset.i, name = function () { return '서비스 ' + (i + 1) + (L[i].svc ? ' · ' + L[i].svc : ''); };
+    // 복사: 같은 서비스의 다른 수행 조건을 만들 때 (예: 시료만 다름) 바로 아래에 같은 값으로 추가
+    if (e.target.closest('[data-copy]')) {
+      pull(); L.splice(i + 1, 0, JSON.parse(JSON.stringify(L[i]))); draw();
+      var nx = document.querySelector('.item[data-i="' + (i + 1) + '"]'); nx.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      OP.toast("'" + name() + "' 항목을 복사했습니다. 다른 조건만 고쳐 주세요.");
+      return;
+    }
+    if (e.target.closest('[data-del]')) {
+      pull();
+      OP.my.confirm("'" + name() + "' 항목을 삭제할까요?", '입력한 지원 항목이 함께 지워집니다. [저장하기]를 눌러야 반영됩니다.', '삭제', function () { L.splice(i, 1); draw(); });
+    }
   });
   $('#add').addEventListener('click', function () { pull(); L.push({ svc: '', st: '', from: '', to: '', f: {}, x: {} }); draw(); var all = document.querySelectorAll('#items .item'); all[all.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' }); });
 
