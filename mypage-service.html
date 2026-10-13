@@ -9,12 +9,12 @@
      회원가입 '추가 정보 입력'에서 고른 대표 서비스를 보고, 서비스를 더 등록·수정·삭제한다.
      서비스를 고르면 R&D 사례작성 v5 공급자 입력 항목(assets/common/svc-spec.js)이 펼쳐짐. 같은 서비스를 여러 번 등록 = 수행 조건 나누기
      데모: 저장은 이 브라우저 localStorage(op.accounts의 services)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261014v">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261014v">
-<script src="assets/common/site.js?v=20261014v"></script>
-<script src="assets/common/mypage.js?v=20261014v"></script>
-<script src="assets/common/flow.js?v=20261014v"></script>
-<script src="assets/common/svc-spec.js?v=20261014v"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261014w">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261014w">
+<script src="assets/common/site.js?v=20261014w"></script>
+<script src="assets/common/mypage.js?v=20261014w"></script>
+<script src="assets/common/flow.js?v=20261014w"></script>
+<script src="assets/common/svc-spec.js?v=20261014w"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .cnt { margin-left:6px; color:var(--teal-600); }
@@ -86,7 +86,7 @@
       <div class="op-ibox warn simple" id="askBox" hidden><p class="t"><span>OmicsPharm이 분석 서비스 정보 입력을 요청했습니다. 제공하는 서비스를 등록해 주세요.</span></p></div>
       <div class="op-ibox"><p class="t">등록한 서비스는 견적 확인과 OmicsPharm 컨설턴트의 프로젝트 매칭에 활용됩니다.</p>
         <ul><li>서비스를 고르면 그 서비스에서 지원하는 항목을 체크할 수 있습니다.</li>
-          <li>같은 서비스라도 함께 제공할 수 없는 조건이 있으면(예: 혈장은 비표적만, 조직은 표적만) [+ 서비스 추가]로 같은 서비스를 한 번 더 등록해 수행 조건을 나눠 주세요.</li></ul></div>
+          <li>같은 서비스라도 함께 제공할 수 없는 조건이 있으면(예: 혈장은 비표적만, 조직은 표적만) [복사]로 하나 더 만들어 수행 조건을 나눠 주세요.</li></ul></div>
       <form id="fSvc" novalidate>
         <div class="items" id="items"></div>
         <button type="button" class="btn add" id="add">+ 서비스 추가</button>
