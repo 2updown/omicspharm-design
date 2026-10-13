@@ -486,7 +486,7 @@
     var mf = e.target.closest('[data-op-mail]');
     if (mf) {
       var mon = mf.getAttribute('data-op-mail') === '1', ms = OP.session();
-      if (ms && OP.mailVerified() !== mon) { OP.saveAccount(ms.email, { mailOk: mon }); location.reload(); }
+      if (ms && OP.mailVerified() !== mon) { OP.saveAccount(ms.email, mon ? { mailOk: true, mailOkAt: Date.now() } : { mailOk: false }); location.reload(); }
       return;
     }
     var vf = e.target.closest('[data-op-verify]');

@@ -126,6 +126,23 @@
         if (sa) L.push({ id: 'svc-ask-' + sa, k: '분석서비스정보요청', cat: 'project', at: sa, t: '분석 서비스 정보를 입력해주세요.', sub: '견적 확인과 프로젝트 매칭에 활용됩니다. 회원정보 > 분석 서비스 정보에서 입력할 수 있습니다.', href: 'mypage-service.html' });
         if (pa.verified && pa.bizOkAt) L.push({ id: 'pv-ok-' + pa.bizOkAt, k: '파트너인증', cat: 'project', at: pa.bizOkAt, t: '파트너 인증이 완료되었습니다. 견적서 작성과 비공개 프로젝트 열람이 가능합니다.', href: 'mypage-verify.html' });
       }
+      // 파트너 인증 검토 요청 (컨설턴트): 분석파트너가 '검토 중'에 들어갈 때 (사업자등록증 저장 · 메일 인증 완료 · 재제출)
+      if (adm && OP.flow) {
+        var PR = {}; try { PR = JSON.parse(localStorage.getItem('op.partnerReview') || '{}'); } catch (e) {}
+        OP.flow.PARTNERS.forEach(function (p) {
+          var h = 'mypage-partners.html?key=' + encodeURIComponent(p.key), at, re = false, org = p.org;
+          if (p.login) { // 로그인 가능한 데모 분석파트너: 계정 값 기준
+            var a = OP.account(p.key) || {};
+            if (a.verified || a.bizAsk || !a.bizDoc || a.mailOk === false) return;
+            at = Math.max(a.bizAt || 0, a.mailOkAt || 0) || new Date(2026, 9, 8).getTime(); re = !!a.bizReAt && a.bizReAt === a.bizAt; org = a.org || org;
+          } else { // 가상 파트너: 미인증(▽▽랩)은 검토 중으로 시작
+            if (p.verified || (PR[p.key] && PR[p.key].st && PR[p.key].st !== 'review')) return;
+            at = new Date(2026, 9, 8, 10, 0).getTime();
+          }
+          L.push({ id: 'pv-rv-' + p.key + '-' + at, k: re ? '사업자등록증재제출' : '파트너인증요청', cat: 'project', at: at,
+            t: re ? J(org, '이', '가') + ' 사업자등록증을 다시 제출했습니다. 확인 후 인증 처리해주세요.' : J(org, '이', '가') + ' 파트너 인증을 요청했습니다. 사업자등록증을 확인해주세요.', href: h });
+        });
+      }
       if (OP.flow) L = L.concat(OP.flow.alarms());
       L.push({ id: 'n-21', cat: 'notice', at: new Date(2026, 8, 28, 9, 0).getTime(), t: '[공지] OmicsPharm 서비스 리뉴얼 오픈 안내', href: 'notice-view.html?id=21&r=2' });
       L.push({ id: 'n-20', cat: 'notice', at: new Date(2026, 8, 15, 9, 0).getTime(), t: '[공지] 개인정보처리방침 변경 안내', href: 'notice-view.html?id=20&r=2' });
@@ -168,7 +185,7 @@
       // 견적관리·프로젝트 관리·문의내역은 그 메뉴에 들어가면 배지가 사라짐 (알림 목록의 읽음 상태와는 따로 op.menuSeen에 기록)
       var NEW = { alarm: n > 0 }, NB = '<span class="nb" aria-label="새 소식">N</span>';
       var seen = read('op.menuSeen', []), seenAdd = [];
-      var menuOf = function (h) { return /mypage-quote/.test(h) ? 'quote' : /mypage-(project|request)/.test(h) ? 'project' : /mypage-inquiry/.test(h) ? 'inquiry' : /mypage-service/.test(h) ? 'service' : ''; }; // service: 컨설턴트의 분석 서비스 정보 입력 요청
+      var menuOf = function (h) { return /mypage-quote/.test(h) ? 'quote' : /mypage-(project|request)/.test(h) ? 'project' : /mypage-inquiry/.test(h) ? 'inquiry' : /mypage-service/.test(h) ? 'service' : /mypage-partners/.test(h) ? 'partners' : ''; }; // service: 컨설턴트의 분석 서비스 정보 입력 요청
       D.alarms().forEach(function (a) {
         if (a.read || !a.href || seen.indexOf(a.id) > -1) return;
         var mk = menuOf(a.href); if (!mk) return;

@@ -7,11 +7,11 @@
 <title>파트너 인증 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > (분석파트너 카드) 파트너 인증 (Figma 시안 없음, 위시켓 '신원 인증' 구성 참고).
      인증 상태 안내 / 인증 절차 / 기관 정보 + 사업자등록증. 데모: 저장은 이 브라우저 localStorage(op.accounts)와 IndexedDB(op-files)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261015t">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261015t">
-<script src="assets/common/site.js?v=20261015t"></script>
-<script src="assets/common/mypage.js?v=20261015t"></script>
-<script src="assets/common/flow.js?v=20261015t"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261015u">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261015u">
+<script src="assets/common/site.js?v=20261015u"></script>
+<script src="assets/common/mypage.js?v=20261015u"></script>
+<script src="assets/common/flow.js?v=20261015u"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .op-vchip { margin-left:8px; }
@@ -196,7 +196,7 @@
     if (!ok) return;
     if (V()) return; // 인증 후에는 저장 없음 (보기 전용)
     var data = { ceo: c.value.trim(), bizno: b.value, addr: a.value.trim(), bizDoc: bizDoc };
-    if (bizFile) { data.bizAsk = null; data.bizAt = Date.now(); } // 새 파일 → 재제출 요청 해제, 다시 검토
+    if (bizFile) { var a0 = OP.account(email) || {}; data.bizAt = Date.now(); data.bizReAt = a0.bizAsk ? data.bizAt : 0; data.bizAsk = null; } // 새 파일 → 재제출 요청 해제, 다시 검토
     var msg = bizDoc !== (OP.account(email) || {}).bizDoc ? (OP.mailVerified() ? '인증 검토를 요청했습니다.' : '저장되었습니다. 이메일 인증을 완료하면 인증 검토가 시작됩니다.') : '기관 정보가 저장되었습니다.'; // 새 파일 → 인증 검토 시작 (메일 인증 후)
     if (bizFile) { OP.files.put('biz:acc:' + email, bizFile); bizFile = null; }
     savedDoc = bizDoc;
