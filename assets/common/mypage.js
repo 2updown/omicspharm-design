@@ -211,6 +211,12 @@
         });
       }
     }
+    // 모바일(≤960px): 대시보드 = 프로필 + 메뉴 목록(허브), 하위 화면 = 메뉴 카드 숨기고 '‹ 메뉴 이름'(→ 마이페이지)만 (CSS body.mp-sub)
+    if (key !== 'dash') {
+      document.body.classList.add('mp-sub');
+      var cur = MENU.filter(function (m) { return m[0] === key; })[0], ph = document.querySelector('.page-head .in');
+      if (cur && ph && !ph.querySelector('.m-back')) ph.insertAdjacentHTML('afterbegin', '<a class="m-back" href="mypage.html" aria-label="마이페이지로"><img src="assets/detail/ic-caret-left.svg" alt="">' + cur[1] + '</a>');
+    }
     return { s: s, acc: acc, name: name, org: org };
   };
 })();
