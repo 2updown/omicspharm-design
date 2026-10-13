@@ -12,12 +12,12 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=프로젝트 번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261015j">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261015j">
-<script src="assets/common/site.js?v=20261015j"></script>
-<script src="assets/common/mypage.js?v=20261015j"></script>
-<script src="assets/common/svc-spec.js?v=20261015j"></script>
-<script src="assets/common/flow.js?v=20261015j"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261015k">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261015k">
+<script src="assets/common/site.js?v=20261015k"></script>
+<script src="assets/common/mypage.js?v=20261015k"></script>
+<script src="assets/common/svc-spec.js?v=20261015k"></script>
+<script src="assets/common/flow.js?v=20261015k"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -272,6 +272,8 @@
   .pv .demo-note { margin:0 auto 12px; max-width:794px; font-size:13px; color:#ddd; text-align:center; }
   @media (max-width:640px) { .fdocs { padding:12px 14px; } .fdocs p { margin-left:0; } .fdocs .fbtns { margin-left:0; } }
   /* ── [테스트] 매칭 에이전트 ── */
+  .agt-pick { display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:13px; font-weight:600; }
+  .agt-pick select { flex:1; min-width:0; max-width:520px; height:40px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font:inherit; font-weight:400; font-size:14px; }
   .agt-note { display:flex; align-items:center; gap:8px; padding:10px 14px; border:1px dashed #a6e3d9; border-radius:8px; background:#f2fbf9; font-size:13px; line-height:20px; color:var(--teal-700); }
   .agt { display:flex; flex-direction:column; gap:14px; padding:20px; border:1px solid #a6e3d9; border-radius:12px; background:linear-gradient(180deg, #f2fbf9 0, #fff 72px); }
   .agt-h { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
@@ -555,7 +557,7 @@
     var groups = ['ok', 'chk', 'miss', 'none', 'other'].map(function (c) {
       var L = R.filter(function (x) { return x.cat === c; }); if (!L.length) return '';
       return '<div class="agt-g"><p class="agt-gh ' + c + '">' + CAT[c] + ' <b>' + L.length + '</b></p>' + L.map(function (x) {
-        var ask = c === 'none' ? (F.svcAsked(x.key) ? '<em class="asked">' + F.ymd(F.svcAsked(x.key)).slice(5) + ' 입력 요청함</em>' : '<button type="button" class="tbtn xs primary" data-svcask="' + x.key + '">입력 요청</button>') : '';
+        var ask = c === 'none' ? (F.svcAsked(x.key) ? '<em class="asked">입력 요청함</em>' : '<button type="button" class="tbtn xs primary" data-svcask="' + x.key + '">입력 요청</button>') : '';
         return '<div class="agt-r"><div><div class="nm"><b>' + esc(x.p.org) + '</b>' + (x.st ? '<span class="sub">' + esc(x.st) + '</span>' : '') + (x.cond ? '<span class="sub">' + x.cond + '</span>' : '') + '</div>' +
           '<div class="why">' + x.why.map(function (w) { return '<span class="' + ['', 'hit', 'miss'][w[1]] + '">' + esc(w[0]) + '</span>'; }).join('') + ask + '</div></div>' + st(x.key) + '</div>';
       }).join('') + '</div>';
@@ -585,7 +587,8 @@
     if (c.rev && s.st === 'quoting') todo = ['warn', '수정 요청한 견적 ' + c.rev + '건을 기다리고 있습니다.', todo[1] + '\n' + todo[2]];
 
     card.innerHTML =
-      '<p class="agt-note"><img src="assets/main/ic-sparkle.svg" alt="" width="16" height="16">테스트 화면 · 분석파트너 매칭 시안입니다. 예시 파트너의 분석 서비스 정보는 가상 값이며 실제 프로젝트 관리 화면에는 반영되지 않았습니다.</p>' +
+      '<div class="agt-pick"><label for="agtPick">테스트할 의뢰</label><select id="agtPick">' + F.requests().map(function (q) { return '<option value="' + esc(q.id) + '"' + (q.id === id ? ' selected' : '') + '>[' + F.adminStage(q.id) + '] ' + esc(q.title) + '</option>'; }).join('') + '</select></div>' +
+      '<p class="agt-note"><img src="assets/main/ic-sparkle.svg" alt="" width="16" height="16">테스트 화면 · 분석파트너 매칭 시안입니다. 의뢰 승인 후 ~ 견적 확정 전 단계에서 보입니다. 예시 파트너의 분석 서비스 정보는 가상 값이며 실제 프로젝트 관리 화면에는 반영되지 않았습니다.</p>' +
       '<div class="phead">' +
         '<div class="prow"><div class="badges"><span class="badge tag">' + esc(r.svc) + '</span>' + stBadge(s) + (r.open === '비공개' ? '<span class="badge lock">비공개</span>' : '') + '</div><span class="reg">접수 ' + F.ymd(r.at) + ' · 프로젝트 번호 ' + esc(r.id) + '</span></div>' +
         '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-request.html" aria-label="프로젝트 목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(r.title) + '</h2>' +
@@ -600,6 +603,7 @@
       (s.st === 'review' && !s.ok ? '' : quotesHTML(s)) +
       '<details class="req"' + (s.st === 'review' ? ' open' : '') + '><summary>의뢰 내용</summary><div class="in">' + F.reqHTML(r) + '</div></details>';
     bind(s);
+    $('#agtPick').onchange = function () { location.href = 'mypage-request-agent-test.html?id=' + encodeURIComponent(this.value); }; // [테스트] 의뢰 바꿔 보기
   }
 
   // 계약서 등록 (견적 확정 후): 클라이언트·분석파트너 계약서 각각 기본 양식 또는 기관 양식 파일
@@ -790,7 +794,7 @@
   function svcMiss(k) {
     if (F.svcInfo(k)) return '';
     var at = F.svcAsked(k);
-    return '<p class="svcm">분석 서비스 정보 미입력' + (at ? ' <em>· ' + md(at) + ' 입력 요청함</em>' : ' <button type="button" class="tbtn xs primary" data-svcask="' + k + '">입력 요청</button>') + '</p>';
+    return '<p class="svcm">분석 서비스 정보 미입력' + (at ? ' <em>· 입력 요청함</em>' : ' <button type="button" class="tbtn xs primary" data-svcask="' + k + '">입력 요청</button>') + '</p>';
   }
   function order(x) { return { sub: 0, rev: 1, draft: 2, req: 2, dec: 3 }[x.status]; }
 
