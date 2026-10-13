@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261014k">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261014k">
-<script src="assets/common/site.js?v=20261014k"></script>
-<script src="assets/common/mypage.js?v=20261014k"></script>
-<script src="assets/common/flow.js?v=20261014k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261014l">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261014l">
+<script src="assets/common/site.js?v=20261014l"></script>
+<script src="assets/common/mypage.js?v=20261014l"></script>
+<script src="assets/common/flow.js?v=20261014l"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -86,7 +86,6 @@
   .psearch button:hover { background:var(--gray-100); }
   .psearch img { width:20px; height:20px; }
   .pbar { display:flex; align-items:center; justify-content:space-between; gap:16px; }
-  .pbar + .list { margin-top:-12px; } /* 총 n건 ↔ 카드 간격 12px (카드 안 기본 간격 24px) */
   .pbar .total { font-size:16px; font-weight:500; line-height:22px; }
   .pbar .total b { color:var(--teal-600); }
   .sort { position:relative; }
@@ -96,23 +95,6 @@
   .unread b { color:var(--orange-600); font-weight:600; }
   .unread label { display:inline-flex; align-items:center; gap:6px; flex:none; font-weight:500; color:var(--gray-700); cursor:pointer; }
   .unread input { width:16px; height:16px; accent-color:var(--teal-600); }
-  /* 상세 필터 (기존 사이트 상세검색 항목 → 검색 기준 화면 디자인) */
-  .pfilter { display:flex; flex-direction:column; gap:20px; padding:20px; border:1px solid var(--gray-200); border-radius:12px; }
-  .pf-row > b { display:block; margin-bottom:10px; font-size:14px; font-weight:600; line-height:20px; }
-  .pf-line { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; }
-  .pf-date { width:200px; height:44px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font:inherit; font-size:14px; color:#000; }
-  .pf-date:focus { outline:none; border-color:var(--teal-600); box-shadow:0 0 0 3px rgba(0,151,136,.14); }
-  .pf-date:invalid, .pf-date[data-empty] { color:var(--gray-400); }
-  .pf-line > span { color:var(--gray-500); }
-  .pfilter .check { display:inline-flex; align-items:center; gap:8px; font-size:14px; line-height:20px; cursor:pointer; user-select:none; position:relative; }
-  .pfilter .check input { position:absolute; opacity:0; width:0; height:0; }
-  .pfilter .check i { width:20px; height:20px; flex:none; background:url(assets/auth/checkbox-off.svg) center/contain no-repeat; }
-  .pfilter .check input:checked + i { background-image:url(assets/auth/checkbox-on.svg); }
-  .pfilter .check input:focus-visible + i { outline:2px solid var(--teal-600); outline-offset:2px; border-radius:4px; }
-  .pf-checks { display:flex; flex-wrap:wrap; gap:12px 24px; }
-  .pf-acts { display:flex; justify-content:center; gap:8px; padding-top:4px; }
-  .pf-acts .btn.primary { min-width:200px; }
-  .pf-acts img { width:16px; height:16px; }
   .badge.qa { background:var(--orange-600); color:#fff; border:1px solid var(--orange-600); }
   .badge.fin { border:1px solid var(--gray-300); color:var(--gray-600); background:var(--gray-100); }
   /* 단계 진행 표시 */
@@ -204,10 +186,6 @@
     .stages { grid-template-columns:repeat(3, minmax(0,1fr)); row-gap:12px; }
     .todo { flex-direction:column; align-items:stretch; }
     .pacts div .btn { flex:1; }
-    .pfilter { padding:16px; }
-    .pf-line { flex-wrap:nowrap; }
-    .pf-date { flex:1; width:0; min-width:0; padding:0 10px; }
-    .pf-acts .btn.primary { min-width:0; flex:1; }
   }
 </style>
 </head>
@@ -248,47 +226,6 @@
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
-  // 프로젝트 관리 목록 상세 필터 (분석파트너·클라이언트 공통): 기간(등록일) · 분석 서비스 · 프로젝트 상태. [검색하기]를 눌러야 적용
-  var SVCS = ['단백체 분석', '대사체 분석', '유전체 분석', '전사체 분석', 'Olink 분석', '바이오의약품·ADC 분석', '기타 분석'];
-  function pfilter(STG, stage0, apply) {
-    var F0 = function (s0) { return { from: '', to: '', svc: [], stage: s0 ? [s0] : [] }; };
-    var cb = function (g, v) { return '<label class="check"><input type="checkbox" data-g="' + g + '" value="' + v + '"><i></i><span>' + v + '</span></label>'; };
-    var ui = F0(stage0);
-    var html = '<div class="pfilter" id="pf">' +
-      '<div class="pf-row"><b>기간 검색</b><div class="pf-line"><input type="date" class="pf-date" id="pfFrom" aria-label="검색 시작일"><span>~</span><input type="date" class="pf-date" id="pfTo" aria-label="검색 종료일"></div></div>' +
-      '<div class="pf-row"><b>분석 서비스</b><div class="pf-checks">' + cb('svc', '전체') + SVCS.map(function (v) { return cb('svc', v); }).join('') + '</div></div>' +
-      '<div class="pf-row"><b>프로젝트 상태</b><div class="pf-checks">' + cb('stage', '전체') + STG.map(function (v) { return cb('stage', v); }).join('') + '</div></div>' +
-      '<div class="pf-acts"><button type="button" class="btn primary lg" id="pfGo">검색하기</button><button type="button" class="btn lg" id="pfReset"><img src="assets/find/ic-arrow-clockwise.svg" alt="">초기화</button></div></div>';
-    function paint() {
-      $('#pfFrom').value = ui.from; $('#pfTo').value = ui.to;
-      ['pfFrom', 'pfTo'].forEach(function (k) { $('#' + k).toggleAttribute('data-empty', !ui[k === 'pfFrom' ? 'from' : 'to']); });
-      ['svc', 'stage'].forEach(function (g) { $('#pf').querySelectorAll('[data-g="' + g + '"]').forEach(function (i) { i.checked = i.value === '전체' ? !ui[g].length : ui[g].indexOf(i.value) > -1; }); });
-    }
-    function bind() {
-      $('#pfFrom').addEventListener('change', function () { ui.from = this.value; paint(); });
-      $('#pfTo').addEventListener('change', function () { ui.to = this.value; paint(); });
-      $('#pf').addEventListener('change', function (e) {
-        var i = e.target, g = i.dataset && i.dataset.g; if (!g) return;
-        if (i.value === '전체') ui[g] = []; // 전체 = 나머지 해제
-        else ui[g] = i.checked ? ui[g].concat(i.value) : ui[g].filter(function (v) { return v !== i.value; });
-        paint();
-      });
-      $('#pfGo').addEventListener('click', function () {
-        if (ui.from && ui.to && ui.from > ui.to) { OP.toast('검색 시작일이 종료일보다 늦습니다.', { type: 'error' }); return; }
-        apply(JSON.parse(JSON.stringify(ui)));
-      });
-      $('#pfReset').addEventListener('click', function () { ui = F0(); paint(); apply(F0()); });
-      paint();
-    }
-    // 조건 검사: d = 'YYYY-MM-DD', svc = 한글 서비스명, stg = 단계
-    var test = function (f, d, svc, stg) {
-      return (!f.from || d >= f.from) && (!f.to || d <= f.to) && (!f.svc.length || f.svc.indexOf(svc) > -1) && (!f.stage.length || f.stage.indexOf(stg) > -1);
-    };
-    var on = function (f) { return !!(f.from || f.to || f.svc.length || f.stage.length); };
-    return { html: html, bind: bind, init: F0(stage0), test: test, on: on };
-  }
-  var ymdI = function (d) { d = new Date(d); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); };
-  var searchHTML = '<form class="psearch" id="pq" role="search"><input type="search" id="pqIn" placeholder="프로젝트명을 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>';
   if (!OP.mypage('project')) return; // 로그인 확인 + 왼쪽 프로필·메뉴
 
   // 컨설턴트: 프로젝트 관리 목록과 견적 중개 의뢰 상세는 mypage-request.html (계약 이후 예시 프로젝트 상세만 여기서)
@@ -369,21 +306,24 @@
     }
 
     var qstg = new URLSearchParams(location.search).get('stage'); if (!ADM && (qstg === '보고서 검토' || qstg === '보고서 승인')) qstg = '보고서 등록';
-    // 상세 필터 (분석파트너는 계약일 = 목록에 들어온 날 기준)
-    var PF = pfilter(STAGES, STAGES.indexOf(qstg) > -1 ? qstg : '', function (f) { st.f = f; draw(); });
-    var st = { q: '', sort: 'new', unread: false, f: PF.init }; // 대시보드에서 단계 눌러 들어오면 그 단계만 체크
-    $('#project').outerHTML = searchHTML + PF.html +
-      '<div class="unread" id="pUnread"></div>' +
+    var st = { q: '', stage: STAGES.indexOf(qstg) > -1 ? qstg : '전체', sort: 'new', unread: false }; // 대시보드에서 단계 눌러 들어오면 그 단계만
+    $('#project').outerHTML =
+      '<form class="psearch" id="pq" role="search"><input type="search" id="pqIn" placeholder="프로젝트명을 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
       '<div class="pbar"><span class="total" id="pTotal"></span><label class="sort"><select id="pSort" aria-label="정렬"><option value="new">최신등록순</option><option value="due">납기임박순</option></select></label></div>' +
+      '<div class="chips" id="pChips" role="tablist"></div>' +
+      '<div class="unread" id="pUnread"></div>' +
       '<div class="list" id="pList"></div>' +
       '<p class="demo-note">※ 화면 확인용 예시 프로젝트입니다.</p>';
     var qaN = ALL.reduce(function (n, p) { return n + (p.qa || 0); }, 0), rvN = ALL.reduce(function (n, p) { return n + (p.review || 0); }, 0);
     $('#pUnread').innerHTML = '<span>확인하지 않은 Q&amp;A <b>' + qaN + '건</b>과 리뷰 <b>' + rvN + '건</b>이 있습니다.</span><label><input type="checkbox" id="pOnly">미열람글만 보기</label>';
     function draw() {
       var q = st.q.trim().toLowerCase();
-      var L = ALL.filter(function (p) {
-        return (!q || p.title.toLowerCase().indexOf(q) > -1) && (!st.unread || p.qa || p.review) && PF.test(st.f, String(p.contract || '').slice(0, 10), OP.my.svcKo(p.svc), SG(p));
-      })
+      var base = ALL.filter(function (p) { return (!q || p.title.toLowerCase().indexOf(q) > -1) && (!st.unread || p.qa || p.review); });
+      $('#pChips').innerHTML = ['전체'].concat(STAGES).map(function (t) {
+        var n = t === '전체' ? base.length : base.filter(function (p) { return SG(p) === t; }).length;
+        return '<button type="button" role="tab" data-st="' + t + '"' + (st.stage === t ? ' class="on" aria-selected="true"' : '') + '>' + t + '<span>' + n + '</span></button>';
+      }).join('');
+      var L = base.filter(function (p) { return st.stage === '전체' || SG(p) === st.stage; })
         .sort(st.sort === 'due' ? function (a, b) { return (a.stage === '완료') - (b.stage === '완료') || new Date(a.due) - new Date(b.due); } : function (a, b) { return b.at - a.at; });
       $('#pTotal').innerHTML = '총 <b>' + L.length + '</b>건';
       $('#pList').innerHTML = L.map(function (x) {
@@ -394,13 +334,14 @@
           '<h3>' + esc(x.title) + '</h3></div>' +
           '<div class="info"><div class="meta"><span>' + esc(x.client) + '</span><span><em>샘플</em>' + x.samples + '개</span><span><em>계약금액</em>' + esc(x.amount) + '</span><span><em>납기일</em>' + dotd(x.due) + '</span></div>' +
           '<p class="reg">계약일 ' + dotd(x.contract) + ' · 프로젝트 번호 ' + esc(x.id) + '</p></div></a>';
-      }).join('') || '<div class="empty"><b>' + (st.q || st.unread || PF.on(st.f) ? '조건에 맞는 프로젝트가 없습니다' : '진행 중인 프로젝트가 없습니다') + '</b><p>OmicsPharm의 매칭을 거쳐 계약된 프로젝트가 여기에 표시됩니다.</p></div>';
+      }).join('') || '<div class="empty"><b>' + (st.q || st.unread ? '조건에 맞는 프로젝트가 없습니다' : '진행 중인 프로젝트가 없습니다') + '</b><p>OmicsPharm의 매칭을 거쳐 계약된 프로젝트가 여기에 표시됩니다.</p></div>';
     }
     $('#pq').addEventListener('submit', function (e) { e.preventDefault(); st.q = $('#pqIn').value; draw(); });
     $('#pqIn').addEventListener('input', function () { if (!this.value && st.q) { st.q = ''; draw(); } });
     $('#pSort').addEventListener('change', function () { st.sort = this.value; draw(); });
     $('#pOnly').addEventListener('change', function () { st.unread = this.checked; draw(); });
-    PF.bind(); draw();
+    $('#pChips').addEventListener('click', function (e) { var b = e.target.closest('[data-st]'); if (b) { st.stage = b.dataset.st; draw(); } });
+    draw();
   }
 
   var list = OP.my.myProjects(); // 분석파트너는 클라이언트 의뢰를 볼 수 없음 (셀키가 견적 요청을 보낸 의뢰만)
@@ -433,24 +374,19 @@
     };
     $('.toprow').hidden = true; // 탭·문의하기는 프로젝트 상세에서만
     // 단계 필터 (대시보드 진행 현황에서 ?stage=단계 로 들어오면 그 단계만)
-    var cst = new URLSearchParams(location.search).get('stage'); if (F.CLIENT_STEPS.indexOf(cst) < 0) cst = '';
-    // 상단은 분석파트너와 같은 구성: 검색 → 상세 필터 → 총 n건 · 정렬 (확인하지 않은 Q&A 박스는 클라이언트 데이터가 없어 제외)
-    var PF = pfilter(F.CLIENT_STEPS, cst, function (f) { cs.f = f; cdraw(); });
-    var cs = { q: '', sort: 'new', f: PF.init };
-    $('#project').outerHTML = searchHTML + PF.html +
-      '<div class="pbar"><span class="total" id="cTotal"></span><label class="sort"><select id="cSort" aria-label="정렬"><option value="new">최신등록순</option><option value="due">희망완료일순</option></select></label></div>' +
-      '<div class="list" id="cList"></div>';
+    var cst = new URLSearchParams(location.search).get('stage'); if (F.CLIENT_STEPS.indexOf(cst) < 0) cst = '전체';
+    $('#project').outerHTML = '<div class="chips" id="cChips" role="tablist"></div><div class="list-head"><span class="total" id="cTotal"></span></div><div class="list" id="cList"></div>';
     var cdraw = function () {
-      var q = cs.q.trim().toLowerCase();
-      var L = list.filter(function (x) { return (!q || String(x.title || '').toLowerCase().indexOf(q) > -1) && PF.test(cs.f, ymdI(x.at), OP.my.svcKo(x.svc), F.clientStage(x.id)); })
-        .sort(cs.sort === 'due' ? function (a, b) { return String(a.due || '9').localeCompare(String(b.due || '9')); } : function (a, b) { return b.at - a.at; });
-      $('#cTotal').innerHTML = '총 <b>' + L.length + '</b>건';
-      $('#cList').innerHTML = L.map(card).join('') || '<div class="empty"><b>조건에 맞는 프로젝트가 없습니다</b></div>';
+      $('#cChips').innerHTML = ['전체'].concat(F.CLIENT_STEPS).map(function (t) {
+        var n = t === '전체' ? list.length : list.filter(function (x) { return F.clientStage(x.id) === t; }).length;
+        return '<button type="button" role="tab" data-st="' + t + '"' + (cst === t ? ' class="on" aria-selected="true"' : '') + '>' + t + '<span>' + n + '</span></button>';
+      }).join('');
+      var L = list.filter(function (x) { return cst === '전체' || F.clientStage(x.id) === cst; });
+      $('#cTotal').textContent = '총 ' + L.length + '개';
+      $('#cList').innerHTML = L.map(card).join('') || '<div class="empty"><b>' + cst + ' 단계의 프로젝트가 없습니다</b></div>';
     };
-    $('#pq').addEventListener('submit', function (e) { e.preventDefault(); cs.q = $('#pqIn').value; cdraw(); });
-    $('#pqIn').addEventListener('input', function () { if (!this.value && cs.q) { cs.q = ''; cdraw(); } });
-    $('#cSort').addEventListener('change', function () { cs.sort = this.value; cdraw(); });
-    PF.bind(); cdraw();
+    $('#cChips').addEventListener('click', function (e) { var b = e.target.closest('[data-st]'); if (b) { cst = b.dataset.st; cdraw(); history.replaceState(null, '', cst === '전체' ? 'mypage-project.html' : '?stage=' + encodeURIComponent(cst)); } });
+    cdraw();
     return;
   }
 
