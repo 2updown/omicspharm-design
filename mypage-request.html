@@ -9,14 +9,14 @@
      ?id 없음 → 들어온 의뢰 목록 (검토 대기 / 견적 수집 중 / 클라이언트 검토 / 매칭 완료)
      ?id=프로젝트 번호 → 의뢰 검토 → 분석파트너 선택·견적 요청 → 견적 확인(수정 요청) → 클라이언트에게 전달 → 매칭 결과
      데이터: assets/common/flow.js (localStorage op.flow)
-     분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
+     AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261015l">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261015l">
-<script src="assets/common/site.js?v=20261015l"></script>
-<script src="assets/common/mypage.js?v=20261015l"></script>
-<script src="assets/common/svc-spec.js?v=20261015l"></script>
-<script src="assets/common/flow.js?v=20261015l"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261015m">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261015m">
+<script src="assets/common/site.js?v=20261015m"></script>
+<script src="assets/common/mypage.js?v=20261015m"></script>
+<script src="assets/common/svc-spec.js?v=20261015m"></script>
+<script src="assets/common/flow.js?v=20261015m"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -556,7 +556,7 @@
           '<div class="why">' + x.why.map(function (w) { return '<span class="' + ['', 'hit', 'miss'][w[1]] + '">' + esc(w[0]) + '</span>'; }).join('') + ask + '</div></div>' + st(x.key) + '</div>';
       }).join('') + '</div>';
     }).join('');
-    return '<div class="agt" id="agt"><div class="agt-h"><div><h3><img src="assets/main/ic-sparkle.svg" alt="">분석파트너 매칭</h3>' +
+    return '<div class="agt" id="agt"><div class="agt-h"><div><h3><img src="assets/common/ic-sparkle-fill.svg" alt="">AI 분석파트너 매칭</h3>' +
         '<p>의뢰 내용과 인증 분석파트너의 분석 서비스 정보를 비교했습니다. · ' + F.ymd(agtAt) + ' ' + new Date(agtAt).toTimeString().slice(0, 5) + '</p></div>' +
         '<button type="button" class="btn" id="agtRe"><img src="assets/find/ic-arrow-clockwise.svg" alt="">다시 비교</button></div>' +
       (R.length ? '<div class="agt-list">' + groups + '</div>' : '<div class="agt-empty">인증 분석파트너가 없습니다.</div>') +
@@ -695,7 +695,7 @@
       '<div class="qm-f"><div class="row"><select id="qmSvc"><option value="">분석 서비스 전체</option>' + KEY.map(function (k) { return '<option value="' + k + '">' + svcName(k) + '</option>'; }).join('') + '</select>' +
         '<select id="qmOrg"><option value="">소속 전체</option>' + orgs.map(function (o) { return '<option>' + esc(o) + '</option>'; }).join('') + '</select></div>' +
         '<form class="row" id="qmForm"><input type="search" id="qmQ" placeholder="키워드 입력 (성함, 소속, 이메일)"><button type="submit">검색</button></form></div>' +
-      (REC.length ? '<p class="qm-rec"><img src="assets/main/ic-sparkle.svg" alt="">분석파트너 매칭 결과 순서(조건 충족 → 확인 필요 → 일부 미지원 → 정보 없음 → 이 서비스 미등록)로 정렬했습니다.</p>' : '') +
+      (REC.length ? '<p class="qm-rec"><img src="assets/common/ic-sparkle-fill.svg" alt="">AI 분석파트너 매칭 결과 순서(조건 충족 → 확인 필요 → 일부 미지원 → 정보 없음 → 이 서비스 미등록)로 정렬했습니다.</p>' : '') +
       '<p class="qm-cnt" id="qmCnt"></p>' +
       '<div class="qm-tbl"><table><thead><tr><th class="ck"><input type="checkbox" id="qmAll" aria-label="전체 선택"></th><th>성함</th><th>소속</th><th>연락처</th><th>이메일</th><th>공급서비스</th><th>상태</th></tr></thead><tbody id="qmBody"></tbody></table></div>' +
       '<div class="qm-pg"><span class="on">1</span></div>' +
