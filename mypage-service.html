@@ -6,13 +6,15 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>분석 서비스 정보 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > (분석파트너 카드) 분석 서비스 정보 (Figma 시안 없음).
-     회원가입 '추가 정보 입력'에서 고른 대표 서비스(서비스·수행 상태·표준 소요 기간)를 보고, 서비스를 더 등록·수정·삭제한다.
+     회원가입 '추가 정보 입력'에서 고른 대표 서비스를 보고, 서비스를 더 등록·수정·삭제한다.
+     서비스를 고르면 R&D 사례작성 v5 공급자 입력 항목(assets/common/svc-spec.js)이 펼쳐짐. 같은 서비스를 여러 번 등록 = 수행 조건 나누기
      데모: 저장은 이 브라우저 localStorage(op.accounts의 services)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261014q">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261014q">
-<script src="assets/common/site.js?v=20261014q"></script>
-<script src="assets/common/mypage.js?v=20261014q"></script>
-<script src="assets/common/flow.js?v=20261014q"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261014r">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261014r">
+<script src="assets/common/site.js?v=20261014r"></script>
+<script src="assets/common/mypage.js?v=20261014r"></script>
+<script src="assets/common/flow.js?v=20261014r"></script>
+<script src="assets/common/svc-spec.js?v=20261014r"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .cnt { margin-left:6px; color:var(--teal-600); }
@@ -42,6 +44,14 @@
   .chips2 label:has(input:focus-visible) { box-shadow:0 0 0 3px #00786e33; }
   .add { align-self:flex-start; }
   .actions { display:flex; justify-content:flex-end; }
+  .sec { padding:14px 0 6px; font-size:13px; font-weight:600; line-height:18px; color:var(--teal-700); border-bottom:1px solid var(--gray-200); }
+  .flabel { flex-wrap:wrap; gap:4px 6px; }
+  .flabel .all { height:20px; font-size:12px; line-height:18px; color:var(--teal-600); }
+  .chips2.sm { gap:6px; }
+  .chips2.sm label { height:32px; padding:0 10px; font-size:13px; }
+  .inp.ta { width:100%; height:auto; padding:10px 12px; resize:vertical; font:inherit; font-size:14px; }
+  .field.err .flabel { color:var(--red-600); }
+  .field.err .fbody { box-shadow:inset 3px 0 0 var(--red-600); }
   .empty-s { padding:32px 16px; border:1px dashed var(--gray-300); border-radius:12px; text-align:center; font-size:14px; color:var(--gray-500); }
   @media (max-width:640px) {
     .field { grid-template-columns:1fr; }
@@ -65,7 +75,9 @@
     <section class="card">
       <div class="card-head"><h3>분석 서비스 정보<span class="cnt" id="cnt"></span></h3></div>
       <div class="op-ibox warn simple" id="askBox" hidden><p class="t"><span>OmicsPharm이 분석 서비스 정보 입력을 요청했습니다. 제공하는 서비스를 등록해 주세요.</span></p></div>
-      <div class="op-ibox simple"><p class="t">등록한 서비스는 견적 확인과 OmicsPharm 컨설턴트의 프로젝트 매칭에 활용됩니다.</p></div>
+      <div class="op-ibox"><p class="t">등록한 서비스는 견적 확인과 OmicsPharm 컨설턴트의 프로젝트 매칭에 활용됩니다.</p>
+        <ul><li>서비스를 고르면 그 서비스에서 지원하는 항목을 체크할 수 있습니다. <b>체크하지 않은 항목은 지원하지 않는 것으로 봅니다.</b></li>
+          <li>같은 서비스라도 함께 제공할 수 없는 조건이 있으면(예: 혈장은 비표적만, 조직은 표적만) [+ 서비스 추가]로 같은 서비스를 한 번 더 등록해 수행 조건을 나눠 주세요.</li></ul></div>
       <form id="fSvc" novalidate>
         <div class="items" id="items"></div>
         <button type="button" class="btn add" id="add">+ 서비스 추가</button>
@@ -83,58 +95,124 @@
   if (me.s.role !== 'partner') { location.replace('mypage.html'); return; } // 분석파트너 전용
   var $ = function (s) { return document.querySelector(s); };
   var email = me.s.email, esc = OP.my.esc;
-  // 회원가입 '추가 정보 입력'과 같은 선택지
+  // 회원가입 '추가 정보 입력'과 같은 서비스 선택지. 기타 외 6개 서비스는 R&D 사례작성 v5 공급자 입력 항목(svc-spec.js)을 펼침
   var SVC = ['단백체', 'Olink', '대사체', '유전체', '전사체', '바이오의약품·ADC', '기타'];
+  var SPEC = window.OP_SVC_SPEC || {};
   var ST = ['즉시 수행 가능', '사전협의 필요'];
+  var MAP = { execution_status: 'st', days_min: 'from', days_max: 'to' }; // v5 항목 ↔ 기존 저장 키
   var L = JSON.parse(JSON.stringify(me.acc.services || []));
   var uid = 0, saved = L.length > 0;
 
   function chips(name, list, cur) {
     return '<div class="chips2">' + list.map(function (v) { return '<label><input type="radio" name="' + name + '" value="' + esc(v) + '"' + (v === cur ? ' checked' : '') + '>' + esc(v) + '</label>'; }).join('') + '</div>';
   }
+  var val = function (o, id) { return MAP[id] ? o[MAP[id]] : (o.f || {})[id]; };
+  var shown = function (o, fd) { if (!fd.when) return true; var v = [].concat(val(o, fd.when.field) || []); return fd.when.values.some(function (w) { return v.indexOf(w) > -1; }); };
+  var row = function (label, req, body, k) { return '<div class="field"' + (k ? ' data-fd="' + k + '"' : '') + '><div class="flabel">' + label + (req ? '<span class="req">*</span>' : '') + '</div><div class="fbody">' + body + '</div></div>'; };
+  var daysRow = function (o, unit) {
+    return row('표준 소요 기간', false, '<div class="days"><input class="inp day" data-k="from" inputmode="numeric" value="' + esc(o.from || '') + '" aria-label="최소 소요 일수"><span>~</span><input class="inp day" data-k="to" inputmode="numeric" value="' + esc(o.to || '') + '" aria-label="최대 소요 일수"><span>' + unit + '</span></div>' +
+      '<p class="help">정수 일수로 적어주세요. 모르면 비워 두세요(0일로 보지 않음). 최소가 최대보다 클 수 없습니다.</p>');
+  };
+  // v5 항목 하나 → 표 한 줄
+  function fieldHTML(o, fd, n) {
+    var id = fd.id, cur = val(o, id);
+    if (id === 'days_max') return '';
+    if (id === 'days_min') return daysRow(o, '일');
+    if (id === 'execution_status') return row(fd.label, true, chips(n + '-st', fd.options, o.st) + (fd.help ? '<p class="help">' + esc(fd.help) + '</p>' : ''), id);
+    if (fd.type === 'text') return row(fd.label, fd.required, '<textarea class="inp ta" data-text="' + id + '" rows="2" placeholder="예) Orbitrap Exploris 480">' + esc(cur || '') + '</textarea>' + (fd.help ? '<p class="help">' + esc(fd.help) + '</p>' : ''), id);
+    var multi = fd.type === 'multi', on = [].concat(cur || []), opts = fd.options.concat(fd.other ? ['기타'] : []);
+    var many = multi && fd.options.length > 8;
+    var body = '<div class="chips2' + (many ? ' sm' : '') + '">' + opts.map(function (v) {
+      return '<label><input type="' + (multi ? 'checkbox' : 'radio') + '" name="' + n + '-' + id + '" data-f="' + id + '" value="' + esc(v) + '"' + (on.indexOf(v) > -1 ? ' checked' : '') + '>' + esc(v) + '</label>';
+    }).join('') + '</div>' +
+      (fd.other ? '<input class="inp etc" data-x="' + id + '" placeholder="기타 지원 내용을 구체적으로 적어주세요" value="' + esc((o.x || {})[id] || '') + '"' + (on.indexOf('기타') > -1 ? '' : ' hidden') + '>' : '') +
+      (fd.help ? '<p class="help">' + esc(fd.help) + '</p>' : '');
+    var lab = esc(fd.label) + (many ? '<button type="button" class="tbtn xs all" data-all="' + id + '">전체 선택</button>' : '');
+    return row(lab, fd.required, body, id);
+  }
+  function itemHTML(o, i) {
+    var n = 'x' + (uid++), etc = SVC.indexOf(o.svc) < 0 && o.svc ? o.svc : '';
+    var sel = etc ? '기타' : o.svc, sp = SPEC[sel];
+    var same = L.filter(function (x, j) { return j <= i && x.svc === o.svc && o.svc; }).length, dup = o.svc && L.filter(function (x) { return x.svc === o.svc; }).length > 1;
+    var h = '<div class="item" data-i="' + i + '"><div class="item-head"><b>서비스 ' + (i + 1) + (o.svc ? ' · ' + esc(o.svc) : '') + (dup ? ' · 수행 조건 ' + same : '') + '</b><button type="button" data-del>삭제</button></div>' +
+      '<div class="tbl">' + row('서비스', true, chips(n + '-svc', SVC, sel) + '<input class="inp etc" data-k="etc" placeholder="서비스명 직접 입력" value="' + esc(etc) + '"' + (sel === '기타' ? '' : ' hidden') + '>');
+    if (sp) {
+      var sec = '';
+      sp.fields.forEach(function (fd) {
+        if (!shown(o, fd)) return;
+        var html = fieldHTML(o, fd, n); if (!html) return;
+        if (fd.section && fd.section !== sec) { sec = fd.section; h += '<div class="sec">' + esc(sec) + '</div>'; }
+        h += html;
+      });
+    } else if (sel) {
+      h += row('수행 상태', true, chips(n + '-st', ST, o.st), 'execution_status') + daysRow(o, '일');
+    }
+    return h + '</div></div>';
+  }
   function draw() {
     $('#askBox').hidden = !(OP.flow && OP.flow.svcAsked(email)) || saved; // 컨설턴트 요청을 받았고 아직 저장된 서비스가 없을 때
     $('#cnt').textContent = L.length ? L.length : '';
-    $('#items').innerHTML = L.length ? L.map(function (o, i) {
-      var n = 'x' + (uid++), etc = SVC.indexOf(o.svc) < 0 && o.svc ? o.svc : '';
-      var sel = etc ? '기타' : o.svc;
-      return '<div class="item" data-i="' + i + '"><div class="item-head"><b>서비스 ' + (i + 1) + (i === 0 ? ' (대표)' : '') + '</b><button type="button" data-del>삭제</button></div>' +
-        '<div class="tbl">' +
-          '<div class="field"><div class="flabel">서비스<span class="req">*</span></div><div class="fbody">' + chips(n + 's', SVC, sel) +
-            '<input class="inp etc" data-k="etc" placeholder="서비스명 직접 입력" value="' + esc(etc) + '"' + (sel === '기타' ? '' : ' hidden') + '></div></div>' +
-          '<div class="field"><div class="flabel">수행 상태<span class="req">*</span></div><div class="fbody">' + chips(n + 't', ST, o.st) + '</div></div>' +
-          '<div class="field"><div class="flabel">표준 소요 기간</div><div class="fbody"><div class="days"><input class="inp day" data-k="from" inputmode="numeric" value="' + esc(o.from || '') + '" aria-label="최소 소요 영업일"><span>~</span><input class="inp day" data-k="to" inputmode="numeric" value="' + esc(o.to || '') + '" aria-label="최대 소요 영업일"><span>영업일</span></div>' +
-            '<p class="help">일반적인 의뢰 기준입니다. 실제 일정은 내용에 따라 협의합니다.</p></div></div>' +
-        '</div></div>';
-    }).join('') : '<div class="empty-s">등록된 분석 서비스가 없습니다. [+ 서비스 추가]로 제공하는 서비스를 등록해 주세요.</div>';
+    $('#items').innerHTML = L.length ? L.map(itemHTML).join('') : '<div class="empty-s">등록된 분석 서비스가 없습니다. [+ 서비스 추가]로 제공하는 서비스를 등록해 주세요.</div>';
   }
   // 화면 입력값 → L
   function pull() {
     [].forEach.call(document.querySelectorAll('#items .item'), function (el) {
-      var o = L[+el.dataset.i], s = el.querySelector('input[name$="s"]:checked'), t = el.querySelector('input[name$="t"]:checked');
-      o.svc = s ? (s.value === '기타' ? (el.querySelector('[data-k=etc]').value.trim() || '기타') : s.value) : '';
-      o.st = t ? t.value : '';
-      o.from = el.querySelector('[data-k=from]').value; o.to = el.querySelector('[data-k=to]').value;
+      var o = L[+el.dataset.i], s = el.querySelector('input[name$="-svc"]:checked'), t = el.querySelector('input[name$="-st"]:checked');
+      var svc = s ? (s.value === '기타' ? (el.querySelector('[data-k=etc]').value.trim() || '기타') : s.value) : '';
+      if (svc !== o.svc && o.svc) { o.f = {}; o.x = {}; } // 서비스를 바꾸면 세부 항목은 새로
+      o.svc = svc; o.st = t ? t.value : o.st || '';
+      var fr = el.querySelector('[data-k=from]'), to = el.querySelector('[data-k=to]'); if (fr) { o.from = fr.value; o.to = to.value; }
+      o.f = o.f || {}; o.x = o.x || {};
+      var seen = {};
+      [].forEach.call(el.querySelectorAll('[data-f]'), function (i) { var id = i.dataset.f; if (!seen[id]) { seen[id] = 1; o.f[id] = i.type === 'radio' ? '' : []; } if (i.checked) { if (i.type === 'radio') o.f[id] = i.value; else o.f[id].push(i.value); } });
+      [].forEach.call(el.querySelectorAll('[data-x]'), function (i) { o.x[i.dataset.x] = i.value.trim(); });
+      [].forEach.call(el.querySelectorAll('[data-text]'), function (i) { o.f[i.dataset.text] = i.value.trim(); });
     });
   }
+  var DEP = {}; Object.keys(SPEC).forEach(function (k) { SPEC[k].fields.forEach(function (fd) { if (fd.when) DEP[fd.when.field] = 1; }); }); // 다른 항목 표시를 바꾸는 항목
   draw();
   $('#items').addEventListener('change', function (e) {
-    if (/s$/.test(e.target.name || '')) { var etc = e.target.closest('.fbody').querySelector('[data-k=etc]'); etc.hidden = e.target.value !== '기타'; if (!etc.hidden) etc.focus(); }
+    var t = e.target;
+    if (/-svc$/.test(t.name || '')) { pull(); draw(); return; } // 서비스 선택 → 그 서비스 항목 펼침
+    if (t.dataset.f && DEP[t.dataset.f]) { pull(); draw(); return; } // 조건부 항목 다시 그림
+    if (t.dataset.f && t.value === '기타') { var x = t.closest('.fbody').querySelector('[data-x]'); if (x) { x.hidden = !t.checked; if (t.checked) x.focus(); } }
+    var f = t.closest('.field'); if (f) f.classList.remove('err');
   });
   $('#items').addEventListener('input', function (e) { if (e.target.classList.contains('day')) e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3); });
   $('#items').addEventListener('click', function (e) {
+    var all = e.target.closest('[data-all]');
+    if (all) { var box = all.closest('.field'), ins = box.querySelectorAll('input[data-f]:not([value="기타"])'), on = [].some.call(ins, function (i) { return !i.checked; }); [].forEach.call(ins, function (i) { i.checked = on; }); all.textContent = on ? '전체 해제' : '전체 선택'; box.classList.remove('err'); return; }
     if (!e.target.closest('[data-del]')) return;
     pull(); L.splice(+e.target.closest('.item').dataset.i, 1); draw();
   });
-  $('#add').addEventListener('click', function () { pull(); L.push({ svc: '', st: '', from: '', to: '' }); draw(); var all = document.querySelectorAll('#items .item'); all[all.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+  $('#add').addEventListener('click', function () { pull(); L.push({ svc: '', st: '', from: '', to: '', f: {}, x: {} }); draw(); var all = document.querySelectorAll('#items .item'); all[all.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' }); });
 
+  // 저장: 보이는 필수 항목 · 기타 상세 · 소요일 확인. 체크하지 않은 값은 '미지원'으로 저장된 것으로 봄 (v5 기준)
+  function check() {
+    var bad = null;
+    document.querySelectorAll('.field.err').forEach(function (f) { f.classList.remove('err'); });
+    L.forEach(function (o, i) {
+      if (bad) return;
+      var el = document.querySelector('.item[data-i="' + i + '"]'), mark = function (id, msg) { bad = { msg: '서비스 ' + (i + 1) + ' · ' + msg, el: el.querySelector('[data-fd="' + id + '"]') || el }; };
+      if (!o.svc) return mark('', '서비스를 선택해주세요.');
+      if (!o.st) return mark('execution_status', '수행 상태를 선택해주세요.');
+      if (o.from && o.to && +o.from > +o.to) return mark('days_min', '최소 소요 일수가 최대보다 깁니다.');
+      var sp = SPEC[o.svc]; if (!sp) return;
+      sp.fields.forEach(function (fd) {
+        if (bad || MAP[fd.id] || fd.type === 'text' || fd.type === 'number' || !shown(o, fd)) return;
+        var v = [].concat(o.f[fd.id] || []).filter(Boolean);
+        if (fd.required && !v.length) return mark(fd.id, fd.label + '을(를) 선택해주세요.');
+        if (v.indexOf('기타') > -1 && !(o.x[fd.id] || '')) return mark(fd.id, fd.label + '의 기타 내용을 적어주세요.');
+      });
+    });
+    return bad;
+  }
   $('#fSvc').addEventListener('submit', function (e) {
     e.preventDefault(); pull();
-    var bad = L.filter(function (o) { return !o.svc || !o.st; }).length;
-    if (bad) { OP.toast('서비스와 수행 상태를 모두 선택해주세요.'); return; }
-    var names = L.map(function (o) { return o.svc; });
-    if (names.some(function (v, i) { return names.indexOf(v) !== i; })) { OP.toast('같은 서비스가 두 번 등록되어 있습니다.'); return; }
-    if (L.some(function (o) { return o.from && o.to && +o.from > +o.to; })) { OP.toast('표준 소요 기간을 다시 확인해주세요. 최소 기간이 최대 기간보다 깁니다.'); return; }
+    var bad = check();
+    if (bad) { if (bad.el.classList.contains('field')) bad.el.classList.add('err'); bad.el.scrollIntoView({ behavior: 'smooth', block: 'center' }); OP.toast(bad.msg); return; }
+    // 숨겨진 조건부 항목 값은 저장하지 않음
+    L.forEach(function (o) { var sp = SPEC[o.svc]; if (!sp) { o.f = {}; o.x = {}; return; } sp.fields.forEach(function (fd) { if (!shown(o, fd)) { delete o.f[fd.id]; delete o.x[fd.id]; } }); });
     OP.saveAccount(email, { services: L }); saved = L.length > 0;
     draw(); OP.toast('분석 서비스 정보가 저장되었습니다.');
   });
