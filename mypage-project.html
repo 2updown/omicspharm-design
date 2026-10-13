@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261014l">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261014l">
-<script src="assets/common/site.js?v=20261014l"></script>
-<script src="assets/common/mypage.js?v=20261014l"></script>
-<script src="assets/common/flow.js?v=20261014l"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261014m">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261014m">
+<script src="assets/common/site.js?v=20261014m"></script>
+<script src="assets/common/mypage.js?v=20261014m"></script>
+<script src="assets/common/flow.js?v=20261014m"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -375,13 +375,19 @@
     $('.toprow').hidden = true; // 탭·문의하기는 프로젝트 상세에서만
     // 단계 필터 (대시보드 진행 현황에서 ?stage=단계 로 들어오면 그 단계만)
     var cst = new URLSearchParams(location.search).get('stage'); if (F.CLIENT_STEPS.indexOf(cst) < 0) cst = '전체';
-    $('#project').outerHTML = '<div class="chips" id="cChips" role="tablist"></div><div class="list-head"><span class="total" id="cTotal"></span></div><div class="list" id="cList"></div>';
+    $('#project').outerHTML = '<div class="chips" id="cChips" role="tablist"></div><div class="unread" id="cUnread"></div><div class="list-head"><span class="total" id="cTotal"></span></div><div class="list" id="cList"></div>';
+    // 확인하지 않은 견적서 = 컨설턴트가 전달했고 아직 고르지 않은 견적 (Q&A는 아직 데이터 없음)
+    var newQN = function (x) { var s = F.state(x.id); return s.st === 'sent' ? fwdKeys(s).length : 0; };
+    var qN = list.reduce(function (n, x) { return n + newQN(x); }, 0), cOnly = false;
+    $('#cUnread').innerHTML = '<span>확인하지 않은 견적서 <b>' + qN + '건</b>과 Q&amp;A <b>0건</b>이 있습니다.</span><label><input type="checkbox" id="cOnly">미열람글만 보기</label>';
+    $('#cOnly').addEventListener('change', function () { cOnly = this.checked; cdraw(); });
     var cdraw = function () {
+      var B = cOnly ? list.filter(function (x) { return newQN(x); }) : list; // 미열람글만 보기
       $('#cChips').innerHTML = ['전체'].concat(F.CLIENT_STEPS).map(function (t) {
-        var n = t === '전체' ? list.length : list.filter(function (x) { return F.clientStage(x.id) === t; }).length;
+        var n = t === '전체' ? B.length : B.filter(function (x) { return F.clientStage(x.id) === t; }).length;
         return '<button type="button" role="tab" data-st="' + t + '"' + (cst === t ? ' class="on" aria-selected="true"' : '') + '>' + t + '<span>' + n + '</span></button>';
       }).join('');
-      var L = list.filter(function (x) { return cst === '전체' || F.clientStage(x.id) === cst; });
+      var L = B.filter(function (x) { return cst === '전체' || F.clientStage(x.id) === cst; });
       $('#cTotal').textContent = '총 ' + L.length + '개';
       $('#cList').innerHTML = L.map(card).join('') || '<div class="empty"><b>' + cst + ' 단계의 프로젝트가 없습니다</b></div>';
     };
