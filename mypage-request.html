@@ -11,12 +11,12 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261015m">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261015m">
-<script src="assets/common/site.js?v=20261015m"></script>
-<script src="assets/common/mypage.js?v=20261015m"></script>
-<script src="assets/common/svc-spec.js?v=20261015m"></script>
-<script src="assets/common/flow.js?v=20261015m"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261015p">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261015p">
+<script src="assets/common/site.js?v=20261015p"></script>
+<script src="assets/common/mypage.js?v=20261015p"></script>
+<script src="assets/common/svc-spec.js?v=20261015p"></script>
+<script src="assets/common/flow.js?v=20261015p"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -270,42 +270,45 @@
   .pv .bizmiss p { margin-top:8px; font-size:14px; line-height:22px; color:var(--gray-600); }
   .pv .demo-note { margin:0 auto 12px; max-width:794px; font-size:13px; color:#ddd; text-align:center; }
   @media (max-width:640px) { .fdocs { padding:12px 14px; } .fdocs p { margin-left:0; } .fdocs .fbtns { margin-left:0; } }
-  /* ── 분석파트너 매칭 ── */
-  .agt { display:flex; flex-direction:column; gap:14px; padding:20px; border:1px solid #a6e3d9; border-radius:12px; background:linear-gradient(180deg, #f2fbf9 0, #fff 72px); }
-  .agt-h { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
-  .agt-h h3 { display:flex; align-items:center; gap:6px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
-  .agt-h h3 img { width:20px; height:20px; }
-  .agt-h p { margin-top:4px; font-size:13px; line-height:18px; color:var(--gray-500); }
-  .agt-h .btn { flex:none; height:36px; }
-  .agt-h .btn img { width:16px; height:16px; }
-  .agt-h .btn.busy img { animation:agtspin .8s linear infinite; }
-  @keyframes agtspin { to { transform:rotate(360deg); } }
-  .agt-list { display:flex; flex-direction:column; gap:16px; }
-  .agt-g { display:flex; flex-direction:column; gap:8px; }
-  .agt-gh { font-size:14px; font-weight:600; line-height:20px; }
-  .agt-gh b { color:var(--gray-500); font-weight:500; }
-  .agt-r { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:14px; padding:14px 16px; border:1px solid var(--gray-200); border-radius:10px; background:#fff; }
-  .agt-r .nm { display:flex; align-items:center; flex-wrap:wrap; gap:6px 8px; }
-  .agt-r .nm b { font-size:16px; font-weight:600; line-height:22px; }
-  .agt-r .nm .sub { font-size:12px; line-height:18px; color:var(--gray-500); }
-  .agt-r .nm .sub + .sub::before { content:"· "; }
-  .agt-r .why { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:8px; }
-  .agt-r .why span { padding:2px 8px; border-radius:6px; background:var(--gray-100); font-size:12px; line-height:18px; color:var(--gray-600); }
-  .agt-r .why span.hit { background:#f2fbf9; color:var(--teal-700); }
-  .agt-r .why span.miss { background:#fff1f2; color:#ca0008; }
-  .agt-r .why .tbtn { height:22px; font-size:12px; }
-  .agt-r .why .asked { font-style:normal; font-size:12px; color:var(--gray-500); }
-  .agt-r .st { font-size:13px; font-weight:500; color:var(--gray-500); white-space:nowrap; }
-  .agt-r .st.sent { color:var(--teal-600); }
-  .agt-f { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-  .agt-f p { font-size:12px; line-height:18px; color:var(--gray-500); }
-  .agt-empty { padding:20px; text-align:center; font-size:14px; color:var(--gray-500); }
-  .qm-tbl tr.rec td { background:#f7fdfb; }
-  .qm-tbl .rb { display:inline-flex; align-items:center; margin:0 6px 2px 0; padding:1px 6px; border-radius:6px; background:var(--teal-600); color:#fff; font-size:11px; font-weight:600; line-height:16px; vertical-align:1px; }
-  .qm-tbl .rb.other { background:var(--gray-100); color:var(--gray-400); } .qm-tbl .rb.chk { background:#f2fbf9; color:var(--teal-700); } .qm-tbl .rb.miss { background:#fff1f2; color:#ca0008; } .qm-tbl .rb.none { background:var(--gray-100); color:var(--gray-500); }
-  .qm-rec { display:flex; align-items:center; gap:6px; margin-top:12px; font-size:13px; line-height:20px; color:var(--teal-700); }
-  .qm-rec img { width:16px; height:16px; }
-  @media (max-width:640px) { .agt { padding:16px; } .agt-h { flex-direction:column; } .agt-r { grid-template-columns:minmax(0,1fr); } }
+  /* ── AI 분석파트너 매칭 (팝업 = 견적제안메일) ── */
+  .blk-h .aim { display:flex; align-items:center; gap:12px; }
+  .aisum { font-size:13px; color:var(--gray-500); white-space:nowrap; }
+  .aisum b { color:var(--teal-700); font-weight:600; }
+  #more img { width:18px; height:18px; }
+  .qmail .box { max-width:920px; }
+  .qm-sub { margin-top:6px; font-size:13px; line-height:20px; color:var(--gray-500); }
+  .qm-sub .tbtn { height:20px; font-size:13px; vertical-align:-1px; }
+  .qm-f .row.grow { flex:1; }
+  .qm-hide { display:inline-flex; align-items:center; gap:8px; margin-top:4px; font-size:14px; cursor:pointer; }
+  .qm-hide { align-self:flex-start; }
+  .qm-f .qm-hide input { flex:none; width:18px; height:18px; padding:0; border:0; accent-color:var(--teal-600); }
+  .qm-head { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:20px; }
+  .qm-head .qm-cnt { margin:0; }
+  .qm-legend { display:flex; align-items:center; gap:6px 10px; flex-wrap:wrap; font-size:12px; color:var(--gray-500); }
+  .qm-legend i { display:inline-block; width:10px; height:10px; margin-right:-4px; border-radius:3px; background:var(--gray-200); }
+  .qm-legend i.hit { background:#bfe9e1; } .qm-legend i.miss { background:#ffc7c9; }
+  .qm-list { display:flex; flex-direction:column; gap:16px; margin:10px 0 20px; padding-top:12px; border-top:2px solid var(--teal-600); }
+  .qg { display:flex; flex-direction:column; gap:6px; }
+  .qg-h { font-size:14px; font-weight:600; line-height:20px; }
+  .qg-h b { font-weight:500; color:var(--gray-500); }
+  .qg-h.ok { color:var(--teal-700); } .qg-h.miss { color:#ca0008; } .qg-h.none, .qg-h.other, .qg-h.unv { color:var(--gray-500); }
+  .qr { display:grid; grid-template-columns:20px minmax(0,1fr) auto; align-items:start; gap:12px; padding:12px 14px; border:1px solid var(--gray-200); border-radius:10px; background:#fff; cursor:pointer; }
+  .qr:hover { border-color:var(--teal-500, #00bba6); }
+  .qr:has(input:checked) { border-color:var(--teal-600); background:#f7fdfb; }
+  .qr.off { cursor:default; background:var(--gray-50); } .qr.off:hover { border-color:var(--gray-200); }
+  .qr input { width:18px; height:18px; margin-top:2px; accent-color:var(--teal-600); }
+  .qr .nm { display:flex; align-items:baseline; flex-wrap:wrap; gap:2px 10px; }
+  .qr .nm b { font-size:15px; font-weight:600; line-height:22px; }
+  .qr .nm small { font-size:12px; line-height:18px; color:var(--gray-500); word-break:break-all; }
+  .qr .why { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:6px; }
+  .qr .why span { padding:2px 8px; border-radius:6px; background:var(--gray-100); font-size:12px; line-height:18px; color:var(--gray-600); }
+  .qr .why span.hit { background:#f2fbf9; color:var(--teal-700); } .qr .why span.miss { background:#fff1f2; color:#ca0008; }
+  .qr .why .tbtn { height:22px; font-size:12px; }
+  .qr .why .asked { font-style:normal; font-size:12px; color:var(--gray-500); }
+  .qr .qs { font-size:13px; font-weight:500; color:var(--gray-500); white-space:nowrap; }
+  .qr .qs.sent { color:var(--teal-600); }
+  .qm-none { padding:40px 0; text-align:center; font-size:14px; color:var(--gray-500); }
+  @media (max-width:640px) { .qm-f .row > select, .qm-f .row.grow { flex-basis:100%; } .qr { grid-template-columns:20px minmax(0,1fr); } .qr .qs { grid-column:2; } .blk-h { flex-wrap:wrap; } .blk-h .aim { width:100%; justify-content:space-between; } }
 </style>
 </head>
 <body>
@@ -544,31 +547,17 @@
       return { key: p.key, p: p, cat: cat, why: why, st: best.st, cond: best.n > 1 ? '수행 조건 ' + (best.ci + 1) + ' 기준' : '' };
     }).sort(function (a, b) { var o = ['ok', 'chk', 'miss', 'none', 'other']; return o.indexOf(a.cat) - o.indexOf(b.cat) || (b.why.filter(function (w) { return w[1] === 1; }).length - a.why.filter(function (w) { return w[1] === 1; }).length); });
   }
-  function agtHTML(s) {
-    var R = agent();
-    var st = function (k) { var x = s.P[k]; return !x ? '<span class="st">미발송</span>' : x.self ? '<span class="st sent">직접 신청</span>' : '<span class="st sent">견적제안 발송함</span>'; };
-    var pick = R.filter(function (x) { return (x.cat === 'ok' || x.cat === 'chk') && !s.P[x.key]; }).length;
-    var groups = ['ok', 'chk', 'miss', 'none', 'other'].map(function (c) {
-      var L = R.filter(function (x) { return x.cat === c; }); if (!L.length) return '';
-      return '<div class="agt-g"><p class="agt-gh ' + c + '">' + CAT[c] + ' <b>' + L.length + '</b></p>' + L.map(function (x) {
-        var ask = c === 'none' ? (F.svcAsked(x.key) ? '<em class="asked">입력 요청함</em>' : '<button type="button" class="tbtn xs primary" data-svcask="' + x.key + '">입력 요청</button>') : '';
-        return '<div class="agt-r"><div><div class="nm"><b>' + esc(x.p.org) + '</b>' + (x.st ? '<span class="sub">' + esc(x.st) + '</span>' : '') + (x.cond ? '<span class="sub">' + x.cond + '</span>' : '') + '</div>' +
-          '<div class="why">' + x.why.map(function (w) { return '<span class="' + ['', 'hit', 'miss'][w[1]] + '">' + esc(w[0]) + '</span>'; }).join('') + ask + '</div></div>' + st(x.key) + '</div>';
-      }).join('') + '</div>';
-    }).join('');
-    return '<div class="agt" id="agt"><div class="agt-h"><div><h3><img src="assets/common/ic-sparkle-fill.svg" alt="">AI 분석파트너 매칭</h3>' +
-        '<p>의뢰 내용과 인증 분석파트너의 분석 서비스 정보를 비교했습니다. · ' + F.ymd(agtAt) + ' ' + new Date(agtAt).toTimeString().slice(0, 5) + '</p></div>' +
-        '<button type="button" class="btn" id="agtRe"><img src="assets/find/ic-arrow-clockwise.svg" alt="">다시 비교</button></div>' +
-      (R.length ? '<div class="agt-list">' + groups + '</div>' : '<div class="agt-empty">인증 분석파트너가 없습니다.</div>') +
-      '<div class="agt-f"><p>초록 = 의뢰와 맞는 값, 빨강 = 지원하지 않는 값, 회색 = 정보 없음·확인 필요. 발송할 파트너는 컨설턴트가 정합니다.</p>' +
-        '<button type="button" class="btn primary" id="agtMail"' + (pick ? '' : ' disabled') + '><img src="assets/main/ic-mail.svg?v=2" alt="" onerror="this.remove()">' + (pick ? '조건 충족·확인 필요 파트너에게 견적제안메일 (' + pick + ')' : '보낼 파트너 없음') + '</button></div></div>';
+  // 견적서 확인 제목 옆 한 줄 요약 (조건 충족·확인 필요 중 아직 안 보낸 곳)
+  function aiSum(s) {
+    var R = agent(), ok = R.filter(function (x) { return x.cat === 'ok'; }).length, chk = R.filter(function (x) { return x.cat === 'chk'; }).length;
+    return '<span class="aisum">조건 충족 <b>' + ok + '</b>' + (chk ? ' · 확인 필요 <b>' + chk + '</b>' : '') + '</span>';
   }
 
   function render() {
     var s = F.state(id), c = cnt(s);
     var k = { review: s.ok ? 1 : 0, quoting: c.sub ? 2 : 1, sent: 3, matched: s.ct ? 5 : 4 }[s.st];
     var todo = {
-      review: s.ok ? ['', '프로젝트 찾기에 게시되었습니다 (' + F.ymd(s.ok) + ').', '분석파트너의 견적을 기다리고 있습니다. 적합해 보이는 기관이 있으면 [견적제안메일]로 견적 작성을 요청해보세요.']
+      review: s.ok ? ['', '프로젝트 찾기에 게시되었습니다 (' + F.ymd(s.ok) + ').', '분석파트너의 견적을 기다리고 있습니다. [AI 분석파트너 매칭]에서 의뢰에 맞는 기관을 확인하고 견적 작성을 요청해보세요.']
                    : ['warn', '의뢰서가 접수되었습니다. 확인 후 승인처리 해주세요.', '승인하면 프로젝트로 등록되고 의뢰사에게 \'의뢰승인\' 알림이 갑니다. 그다음 분석파트너에게 견적을 요청할 수 있습니다.'],
       quoting: c.sub ? ['', '도착한 견적을 확인하고 클라이언트에게 전달해주세요.', '수정이 필요한 견적은 [수정 요청]으로 파트너에게 돌려보낼 수 있습니다.']
                      : ['gray', '분석파트너의 견적을 기다리고 있습니다.', '견적 마감일 ' + dot(s.due) + ' · 견적이 도착하면 알림으로 알려드립니다.'],
@@ -589,10 +578,10 @@
       '<ol class="fsteps" style="--n:5" aria-label="진행 단계">' + STEPS.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
       '<div class="ftodo ' + todo[0] + '"><div><b>' + esc(todo[1]) + '</b><p>' + esc(todo[2]) + '</p></div>' +
         (s.st === 'review' && !s.ok && !bizWait ? '<div class="acts"><button type="button" class="btn primary" id="approve">의뢰 승인</button></div>' : '') + '</div>' +
-      bizHTML(s) +
+      (s.ok ? '' : bizHTML(s)) + // 사업자등록증은 승인 전에만 위에, 승인 뒤에는 의뢰 내용 바로 위로
       (s.st === 'matched' ? contractHTML(s) : '') +
-      (s.ok && s.st !== 'matched' ? agtHTML(s) : '') +
       (s.st === 'review' && !s.ok ? '' : quotesHTML(s)) +
+      (s.ok ? bizHTML(s) : '') +
       '<details class="req"' + (s.st === 'review' ? ' open' : '') + '><summary>의뢰 내용</summary><div class="in">' + F.reqHTML(r) + '</div></details>';
     bind(s);
   }
@@ -682,65 +671,74 @@
     var b = $('#ctSave'); if (b) b.disabled = !ctPick();
   }
 
-  // 견적제안메일 발송 팝업: 공급사(분석파트너) 회원 리스트에서 골라 프로젝트 링크 + 메시지를 메일·알림으로 보냄
-  function mailModal(s, pre) {
-    var AG = agent(), REC = AG.map(function (x) { return x.key; }), CATOF = {}; AG.forEach(function (x) { CATOF[x.key] = x.cat; }); // 분석파트너 매칭 결과 순서
+  // AI 분석파트너 매칭 팝업 (= 견적제안메일 발송): 매칭 결과 묶음별 목록에서 골라 프로젝트 링크 + 메시지를 메일·알림으로 보냄
+  // 조건 충족·확인 필요 중 안 보낸 곳은 미리 체크. '분석 서비스 정보 없는 업체 숨기기'는 AI와 별개 필터
+  function mailModal(s) {
+    var AG = agent(), BY = {}; AG.forEach(function (x) { BY[x.key] = x; });
     var KEY = ['단백체', '대사체', '유전체', '전사체', 'Olink', '바이오의약품'];
     var svcName = function (x) { return x === '바이오의약품' ? '바이오의약품 특성 분석' : x === 'Olink' ? 'Olink 분석' : x + ' 분석'; };
-    var orgs = F.PARTNERS.map(function (p) { return p.org; });
+    var ORDER = ['ok', 'chk', 'miss', 'none', 'other', 'unv'], LBL = Object.assign({ unv: '미인증 (견적 작성 불가)' }, CAT);
+    var all = F.PARTNERS.map(function (p) { return BY[p.key] || { key: p.key, p: p, cat: 'unv', why: [] }; });
+    var picked = {}; all.forEach(function (x) { if ((x.cat === 'ok' || x.cat === 'chk') && !s.P[x.key]) picked[x.key] = 1; });
     var m = document.createElement('div');
-    m.className = 'op-confirm qmail'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', '견적제안메일 발송');
+    m.className = 'op-confirm qmail'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', 'AI 분석파트너 매칭');
     m.innerHTML = '<div class="box"><button type="button" class="qm-x" aria-label="닫기">×</button>' +
-      '<h3><img src="assets/main/ic-mail.svg?v=2" alt="" onerror="this.remove()">견적제안메일 발송</h3>' +
+      '<h3><img src="assets/common/ic-sparkle-fill.svg" alt="">AI 분석파트너 매칭</h3>' +
+      '<p class="qm-sub">의뢰 내용과 인증 분석파트너의 분석 서비스 정보를 비교했습니다. 견적을 요청할 기관을 골라 견적제안메일을 보내세요. <span id="qmAt"></span> <button type="button" class="tbtn xs primary" id="qmRe">다시 비교</button></p>' +
       '<div class="qm-f"><div class="row"><select id="qmSvc"><option value="">분석 서비스 전체</option>' + KEY.map(function (k) { return '<option value="' + k + '">' + svcName(k) + '</option>'; }).join('') + '</select>' +
-        '<select id="qmOrg"><option value="">소속 전체</option>' + orgs.map(function (o) { return '<option>' + esc(o) + '</option>'; }).join('') + '</select></div>' +
-        '<form class="row" id="qmForm"><input type="search" id="qmQ" placeholder="키워드 입력 (성함, 소속, 이메일)"><button type="submit">검색</button></form></div>' +
-      (REC.length ? '<p class="qm-rec"><img src="assets/common/ic-sparkle-fill.svg" alt="">AI 분석파트너 매칭 결과 순서(조건 충족 → 확인 필요 → 일부 미지원 → 정보 없음 → 이 서비스 미등록)로 정렬했습니다.</p>' : '') +
-      '<p class="qm-cnt" id="qmCnt"></p>' +
-      '<div class="qm-tbl"><table><thead><tr><th class="ck"><input type="checkbox" id="qmAll" aria-label="전체 선택"></th><th>성함</th><th>소속</th><th>연락처</th><th>이메일</th><th>공급서비스</th><th>상태</th></tr></thead><tbody id="qmBody"></tbody></table></div>' +
-      '<div class="qm-pg"><span class="on">1</span></div>' +
+        '<form class="row grow" id="qmForm"><input type="search" id="qmQ" placeholder="키워드 입력 (기관명, 담당자, 이메일)"><button type="submit">검색</button></form></div>' +
+        '<label class="qm-hide"><input type="checkbox" id="qmHide">분석 서비스 정보 없는 업체 숨기기</label></div>' +
+      '<div class="qm-head"><p class="qm-cnt" id="qmCnt"></p><p class="qm-legend"><i class="hit"></i>맞는 값 <i class="miss"></i>지원 안 함 <i></i>정보 없음·확인 필요</p></div>' +
+      '<div class="qm-list" id="qmList"></div>' +
       '<textarea id="qmMsg" placeholder="해당 프로젝트의 링크와 함께 메시지가 전달됩니다. 발송할 메시지를 입력하세요."></textarea>' +
       '<div class="btns"><button type="button" class="no">닫기</button><button type="button" class="yes go" id="qmSend" disabled>견적제안발송</button></div></div>';
     document.body.appendChild(m); document.body.style.overflow = 'hidden';
-    var q = { svc: '', org: '', kw: '' }; // 기본: 분석 서비스 전체
+    var q = { svc: '', kw: '', hide: false }, open = {};
+    var stOf = function (k) { var x = s.P[k]; return !x ? '' : x.self ? '직접 신청' : '발송함'; };
     var draw = function () {
-      var L = F.PARTNERS.filter(function (p) {
-        var kw = q.kw.toLowerCase();
-        return (!q.svc || p.svc.indexOf(q.svc) > -1) && (!q.org || p.org === q.org) && (!kw || [p.name, p.org, p.mail].join(' ').toLowerCase().indexOf(kw) > -1);
-      });
-      var rk = function (p) { var i = REC.indexOf(p.key); return i < 0 ? 99 : i; };
-      L.sort(function (a, b) { return rk(a) - rk(b); });
-      m.querySelector('#qmCnt').innerHTML = '공급사 회원 리스트 (총 <b>' + L.length + '</b>건)';
-      m.querySelector('#qmBody').innerHTML = L.map(function (p) {
-        var sent = s.P[p.key] && !s.P[p.key].self, applied = s.P[p.key] && s.P[p.key].self, off = sent || applied || !p.verified;
-        // 상태: button_text (글자만 있는 버튼). 미발송을 누르면 그 행 선택
-        var st = !p.verified ? '<button type="button" class="tbtn xs" disabled>미인증</button>' : applied ? '<span class="tbtn xs primary">직접 신청</span>' : sent ? '<span class="tbtn xs primary">발송</span>' : '<button type="button" class="tbtn xs" data-pickrow="' + p.key + '">미발송</button>';
-        var ri = REC.indexOf(p.key), cc = CATOF[p.key], cls = [off ? 'off' : '', cc === 'ok' ? 'rec' : ''].join(' ').trim();
-        return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td class="ck"><input type="checkbox" value="' + p.key + '"' + (off ? ' disabled' : '') + (!off && pre && pre.indexOf(p.key) > -1 ? ' checked' : '') + ' aria-label="' + esc(p.org) + ' 선택"></td><td>' + esc(p.name) + '</td><td>' + (cc ? '<span class="rb ' + cc + '">' + CAT[cc] + '</span>' : '') + esc(p.org) + '</td><td>' + esc(p.tel) + '</td><td class="mail">' + esc(p.mail) + '</td><td class="svc">' + p.svc.map(svcName).join(', ') + '</td><td>' + st + '</td></tr>';
-      }).join('') || '<tr><td colspan="7" class="none">조건에 맞는 공급사 회원이 없습니다.</td></tr>';
+      m.querySelector('#qmAt').textContent = '· ' + F.ymd(agtAt) + ' ' + new Date(agtAt).toTimeString().slice(0, 5);
+      var kw = q.kw.toLowerCase();
+      var L = all.filter(function (x) { var p = x.p; return (!q.svc || p.svc.indexOf(q.svc) > -1) && (!kw || [p.name, p.org, p.mail].join(' ').toLowerCase().indexOf(kw) > -1) && !(q.hide && (x.cat === 'none' || x.cat === 'unv')); });
+      m.querySelector('#qmCnt').innerHTML = '분석파트너 <b>' + L.length + '</b>곳';
+      m.querySelector('#qmList').innerHTML = ORDER.map(function (c) {
+        var G = L.filter(function (x) { return x.cat === c; }); if (!G.length) return '';
+        return '<div class="qg"><p class="qg-h ' + c + '">' + LBL[c] + ' <b>' + G.length + '</b></p>' + G.map(function (x) {
+          var p = x.p, done = stOf(p.key), off = !!done || c === 'unv', chips = x.why || [], more = chips.length > 6 && !open[p.key];
+          var ask = c === 'none' ? (F.svcAsked(p.key) ? '<em class="asked">입력 요청함</em>' : '<button type="button" class="tbtn xs primary" data-svcask="' + p.key + '">입력 요청</button>') : '';
+          return '<label class="qr' + (off ? ' off' : '') + '"><input type="checkbox" value="' + p.key + '"' + (off ? ' disabled' : picked[p.key] ? ' checked' : '') + ' aria-label="' + esc(p.org) + ' 선택">' +
+            '<span class="qb"><span class="nm"><b>' + esc(p.org) + '</b><small>' + esc(p.name) + ' · ' + esc(p.tel) + ' · ' + esc(p.mail) + '</small>' + (x.cond ? '<small>' + x.cond + '</small>' : '') + '</span>' +
+              (chips.length || ask ? '<span class="why">' + (more ? chips.slice(0, 6) : chips).map(function (w) { return '<span class="' + ['', 'hit', 'miss'][w[1]] + '">' + esc(w[0]) + '</span>'; }).join('') + (more ? '<button type="button" class="tbtn xs" data-more="' + p.key + '">+' + (chips.length - 6) + '</button>' : '') + ask + '</span>' : '') + '</span>' +
+            '<span class="qs' + (done ? ' sent' : '') + '">' + (done || (c === 'unv' ? '미인증' : '미발송')) + '</span></label>';
+        }).join('') + '</div>';
+      }).join('') || '<p class="qm-none">조건에 맞는 분석파트너가 없습니다.</p>';
       sync();
     };
-    var picked = function () { return [].map.call(m.querySelectorAll('#qmBody input:checked'), function (i) { return i.value; }); };
-    var sync = function () { var n = picked().length, b = m.querySelector('#qmSend'); b.disabled = !n; b.textContent = '견적제안발송' + (n ? ' (' + n + ')' : ''); };
+    var keys = function () { return Object.keys(picked).filter(function (k) { return picked[k]; }); };
+    var sync = function () { var n = keys().length, b = m.querySelector('#qmSend'); b.disabled = !n; b.textContent = '견적제안발송' + (n ? ' (' + n + ')' : ''); };
     var close = function () { m.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', key); };
     var key = function (e) { if (e.key === 'Escape') close(); };
     document.addEventListener('keydown', key);
     m.querySelector('#qmSvc').onchange = function () { q.svc = this.value; draw(); };
-    m.querySelector('#qmOrg').onchange = function () { q.org = this.value; draw(); };
+    m.querySelector('#qmHide').onchange = function () { q.hide = this.checked; draw(); };
     m.querySelector('#qmForm').onsubmit = function (e) { e.preventDefault(); q.kw = m.querySelector('#qmQ').value.trim(); draw(); };
-    m.querySelector('#qmAll').onchange = function () { var on = this.checked; [].forEach.call(m.querySelectorAll('#qmBody input:not(:disabled)'), function (i) { i.checked = on; }); sync(); };
-    m.querySelector('#qmBody').onchange = sync;
+    m.querySelector('#qmList').onchange = function (e) { if (e.target.type === 'checkbox') { picked[e.target.value] = e.target.checked; sync(); } };
     m.addEventListener('click', function (e) {
-      var pr = e.target.closest('[data-pickrow]');
-      if (pr) { var cb = m.querySelector('#qmBody input[value="' + pr.dataset.pickrow + '"]'); cb.checked = !cb.checked; sync(); return; }
+      var mo = e.target.closest('[data-more]'); if (mo) { e.preventDefault(); open[mo.dataset.more] = 1; draw(); return; }
+      var sa = e.target.closest('[data-svcask]');
+      if (sa) {
+        e.preventDefault(); var k = sa.dataset.svcask;
+        F.ask({ title: F.partner(k).org + '에 분석 서비스 정보 입력을 요청할까요?', desc: '분석파트너에게 알림이 가고, 회원정보 > 분석 서비스 정보 화면에 입력 안내가 표시됩니다.', label: false, yes: '요청하기' }, function () { F.svcAsk(k); OP.toast(F.partner(k).org + '에 분석 서비스 정보 입력을 요청했습니다.'); draw(); });
+        return;
+      }
+      if (e.target.closest('#qmRe')) { var b = e.target.closest('#qmRe'); b.disabled = true; b.textContent = '비교 중…'; setTimeout(function () { agtAt = Date.now(); b.disabled = false; b.textContent = '다시 비교'; draw(); OP.toast('분석 서비스 정보를 다시 비교했습니다.'); }, 900); return; }
       if (e.target === m || e.target.closest('.no') || e.target.closest('.qm-x')) close();
       else if (e.target.closest('#qmSend') && !e.target.closest('#qmSend').disabled) {
-        var keys = picked();
-        F.send(id, keys, null, m.querySelector('#qmMsg').value.trim());
-        close(); OP.toast('견적제안메일을 발송했습니다. (' + keys.length + '곳)'); render();
+        var ks = keys();
+        F.send(id, ks, null, m.querySelector('#qmMsg').value.trim());
+        close(); OP.toast('견적제안메일을 발송했습니다. (' + ks.length + '곳)'); render();
       }
     });
-    draw(); pre = null; m.querySelector('#qmSvc').focus(); // 미리 체크는 처음 열 때만
+    draw(); m.querySelector('#qmSvc').focus();
   }
 
   // 받은 견적
@@ -773,10 +771,10 @@
     }).join('');
     var c = cnt(s);
     return '<div class="blk" id="quotes">' +
-      '<div class="blk-h"><h3>견적서 확인 <span style="color:var(--teal-600)">' + c.sub + '</span> / ' + c.all + '</h3>' + (edit || s.st === 'review' ? '<button type="button" class="btn primary" id="more"><img src="assets/main/ic-mail.svg?v=2" alt="" onerror="this.remove()">견적제안메일</button>' : '') + '</div>' +
+      '<div class="blk-h"><h3>견적서 확인 <span style="color:var(--teal-600)">' + c.sub + '</span> / ' + c.all + '</h3>' + (edit || s.st === 'review' ? '<span class="aim">' + aiSum(s) + '<button type="button" class="btn primary" id="more"><img src="assets/common/ic-sparkle-fill-w.svg" alt="">AI 분석파트너 매칭</button></span>' : '') + '</div>' +
       '<div class="reqinfo"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>견적 마감</b> ' + dot(s.due || r.to) + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self; }).length + ' · 견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></div>' +
       (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적</span><span>소요</span><span>일자</span><span></span></div>' + rows + '</div>'
-        : '<div class="qempty">아직 견적을 작성 중인 분석파트너가 없습니다.<br>인증 분석파트너는 프로젝트 찾기에서 직접 견적을 작성할 수 있고, [견적제안메일]로 적합한 기관에 요청할 수도 있습니다.</div>') +
+        : '<div class="qempty">아직 견적을 작성 중인 분석파트너가 없습니다.<br>인증 분석파트너는 프로젝트 찾기에서 직접 견적을 작성할 수 있고, [AI 분석파트너 매칭]에서 적합한 기관에 요청할 수도 있습니다.</div>') +
       (edit && subs.some(function (k) { return !s.P[k].fwd; }) ? '<div class="bar"><p>체크한 견적을 수정 없이 그대로 클라이언트에게 전달합니다. 기관명도 함께 공개됩니다.' + (s.st === 'sent' ? ' 이미 전달한 견적(✓)에 추가됩니다.' : '') + '</p><div class="acts"><button type="button" class="btn primary lg" id="fwd"></button></div></div>' : '') +
       (s.msg && s.st !== 'quoting' ? '<div class="msg"><b>클라이언트에게 전달한 메시지 · ' + F.ymd(s.sentAt) + '</b>' + esc(s.msg) + '</div>' : '') +
     '</div>';
@@ -825,12 +823,6 @@
         });
       } else if (t.closest('#more')) {
         mailModal(s);
-      } else if (t.closest('#agtMail')) {
-        mailModal(s, agent().filter(function (x) { return (x.cat === 'ok' || x.cat === 'chk') && !s.P[x.key]; }).map(function (x) { return x.key; }));
-      } else if (t.closest('#agtRe')) {
-        var rb = t.closest('#agtRe'); if (rb.classList.contains('busy')) return;
-        rb.classList.add('busy'); rb.lastChild.textContent = '비교 중…';
-        setTimeout(function () { agtAt = Date.now(); render(); OP.toast('분석 서비스 정보를 다시 비교했습니다.'); }, 900);
       } else if (t.closest('[data-doc]')) {
         var k = t.closest('[data-doc]').dataset.doc; F.showDoc(r, s.P[k].quote, k, F.partner(k).org + ' 견적서');
       } else if (t.closest('[data-rev]')) {
