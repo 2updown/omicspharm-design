@@ -7,11 +7,11 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261014n">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261014n">
-<script src="assets/common/site.js?v=20261014n"></script>
-<script src="assets/common/mypage.js?v=20261014n"></script>
-<script src="assets/common/flow.js?v=20261014n"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261014o">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261014o">
+<script src="assets/common/site.js?v=20261014o"></script>
+<script src="assets/common/mypage.js?v=20261014o"></script>
+<script src="assets/common/flow.js?v=20261014o"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -174,7 +174,7 @@
     // 클라이언트: 견적 중개 단계(의뢰접수 → 견적 비교 → 계약 → 분석 진행)
     cells = ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'].map(function (t) { return [t, P.filter(function (p) { return F.clientStage(p.id) === t; }).length, 'mypage-project.html?stage=' + encodeURIComponent(t)]; });
   } else {
-    // 분석파트너: 견적(견적관리) → 프로젝트(프로젝트 관리). 보고서는 실제 단계(등록·검토중·승인 대기) 그대로
+    // 분석파트너: 견적(견적관리) → 프로젝트(프로젝트 관리). 보고서는 실제 단계(등록·검토·승인) 그대로
     var IN = OP.canQuote() ? F.inbox(me.s.email).map(function (o) { return F.pst(o.s, me.s.email); }) : [];
     var cnt = function (re) { return IN.filter(function (t) { return re.test(t); }).length; };
     cells = [['견적 작성', cnt(/작성 대기|임시저장|수정 요청/), 'mypage-quote.html?t=' + encodeURIComponent('작성 필요'), '', true],
@@ -187,7 +187,7 @@
   //       분석파트너 = 견적(작성·제출) / 프로젝트 진행(계약·분석) / 보고서(보고서 등록) / 완료
   groupFlow($('#flow'), client
     ? [['견적', 'red', pick(cells, ['의뢰접수', '견적 비교'])], ['진행', 'teal', pick(cells, ['계약', '분석 진행'])], ['완료', 'blue', pick(cells, ['결과 수령'])]]
-    : [['견적', 'red', pick(cells, ['견적 작성', '견적 제출'])], ['프로젝트 진행', 'teal', pick(cells, ['계약', '분석'])], ['보고서', 'gray', pick(cells, ['보고서 등록', '보고서 검토중', '보고서 승인 대기'])], ['완료', 'blue', pick(cells, ['완료'])]]);
+    : [['견적', 'red', pick(cells, ['견적 작성', '견적 제출'])], ['프로젝트 진행', 'teal', pick(cells, ['계약', '분석'])], ['보고서', 'gray', pick(cells, ['보고서 등록', '보고서 검토', '보고서 승인'])], ['완료', 'blue', pick(cells, ['완료'])]]);
 
   if (!client && PP.length) {
     $('#plist').innerHTML = '<div class="plist">' + PP.slice(0, 3).map(function (p) {

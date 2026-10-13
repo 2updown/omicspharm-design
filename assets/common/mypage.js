@@ -59,9 +59,9 @@
     // 예시 프로젝트의 영문 서비스명 → 의뢰 폼과 같은 한글 서비스명 (클라이언트 화면과 같은 배지)
     svcKo: function (v) { return { Proteomics: '단백체 분석', Glycoproteomics: '단백체 분석', Metabolomics: '대사체 분석', Genomics: '유전체 분석', Transcriptomics: '전사체 분석', Olink: 'Olink 분석' }[v] || v; },
     P_STAGES: P_STAGES,
-    // 분석파트너도 실제 단계를 모두 표시. 보고서 검토·승인은 파트너 입장 이름으로 (예전: '보고서 등록'에 묶고 '확인 대기' 배지)
-    P4: ['계약', '분석', '보고서 등록', '보고서 검토중', '보고서 승인 대기', '완료'],
-    pStage: function (p) { return { '보고서 검토': '보고서 검토중', '보고서 승인': '보고서 승인 대기' }[p.stage] || p.stage; },
+    // 분석파트너도 컨설턴트와 같은 실제 단계 이름으로 표시 (예전: 보고서 검토·승인을 '보고서 등록'에 묶고 '확인 대기' 배지)
+    P4: P_STAGES,
+    pStage: function (p) { return p.stage; },
     pWaiting: function () { return false; },
     // 인증 분석파트너·컨설턴트만 (미인증은 매칭·계약된 프로젝트가 없음). 견적 중개로 매칭된 프로젝트(계약 단계)가 앞에 붙는다
     partnerProjects: function () {
