@@ -211,11 +211,20 @@
         });
       }
     }
-    // 모바일(≤960px): 대시보드 = 프로필 + 메뉴 목록(허브), 하위 화면 = 메뉴 카드 숨기고 '‹ 메뉴 이름'(→ 마이페이지)만 (CSS body.mp-sub)
-    if (key !== 'dash') {
+    // 모바일(≤960px): 대시보드 = 허브(가운데 정렬 프로필 + 세로 메뉴), 하위 화면 = 메뉴 카드 대신 '‹ 마이페이지' + 가로 메뉴 탭 (CSS body.mp-sub, 이랜서 참고)
+    if (key !== 'dash' && side) {
       document.body.classList.add('mp-sub');
-      var cur = MENU.filter(function (m) { return m[0] === key; })[0], ph = document.querySelector('.page-head .in');
-      if (cur && ph && !ph.querySelector('.m-back')) ph.insertAdjacentHTML('afterbegin', '<a class="m-back" href="mypage.html" aria-label="마이페이지로"><img src="assets/detail/ic-caret-left.svg" alt="">' + cur[1] + '</a>');
+      var ph = document.querySelector('.page-head .in');
+      if (ph && !ph.querySelector('.m-back')) {
+        var tabs = MENU.filter(function (m) { return m[0] !== 'dash' && (!m[3] || m[3].indexOf(s.role) > -1); }).map(function (m) {
+          var href = m[0] === 'project' && s.role === 'admin' ? 'mypage-request.html' : m[2];
+          return '<a href="' + href + '"' + (m[2] === '#' ? ' data-soon="' + m[1] + '"' : '') + (m[0] === key ? ' class="on" aria-current="page"' : '') + '>' + m[1] + (side.querySelector('a[href="' + href + '"] .nb') ? NB : '') + '</a>';
+        }).join('');
+        ph.insertAdjacentHTML('afterbegin', '<a class="m-back" href="mypage.html"><img src="assets/detail/ic-caret-left.svg" alt="">마이페이지</a>');
+        ph.insertAdjacentHTML('afterend', '<nav class="m-tabs" aria-label="마이페이지 메뉴"><div>' + tabs + '</div></nav>');
+        var mt = document.querySelector('.m-tabs > div'), on = mt.querySelector('.on');
+        if (on) mt.scrollLeft = on.offsetLeft - (mt.clientWidth - on.offsetWidth) / 2; // 지금 메뉴를 가운데로
+      }
     }
     return { s: s, acc: acc, name: name, org: org };
   };

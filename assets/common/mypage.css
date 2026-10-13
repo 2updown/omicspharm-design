@@ -95,24 +95,30 @@ button { background:none; border:0; cursor:pointer; }
 .empty .btn { margin-top:24px; }
 
 @media (max-width:1180px) { .page-head, .body { padding-left:24px; padding-right:24px; } }
-/* 좁은 화면(≤960px): 일반적인 모바일 마이페이지 구성
-   - 대시보드(mypage.html) = 허브: 프로필(가로 한 줄) + 세로 메뉴 카드, 그 아래 대시보드 내용
-   - 하위 화면: 메뉴 카드 숨김, 제목 자리에 '‹ 메뉴 이름' (누르면 마이페이지로) */
-.m-back { display:none; }
+/* 좁은 화면(≤960px): 모바일 마이페이지
+   - 대시보드(mypage.html) = 허브: PC와 같은 카드(가운데 정렬 프로필 + 세로 메뉴), 그 아래 대시보드
+   - 하위 화면: 메뉴 카드 숨김 → 위에 '‹ 마이페이지'(허브로) + 가로로 밀리는 메뉴 탭(지금 메뉴 초록 밑줄) */
+.m-back, .m-tabs { display:none; }
 @media (max-width:960px) {
   .body > .in { flex-direction:column; align-items:stretch; }
   .side { width:100%; position:static; }
-  .me { display:grid; grid-template-columns:48px minmax(0,1fr); column-gap:12px; row-gap:2px; justify-items:start; align-items:center; padding:16px 20px; text-align:left; }
-  .me img { grid-column:1; grid-row:1 / span 4; width:48px; height:48px; margin:0; }
-  .me > * { grid-column:2; }
-  .me .roles { margin-bottom:2px; }
   body.mp-sub .side { display:none; }
+  body.mp-sub .page-head { padding-bottom:0; }
   body.mp-sub .page-head h1 { display:none; }
-  body.mp-sub .m-back { display:inline-flex; align-items:center; gap:2px; margin-left:-6px; font-size:22px; font-weight:700; line-height:30px; letter-spacing:-.22px; color:#000; }
-  .m-back img { width:28px; height:28px; }
+  body.mp-sub .m-back { display:inline-flex; align-items:center; gap:4px; margin-left:-4px; font-size:18px; font-weight:600; line-height:26px; color:#000; }
+  .m-back img { width:24px; height:24px; }
+  body.mp-sub .m-tabs { display:block; margin:12px -24px 20px; border-bottom:1px solid var(--gray-200); background:#fff; }
+  .m-tabs > div { display:flex; gap:20px; padding:0 24px; overflow-x:auto; scrollbar-width:none; white-space:nowrap; }
+  .m-tabs > div::-webkit-scrollbar { display:none; }
+  .m-tabs a { position:relative; display:inline-flex; align-items:center; gap:4px; flex:none; height:48px; font-size:15px; font-weight:500; color:var(--gray-500); }
+  .m-tabs a.on { font-weight:600; color:var(--teal-600); }
+  .m-tabs a.on::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--teal-600); }
+  .m-tabs .nb { flex:none; display:grid; place-items:center; width:16px; height:16px; border-radius:50%; background:#f00011; color:#fff; font-size:10px; font-weight:600; line-height:16px; }
 }
 @media (max-width:640px) {
   .page-head { padding:24px 16px; }
+  body.mp-sub .m-tabs { margin-left:-16px; margin-right:-16px; }
+  .m-tabs > div { padding:0 16px; }
   .page-head h1 { font-size:28px; line-height:36px; letter-spacing:-.28px; }
   .body { padding:0 16px 48px; }
   .card { padding:16px; gap:16px; }
