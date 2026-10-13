@@ -9,12 +9,12 @@
      회원가입 '추가 정보 입력'에서 고른 대표 서비스를 보고, 서비스를 더 등록·수정·삭제한다.
      서비스를 고르면 R&D 사례작성 v5 공급자 입력 항목(assets/common/svc-spec.js)이 펼쳐짐. 같은 서비스를 여러 번 등록 = 수행 조건 나누기
      데모: 저장은 이 브라우저 localStorage(op.accounts의 services)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261014r">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261014r">
-<script src="assets/common/site.js?v=20261014r"></script>
-<script src="assets/common/mypage.js?v=20261014r"></script>
-<script src="assets/common/flow.js?v=20261014r"></script>
-<script src="assets/common/svc-spec.js?v=20261014r"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261014s">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261014s">
+<script src="assets/common/site.js?v=20261014s"></script>
+<script src="assets/common/mypage.js?v=20261014s"></script>
+<script src="assets/common/flow.js?v=20261014s"></script>
+<script src="assets/common/svc-spec.js?v=20261014s"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .cnt { margin-left:6px; color:var(--teal-600); }
@@ -44,7 +44,7 @@
   .chips2 label:has(input:focus-visible) { box-shadow:0 0 0 3px #00786e33; }
   .add { align-self:flex-start; }
   .actions { display:flex; justify-content:flex-end; }
-  .sec { padding:14px 0 6px; font-size:13px; font-weight:600; line-height:18px; color:var(--teal-700); border-bottom:1px solid var(--gray-200); }
+  .sec { padding:14px 0 6px; font-size:13px; font-weight:600; line-height:18px; color:#000; border-bottom:1px solid var(--gray-200); }
   .flabel { flex-wrap:wrap; gap:4px 6px; }
   .flabel .all { height:20px; font-size:12px; line-height:18px; color:var(--teal-600); }
   .chips2.sm { gap:6px; }
@@ -76,7 +76,7 @@
       <div class="card-head"><h3>분석 서비스 정보<span class="cnt" id="cnt"></span></h3></div>
       <div class="op-ibox warn simple" id="askBox" hidden><p class="t"><span>OmicsPharm이 분석 서비스 정보 입력을 요청했습니다. 제공하는 서비스를 등록해 주세요.</span></p></div>
       <div class="op-ibox"><p class="t">등록한 서비스는 견적 확인과 OmicsPharm 컨설턴트의 프로젝트 매칭에 활용됩니다.</p>
-        <ul><li>서비스를 고르면 그 서비스에서 지원하는 항목을 체크할 수 있습니다. <b>체크하지 않은 항목은 지원하지 않는 것으로 봅니다.</b></li>
+        <ul><li>서비스를 고르면 그 서비스에서 지원하는 항목을 체크할 수 있습니다.</li>
           <li>같은 서비스라도 함께 제공할 수 없는 조건이 있으면(예: 혈장은 비표적만, 조직은 표적만) [+ 서비스 추가]로 같은 서비스를 한 번 더 등록해 수행 조건을 나눠 주세요.</li></ul></div>
       <form id="fSvc" novalidate>
         <div class="items" id="items"></div>
