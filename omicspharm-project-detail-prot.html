@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261016s">
-<script src="assets/common/site.js?v=20261016s"></script>
-<script src="assets/common/mypage.js?v=20261016s"></script>
-<script src="assets/common/flow.js?v=20261016s"></script>
-<script src="assets/common/projects-data.js?v=20261016s"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261016t">
+<script src="assets/common/site.js?v=20261016t"></script>
+<script src="assets/common/mypage.js?v=20261016t"></script>
+<script src="assets/common/flow.js?v=20261016t"></script>
+<script src="assets/common/projects-data.js?v=20261016t"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -370,10 +370,12 @@
   // 가격 공개 범위 밖이면 희망가격·예상금액을 가림 (OP_PROJECTS.canSeePrice)
   if (!OP_PROJECTS.canSeePrice(x)) F.price = F.priceSp = '비공개';
   document.querySelectorAll('[data-f]').forEach(function (el) { el.textContent = F[el.dataset.f]; });
-  // 가격을 못 보는 경우는 클라이언트(본인 의뢰 제외)·비로그인뿐 (미인증 분석파트너는 비공개 프로젝트에 들어올 수 없음) → 툴팁(Figma 1424:14012)으로 이유 표시
+  // 가격을 못 보는 경우: 클라이언트(본인 의뢰 제외)·비로그인·미인증 분석파트너 → '비공개' + 툴팁(Figma 1424:14012)으로 이유 표시
+  // 미인증 분석파트너는 누르면 인증 안내 팝업 (인증하면 금액을 볼 수 있음)
   if (F.price === '비공개') document.querySelectorAll('[data-f="price"], [data-f="priceSp"]').forEach(function (el) {
     el.classList.add('price-hidden', 'tip-wrap'); el.tabIndex = 0;
-    el.insertAdjacentHTML('beforeend', '<span class="tip" role="tooltip">프로젝트 가격은 분석파트너에게만 공개됩니다.</span>');
+    el.insertAdjacentHTML('beforeend', '<span class="tip" role="tooltip">희망 금액은 인증된 분석파트너에게만 공개됩니다.</span>');
+    if (OP.isPartner()) el.addEventListener('click', function () { OP.verifyGate(); });
   });
   $('[data-f="status"]').className = 'badge ' + (x.open ? 'open' : 'closed');
   document.title = x.title + ' · OmicsPharm';

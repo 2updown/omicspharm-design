@@ -62,12 +62,12 @@
     x.open = x.days >= 0 && OP.flow.open(r.id); // 모집기한 안 + 클라이언트가 견적을 확정하기 전까지 모집중
     DATA.push(x);
   });
-  // 가격(예상금액) 공개 범위: 컨설턴트 = 전부 / 인증 분석파트너 = 공개·비공개 / 미인증 분석파트너 = 공개만 / 클라이언트 = 본인 의뢰만 / 비로그인 = 없음
+  // 가격(예상금액) 공개 범위 (2026-10-14 확정): 컨설턴트·인증 분석파트너 = 전부 / 미인증 분석파트너·다른 클라이언트·비로그인 = 비공개 / 클라이언트 본인 의뢰는 보임
   function canSeePrice(x) {
     var s = window.OP && OP.session && OP.session();
     if (!s) return false;
     if (s.role === 'admin') return true;
-    if (s.role === 'partner') return !x.priv || OP.partnerVerified();
+    if (s.role === 'partner') return OP.partnerVerified();
     return !!(x.rid && OP.my && OP.my.myProjects().some(function (p) { return p.id === x.rid; }));
   }
   // 프로젝트 번호 (상세 화면 표시 · 프로젝트 찾기 검색 공통). 의뢰가 승인돼 게시된 프로젝트는 마이페이지와 같은 번호(PRJ-연도-일련번호)를 그대로 씀
