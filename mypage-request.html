@@ -11,12 +11,12 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261015z">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261015z">
-<script src="assets/common/site.js?v=20261015z"></script>
-<script src="assets/common/mypage.js?v=20261015z"></script>
-<script src="assets/common/svc-spec.js?v=20261015z"></script>
-<script src="assets/common/flow.js?v=20261015z"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261016a">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261016a">
+<script src="assets/common/site.js?v=20261016a"></script>
+<script src="assets/common/mypage.js?v=20261016a"></script>
+<script src="assets/common/svc-spec.js?v=20261016a"></script>
+<script src="assets/common/flow.js?v=20261016a"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -320,13 +320,13 @@
   .qm-unv { margin:-8px 0 16px; font-size:12px; color:var(--gray-500); }
   /* 수행 이력·단계·관리자 확인·전문가 수행 판단 */
   .qw { display:flex; flex-direction:column; }
-  .qr .rec { display:block; margin-top:4px; font-size:12px; line-height:18px; color:var(--gray-600); }
+  .qr .rec { display:block; margin-top:4px; font-size:13px; line-height:20px; font-weight:500; color:var(--gray-700, #404040); }
   .qr .stg { display:block; margin-top:6px; font-size:12px; line-height:18px; color:#ca0008; }
   .qr .adm { display:block; margin-top:6px; font-size:12px; line-height:18px; color:var(--gray-600); }
   .qr .adm em { margin-right:6px; padding:1px 6px; border-radius:4px; background:#fff6e5; font-style:normal; font-weight:600; color:#b26a00; }
   .qr .jsum { display:block; margin-top:6px; padding:6px 10px; border-left:2px solid var(--gray-300); font-size:12px; line-height:18px; color:var(--gray-600); }
   .qr .qs { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
-  .qr .qs .tbtn { height:24px; font-size:12px; }
+  .qr .qs [data-judge].tbtn { height:28px; padding:0 10px; border:1px solid var(--teal-600); border-radius:6px; background:#fff; font-size:12px; font-weight:600; color:var(--teal-700); }
   .jbadge { padding:2px 8px; border-radius:6px; font-size:12px; font-weight:600; line-height:18px; background:var(--gray-100); color:var(--gray-600); }
   .jbadge.ok { background:#f2fbf9; color:var(--teal-700); } .jbadge.no { background:#fff1f2; color:#ca0008; } .jbadge.unk { background:#fff6e5; color:#b26a00; }
   .jform { display:flex; flex-direction:column; gap:10px; margin-top:-1px; padding:14px 16px; border:1px solid var(--teal-600); border-top:0; border-radius:0 0 10px 10px; background:#f7fdfb; }
@@ -335,7 +335,8 @@
   .jopts { display:flex; flex-wrap:wrap; gap:6px; }
   .jopts button { height:32px; padding:0 12px; border:1px solid var(--gray-300); border-radius:16px; background:#fff; font-size:13px; }
   .jopts button.on { border-color:var(--teal-600); background:var(--teal-600); color:#fff; font-weight:600; }
-  .jhelp { font-size:12px; color:var(--gray-500); }
+  .qmail .jform p.jhelp, .qmail .jform p.jt { margin:0; } .qmail .jform p.jhelp { font-size:12px; line-height:18px; color:var(--gray-500); }
+  .qmail .jform p.jt { font-size:14px; line-height:20px; color:var(--gray-900, #191919); }
   .jf { display:flex; flex-direction:column; gap:4px; font-size:13px; font-weight:500; } .jf i { font-style:normal; color:#ca0008; }
   .jf textarea { width:100%; min-height:56px; padding:8px 10px; border:1px solid var(--gray-300); border-radius:6px; font:inherit; font-size:13px; font-weight:400; resize:vertical; background:#fff; }
   .jbtns { display:flex; justify-content:flex-end; align-items:center; gap:6px; } .jbtns [data-jdel] { margin-right:auto; }
