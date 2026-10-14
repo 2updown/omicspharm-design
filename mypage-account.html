@@ -8,11 +8,11 @@
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261016e">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261016e">
-<script src="assets/common/site.js?v=20261016e"></script>
-<script src="assets/common/mypage.js?v=20261016e"></script>
-<script src="assets/common/flow.js?v=20261016e"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261016f">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261016f">
+<script src="assets/common/site.js?v=20261016f"></script>
+<script src="assets/common/mypage.js?v=20261016f"></script>
+<script src="assets/common/flow.js?v=20261016f"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -157,7 +157,7 @@
       <form id="fPw" novalidate>
         <div class="tbl">
           <div class="field"><label class="flabel" for="pw0">현재 비밀번호</label><div class="fbody"><input class="inp" id="pw0" type="password" autocomplete="current-password"></div></div>
-          <div class="field"><label class="flabel" for="pw1">새 비밀번호</label><div class="fbody"><input class="inp" id="pw1" type="password" autocomplete="new-password"><p class="help">영문, 숫자, 특수문자를 포함해 8자 이상 입력해주세요.</p></div></div>
+          <div class="field"><label class="flabel" for="pw1">새 비밀번호</label><div class="fbody"><input class="inp" id="pw1" type="password" autocomplete="new-password"><p class="help">8자 이상, 영문 대문자·소문자, 숫자, 특수문자를 각각 1자 이상 포함해주세요.</p></div></div>
           <div class="field"><label class="flabel" for="pw2">새 비밀번호 확인</label><div class="fbody"><input class="inp" id="pw2" type="password" autocomplete="new-password"></div></div>
         </div>
         <div class="actions"><button type="submit" class="btn lg">비밀번호 변경</button></div>
@@ -307,7 +307,7 @@
     var cur = (OP.account(email) || {}).pw;
     if (!p0.value) { err(p0, '현재 비밀번호를 입력해주세요.'); ok = false; }
     else if (cur && p0.value !== cur) { err(p0, '현재 비밀번호가 일치하지 않습니다.'); ok = false; } else err(p0, '');
-    if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/.test(p1.value)) { err(p1, '영문, 숫자, 특수문자를 포함해 8자 이상 입력해주세요.'); ok = false; }
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/.test(p1.value)) { err(p1, '8자 이상, 영문 대문자·소문자, 숫자, 특수문자를 각각 1자 이상 포함해주세요.'); ok = false; } // 회원가입과 같은 규칙: 8자 이상 + 소문자·대문자·숫자·특수문자 각 1자 이상
     else if (p1.value === p0.value) { err(p1, '현재 비밀번호와 다른 비밀번호를 입력해주세요.'); ok = false; } else err(p1, '');
     if (p2.value !== p1.value || !p2.value) { err(p2, '새 비밀번호가 일치하지 않습니다.'); ok = false; } else err(p2, '');
     if (!ok) return;
