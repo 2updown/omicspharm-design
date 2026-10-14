@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
+<title>아이디 찾기 · OmicsPharm</title>
+<!-- Figma: 아이디 찾기 (1533:16688) → 결과 (1211:62806)
+     이름 + 연락처가 일치하는 계정이 있으면 가입 이메일을 화면에 바로 보여줌 (아이디 앞 2자만 보이고 나머지는 ***, 도메인은 그대로)
+     없으면 같은 결과 화면에서 문구만 '회원님의 정보와 일치하는 아이디가 없습니다.' -->
+<link rel="stylesheet" href="assets/common/site.css?v=20261016g">
+<link rel="stylesheet" href="assets/auth/auth.css?v=20261016g">
+<script src="assets/common/site.js?v=20261016g"></script>
+<script src="assets/auth/auth.js?v=20261016g"></script>
+<style>
+  .auth-inner[hidden], .fid-done .op-ibox[hidden] { display:none; }
+  .fid-done { display:flex; flex-direction:column; align-items:stretch; gap:50px; width:max-content; max-width:100%; margin:0 auto; } /* Figma: 버튼은 가입 이메일 박스 너비에 맞춤 */
+  .fid-done .op-ibox { align-self:center; }
+  .fid-done .btn-action { width:100%; }
+</style>
+</head>
+<body>
+<div class="auth">
+  <aside data-auth-bg></aside>
+  <main class="auth-main">
+    <div class="auth-inner" id="step1">
+      <form class="auth-form" id="form" novalidate>
+        <div class="auth-title">
+          <h1>아이디 찾기</h1>
+          <p>회원정보에 입력하신 성함과 휴대폰 번호를 입력해 주세요.</p>
+        </div>
+        <div class="auth-body">
+          <div class="fields">
+            <div class="field" id="f-name">
+              <label for="name">이름<span class="req">*</span></label>
+              <div class="input"><input id="name" type="text" autocomplete="name" placeholder="이름을 입력해주세요"></div>
+            </div>
+            <div class="field" id="f-phone"><label for="ph1">연락처<span class="req">*</span></label>
+              <div class="phone">
+                <div class="input select cc"><select id="cc" aria-label="국가번호"><option value="+82">+82</option><option value="+1">+1</option><option value="+81">+81</option><option value="+86">+86</option><option value="+44">+44</option><option value="+49">+49</option><option value="+65">+65</option></select></div>
+                <div class="input"><input id="ph1" inputmode="numeric" maxlength="3" placeholder="010" aria-label="휴대폰 번호 앞자리" autocomplete="tel-area-code"></div>
+                <span aria-hidden="true">-</span>
+                <div class="input"><input id="ph2" inputmode="numeric" maxlength="4" placeholder="0000" aria-label="휴대폰 번호 가운데 자리"></div>
+                <span aria-hidden="true">-</span>
+                <div class="input"><input id="ph3" inputmode="numeric" maxlength="4" placeholder="0000" aria-label="휴대폰 번호 끝자리"></div>
+              </div>
+            </div>
+          </div>
+          <button class="btn-action" type="submit">아이디 찾기</button>
+        </div>
+      </form>
+      <div class="alt"><a href="login.html">로그인으로 돌아가기</a></div>
+      <!-- 로그인 도움말 (Figma info_box) -->
+      <div class="info-box">
+        <p class="ib-t">로그인에 문제가 있으신가요?</p>
+        <ul><li>인증 메일이 오지 않으면 스팸함을 확인해주세요.</li></ul>
+      </div>
+    </div>
+    <div class="auth-inner" id="step2" hidden>
+      <div class="fid-done">
+        <div class="auth-title">
+          <h1>아이디 찾기</h1>
+          <p id="doneMsg">회원님의 정보와 일치하는 아이디입니다.</p>
+        </div>
+        <div class="op-ibox simple" id="doneBox"><p class="t" id="doneMail"></p></div>
+        <a class="btn-action" href="login.html">로그인 하기</a>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var nameIn = $('#name'), PH = ['#ph1', '#ph2', '#ph3'].map($); // 'name'은 window.name과 겹쳐서 nameIn
+  nameIn.addEventListener('input', function () { AUTH.setError($('#f-name'), ''); });
+  PH.forEach(function (i, k) {
+    i.addEventListener('input', function () {
+      i.value = i.value.replace(/\D/g, ''); AUTH.setError($('#f-phone'), '');
+      if (i.value.length >= i.maxLength && PH[k + 1]) PH[k + 1].focus(); // 칸이 차면 다음 칸으로
+    });
+  });
+  // 아이디(이메일) 마스킹: 아이디 앞 2자만 보이고 나머지는 *** (도메인은 그대로) 예) hong@omicspharm.com → ho***@omicspharm.com
+  function mask(m) { var i = m.indexOf('@'), id = m.slice(0, i); return (id.length > 2 ? id.slice(0, 2) : id.slice(0, 1)) + '***' + m.slice(i); }
+  var digits = function (v) { return String(v || '').replace(/\D/g, ''); };
+  $('#form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var nm = nameIn.value.trim(), ok = true;
+    if (!nm) { AUTH.setError($('#f-name'), '이름을 입력해주세요.'); ok = false; }
+    if (!(/^\d{2,3}$/.test(PH[0].value) && /^\d{3,4}$/.test(PH[1].value) && /^\d{4}$/.test(PH[2].value))) { AUTH.setError($('#f-phone'), '휴대폰 번호를 정확히 입력해주세요.'); ok = false; }
+    if (!ok) return;
+    // 이름 + 국가번호 + 번호가 모두 같은 계정 (저장 형식: '+82 010-1234-5678')
+    var tel = digits($('#cc').value + PH.map(function (i) { return i.value; }).join('')), A = OP.accounts();
+    var hit = Object.keys(A).filter(function (k) { return A[k].name === nm && digits(A[k].phone) === tel; })[0];
+    $('#doneMsg').textContent = hit ? '회원님의 정보와 일치하는 아이디입니다.' : '회원님의 정보와 일치하는 아이디가 없습니다.';
+    $('#doneBox').hidden = !hit;
+    if (hit) $('#doneMail').textContent = '가입 이메일: ' + mask(hit);
+    $('#step1').hidden = true; $('#step2').hidden = false; window.scrollTo(0, 0);
+  });
+})();
+</script>
+</body>
+</html>
