@@ -1,5 +1,5 @@
 /* 컨설턴트 관리 화면 공통 (클라이언트 관리 · 분석파트너 관리)
-   기존 사이트(omicspharm.com 마이페이지 컨설턴트) 구성 기준: 목록 표 → [상세보기] → '○○ 프로젝트 리스트'(기본 정보 + 프로젝트 표)
+   기존 사이트(omicspharm.com 마이페이지 컨설턴트) 구성 기준: 목록 표 → [상세보기] → '(이름) 프로젝트 리스트'(기본 정보 + 프로젝트 표)
    사용: mypage.js · flow.js · projects-data.js 다음에 불러오고 OP.manage.* 사용. 예시 값은 모두 가상 */
 (function () {
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); };

@@ -8,8 +8,8 @@
   var ACC_KEY = 'op.accounts', SES_KEY = 'op.session';
   var DEMO_PW = 'Demo@1234';
   var SEED = {
-    'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true, name: '홍길동', org: '○○연구소', phone: '+82 010-1234-5678', bizDoc: '사업자등록증_○○연구소.pdf', bizOk: 1788220800000, bizOkName: '사업자등록증_○○연구소.pdf' }, // 예시 클라이언트: 사업자등록증 확인(인증) 완료 상태
-    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '세움분석센터', phone: '+82 010-2345-6789', verified: true, bizDoc: '사업자등록증_세움분석센터.pdf', ceo: '홍길동', bizno: '000-00-00000', addr: '서울특별시 ○○구 ○○로 00',
+    'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true, name: '홍길동', org: '한결연구소', phone: '+82 010-1234-5678', bizDoc: '사업자등록증_한결연구소.pdf', bizOk: 1788220800000, bizOkName: '사업자등록증_한결연구소.pdf' }, // 예시 클라이언트: 사업자등록증 확인(인증) 완료 상태
+    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '세움분석센터', phone: '+82 010-2345-6789', verified: true, bizDoc: '사업자등록증_세움분석센터.pdf', ceo: '홍길동', bizno: '000-00-00000', addr: '서울특별시 강서구 마곡중앙로 00',
       services: SEED_SVC },
     'admin@omicspharm.test':   { role: 'admin',   pw: DEMO_PW, profileDone: true, name: '셀키 컨설턴트', org: '셀키', phone: '+82 010-3456-7890' }
   };
@@ -28,7 +28,9 @@
     // 데모 계정은 저장된 값 위에 기본값을 깔아 둔다 (연락처 등 필수값이 비지 않게)
     accounts: function () {
       var st = read(ACC_KEY, {}), all = Object.assign({}, SEED, st);
-      Object.keys(st).forEach(function (k) { if (st[k] && st[k].org === '○○분석센터') st[k].org = '세움분석센터'; }); // 예전 이름으로 저장된 데모 분석파트너 기관명
+      // 예전 기호 이름(○○…)으로 저장된 데모 계정 값을 새 가상 이름으로
+      var REN = [['○○분석센터', '세움분석센터'], ['○○연구소', '한결연구소']];
+      Object.keys(st).forEach(function (k) { var a = st[k]; if (!a) return; ['org', 'bizDoc', 'bizOkName'].forEach(function (f) { if (typeof a[f] === 'string') REN.forEach(function (r) { a[f] = a[f].split(r[0]).join(r[1]); }); }); });
       Object.keys(SEED).forEach(function (k) { if (st[k]) { all[k] = Object.assign({}, SEED[k], st[k]); if (!st[k].phone) all[k].phone = SEED[k].phone; } });
       return all;
     },
@@ -128,11 +130,11 @@
      3) 부서: 가입자 3명 이상인 부서만, 사용자 이메일 도메인이 그 기관 도메인과 같을 때만 노출 (무료 메일은 직접 입력)
      데모 DB = 아래 예시 + 가입된 계정들(op.accounts)의 소속·부서. 승인된 소속 목록은 localStorage 'op.orgApproved' */
   var ORG_SEED = {
-    '○○연구소': { domains: ['omicspharm.test'], depts: { '단백체연구팀': 3, '유전체분석실': 1 } }, // 데모 계정과 같은 도메인
-    '○○대학교 의과대학': { domains: ['univ.example'], depts: { '생화학교실': 4, '약리학교실': 1 } },
-    '○○바이오': { domains: ['bio.example'], depts: { '연구개발팀': 5 } },
-    '○○병원': { domains: ['hospital.example'], depts: { '임상연구센터': 2 } },
-    '○○제약': { domains: ['pharma.example'], depts: { '신약개발팀': 3, '품질관리팀': 1 } },
+    '한결연구소': { domains: ['omicspharm.test'], depts: { '단백체연구팀': 3, '유전체분석실': 1 } }, // 데모 계정과 같은 도메인
+    '해솔대학교 의과대학': { domains: ['univ.example'], depts: { '생화학교실': 4, '약리학교실': 1 } },
+    '그린셀바이오': { domains: ['bio.example'], depts: { '연구개발팀': 5 } },
+    '한마음병원': { domains: ['hospital.example'], depts: { '임상연구센터': 2 } },
+    '다인제약': { domains: ['pharma.example'], depts: { '신약개발팀': 3, '품질관리팀': 1 } },
     '세움분석센터': { domains: ['center.example'], depts: { '질량분석팀': 3 } },
     '셀키': { domains: ['cellkey.example'], depts: { '컨설팅팀': 3 } }
   };
@@ -462,7 +464,7 @@
     if (ad) {
       e.preventDefault();
       var box = ad.closest('[data-addr-box]'), inp = box && box.querySelector('input');
-      if (inp && !inp.value) { inp.value = '서울특별시 ○○구 ○○로 00'; inp.dispatchEvent(new Event('input', { bubbles: true })); }
+      if (inp && !inp.value) { inp.value = '서울특별시 강서구 마곡중앙로 00'; inp.dispatchEvent(new Event('input', { bubbles: true })); }
       OP.toast('실제 서비스에서는 주소 검색 API로 주소를 선택합니다. 데모에서는 예시 주소를 넣었습니다.', { title: '주소 검색', type: 'info' });
       return;
     }

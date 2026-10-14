@@ -9,8 +9,8 @@
      메뉴: 관리자 메인 / 설정(기본설정·팝업·배너·약관) / 컨텐츠 관리(메뉴·헤더·하단) / 게시판 관리 / 회원(리스트·탈퇴·접속이력·등급) / 알림 설정(메일 발송 로그·알림톡 발송 내역)
      빠진 메뉴: SEO 설정, 모듈 관리 (2026-10-14 기준, 확정 아님). 분석파트너 인증 처리는 컨설턴트 마이페이지 > 분석파트너 관리.
      화면 이동: admin.html#페이지키. 예시 값은 모두 가상 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261016d">
-<script src="assets/common/site.js?v=20261016d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261016e">
+<script src="assets/common/site.js?v=20261016e"></script>
 <style>
   :root { --nav:#1b2440; --nav2:#141b33; --line:#e5e7eb; --bg:#f3f4f6; --ink:#111827; --mute:#6b7280; --acc:#1d3a8a; }
   * { box-sizing:border-box; margin:0; padding:0; }
@@ -132,10 +132,10 @@
 
   // 예시 회원 (가상)
   var MEM = [
-    ['client@omicspharm.test', '홍길동', '○○연구소', '클라이언트', '일반', '2026.09.01'],
+    ['client@omicspharm.test', '홍길동', '한결연구소', '클라이언트', '일반', '2026.09.01'],
     ['partner@omicspharm.test', '김파트너', '세움분석센터', '분석파트너', '인증', '2026.09.01'],
-    ['user01@example.test', '김○○', '○○대학교 의과대학', '클라이언트', '일반', '2026.09.17'],
-    ['lab01@example.test', '이○○', '△△바이오', '클라이언트', '일반', '2026.09.20'],
+    ['user01@example.test', '김민준', '해솔대학교 의과대학', '클라이언트', '일반', '2026.09.17'],
+    ['lab01@example.test', '이서연', '미래온바이오', '클라이언트', '일반', '2026.09.20'],
     ['contact@biolab.test', '이담당', '라온바이오랩', '분석파트너', '인증', '2026.08.11'],
     ['hello@newlab.test', '오담당', '새봄랩', '분석파트너', '미인증', '2026.10.02'],
     ['admin@omicspharm.test', '셀키 컨설턴트', '셀키', '컨설턴트', '관리자', '2026.08.01']
@@ -147,8 +147,8 @@
       var max = 30, pts = v.map(function (n, i) { return (i * (100 / (v.length - 1))).toFixed(1) + ',' + (100 - n / max * 100).toFixed(1); }).join(' ');
       var bar = function (L, cls) { var m = Math.max.apply(null, L.map(function (x) { return x[1]; })); return '<div class="bars ' + (cls || '') + '">' + L.map(function (x) { return '<div><span>' + x[0] + '</span><i style="width:' + Math.round(x[1] / m * 100) + '%"></i></div>'; }).join('') + '</div>'; };
       var Q = [
-        { name: '김○○', org: '○○바이오', tel: '010-0000-0001', mail: 'q1@example.test', title: '웨비나 링크 재전달 요청', body: '금일 진행되는 웨비나를 신청하였으나\n참석 링크를 받지 못했습니다.\n다시 전달해주실 수 있을까요?', file: '', at: '2026/10/12 13:19' },
-        { name: '이○○', org: '△△제약', tel: '010-0000-0002', mail: 'q2@example.test', title: '재조합 단백질 봉입률 분석 가능 여부', body: '리포좀에 봉입된 재조합 단백질의\n봉입률 분석이 가능한지 문의드립니다.\n시료 정보는 첨부드립니다.', file: '시료정보.pdf', at: '2026/10/01 14:45' }
+        { name: '김민준', org: '그린셀바이오', tel: '010-0000-0001', mail: 'q1@example.test', title: '웨비나 링크 재전달 요청', body: '금일 진행되는 웨비나를 신청하였으나\n참석 링크를 받지 못했습니다.\n다시 전달해주실 수 있을까요?', file: '', at: '2026/10/12 13:19' },
+        { name: '이서연', org: '청솔제약', tel: '010-0000-0002', mail: 'q2@example.test', title: '재조합 단백질 봉입률 분석 가능 여부', body: '리포좀에 봉입된 재조합 단백질의\n봉입률 분석이 가능한지 문의드립니다.\n시료 정보는 첨부드립니다.', file: '시료정보.pdf', at: '2026/10/01 14:45' }
       ];
       return '<h1>대시보드</h1>' +
         box('방문자', '<div class="row end"><input class="in" type="date" value="2026-10-05"> ~ <input class="in" type="date" value="2026-10-12"><button type="button" class="btn dark" data-soon="방문자 검색">검색</button></div>' +
@@ -162,14 +162,14 @@
     },
     basic: function () {
       var f = function (k, v) { return '<div class="k">' + k + '</div><div><input class="in" value="' + esc(v) + '"></div>'; };
-      return '<h1>기본설정</h1>' + box('사이트 정보', '<div class="form">' + f('사이트명', 'OmicsPharm') + f('대표 이메일', 'help@omicspharm.test') + f('대표 전화', '02-0000-0000') + f('사업자등록번호', '000-00-00000') + f('주소', '서울특별시 ○○구 ○○로 00') + '</div><div class="row end"><button type="button" class="btn blue" data-soon="저장">저장</button></div>');
+      return '<h1>기본설정</h1>' + box('사이트 정보', '<div class="form">' + f('사이트명', 'OmicsPharm') + f('대표 이메일', 'help@omicspharm.test') + f('대표 전화', '02-0000-0000') + f('사업자등록번호', '000-00-00000') + f('주소', '서울특별시 강서구 마곡중앙로 00') + '</div><div class="row end"><button type="button" class="btn blue" data-soon="저장">저장</button></div>');
     },
     popup: function () { return '<h1>팝업</h1>' + box('', '<div class="row end"><button type="button" class="btn blue" data-soon="팝업 등록">팝업 등록</button></div>' + table([['No', 'no'], ['제목', 't', 'l'], ['노출 기간', 'p'], ['노출 위치', 'w'], ['상태', 's', '', 1]], [{ no: 2, t: '서비스 리뉴얼 오픈 안내', p: '2026.10.01 ~ 2026.10.31', w: '메인', s: tag('노출', 'green') }, { no: 1, t: '추석 연휴 고객센터 운영 안내', p: '2026.09.20 ~ 2026.10.05', w: '메인', s: tag('종료', 'gray') }])); },
     banner: function () { return '<h1>배너</h1>' + box('', '<div class="row end"><button type="button" class="btn blue" data-soon="배너 등록">배너 등록</button></div>' + table([['No', 'no'], ['배너명', 't', 'l'], ['위치', 'w'], ['링크', 'l'], ['순서', 'o'], ['상태', 's', '', 1]], [{ no: 2, t: '메인 히어로', w: '메인 상단', l: '/projects.html', o: 1, s: tag('노출', 'green') }, { no: 1, t: '이용 가이드', w: '메인 중단', l: '/guide.html', o: 2, s: tag('노출', 'green') }])); },
     terms: function () { return '<h1>약관</h1>' + box('', table([['No', 'no'], ['약관명', 't', 'l'], ['시행일', 'd'], ['수정일', 'u'], ['관리', 'm', '', 1]], [{ no: 3, t: '이용약관', d: '2026.10.01', u: '2026.09.25', m: '<button class="btn" data-soon="약관 수정">수정</button>' }, { no: 2, t: '개인정보 처리방침', d: '2026.10.01', u: '2026.09.25', m: '<button class="btn" data-soon="약관 수정">수정</button>' }, { no: 1, t: '마케팅 정보 수신 동의', d: '2026.10.01', u: '2026.09.25', m: '<button class="btn" data-soon="약관 수정">수정</button>' }])); },
     menu: function () { return '<h1>메뉴 관리</h1>' + box('GNB 메뉴', table([['순서', 'o'], ['메뉴명', 't', 'l'], ['연결 주소', 'u', 'l'], ['노출', 's', '', 1]], [['프로젝트 의뢰', '/omicspharm-register.html'], ['프로젝트 찾기', '/projects.html'], ['커뮤니티', '/notice.html'], ['서비스 소개', '/service.html'], ['고객지원', '/faq.html']].map(function (m, i) { return { o: i + 1, t: m[0], u: m[1], s: tag('노출', 'green') }; }))); },
     header: function () { return '<h1>헤더 관리</h1>' + box('헤더', '<div class="form"><div class="k">로고</div><div>OmicsPharm 로고 (190×20)</div><div class="k">언어 선택</div><div>KOR · ENG</div><div class="k">알림 아이콘</div><div>로그인 시 노출</div></div>'); },
-    footer: function () { return '<h1>하단 관리</h1>' + box('하단 정보', '<div class="form"><div class="k">회사명</div><div>CellKey AI Co., Ltd.</div><div class="k">사업자등록번호</div><div>000-00-00000</div><div class="k">주소</div><div>서울특별시 ○○구 ○○로 00</div><div class="k">SNS</div><div>Naver Blog · LinkedIn</div></div>'); },
+    footer: function () { return '<h1>하단 관리</h1>' + box('하단 정보', '<div class="form"><div class="k">회사명</div><div>CellKey AI Co., Ltd.</div><div class="k">사업자등록번호</div><div>000-00-00000</div><div class="k">주소</div><div>서울특별시 강서구 마곡중앙로 00</div><div class="k">SNS</div><div>Naver Blog · LinkedIn</div></div>'); },
     boards: function () { return '<h1>게시판 관리</h1>' + box('', '<div class="row end"><button type="button" class="btn blue" data-soon="게시판 추가">게시판 추가</button></div>' + table([['No', 'no'], ['게시판명', 't', 'l'], ['유형', 'k'], ['게시글 수', 'n'], ['쓰기 권한', 'w']], [['공지사항', '목록형', 21, '관리자'], ['FAQ', '아코디언', 32, '관리자'], ['블로그', '카드형', 12, '관리자'], ['문의하기', '1:1', 48, '회원']].map(function (b, i) { return { no: 4 - i, t: b[0], k: b[1], n: b[2], w: b[3] }; }))); },
     members: function () { return '<h1>회원 리스트</h1>' + box('', search('이메일, 이름, 소속 검색', '<select class="in"><option>회원 유형 전체</option><option>클라이언트</option><option>분석파트너</option><option>컨설턴트</option></select>') + table([['No', 'no'], ['이메일', 'mail', 'l'], ['이름', 'name'], ['소속', 'org'], ['회원 유형', 'role'], ['등급', 'grade'], ['가입일', 'at']], MEM)); },
     left: function () { return '<h1>탈퇴 회원 리스트</h1>' + box('', search('이메일 검색') + table([['No', 'no'], ['이메일', 'mail', 'l'], ['회원 유형', 'role'], ['탈퇴 사유', 'why', 'l'], ['탈퇴일', 'at']], [{ no: 2, mail: 'old01@example.test', role: '클라이언트', why: '서비스 이용 빈도가 낮음', at: '2026.10.03' }, { no: 1, mail: 'old02@example.test', role: '분석파트너', why: '기타 (사업 종료)', at: '2026.09.21' }])); },

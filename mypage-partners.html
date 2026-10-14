@@ -9,13 +9,13 @@
      파트너 인증 검토: 목록(상태별) → 상세(기관 정보 · 사업자등록증 [보기] [인증 완료] [재제출 요청]).
      재제출 요청은 클라이언트 사업자등록증 재제출 요청(mypage-request.html)과 같은 방식. 규칙: docs/partner-verification.md
      데모: 로그인 가능한 분석파트너(partner@omicspharm.test)는 계정 값(op.accounts)을, 가상 파트너는 op.partnerReview를 바꾼다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261016d">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261016d">
-<script src="assets/common/site.js?v=20261016d"></script>
-<script src="assets/common/projects-data.js?v=20261016d"></script>
-<script src="assets/common/mypage.js?v=20261016d"></script>
-<script src="assets/common/flow.js?v=20261016d"></script>
-<script src="assets/common/manage.js?v=20261016d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261016e">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261016e">
+<script src="assets/common/site.js?v=20261016e"></script>
+<script src="assets/common/projects-data.js?v=20261016e"></script>
+<script src="assets/common/mypage.js?v=20261016e"></script>
+<script src="assets/common/flow.js?v=20261016e"></script>
+<script src="assets/common/manage.js?v=20261016e"></script>
 <style>
   .chips { display:flex; flex-wrap:wrap; gap:8px; }
   .chips button { height:36px; padding:0 14px; border-radius:99px; border:1px solid var(--gray-300); background:#fff; font-size:14px; font-weight:500; color:var(--gray-600); }
@@ -101,7 +101,7 @@
         o.st = a.verified && o.mailOk ? 'ok' : o.ask ? 'ask' : !o.doc ? 'none' : o.mailOk ? 'review' : 'mail';
       } else { // 가상 파트너: 인증 파트너는 인증 완료, 미인증(새봄랩)은 검토 중으로 시작 + 컨설턴트 처리 기록(op.partnerReview)
         var r = rv()[p.key] || {};
-        o.ceo = '홍길동'; o.bizno = '000-00-00000'; o.addr = '서울특별시 ○○구 ○○로 00'; o.doc = '사업자등록증_' + p.org + '.pdf'; o.mailOk = true;
+        o.ceo = '홍길동'; o.bizno = '000-00-00000'; o.addr = '서울특별시 강서구 마곡중앙로 00'; o.doc = '사업자등록증_' + p.org + '.pdf'; o.mailOk = true;
         o.st = r.st || (p.verified ? 'ok' : 'review'); o.ask = r.st === 'ask' ? r.ask : null; o.okAt = r.okAt || (p.verified ? T0 - 864e5 * (60 + i * 5) : 0);
       }
       return o;
