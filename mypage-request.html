@@ -11,12 +11,12 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261016b">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261016b">
-<script src="assets/common/site.js?v=20261016b"></script>
-<script src="assets/common/mypage.js?v=20261016b"></script>
-<script src="assets/common/svc-spec.js?v=20261016b"></script>
-<script src="assets/common/flow.js?v=20261016b"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261016c">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261016c">
+<script src="assets/common/site.js?v=20261016c"></script>
+<script src="assets/common/mypage.js?v=20261016c"></script>
+<script src="assets/common/svc-spec.js?v=20261016c"></script>
+<script src="assets/common/flow.js?v=20261016c"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -311,9 +311,6 @@
   .qm-tabs button.on { border-color:var(--teal-600); color:var(--gray-900, #191919); font-weight:600; }
   .qm-tabs button.on b { color:var(--teal-700); }
   .qm-desc { font-size:13px; line-height:20px; color:var(--gray-600); }
-  .qg-h.fold { display:inline-flex; align-items:center; gap:4px; align-self:flex-start; }
-  .qg-h.fold img { width:14px; height:14px; transition:transform .2s; }
-  .qg-h.fold[aria-expanded="true"] img { transform:rotate(180deg); }
   .qr.join { grid-template-columns:minmax(0,1fr) auto; }
   .qr .qs .cat { display:block; margin-top:4px; padding:1px 6px; border-radius:4px; background:var(--gray-100); font-size:11px; font-style:normal; font-weight:500; line-height:16px; color:var(--gray-500); text-align:center; }
   .qr .qs .cat.ok { background:#f2fbf9; color:var(--teal-700); } .qr .qs .cat.miss { background:#fff1f2; color:#ca0008; }
@@ -530,6 +527,7 @@
       { svc: '단백체', st: '즉시 수행 가능', from: '25', to: '35', f: { types: ['비표적 단백체', '표적 단백체'], purpose: ['단백질 발현 비교', '바이오마커 후보', '단백질 동정'], results: ['단백질 동정', '상대정량', '군 간 비교', '차등단백질', 'Pathway'], statistics: ['PCA', 'Clustering·Heatmap', 'Volcano plot', 'Enrichment'], prep: ['TMT', 'Label-free'], technology: ['DDA', 'DIA', 'PRM'], equipment: ['Orbitrap'], organisms: ['Human', 'Mouse', 'Rat'], materials: ['혈장', '혈청', '배양 상등액', 'Conditioned medium', '배양 세포', 'Cell lysate'], deliverables: ['Raw data', '국문 보고서', '영문 보고서'], quantification: ['상대정량'], method_readiness: ['기존 분석법 적용 가능'] } },
       { svc: '대사체', st: '사전협의 필요', f: { types: ['비표적 대사체'], platform: ['LC-MS'], mode: ['Positive', 'Negative', 'Positive+Negative'], purpose: ['대사체 탐색', '군 간 차이', '바이오마커 후보'], results: ['검출·동정', '상대정량', '군 간 비교', '차등 대사체'], statistics: ['PCA', 'Heatmap', 'Volcano plot', 'PLS-DA'], organisms: ['Human', 'Mouse'], materials: ['혈장', '혈청', '소변'], deliverables: ['Raw data', '결과표', '국문 보고서'] } }],
     'p-omx': [
+      { svc: '대사체', st: '사전협의 필요', from: '25', to: '35', f: { types: ['비표적 대사체'], platform: ['LC-MS'], mode: ['Positive', 'Negative', 'Positive+Negative'], purpose: ['대사체 탐색', '약물·처리 반응', '대사경로 변화'], results: ['검출·동정', '상대정량', '차등 대사체', 'Pathway'], organisms: ['Human', 'Mouse'], materials: ['조직', '혈청', '혈장'], deliverables: ['Raw data', '결과표', '국문 보고서'] } }, // 통계분석 미입력 → '확인 필요' 예시
       { svc: '단백체', st: '즉시 수행 가능', f: { types: ['비표적 단백체'], purpose: ['단백질 발현 비교', '기능·경로 분석'], results: ['상대정량', '군 간 비교', '차등단백질', 'Pathway', 'Network'], prep: ['Label-free'], technology: ['DIA'], equipment: ['Q-TOF'], organisms: ['Human', 'Mouse'], materials: ['조직', '동결 조직', '배양 세포', 'Tissue lysate'], deliverables: ['Raw data', '국문 보고서'] } },
       { svc: '전사체', st: '즉시 수행 가능', f: { types: ['일반 전사체 발현'], items_0: ['mRNA-seq', 'Total RNA-seq', 'Low-input·FFPE RNA-seq'], purpose: ['발현량 비교', 'Pathway 분석'], results: ['유전자 발현량', 'DEG', 'Pathway'], library: ['Stranded'], sequencing: ['Paired-end'], reference: ['GRCh38', 'GRCm39'], organisms: ['Human', 'Mouse'], materials: ['조직', '동결 조직', 'FFPE 조직'], deliverables: ['FASTQ', 'Count matrix', 'DEG 결과표', '국문 보고서'], extraction_support: ['미추출 시료의 핵산 추출', '품질 QC'] } }],
     'p-gen': [
@@ -547,7 +545,7 @@
   var CAT = { ok: '조건 충족', chk: '확인 필요', miss: '일부 미지원', none: '분석 서비스 정보 없음', other: '이 서비스 미등록' };
   // 파트너 참고 정보 (가상): 서비스별 수행 프로젝트 수. 과거 견적서 수는 수행 건수로 흉내 (실제는 에이전트가 견적서 파일을 참고)
   var CASES = { 'partner@omicspharm.test': { '단백체': 21, '대사체': 9, '바이오의약품': 8 }, 'p-bio': { '단백체': 24, 'Olink': 18, '대사체': 10 }, 'p-omx': { '전사체': 14, '유전체': 8, '단백체': 5 },
-    'p-gen': { '유전체': 40, '전사체': 24 }, 'p-prt': { '단백체': 3 }, 'p-met': { '대사체': 15, 'Olink': 4, '단백체': 3 }, 'p-adc': { '바이오의약품': 9, '단백체': 2 } };
+    'p-gen': { '유전체': 40, '전사체': 24 }, 'p-prt': { '단백체': 3 }, 'p-mlt': { '단백체': 18, '대사체': 12, '전사체': 9, '유전체': 6 }, 'p-met': { '대사체': 15, 'Olink': 4, '단백체': 3 }, 'p-adc': { '바이오의약품': 9, '단백체': 2 } };
   // 전문가 수행 판단 (v5 judgment): 의뢰·파트너별로 컨설턴트가 기록 (op.judge)
   var FEAS = window.OP_FEAS || [], T0J = new Date(2026, 9, 12, 15, 0).getTime();
   // 예시 판단 (0046): 네 가지 판단을 모두 볼 수 있게. 한 번이라도 저장·삭제하면 저장된 값을 씀
@@ -562,6 +560,11 @@
   var aiRun = function () { try { return (JSON.parse(localStorage.getItem('op.aiRun') || '{}'))[id] || 0; } catch (e) { return 0; } };
   var aiRunSet = function () { try { var o = JSON.parse(localStorage.getItem('op.aiRun') || '{}'); o[id] = Date.now(); localStorage.setItem('op.aiRun', JSON.stringify(o)); } catch (e) {} };
   var hm = function (t) { return F.ymd(t) + ' ' + new Date(t).toTimeString().slice(0, 5); };
+  // ▲▲멀티오믹스(p-mlt): 단백체·대사체·전사체·유전체의 v5 선택지를 모두 지원하는 예시 (모든 예시 의뢰에 '조건 충족' 후보가 있도록)
+  DEMO_SVC['p-mlt'] = ['단백체', '대사체', '전사체', '유전체'].map(function (k) {
+    var f = {}; ((SPEC[k] || {}).fields || []).forEach(function (x) { if (x.options && (x.type === 'multi' || x.type === 'single')) f[x.id] = x.type === 'multi' ? x.options.slice() : x.options[0]; });
+    return { svc: k, st: '즉시 수행 가능', from: '20', to: '30', f: f };
+  });
   function svcInfoOf(k) { var a = OP.account(k); return a && a.role === 'partner' ? (a.services || []) : (DEMO_SVC[k] || []); }
   function agent() {
     var sk = ['단백체', '대사체', '유전체', '전사체', 'Olink', '바이오의약품'].filter(function (k) { return String(r.svc).indexOf(k) > -1; })[0] || '';
@@ -734,7 +737,7 @@
   }
 
   // AI 분석파트너 매칭 팝업 (= 견적제안메일 발송). 탭 3개
-  // - 추천: 분석 서비스 정보로 비교된 곳 (조건 충족·확인 필요 미리 체크, 일부 미지원은 접어 둠)
+  // - 추천: 분석 서비스 정보로 비교된 곳 (조건 충족·확인 필요 미리 체크, 일부 미지원까지 모두 펼쳐서 노출)
   // - 정보 부족: 분석 서비스 정보 없음·이 서비스 미등록 → [입력 요청], 체크는 가능하나 미리 체크 안 함
   // - 참여 중: 견적제안을 받았거나 직접 신청한 곳 (체크 없음, 실제 진행 상태 + 매칭 결과 배지)
   // 미인증 분석파트너는 견적을 낼 수 없어 목록에서 제외하고 개수만 안내
@@ -744,7 +747,7 @@
     var TABS = [['rec', '추천'], ['info', '정보 부족'], ['join', '참여 중']];
     var GROUP = { rec: ['ok', 'chk', 'miss'], info: ['none', 'other'] };
     var unv = F.PARTNERS.filter(function (p) { return !p.verified; }).length;
-    var AG = [], picked = {}, tab = 'rec', q = { svc: '', kw: '' }, open = {}, foldMiss = true, busy = !aiRun(), J = judges(), jOpen = '', jDraft = {};
+    var AG = [], picked = {}, tab = 'rec', q = { svc: '', kw: '' }, open = {}, busy = !aiRun(), J = judges(), jOpen = '', jDraft = {};
     var tabOf = function (x) { return s.P[x.key] ? 'join' : REC[x.cat] ? 'rec' : 'info'; };
     var run = function () { AG = agent(); picked = {}; AG.forEach(function (x) { if ((x.cat === 'ok' || x.cat === 'chk') && !s.P[x.key]) picked[x.key] = 1; }); };
     var m = document.createElement('div');
@@ -767,7 +770,7 @@
     var stOf = function (k) { var x = s.P[k]; return (x.self ? '직접 신청 · ' : '견적제안 · ') + F.pst(s, k); };
     var JC = { '수행 가능': 'ok', '수행 불가': 'no', '정보 부족으로 판단 불가': 'unk', '판단 보류': 'hold' };
     var row = function (x, c) {
-      var p = x.p, join = tab === 'join', chips = join ? [] : x.why || [], more = chips.length > 6 && !open[p.key];
+      var p = x.p, join = tab === 'join', chips = join ? [] : x.why || [], more = false; // 칩은 접지 않고 모두 노출
       var ask = c === 'none' || c === 'other' ? (F.svcAsked(p.key) ? '<em class="asked">입력 요청함</em>' : '<button type="button" class="tbtn xs primary" data-svcask="' + p.key + '">입력 요청</button>') : '';
       var sk = KEY.filter(function (k) { return String(r.svc).indexOf(k) > -1; })[0], n = (CASES[p.key] || {})[sk] || 0;
       var rec = [sk + ' 수행 ' + n + '건', '과거 견적서 ' + Math.round(p.done / 3) + '건', x.st || '', x.from && x.to ? x.from + '~' + x.to + ' 영업일' : p.lead].filter(Boolean).join(' · ');
@@ -807,9 +810,8 @@
       var html = tab === 'join' ? (T.length ? '<div class="qg">' + T.map(function (x) { return row(x, x.cat); }).join('') + '</div>' : '')
         : GROUP[tab].map(function (c) {
             var G = T.filter(function (x) { return x.cat === c; }); if (!G.length) return '';
-            var fold = c === 'miss' && foldMiss;
-            return '<div class="qg">' + (c === 'miss' ? '<button type="button" class="qg-h miss fold" data-fold aria-expanded="' + !fold + '">' + CAT[c] + ' <b>' + G.length + '</b><img src="assets/find/ic-chevron-down.svg" alt=""></button>' : '<p class="qg-h ' + c + '">' + CAT[c] + ' <b>' + G.length + '</b></p>') +
-              (fold ? '' : G.map(function (x) { return row(x, c); }).join('')) + '</div>';
+            return '<div class="qg">' + '<p class="qg-h ' + c + '">' + CAT[c] + ' <b>' + G.length + '</b></p>' +
+              G.map(function (x) { return row(x, c); }).join('') + '</div>';
           }).join('');
       m.querySelector('#qmList').innerHTML = html || '<p class="qm-none">' + { rec: '추천할 분석파트너가 없습니다.', info: '정보가 부족한 분석파트너가 없습니다.', join: '아직 참여 중인 분석파트너가 없습니다.' }[tab] + '</p>';
       sync();
@@ -841,7 +843,6 @@
         judgeSet(js.dataset.jsave, { feas: d.feas, basis: d.basis.trim(), scope: d.feas === '수행 불가' ? d.scope.trim() : '', unknown: d.feas === '정보 부족으로 판단 불가' ? d.unknown.trim() : '', q: (d.q || '').trim(), at: Date.now() });
         J = judges(); jOpen = ''; draw(); OP.toast('수행 판단을 저장했습니다.'); return;
       }
-      if (e.target.closest('[data-fold]')) { e.preventDefault(); foldMiss = !foldMiss; draw(); return; }
       var mo = e.target.closest('[data-more]'); if (mo) { e.preventDefault(); open[mo.dataset.more] = 1; draw(); return; }
       var sa = e.target.closest('[data-svcask]');
       if (sa) {

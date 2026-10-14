@@ -26,6 +26,7 @@
     { key: 'p-met', org: '☆☆대사체연구소', name: '정담당', tel: '02-000-1004', mail: 'lab@metabo.test', svc: ['대사체', 'Olink'], verified: true, done: 19, lead: '평균 6주', rate: .97, weeks: 6 },
     { key: 'p-adc', org: '◎◎바이오로직스', name: '한담당', tel: '032-000-1005', mail: 'bd@biologics.test', svc: ['바이오의약품', '단백체'], verified: true, done: 11, lead: '평균 8주', rate: 1.15, weeks: 8, svcInfo: false }, // svcInfo:false = 분석 서비스 정보 미입력 예시
     { key: 'p-prt', org: '◆◆프로틴랩', name: '윤담당', tel: '02-000-1007', mail: 'lab@protein.test', svc: ['단백체'], verified: true, done: 8, lead: '평균 6주', rate: 1.02, weeks: 6, svcInfo: false }, // 견적에 참여하지 않은 분석 서비스 정보 미입력 예시 (AI 매칭 '정보 부족' 탭)
+    { key: 'p-mlt', org: '▲▲멀티오믹스', name: '서담당', tel: '02-000-1008', mail: 'hello@multiomics.test', svc: ['단백체', '대사체', '전사체', '유전체'], verified: true, done: 45, lead: '평균 6주', rate: 1, weeks: 6 }, // 여러 오믹스를 폭넓게 지원하는 예시 (AI 매칭 '조건 충족' 예시)
     { key: 'p-new', org: '▽▽랩', name: '오담당', tel: '010-0000-1006', mail: 'hello@newlab.test', svc: ['단백체', '전사체'], verified: false, done: 0, lead: '-' }
   ];
   var partner = function (k) { return PARTNERS.filter(function (p) { return p.key === k; })[0] || { key: k, org: k, svc: [] }; };
