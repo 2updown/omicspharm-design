@@ -8,11 +8,11 @@
 <!-- Figma: Find Projects1-list (993:12559) · Find Projects1-grid (996:13677)
      카드: Project-list (974:7938) · Project-card Type=card (147:1266)
      B안: Find Projects2-list (831:3469) · Find Projects2-grid (977:9070) — 오른쪽을 흰 박스 하나로 묶고 행을 구분선으로 나열. 기존 목록형(A안)은 ?list=a 로 비교. 그리드형은 구분선 격자가 기본, 박스 안 카드형은 ?grid=a 로 비교 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261015v">
-<script src="assets/common/site.js?v=20261015v"></script>
-<script src="assets/common/mypage.js?v=20261015v"></script>
-<script src="assets/common/flow.js?v=20261015v"></script>
-<script src="assets/common/projects-data.js?v=20261015v"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261015w">
+<script src="assets/common/site.js?v=20261015w"></script>
+<script src="assets/common/mypage.js?v=20261015w"></script>
+<script src="assets/common/flow.js?v=20261015w"></script>
+<script src="assets/common/projects-data.js?v=20261015w"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -114,7 +114,8 @@
 
   /* 목록형 카드 (Project-list Type=card) */
   .lcard { display:flex; flex-direction:column; gap:16px; padding:16px 12px; background:#fff; border:1px solid var(--gray-200); border-radius:12px; transition:border-color .15s, box-shadow .15s; }
-  a.lcard:hover { border-color:var(--teal-500); box-shadow:var(--shadow2); }
+  .private.gate { cursor:pointer; } /* 미인증 분석파트너: 비공개 카드 → 인증 안내 팝업 */
+  a.lcard:hover, .lcard.gate:hover { border-color:var(--teal-500); box-shadow:var(--shadow2); }
   .lcard .head { display:flex; flex-direction:column; gap:16px; padding-bottom:12px; border-bottom:1px solid var(--gray-200); }
   .lcard.private .head { padding-bottom:0; border-bottom:0; }
   .lcard .row1 { display:flex; align-items:center; justify-content:space-between; }
@@ -131,7 +132,7 @@
 
   /* 그리드형 카드 (Project-card Type=card) */
   .gcard { display:flex; flex-direction:column; gap:16px; padding:4px 4px 16px; background:#fff; border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; transition:border-color .15s, box-shadow .15s; }
-  a.gcard:hover { border-color:var(--teal-500); box-shadow:var(--shadow2); }
+  a.gcard:hover, .gcard.gate:hover { border-color:var(--teal-500); box-shadow:var(--shadow2); }
   .gcard .top { display:flex; flex-direction:column; gap:12px; padding:16px 12px; border-bottom:1px solid var(--gray-200); }
   .gcard.private .top { border-bottom:0; border-radius:8px; background:linear-gradient(99.06deg, #f6f9f8 10.77%, #eff2f1 100.96%); }
   .gcard .row1 { display:flex; align-items:center; justify-content:space-between; }
@@ -146,7 +147,7 @@
   .main.boxed .grid.lines { gap:0; padding:0; border-top:1px solid var(--gray-300); } /* 툴바와 간격 8px (.results gap), 첫 줄 위에도 선 */
   .grid.lines > .gcard, .grid.lines > .gfill { gap:16px; padding:4px 4px 16px; border:0; border-right:1px solid var(--gray-300); border-bottom:1px solid var(--gray-300); border-radius:0; box-shadow:none; background:#fff; transition:background .15s; }
   .grid.lines > :nth-child(3n) { border-right:0; } /* 마지막 열은 박스 테두리와 겹치지 않게 */
-  .grid.lines > a.gcard:hover { border-color:var(--gray-300); background:var(--gray-50); box-shadow:none; }
+  .grid.lines > a.gcard:hover, .grid.lines > .gcard.gate:hover { border-color:var(--gray-300); background:var(--gray-50); box-shadow:none; }
   .grid.lines > a.gcard:hover h3 { color:var(--teal-700); }
   .grid.lines .gcard .top { gap:12px; padding:16px 12px; border-bottom:1px solid var(--gray-200); border-radius:0; }
   .grid.lines .gcard.private .top { border-bottom:1px solid var(--gray-200); } /* 비공개도 제목 아래 선 유지 (카드 높이 동일) */
@@ -167,7 +168,7 @@
   .grid .empty { grid-column:1 / -1; }
   .main.boxed .empty { border:0; border-top:1px solid var(--gray-300); border-radius:0; }
   .lrow { display:flex; flex-direction:column; gap:16px; padding:16px 24px; border-top:1px solid var(--gray-300); background:#fff; transition:background .15s; }
-  a.lrow:hover { background:var(--gray-50); }
+  a.lrow:hover, .lrow.gate:hover { background:var(--gray-50); }
   a.lrow:hover h3 { color:var(--teal-700); }
   .lrow .row1 { display:flex; align-items:center; justify-content:space-between; }
   .lrow .dday { font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
@@ -345,10 +346,12 @@
   }
   // 비공개 프로젝트(가려진 카드): 미인증 분석파트너에게도 잠긴 견적서 작성 버튼 → 누르면 인증 안내 팝업(비공개 프로젝트 열람 안내 포함)
   function lockedBtn(x) { return PARTNER && x.open ? LOCKED : ''; }
+  // 미인증 분석파트너(메일 미인증 포함): 가려진 비공개 카드 전체도 누르면 인증 안내 팝업 (클라이언트·비로그인은 반응 없음)
+  var GATE = PARTNER ? ' gate" role="button" tabindex="0" data-quote-locked aria-label="비공개 프로젝트 · 파트너 인증 후 열람할 수 있습니다' : '';
   function listCard(x) {
     var badges = '<div class="badges"><span class="badge tag">' + esc(x.cat) + '</span>' + status(x) + '</div>';
     if (masked(x)) {
-      return '<div class="lcard private"><div class="head"><div class="row1">' + badges + '<img class="lock" src="assets/main/ic-lock-key.svg" alt="비공개"></div><h3>' + esc(x.title) + '</h3></div>' +
+      return '<div class="lcard private' + GATE + '"><div class="head"><div class="row1">' + badges + '<img class="lock" src="assets/main/ic-lock-key.svg" alt="비공개"></div><h3>' + esc(x.title) + '</h3></div>' +
         '<div class="info"><div class="meta">' +
           '<span><img src="assets/find/ic-user.svg" alt="">비공개</span>' +
           '<span><img src="assets/find/ic-flask.svg" alt=""><em>샘플</em>비공개</span>' +
@@ -376,7 +379,7 @@
         '<span><em>희망완료일 :</em>' + v(x.due) + '</span>' +
         '<span><em>모집기한 :</em>' + v(x.from + ' ~ ' + x.to) + '</span>' +
       '</div><div class="foot"><p class="reg">등록일 ' + x.reg + '</p>' + (p ? lockedBtn(x) : quoteBtn(x)) + '</div></div>';
-    return p ? '<div class="lrow private">' + inner + '</div>' : '<a class="lrow" href="' + OP_PROJECTS.url(x) + '">' + inner + '</a>';
+    return p ? '<div class="lrow private' + GATE + '">' + inner + '</div>' : '<a class="lrow" href="' + OP_PROJECTS.url(x) + '">' + inner + '</a>';
   }
   var LIST_A = new URLSearchParams(location.search).get('list') === 'a'; // 기존 카드형 목록과 비교용
   var GRID_Q = new URLSearchParams(location.search).get('grid');
@@ -389,7 +392,7 @@
       '<div><em>모집 기한</em>' + (p ? '비공개' : x.from + ' ~ ' + x.to) + '</div>' +
       '<div class="foot"><p class="reg">등록일 ' + x.reg + '</p>' + (p ? lockedBtn(x) : quoteBtn(x)) + '</div>';
     var top = '<div class="top"><div class="row1"><div class="badges"><span class="badge tag">' + esc(x.cat) + '</span>' + status(x) + '</div>' + (x.priv ? LOCK : '') + '</div><h3>' + esc(x.title) + '</h3></div>';
-    return p ? '<div class="gcard private">' + top + '<div class="rows">' + rows + '</div></div>'
+    return p ? '<div class="gcard private' + GATE + '">' + top + '<div class="rows">' + rows + '</div></div>'
              : '<a class="gcard" href="' + OP_PROJECTS.url(x) + '">' + top + '<div class="rows">' + rows + '</div></a>';
   }
 
