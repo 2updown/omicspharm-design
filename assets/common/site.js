@@ -9,7 +9,7 @@
   var DEMO_PW = 'Demo@1234';
   var SEED = {
     'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true, name: '홍길동', org: '○○연구소', phone: '+82 010-1234-5678', bizDoc: '사업자등록증_○○연구소.pdf', bizOk: 1788220800000, bizOkName: '사업자등록증_○○연구소.pdf' }, // 예시 클라이언트: 사업자등록증 확인(인증) 완료 상태
-    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '○○분석센터', phone: '+82 010-2345-6789', verified: true, bizDoc: '사업자등록증_○○분석센터.pdf', ceo: '홍길동', bizno: '000-00-00000', addr: '서울특별시 ○○구 ○○로 00',
+    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '세움분석센터', phone: '+82 010-2345-6789', verified: true, bizDoc: '사업자등록증_세움분석센터.pdf', ceo: '홍길동', bizno: '000-00-00000', addr: '서울특별시 ○○구 ○○로 00',
       services: SEED_SVC },
     'admin@omicspharm.test':   { role: 'admin',   pw: DEMO_PW, profileDone: true, name: '셀키 컨설턴트', org: '셀키', phone: '+82 010-3456-7890' }
   };
@@ -28,6 +28,7 @@
     // 데모 계정은 저장된 값 위에 기본값을 깔아 둔다 (연락처 등 필수값이 비지 않게)
     accounts: function () {
       var st = read(ACC_KEY, {}), all = Object.assign({}, SEED, st);
+      Object.keys(st).forEach(function (k) { if (st[k] && st[k].org === '○○분석센터') st[k].org = '세움분석센터'; }); // 예전 이름으로 저장된 데모 분석파트너 기관명
       Object.keys(SEED).forEach(function (k) { if (st[k]) { all[k] = Object.assign({}, SEED[k], st[k]); if (!st[k].phone) all[k].phone = SEED[k].phone; } });
       return all;
     },
@@ -132,7 +133,7 @@
     '○○바이오': { domains: ['bio.example'], depts: { '연구개발팀': 5 } },
     '○○병원': { domains: ['hospital.example'], depts: { '임상연구센터': 2 } },
     '○○제약': { domains: ['pharma.example'], depts: { '신약개발팀': 3, '품질관리팀': 1 } },
-    '○○분석센터': { domains: ['center.example'], depts: { '질량분석팀': 3 } },
+    '세움분석센터': { domains: ['center.example'], depts: { '질량분석팀': 3 } },
     '셀키': { domains: ['cellkey.example'], depts: { '컨설팅팀': 3 } }
   };
   var FREE_MAIL = ['gmail.com', 'naver.com', 'daum.net', 'hanmail.net', 'kakao.com', 'nate.com', 'hotmail.com', 'outlook.com', 'yahoo.com', 'icloud.com', 'me.com'];

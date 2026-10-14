@@ -105,7 +105,7 @@
         if (q.answer) L.push({ id: 'a-' + q.id, cat: 'inquiry', at: q.answer.at, t: "'" + q.title + "' 문의에 답변이 등록되었습니다.", href: 'mypage-inquiry.html?id=' + q.id });
         L.push({ id: 'q-' + q.id, cat: 'inquiry', at: q.at, t: "'" + q.title + "' 문의가 접수되었습니다.", href: 'mypage-inquiry.html?id=' + q.id });
       });
-      // 계약 이후 단계 (예시 프로젝트, 공급사 = ○○분석센터)
+      // 계약 이후 단계 (예시 프로젝트, 공급사 = 세움분석센터)
       var ses = OP.session() || {}, adm = ses.role === 'admin', PS = P_STAGES;
       var J = function (w, a, b) { return OP.flow ? OP.flow.josa(w, a, b) : w + a; };
       D.partnerProjects().forEach(function (p) {
@@ -113,7 +113,7 @@
         var i = PS.indexOf(p.stage), h = 'mypage-project.html?id=' + p.id, c0 = new Date(p.contract).getTime();
         if (!adm && i === 0) L.push({ id: 'ct-' + p.id, k: '견적확정', cat: 'project', at: p.at, t: p.title + '의 견적이 최종 선정되었습니다.', sub: '견적금액: ' + p.amount, href: h });
         if (!adm && i >= 1) L.push({ id: 'cf-' + p.id, k: '계약', cat: 'project', at: c0 + 864e5 * 3, t: p.title + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: h });
-        if (adm && i >= 3) L.push({ id: 'rr-' + p.id, k: '보고서 등록', cat: 'project', at: c0 + 864e5 * 40, t: J('○○분석센터', '이', '가') + ' ' + p.title + ' 프로젝트의 분석 결과 보고서를 등록 했습니다.', href: h });
+        if (adm && i >= 3) L.push({ id: 'rr-' + p.id, k: '보고서 등록', cat: 'project', at: c0 + 864e5 * 40, t: J('세움분석센터', '이', '가') + ' ' + p.title + ' 프로젝트의 분석 결과 보고서를 등록 했습니다.', href: h });
         if (adm && i === 5) L.push({ id: 'ra-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.client + '의 ' + p.title + ' 프로젝트 1차 결과보고서가 최종 승인 처리 되었습니다.', href: h });
         if (!adm && i === 5) L.push({ id: 'rf-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.title + ' 프로젝트의 1차 결과보고서가 최종 확인 처리 되었습니다.', sub: p.title + ' 프로젝트가 최종 완료 처리 되었습니다.', href: h });
         if (p.qa) L.push({ id: 'qa-' + p.id, k: 'Q&A', cat: 'project', at: p.at + 864e5 * 10, t: p.title + ' Q&A에 새로운 글이 등록 되었습니다.', sub: '문의제목: 시료 발송 일정 문의 · 작성자: ' + p.client, href: h });
@@ -135,7 +135,7 @@
             var a = OP.account(p.key) || {};
             if (a.verified || a.bizAsk || !a.bizDoc || a.mailOk === false) return;
             at = Math.max(a.bizAt || 0, a.mailOkAt || 0) || new Date(2026, 9, 8).getTime(); re = !!a.bizReAt && a.bizReAt === a.bizAt; org = a.org || org;
-          } else { // 가상 파트너: 미인증(▽▽랩)은 검토 중으로 시작
+          } else { // 가상 파트너: 미인증(새봄랩)은 검토 중으로 시작
             if (p.verified || (PR[p.key] && PR[p.key].st && PR[p.key].st !== 'review')) return;
             at = new Date(2026, 9, 8, 10, 0).getTime();
           }

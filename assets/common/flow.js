@@ -19,15 +19,15 @@
   // 분석파트너 목록 (svc: 의뢰 서비스명에 들어 있으면 '추천')
   var PARTNERS = [
     // name·tel·mail: 견적제안메일 발송 목록용 (데모 값)
-    { key: ME_PARTNER, org: '○○분석센터', name: '김파트너', tel: '010-2345-6789', mail: ME_PARTNER, svc: ['단백체', '대사체', '바이오의약품'], verified: true, done: 38, lead: '평균 6주', login: true },
-    { key: 'p-bio', org: '△△바이오랩', name: '이담당', tel: '02-000-1001', mail: 'contact@biolab.test', svc: ['단백체', 'Olink', '대사체'], verified: true, done: 52, lead: '평균 5주', rate: .92, weeks: 5 },
-    { key: 'p-omx', org: '□□오믹스', name: '박담당', tel: '031-000-1002', mail: 'sales@omics.test', svc: ['전사체', '유전체', '단백체'], verified: true, done: 27, lead: '평균 7주', rate: 1.08, weeks: 7 },
-    { key: 'p-gen', org: '◇◇유전체센터', name: '최담당', tel: '042-000-1003', mail: 'info@genome.test', svc: ['유전체', '전사체'], verified: true, done: 64, lead: '평균 6주', rate: 1, weeks: 6 },
-    { key: 'p-met', org: '☆☆대사체연구소', name: '정담당', tel: '02-000-1004', mail: 'lab@metabo.test', svc: ['대사체', 'Olink'], verified: true, done: 19, lead: '평균 6주', rate: .97, weeks: 6 },
-    { key: 'p-adc', org: '◎◎바이오로직스', name: '한담당', tel: '032-000-1005', mail: 'bd@biologics.test', svc: ['바이오의약품', '단백체'], verified: true, done: 11, lead: '평균 8주', rate: 1.15, weeks: 8, svcInfo: false }, // svcInfo:false = 분석 서비스 정보 미입력 예시
-    { key: 'p-prt', org: '◆◆프로틴랩', name: '윤담당', tel: '02-000-1007', mail: 'lab@protein.test', svc: ['단백체'], verified: true, done: 8, lead: '평균 6주', rate: 1.02, weeks: 6, svcInfo: false }, // 견적에 참여하지 않은 분석 서비스 정보 미입력 예시 (AI 매칭 '정보 부족' 탭)
-    { key: 'p-mlt', org: '▲▲멀티오믹스', name: '서담당', tel: '02-000-1008', mail: 'hello@multiomics.test', svc: ['단백체', '대사체', '전사체', '유전체'], verified: true, done: 45, lead: '평균 6주', rate: 1, weeks: 6 }, // 여러 오믹스를 폭넓게 지원하는 예시 (AI 매칭 '조건 충족' 예시)
-    { key: 'p-new', org: '▽▽랩', name: '오담당', tel: '010-0000-1006', mail: 'hello@newlab.test', svc: ['단백체', '전사체'], verified: false, done: 0, lead: '-' }
+    { key: ME_PARTNER, org: '세움분석센터', name: '김파트너', tel: '010-2345-6789', mail: ME_PARTNER, svc: ['단백체', '대사체', '바이오의약품'], verified: true, done: 38, lead: '평균 6주', login: true },
+    { key: 'p-bio', org: '라온바이오랩', name: '이담당', tel: '02-000-1001', mail: 'contact@biolab.test', svc: ['단백체', 'Olink', '대사체'], verified: true, done: 52, lead: '평균 5주', rate: .92, weeks: 5 },
+    { key: 'p-omx', org: '하늬오믹스', name: '박담당', tel: '031-000-1002', mail: 'sales@omics.test', svc: ['전사체', '유전체', '단백체'], verified: true, done: 27, lead: '평균 7주', rate: 1.08, weeks: 7 },
+    { key: 'p-gen', org: '다온유전체센터', name: '최담당', tel: '042-000-1003', mail: 'info@genome.test', svc: ['유전체', '전사체'], verified: true, done: 64, lead: '평균 6주', rate: 1, weeks: 6 },
+    { key: 'p-met', org: '온누리대사체연구소', name: '정담당', tel: '02-000-1004', mail: 'lab@metabo.test', svc: ['대사체', 'Olink'], verified: true, done: 19, lead: '평균 6주', rate: .97, weeks: 6 },
+    { key: 'p-adc', org: '이룸바이오로직스', name: '한담당', tel: '032-000-1005', mail: 'bd@biologics.test', svc: ['바이오의약품', '단백체'], verified: true, done: 11, lead: '평균 8주', rate: 1.15, weeks: 8, svcInfo: false }, // svcInfo:false = 분석 서비스 정보 미입력 예시
+    { key: 'p-prt', org: '가람프로틴랩', name: '윤담당', tel: '02-000-1007', mail: 'lab@protein.test', svc: ['단백체'], verified: true, done: 8, lead: '평균 6주', rate: 1.02, weeks: 6, svcInfo: false }, // 견적에 참여하지 않은 분석 서비스 정보 미입력 예시 (AI 매칭 '정보 부족' 탭)
+    { key: 'p-mlt', org: '누리멀티오믹스', name: '서담당', tel: '02-000-1008', mail: 'hello@multiomics.test', svc: ['단백체', '대사체', '전사체', '유전체'], verified: true, done: 45, lead: '평균 6주', rate: 1, weeks: 6 }, // 여러 오믹스를 폭넓게 지원하는 예시 (AI 매칭 '조건 충족' 예시)
+    { key: 'p-new', org: '새봄랩', name: '오담당', tel: '010-0000-1006', mail: 'hello@newlab.test', svc: ['단백체', '전사체'], verified: false, done: 0, lead: '-' }
   ];
   var partner = function (k) { return PARTNERS.filter(function (p) { return p.key === k; })[0] || { key: k, org: k, svc: [] }; };
   // 분석 서비스 정보 입력 여부: 가입 계정은 회원정보 > 분석 서비스 정보 기준, 예시 파트너는 svcInfo 값
@@ -111,7 +111,7 @@
     S[r2.id] = { st: 'quoting', ok: T0 - DAY * 3.5, reqAt: T0 - DAY * 3, due: '2026-10-10', memo: '시료 수가 많아 일정 제안을 함께 부탁드립니다.', P: {} };
     S[r2.id].P[ME_PARTNER] = { at: T0 - DAY * 3, status: 'req' };
     ['p-bio', 'p-met'].forEach(function (k, i) { var p = partner(k); S[r2.id].P[k] = { at: T0 - DAY * 3, status: 'sub', quote: genQuote(p, r2), subAt: T0 - DAY * (2 - i) }; });
-    S[r3.id] = { st: 'sent', ok: T0 - DAY * 8.5, reqAt: T0 - DAY * 8, due: '2026-10-01', memo: '', P: {}, sentAt: T0 - DAY * 2, msg: '세 기관 모두 FFPE 시료 경험이 있습니다. 일정이 급하시면 △△바이오랩보다 ◇◇유전체센터를 추천드립니다.' };
+    S[r3.id] = { st: 'sent', ok: T0 - DAY * 8.5, reqAt: T0 - DAY * 8, due: '2026-10-01', memo: '', P: {}, sentAt: T0 - DAY * 2, msg: '세 기관 모두 FFPE 시료 경험이 있습니다. 일정이 급하시면 라온바이오랩보다 다온유전체센터를 추천드립니다.' };
     [['p-gen', 1], ['p-omx', 1], ['p-bio', 0]].forEach(function (a, i) {
       var p = partner(a[0]); S[r3.id].P[a[0]] = a[1] ? { at: T0 - DAY * 8, status: 'sub', quote: genQuote(p, r3), subAt: T0 - DAY * (6 - i), fwd: true }
         : { at: T0 - DAY * 8, status: 'dec', dec: { at: T0 - DAY * 7, why: '해당 기간 시퀀싱 장비 일정이 모두 차 있습니다.' } };
