@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>OmicsPharm</title>
 <!-- Figma: [OmicsPharm] Renewal / 03_디자인(작업중) / 1440_시안1 (180:5300) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261015w">
-<script src="assets/common/site.js?v=20261015w"></script>
-<script src="assets/common/mypage.js?v=20261015w"></script>
-<script src="assets/common/flow.js?v=20261015w"></script>
-<script src="assets/common/projects-data.js?v=20261015w"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261015x">
+<script src="assets/common/site.js?v=20261015x"></script>
+<script src="assets/common/mypage.js?v=20261015x"></script>
+<script src="assets/common/flow.js?v=20261015x"></script>
+<script src="assets/common/projects-data.js?v=20261015x"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --teal-900:#004f4a;
@@ -139,8 +139,8 @@
   .pcard h3 { height:56px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; }
   .pcard .meta { display:flex; align-items:center; gap:8px; padding:0 12px; font-size:14px; line-height:20px; }
   .pcard .meta .date { flex:1; color:#9b9b9b; }
-  .pcard:not(.private):hover { border-color:var(--teal-500); box-shadow:var(--shadow2); }
-  .pcard.private { cursor:default; }
+  .pcard:hover { border-color:var(--teal-500); box-shadow:var(--shadow2); }
+  .pcard.private { cursor:pointer; } /* 비공개(열람 불가): 누르면 인증 안내 팝업 또는 토스트 */
   .pcard:not(.private):hover .top { background:linear-gradient(99.06deg, #f6f9f8 0%, #dcf6ee 100%); }
   .badge { display:inline-flex; align-items:center; justify-content:center; padding:2px 8px; border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; white-space:nowrap; }
   .badge.outline { border:1px solid var(--teal-600); color:var(--teal-600); }
@@ -462,10 +462,15 @@
       ? `<div class="top"><div class="row1"><span class="badge outline">${esc(tag)}</span><img class="lock" src="assets/main/ic-lock-key.svg" alt="비공개"></div><h3>${esc(title)}</h3></div>`
       : `<div class="top"><span class="badge outline" style="align-self:flex-start">${esc(tag)}</span><h3>${esc(title)}</h3></div>`;
     const meta = `<div class="meta"><span>모집기한</span><span class="date">${date}</span>${badge}</div>`;
-    // 비공개 프로젝트는 hover·이동 없음
-    return isPrivate ? `<div class="pcard private">${top}${meta}</div>` : `<a class="pcard" href="omicspharm-project-detail-prot.html?id=${id}">${top}${meta}</a>`;
+    // 비공개 프로젝트: 인증 분석파트너·컨설턴트는 상세로 이동 (프로젝트 찾기와 같은 기준)
+    // 그 외에는 hover + 클릭 시 미인증 분석파트너는 인증 안내 팝업, 클라이언트·비로그인은 안내 토스트
+    if (isPrivate && !OP.canSeePrivate()) return `<div class="pcard private" role="button" tabindex="0" data-priv aria-label="비공개 프로젝트">${top}${meta}</div>`;
+    return `<a class="pcard" href="omicspharm-project-detail-prot.html?id=${id}">${top}${meta}</a>`;
   }
   const projView = document.getElementById('projView');
+  const privOpen = e => { if (!e.target.closest('[data-priv]')) return; e.preventDefault(); OP.isPartner() ? OP.verifyGate() : OP.toast('비공개 프로젝트는 인증된 분석파트너만 볼 수 있습니다.'); };
+  projView.addEventListener('click', privOpen);
+  projView.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') privOpen(e); });
   let page = 0;
   function grid(p) { const g = document.createElement('div'); g.className = 'proj-grid'; g.innerHTML = PROJECTS.slice(p * 8, p * 8 + 8).map(card).join(''); return g; }
   projView.appendChild(grid(0));

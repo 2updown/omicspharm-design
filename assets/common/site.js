@@ -70,7 +70,7 @@
     // 클라이언트 전용 화면 진입 판단: 'ok' | 'login' | 'deny'
     /* 프로젝트 열람 권한: 비공개 프로젝트는 인증 분석파트너·컨설턴트만 열람. 클라이언트·비로그인·미인증 분석파트너는 불가 */
     // 분석파트너 인증 여부 (표시용. 관리자가 기관 정보 및 사업자등록증을 확인한 뒤 설정 — 가입 여부와 별도 관리)
-    partnerVerified: function (email) { var s = OP.session(); email = email || (s && s.email); var a = OP.account(email) || {}; return a.role === 'partner' && !!a.verified; },
+    partnerVerified: function (email) { var s = OP.session(); email = email || (s && s.email); var a = OP.account(email) || {}; return a.role === 'partner' && !!a.verified && a.mailOk !== false; }, // 파트너 인증은 메일 인증 후에만 (메일 미인증 + 인증 상태는 없음)
     // 미인증 분석파트너: 공개 프로젝트만 열람, 견적서 작성 불가 / 인증 분석파트너·컨설턴트: 비공개 열람
     canSeePrivate: function () { var s = OP.session(); return !!s && (s.role === 'admin' || OP.partnerVerified()); },
     canQuote: function () { return OP.partnerVerified(); },
@@ -486,13 +486,13 @@
     var mf = e.target.closest('[data-op-mail]');
     if (mf) {
       var mon = mf.getAttribute('data-op-mail') === '1', ms = OP.session();
-      if (ms && OP.mailVerified() !== mon) { OP.saveAccount(ms.email, mon ? { mailOk: true, mailOkAt: Date.now() } : { mailOk: false }); location.reload(); }
+      if (ms && OP.mailVerified() !== mon) { var pv0 = OP.partnerVerified(); OP.saveAccount(ms.email, mon ? { mailOk: true, mailOkAt: Date.now() } : { mailOk: false, verified: false }); if (!mon && pv0) OP.flash('메일 인증 전에는 파트너 인증을 받을 수 없어 미인증으로 함께 바꿨습니다.'); location.reload(); } // 메일 미인증이면 파트너 인증도 해제
       return;
     }
     var vf = e.target.closest('[data-op-verify]');
     if (vf) {
       var on = vf.getAttribute('data-op-verify') === '1', ss = OP.session();
-      if (ss && OP.partnerVerified() !== on) { OP.saveAccount(ss.email, { verified: on }); location.reload(); }
+      if (ss && OP.partnerVerified() !== on) { var mo0 = OP.mailVerified(); OP.saveAccount(ss.email, on ? { verified: true, mailOk: true } : { verified: false }); if (on && !mo0) OP.flash('파트너 인증은 메일 인증 후에만 가능해 메일 인증도 완료로 바꿨습니다.'); location.reload(); } // 인증으로 바꾸면 메일 인증도 완료
       return;
     }
     var as = e.target.closest('[data-op-as]');
