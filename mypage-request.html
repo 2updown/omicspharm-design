@@ -11,12 +11,12 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261016a">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261016a">
-<script src="assets/common/site.js?v=20261016a"></script>
-<script src="assets/common/mypage.js?v=20261016a"></script>
-<script src="assets/common/svc-spec.js?v=20261016a"></script>
-<script src="assets/common/flow.js?v=20261016a"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261016b">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261016b">
+<script src="assets/common/site.js?v=20261016b"></script>
+<script src="assets/common/mypage.js?v=20261016b"></script>
+<script src="assets/common/svc-spec.js?v=20261016b"></script>
+<script src="assets/common/flow.js?v=20261016b"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -321,7 +321,7 @@
   /* 수행 이력·단계·관리자 확인·전문가 수행 판단 */
   .qw { display:flex; flex-direction:column; }
   .qr .rec { display:block; margin-top:4px; font-size:13px; line-height:20px; font-weight:500; color:var(--gray-700, #404040); }
-  .qr .stg { display:block; margin-top:6px; font-size:12px; line-height:18px; color:#ca0008; }
+  .qr .stg { display:block; margin-top:6px; font-size:12px; line-height:18px; color:#ca0008; } .qr .stg.unk { color:var(--gray-500); }
   .qr .adm { display:block; margin-top:6px; font-size:12px; line-height:18px; color:var(--gray-600); }
   .qr .adm em { margin-right:6px; padding:1px 6px; border-radius:4px; background:#fff6e5; font-style:normal; font-weight:600; color:#b26a00; }
   .qr .jsum { display:block; margin-top:6px; padding:6px 10px; border-left:2px solid var(--gray-300); font-size:12px; line-height:18px; color:var(--gray-600); }
@@ -530,11 +530,12 @@
       { svc: '단백체', st: '즉시 수행 가능', from: '25', to: '35', f: { types: ['비표적 단백체', '표적 단백체'], purpose: ['단백질 발현 비교', '바이오마커 후보', '단백질 동정'], results: ['단백질 동정', '상대정량', '군 간 비교', '차등단백질', 'Pathway'], statistics: ['PCA', 'Clustering·Heatmap', 'Volcano plot', 'Enrichment'], prep: ['TMT', 'Label-free'], technology: ['DDA', 'DIA', 'PRM'], equipment: ['Orbitrap'], organisms: ['Human', 'Mouse', 'Rat'], materials: ['혈장', '혈청', '배양 상등액', 'Conditioned medium', '배양 세포', 'Cell lysate'], deliverables: ['Raw data', '국문 보고서', '영문 보고서'], quantification: ['상대정량'], method_readiness: ['기존 분석법 적용 가능'] } },
       { svc: '대사체', st: '사전협의 필요', f: { types: ['비표적 대사체'], platform: ['LC-MS'], mode: ['Positive', 'Negative', 'Positive+Negative'], purpose: ['대사체 탐색', '군 간 차이', '바이오마커 후보'], results: ['검출·동정', '상대정량', '군 간 비교', '차등 대사체'], statistics: ['PCA', 'Heatmap', 'Volcano plot', 'PLS-DA'], organisms: ['Human', 'Mouse'], materials: ['혈장', '혈청', '소변'], deliverables: ['Raw data', '결과표', '국문 보고서'] } }],
     'p-omx': [
-      { svc: '단백체', st: '즉시 수행 가능', f: { types: ['비표적 단백체'], purpose: ['단백질 발현 비교', '기능·경로 분석'], results: ['상대정량', '군 간 비교', '차등단백질', 'Pathway', 'Network'], statistics: ['PCA', 'Volcano plot', 'Enrichment', 'PPI network'], prep: ['Label-free'], technology: ['DIA'], equipment: ['Q-TOF'], organisms: ['Human', 'Mouse'], materials: ['조직', '동결 조직', '배양 세포', 'Tissue lysate'], deliverables: ['Raw data', '국문 보고서'] } },
+      { svc: '단백체', st: '즉시 수행 가능', f: { types: ['비표적 단백체'], purpose: ['단백질 발현 비교', '기능·경로 분석'], results: ['상대정량', '군 간 비교', '차등단백질', 'Pathway', 'Network'], prep: ['Label-free'], technology: ['DIA'], equipment: ['Q-TOF'], organisms: ['Human', 'Mouse'], materials: ['조직', '동결 조직', '배양 세포', 'Tissue lysate'], deliverables: ['Raw data', '국문 보고서'] } },
       { svc: '전사체', st: '즉시 수행 가능', f: { types: ['일반 전사체 발현'], items_0: ['mRNA-seq', 'Total RNA-seq', 'Low-input·FFPE RNA-seq'], purpose: ['발현량 비교', 'Pathway 분석'], results: ['유전자 발현량', 'DEG', 'Pathway'], library: ['Stranded'], sequencing: ['Paired-end'], reference: ['GRCh38', 'GRCm39'], organisms: ['Human', 'Mouse'], materials: ['조직', '동결 조직', 'FFPE 조직'], deliverables: ['FASTQ', 'Count matrix', 'DEG 결과표', '국문 보고서'], extraction_support: ['미추출 시료의 핵산 추출', '품질 QC'] } }],
     'p-gen': [
       { svc: '전사체', st: '즉시 수행 가능', f: { types: ['일반 전사체 발현', '비암호화·소형 RNA'], items_0: ['mRNA-seq', 'Total RNA-seq'], items_1: ['Small RNA-seq', 'miRNA-seq'], purpose: ['발현량 비교', '바이오마커 탐색'], results: ['유전자 발현량', 'DEG'], library: ['Stranded', 'Unstranded'], sequencing: ['Single-end', 'Paired-end'], organisms: ['Human', 'Mouse', 'Rat'], materials: ['조직', '동결 조직', '배양 세포', '전혈'], deliverables: ['FASTQ', 'BAM', 'Count matrix', '국문 보고서'], extraction_support: ['미추출 시료의 핵산 추출', '추출 핵산 접수', '품질 QC'] } }],
     'p-met': [
+      { svc: '단백체', st: '사전협의 필요', from: '30', to: '40', f: { types: ['비표적 단백체'], purpose: ['단백질 발현 비교'], results: ['상대정량', '군 간 비교', '차등단백질'], statistics: ['PCA', 'Volcano plot'], prep: ['Label-free'], technology: ['DIA', 'DDA'], equipment: ['Orbitrap'], organisms: ['Mouse', 'Rat'], materials: ['조직', '혈청'], deliverables: ['Raw data', '국문 보고서'] } }, // 생물종 미지원 → '일부 미지원' 예시
       { svc: '대사체', st: '즉시 수행 가능', from: '20', to: '30', f: { types: ['비표적 대사체'], platform: ['LC-MS', 'GC-MS'], mode: ['Positive', 'Negative', 'Positive+Negative'], purpose: ['대사체 탐색', '군 간 차이', '약물·처리 반응', '대사경로 변화'], results: ['검출·동정', '상대정량', '군 간 비교', '차등 대사체', 'Pathway'], statistics: ['PCA', 'HCA', 'Heatmap', 'Volcano plot', 'PLS-DA', 'OPLS-DA'], organisms: ['Human', 'Mouse', 'Rat'], materials: ['조직', '동결 조직', '혈청', '혈장', '소변'], deliverables: ['Raw data', '결과표', '국문 보고서', '영문 보고서'] } },
       { svc: '대사체', st: '사전협의 필요', f: { types: ['표적 대사체'], platform: ['LC-MS'], mode: ['Positive+Negative'], panels: ['Amino acid·BCAA', 'Acylcarnitine'], quantification: ['상대정량', '절대정량'], method_readiness: ['기존 분석법 적용 가능'], validation: ['Linearity', 'Accuracy', 'Precision'], purpose: ['바이오마커 후보'], organisms: ['Human'], materials: ['혈청', '혈장'], deliverables: ['결과표', '국문 보고서'], standard_support: ['내부표준물질 합성·확보 가능'] } }]
   };
@@ -546,11 +547,17 @@
   var CAT = { ok: '조건 충족', chk: '확인 필요', miss: '일부 미지원', none: '분석 서비스 정보 없음', other: '이 서비스 미등록' };
   // 파트너 참고 정보 (가상): 서비스별 수행 프로젝트 수. 과거 견적서 수는 수행 건수로 흉내 (실제는 에이전트가 견적서 파일을 참고)
   var CASES = { 'partner@omicspharm.test': { '단백체': 21, '대사체': 9, '바이오의약품': 8 }, 'p-bio': { '단백체': 24, 'Olink': 18, '대사체': 10 }, 'p-omx': { '전사체': 14, '유전체': 8, '단백체': 5 },
-    'p-gen': { '유전체': 40, '전사체': 24 }, 'p-met': { '대사체': 15, 'Olink': 4 }, 'p-adc': { '바이오의약품': 9, '단백체': 2 } };
+    'p-gen': { '유전체': 40, '전사체': 24 }, 'p-prt': { '단백체': 3 }, 'p-met': { '대사체': 15, 'Olink': 4, '단백체': 3 }, 'p-adc': { '바이오의약품': 9, '단백체': 2 } };
   // 전문가 수행 판단 (v5 judgment): 의뢰·파트너별로 컨설턴트가 기록 (op.judge)
-  var FEAS = window.OP_FEAS || [];
-  var judges = function () { try { return (JSON.parse(localStorage.getItem('op.judge') || '{}'))[id] || {}; } catch (e) { return {}; } };
-  var judgeSet = function (k, v) { try { var o = JSON.parse(localStorage.getItem('op.judge') || '{}'); o[id] = o[id] || {}; if (v) o[id][k] = v; else delete o[id][k]; localStorage.setItem('op.judge', JSON.stringify(o)); } catch (e) {} };
+  var FEAS = window.OP_FEAS || [], T0J = new Date(2026, 9, 12, 15, 0).getTime();
+  // 예시 판단 (0046): 네 가지 판단을 모두 볼 수 있게. 한 번이라도 저장·삭제하면 저장된 값을 씀
+  var DEMO_JUDGE = { 'PRJ-2026-0046': {
+    'p-bio': { feas: '수행 가능', basis: '세포 배양액 분비 단백질 Label-free·DIA 수행 이력 다수, Orbitrap 보유', q: '', at: T0J },
+    'p-omx': { feas: '정보 부족으로 판단 불가', basis: '통계·해석 지원 여부가 서비스 정보에 없음', unknown: '통계·해석(PCA, Volcano plot) 지원 여부', q: '군 간 비교 통계 결과표 제공 가능 여부', at: T0J },
+    'p-met': { feas: '수행 불가', basis: '단백체는 동물 시료만 수행', scope: 'Human 시료 미지원. 그 밖의 조건은 지원', q: '', at: T0J },
+    'partner@omicspharm.test': { feas: '판단 보류', basis: '견적서 임시저장 상태라 제출 후 판단', q: '', at: T0J } } };
+  var judges = function () { try { var o = JSON.parse(localStorage.getItem('op.judge') || '{}'); return o[id] || Object.assign({}, DEMO_JUDGE[id] || {}); } catch (e) { return {}; } };
+  var judgeSet = function (k, v) { try { var o = JSON.parse(localStorage.getItem('op.judge') || '{}'); o[id] = o[id] || Object.assign({}, DEMO_JUDGE[id] || {}); if (v) o[id][k] = v; else delete o[id][k]; localStorage.setItem('op.judge', JSON.stringify(o)); } catch (e) {} };
   // 매칭은 [AI 분석파트너 매칭] 버튼을 눌러야 실행. 마지막 실행 시각을 의뢰별로 기록 (op.aiRun)
   var aiRun = function () { try { return (JSON.parse(localStorage.getItem('op.aiRun') || '{}'))[id] || 0; } catch (e) { return 0; } };
   var aiRunSet = function () { try { var o = JSON.parse(localStorage.getItem('op.aiRun') || '{}'); o[id] = Date.now(); localStorage.setItem('op.aiRun', JSON.stringify(o)); } catch (e) {} };
@@ -769,7 +776,7 @@
         '<span class="qb"><span class="nm"><b>' + esc(p.org) + '</b><small>' + esc(p.name) + ' · ' + esc(p.tel) + ' · ' + esc(p.mail) + '</small>' + (x.cond && !join ? '<small>' + x.cond + '</small>' : '') + '</span>' +
           '<span class="rec">' + esc(rec) + '</span>' +
           (chips.length || ask ? '<span class="why">' + (more ? chips.slice(0, 6) : chips).map(function (w) { return '<span class="' + ['', 'hit', 'miss'][w[1]] + '">' + esc(w[0]) + '</span>'; }).join('') + (more ? '<button type="button" class="tbtn xs" data-more="' + p.key + '">+' + (chips.length - 6) + '</button>' : '') + ask + '</span>' : '') +
-          (!join && x.stage ? '<span class="stg">' + esc(x.stage) + '</span>' : '') +
+          (!join && x.stage ? '<span class="stg' + (/정보 없음$/.test(x.stage) ? ' unk' : '') + '">' + esc(x.stage) + '</span>' : '') +
           (!join && (x.adm || []).length ? '<span class="adm"><em>확인 필요 사항</em>' + x.adm.map(esc).join(' · ') + '</span>' : '') +
           (j ? '<span class="jsum">' + esc(j.basis) + (j.scope ? ' · 불가 범위: ' + esc(j.scope) : '') + (j.unknown ? ' · 부족한 정보: ' + esc(j.unknown) : '') + (j.q ? ' · 확인 질문: ' + esc(j.q) : '') + '</span>' : '') + '</span>' +
         '<span class="qs' + (join ? ' sent' : '') + '">' + (join ? stOf(p.key) + '<em class="cat ' + c + '">' + CAT[c] + '</em>' : '미발송') + jb + '</span></label>' +
