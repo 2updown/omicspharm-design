@@ -8,11 +8,11 @@
 <!-- Figma: Find Projects1-list (993:12559) · Find Projects1-grid (996:13677)
      카드: Project-list (974:7938) · Project-card Type=card (147:1266)
      B안: Find Projects2-list (831:3469) · Find Projects2-grid (977:9070) — 오른쪽을 흰 박스 하나로 묶고 행을 구분선으로 나열. 기존 목록형(A안)은 ?list=a 로 비교. 그리드형은 구분선 격자가 기본, 박스 안 카드형은 ?grid=a 로 비교 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261015u">
-<script src="assets/common/site.js?v=20261015u"></script>
-<script src="assets/common/mypage.js?v=20261015u"></script>
-<script src="assets/common/flow.js?v=20261015u"></script>
-<script src="assets/common/projects-data.js?v=20261015u"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261015v">
+<script src="assets/common/site.js?v=20261015v"></script>
+<script src="assets/common/mypage.js?v=20261015v"></script>
+<script src="assets/common/flow.js?v=20261015v"></script>
+<script src="assets/common/projects-data.js?v=20261015v"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -343,6 +343,8 @@
     if (!x.open || !PARTNER) return '';
     return QUOTE ? '<span class="qbtn" role="button" tabindex="0" data-quote="' + x.id + '">견적서 작성</span>' : LOCKED;
   }
+  // 비공개 프로젝트(가려진 카드): 미인증 분석파트너에게도 잠긴 견적서 작성 버튼 → 누르면 인증 안내 팝업(비공개 프로젝트 열람 안내 포함)
+  function lockedBtn(x) { return PARTNER && x.open ? LOCKED : ''; }
   function listCard(x) {
     var badges = '<div class="badges"><span class="badge tag">' + esc(x.cat) + '</span>' + status(x) + '</div>';
     if (masked(x)) {
@@ -352,7 +354,7 @@
           '<span><img src="assets/find/ic-flask.svg" alt=""><em>샘플</em>비공개</span>' +
           '<span><img src="assets/find/ic-timer.svg" alt=""><em>희망완료일</em>비공개</span>' +
           '<span><img src="assets/find/ic-calendar.svg" alt=""><em>모집 기한</em>비공개</span>' +
-        '</div><p class="reg">등록일 ' + x.reg + '</p></div></div>';
+        '</div><div class="foot"><p class="reg">등록일 ' + x.reg + '</p>' + lockedBtn(x) + '</div></div></div>';
     }
     return '<a class="lcard" href="' + OP_PROJECTS.url(x) + '"><div class="head"><div class="row1">' + badges + '<span class="rt">' + (x.priv ? LOCK : '') + '<span class="dday">' + dday(x) + '</span></span></div><h3>' + esc(x.title) + '</h3></div>' +
       '<div class="info"><div class="meta">' +
@@ -373,7 +375,7 @@
         '<span><em>샘플 :</em>' + v(x.samples + '개') + '</span>' +
         '<span><em>희망완료일 :</em>' + v(x.due) + '</span>' +
         '<span><em>모집기한 :</em>' + v(x.from + ' ~ ' + x.to) + '</span>' +
-      '</div><div class="foot"><p class="reg">등록일 ' + x.reg + '</p>' + (p ? '' : quoteBtn(x)) + '</div></div>';
+      '</div><div class="foot"><p class="reg">등록일 ' + x.reg + '</p>' + (p ? lockedBtn(x) : quoteBtn(x)) + '</div></div>';
     return p ? '<div class="lrow private">' + inner + '</div>' : '<a class="lrow" href="' + OP_PROJECTS.url(x) + '">' + inner + '</a>';
   }
   var LIST_A = new URLSearchParams(location.search).get('list') === 'a'; // 기존 카드형 목록과 비교용
@@ -385,7 +387,7 @@
     var rows = '<div><em>샘플</em>' + (p ? '비공개' : x.samples + '개') + '</div>' +
       '<div><em>희망완료일</em>' + (p ? '비공개' : x.due) + '</div>' +
       '<div><em>모집 기한</em>' + (p ? '비공개' : x.from + ' ~ ' + x.to) + '</div>' +
-      '<div class="foot"><p class="reg">등록일 ' + x.reg + '</p>' + (p ? '' : quoteBtn(x)) + '</div>';
+      '<div class="foot"><p class="reg">등록일 ' + x.reg + '</p>' + (p ? lockedBtn(x) : quoteBtn(x)) + '</div>';
     var top = '<div class="top"><div class="row1"><div class="badges"><span class="badge tag">' + esc(x.cat) + '</span>' + status(x) + '</div>' + (x.priv ? LOCK : '') + '</div><h3>' + esc(x.title) + '</h3></div>';
     return p ? '<div class="gcard private">' + top + '<div class="rows">' + rows + '</div></div>'
              : '<a class="gcard" href="' + OP_PROJECTS.url(x) + '">' + top + '<div class="rows">' + rows + '</div></a>';
