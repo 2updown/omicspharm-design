@@ -20,7 +20,7 @@ input { font:inherit; color:inherit; }
 
 /* ── 왼쪽: login-bg (Figma 1475:13273) ── */
 /* 왼쪽 패널은 화면 높이에 고정(스크롤해도 그대로), 오른쪽만 길어지면 페이지가 스크롤된다 */
-.auth-bg { flex:1 1 0; min-width:0; position:sticky; top:0; height:100vh; align-self:flex-start; overflow:hidden; background:#f4f7fa url(login-bg2.jpg?v=2) center/cover no-repeat; }
+.auth-bg { flex:1 1 0; min-width:0; position:sticky; top:0; height:100vh; align-self:flex-start; overflow:hidden; background:#f4f7fa url(login-bg2.jpg?v=3) center/cover no-repeat; }
 /* Figma 720×1024 기준: 로고는 좌측 상단(53,40), 문구는 위에서 181px. 패널 크기에 맞춰 비율로 확대·축소 (auth.js가 --s 계산) */
 .auth-card { position:absolute; inset:0; }
 /* 배경 비교 스위치(테스트용) */
