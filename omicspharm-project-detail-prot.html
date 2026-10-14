@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261016w">
-<script src="assets/common/site.js?v=20261016w"></script>
-<script src="assets/common/mypage.js?v=20261016w"></script>
-<script src="assets/common/flow.js?v=20261016w"></script>
-<script src="assets/common/projects-data.js?v=20261016w"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261016x">
+<script src="assets/common/site.js?v=20261016x"></script>
+<script src="assets/common/mypage.js?v=20261016x"></script>
+<script src="assets/common/flow.js?v=20261016x"></script>
+<script src="assets/common/projects-data.js?v=20261016x"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -70,6 +70,14 @@
 
   /* 본문 섹션 */
   .sections { display:flex; flex-direction:column; gap:36px; }
+  /* 비로그인: 본문을 흐리게 가리고 로그인 안내 (Figma 1491:14748). 가린 영역의 글은 실제 내용이 아닌 채움 글 */
+  .sections.guest { position:relative; }
+  .gate { position:absolute; left:-24px; right:-24px; bottom:-24px; z-index:5; background:rgba(255,255,255,.5); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+  .gate-card { position:sticky; top:142px; display:flex; flex-direction:column; align-items:center; gap:24px; width:378px; max-width:calc(100% - 32px); margin:20px auto 0; padding:24px; border:1px solid var(--gray-200); border-radius:16px; background:#fff; box-shadow:0 16px 12px rgba(0,0,0,.16), 0 0 1px rgba(0,0,0,.16); }
+  .gate-card h3 { font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; text-align:center; word-break:keep-all; }
+  .gate-card .go { display:flex; align-items:center; justify-content:center; width:100%; height:56px; border-radius:99px; background:var(--teal-600); color:#fff; font-size:16px; font-weight:500; }
+  .gate-card .go:hover { background:var(--teal-700); }
+  .gate-card .alt { display:flex; gap:12px; font-size:16px; color:#0a0a0c; } .gate-card .alt a { color:#026451; } .gate-card .alt a:hover { text-decoration:underline; }
   .sec { display:flex; flex-direction:column; gap:12px; scroll-margin-top:142px; } /* GNB 70 + 탭 48 + 여백 24 */
   .sec h2 { font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
   .sec p.text { font-size:16px; line-height:22px; }
@@ -183,7 +191,7 @@
   }
   @media (max-width:640px) {
     .body { padding-left:16px; padding-right:16px; }
-    .card { padding:16px; }
+    .card { padding:16px; } .gate { left:-16px; right:-16px; bottom:-16px; } .gate-card { top:128px; }
     .cta-bar { padding:10px 16px; }
     .cta-bar .txt { display:none; }
     .cta-bar .btn-filled { margin-left:0; width:100%; }
@@ -381,6 +389,18 @@
     el.insertAdjacentHTML('beforeend', '<span class="tip" role="tooltip">희망 금액은 인증된 분석파트너에게만 공개됩니다.</span>');
     if (OP.isPartner()) el.addEventListener('click', function () { OP.verifyGate(); });
   });
+  // 비로그인: 첫 제목(연구 내용 및 목적) 아래부터 본문을 흐리게 가리고 로그인 안내. 가린 글은 같은 길이의 채움 글로 바꿔 실제 내용이 남지 않게 함
+  if (!OP.session()) {
+    var secs = $('.sections'), first = $('#purpose .text'), FILL = '분석의뢰상세내용시료조건요구사항산출물정보';
+    secs.querySelectorAll('.sec').forEach(function (sec) {
+      var w = document.createTreeWalker(sec, NodeFilter.SHOW_TEXT), n, i = 0;
+      while ((n = w.nextNode())) { if (sec.id === 'purpose' && n.parentNode.tagName === 'H2') continue; n.nodeValue = n.nodeValue.replace(/\S/g, function () { return FILL.charAt(i++ % FILL.length); }); }
+    });
+    secs.classList.add('guest');
+    var next = encodeURIComponent('omicspharm-project-detail-prot.html?id=' + x.id);
+    secs.insertAdjacentHTML('beforeend', '<div class="gate" style="top:' + (first.offsetTop - 4) + 'px"><div class="gate-card"><h3>로그인하면 의뢰 내용을 자세히 볼 수 있어요</h3>' +
+      '<a class="go" href="login.html?next=' + next + '">로그인 하기</a><div class="alt"><span>아직 회원이 아니신가요?</span><a href="signup.html">회원가입하기</a></div></div></div>');
+  }
   $('[data-f="status"]').className = 'badge ' + (x.open ? 'open' : 'closed');
   document.title = x.title + ' · OmicsPharm';
 
