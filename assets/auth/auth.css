@@ -229,7 +229,7 @@ input { font:inherit; color:inherit; }
 .done .done-btns { display:flex; justify-content:center; gap:12px; width:100%; margin-top:16px; } /* Figma 1440:21850: 두 버튼 fill (설명 문단 너비를 반씩) */
 .done .done-btns .btn-action { flex:1 1 0; width:auto; min-width:0; }
 .done .btn-action.line { border:1px solid var(--teal-600); background:#fff; color:var(--teal-600); }
-.done .btn-action.line:hover { background:#edfefa; }
+.done .btn-action.line:hover { background:#fff; border-color:var(--teal-700); color:var(--teal-700); } /* button_action secondary hovered (Figma 281:24574): 흰 배경 유지, 테두리·글자 teal 700 */
 .done .btn-action.off { cursor:default; }
 @media (max-width:640px) { .done { width:100%; } .done .done-btns { flex-direction:column; } .done .done-btns .btn-action { flex:none; width:100%; } }
 
