@@ -8,11 +8,11 @@
 <!-- Figma: Find Projects1-list (993:12559) · Find Projects1-grid (996:13677)
      카드: Project-list (974:7938) · Project-card Type=card (147:1266)
      B안: Find Projects2-list (831:3469) · Find Projects2-grid (977:9070) — 오른쪽을 흰 박스 하나로 묶고 행을 구분선으로 나열. 기존 목록형(A안)은 ?list=a 로 비교. 그리드형은 구분선 격자가 기본, 박스 안 카드형은 ?grid=a 로 비교 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261016u">
-<script src="assets/common/site.js?v=20261016u"></script>
-<script src="assets/common/mypage.js?v=20261016u"></script>
-<script src="assets/common/flow.js?v=20261016u"></script>
-<script src="assets/common/projects-data.js?v=20261016u"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261016v">
+<script src="assets/common/site.js?v=20261016v"></script>
+<script src="assets/common/mypage.js?v=20261016v"></script>
+<script src="assets/common/flow.js?v=20261016v"></script>
+<script src="assets/common/projects-data.js?v=20261016v"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -62,6 +62,10 @@
   .range input::-moz-range-thumb { pointer-events:auto; width:20px; height:20px; border-radius:50%; background:#fff; border:1.5px solid var(--teal-500); box-shadow:0 2px 4px rgba(0,0,0,.12); cursor:grab; }
   .range input::-webkit-slider-runnable-track { background:none; }
   .range input:focus-visible::-webkit-slider-thumb { box-shadow:0 0 0 3px #00786e33; }
+  #priceGroup.locked { cursor:pointer; } /* 미인증 분석파트너: 잠금 → 인증 안내 팝업 */
+  #priceGroup.locked .range, #priceGroup.locked .range-foot { opacity:.4; pointer-events:none; }
+  #priceGroup.locked .range-head span { display:inline-flex; align-items:center; gap:4px; }
+  #priceGroup.locked .range-head span img { width:16px; height:16px; opacity:.6; }
   .range-foot { display:flex; justify-content:space-between; margin-top:4px; font-size:12px; font-weight:500; line-height:16px; color:var(--gray-400); }
   .reset { align-self:flex-start; display:inline-flex; align-items:center; gap:2px; height:36px; min-width:64px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; background:var(--gray-50); font-size:14px; font-weight:500; line-height:20px; color:var(--gray-600); }
   .reset:hover { background:var(--gray-100); }
@@ -398,8 +402,16 @@
   }
 
   // 예상금액 필터는 분석파트너·컨설턴트만 (클라이언트·비로그인은 다른 프로젝트 가격을 볼 수 없음)
-  // 예상금액 필터: 금액을 볼 수 있는 컨설턴트·인증 분석파트너만
-  if (!((OP.session() || {}).role === 'admin' || OP.partnerVerified())) { var pg = document.getElementById('priceGroup'); pg.hidden = true; if (pg.previousElementSibling && pg.previousElementSibling.classList.contains('divider')) pg.previousElementSibling.hidden = true; }
+  // 예상금액 필터: 금액을 볼 수 있는 컨설턴트·인증 분석파트너만 사용
+  // 미인증 분석파트너(메일 미인증 포함)는 잠금으로 보여 주고 누르면 인증 안내 팝업, 클라이언트·비로그인은 숨김
+  if (OP.isPartner() && !OP.partnerVerified()) {
+    var lg = document.getElementById('priceGroup');
+    lg.classList.add('locked'); lg.setAttribute('role', 'button'); lg.tabIndex = 0; lg.setAttribute('aria-label', '예상금액 필터 · 파트너 인증 후 이용할 수 있습니다');
+    lg.querySelectorAll('input').forEach(function (i) { i.disabled = true; });
+    document.getElementById('rangeLabel').innerHTML = '<img src="assets/main/ic-lock-key.svg" alt="">인증 후 이용';
+    lg.addEventListener('click', function () { OP.verifyGate(); });
+    lg.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); OP.verifyGate(); } });
+  } else if (!((OP.session() || {}).role === 'admin' || OP.partnerVerified())) { var pg = document.getElementById('priceGroup'); pg.hidden = true; if (pg.previousElementSibling && pg.previousElementSibling.classList.contains('divider')) pg.previousElementSibling.hidden = true; }
   function filtered() {
     var q = state.q.trim().toLowerCase();
     var out = DATA.filter(function (x) {
@@ -448,7 +460,7 @@
     var lo = +$('#minP').value, hi = +$('#maxP').value;
     $('#rangeFill').style.left = (lo / 10) + '%';
     $('#rangeFill').style.width = ((hi - lo) / 10) + '%';
-    $('#rangeLabel').textContent = (lo === 0 && hi === 1000) ? '전체' : lo + '-' + (hi === 1000 ? '1000만원 이상' : hi + '만원');
+    if (!$('#priceGroup').classList.contains('locked')) $('#rangeLabel').textContent = (lo === 0 && hi === 1000) ? '전체' : lo + '-' + (hi === 1000 ? '1000만원 이상' : hi + '만원');
   }
 
   var gridCols = 0;
