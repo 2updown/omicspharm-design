@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
+<title>받은 메일 · 비밀번호 재설정 · OmicsPharm</title>
+<!-- [데모] 비밀번호 재설정 메일 미리보기. 실제 서비스에서는 이 내용이 회원 메일함으로 감 (메일 템플릿 참고용)
+     ?t=재설정 토큰 (find-password.html에서 발급, localStorage op.pwReset) -->
+<link rel="stylesheet" href="assets/common/site.css?v=20261016i">
+<script src="assets/common/site.js?v=20261016i"></script>
+<style>
+  body { background:#eef1f4; }
+  .bar { display:flex; align-items:center; justify-content:space-between; gap:12px; max-width:680px; margin:24px auto 12px; padding:0 16px; font-size:13px; color:var(--gray-500, #737373); }
+  .bar a { color:var(--gray-600, #525252); text-decoration:underline; }
+  .head { max-width:680px; margin:0 auto; padding:16px 20px; border-radius:12px 12px 0 0; background:#fff; border-bottom:1px solid #e5e5e5; font-size:13px; line-height:20px; color:#525252; }
+  .head b { display:block; margin-bottom:6px; font-size:18px; line-height:26px; color:#0a0a0c; }
+  .head span { display:inline-block; min-width:72px; color:#a3a3a3; }
+  .mail { max-width:680px; margin:0 auto 40px; padding:40px 20px; border-radius:0 0 12px 12px; background:#fff; }
+  .card { max-width:520px; margin:0 auto; text-align:center; }
+  .card .logo { height:16px; margin-bottom:32px; }
+  .card h1 { font-size:24px; font-weight:700; line-height:34px; color:#0a0a0c; }
+  .card p { margin-top:12px; font-size:15px; line-height:24px; color:#414143; word-break:keep-all; }
+  .card .go { text-decoration:none; display:inline-flex; align-items:center; justify-content:center; height:52px; margin-top:28px; padding:0 32px; border-radius:99px; background:#009788; color:#fff; font-size:16px; font-weight:500; }
+  .card .go:hover { background:#00796d; }
+  .card .note { margin-top:28px; padding:14px 16px; border-radius:8px; background:#f5f5f5; font-size:13px; line-height:20px; color:#737373; text-align:left; }
+  .card .foot { margin-top:32px; font-size:12px; line-height:18px; color:#a3a3a3; }
+  .none { max-width:680px; margin:80px auto; padding:40px 20px; border-radius:12px; background:#fff; text-align:center; font-size:15px; color:#525252; }
+  .none a { color:#009788; text-decoration:underline; }
+</style>
+</head>
+<body>
+<div id="view"></div>
+<script>
+(function () {
+  var t = new URLSearchParams(location.search).get('t'), R = {};
+  try { R = JSON.parse(localStorage.getItem('op.pwReset') || '{}'); } catch (e) {}
+  var x = R[t], v = document.getElementById('view'), esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+  if (!x) { v.innerHTML = '<div class="none">메일을 찾을 수 없습니다. <a href="find-password.html">비밀번호 찾기</a>에서 다시 요청해주세요.</div>'; return; }
+  var a = OP.account(x.email) || {}, d = new Date(x.at), ts = d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0') + ' ' + d.toTimeString().slice(0, 5);
+  v.innerHTML =
+    '<div class="bar"><span>데모 · 받은 메일 미리보기 (실제로는 회원 메일함으로 발송)</span><a href="find-password.html">비밀번호 찾기로</a></div>' +
+    '<div class="head"><b>[OmicsPharm] 비밀번호 재설정 안내</b><span>보낸 사람</span>OmicsPharm &lt;no-reply@omicspharm.test&gt;<br><span>받는 사람</span>' + esc(x.email) + '<br><span>받은 시각</span>' + ts + '</div>' +
+    '<div class="mail"><div class="card">' +
+      '<img class="logo" src="assets/auth/logo-bg.svg" alt="OmicsPharm">' +
+      '<h1>비밀번호 재설정</h1>' +
+      '<p>' + esc(a.name || '회원') + '님, 비밀번호 재설정을 요청하셨습니다.<br>아래 버튼을 눌러 새 비밀번호를 설정해주세요.</p>' +
+      '<a class="go" href="reset-password.html?t=' + encodeURIComponent(t) + '">비밀번호 재설정하기</a>' +
+      '<div class="note">· 이 링크는 발송 후 30분 동안 한 번만 사용할 수 있습니다.<br>· 본인이 요청하지 않았다면 이 메일을 무시해주세요. 비밀번호는 바뀌지 않습니다.</div>' +
+      '<p class="foot">본 메일은 발신 전용입니다. 문의는 help@omicspharm.test 로 보내주세요.</p>' +
+    '</div></div>';
+})();
+</script>
+</body>
+</html>
