@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261016v">
-<script src="assets/common/site.js?v=20261016v"></script>
-<script src="assets/common/mypage.js?v=20261016v"></script>
-<script src="assets/common/flow.js?v=20261016v"></script>
-<script src="assets/common/projects-data.js?v=20261016v"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261016w">
+<script src="assets/common/site.js?v=20261016w"></script>
+<script src="assets/common/mypage.js?v=20261016w"></script>
+<script src="assets/common/flow.js?v=20261016w"></script>
+<script src="assets/common/projects-data.js?v=20261016w"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -49,9 +49,13 @@
   .summary em { font-style:normal; color:var(--gray-500); }
   .price-hidden { position:relative; color:inherit; cursor:help; } /* 가격 공개 범위 밖 */
   /* 툴팁 (Figma tooltip 1424:14012): 위에 띄우고 꼬리는 아래 */
-  .price-hidden .tip { display:none; position:absolute; left:50%; bottom:calc(100% + 6px); transform:translateX(-50%); z-index:5; width:max-content; min-width:102px; max-width:242px; padding:4px 8px; border-radius:4px; background:#1b1b1b; color:#fff; font-size:14px; font-weight:500; line-height:20px; white-space:normal; text-align:center; word-break:keep-all; }
-  .price-hidden .tip::after { content:""; position:absolute; left:50%; top:100%; transform:translateX(-50%); border:3px solid transparent; border-bottom:0; border-top-color:#1b1b1b; }
+  .price-hidden .tip { display:none; position:absolute; left:calc(100% + 8px); top:50%; transform:translateY(-50%); z-index:5; width:max-content; min-width:102px; max-width:none; padding:4px 8px; border-radius:4px; background:#1b1b1b; color:#fff; font-size:14px; font-weight:500; line-height:20px; white-space:nowrap; text-align:center; word-break:keep-all; }
+  .price-hidden .tip::after { content:""; position:absolute; right:100%; top:50%; transform:translateY(-50%); border:3px solid transparent; border-left:0; border-right-color:#1b1b1b; } /* 오른쪽에 띄우고 꼬리는 왼쪽(<) */
   .price-hidden:hover .tip, .price-hidden:focus-visible .tip { display:block; }
+  @media (max-width:640px) { /* 좁은 화면: 오른쪽에 자리가 없으면 위로 (꼬리 아래) */
+    .price-hidden .tip { left:50%; top:auto; bottom:calc(100% + 6px); transform:translateX(-50%); max-width:242px; white-space:normal; }
+    .price-hidden .tip::after { right:auto; left:50%; top:100%; transform:translateX(-50%); border:3px solid transparent; border-bottom:0; border-top-color:#1b1b1b; }
+  }
   .price-hidden:focus:not(:focus-visible) { outline:none; }
   .summary .dday { color:var(--orange-600); }
 
