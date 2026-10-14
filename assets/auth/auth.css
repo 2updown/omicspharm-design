@@ -232,7 +232,6 @@ input { font:inherit; color:inherit; }
 .done .btn-action.line:hover { background:#edfefa; }
 .done .btn-action.off { cursor:default; }
 @media (max-width:640px) { .done { width:100%; } .done .done-btns { flex-direction:column; } .done .done-btns .btn-action { flex:none; width:100%; } }
-.done > .btn-action.client-only { margin-top:16px; } /* 내용과 버튼 사이 40px (Figma) */
 
 /* 주소: 직접 입력 없이 [검색]으로 선택 (프로토타입은 안내 토스트) */
 .with-btn input[readonly] { cursor:pointer; }
