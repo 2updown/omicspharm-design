@@ -251,28 +251,28 @@ div.op-phone.bad input, div.op-phone.bad select { border-color:var(--op-red-600)
 /* 인증 안내 팝업 (미인증 분석파트너가 견적서 작성을 누를 때, OP.verifyGate) */
 .op-gate { position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; padding:24px; background:rgba(0,0,0,.5); }
 .op-gate .box { position:relative; width:100%; max-width:440px; border-radius:16px; background:#fff; overflow:hidden; box-shadow:0 16px 40px rgba(0,0,0,.14); text-align:center; }
-.op-gate .x { position:absolute; top:16px; right:16px; width:28px; height:28px; border:0; border-radius:6px; background:none; cursor:pointer; }
-.op-gate .x::before { content:""; position:absolute; inset:4px; background:#737373; -webkit-mask:url(../main/ic-x.svg) center/contain no-repeat; mask:url(../main/ic-x.svg) center/contain no-repeat; } /* Phosphor X */
-.op-gate .x:hover::before { background:#404040; }
-.op-gate h3 { margin:40px 24px 0; font-size:20px; font-weight:700; line-height:28px; color:#000; }
-.op-gate .box > p { margin:12px 24px 0; font-size:14px; line-height:22px; color:var(--op-gray-600, #525252); word-break:keep-all; }
-.op-gate .bar { position:relative; height:6px; margin-top:52px; background:#f0f0f0; }
+.op-gate .x { position:absolute; top:20px; right:24px; width:20px; height:20px; border:0; border-radius:4px; background:none; cursor:pointer; } /* Figma 1586:13474: 닫기 X 20px, 위 20 · 오른쪽 24 */
+.op-gate .x::before { content:""; position:absolute; inset:0; background:#000; -webkit-mask:url(../main/ic-x.svg) center/contain no-repeat; mask:url(../main/ic-x.svg) center/contain no-repeat; } /* Phosphor X */
+.op-gate .x:hover::before { background:#525252; }
+.op-gate h3 { margin:52px 24px 0; font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; color:#000; } /* Heading/Medium/B */
+.op-gate .box > p { margin:12px 24px 0; font-size:14px; line-height:20px; color:var(--op-gray-600, #525252); word-break:keep-all; }
+.op-gate .bar { position:relative; height:6px; margin-top:47px; background:#f0f0f0; } /* 설명 → 툴팁 12 + 툴팁 28 + 꼬리 3 + 4 */
 .op-gate .bar .fill { position:absolute; left:0; top:0; bottom:0; background:var(--op-teal-600); }
-.op-gate .bar .gtip { position:absolute; left:50%; bottom:12px; transform:translateX(-50%); padding:4px 8px; border-radius:4px; background:#1b1b1b; color:#fff; font-size:14px; font-weight:500; line-height:20px; white-space:nowrap; } /* Figma tooltip 1424:14012 */
+.op-gate .bar .gtip { position:absolute; left:50%; bottom:7px; transform:translateX(-50%); padding:4px 8px; border-radius:4px; background:#1b1b1b; color:#fff; font-size:14px; font-weight:500; line-height:20px; white-space:nowrap; } /* Figma tooltip 1424:14012 */
 .op-gate .bar .gtip::after { content:""; position:absolute; left:50%; top:100%; transform:translateX(-50%); border:3px solid transparent; border-bottom:0; border-top-color:#1b1b1b; }
-.op-gate .bar .gtip b { font-weight:600; color:var(--op-teal-500); } /* 진행률 숫자만 teal (검정 배경 대비로 teal/500) */
+.op-gate .bar .gtip b { font-weight:500; color:var(--op-teal-500); } /* 진행률 숫자만 teal (검정 배경 대비로 teal/500) */
 .op-gate .list { display:flex; flex-direction:column; gap:10px; padding:24px 28px 28px; background:#f6faf9; }
-.op-gate .gi { display:flex; align-items:center; justify-content:center; gap:6px; height:48px; border-radius:8px; border:1px solid var(--op-teal-600); background:#fff; color:var(--op-teal-600); font-size:15px; font-weight:500; }
+.op-gate .gi { display:flex; align-items:center; justify-content:center; gap:8px; height:48px; padding:0 16px; border-radius:8px; border:1px solid var(--op-teal-600); background:#fff; color:var(--op-teal-600); font-size:16px; font-weight:500; line-height:22px; } /* button_outline (Figma 1586:13474) */
 .op-gate a.gi:hover, .op-gate button.gi:hover { background:#f0fbf8; }
-.op-gate button.gi { width:100%; font:inherit; font-size:15px; font-weight:500; cursor:pointer; }
+.op-gate button.gi { width:100%; font:inherit; font-size:16px; font-weight:500; cursor:pointer; }
 .op-gate .gi.off { border-color:#e5e5e5; background:#f5f5f5; color:#a3a3a3; cursor:default; } /* 메일 인증 전 사업자등록증 업로드 */
-.op-gate .gi.done { border-color:#e5e5e5; color:#a3a3a3; }
+.op-gate .gi.done { border-color:#d4d4d4; color:#a3a3a3; }
 .op-gate .gi em { font-style:normal; font-size:13px; color:var(--op-teal-600); }
-.op-gate .gi i { width:14px; height:14px; background:currentColor; }
+.op-gate .gi i { width:16px; height:16px; background:currentColor; }
 .op-gate .gi .pl { -webkit-mask:url(../auth/ic-plus.svg) center/contain no-repeat; mask:url(../auth/ic-plus.svg) center/contain no-repeat; }
 .op-gate .gi .ck { -webkit-mask:url(../auth/ic-check.svg) center/contain no-repeat; mask:url(../auth/ic-check.svg) center/contain no-repeat; }
 .op-gate .gi.done .ck { background:var(--op-teal-500); }
 .op-gate .gi .go { -webkit-mask:url(../auth/ic-caret-right.svg) center/contain no-repeat; mask:url(../auth/ic-caret-right.svg) center/contain no-repeat; }
-.op-gate .gi.opt { border-color:#d4d4d4; color:#404040; } /* 선택 항목: 회색 아웃라인 */
+.op-gate .gi.opt { border-color:#d4d4d4; color:#737373; } /* 선택 항목: 회색 아웃라인, 글자 gray 500 */
 .op-gate a.gi.opt:hover { background:#fafafa; border-color:#a3a3a3; }
 .op-gate .gi .tag { padding:1px 7px; border:1px solid #525252; border-radius:8px; color:#525252; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; } /* badge_basic gray outline (605:41259) */
