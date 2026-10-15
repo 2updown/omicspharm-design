@@ -8,11 +8,11 @@
 <!-- Figma: Find Projects1-list (993:12559) · Find Projects1-grid (996:13677)
      카드: Project-list (974:7938) · Project-card Type=card (147:1266)
      B안: Find Projects2-list (831:3469) · Find Projects2-grid (977:9070) — 오른쪽을 흰 박스 하나로 묶고 행을 구분선으로 나열. 기존 목록형(A안)은 ?list=a 로 비교. 그리드형은 구분선 격자가 기본, 박스 안 카드형은 ?grid=a 로 비교 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261017i">
-<script src="assets/common/site.js?v=20261017i"></script>
-<script src="assets/common/mypage.js?v=20261017i"></script>
-<script src="assets/common/flow.js?v=20261017i"></script>
-<script src="assets/common/projects-data.js?v=20261017i"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261017j">
+<script src="assets/common/site.js?v=20261017j"></script>
+<script src="assets/common/mypage.js?v=20261017j"></script>
+<script src="assets/common/flow.js?v=20261017j"></script>
+<script src="assets/common/projects-data.js?v=20261017j"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -323,7 +323,8 @@
 
   function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
   function status(x) { return x.open ? '<span class="badge open">모집중</span>' : '<span class="badge closed">모집마감</span>'; }
-  function dday(x) { return x.open ? '종료 D-' + String(x.days).padStart(2, '0') : '모집 종료'; }
+  // 모집중만 마감 D-day 표시. 모집마감은 왼쪽 '모집마감' 배지로 충분해서 표시하지 않음
+  function dday(x) { return x.open ? '<span class="dday">종료 D-' + String(x.days).padStart(2, '0') + '</span>' : ''; }
 
   // 비공개 프로젝트: 분석파트너·컨설턴트는 내용까지 보이고 자물쇠로 표시, 클라이언트·비로그인은 가려지고 열 수 없음
   var SEE_PRIV = OP.canSeePrivate(), QUOTE = OP.canQuote();
@@ -364,7 +365,7 @@
           '<span><img src="assets/find/ic-calendar.svg" alt=""><em>모집 기한</em>비공개</span>' +
         '</div><div class="foot"><p class="reg">등록일 ' + x.reg + '</p>' + lockedBtn(x) + '</div></div></div>';
     }
-    return '<a class="lcard" href="' + OP_PROJECTS.url(x) + '"><div class="head"><div class="row1">' + badges + '<span class="rt">' + (x.priv ? LOCK : '') + '<span class="dday">' + dday(x) + '</span></span></div><h3>' + esc(x.title) + '</h3></div>' +
+    return '<a class="lcard" href="' + OP_PROJECTS.url(x) + '"><div class="head"><div class="row1">' + badges + '<span class="rt">' + (x.priv ? LOCK : '') + dday(x) + '</span></div><h3>' + esc(x.title) + '</h3></div>' +
       '<div class="info"><div class="meta">' +
         '<span>' + x.owner + '</span>' +
         '<span><em>샘플</em>' + x.samples + '개</span>' +
@@ -376,7 +377,7 @@
   function listRow(x) {
     var badges = '<div class="badges"><span class="badge tag">' + esc(x.cat) + '</span>' + status(x) + '</div>';
     var p = masked(x), v = function (t) { return p ? '비공개' : t; };
-    var inner = '<div class="top"><div class="row1">' + badges + (p ? LOCK : '<span class="rt">' + (x.priv ? LOCK : '') + '<span class="dday">' + dday(x) + '</span></span>') + '</div>' +
+    var inner = '<div class="top"><div class="row1">' + badges + (p ? LOCK : '<span class="rt">' + (x.priv ? LOCK : '') + dday(x) + '</span>') + '</div>' +
       '<h3>' + esc(x.title) + '</h3></div>' +
       '<div class="info"><div class="lmeta">' +
         '<span>' + v(x.owner) + '</span>' +
