@@ -545,8 +545,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261017u">
-<script src="assets/common/site.js?v=20261017u"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261017v">
+<script src="assets/common/site.js?v=20261017v"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -890,7 +890,7 @@
     </table>
     <div class="mempty" id="draftEmpty" style="display:none">저장된 의뢰서가 없습니다.<br>작성 중 임시저장을 누르면 여기에 보관됩니다.</div>
   </div>
-  <p class="mnote">작성 중인 의뢰서는 30일간 보관됩니다.</p>
+  <p class="mnote" id="draftNote">작성 중인 의뢰서는 30일간 보관됩니다.</p>
   <div class="mfoot">
     <button type="button" class="mdel" id="delDraft" disabled>삭제</button>
     <button type="button" class="mload" id="loadDraft" disabled>의뢰서 불러오기</button>
@@ -1490,6 +1490,7 @@
     var list=await STORE.get(), tb=$('#draftList');
     $('.dtbl').style.display=list.length?'table':'none';
     $('#draftEmpty').style.display=list.length?'none':'block';
+    $('#draftNote').hidden=!list.length; // 보관 기간 안내는 목록이 있을 때만
     pick=null; syncPick();
     tb.innerHTML=list.map(function(d,i){
       return '<tr data-id="'+d.id+'">'+
