@@ -206,6 +206,11 @@
   .grpmsg.ok::before{background:var(--teal)}
   .grpmsg.warn{color:#b06a00;background:#fff9ef;border:1px solid #f4e0bd;border-radius:7px;padding:10px 12px}
   .grpmsg.warn::before{background:#e8a33d}
+  .grpmsg:not(.ok):not(.warn)::before{display:none} /* 기본 안내 문구는 앞 동그라미 없이 */
+  /* button_outline primary XS(32) (Figma 1424:14502): 대조군 추가 */
+  .bo-xs{display:inline-flex;align-items:center;justify-content:center;gap:2px;height:32px;margin-top:10px;padding:0 10px;border:1px solid #009788;border-radius:8px;background:#fff;color:#009788;font-size:14px;font-weight:500;line-height:20px;cursor:pointer}
+  .bo-xs i{width:12px;height:12px;background:currentColor;-webkit-mask:url(assets/auth/ic-plus.svg) center/contain no-repeat;mask:url(assets/auth/ic-plus.svg) center/contain no-repeat}
+  .bo-xs:hover{background:#fafafa;color:#00786e}
   .lnk{background:none;border:none;color:var(--teal);font-size:12.5px;padding:4px 0;font-weight:600}
   .x{background:none;border:none;color:var(--ink4);font-size:15px;padding:0 4px}
 
@@ -545,8 +550,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261017v">
-<script src="assets/common/site.js?v=20261017v"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261017w">
+<script src="assets/common/site.js?v=20261017w"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -780,7 +785,7 @@
             <p class="fhelp">비교할 그룹이 2개 이상이면 그룹 있음을 선택해 주세요. 그룹명과 그룹별 시료 수는 선택 입력입니다.</p>
             <div id="grpWrap" style="display:none">
               <table class="grp"><thead><tr><th>구분</th><th>그룹명</th><th style="width:100px">시료 수</th><th style="width:88px"></th></tr></thead><tbody id="grpBody"></tbody></table>
-              <button type="button" class="lnk" id="addC">+ 대조군 추가</button>
+              <button type="button" class="bo-xs" id="addC"><i aria-hidden="true"></i>대조군 추가</button>
               <p class="fhelp" id="grpMsg"></p>
             </div></div></div>
         </div>
