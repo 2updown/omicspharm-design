@@ -139,6 +139,7 @@
   /* 선택 칩 */
   .opts{display:flex;flex-wrap:wrap;column-gap:22px;row-gap:9px;padding:3px 0}
   .opts .ogrp{flex-basis:100%;margin:8px 0 -8px;font-size:13px;line-height:16px;font-weight:600;color:var(--n500,#737373)} .opts .ogrp:first-child{margin-top:0} /* 바이오의약품·ADC 분석 항목 범주 (와이어프레임 v5) */
+  .opts .ogrp:not(:first-child){margin-top:4px;padding-top:12px;border-top:1px solid #e5e5e5} /* 범주 사이 구분선 (gray 200) */
   [hidden]{display:none!important} /* 서비스별로 숨긴 선택지·항목 (label 등의 display보다 우선) */
   .opts label{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--n900);
     cursor:pointer;line-height:1.4}
@@ -544,8 +545,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261017c">
-<script src="assets/common/site.js?v=20261017c"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261017d">
+<script src="assets/common/site.js?v=20261017d"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
