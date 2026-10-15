@@ -50,8 +50,8 @@
         { title: '추가 요청사항 및 후속 연구계획', note: '시료는 계약 후 드라이아이스로 발송 예정입니다. 분석 일정 제안 부탁드립니다.' }] },
     { id: 'PRJ-2026-0044', demo: true, at: T0 - DAY * 4, svc: '대사체 분석', title: '마우스 뇌 조직 비표적 대사체 프로파일링', org: '한결연구소', manager: '홍길동', bizDoc: '사업자등록증_한결연구소.pdf', owner: 'client@omicspharm.test', samples: '24', due: '2026-12-31', from: '2026-10-02', to: '2026-10-16', budget: '500만~1,000만원', open: '비공개',
       purpose: '약물 투여군과 대조군 마우스 뇌 조직에서 대사체 변화를 확인하고자 합니다.',
-      sections: [{ title: '분석 서비스 : 대사체 분석', rows: [['분석 유형', 'Untargeted'], ['플랫폼', 'LC-MS'], ['측정 모드', 'Positive+Negative'], ['요청 분석 목적', '약물·처리 반응, 대사경로 변화']] },
-        { title: 'Untargeted', rows: [['원하는 분석 결과', '검출·동정, 상대정량, 차등 대사체, Pathway'], ['통계분석', 'PCA, Volcano plot, PLS-DA'], ['후속 분석', '없음']] },
+      sections: [{ title: '분석 서비스 : 대사체 분석', rows: [['분석 유형', '비표적 대사체'], ['플랫폼', 'LC-MS'], ['측정 모드', 'Positive+Negative'], ['요청 분석 목적', '약물·처리 반응, 대사경로 변화']] },
+        { title: '비표적 대사체', rows: [['원하는 분석 결과', '검출·동정, 상대정량, 차등 대사체, Pathway'], ['통계분석', 'PCA, Volcano plot, PLS-DA'], ['후속 분석', '없음']] },
         { title: '시료 정보', rows: [['생물종', 'Mouse'], ['시료 종류', '조직'], ['총 시료 수', '24개'], ['보관상태', '초저온 (-80℃)']] },
         { title: '분석 그룹', rows: [['비교군 구성', '그룹 있음'], ['대조군', '대조군 · 8개'], ['실험군', '저용량 · 8개'], ['실험군', '고용량 · 8개']] },
         { title: '희망 산출물', rows: [['희망 산출물', 'Raw data, 결과표, 국문 보고서'], ['산출물 용도', '내부 연구용']] }] },
@@ -71,8 +71,8 @@
         { title: '희망 산출물', rows: [['희망 산출물', 'Raw data, 결과표, 국문 보고서'], ['산출물 용도', '내부 연구용']] }] },
     { id: 'PRJ-2026-0047', demo: true, at: T0 - DAY * 6, svc: '대사체 분석', title: '혈청 아미노산 표적 대사체 절대정량', org: '한결연구소', manager: '홍길동', bizDoc: '사업자등록증_한결연구소.pdf', owner: 'client@omicspharm.test', samples: '30', due: '2026-12-15', from: '2026-09-30', to: '2026-10-14', budget: '500만원 미만', open: '비공개',
       purpose: '식이 중재 전후 혈청 아미노산 농도 변화를 정량하고자 합니다.',
-      sections: [{ title: '분석 서비스 : 대사체 분석', rows: [['분석 유형', 'Targeted'], ['플랫폼', 'LC-MS/MS'], ['요청 분석 목적', '바이오마커 정량']] },
-        { title: 'Targeted', rows: [['표적 패널', 'Amino acid·BCAA'], ['표적 대사체명', 'Leucine, Isoleucine, Valine, Glutamine'], ['정량 방식', '절대정량'], ['내부표준물질 준비', '미보유'], ['검량선용 표준물질 보유', '확인 필요']] },
+      sections: [{ title: '분석 서비스 : 대사체 분석', rows: [['분석 유형', '표적 대사체'], ['플랫폼', 'LC-MS/MS'], ['요청 분석 목적', '바이오마커 정량']] },
+        { title: '표적 대사체', rows: [['표적 패널', 'Amino acid·BCAA'], ['표적 대사체명', 'Leucine, Isoleucine, Valine, Glutamine'], ['정량 방식', '절대정량'], ['내부표준물질 준비', '미보유'], ['검량선용 표준물질 보유', '확인 필요']] },
         { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', '혈청'], ['총 시료 수', '30개'], ['보관상태', '초저온 (-80℃)']] },
         { title: '분석 그룹', rows: [['비교군 구성', '그룹 있음'], ['대조군', '중재 전 · 15개'], ['실험군', '중재 후 · 15개']] },
         { title: '희망 산출물', rows: [['희망 산출물', '결과표, 국문 보고서'], ['산출물 용도', '논문 학술용']] }] }
@@ -448,7 +448,7 @@
     // 3. 분석 서비스: 프로젝트 의뢰 때 입력한 '분석 상세' 단계 값(조건부 Targeted·PTM 등 포함) + 요청 기술만, 원본 의뢰서처럼 [구분 | 항목 | 입력값]
     var TITLE = { '단백체': '단백체 분석 (Proteomics)', '대사체': '대사체 분석 (Metabolomics)', '유전체': '유전체 분석 (Genomics)', '전사체': '전사체 분석 (Transcriptomics)', 'Olink': 'Olink 분석', '바이오의약품': '바이오의약품·ADC 분석' };
     var tk = Object.keys(TITLE).filter(function (t) { return String(r.svc).indexOf(t) > -1; })[0];
-    var SUB = ['Targeted', 'Untargeted', '표적 단백체', 'PTM', 'ADC 상세 정보'], TECH = /^(시료 전처리 기술|분석 기술|희망 장비|요청 기술)/;
+    var SUB = ['Targeted', 'Untargeted', '표적 단백체', '비표적 대사체', '표적 대사체', 'PTM', 'ADC 상세 정보'] // Targeted·Untargeted는 예전에 저장된 의뢰용, TECH = /^(시료 전처리 기술|분석 기술|희망 장비|요청 기술)/;
     var groups = (r.sections || []).filter(function (sec) { return sec.rows && (/^분석 서비스/.test(sec.title) || SUB.indexOf(sec.title) > -1); })
       .map(function (sec) { return [/^분석 서비스/.test(sec.title) ? String(r.svc).replace(/·ADC$/, '') : sec.title, sec.rows.filter(function (x) { return !TECH.test(x[0]); })]; });
     var tech = []; (r.sections || []).forEach(function (sec) { (sec.rows || []).forEach(function (x) { if (TECH.test(x[0])) tech.push(x); }); });
