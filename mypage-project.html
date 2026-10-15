@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261017n">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261017n">
-<script src="assets/common/site.js?v=20261017n"></script>
-<script src="assets/common/mypage.js?v=20261017n"></script>
-<script src="assets/common/flow.js?v=20261017n"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261017o">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261017o">
+<script src="assets/common/site.js?v=20261017o"></script>
+<script src="assets/common/mypage.js?v=20261017o"></script>
+<script src="assets/common/flow.js?v=20261017o"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -268,7 +268,7 @@
           Transcriptomics: [['분석 서비스 : 전사체 분석', [['분석 유형', '일반 전사체 발현'], ['일반 전사체 발현 · 분석 항목', 'mRNA-seq'], ['연구 목적', '발현량 비교'], ['원하는 분석 결과', 'DEG, Pathway'], ['참조정보', 'GRCm39'], ['핵산 추출 상태', '미추출 시료'], ['Library 유형', 'Stranded'], ['시퀀싱 방식', 'Paired-end']]], ['시료 정보', [['생물종', 'Mouse'], ['시료 종류', '조직']]]],
           Olink: [['분석 서비스 : Olink 분석', [['Olink 서비스 유형', 'Target 96'], ['관심 패널 · 연구 분야', 'Inflammation'], ['분석 목적', '바이오마커 탐색'], ['원하는 분석 결과', 'NPX, QC, 군 간 비교'], ['통계 · 해석', 'PCA, 유의성 검정']]], ['시료 정보', [['생물종', 'Human'], ['시료 종류', '혈장']]]],
           Genomics: [['분석 서비스 : 유전체 분석', [['분석 유형', '전체 유전체·특정 영역 분석'], ['전체 유전체·특정 영역 분석 · 분석 항목', 'Short-read WGS'], ['연구 목적', '변이 발굴'], ['원하는 분석 결과', 'SNV·Indel, CNV·SV'], ['참조정보', 'GRCh38'], ['핵산 추출 상태', '추출 DNA']]], ['시료 정보', [['생물종', 'Human'], ['시료 종류', '배양 세포']]]],
-          Proteomics: [['분석 서비스 : 단백체 분석', [['분석 유형', 'Targeted'], ['분석 목적', '단백질 동정'], ['원하는 분석 결과', '단백질 동정, 상대정량']]], ['Targeted', [['표적 단백질명 (Target protein)', '인슐린 유사체'], ['정량 방식', '상대정량'], ['분석법 준비 상태', '기존 분석법 적용']]], ['시료 정보', [['생물종', 'Human'], ['시료 종류', '정제 단백질']]], ['요구사항', [['분석 기술', 'PRM'], ['희망 장비', 'Orbitrap']]]]
+          Proteomics: [['분석 서비스 : 단백체 분석', [['분석 유형', '표적 단백체'], ['분석 목적', '단백질 동정'], ['원하는 분석 결과', '단백질 동정, 상대정량']]], ['표적 단백체', [['표적 단백질명 (Target protein)', '인슐린 유사체'], ['정량 방식', '상대정량'], ['분석법 준비 상태', '기존 분석법 적용']]], ['시료 정보', [['생물종', 'Human'], ['시료 종류', '정제 단백질']]], ['요구사항', [['분석 기술', 'PRM'], ['희망 장비', 'Orbitrap']]]]
         };
         CR = { id: x.id, title: x.title, svc: SVCK[x.svc] || x.svc, org: x.client, manager: '-', samples: String(x.samples), purpose: x.title,
           sections: (DEMO_SEC[x.svc] || []).map(function (g) { return { title: g[0], rows: g[1] }; }) };

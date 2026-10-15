@@ -42,7 +42,7 @@
   var DEMO_REQS = [
     { id: 'PRJ-2026-0043', demo: true, at: T0 - DAY * 1, svc: '단백체 분석', title: '혈장 시료 TMT 정량 단백체 분석', org: '한결연구소', manager: '홍길동', bizDoc: '사업자등록증_한결연구소.pdf', owner: 'client@omicspharm.test', samples: '20', due: '2026-12-18', from: '2026-10-05', to: '2026-10-19', budget: '1,000만원 이상', open: '공개',
       purpose: '대조군 10명, 환자군 10명 혈장에서 차등 발현 단백질을 찾고, 후보 바이오마커를 선별하고자 합니다.',
-      sections: [{ title: '분석 서비스 : 단백체 분석', rows: [['분석 유형', 'Untargeted'], ['분석 목적', '단백질 발현 비교, 바이오마커 후보'], ['원하는 분석 결과', '상대정량, 군 간 비교, 차등단백질, Pathway'], ['통계 · 해석', 'PCA, Volcano plot, Enrichment']] },
+      sections: [{ title: '분석 서비스 : 단백체 분석', rows: [['분석 유형', '비표적 단백체'], ['분석 목적', '단백질 발현 비교, 바이오마커 후보'], ['원하는 분석 결과', '상대정량, 군 간 비교, 차등단백질, Pathway'], ['통계 · 해석', 'PCA, Volcano plot, Enrichment']] },
         { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', '혈장'], ['총 시료 수', '20개'], ['보관상태', '초저온 (-80℃)']] },
         { title: '분석 그룹', rows: [['비교군 구성', '그룹 있음'], ['대조군', '대조군 · 10개'], ['실험군', '환자군 · 10개']] },
         { title: '요구사항', rows: [['희망완료일', '2026-12-18'], ['일정 협의 가능 여부', '가능'], ['예상금액', '1,000만원 이상'], ['시료 전처리 기술', 'TMT'], ['분석 기술', 'DDA'], ['희망 장비', 'Orbitrap']] },
@@ -64,7 +64,7 @@
     // 분석파트너 데모(partner@omicspharm.test)용: 임시저장 1건, 제출 완료 1건
     { id: 'PRJ-2026-0046', demo: true, at: T0 - DAY * 3, svc: '단백체 분석', title: '세포 배양액 분비 단백질 Label-free 정량 분석', org: '한결연구소', manager: '홍길동', bizDoc: '사업자등록증_한결연구소.pdf', owner: 'client@omicspharm.test', samples: '12', due: '2026-12-24', from: '2026-10-03', to: '2026-10-17', budget: '500만~1,000만원', open: '공개',
       purpose: '약물 처리 전후 세포 배양액에서 분비 단백질 변화를 확인하고자 합니다.',
-      sections: [{ title: '분석 서비스 : 단백체 분석', rows: [['분석 유형', 'Untargeted'], ['분석 목적', '단백질 발현 비교'], ['원하는 분석 결과', '상대정량, 군 간 비교, 차등단백질'], ['통계 · 해석', 'PCA, Volcano plot']] },
+      sections: [{ title: '분석 서비스 : 단백체 분석', rows: [['분석 유형', '비표적 단백체'], ['분석 목적', '단백질 발현 비교'], ['원하는 분석 결과', '상대정량, 군 간 비교, 차등단백질'], ['통계 · 해석', 'PCA, Volcano plot']] },
         { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', '세포 배양액'], ['총 시료 수', '12개'], ['보관상태', '초저온 (-80℃)']] },
         { title: '분석 그룹', rows: [['비교군 구성', '그룹 있음'], ['대조군', '처리 전 · 6개'], ['실험군', '처리 후 · 6개']] },
         { title: '요구사항', rows: [['희망완료일', '2026-12-24'], ['일정 협의 가능 여부', '가능'], ['예상금액', '500만~1,000만원'], ['시료 전처리 기술', 'Label-free'], ['분석 기술', 'DIA']] },
@@ -448,7 +448,7 @@
     // 3. 분석 서비스: 프로젝트 의뢰 때 입력한 '분석 상세' 단계 값(조건부 Targeted·PTM 등 포함) + 요청 기술만, 원본 의뢰서처럼 [구분 | 항목 | 입력값]
     var TITLE = { '단백체': '단백체 분석 (Proteomics)', '대사체': '대사체 분석 (Metabolomics)', '유전체': '유전체 분석 (Genomics)', '전사체': '전사체 분석 (Transcriptomics)', 'Olink': 'Olink 분석', '바이오의약품': '바이오의약품·ADC 분석' };
     var tk = Object.keys(TITLE).filter(function (t) { return String(r.svc).indexOf(t) > -1; })[0];
-    var SUB = ['Targeted', 'Untargeted', 'PTM', 'ADC 상세 정보'], TECH = /^(시료 전처리 기술|분석 기술|희망 장비|요청 기술)/;
+    var SUB = ['Targeted', 'Untargeted', '표적 단백체', 'PTM', 'ADC 상세 정보'], TECH = /^(시료 전처리 기술|분석 기술|희망 장비|요청 기술)/;
     var groups = (r.sections || []).filter(function (sec) { return sec.rows && (/^분석 서비스/.test(sec.title) || SUB.indexOf(sec.title) > -1); })
       .map(function (sec) { return [/^분석 서비스/.test(sec.title) ? String(r.svc).replace(/·ADC$/, '') : sec.title, sec.rows.filter(function (x) { return !TECH.test(x[0]); })]; });
     var tech = []; (r.sections || []).forEach(function (sec) { (sec.rows || []).forEach(function (x) { if (TECH.test(x[0])) tech.push(x); }); });

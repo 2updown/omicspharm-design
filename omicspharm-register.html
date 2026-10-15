@@ -545,8 +545,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261017n">
-<script src="assets/common/site.js?v=20261017n"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261017o">
+<script src="assets/common/site.js?v=20261017o"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -632,8 +632,8 @@
         <div class="tbl">
           <div class="field" data-req="choice"><div class="flabel">분석 유형<span class="req">*</span></div><div class="fbody">
             <div class="opts">
-              <label><input type="radio" name="aty" class="aty" data-t="untg">Untargeted</label>
-              <label><input type="radio" name="aty" class="aty" data-t="tgt">Targeted</label>
+              <label><input type="radio" name="aty" class="aty" data-t="untg">비표적 단백체</label>
+              <label><input type="radio" name="aty" class="aty" data-t="tgt">표적 단백체</label>
               <label><input type="radio" name="aty" class="aty" data-t="ptm">PTM</label>
             </div>
 </div></div>
@@ -641,14 +641,14 @@
             <div class="opts"><label><input type="checkbox" name="p1">단백질 발현 비교</label><label><input type="checkbox" name="p1">바이오마커 후보</label><label><input type="checkbox" name="p1">약물·처리 반응</label><label><input type="checkbox" name="p1">기능·경로 분석</label><label><input type="checkbox" name="p1">단백질 동정</label><label class="etc"><input type="checkbox" name="p1" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div>
           <div class="field" data-req="choice"><div class="flabel">원하는 분석 결과<span class="req">*</span></div><div class="fbody">
             <div class="opts"><label><input type="checkbox" name="p2">단백질 동정</label><label><input type="checkbox" name="p2">상대정량</label><label><input type="checkbox" name="p2">절대정량</label><label><input type="checkbox" name="p2">군 간 비교</label><label><input type="checkbox" name="p2">차등단백질</label><label><input type="checkbox" name="p2">Pathway</label><label><input type="checkbox" name="p2">Network</label><label class="etc"><input type="checkbox" name="p2" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div>
-          <!-- 통계·해석: Untargeted·PTM일 때만 (V5 기준) -->
+          <!-- 통계·해석: 비표적 단백체·PTM일 때만 (V5 기준) -->
           <div class="field cond" id="p-stat" data-req="choice"><div class="flabel">통계 · 해석<span class="req">*</span></div><div class="fbody">
             <div class="opts"><label><input type="checkbox" name="p3">PCA</label><label><input type="checkbox" name="p3">Clustering·Heatmap</label><label><input type="checkbox" name="p3">Volcano plot</label><label><input type="checkbox" name="p3">Enrichment</label><label><input type="checkbox" name="p3">PPI network</label><label class="etc"><input type="checkbox" name="p3" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div>
         </div>
       </div>
 
       <div class="sec cond" id="g-tgt">
-        <h2>Targeted</h2>
+        <h2>표적 단백체</h2>
         <div class="tbl">
           <div class="field" data-req="tags"><div class="flabel">표적 단백질명 (Target protein)<span class="req">*</span></div><div class="fbody">
             <input type="text" id="tgtIn" placeholder="예) IL-6">
@@ -943,7 +943,7 @@
     $$('.aty').forEach(function(i){on[i.dataset.t]=i.checked});
     $('#g-ptm').classList.toggle('on',!!on.ptm);
     $('#g-tgt').classList.toggle('on',!!on.tgt);
-    $('#p-stat').classList.toggle('on',!!(on.untg||on.ptm)); // 통계·해석은 Untargeted·PTM일 때만
+    $('#p-stat').classList.toggle('on',!!(on.untg||on.ptm)); // 통계·해석은 비표적 단백체·PTM일 때만
     $('#g-abs').classList.toggle('on',$('#absq').checked);
   }
   document.addEventListener('change',function(e){
