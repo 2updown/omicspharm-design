@@ -545,8 +545,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261017t">
-<script src="assets/common/site.js?v=20261017t"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261017u">
+<script src="assets/common/site.js?v=20261017u"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -837,6 +837,10 @@
           <div class="field"><div class="flabel">의뢰명</div><div class="fbody" id="rvName">-</div></div>
           <div class="field"><div class="flabel">분석 유형</div><div class="fbody" id="rvAty">-</div></div>
           <div class="field"><div class="flabel">시료</div><div class="fbody" id="rvSpc">-</div></div>
+          <div class="field"><div class="flabel">공개여부</div><div class="fbody" id="rvOpen">-</div></div>
+          <div class="field"><div class="flabel">희망완료일</div><div class="fbody" id="rvDue">-</div></div>
+          <div class="field"><div class="flabel">모집기한</div><div class="fbody" id="rvRecruit">-</div></div>
+          <div class="field"><div class="flabel">예상금액</div><div class="fbody" id="rvBud">-</div></div>
         </div>
         <p class="fhelp">제출하면 담당 매니저가 검토한 뒤 적합한 분석기관 후보를 안내해 드립니다.</p>
       </div>
@@ -1181,6 +1185,13 @@
     var sp=$$('#spcOpts input:checked').map(function(i){return i.parentNode.textContent.trim()});
     var n=$('#totalN').value;
     $('#rvSpc').textContent = (sp.join(', ')||'-') + (n?' · '+n+'개':'');
+    // 공개여부 · 희망완료일 · 모집기한 · 예상금액 (기타면 직접 입력값)
+    var lab=function(i){ return i ? i.closest('label').textContent.trim() : ''; }, dot=function(v){ return (v||'').replace(/-/g,'.'); };
+    $('#rvOpen').textContent = lab($('input[name="sec"]:checked'))||'-';
+    $('#rvDue').textContent = dot($('#dueDate').value)||'-';
+    $('#rvRecruit').textContent = $('#rFrom').value||$('#rTo').value ? dot($('#rFrom').value)+' ~ '+dot($('#rTo').value) : '-';
+    var bd=$('input[name="bud"]:checked'), be=bd&&bd.hasAttribute('data-etc') ? bd.closest('label').nextElementSibling : null;
+    $('#rvBud').textContent = bd ? (be&&be.value.trim() ? '기타('+be.value.trim()+')' : lab(bd)) : '-';
   }
   next.onclick=function(){
     TAGS.commit();
