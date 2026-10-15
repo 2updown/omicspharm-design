@@ -9,12 +9,12 @@
      회원가입 '추가 정보 입력'에서 고른 대표 서비스를 보고, 서비스를 더 등록·수정·삭제한다.
      서비스를 고르면 R&D 사례작성 v5 공급자 입력 항목(assets/common/svc-spec.js)이 펼쳐짐. 같은 서비스를 여러 번 등록 = 수행 조건 나누기
      데모: 저장은 이 브라우저 localStorage(op.accounts의 services)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261016y">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261016y">
-<script src="assets/common/site.js?v=20261016y"></script>
-<script src="assets/common/mypage.js?v=20261016y"></script>
-<script src="assets/common/flow.js?v=20261016y"></script>
-<script src="assets/common/svc-spec.js?v=20261016y"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261016z">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261016z">
+<script src="assets/common/site.js?v=20261016z"></script>
+<script src="assets/common/mypage.js?v=20261016z"></script>
+<script src="assets/common/flow.js?v=20261016z"></script>
+<script src="assets/common/svc-spec.js?v=20261016z"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .cnt { margin-left:6px; color:var(--teal-600); }
@@ -48,6 +48,7 @@
   .msg { font-size:12px; line-height:18px; color:var(--red-600); }
   /* 체크박스 · 라디오 (프로젝트 의뢰 폼 .opts와 동일, checkbox_item S20) */
   .opts { display:flex; flex-wrap:wrap; column-gap:12px; row-gap:12px; padding:6px 0; }
+  .opts .ogrp { flex-basis:100%; margin-top:8px; font-size:13px; font-weight:600; line-height:18px; color:var(--gray-500); } /* 선택지 큰 범주 (바이오의약품·ADC 분석 항목) */
   .opts label { display:inline-flex; align-items:center; gap:8px; font-size:14px; line-height:20px; cursor:pointer; }
   .opts input { appearance:none; -webkit-appearance:none; width:20px; height:20px; margin:0; flex:none; cursor:pointer; background:url(assets/auth/checkbox-off.svg) center/contain no-repeat; }
   .opts input:checked { background-image:url(assets/auth/checkbox-on.svg); }
@@ -133,9 +134,10 @@
     if (fd.type === 'text') return row(fd.label, fd.required, '<textarea class="inp ta" data-text="' + id + '" rows="2" placeholder="예) Orbitrap Exploris 480">' + esc(cur || '') + '</textarea>' + (fd.help ? '<p class="help">' + esc(fd.help) + '</p>' : ''), id);
     var multi = fd.type === 'multi', on = [].concat(cur || []), opts = fd.options.concat(fd.other ? ['기타'] : []);
     var many = multi && fd.options.length > 8;
-    var body = '<div class="opts">' + (many ? '<label><input type="checkbox" data-all="' + id + '"' + (fd.options.every(function (v) { return on.indexOf(v) > -1; }) ? ' checked' : '') + '>전체</label>' : '') + opts.map(function (v) {
-      return '<label><input type="' + (multi ? 'checkbox' : 'radio') + '" name="' + n + '-' + id + '" data-f="' + id + '" value="' + esc(v) + '"' + (on.indexOf(v) > -1 ? ' checked' : '') + '>' + esc(v) + '</label>';
-    }).join('') + '</div>' +
+    var one = function (v) { return '<label><input type="' + (multi ? 'checkbox' : 'radio') + '" name="' + n + '-' + id + '" data-f="' + id + '" value="' + esc(v) + '"' + (on.indexOf(v) > -1 ? ' checked' : '') + '>' + esc(v) + '</label>'; };
+    // groups가 있으면 큰 범주 제목 아래에 묶어서 (바이오의약품·ADC 분석 항목, 와이어프레임 v5 기준)
+    var list = fd.groups ? fd.groups.map(function (g) { return '<p class="ogrp">' + esc(g[0]) + '</p>' + g[1].map(one).join(''); }).join('') + (fd.other ? one('기타') : '') : opts.map(one).join('');
+    var body = '<div class="opts">' + (many ? '<label><input type="checkbox" data-all="' + id + '"' + (fd.options.every(function (v) { return on.indexOf(v) > -1; }) ? ' checked' : '') + '>전체</label>' : '') + list + '</div>' +
       (fd.other ? '<input class="inp etc" data-x="' + id + '" placeholder="기타 지원 내용을 구체적으로 적어주세요" value="' + esc((o.x || {})[id] || '') + '"' + (on.indexOf('기타') > -1 ? '' : ' hidden') + '>' : '') +
       (fd.help ? '<p class="help">' + esc(fd.help) + '</p>' : '');
     return row(esc(fd.label), fd.required, body, id);
