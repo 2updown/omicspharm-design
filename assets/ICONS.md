@@ -28,6 +28,7 @@
 | `detail/ic-caret-right-20.svg` | CaretRight | Phosphor (Figma에서 내보냄) |
 | `detail/ic-currency-krw.svg` | CurrencyKrw | Phosphor (Figma에서 내보냄) |
 | `detail/ic-heart.svg` | HeartStraight | Phosphor (Figma에서 내보냄) |
+| `detail/ic-heart-fill.svg` | HeartStraight (Fill) | Phosphor Fill (프로젝트 상세 관심 프로젝트 추가 상태) |
 | `detail/ic-info-circle.svg` | info-circle | Phosphor (Figma 레이어 이름만 다름) |
 | `find/ic-arrow-clockwise.svg` | ArrowClockwise | Phosphor (Figma에서 내보냄) |
 | `find/ic-arrow-right-white.svg` | arrow-right | Phosphor (Figma 레이어 이름만 다름) |
