@@ -545,8 +545,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261017p">
-<script src="assets/common/site.js?v=20261017p"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261017r">
+<script src="assets/common/site.js?v=20261017r"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -792,7 +792,7 @@
       <div class="sec">
         <h2>요구사항</h2>
         <div class="tbl">
-          <div class="field"><div class="flabel">희망국가</div><div class="fbody"><div class="opts"><label><input type="radio" name="cty">대한민국</label><label><input type="radio" name="cty">미국</label><label><input type="radio" name="cty">일본</label><label class="etc"><input type="radio" name="cty" data-etc>기타</label><input type="text" class="etcin" placeholder="직접 입력"></div></div></div>
+          <div class="field"><div class="flabel">희망국가</div><div class="fbody"><div class="inline"><select class="w-m" id="cty" aria-label="희망국가"><option>대한민국</option><option>미국</option><option>일본</option><option value="기타">기타 (직접 입력)</option></select><input type="text" class="w-m" id="ctyEtc" placeholder="국가명 직접 입력" aria-label="희망국가 직접 입력" hidden disabled></div></div></div><!-- 희망국가: 드롭다운(기본 대한민국, 나중에 국가가 늘어날 수 있음). 기타면 옆 칸에 직접 입력 -->
           <div class="field" data-req="text"><div class="flabel">희망완료일<span class="req">*</span></div><div class="fbody"><input type="date" class="w-m" id="dueDate" data-v></div></div>
           <div class="field" data-req="choice"><div class="flabel">일정 협의 가능 여부<span class="req">*</span></div><div class="fbody">
             <div class="opts"><label><input type="radio" name="nego">가능</label><label><input type="radio" name="nego">불가능</label></div>
@@ -1203,11 +1203,11 @@
       var c=l.cloneNode(true); $$('.d', c).forEach(function(d){ d.remove(); }); out.push(subTxt(c));
     });
     $$('input[type=text]:not(:disabled), input[type=number], input[type=date], textarea', f).forEach(function(i){
-      if(i.id==='tgtIn' || i.classList.contains('etcin') || i.style.display==='none' || !i.value.trim()) return; out.push(i.value.trim());  // 다른 단계는 숨겨져 있으니 offsetParent로 거르지 않음
+      if(i.id==='tgtIn' || i.id==='ctyEtc' || i.classList.contains('etcin') || i.style.display==='none' || !i.value.trim()) return; out.push(i.value.trim());  // 다른 단계는 숨겨져 있으니 offsetParent로 거르지 않음
     });
     var dates=$$('input[type=date]', f).map(function(i){ return i.value; }).filter(Boolean);
     if(dates.length===2) return dates.join(' ~ ');
-    $$('select', f).forEach(function(sel){ var num=sel.previousElementSibling; if(num && num.value) out[out.length-1]=num.value+' '+sel.value; else if(!num) out.push(sel.value); });
+    $$('select', f).forEach(function(sel){ if(sel.id==='cty'){ var ce=$('#ctyEtc').value.trim(); out.push(sel.value==='기타' ? (ce ? '기타('+ce+')' : '기타') : sel.value); return; } var num=sel.previousElementSibling; if(num && num.value) out[out.length-1]=num.value+' '+sel.value; else if(!num) out.push(sel.value); });
     var tags=$$('.tag', f).map(function(t){ return subTxt(t).replace(/×$/,'').trim(); }); if(tags.length) out.unshift(tags.join(', '));
     return out.filter(Boolean).join(' / ');
   }
@@ -1420,7 +1420,7 @@
     set:async function(v){ if(window.storage&&window.storage.set){try{await window.storage.set(KEY,JSON.stringify(v));return}catch(e){}} MEM[KEY]=v }
   };
   // 저장·복원은 순서(인덱스)로 맞추므로 '기타' 입력칸은 비활성 상태여도 포함 (빼면 체크 상태에 따라 순서가 어긋남)
-  function fields(){ return $$('.card input, .card select, .card textarea').filter(function(el){return el.type!=='file'&&!el.closest('#grpBody')&&(!el.disabled||el.classList.contains('etcin'))}) } // 파일 입력(사업자등록증)은 값 복원 대상 아님
+  function fields(){ return $$('.card input, .card select, .card textarea').filter(function(el){return el.type!=='file'&&!el.closest('#grpBody')&&(!el.disabled||el.classList.contains('etcin')||el.id==='ctyEtc')}) } // 파일 입력(사업자등록증)은 값 복원 대상 아님
   function collect(){
     var T=0,D=0; for(var n=1;n<=MAX;n++){var st=stepStat(n); T+=st.total; D+=st.done}
     return { id:curId, title:($('#reqName').value.trim()||(svcName()||'새')+' 의뢰서'), svc:svcName()||'서비스 미선택',
@@ -1431,7 +1431,7 @@
   function apply(d){
     var f=fields(), old=d.rev!==FORM_REV; if(old) setTimeout(function(){ toast('입력 양식이 바뀌어 이전에 입력한 선택값은 불러오지 않았습니다'); },300);
     (old?[]:(d.vals||[])).forEach(function(v,i){var el=f[i]; if(!el)return; if(el.type==='checkbox'||el.type==='radio') el.checked=!!v; else el.value=v});
-    TAGS.set(old?[]:d.tags); syncCond(); syncSvc(); syncShow(); syncEtc();
+    TAGS.set(old?[]:d.tags); syncCond(); syncSvc(); syncShow(); syncEtc(); syncCty(); if(!$('#cty').value) { $('#cty').value='대한민국'; syncCty(); } // 예전 임시저장(라디오 시절)은 기본값으로
     var gy=$('input[name="grpUse"][value="y"]'); $('#grpWrap').style.display=gy.checked?'block':'none'; GRP.set(old?[]:d.groups);
     drawSmp();
     curId=d.id; for(var i=1;i<=d.step;i++) visited[i]=true; cur=d.step||1; dirty=false; clearErr(); render();
@@ -1452,8 +1452,12 @@
   $('#openList').onclick=function(){ drawList(); modal.classList.add('on') };
   $('#closeList').onclick=function(){ modal.classList.remove('on') };
   modal.onclick=function(e){ if(e.target===modal) modal.classList.remove('on') };
+  // 희망국가: '기타'를 고르면 직접 입력 칸 표시
+  function syncCty(){ var on=$('#cty').value==='기타', e=$('#ctyEtc'); e.hidden=!on; e.disabled=!on; }
+  $('#cty').addEventListener('change', function(){ syncCty(); if(this.value==='기타') $('#ctyEtc').focus(); });
   function resetForm(){
     fields().forEach(function(el){ if(el.type==='checkbox'||el.type==='radio') el.checked=false; else if(el.type!=='date') el.value='' });
+    $('#cty').value='대한민국'; syncCty(); // 희망국가 기본값
     $('#grpWrap').style.display='none'; GRP.set([]); TAGS.set([]); syncCond(); syncSvc(); syncShow(); syncEtc();
     curId=null; visited={1:true}; cur=1; clearErr(); render(); modal.classList.remove('on');
     $('#savedLine').textContent='임시저장 전'; dirty=false; toast('새 의뢰서를 시작합니다');
