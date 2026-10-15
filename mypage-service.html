@@ -9,12 +9,12 @@
      회원가입 '추가 정보 입력'에서 고른 대표 서비스를 보고, 서비스를 더 등록·수정·삭제한다.
      서비스를 고르면 R&D 사례작성 v5 공급자 입력 항목(assets/common/svc-spec.js)이 펼쳐짐. 같은 서비스를 여러 번 등록 = 수행 조건 나누기
      데모: 저장은 이 브라우저 localStorage(op.accounts의 services)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261016z">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261016z">
-<script src="assets/common/site.js?v=20261016z"></script>
-<script src="assets/common/mypage.js?v=20261016z"></script>
-<script src="assets/common/flow.js?v=20261016z"></script>
-<script src="assets/common/svc-spec.js?v=20261016z"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261017a">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261017a">
+<script src="assets/common/site.js?v=20261017a"></script>
+<script src="assets/common/mypage.js?v=20261017a"></script>
+<script src="assets/common/flow.js?v=20261017a"></script>
+<script src="assets/common/svc-spec.js?v=20261017a"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .cnt { margin-left:6px; color:var(--teal-600); }
@@ -48,7 +48,7 @@
   .msg { font-size:12px; line-height:18px; color:var(--red-600); }
   /* 체크박스 · 라디오 (프로젝트 의뢰 폼 .opts와 동일, checkbox_item S20) */
   .opts { display:flex; flex-wrap:wrap; column-gap:12px; row-gap:12px; padding:6px 0; }
-  .opts .ogrp { flex-basis:100%; margin-top:8px; font-size:13px; font-weight:600; line-height:18px; color:var(--gray-500); } /* 선택지 큰 범주 (바이오의약품·ADC 분석 항목) */
+  .opts .ogrp { flex-basis:100%; margin:8px 0 -6px; font-size:13px; font-weight:600; line-height:18px; color:var(--gray-500); } /* 선택지 큰 범주 (바이오의약품·ADC 분석 항목) */
   .opts label { display:inline-flex; align-items:center; gap:8px; font-size:14px; line-height:20px; cursor:pointer; }
   .opts input { appearance:none; -webkit-appearance:none; width:20px; height:20px; margin:0; flex:none; cursor:pointer; background:url(assets/auth/checkbox-off.svg) center/contain no-repeat; }
   .opts input:checked { background-image:url(assets/auth/checkbox-on.svg); }
