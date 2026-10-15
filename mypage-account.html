@@ -8,11 +8,11 @@
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261017s">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261017s">
-<script src="assets/common/site.js?v=20261017s"></script>
-<script src="assets/common/mypage.js?v=20261017s"></script>
-<script src="assets/common/flow.js?v=20261017s"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261017t">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261017t">
+<script src="assets/common/site.js?v=20261017t"></script>
+<script src="assets/common/mypage.js?v=20261017t"></script>
+<script src="assets/common/flow.js?v=20261017t"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -142,7 +142,7 @@
           <div class="field"><label class="flabel" for="dept">부서·직책</label><div class="fbody"><input class="inp" id="dept" placeholder="부서 검색 또는 입력"></div></div>
           <div class="field"><label class="flabel" for="ph1">연락처<span class="req">*</span></label><div class="fbody"><div id="phoneHost" class="phwrap"></div></div></div>
           <div class="field" id="rowDoc" hidden><div class="flabel">사업자등록증</div><div class="fbody">
-            <div class="doc"><span class="fname" id="docName"></span><span class="op-vchip ok" id="docBadge" hidden>인증됨</span><label class="btn" for="docFile" id="docBtn">파일 선택</label><button type="button" class="btn del" id="docDel" hidden>삭제</button>
+            <div class="doc"><span class="fname" id="docName"></span><span class="op-vchip ok lg" id="docBadge" hidden>인증완료</span><label class="btn" for="docFile" id="docBtn">파일 선택</label><button type="button" class="btn del" id="docDel" hidden>삭제</button>
               <input type="file" id="docFile" accept=".pdf,.jpg,.jpeg,.png"></div>
             <p class="help" id="docHelp"></p>
             <p class="note" id="docNote" hidden style="font-size:12px;line-height:18px;color:var(--teal-700);font-weight:500">아래 저장하기를 눌러야 반영됩니다.</p></div></div>
