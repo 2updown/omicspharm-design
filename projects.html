@@ -8,11 +8,11 @@
 <!-- Figma: Find Projects1-list (993:12559) · Find Projects1-grid (996:13677)
      카드: Project-list (974:7938) · Project-card Type=card (147:1266)
      B안: Find Projects2-list (831:3469) · Find Projects2-grid (977:9070) — 오른쪽을 흰 박스 하나로 묶고 행을 구분선으로 나열. 기존 목록형(A안)은 ?list=a 로 비교. 그리드형은 구분선 격자가 기본, 박스 안 카드형은 ?grid=a 로 비교 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261017j">
-<script src="assets/common/site.js?v=20261017j"></script>
-<script src="assets/common/mypage.js?v=20261017j"></script>
-<script src="assets/common/flow.js?v=20261017j"></script>
-<script src="assets/common/projects-data.js?v=20261017j"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261017k">
+<script src="assets/common/site.js?v=20261017k"></script>
+<script src="assets/common/mypage.js?v=20261017k"></script>
+<script src="assets/common/flow.js?v=20261017k"></script>
+<script src="assets/common/projects-data.js?v=20261017k"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -195,8 +195,8 @@
   .qbtn.off img { width:14px; height:14px; opacity:.45; }
   .qbtn:focus-visible { outline:2px solid var(--teal-600); outline-offset:2px; }
   .cbtns { flex:none; display:inline-flex; gap:6px; }
-  .qbtn.ghost { background:#f3f2f2; color:var(--gray-700); border:1px solid var(--gray-400); }
-  .qbtn.ghost:hover { background:var(--gray-200); }
+  .qbtn.ghost { padding:0 12px; background:#fff; color:var(--gray-500); border:1px solid var(--gray-300); } /* button_outline tertiary S(36) (컨설턴트 견적서·Q&A) */
+  .qbtn.ghost:hover { background:var(--gray-50); color:var(--gray-600); }
   /* 제출 완료: button_filled tertiary */
   .qbtn.done { background:var(--gray-500); }
   .qbtn.done:hover { background:var(--gray-600); }
