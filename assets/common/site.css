@@ -258,8 +258,8 @@ div.op-phone.bad input, div.op-phone.bad select { border-color:var(--op-red-600)
 .op-gate .box > p { margin:12px 24px 0; font-size:14px; line-height:20px; color:var(--op-gray-600, #525252); word-break:keep-all; }
 .op-gate .bar { position:relative; height:6px; margin-top:47px; background:#f0f0f0; } /* 설명 → 툴팁 12 + 툴팁 28 + 꼬리 3 + 4 */
 .op-gate .bar .fill { position:absolute; left:0; top:0; bottom:0; background:var(--op-teal-600); }
-.op-gate .bar .gtip { position:absolute; left:50%; bottom:7px; transform:translateX(-50%); padding:4px 8px; border-radius:4px; background:#1b1b1b; color:#fff; font-size:14px; font-weight:500; line-height:20px; white-space:nowrap; } /* Figma tooltip 1424:14012 */
-.op-gate .bar .gtip::after { content:""; position:absolute; left:50%; top:100%; transform:translateX(-50%); border:3px solid transparent; border-bottom:0; border-top-color:#1b1b1b; }
+.op-gate .bar .gtip { position:absolute; left:50%; bottom:13px; transform:translateX(-50%); padding:4px 8px; border-radius:4px; background:#1b1b1b; color:#fff; font-size:14px; font-weight:500; line-height:20px; white-space:nowrap; } /* Figma tooltip 1424:14012 */
+.op-gate .bar .gtip::after { /* 툴팁 bottom 13 = 바 높이 6 + 꼬리 3 + 간격 4 */ content:""; position:absolute; left:50%; top:100%; transform:translateX(-50%); border:3px solid transparent; border-bottom:0; border-top-color:#1b1b1b; }
 .op-gate .bar .gtip b { font-weight:500; color:var(--op-teal-500); } /* 진행률 숫자만 teal (검정 배경 대비로 teal/500) */
 .op-gate .list { display:flex; flex-direction:column; gap:10px; padding:24px 28px 28px; background:#f6faf9; }
 .op-gate .gi { display:flex; align-items:center; justify-content:center; gap:8px; height:48px; padding:0 16px; border-radius:8px; border:1px solid var(--op-teal-600); background:#fff; color:var(--op-teal-600); font-size:16px; font-weight:500; line-height:22px; } /* button_outline (Figma 1586:13474) */
