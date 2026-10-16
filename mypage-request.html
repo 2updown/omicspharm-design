@@ -343,6 +343,21 @@
   .jbtns [data-jsave] { border-color:var(--teal-600); background:var(--teal-600); color:#fff; }
   @media (max-width:640px) { .qr.join { grid-template-columns:minmax(0,1fr); } .qr.join .qs { grid-column:1; } .qr .qs .cat { display:inline-block; margin:0 0 0 6px; } }
   @media (max-width:640px) { .qm-f .row > select, .qm-f .row.grow { flex-basis:100%; } .qr { grid-template-columns:20px minmax(0,1fr); } .qr .qs { grid-column:2; } .blk-h { flex-wrap:wrap; } .blk-h .aim { width:100%; justify-content:space-between; } }
+  /* 프로젝트 찾기 목록 카드(projects.html .lrow)와 같은 본문: 제목 아래 구분선 없음, 정보는 16px·'항목 :' 형식 */
+  .lc { padding:16px 24px; }
+  .lc .head { padding-bottom:0; border-bottom:0; }
+  .lc h3 { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .lc .meta { gap:4px 12px; font-size:16px; font-weight:500; line-height:22px; }
+  .lc .meta > span { gap:0; }
+  .lc .meta > span + span::before { align-self:stretch; height:auto; margin-right:12px; }
+  .lc .meta em { margin-right:4px; font-weight:400; color:inherit; }
+  .lc .meta em::after { content:" :"; }
+  @media (max-width:640px) {
+    .lc { padding:16px; gap:12px; }
+    .lc h3 { font-size:18px; line-height:26px; white-space:normal; word-break:keep-all; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+    .lc .meta { font-size:14px; line-height:20px; column-gap:10px; }
+    .lc .meta > span + span::before { margin-right:10px; }
+  }
 </style>
 </head>
 <body>

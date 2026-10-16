@@ -230,6 +230,21 @@
     .todo { flex-direction:column; align-items:stretch; }
     .pacts div .btn { flex:1; }
   }
+  /* 프로젝트 찾기 목록 카드(projects.html .lrow)와 같은 본문: 제목 아래 구분선 없음, 정보는 16px·'항목 :' 형식 */
+  .lcard { padding:16px 24px; }
+  .lcard .head { padding-bottom:0; border-bottom:0; }
+  .lcard h3 { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .lcard .meta { gap:4px 12px; font-size:16px; font-weight:500; line-height:22px; }
+  .lcard .meta > span { gap:0; }
+  .lcard .meta > span + span::before { align-self:stretch; height:auto; margin-right:12px; }
+  .lcard .meta em { margin-right:4px; font-weight:400; color:inherit; }
+  .lcard .meta em::after { content:" :"; }
+  @media (max-width:640px) {
+    .lcard { padding:16px; gap:12px; }
+    .lcard h3 { font-size:18px; line-height:26px; white-space:normal; word-break:keep-all; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+    .lcard .meta { font-size:14px; line-height:20px; column-gap:10px; }
+    .lcard .meta > span + span::before { margin-right:10px; }
+  }
 </style>
 </head>
 <body>
@@ -419,13 +434,13 @@
       var days = x.to ? Math.round((new Date(x.to) - new Date(new Date().toDateString())) / 864e5) : null;
       return '<a class="lcard" href="mypage-project.html?id=' + encodeURIComponent(x.id) + '"><div class="head">' +
         '<div class="row1"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stB(x.id) + newQ(x.id) + '</div>' +
-          (days === null ? '' : '<span class="dday">' + (days >= 0 ? '모집 종료 D-' + String(days).padStart(2, '0') : '모집 종료') + '</span>') + '</div>' +
+          (days === null || days < 0 ? '' : '<span class="dday">종료 D-' + String(days).padStart(2, '0') + '</span>') + '</div>' +
         '<h3>' + esc(x.title) + '</h3></div>' +
         '<div class="info"><div class="meta">' +
           '<span>' + esc((x.org || '-') + (x.manager ? '(' + x.manager + ')' : '')) + '</span>' +
           '<span><em>샘플</em>' + (x.samples ? esc(x.samples) + '개' : '-') + '</span>' +
           '<span><em>희망완료일</em>' + dot(x.due) + '</span>' +
-          '<span><em>모집 기한</em>' + (x.from || x.to ? dot(x.from) + ' ~ ' + dot(x.to) : '-') + '</span>' +
+          '<span><em>모집기한</em>' + (x.from || x.to ? dot(x.from) + ' ~ ' + dot(x.to) : '-') + '</span>' +
         '</div><p class="reg">등록일 ' + ymd(x.at) + '</p></div></a>';
     };
     $('.toprow').hidden = true; // 탭·문의하기는 프로젝트 상세에서만
