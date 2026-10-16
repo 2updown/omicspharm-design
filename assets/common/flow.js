@@ -6,7 +6,7 @@
    - 데모: 로그인 가능한 파트너는 partner@omicspharm.test 하나이고, 나머지 파트너는 요청을 받으면 바로 응답한다
    사용: mypage.js 다음에 불러오고 OP.flow.* 사용 */
 (function () {
-  var KEY = 'op.flow', VER = 6; // 3: 프로젝트 번호 통일 (PRJ-연도-일련번호), 4: 분석파트너 예시 0046·0047 추가, 5: 예시 견적 단위 EA, 6: 분석 진행·결과 수령 예시(0040·0041) + 2차 견적 예시
+  var KEY = 'op.flow', VER = 7; // 3: 프로젝트 번호 통일 (PRJ-연도-일련번호), 4: 분석파트너 예시 0046·0047 추가, 5: 예시 견적 단위 EA, 6: 분석 진행·결과 수령 예시 + 2차 견적 예시, 7: 그 예시 번호를 0036·0035로 (분석파트너 예시 0040·0041과 겹침)
   function read(k, f) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch (e) { return f; } }
   function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); };
@@ -77,12 +77,12 @@
         { title: '분석 그룹', rows: [['비교군 구성', '그룹 있음'], ['대조군', '중재 전 · 15개'], ['실험군', '중재 후 · 15개']] },
         { title: '희망 산출물', rows: [['희망 산출물', '결과표, 국문 보고서'], ['산출물 용도', '논문 학술용']] }] },
     // 클라이언트 데모: 분석 진행(계약 완료) 1건, 결과 수령(결과보고서 2차까지) 1건
-    { id: 'PRJ-2026-0041', demo: true, at: T0 - DAY * 30, svc: '단백체 분석', title: '간암 조직 인산화 단백체 분석', org: '한결연구소', manager: '홍길동', bizDoc: '사업자등록증_한결연구소.pdf', owner: 'client@omicspharm.test', samples: '12', due: '2026-12-04', from: '2026-09-01', to: '2026-09-15', budget: '1,000만원 이상', open: '공개',
+    { id: 'PRJ-2026-0036', demo: true, at: T0 - DAY * 30, svc: '단백체 분석', title: '간암 조직 인산화 단백체 분석', org: '한결연구소', manager: '홍길동', bizDoc: '사업자등록증_한결연구소.pdf', owner: 'client@omicspharm.test', samples: '12', due: '2026-12-04', from: '2026-09-01', to: '2026-09-15', budget: '1,000만원 이상', open: '공개',
       purpose: '간암 조직과 정상 조직의 인산화 신호 차이를 확인하고자 합니다.',
       sections: [{ title: '분석 서비스 : 단백체 분석', rows: [['분석 유형', '번역 후 변형(PTM)'], ['PTM 종류', '인산화'], ['원하는 분석 결과', '상대정량, 차등 인산화 사이트, Kinase 분석']] },
         { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', '조직'], ['총 시료 수', '12개'], ['보관상태', '초저온 (-80℃)']] },
         { title: '희망 산출물', rows: [['희망 산출물', 'Raw data, 결과표, 국문 보고서'], ['산출물 용도', '논문 학술용']] }] },
-    { id: 'PRJ-2026-0040', demo: true, at: T0 - DAY * 60, svc: '대사체 분석', title: '장내 미생물 대사산물 단쇄지방산 정량', org: '한결연구소', manager: '홍길동', bizDoc: '사업자등록증_한결연구소.pdf', owner: 'client@omicspharm.test', samples: '18', due: '2026-10-10', from: '2026-08-01', to: '2026-08-14', budget: '500만~1,000만원', open: '공개',
+    { id: 'PRJ-2026-0035', demo: true, at: T0 - DAY * 60, svc: '대사체 분석', title: '장내 미생물 대사산물 단쇄지방산 정량', org: '한결연구소', manager: '홍길동', bizDoc: '사업자등록증_한결연구소.pdf', owner: 'client@omicspharm.test', samples: '18', due: '2026-10-10', from: '2026-08-01', to: '2026-08-14', budget: '500만~1,000만원', open: '공개',
       purpose: '프로바이오틱스 투여 전후 분변 시료의 단쇄지방산 농도 변화를 정량하고자 합니다.',
       sections: [{ title: '분석 서비스 : 대사체 분석', rows: [['분석 유형', '표적 대사체'], ['플랫폼', 'GC-MS'], ['표적 패널', '단쇄지방산(SCFA)'], ['정량 방식', '절대정량']] },
         { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', '분변'], ['총 시료 수', '18개'], ['보관상태', '초저온 (-80℃)']] },
@@ -141,9 +141,9 @@
     seed6(S);
     return { v: VER, S: S };
   }
-  // 6: 분석 진행(0041)·결과 수령(0040) 예시 + 0045의 B사 견적을 2차로(1차는 hist)
+  // 6·7: 분석 진행(0036)·결과 수령(0035) 예시 + 0045의 B사 견적을 2차로(1차는 hist)
   function seed6(S) {
-    var a = req2('PRJ-2026-0041'), b = req2('PRJ-2026-0040');
+    var a = req2('PRJ-2026-0036'), b = req2('PRJ-2026-0035');
     if (!S[a.id]) {
       S[a.id] = { st: 'matched', ok: T0 - DAY * 29, reqAt: T0 - DAY * 28, due: '2026-09-15', memo: '', P: {}, sentAt: T0 - DAY * 20, pick: 'p-mlt', pickAt: T0 - DAY * 17,
         ct: { at: T0 - DAY * 12, due: '2026-12-04', client: { type: 'form' }, partner: { type: 'form' } } };
@@ -171,7 +171,8 @@
       Object.keys(d.S).forEach(function (id) { var P = d.S[id].P || {}; Object.keys(P).forEach(function (k) { var q = P[k].quote; (q && q.groups || []).forEach(function (g) { g.lines.forEach(function (l) { if (l.u === 'sample' || l.u === '식' || l.u === 1) l.u = 'EA'; }); }); }); });
       d.v = 5; write(KEY, d);
     }
-    if (d && d.v === 5) { seed6(d.S); d.v = VER; write(KEY, d); }
+    if (d && d.v === 5) { seed6(d.S); d.v = 6; write(KEY, d); }
+    if (d && d.v === 6) { ['PRJ-2026-0040', 'PRJ-2026-0041'].forEach(function (k) { var x = d.S[k]; if (x && (x.pick === 'p-met' || x.pick === 'p-mlt')) delete d.S[k]; }); seed6(d.S); d.v = VER; write(KEY, d); }
     if (!d || d.v !== VER) { d = seed(); write(KEY, d); }
     d.X = d.X || []; return d;
   }
