@@ -221,8 +221,11 @@
 
   /* 오류 */
   /* 필수값 미입력: 왼쪽 항목명·배경은 그대로 두고 입력란 아래 빨간 안내만 */
-  .emsg{display:none;font-size:12px;line-height:18px;color:var(--red);margin-top:7px} /* text field 헬프텍스트 오류색 (Red/600) */
+  /* text-field error (Figma 281:23535): 입력칸 테두리 Red/600 1.5px, 헬프텍스트 12/18 Red/600, 입력칸과 8px */
+  .emsg{display:none;font-size:12px;line-height:18px;color:var(--red);margin-top:8px}
+  .fbody>.emsg{margin-top:0} /* .fbody가 gap 8px */
   .field.invalid .emsg{display:block}
+  .field.invalid .inv,.field.invalid .inv:focus{border-color:var(--red);box-shadow:inset 0 0 0 .5px var(--red)}
 
   /* 하단 버튼 */
   .bar{display:flex;align-items:center;gap:8px;margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
@@ -545,8 +548,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261018c">
-<script src="assets/common/site.js?v=20261018c"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261018d">
+<script src="assets/common/site.js?v=20261018d"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -1111,12 +1114,14 @@
       .map(function(f){return {step:n,label:labelOf(f),el:f}});
   }
   function allMiss(){var m=[];for(var i=1;i<=MAX;i++)m=m.concat(stepMiss(i));return m}
-  function clearInv(el){var f=el.closest&&el.closest('.field'); if(f) f.classList.remove('invalid')}
-  function clearErr(){ $$('.field.invalid').forEach(function(f){f.classList.remove('invalid')}); tabs.forEach(function(t){t.classList.remove('err')}) }
+  function clearInv(el){var f=el.closest&&el.closest('.field'); if(f){ f.classList.remove('invalid'); $$('.inv',f).forEach(function(i){i.classList.remove('inv')}); }}
+  function clearErr(){ $$('.field.invalid').forEach(function(f){f.classList.remove('invalid')}); $$('.inv').forEach(function(i){i.classList.remove('inv')}); tabs.forEach(function(t){t.classList.remove('err')}) }
   function showErr(miss,one){
     clearErr();
     // 상단 오류 요약 박스 없음: 빈 필드 아래 빨간 헬프텍스트 + 단계 탭 표시, 첫 번째 빈 필드로 스크롤
     miss.forEach(function(m){ m.el.classList.add('invalid');
+      // 비어 있는 입력칸만 빨간 테두리 (보이는 칸만)
+      $$('input[type=text]:not(:disabled),input[type=number],input[type=date],textarea,select',m.el).forEach(function(i){ if(i.offsetParent && !String(i.value).trim()) i.classList.add('inv'); });
       var body=$('.fbody',m.el)||m.el;
       if(!$('.emsg',m.el)){var p=document.createElement('p');p.className='emsg';
         p.textContent = m.el.id==='phoneField' ? '휴대폰 인증을 완료해 주세요.' : (baseFilled(m.el) && etcEmpty(m.el)) ? '기타 내용을 입력해 주세요.' : '필수 입력 항목입니다.';
