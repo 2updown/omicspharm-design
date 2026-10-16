@@ -44,7 +44,6 @@
   .ask { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
   .ask a { display:inline-flex; align-items:center; height:40px; padding:0 16px; border-radius:999px; background:var(--teal-600); color:#fff; font-size:14px; font-weight:500; line-height:20px; }
   .ask a:hover { background:var(--teal-700); }
-  .ask small { font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
 
   .phead { display:flex; flex-direction:column; gap:12px; }
   .prow { display:flex; align-items:center; justify-content:space-between; gap:16px; }
@@ -255,7 +254,6 @@
         </div>
         <div class="ask">
           <a href="contact.html?type=project" id="askLink">문의하기 (0 / 0)</a>
-          <small>견적, 계약, 분석, 결과, 기타 관련 문의는 클릭해 주세요.</small>
         </div>
       </div>
 
@@ -377,7 +375,7 @@
             '<span class="dday">' + (x.stage === '완료' ? '완료' : dday(x.due)) + '</span></div>' +
           '<h3>' + esc(x.title) + '</h3></div>' +
           '<div class="info"><div class="meta"><span>' + esc(x.client) + '</span><span><em>샘플</em>' + x.samples + '개</span><span><em>계약금액</em>' + esc(x.amount) + '</span><span><em>납기일</em>' + dotd(x.due) + '</span></div>' +
-          '<p class="reg">계약일 ' + dotd(x.contract) + ' · 프로젝트 번호 ' + esc(x.id) + '</p></div></a>';
+          '<p class="reg">계약일 ' + dotd(x.contract) + '</p></div></a>';
       }).join('') || '<div class="empty"><b>' + (st.q || st.unread ? '조건에 맞는 프로젝트가 없습니다' : '진행 중인 프로젝트가 없습니다') + '</b><p>OmicsPharm의 매칭을 거쳐 계약된 프로젝트가 여기에 표시됩니다.</p></div>';
     }
     $('#pq').addEventListener('submit', function (e) { e.preventDefault(); st.q = $('#pqIn').value; draw(); });
@@ -428,7 +426,7 @@
           '<span><em>샘플</em>' + (x.samples ? esc(x.samples) + '개' : '-') + '</span>' +
           '<span><em>희망완료일</em>' + dot(x.due) + '</span>' +
           '<span><em>모집 기한</em>' + (x.from || x.to ? dot(x.from) + ' ~ ' + dot(x.to) : '-') + '</span>' +
-        '</div><p class="reg">등록일 ' + ymd(x.at) + ' · 프로젝트 번호 ' + esc(x.id) + '</p></div></a>';
+        '</div><p class="reg">등록일 ' + ymd(x.at) + '</p></div></a>';
     };
     $('.toprow').hidden = true; // 탭·문의하기는 프로젝트 상세에서만
     // 단계 필터 (대시보드 진행 현황에서 ?stage=단계 로 들어오면 그 단계만)

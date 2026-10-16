@@ -454,7 +454,7 @@
             (o.next ? '<span class="nx' + (o.urgent ? ' hot' : '') + '">' + o.next + '</span>' : '') + '</div>' +
           '<h3>' + esc(o.title) + '</h3></div>' +
           '<div class="info"><div class="meta"><span><em>클라이언트</em>' + esc(o.who) + '</span>' + (o.partner ? '<span><em>분석파트너</em>' + esc(o.partner) + '</span>' : '') + '<span><em>샘플</em>' + (o.samples ? esc(o.samples) + '개' : '-') + '</span><span><em>희망완료일</em>' + dot(o.due) + '</span>' + (o.period !== '-' ? '<span><em>모집기한</em>' + o.period + '</span>' : '') + '</div>' +
-          '<div class="foot"><p class="reg">등록일 ' + F.ymd(o.at) + ' · ' + esc(o.id) + '</p><span class="cbtns"><span class="qb">견적서 (' + o.quotes + ')</span><span class="qb">Q&amp;A (0 / 0)</span></span></div></div></a>';
+          '<div class="foot"><p class="reg">등록일 ' + F.ymd(o.at) + '</p><span class="cbtns"><span class="qb">견적서 (' + o.quotes + ')</span><span class="qb">Q&amp;A (0 / 0)</span></span></div></div></a>';
       }).join('') || '<div class="empty"><b>조건에 맞는 프로젝트가 없습니다</b><p>필터를 바꾸거나 초기화해보세요.</p></div>';
     }
     var closePops = function (except) { [].forEach.call(card.querySelectorAll('.b-pop'), function (p) { if (p !== except) p.hidden = true; }); };
