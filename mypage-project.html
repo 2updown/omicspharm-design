@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261018u">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261018u">
-<script src="assets/common/site.js?v=20261018u"></script>
-<script src="assets/common/mypage.js?v=20261018u"></script>
-<script src="assets/common/flow.js?v=20261018u"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261018v">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261018v">
+<script src="assets/common/site.js?v=20261018v"></script>
+<script src="assets/common/mypage.js?v=20261018v"></script>
+<script src="assets/common/flow.js?v=20261018v"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -275,6 +275,7 @@
   .b-tabs button:hover { color:#000; }
   .b-tabs button.on { border-color:var(--teal-600); color:var(--teal-700); font-weight:700; } .b-tabs button.on b { background:var(--teal-600); color:#fff; }
   @media (max-width:640px) { .b-tabw { margin:0 -16px; } .b-tabs { padding:0 16px; } .b-arr { width:28px; height:28px; margin-top:-14px; } .b-arr.l { left:6px; } .b-arr.r { right:6px; } }
+  @media (max-width:960px) { .prow:has(.pright) { flex-direction:column; align-items:flex-start; } .prow:has(.pright) .ptitle { flex:none; width:100%; } } /* 세로 배치일 때 제목 너비 기준(360px)이 높이로 잡히지 않게 */
 </style>
 </head>
 <body>
@@ -392,7 +393,7 @@
           '<div class="prow"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stBadge(x) + (x.qa ? '<span class="badge qa">Q&amp;A ' + x.qa + '</span>' : '') + '</div>' +
             '<span class="reg">계약일 ' + dotd(x.contract) + ' · 프로젝트 번호 ' + esc(x.id) + '</span></div>' +
           '<div class="prow"><h2 class="ptitle"><a class="back" href="' + (OP.session().role === 'admin' ? 'mypage-request.html' : 'mypage-project.html') + '" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(x.title) + '</h2>' +
-            '<div class="pright"><div class="period"><b>납기일</b><span>' + dotd(x.due) + '</span>' + (x.stage === '완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div>' + OP.askBtn(OP.askHref(x.title, x.svc)) + '</div></div>' +
+            '<div class="pright"><div class="period"><b>납기일</b><span>' + dotd(x.due) + '</span>' + (x.stage === '완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div>' + OP.askBtn({ key: x.id, cat: OP.my.svcKo(x.svc), no: x.id, title: x.title }) + '</div></div>' +
         '</div>' +
         '<ol class="stages" aria-label="진행 단계" style="grid-template-columns:repeat(' + STAGES.length + ', minmax(0,1fr))">' + STAGES.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
         '<div class="todo"><div><b>' + TODO[0] + '</b><p>' + TODO[1] + '</p></div>' + (TODO[2] ? (TODO[2] === '계약서 확인' && CS ? '<button type="button" class="btn primary" data-ct="partner">계약서 확인</button>' : '<a class="btn primary" href="#" data-soon="' + TODO[2] + '">' + TODO[2] + '</a>') : '') + '</div>' +
@@ -537,7 +538,6 @@
       '<a href="omicspharm-register.html" data-client-only>프로젝트 의뢰하기</a></div>';
     return;
   }
-  var ASK = OP.askHref(d.title || d.id, d.svc);
   var FS = F.state(d.id), sk = F.CLIENT_STEPS.indexOf(F.clientStage(d.id)), FK = fwdKeys(FS), REP = FS.rep || [];
   if (FS.fin) sk = F.CLIENT_STEPS.length; // 최종 확인 = 모든 단계 완료
   var DUE = (FS.ct && FS.ct.due) || d.due || '';
@@ -586,7 +586,7 @@
           '<div class="qc-acts"><button type="button" class="btn" data-doc="' + k + '">견적서 보기</button>' + (done ? '' : '<button type="button" class="btn primary" data-pick="' + k + '">이 견적 선택</button>') + '</div>' +
         '</article>';
       }).join('') + '</div>' +
-      (done ? '' : '<p class="qnote">견적 내용에 궁금한 점이 있으면 <a href="' + ASK + '">문의하기</a>로 OmicsPharm 컨설턴트에게 물어보세요.</p>');
+      (done ? '' : '<p class="qnote">견적 내용에 궁금한 점이 있으면 <a href="#" data-chat>문의하기</a>로 OmicsPharm 컨설턴트에게 물어보세요.</p>');
     box.onclick = function (e) {
       var b = e.target.closest('[data-doc]'), c = e.target.closest('[data-pick]');
       if (b) {
@@ -623,12 +623,11 @@
   function reportHTML() {
     if (!REP.length) return '<div class="empty"><b>등록된 결과보고서가 없습니다</b><p>' + (FS.ct ? '분석이 끝나면 OmicsPharm 컨설턴트가 결과보고서를 검토해 등록합니다. 납기일 ' + dot(DUE) + ' (' + dd(DUE) + ')' : '계약 후 분석이 끝나면 결과보고서가 여기에 등록됩니다.') + '</p></div>';
     var last = REP[REP.length - 1], n = REP.length;
-    var ask = ASK;
     return '<div class="qhead"><h3>결과보고서</h3><span>의뢰서 작성 시 선택하신 산출물이 등록됩니다. 이전 차수는 아래에서 열어볼 수 있습니다.</span></div>' +
       '<section class="rver cur"><div class="rv-head"><b>' + n + '차 결과보고서</b><span class="badge ' + (FS.fin ? 'done">최종 확인 완료' : 'wait">검수 대기') + '</span><em>' + ymd(last.at) + ' 등록</em></div>' +
         (last.note ? '<p class="rv-note"><b>OmicsPharm 컨설턴트</b>' + esc(F.mask(FS, last.note)) + '</p>' : '') + filesHTML(last) +
         (FS.fin ? '<p class="rv-fin">' + ymd(FS.fin) + ' 최종 확인했습니다. 이후 수정이 필요하면 문의하기로 요청해주세요.</p>'
-          : '<div class="rv-acts"><a class="btn" href="' + ask + '">수정 요청</a><button type="button" class="btn primary" id="repFin">최종 확인</button></div>') +
+          : '<div class="rv-acts"><button type="button" class="btn" data-chat>수정 요청</button><button type="button" class="btn primary" id="repFin">최종 확인</button></div>') +
       '</section>' +
       (n > 1 ? '<div class="rold">' + REP.slice(0, -1).map(function (v, i) { return { v: v, i: i }; }).reverse().map(function (o) {
         return '<details class="rver"><summary><b>' + (o.i + 1) + '차 결과보고서</b><em>' + ymd(o.v.at) + ' 등록</em><img src="assets/find/ic-chevron-down.svg" alt=""></summary>' + (o.v.note ? '<p class="rv-note">' + esc(F.mask(FS, o.v.note)) + '</p>' : '') + filesHTML(o.v) + '</details>';
@@ -649,7 +648,7 @@
       '<div class="prow"><div class="badges"><span class="badge tag">' + esc(d.svc) + '</span>' + stB(d.id) + '</div>' +
         '<span class="reg">등록일 ' + ymd(d.at) + (d.updatedAt ? ' · 수정일 ' + ymd(d.updatedAt) : '') + ' · 프로젝트 번호 ' + esc(d.id) + '</span></div>' +
       '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-project.html" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(d.title) + '</h2>' +
-        '<div class="pright">' + ((d.from || d.to) && sk === 0 ? '<div class="period"><b>모집기한</b><span>' + dot(d.from) + ' ~ ' + dot(d.to) + '</span><em>' + (closed ? '모집마감' : '모집중') + '</em></div>' : '') + OP.askBtn(ASK) + '</div></div>' +
+        '<div class="pright">' + ((d.from || d.to) && sk === 0 ? '<div class="period"><b>모집기한</b><span>' + dot(d.from) + ' ~ ' + dot(d.to) + '</span><em>' + (closed ? '모집마감' : '모집중') + '</em></div>' : '') + OP.askBtn({ key: d.id, cat: d.svc, no: d.id, title: d.title }) + '</div></div>' +
     '</div>' +
     '<ol class="fsteps" style="--n:5" aria-label="진행 단계">' + F.CLIENT_STEPS.map(function (t, i) { return '<li class="' + (i < sk ? 'done' : i === sk ? 'cur' : '') + '"' + (i === sk ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
     todoHTML() +

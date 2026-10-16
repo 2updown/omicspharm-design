@@ -171,9 +171,9 @@
   };
   D.removeProject = function (id) { if (OP.flow) OP.flow.remove(id); write('op.submitted', D.projects().filter(function (p) { return p.id !== id; })); };
 
-  // 프로젝트 상세 [문의하기]: 세 계정 모두 제목 줄 오른쪽. Q&A 게시판 대신 챗봇으로 받을 예정 — 챗봇 화면 전까지는 문의하기 페이지에 프로젝트명을 채워 연다
-  OP.askHref = function (title, svc) { return 'contact.html?type=project&ref=' + encodeURIComponent(title || '') + (svc ? '&svc=' + encodeURIComponent(svc) : ''); };
-  OP.askBtn = function (href) { return '<a class="btn op-ask" href="' + href + '"><img src="assets/project/ic-chat-circle-dots.svg" alt="">문의하기</a>'; };
+  // 프로젝트 상세 [문의하기]: 세 계정 모두 제목 줄 오른쪽. 누르면 상담 챗봇이 이 프로젝트 문의로 열림 (site.js OP.chatOpen)
+  // ctx = { key: 프로젝트 번호, cat: 분석 서비스, no: 프로젝트 번호, title } — 오른쪽 아래 챗봇 버튼도 같은 프로젝트로 열리게 OP.chatCtx에 둠
+  OP.askBtn = function (ctx) { OP.chatCtx = ctx; return '<button type="button" class="btn op-ask" data-chat><img src="assets/project/ic-chat-circle-dots.svg" alt="">문의하기</button>'; };
   OP.my = D;
   OP.mypage = function (key) {
     var s = OP.session();

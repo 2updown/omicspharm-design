@@ -397,7 +397,7 @@
   var FLOAT =
     '<div class="op-float">' +
       '<button type="button" class="op-top" aria-label="맨 위로"><img src="' + A + 'ic-arrow-up.svg" alt=""></button>' +
-      '<a class="op-chat" href="#" data-soon="상담 챗봇" aria-label="상담 챗봇"><img src="' + A + 'fab.svg" alt=""></a>' +
+      '<a class="op-chat" href="#" aria-label="상담 챗봇"><img src="' + A + 'fab.svg" alt=""></a>' +
     '</div>';
 
   function render() {
@@ -468,6 +468,9 @@
       OP.toast('실제 서비스에서는 주소 검색 API로 주소를 선택합니다. 데모에서는 예시 주소를 넣었습니다.', { title: '주소 검색', type: 'info' });
       return;
     }
+    // 상담 챗봇: 오른쪽 아래 버튼 / [문의하기](data-chat). 프로젝트 상세면 그 프로젝트(OP.chatCtx) 문의로 열림
+    var ch = e.target.closest('.op-chat, [data-chat]');
+    if (ch) { e.preventDefault(); if (ch.classList.contains('op-chat') && OP.chat && OP.chat.isOpen()) OP.chat.close(); else OP.chatOpen(OP.chatCtx); return; }
     var soon = e.target.closest('[data-soon]');
     if (soon) { e.preventDefault(); OP.toast("'" + soon.getAttribute('data-soon') + "' 화면은 준비 중입니다."); return; }
     // 프로젝트 등록(의뢰)은 클라이언트만: 비로그인 → 로그인 화면, 파트너·관리자 → 안내
@@ -575,6 +578,13 @@
     var load = function (f, cb) { var sc = document.createElement('script'); sc.src = SITE_SRC.replace('site.js', f); sc.onload = cb; document.head.appendChild(sc); };
     var flow = function () { if (OP.flow) OP.syncBell(); else load('flow.js', OP.syncBell); };
     if (OP.my) flow(); else load('mypage.js', flow);
+  };
+  // 챗봇 창(chat.js·chat.css)은 처음 열 때 불러옴
+  OP.chatOpen = function (ctx) {
+    if (OP.chat) return OP.chat.open(ctx);
+    if (OP._chatLoading) return; OP._chatLoading = true;
+    var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = SITE_SRC.replace('site.js', 'chat.css'); document.head.appendChild(l);
+    var sc = document.createElement('script'); sc.src = SITE_SRC.replace('site.js', 'chat.js'); sc.onload = function () { OP._chatLoading = false; OP.chat.open(ctx); }; document.head.appendChild(sc);
   };
   function init() { render(); syncGnb(); showFlash(); if (OP.session()) OP.syncBell(); }
   function initAll() { init(); watchFooter(); }

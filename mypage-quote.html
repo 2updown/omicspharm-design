@@ -9,12 +9,12 @@
      ?rid=프로젝트 번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261018u">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261018u">
-<script src="assets/common/site.js?v=20261018u"></script>
-<script src="assets/common/mypage.js?v=20261018u"></script>
-<script src="assets/common/flow.js?v=20261018u"></script>
-<script src="assets/common/projects-data.js?v=20261018u"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261018v">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261018v">
+<script src="assets/common/site.js?v=20261018v"></script>
+<script src="assets/common/mypage.js?v=20261018v"></script>
+<script src="assets/common/flow.js?v=20261018v"></script>
+<script src="assets/common/projects-data.js?v=20261018v"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -29,6 +29,8 @@
   /* 의뢰 요약 */
   .phead { display:flex; flex-direction:column; gap:12px; }
   .prow { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .pright { display:flex; align-items:center; gap:8px; flex:none; flex-wrap:wrap; }
+  .prow:has(.pright) { flex-wrap:wrap; row-gap:12px; } .prow:has(.pright) .ptitle { flex:1 1 360px; min-width:0; }
   .badges { display:flex; gap:6px; }
   .reg { font-size:12px; line-height:18px; color:var(--gray-500); }
   .ptitle { display:flex; align-items:center; gap:8px; font-size:22px; font-weight:600; line-height:30px; letter-spacing:-.22px; word-break:keep-all; }
@@ -136,6 +138,7 @@
     .acts .btn { min-width:0; } .acts .right .btn { flex:1; }
     .qrow { flex-wrap:wrap; gap:4px 12px; } .qrow .t { flex-basis:100%; } .qrow .x { width:auto; margin-left:auto; }
   }
+  @media (max-width:960px) { .prow:has(.pright) { flex-direction:column; align-items:flex-start; } .prow:has(.pright) .ptitle { flex:none; width:100%; } } /* 세로 배치일 때 제목 너비 기준(360px)이 높이로 잡히지 않게 */
 </style>
 </head>
 <body>
@@ -256,7 +259,7 @@
   head.innerHTML = '<div class="phead">' +
       '<div class="prow"><div class="badges"><span class="badge tag">' + esc(R.svc) + '</span>' + (rid ? '<span class="badge ' + BADGE[F.pst(S, ME)] + '">' + F.pst(S, ME) + '</span>' : '') + (R.open === '비공개' ? '<span class="badge done">비공개</span>' : '') + '</div><span class="reg">' + (rid ? (X.self ? '견적 신청일 : ' : '견적 요청일 : ') + F.ymd(X.at) : '등록일 : ' + dot(x.reg)) + '</span></div>' +
       '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-quote.html" aria-label="견적 목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(R.title) + '</h2>' +
-        (rid ? '<span class="period"><b>견적 마감</b>' + dot(S.due) + (locked ? '' : '<em>' + dleft(S.due) + '</em>') + '</span>' : '<span class="period"><b>모집기한</b>' + dot(x.from) + ' ~ ' + dot(x.to) + '<em>' + (x.open ? '모집중' : '모집마감') + '</em></span>') + '</div></div>' +
+        '<div class="pright">' + (rid ? '<span class="period"><b>견적 마감</b>' + dot(S.due) + (locked ? '' : '<em>' + dleft(S.due) + '</em>') + '</span>' : '<span class="period"><b>모집기한</b>' + dot(x.from) + ' ~ ' + dot(x.to) + '<em>' + (x.open ? '모집중' : '모집마감') + '</em></span>') + OP.askBtn({ key: rid || 'P' + x.id, cat: R.svc, no: rid || '', title: R.title }) + '</div></div></div>' +
       banner;
   card.innerHTML =
     '<nav class="qtabs" role="tablist"><button type="button" role="tab" data-go="req">의뢰내용</button><button type="button" role="tab" data-go="quote">' + (locked ? '제출한 견적서' : '견적서 작성') + '</button></nav>' +
