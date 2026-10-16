@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261018l">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261018l">
-<script src="assets/common/site.js?v=20261018l"></script>
-<script src="assets/common/mypage.js?v=20261018l"></script>
-<script src="assets/common/flow.js?v=20261018l"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261018m">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261018m">
+<script src="assets/common/site.js?v=20261018m"></script>
+<script src="assets/common/mypage.js?v=20261018m"></script>
+<script src="assets/common/flow.js?v=20261018m"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -52,6 +52,7 @@
   .badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; }
   .badge.tag { border:1px solid var(--teal-600); color:var(--teal-600); }
   .badge.state { border:1px solid var(--blue-600); color:var(--blue-600); background:var(--blue-50); }
+  .badge.draft { border:1px solid var(--gray-400); color:var(--gray-600); background:var(--gray-50); } /* 임시저장 (제출 전) */
   .reg { font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
   .ptitle { display:flex; align-items:center; gap:8px; font-size:24px; font-weight:600; line-height:32px; letter-spacing:-.24px; }
   /* 뒤로 가기: 누르는 영역 36px + hover 배경 */
@@ -357,8 +358,22 @@
   var newQ = function (pid) { var s = F.state(pid); return s.st === 'sent' ? '<span class="badge wait">견적 ' + fwdKeys(s).length + '건 도착</span>' : ''; };
   var fwdKeys = function (s) { return Object.keys(s.P).filter(function (k) { return s.P[k].fwd && s.P[k].status === 'sub'; }); };
 
-  // ?id 없으면 프로젝트 관리 목록 (최근 제출 순)
-  if (!id && list.length) {
+  // 임시저장한 의뢰서 (의뢰 등록 화면의 [임시저장], localStorage omicspharm:drafts). 클릭하면 의뢰 등록 화면에서 이어서 작성
+  var drafts = !partner ? (function () { try { return JSON.parse(localStorage.getItem('omicspharm:drafts') || '[]'); } catch (e) { return []; } })() : [];
+  var DRAFT_DAYS = 30;
+  var hm = function (t) { var x = new Date(t); return ymd(t) + ' ' + ('0' + x.getHours()).slice(-2) + ':' + ('0' + x.getMinutes()).slice(-2); };
+  var draftCard = function (x) {
+    var left = Math.max(0, Math.ceil((x.at + DRAFT_DAYS * 864e5 - Date.now()) / 864e5));
+    return '<a class="lcard" href="omicspharm-register.html?draft=' + encodeURIComponent(x.id) + '"><div class="head">' +
+      '<div class="row1"><div class="badges">' + (x.svc && x.svc !== '서비스 미선택' ? '<span class="badge tag">' + esc(x.svc) + '</span>' : '') + '<span class="badge draft">임시저장</span></div>' +
+        '<span class="dday">보관 D-' + String(left).padStart(2, '0') + '</span></div>' +
+      '<h3>' + esc(x.title) + '</h3></div>' +
+      '<div class="info"><div class="meta"><span><em>작성 단계</em>' + (x.step || 1) + '/4단계</span><span><em>마지막 저장</em>' + hm(x.at) + '</span></div>' +
+      '<p class="reg">저장일로부터 ' + DRAFT_DAYS + '일 동안 보관되며, 클릭하면 이어서 작성할 수 있습니다.</p></div></a>';
+  };
+
+  // ?id 없으면 프로젝트 관리 목록 (최근 제출 순). 클라이언트는 분석파트너 목록처럼 검색 + 총 건수 + 단계 칩(맨 끝 '임시저장')
+  if (!id && (list.length || drafts.length)) {
     var card = function (x) {
       var days = x.to ? Math.round((new Date(x.to) - new Date(new Date().toDateString())) / 864e5) : null;
       return '<a class="lcard" href="mypage-project.html?id=' + encodeURIComponent(x.id) + '"><div class="head">' +
@@ -374,23 +389,33 @@
     };
     $('.toprow').hidden = true; // 탭·문의하기는 프로젝트 상세에서만
     // 단계 필터 (대시보드 진행 현황에서 ?stage=단계 로 들어오면 그 단계만)
-    var cst = new URLSearchParams(location.search).get('stage'); if (F.CLIENT_STEPS.indexOf(cst) < 0) cst = '전체';
-    $('#project').outerHTML = '<div class="chips" id="cChips" role="tablist"></div><div class="unread" id="cUnread"></div><div class="list-head"><span class="total" id="cTotal"></span></div><div class="list" id="cList"></div>';
+    var cst = new URLSearchParams(location.search).get('stage'); if (F.CLIENT_STEPS.indexOf(cst) < 0 && cst !== '임시저장') cst = '전체';
+    var cq = '', DR = '임시저장';
+    $('#project').outerHTML =
+      '<form class="psearch" id="cq" role="search"><input type="search" id="cqIn" placeholder="프로젝트명을 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
+      '<div class="pbar"><span class="total" id="cTotal"></span></div>' +
+      '<div class="chips" id="cChips" role="tablist"></div><div class="unread" id="cUnread"></div><div class="list" id="cList"></div>';
     // 확인하지 않은 견적서 = 컨설턴트가 전달했고 아직 고르지 않은 견적 (Q&A는 아직 데이터 없음)
     var newQN = function (x) { var s = F.state(x.id); return s.st === 'sent' ? fwdKeys(s).length : 0; };
     var qN = list.reduce(function (n, x) { return n + newQN(x); }, 0), cOnly = false;
     $('#cUnread').innerHTML = '<span>확인하지 않은 견적서 <b>' + qN + '건</b>과 Q&amp;A <b>0건</b>이 있습니다.</span><label><input type="checkbox" id="cOnly">미열람글만 보기</label>';
     $('#cOnly').addEventListener('change', function () { cOnly = this.checked; cdraw(); });
     var cdraw = function () {
-      var B = cOnly ? list.filter(function (x) { return newQN(x); }) : list; // 미열람글만 보기
-      $('#cChips').innerHTML = ['전체'].concat(F.CLIENT_STEPS).map(function (t) {
-        var n = t === '전체' ? B.length : B.filter(function (x) { return F.clientStage(x.id) === t; }).length;
+      var q = cq.trim().toLowerCase(), hit = function (x) { return !q || String(x.title || '').toLowerCase().indexOf(q) > -1; };
+      var B = (cOnly ? list.filter(function (x) { return newQN(x); }) : list).filter(hit); // 미열람글만 보기
+      var DB = cOnly ? [] : drafts.filter(hit).sort(function (a, b) { return b.at - a.at; }); // 임시저장은 '전체'에도 포함 (맨 위)
+      $('#cChips').innerHTML = ['전체'].concat(F.CLIENT_STEPS, [DR]).map(function (t) {
+        var n = t === '전체' ? B.length + DB.length : t === DR ? DB.length : B.filter(function (x) { return F.clientStage(x.id) === t; }).length;
         return '<button type="button" role="tab" data-st="' + t + '"' + (cst === t ? ' class="on" aria-selected="true"' : '') + '>' + t + '<span>' + n + '</span></button>';
       }).join('');
-      var L = B.filter(function (x) { return cst === '전체' || F.clientStage(x.id) === cst; });
-      $('#cTotal').textContent = '총 ' + L.length + '개';
-      $('#cList').innerHTML = L.map(card).join('') || '<div class="empty"><b>' + cst + ' 단계의 프로젝트가 없습니다</b></div>';
+      var D2 = cst === '전체' || cst === DR ? DB : [];
+      var L = cst === DR ? [] : B.filter(function (x) { return cst === '전체' || F.clientStage(x.id) === cst; });
+      $('#cTotal').innerHTML = '총 <b>' + (D2.length + L.length) + '</b>건';
+      $('#cList').innerHTML = D2.map(draftCard).join('') + L.map(card).join('') ||
+        '<div class="empty"><b>' + (q ? '조건에 맞는 프로젝트가 없습니다' : cst === DR ? '임시저장한 의뢰서가 없습니다' : cst === '전체' ? '프로젝트가 없습니다' : cst + ' 단계의 프로젝트가 없습니다') + '</b></div>';
     };
+    $('#cq').addEventListener('submit', function (e) { e.preventDefault(); cq = $('#cqIn').value; cdraw(); });
+    $('#cqIn').addEventListener('input', function () { if (!this.value && cq) { cq = ''; cdraw(); } });
     $('#cChips').addEventListener('click', function (e) { var b = e.target.closest('[data-st]'); if (b) { cst = b.dataset.st; cdraw(); history.replaceState(null, '', cst === '전체' ? 'mypage-project.html' : '?stage=' + encodeURIComponent(cst)); } });
     cdraw();
     return;

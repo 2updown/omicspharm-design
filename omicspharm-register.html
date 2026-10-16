@@ -567,8 +567,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261018l">
-<script src="assets/common/site.js?v=20261018l"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261018m">
+<script src="assets/common/site.js?v=20261018m"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -1576,6 +1576,13 @@
   }
   if(!EDIT){ syncSvc(); syncShow(); syncEtc(); }
   refresh(); render();
+  // 마이페이지 > 프로젝트 관리 > 임시저장 카드에서 들어옴 (?draft=임시저장 id) → 그 의뢰서를 이어서 작성
+  var DRAFT_Q=new URLSearchParams(location.search).get('draft');
+  if(!EDIT && DRAFT_Q) STORE.get().then(function(l){
+    var d=l.find(function(x){return x.id===DRAFT_Q});
+    if(!d){ toast('임시저장 기간이 지났거나 삭제된 의뢰서입니다'); return; }
+    apply(d); $('#savedLine').textContent='임시저장 '+when(d.at); toast('작성 중이던 내용을 불러왔습니다');
+  });
 })();
 </script>
 </body>
