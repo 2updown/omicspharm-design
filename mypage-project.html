@@ -245,6 +245,25 @@
     .lcard .meta { font-size:14px; line-height:20px; column-gap:10px; }
     .lcard .meta > span + span::before { margin-right:10px; }
   }
+  /* 진행상태 탭 (컨설턴트 프로젝트 관리 .b-tabs와 동일) */
+  .b-tabw { position:relative; margin:0 -24px; border-bottom:1px solid var(--gray-200); }
+  .b-tabw::before, .b-tabw::after { content:""; position:absolute; top:0; bottom:1px; z-index:1; width:56px; pointer-events:none; opacity:0; transition:opacity .15s; }
+  .b-tabw::before { left:0; background:linear-gradient(90deg, #fff 40%, #fff0); } .b-tabw::after { right:0; background:linear-gradient(270deg, #fff 40%, #fff0); }
+  .b-tabw.fl::before, .b-tabw.fr::after { opacity:1; }
+  .b-arr { position:absolute; top:50%; z-index:2; display:flex; align-items:center; justify-content:center; width:32px; height:32px; margin-top:-16px; border:1px solid var(--gray-200); border-radius:50%; background:#fff; box-shadow:0 2px 6px #00000014; }
+  .b-arr[hidden] { display:none; }
+  .b-arr.l { left:12px; } .b-arr.r { right:12px; }
+  .b-arr:hover { border-color:var(--gray-300); background:var(--gray-50); }
+  .b-arr img { width:16px; height:16px; }
+  .b-tabs { display:flex; gap:4px; padding:0 24px; overflow-x:auto; scrollbar-width:none; cursor:grab; user-select:none; -webkit-user-select:none; scroll-behavior:auto; }
+  .b-tabs.drag { cursor:grabbing; } .b-tabs.drag button { pointer-events:none; }
+  .b-tabs::-webkit-scrollbar { display:none; }
+  .b-tabs button { flex:none; display:flex; align-items:center; gap:6px; height:44px; padding:0 10px; border-bottom:2px solid transparent; margin-bottom:-1px; font-size:14px; font-weight:500; color:var(--gray-500); white-space:nowrap; }
+  .b-tabs button b { min-width:20px; padding:0 6px; border-radius:99px; background:var(--gray-100); font-size:12px; font-weight:600; line-height:20px; color:var(--gray-600); text-align:center; }
+  .b-tabs button[data-zero] { color:var(--gray-400); } .b-tabs button[data-zero] b { color:var(--gray-400); }
+  .b-tabs button:hover { color:#000; }
+  .b-tabs button.on { border-color:var(--teal-600); color:var(--teal-700); font-weight:700; } .b-tabs button.on b { background:var(--teal-600); color:#fff; }
+  @media (max-width:640px) { .b-tabw { margin:0 -16px; } .b-tabs { padding:0 16px; } .b-arr { width:28px; height:28px; margin-top:-14px; } .b-arr.l { left:6px; } .b-arr.r { right:6px; } }
 </style>
 </head>
 <body>
@@ -283,6 +302,23 @@
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+  // 진행상태 탭 슬라이드 (컨설턴트 프로젝트 관리와 같은 동작): 양쪽 화살표 + 가장자리 흐림, 마우스 드래그·휠
+  function slideTabs(tw) {
+    var tabs = tw.querySelector('.b-tabs'), drag = null;
+    function edges() {
+      var max = tabs.scrollWidth - tabs.clientWidth, l = tabs.scrollLeft > 2, r = tabs.scrollLeft < max - 2;
+      tw.querySelector('.l').hidden = !l; tw.querySelector('.r').hidden = !r; tw.classList.toggle('fl', l); tw.classList.toggle('fr', r);
+    }
+    tw.addEventListener('click', function (e) { var a = e.target.closest('[data-arr]'); if (a) tabs.scrollBy({ left: +a.dataset.arr * tabs.clientWidth * .6, behavior: 'smooth' }); });
+    tabs.addEventListener('scroll', edges, { passive: true }); window.addEventListener('resize', edges);
+    tabs.addEventListener('wheel', function (e) { if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && tabs.scrollWidth > tabs.clientWidth) { e.preventDefault(); tabs.scrollLeft += e.deltaY; } }, { passive: false });
+    tabs.addEventListener('mousedown', function (e) { drag = { x: e.clientX, l: tabs.scrollLeft, moved: false }; });
+    window.addEventListener('mousemove', function (e) { if (!drag || drag.end) return; var dx = e.clientX - drag.x; if (Math.abs(dx) > 4) { drag.moved = true; tabs.classList.add('drag'); } tabs.scrollLeft = drag.l - dx; });
+    window.addEventListener('mouseup', function () { if (drag && drag.moved) setTimeout(function () { tabs.classList.remove('drag'); }, 0); drag = drag && drag.moved ? { moved: true, end: 1 } : null; setTimeout(function () { drag = null; }, 0); });
+    tabs.addEventListener('click', function (e) { if (drag && drag.moved) { e.stopPropagation(); e.preventDefault(); } }, true);
+    var on = tabs.querySelector('.on'); if (on) tabs.scrollLeft = on.offsetLeft - (tabs.clientWidth - on.offsetWidth) / 2;
+    edges();
+  }
   if (!OP.mypage('project')) return; // 로그인 확인 + 왼쪽 프로필·메뉴
 
   // 컨설턴트: 프로젝트 관리 목록과 견적 중개 의뢰 상세는 mypage-request.html (계약 이후 예시 프로젝트 상세만 여기서)
@@ -366,9 +402,9 @@
     var st = { q: '', stage: STAGES.indexOf(qstg) > -1 ? qstg : '전체', sort: 'new', unread: false }; // 대시보드에서 단계 눌러 들어오면 그 단계만
     $('#project').outerHTML =
       '<form class="psearch" id="pq" role="search"><input type="search" id="pqIn" placeholder="프로젝트명을 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
-      '<div class="pbar"><span class="total" id="pTotal"></span><label class="sort"><select id="pSort" aria-label="정렬"><option value="new">최신등록순</option><option value="due">납기임박순</option></select></label></div>' +
-      '<div class="chips" id="pChips" role="tablist"></div>' +
+      '<div class="b-tabw" id="pTabW"><button type="button" class="b-arr l" data-arr="-1" aria-label="이전 단계 보기" hidden><img src="assets/find/ic-caret-left.svg" alt=""></button><div class="b-tabs" id="pChips" role="tablist"></div><button type="button" class="b-arr r" data-arr="1" aria-label="다음 단계 보기" hidden><img src="assets/find/ic-caret-right.svg" alt=""></button></div>' +
       '<div class="unread" id="pUnread"></div>' +
+      '<div class="pbar"><span class="total" id="pTotal"></span><label class="sort"><select id="pSort" aria-label="정렬"><option value="new">최신등록순</option><option value="due">납기임박순</option></select></label></div>' +
       '<div class="list" id="pList"></div>' +
       '<p class="demo-note">※ 화면 확인용 예시 프로젝트입니다.</p>';
     var qaN = ALL.reduce(function (n, p) { return n + (p.qa || 0); }, 0), rvN = ALL.reduce(function (n, p) { return n + (p.review || 0); }, 0);
@@ -378,7 +414,7 @@
       var base = ALL.filter(function (p) { return (!q || p.title.toLowerCase().indexOf(q) > -1) && (!st.unread || p.qa || p.review); });
       $('#pChips').innerHTML = ['전체'].concat(STAGES).map(function (t) {
         var n = t === '전체' ? base.length : base.filter(function (p) { return SG(p) === t; }).length;
-        return '<button type="button" role="tab" data-st="' + t + '"' + (st.stage === t ? ' class="on" aria-selected="true"' : '') + '>' + t + '<span>' + n + '</span></button>';
+        return '<button type="button" role="tab" data-st="' + t + '"' + (st.stage === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b></button>';
       }).join('');
       var L = base.filter(function (p) { return st.stage === '전체' || SG(p) === st.stage; })
         .sort(st.sort === 'due' ? function (a, b) { return (a.stage === '완료') - (b.stage === '완료') || new Date(a.due) - new Date(b.due); } : function (a, b) { return b.at - a.at; });
@@ -399,6 +435,7 @@
     $('#pOnly').addEventListener('change', function () { st.unread = this.checked; draw(); });
     $('#pChips').addEventListener('click', function (e) { var b = e.target.closest('[data-st]'); if (b) { st.stage = b.dataset.st; draw(); } });
     draw();
+    slideTabs($('#pTabW'));
   }
 
   var list = OP.my.myProjects(); // 분석파트너는 클라이언트 의뢰를 볼 수 없음 (셀키가 견적 요청을 보낸 의뢰만)
@@ -449,8 +486,8 @@
     var cq = '', DR = '임시저장';
     $('#project').outerHTML =
       '<form class="psearch" id="cq" role="search"><input type="search" id="cqIn" placeholder="프로젝트명을 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
-      '<div class="pbar"><span class="total" id="cTotal"></span></div>' +
-      '<div class="chips" id="cChips" role="tablist"></div><div class="unread" id="cUnread"></div><div class="list" id="cList"></div>';
+      '<div class="b-tabw" id="cTabW"><button type="button" class="b-arr l" data-arr="-1" aria-label="이전 단계 보기" hidden><img src="assets/find/ic-caret-left.svg" alt=""></button><div class="b-tabs" id="cChips" role="tablist"></div><button type="button" class="b-arr r" data-arr="1" aria-label="다음 단계 보기" hidden><img src="assets/find/ic-caret-right.svg" alt=""></button></div>' +
+      '<div class="unread" id="cUnread"></div><div class="pbar"><span class="total" id="cTotal"></span></div><div class="list" id="cList"></div>';
     // 확인하지 않은 견적서 = 컨설턴트가 전달했고 아직 고르지 않은 견적 (Q&A는 아직 데이터 없음)
     var newQN = function (x) { var s = F.state(x.id); return s.st === 'sent' ? fwdKeys(s).length : 0; };
     var qN = list.reduce(function (n, x) { return n + newQN(x); }, 0), cOnly = false;
@@ -462,7 +499,7 @@
       var DB = cOnly ? [] : drafts.filter(hit).sort(function (a, b) { return b.at - a.at; }); // 임시저장은 '전체'에도 포함 (맨 위)
       $('#cChips').innerHTML = ['전체'].concat(F.CLIENT_STEPS, [DR]).map(function (t) {
         var n = t === '전체' ? B.length + DB.length : t === DR ? DB.length : B.filter(function (x) { return F.clientStage(x.id) === t; }).length;
-        return '<button type="button" role="tab" data-st="' + t + '"' + (cst === t ? ' class="on" aria-selected="true"' : '') + '>' + t + '<span>' + n + '</span></button>';
+        return '<button type="button" role="tab" data-st="' + t + '"' + (cst === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b></button>';
       }).join('');
       var D2 = cst === '전체' || cst === DR ? DB : [];
       var L = cst === DR ? [] : B.filter(function (x) { return cst === '전체' || F.clientStage(x.id) === cst; });
@@ -474,6 +511,7 @@
     $('#cqIn').addEventListener('input', function () { if (!this.value && cq) { cq = ''; cdraw(); } });
     $('#cChips').addEventListener('click', function (e) { var b = e.target.closest('[data-st]'); if (b) { cst = b.dataset.st; cdraw(); history.replaceState(null, '', cst === '전체' ? 'mypage-project.html' : '?stage=' + encodeURIComponent(cst)); } });
     cdraw();
+    slideTabs($('#cTabW'));
     return;
   }
 
