@@ -8,10 +8,10 @@
 <!-- Figma 회원가입/로그인 섹션 (254:18355)
      클라이언트: Signup-Filled 281:23123 → 기본정보 1/2 806:5078 → 추가정보 2/2 806:5117 → 완료 1120:43157
      분석파트너: Signup-Filled 1109:37231 → 1/3 1109:37368 → 2/3 1109:37427 → 3/3 1117:42815 → 완료 1120:42976 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261018w">
-<link rel="stylesheet" href="assets/auth/auth.css?v=20261018w">
-<script src="assets/common/site.js?v=20261018w"></script>
-<script src="assets/auth/auth.js?v=20261018w"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261018x">
+<link rel="stylesheet" href="assets/auth/auth.css?v=20261018x">
+<script src="assets/common/site.js?v=20261018x"></script>
+<script src="assets/auth/auth.js?v=20261018x"></script>
 </head>
 <body>
 <div class="auth">
@@ -35,9 +35,8 @@
                   <div class="input"><input id="pw" type="password" autocomplete="new-password" placeholder="비밀번호를 입력해주세요"><button type="button" class="ic" data-eye aria-label="비밀번호 보기"><img src="assets/auth/ic-eye.svg" alt=""></button></div>
                 </div>
                 <ul class="rules" id="rules">
-                  <li data-r="len">8자 이상</li>
-                  <li data-r="lower">소문자 1자 이상</li>
-                  <li data-r="upper">대문자 1개 이상</li>
+                  <li data-r="len">8~20자</li>
+                  <li data-r="alpha">영문 1자 이상</li>
                   <li data-r="num">숫자 1자 이상</li>
                   <li data-r="sym">특수문자 1개 이상</li>
                 </ul>
@@ -223,7 +222,7 @@
 
   /* ── 1. 계정 ── */
   var email = $('#email'), pw = $('#pw'), start = $('#startBtn');
-  var RULES = { len: /.{8,}/, lower: /[a-z]/, upper: /[A-Z]/, num: /[0-9]/, sym: /[^A-Za-z0-9]/ };
+  var RULES = { len: /^.{8,20}$/, alpha: /[A-Za-z]/, num: /[0-9]/, sym: /[^A-Za-z0-9]/ };
   function emailState() {
     var v = email.value.trim();
     if (!v) return '';
