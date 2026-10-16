@@ -11,12 +11,12 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261018n">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261018n">
-<script src="assets/common/site.js?v=20261018n"></script>
-<script src="assets/common/mypage.js?v=20261018n"></script>
-<script src="assets/common/svc-spec.js?v=20261018n"></script>
-<script src="assets/common/flow.js?v=20261018n"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261018o">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261018o">
+<script src="assets/common/site.js?v=20261018o"></script>
+<script src="assets/common/mypage.js?v=20261018o"></script>
+<script src="assets/common/svc-spec.js?v=20261018o"></script>
+<script src="assets/common/flow.js?v=20261018o"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -78,6 +78,7 @@
   .qt .r.win { background:var(--teal-50); }
   .qt .r input { width:18px; height:18px; accent-color:var(--teal-600); }
   .qt .who b { display:block; font-size:15px; font-weight:600; line-height:22px; }
+  .qt .who .qn { margin-left:6px; padding:1px 6px; border-radius:6px; background:var(--gray-100); font-size:12px; font-weight:500; color:var(--gray-600); }
   .qt .who span { font-size:12px; line-height:18px; color:var(--gray-500); }
   .qt .who .svcm { display:flex; align-items:center; gap:6px; margin-top:2px; font-size:12px; line-height:18px; color:var(--orange-600); }
   .qt .who .svcm .tbtn { height:18px; font-size:12px; line-height:18px; }
@@ -883,7 +884,7 @@
       var x = s.P[k], p = F.partner(k), q = x.quote, sub = x.status === 'sub';
       return '<div class="r' + (s.pick === k ? ' win' : '') + '">' +
         (edit && sub && !x.fwd ? '<input type="checkbox" name="fw" value="' + k + '" checked aria-label="' + esc(p.org) + ' 견적 전달">' : '<span title="' + (x.fwd ? '클라이언트에게 전달함' : '') + '">' + (x.fwd ? '✓' : '') + '</span>') +
-        '<div class="who"><b>' + esc(p.org) + '</b><span>' + (x.self ? '<i class="src self">직접 신청</i>' : '<i class="src">견적제안</i>') + md(x.at) + (x.revN ? ' · 수정 ' + x.revN + '회' : '') + '</span>' + svcMiss(k) + '</div>' +
+        '<div class="who"><b>' + esc(p.org) + (x.fwd ? ' <small class="qn">클라이언트에게 ' + F.qname(s, k) + '</small>' : '') + '</b><span>' + (x.self ? '<i class="src self">직접 신청</i>' : '<i class="src">견적제안</i>') + md(x.at) + (x.revN ? ' · 수정 ' + x.revN + '회' : '') + '</span>' + svcMiss(k) + '</div>' +
         '<div class="st">' + badge(k) + '</div>' +
         '<div class="amt">' + (sub ? F.money(F.total(q).final) + (k === low ? '<span class="hl">최저가</span>' : '') + '<small>VAT 포함</small>' : '-') + (sub ? '<span class="mob">· ' + esc(q.weeks || '-') + '주</span>' : '') + '</div>' +
         '<div class="wk">' + (sub ? esc(q.weeks || '-') + '주' + (k === fast ? '<span class="hl">최단</span>' : '') : '-') + '</div>' +
@@ -899,7 +900,7 @@
       '<div class="reqinfo"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>견적 마감</b> ' + dot(s.due || r.to) + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self; }).length + ' · 견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></div>' +
       (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적</span><span>소요</span><span>일자</span><span></span></div>' + rows + '</div>'
         : '<div class="qempty">아직 견적을 작성 중인 분석파트너가 없습니다.<br>인증 분석파트너는 프로젝트 찾기에서 직접 견적을 작성할 수 있고, [AI 분석파트너 매칭]에서 적합한 기관에 요청할 수도 있습니다.</div>') +
-      (edit && subs.some(function (k) { return !s.P[k].fwd; }) ? '<div class="bar"><p>체크한 견적을 공급자만 ㈜셀키에이아이로 바꿔 클라이언트에게 전달합니다. 금액·항목은 그대로이고, 분석파트너 기관명도 함께 보입니다.' + (s.st === 'sent' ? ' 이미 전달한 견적(✓)에 추가됩니다.' : '') + '</p><div class="acts"><button type="button" class="btn primary lg" id="fwd"></button></div></div>' : '') +
+      (edit && subs.some(function (k) { return !s.P[k].fwd; }) ? '<div class="bar"><p>체크한 견적을 ㈜셀키에이아이 명의로 클라이언트에게 전달합니다. 금액·항목은 그대로이고, 기관명은 A사·B사로 가려집니다.' + (s.st === 'sent' ? ' 이미 전달한 견적(✓)에 추가됩니다.' : '') + '</p><div class="acts"><button type="button" class="btn primary lg" id="fwd"></button></div></div>' : '') +
       (s.msg && s.st !== 'quoting' ? '<div class="msg"><b>클라이언트에게 전달한 메시지 · ' + F.ymd(s.sentAt) + '</b>' + esc(s.msg) + '</div>' : '') +
     '</div>';
   }
@@ -957,7 +958,7 @@
         });
       } else if (t.closest('#fwd')) {
         var fk = [].map.call(card.querySelectorAll('input[name="fw"]:checked'), function (i) { return i.value; });
-        F.ask({ title: '견적 ' + fk.length + '건을 클라이언트에게 전달할까요?', desc: fk.map(function (k) { return F.partner(k).org; }).join(', ') + ' 견적을 그대로 전달합니다. 전달한 뒤에는 클라이언트가 견적을 비교하고 분석파트너를 선택합니다.', label: '클라이언트에게 남길 메시지 (선택)', ph: '예) 일정이 급하시면 세움분석센터를 추천드립니다.', yes: '전달하기' }, function (v) {
+        F.ask({ title: '견적 ' + fk.length + '건을 클라이언트에게 전달할까요?', desc: fk.map(function (k) { return F.partner(k).org; }).join(', ') + ' 견적을 ㈜셀키에이아이 명의로 전달합니다. 클라이언트에게는 기관명 대신 A사·B사로 보이니, 메시지에도 기관명을 쓰지 말아주세요.', label: '클라이언트에게 남길 메시지 (선택)', ph: '예) 일정이 급하시면 소요 기간이 짧은 견적을 추천드립니다.', yes: '전달하기' }, function (v) {
           F.forward(id, fk, v); OP.toast('클라이언트에게 견적을 전달했습니다.'); render(); window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       }

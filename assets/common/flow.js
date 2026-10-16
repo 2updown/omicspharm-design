@@ -106,12 +106,13 @@
 
   // ── 상태 저장 ──
   // S[의뢰id] = { st:'review'|'quoting'|'sent'|'matched', due, memo, reqAt, P:{ 파트너키:{ at, status:'req'|'draft'|'sub'|'rev'|'dec', quote, subAt, rev:{at,note}, revN, dec:{at,why}, fwd } }, sentAt, msg, pick, pickAt }
+  var OLDMSG = ['세 기관 모두 FFPE 시료 경험이 있습니다. 일정이 급하시면 라온바이오랩보다 다온유전체센터를 추천드립니다.', '두 곳 모두 FFPE 시료 경험이 있습니다. 일정이 급하시면 소요 기간이 짧은 A사를 추천드립니다.'];
   function seed() {
     var r2 = DEMO_REQS[1], r3 = DEMO_REQS[2], S = {};
     S[r2.id] = { st: 'quoting', ok: T0 - DAY * 3.5, reqAt: T0 - DAY * 3, due: '2026-10-10', memo: '시료 수가 많아 일정 제안을 함께 부탁드립니다.', P: {} };
     S[r2.id].P[ME_PARTNER] = { at: T0 - DAY * 3, status: 'req' };
     ['p-bio', 'p-met'].forEach(function (k, i) { var p = partner(k); S[r2.id].P[k] = { at: T0 - DAY * 3, status: 'sub', quote: genQuote(p, r2), subAt: T0 - DAY * (2 - i) }; });
-    S[r3.id] = { st: 'sent', ok: T0 - DAY * 8.5, reqAt: T0 - DAY * 8, due: '2026-10-01', memo: '', P: {}, sentAt: T0 - DAY * 2, msg: '세 기관 모두 FFPE 시료 경험이 있습니다. 일정이 급하시면 라온바이오랩보다 다온유전체센터를 추천드립니다.' };
+    S[r3.id] = { st: 'sent', ok: T0 - DAY * 8.5, reqAt: T0 - DAY * 8, due: '2026-10-01', memo: '', P: {}, sentAt: T0 - DAY * 2, msg: OLDMSG[1] };
     [['p-gen', 1], ['p-omx', 1], ['p-bio', 0]].forEach(function (a, i) {
       var p = partner(a[0]); S[r3.id].P[a[0]] = a[1] ? { at: T0 - DAY * 8, status: 'sub', quote: genQuote(p, r3), subAt: T0 - DAY * (6 - i), fwd: true }
         : { at: T0 - DAY * 8, status: 'dec', dec: { at: T0 - DAY * 7, why: '해당 기간 시퀀싱 장비 일정이 모두 차 있습니다.' } };
@@ -131,6 +132,8 @@
   // 버전 3 → 4: 진행하던 기록은 그대로 두고 새 예시(0046·0047)만 추가
   function db() {
     var d = read(KEY, null);
+    // 컨설턴트 의견 예시에서 기관명 → A사·B사 (기록은 그대로)
+    if (d && d.S) Object.keys(d.S).forEach(function (k) { if (d.S[k].msg === OLDMSG[0]) { d.S[k].msg = OLDMSG[1]; write(KEY, d); } });
     if (d && d.v === 3) { var n = seed().S; Object.keys(n).forEach(function (k) { if (!d.S[k]) d.S[k] = n[k]; }); d.v = 4; }
     // 4 → 5: 예시 견적의 단위(sample·식)를 EA로
     if (d && d.v === 4) {
@@ -374,8 +377,9 @@
 
   // 클라이언트에게 보이는 견적 이름: 전달된 순서대로 A·B·C
   F.qno = function (s, k) { var K = Object.keys(s.P || {}).filter(function (x) { return s.P[x].fwd; }); return String.fromCharCode(65 + Math.max(0, K.indexOf(k))); };
+  F.qname = function (s, k) { return F.qno(s, k) + '사'; }; // 클라이언트에게는 기관명 대신 A사·B사
   // 클라이언트에게 전달하는 견적서의 공급자 = 셀키에이아이 (분석파트너 견적을 셀키 명의로 전달). 공개 사이트라 대표자·번호·주소는 예시값
-  F.SELLER = { s_org: '㈜셀키에이아이', s_ceo: '김민준', s_tel: '02-0000-0000', s_biz: '000-00-00000', s_mgr: 'OmicsPharm 컨설턴트', s_mail: 'help@omicspharm.test', s_addr: '서울특별시 강서구 마곡중앙로 00' };
+  F.SELLER = { s_org: '㈜셀키에이아이', s_ceo: '홍길동', s_tel: '02-0000-0000', s_biz: '000-00-00000', s_mgr: 'OmicsPharm 컨설턴트', s_mail: 'help@omicspharm.test', s_addr: '서울특별시 강서구 마곡중앙로 00' };
   // 견적서 문서 (A4) — 파트너가 쓴 그대로. o.client면 클라이언트용: 공급자를 셀키로, 견적번호 끝은 o.no(A·B·C)
   F.docHTML = function (r, q, k, o) {
     o = o || {};
