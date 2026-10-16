@@ -411,6 +411,8 @@
   .flabel{background:var(--n100);padding:12px 18px;font-size:14px;font-weight:500;line-height:20px;display:flex;align-items:center}
   .fbody{padding:6px 12px;display:flex;flex-direction:column;justify-content:center;gap:8px}
   .fbody > .opts, .fbody > .items{padding:6px 0}
+  /* 선택지 바로 아래 헬프텍스트·오류 문구는 체크박스/라디오(또는 기타 입력칸)에서 8px: 아래 여백 6px을 빼고 .fbody gap 8px만 */
+  .fbody > :is(.opts,.items):has(+ .fhelp), .field.invalid .fbody > :is(.opts,.items):has(+ .emsg){padding-bottom:0}
   .fhelp{margin:0;font-size:12px;line-height:18px;letter-spacing:-.12px;color:var(--n500)}
   .fhelp:last-child{margin:0}
   .tnote{margin:8px 0 0;font-size:12px;line-height:18px;letter-spacing:-.12px;color:var(--n500)}
@@ -548,8 +550,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261018i">
-<script src="assets/common/site.js?v=20261018i"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261018j">
+<script src="assets/common/site.js?v=20261018j"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
