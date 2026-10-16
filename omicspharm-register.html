@@ -551,8 +551,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261017x">
-<script src="assets/common/site.js?v=20261017x"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261017y">
+<script src="assets/common/site.js?v=20261017y"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -943,7 +943,7 @@
   var cur=1, MAX=4;
   var FORM_VER=4;
   var FORM_REV='v5-20261008'; // 입력칸 구성 버전: 임시저장·수정하기는 입력칸 순서로 값을 복원하므로, 구성이 바뀐 이전 저장본은 값을 불러오지 않음     // 의뢰 입력 양식 버전 (V4 입력 기준). 이전 양식으로 제출된 의뢰는 마이페이지에서 정리됨
-  var FREE_NAV=true;   // 내부 검토용: 필수값 검사 없이 단계 이동 허용
+  var FREE_NAV=!/[?&]check=1/.test(location.search);   // 내부 검토용: 필수값 검사 없이 단계 이동 허용 (?check=1 이면 필수값 검사 켬)
   var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
   var steps=$$('.step'), tabs=$$('.st'), prev=$('#prev'), next=$('#next');
 
