@@ -146,12 +146,15 @@
   details.req { border:1px solid var(--gray-200); border-radius:12px; }
   /* ── 시안 B ── */
   .pmb .draft { padding:2px 8px; border-radius:6px; background:#fff4ed; font-size:12px; font-weight:600; color:var(--orange-600); }
-  .b-search { display:flex; align-items:center; gap:10px; height:52px; padding:0 4px 0 18px; border:1px solid var(--gray-300); border-radius:999px; background:#fff; }
+  /* 검색창: 프로젝트 찾기·인사이트와 같은 text-field M(40), 돋보기는 오른쪽(누르면 검색) */
+  .b-search { display:flex; align-items:center; gap:4px; height:40px; padding:0 8px 0 16px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; }
   .b-search:focus-within { border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
-  .b-search img { width:20px; height:20px; }
-  .b-search input { flex:1; min-width:0; border:0; outline:0; background:none; font:inherit; font-size:16px; }
+  .b-search input { flex:1; min-width:0; border:0; outline:0; background:none; font:inherit; font-size:14px; line-height:20px; }
+  .b-search input::placeholder { color:var(--gray-400); }
   .b-search input::-webkit-search-cancel-button { display:none; }
-  .b-search button { flex:none; height:44px; padding:0 32px; border-radius:999px; background:var(--gray-600); color:#fff; font-size:15px; font-weight:500; }
+  .b-search button { display:flex; align-items:center; justify-content:center; width:28px; height:28px; flex:none; border-radius:6px; }
+  .b-search button:hover { background:var(--gray-100); }
+  .b-search img { width:20px; height:20px; }
   .b-tabw { position:relative; margin:0 -24px; border-bottom:1px solid var(--gray-200); }
   .b-tabw::before, .b-tabw::after { content:""; position:absolute; top:0; bottom:1px; z-index:1; width:56px; pointer-events:none; opacity:0; transition:opacity .15s; }
   .b-tabw::before { left:0; background:linear-gradient(90deg, #fff 40%, #fff0); } .b-tabw::after { right:0; background:linear-gradient(270deg, #fff 40%, #fff0); }
@@ -214,7 +217,7 @@
   @media (max-width:640px) {
     .b-tabw { margin:0 -16px; } .b-tabs { padding:0 16px; }
     .b-arr { width:28px; height:28px; margin-top:-14px; } .b-arr.l { left:6px; } .b-arr.r { right:6px; }
-    .b-search { height:48px; } .b-search button { padding:0 18px; height:40px; }
+
     .b-bar { flex-wrap:nowrap; overflow-x:auto; margin:0 -16px; padding:0 16px 4px; scrollbar-width:none; } .b-bar::-webkit-scrollbar { display:none; }
     .b-pop { position:fixed; left:16px; right:16px; top:auto; bottom:16px; }
     .lc h3 { font-size:17px; line-height:24px; } .lc .row1 { flex-wrap:wrap; } .lc .foot { flex-direction:column; align-items:flex-start; }
@@ -414,7 +417,7 @@
     card.classList.add('pmb');
     card.innerHTML =
       '<div class="card-head"><h3>프로젝트 관리</h3></div>' +
-      '<form class="b-search" id="bq" role="search"><img src="assets/find/ic-search.svg" alt=""><input type="search" id="bqIn" placeholder="클라이언트/분석파트너명, 의뢰명, 키워드 입력" autocomplete="off"><button type="submit">검색</button></form>' +
+      '<form class="b-search" id="bq" role="search"><input type="search" id="bqIn" placeholder="클라이언트/분석파트너명, 의뢰명, 키워드 입력" autocomplete="off" aria-label="프로젝트 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
       '<div class="b-tabw" id="bTabW"><button type="button" class="b-arr l" data-arr="-1" aria-label="이전 단계 보기" hidden><img src="assets/find/ic-caret-left.svg" alt=""></button><div class="b-tabs" id="bTabs" role="tablist"></div><button type="button" class="b-arr r" data-arr="1" aria-label="다음 단계 보기" hidden><img src="assets/find/ic-caret-right.svg" alt=""></button></div>' +
       '<div class="b-bar"><div class="b-dd" data-dd="cat"><button type="button" class="b-btn" id="ddCat">분석 서비스<i></i></button><div class="b-pop" hidden>' + CATS.map(function (c) { return '<label><input type="checkbox" value="' + c + '">' + c + '<span class="n" data-cn="' + c + '"></span></label>'; }).join('') + '</div></div>' +
         '<div class="b-dd" data-dd="rec"><button type="button" class="b-btn" id="ddRec">모집상태<i></i></button><div class="b-pop" hidden>' + [['', '전체'], ['open', '모집중'], ['closed', '모집완료']].map(function (o) { return '<label><input type="radio" name="rec" value="' + o[0] + '"' + (o[0] ? '' : ' checked') + '>' + o[1] + '</label>'; }).join('') + '</div></div>' +

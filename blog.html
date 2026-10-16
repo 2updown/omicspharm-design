@@ -34,6 +34,14 @@
   .tabs button.on { color:#000; font-weight:600; }
   .tabs button.on::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--teal-600); }
 
+  /* 검색창: 프로젝트 찾기 검색창과 같은 text-field M(40) (Figma 1371:77783) */
+  .tabrow { display:flex; align-items:center; justify-content:space-between; gap:24px; }
+  .search { display:flex; align-items:center; gap:4px; width:343px; flex:none; height:40px; padding:0 16px; background:#fff; border:1px solid var(--gray-300); border-radius:8px; }
+  .search:focus-within { border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+  .search input { flex:1; min-width:0; border:0; outline:0; background:none; font:inherit; font-size:14px; line-height:20px; }
+  .search input::placeholder { color:var(--gray-400); }
+  .search input::-webkit-search-cancel-button { display:none; }
+  .search img { width:20px; height:20px; }
   .body { padding:32px 60px 80px; }
   .empty { grid-column:1 / -1; padding:80px 0; text-align:center; font-size:16px; line-height:24px; color:var(--gray-500); }
 
@@ -71,6 +79,8 @@
     .tabs { gap:20px; overflow-x:auto; scrollbar-width:none; }
     .tabs::-webkit-scrollbar { display:none; }
     .tabs button { height:52px; font-size:16px; }
+    .tabrow { flex-direction:column; align-items:stretch; gap:12px; padding-bottom:12px; }
+    .search { width:auto; }
     .body { padding:20px 16px 56px; }
     .posts { grid-template-columns:1fr; gap:16px; }
         .pager { margin-top:32px; flex-wrap:wrap; }
@@ -84,7 +94,8 @@
   <h1>Insights</h1>
 </div></section>
 
-<nav class="tabs-wrap" aria-label="카테고리"><div class="in tabs" role="tablist" id="tabs"></div></nav>
+<div class="tabs-wrap"><div class="in tabrow"><nav class="tabs" role="tablist" id="tabs" aria-label="카테고리"></nav>
+  <label class="search"><input id="q" type="search" placeholder="검색하기" aria-label="인사이트 검색"><img src="assets/find/ic-search.svg" alt=""></label></div></div>
 
 <main class="body"><div class="in">
   <div class="posts" id="posts"></div>
@@ -136,6 +147,7 @@
     var u = new URL(location.href); if (state.cat === 'all') u.searchParams.delete('cat'); else u.searchParams.set('cat', state.cat); history.replaceState(null, '', u);
     render();
   });
+  $('#q').addEventListener('input', function () { state.q = this.value; state.page = 1; render(); });
   $('#pager').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b || b.disabled) return;
     state.page = +b.dataset.p; render(); $('.tabs-wrap').scrollIntoView({ behavior: 'smooth' });
