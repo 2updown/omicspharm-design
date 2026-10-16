@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261018t">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261018t">
-<script src="assets/common/site.js?v=20261018t"></script>
-<script src="assets/common/mypage.js?v=20261018t"></script>
-<script src="assets/common/flow.js?v=20261018t"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261018u">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261018u">
+<script src="assets/common/site.js?v=20261018u"></script>
+<script src="assets/common/mypage.js?v=20261018u"></script>
+<script src="assets/common/flow.js?v=20261018u"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -47,6 +47,7 @@
 
   .phead { display:flex; flex-direction:column; gap:12px; }
   .prow { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .prow:has(.pright) { flex-wrap:wrap; row-gap:12px; } .prow:has(.pright) .ptitle { flex:1 1 360px; min-width:0; } /* 제목이 길면 납기일·문의하기는 아래 줄로 */
   .badges { display:flex; gap:8px; }
   .badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; }
   .badge.tag { border:1px solid var(--teal-600); color:var(--teal-600); }
@@ -115,6 +116,16 @@
   .pacts .del:hover { background:#fff1f2; border-color:#f00011; }
   .note { padding:24px; border-radius:8px; background:var(--bg-green); font-size:16px; line-height:22px; white-space:pre-line; }
   .tpanel { display:flex; flex-direction:column; gap:24px; }
+  .tpanel + .tpanel { padding-top:32px; border-top:1px solid var(--gray-200); }
+  .tpanel { scroll-margin-top:88px; }
+  .pright { display:flex; align-items:center; gap:8px; flex:none; flex-wrap:wrap; }
+  .qnote a { color:var(--teal-700); text-decoration:underline; }
+  .reqbox > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; list-style:none; cursor:pointer; }
+  .reqbox > summary::-webkit-details-marker { display:none; }
+  .reqbox > summary h3 { font-size:18px; font-weight:600; line-height:24px; }
+  .reqbox > summary img { width:20px; height:20px; transition:transform .15s; }
+  .reqbox[open] > summary img { transform:rotate(180deg); }
+  .reqbox:not([open]) { gap:0; }
   .ptabs .tcnt { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; margin-left:6px; padding:0 5px; border-radius:99px; background:var(--orange-600); color:#fff; font-size:11px; font-weight:700; }
   /* 견적 비교 */
   .cmsg { padding:16px 20px; border-left:3px solid var(--teal-600); border-radius:0 8px 8px 0; background:var(--bg-green); font-size:14px; line-height:22px; white-space:pre-line; }
@@ -279,7 +290,7 @@
   <div class="main">
 
     <div class="card" id="card">
-      <div class="toprow">
+      <div class="toprow" hidden>
         <div class="ptabs" role="tablist">
           <button type="button" class="on" role="tab" aria-selected="true" data-tab="req">의뢰내용</button>
           <button type="button" role="tab" aria-selected="false" data-tab="quote">견적서<span class="tcnt" id="qCnt" hidden></span></button>
@@ -381,7 +392,7 @@
           '<div class="prow"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stBadge(x) + (x.qa ? '<span class="badge qa">Q&amp;A ' + x.qa + '</span>' : '') + '</div>' +
             '<span class="reg">계약일 ' + dotd(x.contract) + ' · 프로젝트 번호 ' + esc(x.id) + '</span></div>' +
           '<div class="prow"><h2 class="ptitle"><a class="back" href="' + (OP.session().role === 'admin' ? 'mypage-request.html' : 'mypage-project.html') + '" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(x.title) + '</h2>' +
-            '<div class="period"><b>납기일</b><span>' + dotd(x.due) + '</span>' + (x.stage === '완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div></div>' +
+            '<div class="pright"><div class="period"><b>납기일</b><span>' + dotd(x.due) + '</span>' + (x.stage === '완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div>' + OP.askBtn(OP.askHref(x.title, x.svc)) + '</div></div>' +
         '</div>' +
         '<ol class="stages" aria-label="진행 단계" style="grid-template-columns:repeat(' + STAGES.length + ', minmax(0,1fr))">' + STAGES.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
         '<div class="todo"><div><b>' + TODO[0] + '</b><p>' + TODO[1] + '</p></div>' + (TODO[2] ? (TODO[2] === '계약서 확인' && CS ? '<button type="button" class="btn primary" data-ct="partner">계약서 확인</button>' : '<a class="btn primary" href="#" data-soon="' + TODO[2] + '">' + TODO[2] + '</a>') : '') + '</div>' +
@@ -526,7 +537,7 @@
       '<a href="omicspharm-register.html" data-client-only>프로젝트 의뢰하기</a></div>';
     return;
   }
-  $('#askLink').href = 'contact.html?type=project&ref=' + encodeURIComponent(d.title || d.id) + (d.svc ? '&svc=' + encodeURIComponent(d.svc) : '');
+  var ASK = OP.askHref(d.title || d.id, d.svc);
   var FS = F.state(d.id), sk = F.CLIENT_STEPS.indexOf(F.clientStage(d.id)), FK = fwdKeys(FS), REP = FS.rep || [];
   if (FS.fin) sk = F.CLIENT_STEPS.length; // 최종 확인 = 모든 단계 완료
   var DUE = (FS.ct && FS.ct.due) || d.due || '';
@@ -552,7 +563,7 @@
   }
   // 견적서 탭: 컨설턴트가 전달한 견적 비교 → 하나 선택
   function drawQuotes() {
-    var box = $('#tp-quote');
+    var box = $('#tp-quote'); if (!box) return;
     if (!FK.length) {
       box.innerHTML = '<div class="empty"><b>아직 도착한 견적이 없습니다</b><p>' + (FS.st === 'review' && !FS.ok ? 'OmicsPharm 컨설턴트가 의뢰서를 승인하면 프로젝트 찾기에 게시되어 분석파트너의 견적을 받습니다.' : '분석파트너 ' + Object.keys(FS.P).length + '곳이 견적을 준비하고 있습니다. 견적은 컨설턴트가 확인한 뒤 전달해드리며, 도착하면 알림으로 알려드립니다.') + '</p></div>';
       return;
@@ -575,7 +586,7 @@
           '<div class="qc-acts"><button type="button" class="btn" data-doc="' + k + '">견적서 보기</button>' + (done ? '' : '<button type="button" class="btn primary" data-pick="' + k + '">이 견적 선택</button>') + '</div>' +
         '</article>';
       }).join('') + '</div>' +
-      (done ? '' : '<p class="qnote">견적 내용에 궁금한 점이 있으면 상단의 [문의하기]로 OmicsPharm 컨설턴트에게 물어보세요.</p>');
+      (done ? '' : '<p class="qnote">견적 내용에 궁금한 점이 있으면 <a href="' + ASK + '">문의하기</a>로 OmicsPharm 컨설턴트에게 물어보세요.</p>');
     box.onclick = function (e) {
       var b = e.target.closest('[data-doc]'), c = e.target.closest('[data-pick]');
       if (b) {
@@ -598,7 +609,7 @@
         '<div><dt>최종 계약 금액</dt><dd><b class="amt">' + F.money(t.final, q.cur) + '</b> <span class="sub">(공급가 ' + F.money(t.net, q.cur) + ' + VAT)</span></dd></div>' +
         '<div><dt>계약 견적</dt><dd>' + F.qname(FS, FS.pick) + ' 견적 <button type="button" class="lnk" data-doc-pick>견적서 보기</button></dd></div>' +
         '<div><dt>계약일</dt><dd>' + ymd(FS.ct.at) + '</dd></div>' +
-        '<div><dt>납기일</dt><dd>' + dot(DUE) + (FS.fin ? '' : ' <em class="dday">' + dd(DUE) + '</em>') + '</dd></div>' +
+        '<div><dt>납기일</dt><dd>' + dot(DUE) + (FS.fin || REP.length ? '' : ' <em class="dday">' + dd(DUE) + '</em>') + '</dd></div>' +
       '</dl></section>' +
       '<section class="sec"><h3>계약서 파일</h3>' + F.contractListHTML(FS, ['client']) + '</section>';
   }
@@ -612,7 +623,7 @@
   function reportHTML() {
     if (!REP.length) return '<div class="empty"><b>등록된 결과보고서가 없습니다</b><p>' + (FS.ct ? '분석이 끝나면 OmicsPharm 컨설턴트가 결과보고서를 검토해 등록합니다. 납기일 ' + dot(DUE) + ' (' + dd(DUE) + ')' : '계약 후 분석이 끝나면 결과보고서가 여기에 등록됩니다.') + '</p></div>';
     var last = REP[REP.length - 1], n = REP.length;
-    var ask = 'contact.html?type=project&ref=' + encodeURIComponent(d.title) + '&cat=result';
+    var ask = ASK;
     return '<div class="qhead"><h3>결과보고서</h3><span>의뢰서 작성 시 선택하신 산출물이 등록됩니다. 이전 차수는 아래에서 열어볼 수 있습니다.</span></div>' +
       '<section class="rver cur"><div class="rv-head"><b>' + n + '차 결과보고서</b><span class="badge ' + (FS.fin ? 'done">최종 확인 완료' : 'wait">검수 대기') + '</span><em>' + ymd(last.at) + ' 등록</em></div>' +
         (last.note ? '<p class="rv-note"><b>OmicsPharm 컨설턴트</b>' + esc(F.mask(FS, last.note)) + '</p>' : '') + filesHTML(last) +
@@ -638,11 +649,15 @@
       '<div class="prow"><div class="badges"><span class="badge tag">' + esc(d.svc) + '</span>' + stB(d.id) + '</div>' +
         '<span class="reg">등록일 ' + ymd(d.at) + (d.updatedAt ? ' · 수정일 ' + ymd(d.updatedAt) : '') + ' · 프로젝트 번호 ' + esc(d.id) + '</span></div>' +
       '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-project.html" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(d.title) + '</h2>' +
-        ((d.from || d.to) && sk === 0 ? '<div class="period"><b>모집기한</b><span>' + dot(d.from) + ' ~ ' + dot(d.to) + '</span><em>' + (closed ? '모집마감' : '모집중') + '</em></div>' : '') + '</div>' +
+        '<div class="pright">' + ((d.from || d.to) && sk === 0 ? '<div class="period"><b>모집기한</b><span>' + dot(d.from) + ' ~ ' + dot(d.to) + '</span><em>' + (closed ? '모집마감' : '모집중') + '</em></div>' : '') + OP.askBtn(ASK) + '</div></div>' +
     '</div>' +
     '<ol class="fsteps" style="--n:5" aria-label="진행 단계">' + F.CLIENT_STEPS.map(function (t, i) { return '<li class="' + (i < sk ? 'done' : i === sk ? 'cur' : '') + '"' + (i === sk ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
     todoHTML() +
-    '<div class="tpanel" id="tp-req">' +
+    // 한 페이지: 지금 단계 섹션부터 (결과보고서 → 계약정보 → 견적서), 의뢰 내용은 맨 아래 (앞 단계 섹션이 있으면 접어둠)
+    (REP.length ? '<section class="tpanel" id="tp-report">' + reportHTML() + '</section>' : '') +
+    (FS.ct ? '<section class="tpanel" id="tp-contract">' + contractHTML() + '</section>' : '') +
+    (FK.length ? '<section class="tpanel" id="tp-quote"></section>' : '') +
+    '<details class="tpanel reqbox" id="tp-req"' + (FK.length || FS.ct ? '' : ' open') + '><summary><h3>의뢰 내용</h3><img src="assets/find/ic-chevron-down.svg" alt=""></summary>' +
     '<div class="summary">' +
       '<div><img src="assets/find/ic-user.svg" alt="">' + esc((d.org || '-') + (d.manager ? '(' + d.manager + ')' : '')) + '</div>' +
       '<div><img src="assets/find/ic-flask.svg" alt=""><em>샘플</em>' + (d.samples ? esc(d.samples) + '개' : '-') + '</div>' +
@@ -666,24 +681,15 @@
     (sk === 0 && !d.demo ? '<div class="pacts"><p>분석파트너의 견적이 선정되기 전까지 의뢰 내용을 수정하거나 삭제할 수 있습니다.</p>' +
       '<div><button type="button" class="btn del" id="pDel">삭제</button><a class="btn primary" href="omicspharm-register.html?edit=' + encodeURIComponent(d.id) + '&t=' + Date.now() + '">수정하기</a></div></div>' : '') +
     (d.demo ? '<p class="demo-note">※ 견적 중개 과정을 확인하기 위한 예시 의뢰입니다.</p>' : '') +
-    '</div>' +
-    '<div class="tpanel" id="tp-quote" hidden></div>' +
-    '<div class="tpanel" id="tp-contract" hidden>' + (FS.ct ? contractHTML()
-      : '<div class="empty"><b>등록된 계약서가 없습니다</b><p>' + (FS.pick ? '견적을 확정하면 OmicsPharm 컨설턴트가 계약서를 준비해 등록합니다.' : '견적을 비교하고 확정하면 OmicsPharm 컨설턴트가 계약서를 등록합니다.') + '</p></div>') + '</div>' +
-    '<div class="tpanel" id="tp-report" hidden>' + reportHTML() + '</div>';
+    '</details>';
   $('#project').outerHTML = html;
   drawQuotes();
-  // 탭 전환 (?tab=quote 로 바로 열기)
-  var tabBtns = [].slice.call(document.querySelectorAll('.ptabs [data-tab]'));
-  function showTab(k) {
-    tabBtns.forEach(function (b) { var on = b.dataset.tab === k; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
-    $('#tp-req').hidden = k !== 'req'; $('#tp-quote').hidden = k !== 'quote'; $('#tp-contract').hidden = k !== 'contract'; $('#tp-report').hidden = k !== 'report';
-  }
-  $('.ptabs').addEventListener('click', function (e) { var b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); });
+  // 섹션으로 이동 (?tab=quote|contract|report|req 로 들어오면 그 섹션으로)
+  function showTab(k) { var el = $('#tp-' + k); if (!el) return; if (el.tagName === 'DETAILS') el.open = true; el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-open-quote]'), c = e.target.closest('[data-open-tab]'), v = e.target.closest('[data-ct]');
-    if (b) { showTab('quote'); $('#tp-quote').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-    if (c) { showTab(c.dataset.openTab); $('#tp-' + c.dataset.openTab).scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    if (b) showTab('quote');
+    if (c) showTab(c.dataset.openTab);
     if (v) F.showContract(d, FS, v.dataset.ct);
     if (e.target.closest('[data-doc-pick]')) { var X = FS.P[FS.pick]; F.showDoc(d, X.quote, FS.pick, F.qname(FS, FS.pick) + ' 견적서', { client: true, no: F.qno(FS, FS.pick) }); }
     var dl = e.target.closest('[data-dl]'); if (dl) OP.toast('데모: ' + dl.dataset.dl + ' 파일을 내려받습니다.');
@@ -695,8 +701,7 @@
     if (e.target.closest('#rateGo')) { F.rate(d.id, +$('#rate').dataset.v, $('#rateText').value.trim()); OP.flash('만족도 평가를 제출했습니다. 감사합니다.'); location.replace('mypage-project.html?id=' + encodeURIComponent(d.id) + '&tab=report'); }
   });
   // 처음 보이는 탭은 단계에 맞춤: 의뢰접수 = 의뢰내용 / 견적 비교·견적 확정 = 견적서 / 계약서 등록 후 = 계약정보 (?tab= 이 있으면 그 탭)
-  var qtab = new URLSearchParams(location.search).get('tab');
-  showTab(qtab === 'req' || qtab === 'quote' || qtab === 'contract' || qtab === 'report' ? qtab : REP.length ? 'report' : FS.ct ? 'contract' : FS.st === 'sent' || FS.st === 'matched' ? 'quote' : 'req');
+  var qtab = new URLSearchParams(location.search).get('tab'); if (qtab) setTimeout(function () { showTab(qtab); }, 50);
   // 사업자등록증 다시 올리기: 이 의뢰의 파일로 저장하고 내 정보 관리에도 반영
   if ($('#bizRe')) $('#bizRe').addEventListener('change', function () {
     var f = this.files[0]; this.value = ''; if (!f) return;

@@ -171,6 +171,9 @@
   };
   D.removeProject = function (id) { if (OP.flow) OP.flow.remove(id); write('op.submitted', D.projects().filter(function (p) { return p.id !== id; })); };
 
+  // 프로젝트 상세 [문의하기]: 세 계정 모두 제목 줄 오른쪽. Q&A 게시판 대신 챗봇으로 받을 예정 — 챗봇 화면 전까지는 문의하기 페이지에 프로젝트명을 채워 연다
+  OP.askHref = function (title, svc) { return 'contact.html?type=project&ref=' + encodeURIComponent(title || '') + (svc ? '&svc=' + encodeURIComponent(svc) : ''); };
+  OP.askBtn = function (href) { return '<a class="btn op-ask" href="' + href + '"><img src="assets/project/ic-chat-circle-dots.svg" alt="">문의하기</a>'; };
   OP.my = D;
   OP.mypage = function (key) {
     var s = OP.session();

@@ -11,12 +11,12 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261018t">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261018t">
-<script src="assets/common/site.js?v=20261018t"></script>
-<script src="assets/common/mypage.js?v=20261018t"></script>
-<script src="assets/common/svc-spec.js?v=20261018t"></script>
-<script src="assets/common/flow.js?v=20261018t"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261018u">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261018u">
+<script src="assets/common/site.js?v=20261018u"></script>
+<script src="assets/common/mypage.js?v=20261018u"></script>
+<script src="assets/common/svc-spec.js?v=20261018u"></script>
+<script src="assets/common/flow.js?v=20261018u"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -29,6 +29,7 @@
   /* 상세 머리 */
   .phead { display:flex; flex-direction:column; gap:12px; }
   .prow { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .prow:has(.pright) { flex-wrap:wrap; row-gap:12px; } .prow:has(.pright) .ptitle { flex:1 1 360px; min-width:0; } /* 제목이 길면 납기일·문의하기는 아래 줄로 */
   .badges { display:flex; gap:6px; flex-wrap:wrap; }
   .reg { font-size:12px; line-height:18px; color:var(--gray-500); }
   .ptitle { display:flex; align-items:center; gap:8px; font-size:22px; font-weight:600; line-height:30px; letter-spacing:-.22px; word-break:keep-all; }
@@ -37,6 +38,7 @@
   .ptitle img { width:22px; height:22px; }
   .client { display:inline-flex; align-items:center; gap:8px; height:36px; padding:0 14px; border:1px solid var(--gray-300); border-radius:99px; font-size:14px; white-space:nowrap; }
   .client b { font-weight:600; }
+  .pright { display:flex; align-items:center; gap:8px; flex:none; flex-wrap:wrap; }
 
   .blk { display:flex; flex-direction:column; gap:14px; }
   .blk-h { display:flex; align-items:center; justify-content:space-between; gap:12px; }
@@ -653,7 +655,7 @@
       '<div class="phead">' +
         '<div class="prow"><div class="badges"><span class="badge tag">' + esc(r.svc) + '</span>' + stBadge(s) + (r.open === '비공개' ? '<span class="badge lock">비공개</span>' : '') + '</div><span class="reg">접수 ' + F.ymd(r.at) + ' · 프로젝트 번호 ' + esc(r.id) + '</span></div>' +
         '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-request.html" aria-label="프로젝트 목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(r.title) + '</h2>' +
-          '<span class="client"><b>클라이언트</b>' + esc((r.org || '-') + (r.manager ? ' · ' + r.manager : '')) + '</span></div>' +
+          '<div class="pright"><span class="client"><b>클라이언트</b>' + esc((r.org || '-') + (r.manager ? ' · ' + r.manager : '')) + '</span>' + OP.askBtn(OP.askHref(r.title, r.svc)) + '</div></div>' +
       '</div>' +
       '<ol class="fsteps" style="--n:5" aria-label="진행 단계">' + STEPS.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
       '<div class="ftodo ' + todo[0] + '"><div><b>' + esc(todo[1]) + '</b><p>' + esc(todo[2]) + '</p></div>' +

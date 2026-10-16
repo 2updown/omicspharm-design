@@ -87,3 +87,4 @@ Phosphor 아이콘이 아니라 프로토타입용으로 직접 만든 SVG 이�
 | `project/ic-star.svg` · `project/ic-star-fill.svg` | Star / star-fill (Fill) | Phosphor (결과보고서 만족도 평가 별점, 빈 별 #D4D4D4 / 채운 별 #F59E0B) |
 | `project/ic-download-simple.svg` | DownloadSimple | Phosphor (결과보고서 파일 다운로드, #525252) |
 | `project/ic-file-pdf.svg` · `project/ic-file-xls.svg` · `project/ic-image.svg` | FilePdf / FileXls / Image | Phosphor (결과보고서 파일 종류, #525252) |
+| `project/ic-chat-circle-dots.svg` | ChatCircleDots | Phosphor (프로젝트 상세 제목 줄 [문의하기], #525252) |

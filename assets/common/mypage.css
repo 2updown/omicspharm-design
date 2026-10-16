@@ -303,3 +303,6 @@ span.tbtn { cursor:default; }
   .pv-ver { order:3; width:100%; } .pv-ver button { flex:1; }
 }
 @media print { .pv-old { display:none; } }
+
+/* 프로젝트 상세 제목 줄 [문의하기] (클라이언트·분석파트너·컨설턴트 공통) */
+.op-ask { flex:none; } .op-ask img { width:20px; height:20px; }
