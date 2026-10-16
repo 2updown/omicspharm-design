@@ -106,7 +106,7 @@
   .st.on .n{background:#fff;border-color:var(--teal);color:var(--teal)}
   .st.on b{color:var(--ink);font-weight:700}
   .st.on .cnt{color:var(--orange)}
-  .st.err .n{border-color:var(--red);color:var(--red);background:var(--redL)}
+  .st.err .n{border-color:var(--red);color:var(--red);background:var(--red-bg)}
   .st.err .cnt{color:var(--red)}
 
   .step{display:none}
@@ -220,13 +220,8 @@
   .rev .fbody{padding:14px 16px;font-size:13.5px}
 
   /* 오류 */
-  .errbox{display:none;border:1px solid #ffd4d4;background:var(--redL);border-radius:8px;padding:13px 15px;margin-bottom:20px}
-  .errbox.on{display:block}
-  .errbox b{font-size:13.5px;color:#c23a3f;display:block;margin-bottom:8px}
-  .errbox ul{display:flex;flex-wrap:wrap;gap:5px;margin:0;padding:0;list-style:none}
-  .errbox button{border:1px solid #ffd4d4;background:#fff;color:#c23a3f;border-radius:5px;padding:4px 10px;font-size:12px}
   /* 필수값 미입력: 왼쪽 항목명·배경은 그대로 두고 입력란 아래 빨간 안내만 */
-  .emsg{display:none;font-size:12px;color:#c23a3f;margin-top:7px}
+  .emsg{display:none;font-size:12px;line-height:18px;color:var(--red);margin-top:7px} /* text field 헬프텍스트 오류색 (Red/600) */
   .field.invalid .emsg{display:block}
 
   /* 하단 버튼 */
@@ -550,8 +545,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261018b">
-<script src="assets/common/site.js?v=20261018b"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261018c">
+<script src="assets/common/site.js?v=20261018c"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -572,7 +567,6 @@
     <div class="sr-keep" hidden><span id="savedLine">임시저장 전</span><b id="stepNo">1</b><span id="stepTitle">기본 정보</span><span id="stepLead"></span></div>
 
 
-    <div class="errbox" id="errBox"><b id="errHead">입력하지 않은 필수 항목이 있습니다</b><ul id="errList"></ul></div>
 
     <!-- ① 의뢰 정보 -->
     <div class="step on" data-step="1">
@@ -1118,25 +1112,17 @@
   }
   function allMiss(){var m=[];for(var i=1;i<=MAX;i++)m=m.concat(stepMiss(i));return m}
   function clearInv(el){var f=el.closest&&el.closest('.field'); if(f) f.classList.remove('invalid')}
-  function clearErr(){ $$('.field.invalid').forEach(function(f){f.classList.remove('invalid')}); tabs.forEach(function(t){t.classList.remove('err')}); $('#errBox').classList.remove('on') }
+  function clearErr(){ $$('.field.invalid').forEach(function(f){f.classList.remove('invalid')}); tabs.forEach(function(t){t.classList.remove('err')}) }
   function showErr(miss,one){
     clearErr();
-    $('#errHead').textContent = one ? '이 단계에서 입력하지 않은 항목이 있습니다' : '입력하지 않은 필수 항목이 있습니다';
-    $('#errList').innerHTML = miss.map(function(m,i){return '<li><button type="button" data-i="'+i+'">'+(one?'':m.step+'단계 · ')+m.label+'</button></li>'}).join('');
-    $$('#errList button').forEach(function(b){b.onclick=function(){
-      var m=miss[+b.dataset.i]; cur=m.step; render();
-      setTimeout(function(){
-        m.el.scrollIntoView({behavior:'smooth',block:'center'});
-      },40);
-    }});
+    // 상단 오류 요약 박스 없음: 빈 필드 아래 빨간 헬프텍스트 + 단계 탭 표시, 첫 번째 빈 필드로 스크롤
     miss.forEach(function(m){ m.el.classList.add('invalid');
       var body=$('.fbody',m.el)||m.el;
       if(!$('.emsg',m.el)){var p=document.createElement('p');p.className='emsg';
         p.textContent = m.el.id==='phoneField' ? '휴대폰 인증을 완료해 주세요.' : (baseFilled(m.el) && etcEmpty(m.el)) ? '기타 내용을 입력해 주세요.' : '필수 입력 항목입니다.';
         body.appendChild(p)} tabs[m.step-1].classList.add('err') });
-    $('#errBox').classList.add('on');
     if(!one){ cur=miss[0].step; render(); }
-    $('#errBox').scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(function(){ miss[0].el.scrollIntoView({behavior:'smooth',block:'center'}); },40);
   }
   document.addEventListener('input',function(e){clearInv(e.target); updateProg()});
   document.addEventListener('change',function(e){clearInv(e.target); updateProg()});
