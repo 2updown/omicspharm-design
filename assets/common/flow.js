@@ -164,7 +164,7 @@
   function db() {
     var d = read(KEY, null);
     // 컨설턴트 의견 예시에서 기관명 → A사·B사 (기록은 그대로)
-    if (d && d.S) Object.keys(d.S).forEach(function (k) { if (d.S[k].msg === OLDMSG[0]) { d.S[k].msg = OLDMSG[1]; write(KEY, d); } });
+    if (d && d.S) Object.keys(d.S).forEach(function (k) { if (d.S[k].msg && d.S[k].msg !== OLDMSG[1] && d.S[k].msg.indexOf('세 기관 모두 FFPE') === 0) { d.S[k].msg = OLDMSG[1]; write(KEY, d); } }); // 예전 이름(○○·△△…)으로 저장된 예시 문장도 바꿈
     if (d && d.v === 3) { var n = seed().S; Object.keys(n).forEach(function (k) { if (!d.S[k]) d.S[k] = n[k]; }); d.v = 4; }
     // 4 → 5: 예시 견적의 단위(sample·식)를 EA로
     if (d && d.v === 4) {
@@ -414,7 +414,8 @@
   F.qno = function (s, k) { var K = Object.keys(s.P || {}).filter(function (x) { return s.P[x].fwd; }); return String.fromCharCode(65 + Math.max(0, K.indexOf(k))); };
   // 클라이언트에게 보이는 글(컨설턴트 의견 등)에서 기관명 가리기: 전달한 견적은 A사·B사, 그 밖의 기관은 '다른 기관'
   F.mask = function (s, t) {
-    return PARTNERS.reduce(function (t, p) { return t.split(p.org).join(s.P && s.P[p.key] && s.P[p.key].fwd ? F.qname(s, p.key) : '다른 기관'); }, String(t || ''));
+    t = PARTNERS.reduce(function (t, p) { return t.split(p.org).join(s.P && s.P[p.key] && s.P[p.key].fwd ? F.qname(s, p.key) : '다른 기관'); }, String(t || ''));
+    return t.replace(/[○△□◇◎☆]{2}[^\s,.]*/g, '다른 기관'); // 예전 예시 이름(△△바이오랩 등)
   };
   F.qname = function (s, k) { return F.qno(s, k) + '사'; }; // 클라이언트에게는 기관명 대신 A사·B사
   // 클라이언트에게 전달하는 견적서의 공급자 = 셀키에이아이 (분석파트너 견적을 셀키 명의로 전달). 공개 사이트라 대표자·번호·주소는 예시값
