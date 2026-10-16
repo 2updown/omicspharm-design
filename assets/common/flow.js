@@ -6,7 +6,7 @@
    - 데모: 로그인 가능한 파트너는 partner@omicspharm.test 하나이고, 나머지 파트너는 요청을 받으면 바로 응답한다
    사용: mypage.js 다음에 불러오고 OP.flow.* 사용 */
 (function () {
-  var KEY = 'op.flow', VER = 5; // 3: 프로젝트 번호 통일 (PRJ-연도-일련번호), 4: 분석파트너 예시 0046·0047 추가, 5: 예시 견적 단위 EA
+  var KEY = 'op.flow', VER = 6; // 3: 프로젝트 번호 통일 (PRJ-연도-일련번호), 4: 분석파트너 예시 0046·0047 추가, 5: 예시 견적 단위 EA, 6: 분석 진행·결과 수령 예시(0040·0041) + 2차 견적 예시
   function read(k, f) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch (e) { return f; } }
   function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); };
@@ -75,7 +75,18 @@
         { title: '표적 대사체', rows: [['표적 패널', 'Amino acid·BCAA'], ['표적 대사체명', 'Leucine, Isoleucine, Valine, Glutamine'], ['정량 방식', '절대정량'], ['내부표준물질 준비', '미보유'], ['검량선용 표준물질 보유', '확인 필요']] },
         { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', '혈청'], ['총 시료 수', '30개'], ['보관상태', '초저온 (-80℃)']] },
         { title: '분석 그룹', rows: [['비교군 구성', '그룹 있음'], ['대조군', '중재 전 · 15개'], ['실험군', '중재 후 · 15개']] },
-        { title: '희망 산출물', rows: [['희망 산출물', '결과표, 국문 보고서'], ['산출물 용도', '논문 학술용']] }] }
+        { title: '희망 산출물', rows: [['희망 산출물', '결과표, 국문 보고서'], ['산출물 용도', '논문 학술용']] }] },
+    // 클라이언트 데모: 분석 진행(계약 완료) 1건, 결과 수령(결과보고서 2차까지) 1건
+    { id: 'PRJ-2026-0041', demo: true, at: T0 - DAY * 30, svc: '단백체 분석', title: '간암 조직 인산화 단백체 분석', org: '한결연구소', manager: '홍길동', bizDoc: '사업자등록증_한결연구소.pdf', owner: 'client@omicspharm.test', samples: '12', due: '2026-12-04', from: '2026-09-01', to: '2026-09-15', budget: '1,000만원 이상', open: '공개',
+      purpose: '간암 조직과 정상 조직의 인산화 신호 차이를 확인하고자 합니다.',
+      sections: [{ title: '분석 서비스 : 단백체 분석', rows: [['분석 유형', '번역 후 변형(PTM)'], ['PTM 종류', '인산화'], ['원하는 분석 결과', '상대정량, 차등 인산화 사이트, Kinase 분석']] },
+        { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', '조직'], ['총 시료 수', '12개'], ['보관상태', '초저온 (-80℃)']] },
+        { title: '희망 산출물', rows: [['희망 산출물', 'Raw data, 결과표, 국문 보고서'], ['산출물 용도', '논문 학술용']] }] },
+    { id: 'PRJ-2026-0040', demo: true, at: T0 - DAY * 60, svc: '대사체 분석', title: '장내 미생물 대사산물 단쇄지방산 정량', org: '한결연구소', manager: '홍길동', bizDoc: '사업자등록증_한결연구소.pdf', owner: 'client@omicspharm.test', samples: '18', due: '2026-10-10', from: '2026-08-01', to: '2026-08-14', budget: '500만~1,000만원', open: '공개',
+      purpose: '프로바이오틱스 투여 전후 분변 시료의 단쇄지방산 농도 변화를 정량하고자 합니다.',
+      sections: [{ title: '분석 서비스 : 대사체 분석', rows: [['분석 유형', '표적 대사체'], ['플랫폼', 'GC-MS'], ['표적 패널', '단쇄지방산(SCFA)'], ['정량 방식', '절대정량']] },
+        { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', '분변'], ['총 시료 수', '18개'], ['보관상태', '초저온 (-80℃)']] },
+        { title: '희망 산출물', rows: [['희망 산출물', '국문 보고서, 영문 보고서, 결과 이미지, Raw data'], ['산출물 용도', '논문 학술용']] }] }
   ];
 
   // 가상 파트너 견적 (서비스·시료 수 기준으로 만든 예시)
@@ -127,8 +138,28 @@
     S[r5.id] = { st: 'quoting', ok: T0 - DAY * 5.5, reqAt: T0 - DAY * 5, due: '2026-10-12', memo: '절대정량이 가능한 기관 위주로 요청드립니다.', P: {} };
     S[r5.id].P[ME_PARTNER] = { at: T0 - DAY * 5, status: 'sub', quote: genQuote(me, r5), subAt: T0 - DAY * 3 };
     S[r5.id].P['p-met'] = { at: T0 - DAY * 5, status: 'sub', quote: genQuote(partner('p-met'), r5), subAt: T0 - DAY * 4 };
+    seed6(S);
     return { v: VER, S: S };
   }
+  // 6: 분석 진행(0041)·결과 수령(0040) 예시 + 0045의 B사 견적을 2차로(1차는 hist)
+  function seed6(S) {
+    var a = req2('PRJ-2026-0041'), b = req2('PRJ-2026-0040');
+    if (!S[a.id]) {
+      S[a.id] = { st: 'matched', ok: T0 - DAY * 29, reqAt: T0 - DAY * 28, due: '2026-09-15', memo: '', P: {}, sentAt: T0 - DAY * 20, pick: 'p-mlt', pickAt: T0 - DAY * 17,
+        ct: { at: T0 - DAY * 12, due: '2026-12-04', client: { type: 'form' }, partner: { type: 'form' } } };
+      S[a.id].P['p-mlt'] = { at: T0 - DAY * 28, status: 'sub', quote: genQuote(partner('p-mlt'), a), subAt: T0 - DAY * 22, fwd: true };
+    }
+    if (!S[b.id]) {
+      S[b.id] = { st: 'matched', ok: T0 - DAY * 59, reqAt: T0 - DAY * 58, due: '2026-08-14', memo: '', P: {}, sentAt: T0 - DAY * 50, pick: 'p-met', pickAt: T0 - DAY * 47,
+        ct: { at: T0 - DAY * 44, due: '2026-10-10', client: { type: 'form' }, partner: { type: 'form' } },
+        rep: [{ at: T0 - DAY * 6, files: ['분석결과보고서_국문_v1.pdf', '분석결과보고서_영문_v1.pdf', '결과이미지_v1.pdf', 'RawData.xlsx'] },
+              { at: T0 - DAY * 1, files: ['분석결과보고서_국문_v2.pdf', '분석결과보고서_영문_v2.pdf', '결과이미지_v2.pdf', 'RawData.xlsx'], note: '요청하신 대로 그룹별 Boxplot을 추가하고, 통계 검정 방법을 Wilcoxon으로 바꿨습니다.' }] };
+      S[b.id].P['p-met'] = { at: T0 - DAY * 58, status: 'sub', quote: genQuote(partner('p-met'), b), subAt: T0 - DAY * 52, fwd: true };
+    }
+    var x = S['PRJ-2026-0045'] && S['PRJ-2026-0045'].P['p-omx'];
+    if (x && x.quote && !x.hist) { var hq = genQuote(partner('p-omx'), req2('PRJ-2026-0045'), 1.06); hq.subAt = T0 - DAY * 4; x.hist = [{ quote: hq, at: T0 - DAY * 4 }]; x.ver2At = T0 - DAY; }
+  }
+  function req2(id) { return DEMO_REQS.filter(function (r) { return r.id === id; })[0]; }
   // 버전 3 → 4: 진행하던 기록은 그대로 두고 새 예시(0046·0047)만 추가
   function db() {
     var d = read(KEY, null);
@@ -138,8 +169,9 @@
     // 4 → 5: 예시 견적의 단위(sample·식)를 EA로
     if (d && d.v === 4) {
       Object.keys(d.S).forEach(function (id) { var P = d.S[id].P || {}; Object.keys(P).forEach(function (k) { var q = P[k].quote; (q && q.groups || []).forEach(function (g) { g.lines.forEach(function (l) { if (l.u === 'sample' || l.u === '식' || l.u === 1) l.u = 'EA'; }); }); }); });
-      d.v = VER; write(KEY, d);
+      d.v = 5; write(KEY, d);
     }
+    if (d && d.v === 5) { seed6(d.S); d.v = VER; write(KEY, d); }
     if (!d || d.v !== VER) { d = seed(); write(KEY, d); }
     d.X = d.X || []; return d;
   }
@@ -285,7 +317,10 @@
       var A = OP.accounts(); Object.keys(A).forEach(function (k) { if (A[k].bizOk) OP.saveAccount(k, { bizOk: 0, bizOkName: '' }); }); // 사업자등록증 확인 완료도 처음 상태로 (올린 파일은 유지)
     },
     // 클라이언트 단계
-    clientStage: function (id) { var s = state(id); return s.ct ? '분석 진행' : F.CLIENT_ST[s.st]; },
+    clientStage: function (id) { var s = state(id); return s.rep && s.rep.length ? '결과 수령' : s.ct ? '분석 진행' : F.CLIENT_ST[s.st]; },
+    // 결과보고서 최종 확인(프로젝트 완료) · 만족도 평가
+    finish: function (id) { return put(id, function (s) { s.fin = Date.now(); }); },
+    rate: function (id, star, text) { return put(id, function (s) { s.rate = { star: star, text: text, at: Date.now() }; }); },
     // 분석파트너가 받은 견적 요청
     inbox: function (k) {
       var d = db().S;
@@ -377,6 +412,10 @@
 
   // 클라이언트에게 보이는 견적 이름: 전달된 순서대로 A·B·C
   F.qno = function (s, k) { var K = Object.keys(s.P || {}).filter(function (x) { return s.P[x].fwd; }); return String.fromCharCode(65 + Math.max(0, K.indexOf(k))); };
+  // 클라이언트에게 보이는 글(컨설턴트 의견 등)에서 기관명 가리기: 전달한 견적은 A사·B사, 그 밖의 기관은 '다른 기관'
+  F.mask = function (s, t) {
+    return PARTNERS.reduce(function (t, p) { return t.split(p.org).join(s.P && s.P[p.key] && s.P[p.key].fwd ? F.qname(s, p.key) : '다른 기관'); }, String(t || ''));
+  };
   F.qname = function (s, k) { return F.qno(s, k) + '사'; }; // 클라이언트에게는 기관명 대신 A사·B사
   // 클라이언트에게 전달하는 견적서의 공급자 = 셀키에이아이 (분석파트너 견적을 셀키 명의로 전달). 공개 사이트라 대표자·번호·주소는 예시값
   F.SELLER = { s_org: '㈜셀키에이아이', s_ceo: '홍길동', s_tel: '02-0000-0000', s_biz: '000-00-00000', s_mgr: 'OmicsPharm 컨설턴트', s_mail: 'help@omicspharm.test', s_addr: '서울특별시 강서구 마곡중앙로 00' };
@@ -415,16 +454,30 @@
     '</article>';
   };
   // 견적서 보기 창
+  // o.vers = [{ q, t }] 최신 차수부터 (1·2·3차 견적): 창 위쪽에서 차수를 바꿔 볼 수 있음
   F.showDoc = function (r, q, k, title, o) {
+    o = o || {};
+    var V = o.vers && o.vers.length > 1 ? o.vers : null, cur = 0;
     var pv = document.createElement('div');
     pv.className = 'pv'; pv.setAttribute('role', 'dialog'); pv.setAttribute('aria-modal', 'true'); pv.setAttribute('aria-label', title || '견적서');
-    pv.innerHTML = '<div class="pv-bar"><b>' + esc(title || '견적서') + '</b><div><button type="button" data-print>인쇄 · PDF 저장</button><button type="button" class="x" data-close>닫기</button></div></div><div class="pv-scroll">' + F.docHTML(r, q, k, o) + '</div>';
+    var body = function () {
+      var vq = V ? V[cur].q : q;
+      return (V && cur ? '<p class="pv-old">이전 견적입니다. 지금 확정할 수 있는 견적은 ' + esc(V[0].t) + '입니다.</p>' : '') + F.docHTML(r, vq, k, o);
+    };
+    pv.innerHTML = '<div class="pv-bar"><b>' + esc(title || '견적서') + '</b>' +
+      (V ? '<div class="pv-ver" role="tablist" aria-label="견적 차수">' + V.map(function (v, i) { return '<button type="button" role="tab" data-ver="' + i + '" aria-selected="' + !i + '">' + esc(v.t) + (i ? '' : ' · 최신') + '</button>'; }).join('') + '</div>' : '') +
+      '<div><button type="button" data-print>인쇄 · PDF 저장</button><button type="button" class="x" data-close>닫기</button></div></div><div class="pv-scroll">' + body() + '</div>';
     var close = function () { pv.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', key); };
     var key = function (e) { if (e.key === 'Escape') close(); };
-    pv.addEventListener('click', function (e) { if (e.target.closest('[data-close]') || e.target === pv) close(); else if (e.target.closest('[data-print]')) window.print(); });
+    pv.addEventListener('click', function (e) {
+      var vb = e.target.closest('[data-ver]');
+      if (vb) { cur = +vb.dataset.ver; [].forEach.call(pv.querySelectorAll('[data-ver]'), function (b) { b.setAttribute('aria-selected', b === vb); }); pv.querySelector('.pv-scroll').innerHTML = body(); pv.querySelector('.pv-scroll').scrollTop = 0; }
+      else if (e.target.closest('[data-close]') || e.target === pv) close(); else if (e.target.closest('[data-print]')) window.print();
+    });
     document.addEventListener('keydown', key);
     document.body.appendChild(pv); document.body.style.overflow = 'hidden'; pv.querySelector('[data-close]').focus();
   };
+
   // 입력 모달 (수정 요청 사유, 거절 사유, 전달 메시지): OP.flow.ask({title, desc, label, ph, yes, required}, cb(value))
   F.ask = function (o, cb) {
     var m = document.createElement('div');

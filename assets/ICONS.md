@@ -84,3 +84,6 @@ Phosphor 아이콘이 아니라 프로토타입용으로 직접 만든 SVG 이�
 | `guide/tip-org.svg` · `guide/tip-private.svg` · `guide/tip-qna.svg` · `guide/tip-split.svg` | 이용 가이드 > TIP 카드 | 카드 일러스트 |
 | `main/features/feature-report.svg` · `feature-interpret.svg` · `feature-matching.svg` · `feature-support.svg` | 메인 > Features 4개 항목 | **임시 이미지** — 실제 화면·디자인 확정 후 교체 |
 | `main/features/feature-manage.svg` · `feature-request.svg` | 사용 안 함 | 예전 Features 구성용 (삭제 가능) |
+| `project/ic-star.svg` · `project/ic-star-fill.svg` | Star / star-fill (Fill) | Phosphor (결과보고서 만족도 평가 별점, 빈 별 #D4D4D4 / 채운 별 #F59E0B) |
+| `project/ic-download-simple.svg` | DownloadSimple | Phosphor (결과보고서 파일 다운로드, #525252) |
+| `project/ic-file-pdf.svg` · `project/ic-file-xls.svg` · `project/ic-image.svg` | FilePdf / FileXls / Image | Phosphor (결과보고서 파일 종류, #525252) |
