@@ -530,7 +530,10 @@
   .dtbl th{background:var(--n100);color:#000;font-weight:500;border-top:0;padding:12px 18px}
   .dtbl td{padding:10px 18px}
   .dtbl tbody tr.sel{background:#f6faf9}
-  .mnote{margin:-4px 0 0;font-size:12px;line-height:18px;letter-spacing:-.12px;color:var(--n500)}
+  .mhead{align-items:flex-start}
+  .mtit{flex:1;min-width:0}
+  .mdesc{margin:0;font-size:16px;line-height:22px;color:var(--n700,#404040)} /* Body/Medium/R, gray 700 */
+  .mdesc[hidden]{display:none}
   .mfoot{padding:0}
   .mfoot button{height:40px}
   .cbox{max-width:512px;border:0;border-radius:12px;padding:24px}
@@ -550,8 +553,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261018j">
-<script src="assets/common/site.js?v=20261018j"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261018k">
+<script src="assets/common/site.js?v=20261018k"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -883,7 +886,7 @@
 </div>
 
 <div class="modal" id="listModal"><div class="mbox">
-  <div class="mhead"><h3>의뢰서 불러오기</h3><button type="button" id="closeList">×</button></div>
+  <div class="mhead"><div class="mtit"><h3>의뢰서 불러오기</h3><p class="mdesc" id="draftNote">최대 5개까지 저장되며, 작성 중인 의뢰서는 30일간 보관됩니다.</p></div><button type="button" id="closeList">×</button></div><!-- Figma 1424:15044: 제목 아래 설명 -->
   <div class="mbody">
     <table class="dtbl">
       <thead><tr>
@@ -892,9 +895,8 @@
       </tr></thead>
       <tbody id="draftList"></tbody>
     </table>
-    <div class="mempty" id="draftEmpty" style="display:none">저장된 의뢰서가 없습니다.<br>작성 중 임시저장을 누르면 여기에 보관됩니다.</div>
+    <div class="mempty" id="draftEmpty" style="display:none">저장된 의뢰서가 없습니다.</div>
   </div>
-  <p class="mnote" id="draftNote">작성 중인 의뢰서는 30일간 보관됩니다.</p>
   <div class="mfoot">
     <button type="button" class="mdel" id="delDraft" disabled>삭제</button>
     <button type="button" class="mload" id="loadDraft" disabled>의뢰서 불러오기</button>
@@ -1495,7 +1497,7 @@
     var list=await STORE.get(), tb=$('#draftList');
     $('.dtbl').style.display=list.length?'table':'none';
     $('#draftEmpty').style.display=list.length?'none':'block';
-    $('#draftNote').hidden=!list.length; // 보관 기간 안내는 목록이 있을 때만
+    $('#draftNote').hidden=!list.length; // 제목 아래 설명은 목록이 있을 때만 (없으면 '저장된 의뢰서가 없습니다.'만)
     pick=null; syncPick();
     tb.innerHTML=list.map(function(d,i){
       return '<tr data-id="'+d.id+'">'+
