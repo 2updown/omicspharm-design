@@ -415,7 +415,7 @@
   // 클라이언트에게 보이는 글(컨설턴트 의견 등)에서 기관명 가리기: 전달한 견적은 A사·B사, 그 밖의 기관은 '다른 기관'
   F.mask = function (s, t) {
     t = PARTNERS.reduce(function (t, p) { return t.split(p.org).join(s.P && s.P[p.key] && s.P[p.key].fwd ? F.qname(s, p.key) : '다른 기관'); }, String(t || ''));
-    return t.replace(/[○△□◇◎☆]{2}[^\s,.]*/g, '다른 기관'); // 예전 예시 이름(△△바이오랩 등)
+    return t.replace(/[○△□◇◎☆]{2}[가-힣A-Za-z]*?(센터|연구소|연구원|랩|오믹스|로직스)/g, '다른 기관'); // 예전 예시 이름(△△바이오랩 등)
   };
   F.qname = function (s, k) { return F.qno(s, k) + '사'; }; // 클라이언트에게는 기관명 대신 A사·B사
   // 클라이언트에게 전달하는 견적서의 공급자 = 셀키에이아이 (분석파트너 견적을 셀키 명의로 전달). 공개 사이트라 대표자·번호·주소는 예시값
