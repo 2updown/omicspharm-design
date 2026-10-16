@@ -530,10 +530,24 @@
   .dtbl th{background:var(--n100);color:#000;font-weight:500;border-top:0;padding:12px 18px}
   .dtbl td{padding:10px 18px}
   .dtbl tbody tr.sel{background:#f6faf9}
+  /* 의뢰서 불러오기 (Figma 1424:15044) */
+  #listModal .mbox{border-radius:8px;gap:12px;box-shadow:0 16px 24px rgba(0,0,0,.16),0 0 2px rgba(0,0,0,.16)}
   .mhead{align-items:flex-start}
-  .mtit{flex:1;min-width:0}
+  .mhead button{width:24px;height:24px;padding:0;color:#000}
+  .mtit{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
   .mdesc{margin:0;font-size:16px;line-height:22px;color:var(--n700,#404040)} /* Body/Medium/R, gray 700 */
-  .mdesc[hidden]{display:none}
+  #listModal .dtbl{table-layout:fixed}
+  #listModal .dtbl th,#listModal .dtbl td{border-right:1px solid var(--n200)}
+  #listModal .dtbl th:last-child,#listModal .dtbl td:last-child{border-right:0}
+  #listModal .dtbl th{border-bottom:1px solid var(--n200);line-height:20px}
+  #listModal .dtbl th:first-child,#listModal .dtbl td:first-child{text-align:center}
+  #listModal .dtbl td{padding:8px 18px;line-height:20px;color:#000;border-bottom:1px solid var(--n200);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #listModal .dtbl .nm em{background:none;border:1px solid var(--teal);color:var(--teal);line-height:18px;letter-spacing:-.12px;padding:1px 7px}
+  #listModal .dtbl td:last-child{padding:8px 0;font-size:0}
+  #listModal .dtbl input[type=radio]{appearance:none;-webkit-appearance:none;width:20px;height:20px;margin:0;vertical-align:middle;cursor:pointer;border-radius:50%;background:#fff;border:1.5px solid var(--n300)}
+  #listModal .dtbl input[type=radio]:checked{border:0;background:var(--teal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.2l2.6 2.6L14 7.4' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/20px no-repeat}
+  #listModal .mempty{padding:40px 0;border-top:2px solid #000;border-bottom:1px solid var(--n200);font-size:14px;line-height:20px;color:var(--n500)}
+  #listModal .mfoot button{height:36px;padding:0 12px;min-width:64px;justify-content:center;font-size:14px;font-weight:500;line-height:20px;border-radius:8px}
   .mfoot{padding:0}
   .mfoot button{height:40px}
   .cbox{max-width:512px;border:0;border-radius:12px;padding:24px}
@@ -553,8 +567,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261018k">
-<script src="assets/common/site.js?v=20261018k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261018l">
+<script src="assets/common/site.js?v=20261018l"></script>
 <script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
 </head>
 <body>
@@ -890,8 +904,8 @@
   <div class="mbody">
     <table class="dtbl">
       <thead><tr>
-        <th style="width:52px">No.</th><th style="width:150px">분석 서비스</th><th>의뢰명</th>
-        <th style="width:84px">진행</th><th style="width:110px">등록일</th><th style="width:56px">선택</th>
+        <th style="width:59px">No.</th><th style="width:142px">분석 서비스</th><th>의뢰명</th>
+        <th style="width:110px">등록일</th><th style="width:56px">선택</th>
       </tr></thead>
       <tbody id="draftList"></tbody>
     </table>
@@ -1433,8 +1447,8 @@
   /* ── 임시저장 ── */
   var KEY='omicspharm:drafts', MEM={}, curId=null;
   var STORE={
-    get:async function(){ if(window.storage&&window.storage.get){try{var r=await window.storage.get(KEY);return r&&r.value?JSON.parse(r.value):[]}catch(e){return []}} return MEM[KEY]||[] },
-    set:async function(v){ if(window.storage&&window.storage.set){try{await window.storage.set(KEY,JSON.stringify(v));return}catch(e){}} MEM[KEY]=v }
+    get:async function(){ if(window.storage&&window.storage.get){try{var r=await window.storage.get(KEY);return r&&r.value?JSON.parse(r.value):[]}catch(e){return []}} try{ return JSON.parse(localStorage.getItem(KEY)||'[]') }catch(e){ return MEM[KEY]||[] } },
+    set:async function(v){ if(window.storage&&window.storage.set){try{await window.storage.set(KEY,JSON.stringify(v));return}catch(e){}} MEM[KEY]=v; try{ localStorage.setItem(KEY,JSON.stringify(v)) }catch(e){} } // 프로토타입: 새로고침해도 남도록 localStorage에 보관
   };
   // 저장·복원은 순서(인덱스)로 맞추므로 '기타' 입력칸은 비활성 상태여도 포함 (빼면 체크 상태에 따라 순서가 어긋남)
   function fields(){ return $$('.card input, .card select, .card textarea').filter(function(el){return el.type!=='file'&&!el.closest('#grpBody')&&(!el.disabled||el.classList.contains('etcin')||el.id==='ctyEtc')}) } // 파일 입력(사업자등록증)은 값 복원 대상 아님
@@ -1456,14 +1470,26 @@
   function when(ts){var d=new Date(ts),h=d.getHours();return (d.getMonth()+1)+'월 '+d.getDate()+'일 '+(h<12?'오전':'오후')+' '+(h%12||12)+':'+('0'+d.getMinutes()).slice(-2)}
   var tt; function toast(m){var t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(tt); tt=setTimeout(function(){t.classList.remove('on')},2200)}
 
+  // 임시저장은 최대 5개. 새로 저장할 때 5개가 차 있으면 확인 후 가장 오래된 의뢰서를 지우고 저장
+  var DRAFT_MAX=5;
   $('#saveBtn').onclick=async function(){
     var list=await STORE.get(), d=collect();
-    if(!d.id){ d.id='d'+Date.now(); curId=d.id }
-    var k=list.findIndex(function(x){return x.id===d.id}); if(k>-1) list[k]=d; else list.unshift(d);
-    await STORE.set(list); await refresh();
-    $('#savedLine').textContent='임시저장 '+when(d.at);
-    dirty=false;
-    toast('임시저장되었습니다');
+    var save=async function(drop){
+      if(drop) list=list.filter(function(x){return x.id!==drop.id});
+      if(!d.id){ d.id='d'+Date.now(); curId=d.id }
+      var k=list.findIndex(function(x){return x.id===d.id}); if(k>-1) list[k]=d; else list.unshift(d);
+      await STORE.set(list); await refresh();
+      $('#savedLine').textContent='임시저장 '+when(d.at);
+      dirty=false;
+      toast(drop?'가장 오래된 의뢰서를 삭제하고 임시저장했습니다':'임시저장되었습니다');
+    };
+    var isNew=!d.id || !list.some(function(x){return x.id===d.id});
+    if(isNew && list.length>=DRAFT_MAX){
+      var old=list.reduce(function(a,x){return x.at<a.at?x:a});
+      confirmBox('임시저장은 최대 '+DRAFT_MAX+'개까지 가능합니다','가장 오래된 \''+old.title+'\'('+ymd(old.at)+') 의뢰서를 삭제하고 저장할까요?','삭제 후 저장',function(){ save(old); });
+      return;
+    }
+    save(null);
   };
   var modal=$('#listModal');
   $('#openList').onclick=function(){ drawList(); modal.classList.add('on') };
@@ -1497,15 +1523,13 @@
     var list=await STORE.get(), tb=$('#draftList');
     $('.dtbl').style.display=list.length?'table':'none';
     $('#draftEmpty').style.display=list.length?'none':'block';
-    $('#draftNote').hidden=!list.length; // 제목 아래 설명은 목록이 있을 때만 (없으면 '저장된 의뢰서가 없습니다.'만)
     pick=null; syncPick();
     tb.innerHTML=list.map(function(d,i){
       return '<tr data-id="'+d.id+'">'+
-        '<td class="dim">'+(i+1)+'</td>'+
+        '<td>'+(i+1)+'</td>'+
         '<td>'+d.svc+'</td>'+
-        '<td><div class="nm"><span>'+d.title+'</span>'+(d.id===curId?'<em>작성 중</em>':'')+'</div></td>'+
-        '<td class="dim">'+d.step+'/4단계</td>'+
-        '<td class="dim">'+ymd(d.at)+'</td>'+
+        '<td><div class="nm"><span>'+d.title+'</span>'+(d.id===curId?'<em>작성중</em>':'')+'</div></td>'+
+        '<td>'+ymd(d.at)+'</td>'+
         '<td><input type="radio" name="dpick" value="'+d.id+'"></td></tr>';
     }).join('');
     $$('#draftList tr').forEach(function(tr){
