@@ -372,9 +372,15 @@
       }).join('');
   };
 
-  // 견적서 문서 (A4) — 파트너가 쓴 그대로
-  F.docHTML = function (r, q, k) {
-    var cur = q.cur || 'KRW', sup = q.supplier || {}, tt = total(q), val = function (v) { return esc(v || '-'); };
+  // 클라이언트에게 보이는 견적 이름: 전달된 순서대로 A·B·C
+  F.qno = function (s, k) { var K = Object.keys(s.P || {}).filter(function (x) { return s.P[x].fwd; }); return String.fromCharCode(65 + Math.max(0, K.indexOf(k))); };
+  // 클라이언트에게 전달하는 견적서의 공급자 = 셀키에이아이 (분석파트너 견적을 셀키 명의로 전달). 공개 사이트라 대표자·번호·주소는 예시값
+  F.SELLER = { s_org: '㈜셀키에이아이', s_ceo: '김민준', s_tel: '02-0000-0000', s_biz: '000-00-00000', s_mgr: 'OmicsPharm 컨설턴트', s_mail: 'help@omicspharm.test', s_addr: '서울특별시 강서구 마곡중앙로 00' };
+  // 견적서 문서 (A4) — 파트너가 쓴 그대로. o.client면 클라이언트용: 공급자를 셀키로, 견적번호 끝은 o.no(A·B·C)
+  F.docHTML = function (r, q, k, o) {
+    o = o || {};
+    var cur = q.cur || 'KRW', sup = o.client ? F.SELLER : q.supplier || {}, tt = total(q), val = function (v) { return esc(v || '-'); };
+    if (o.client) k = o.no || '';
     var party = function (h, v) { return '<div><h3>' + h + '</h3><table><tr><th>기업명</th><td>' + val(v[0]) + '</td><th>대표자성명</th><td>' + val(v[1]) + '</td></tr><tr><th>연락처</th><td>' + val(v[2]) + '</td><th>사업자등록번호</th><td>' + val(v[3]) + '</td></tr><tr><th>담당자</th><td>' + val(v[4]) + '</td><th>이메일</th><td>' + val(v[5]) + '</td></tr><tr><th>주소</th><td colspan="3">' + val(v[6]) + '</td></tr></table></div>'; };
     var sub = function (g) { return g.lines.reduce(function (s, l) { return s + num(l.q) * num(l.p); }, 0); };
     var rows = (q.groups || []).map(function (g) {
@@ -405,10 +411,10 @@
     '</article>';
   };
   // 견적서 보기 창
-  F.showDoc = function (r, q, k, title) {
+  F.showDoc = function (r, q, k, title, o) {
     var pv = document.createElement('div');
     pv.className = 'pv'; pv.setAttribute('role', 'dialog'); pv.setAttribute('aria-modal', 'true'); pv.setAttribute('aria-label', title || '견적서');
-    pv.innerHTML = '<div class="pv-bar"><b>' + esc(title || '견적서') + '</b><div><button type="button" data-print>인쇄 · PDF 저장</button><button type="button" class="x" data-close>닫기</button></div></div><div class="pv-scroll">' + F.docHTML(r, q, k) + '</div>';
+    pv.innerHTML = '<div class="pv-bar"><b>' + esc(title || '견적서') + '</b><div><button type="button" data-print>인쇄 · PDF 저장</button><button type="button" class="x" data-close>닫기</button></div></div><div class="pv-scroll">' + F.docHTML(r, q, k, o) + '</div>';
     var close = function () { pv.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', key); };
     var key = function (e) { if (e.key === 'Escape') close(); };
     pv.addEventListener('click', function (e) { if (e.target.closest('[data-close]') || e.target === pv) close(); else if (e.target.closest('[data-print]')) window.print(); });
@@ -476,7 +482,7 @@
   F.showContract = function (r, s, side) {
     var c = s.ct && s.ct[side], q = s.P[s.pick].quote, label = side === 'client' ? '클라이언트 계약서' : '분석파트너 계약서';
     var body = !c || c.type === 'form'
-      ? F.contractHTML(r, s, side) + '<p class="attach-t"># 별첨1. 분석 견적서</p>' + F.docHTML(r, q, s.pick)
+      ? F.contractHTML(r, s, side) + '<p class="attach-t"># 별첨1. 분석 견적서</p>' + F.docHTML(r, q, s.pick, side === 'client' ? { client: true, no: F.qno(s, s.pick) } : null)
       : '<article class="doc cdoc file"><div class="c-brand">C E L L K E Y</div><div class="fileph"><b>' + esc(c.name) + '</b><p>기관 자체 양식으로 업로드한 계약서입니다.<br>프로토타입에서는 파일 내용을 표시하지 않습니다.</p></div></article>';
     var pv = document.createElement('div');
     pv.className = 'pv'; pv.setAttribute('role', 'dialog'); pv.setAttribute('aria-modal', 'true'); pv.setAttribute('aria-label', label);
