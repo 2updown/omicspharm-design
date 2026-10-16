@@ -158,6 +158,12 @@
     }
     var x = S['PRJ-2026-0045'] && S['PRJ-2026-0045'].P['p-omx'];
     if (x && x.quote && !x.hist) { var hq = genQuote(partner('p-omx'), req2('PRJ-2026-0045'), 1.06); hq.subAt = T0 - DAY * 4; x.hist = [{ quote: hq, at: T0 - DAY * 4 }]; x.ver2At = T0 - DAY; }
+    histDemo(S);
+  }
+  // 2차 견적 예시: 1차는 8주였고, 일정 단축 요청으로 단가·기간을 조정한 것으로 (이미 저장된 기록에도 채움)
+  function histDemo(S) {
+    var x = S['PRJ-2026-0045'] && S['PRJ-2026-0045'].P['p-omx'];
+    if (x && x.hist && x.hist[0] && !x.why) { x.hist[0].quote.weeks = '8'; x.why = '클라이언트의 일정 단축 요청에 따라 기기 분석 단가와 소요 기간을 조정했습니다.'; return true; }
   }
   function req2(id) { return DEMO_REQS.filter(function (r) { return r.id === id; })[0]; }
   // 버전 3 → 4: 진행하던 기록은 그대로 두고 새 예시(0046·0047)만 추가
@@ -174,6 +180,7 @@
     if (d && d.v === 5) { seed6(d.S); d.v = 6; write(KEY, d); }
     if (d && d.v === 6) { ['PRJ-2026-0040', 'PRJ-2026-0041'].forEach(function (k) { var x = d.S[k]; if (x && (x.pick === 'p-met' || x.pick === 'p-mlt')) delete d.S[k]; }); seed6(d.S); d.v = VER; write(KEY, d); }
     if (!d || d.v !== VER) { d = seed(); write(KEY, d); }
+    if (d && histDemo(d.S)) write(KEY, d);
     d.X = d.X || []; return d;
   }
   function save(d) { write(KEY, d); }

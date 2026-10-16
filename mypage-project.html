@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261018v">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261018v">
-<script src="assets/common/site.js?v=20261018v"></script>
-<script src="assets/common/mypage.js?v=20261018v"></script>
-<script src="assets/common/flow.js?v=20261018v"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261018w">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261018w">
+<script src="assets/common/site.js?v=20261018w"></script>
+<script src="assets/common/mypage.js?v=20261018w"></script>
+<script src="assets/common/flow.js?v=20261018w"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -153,7 +153,21 @@
   .qc-memo { padding-top:12px; border-top:1px solid var(--gray-200); font-size:13px; line-height:20px; color:var(--gray-600); white-space:pre-line; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
   .qc-acts { display:flex; gap:8px; margin-top:auto; }
   .qc-acts .btn { flex:1; }
-  .qc-price .prev { color:var(--gray-400); } .qc-price .prev s { margin-left:2px; }
+  .qc-price .delta { font-style:normal; font-size:13px; font-weight:600; line-height:18px; }
+  .qc-price .delta.down { color:var(--blue-600, #2563eb); } .qc-price .delta.up { color:#f00011; }
+  .qc-hist { border-top:1px solid var(--gray-200); padding-top:12px; font-size:13px; line-height:20px; }
+  .qc-hist summary { display:flex; align-items:center; justify-content:space-between; list-style:none; cursor:pointer; font-weight:600; color:var(--gray-700); }
+  .qc-hist summary::-webkit-details-marker { display:none; }
+  .qc-hist summary img { width:16px; height:16px; transition:transform .15s; }
+  .qc-hist[open] summary img { transform:rotate(180deg); }
+  .qh-vers { display:flex; flex-direction:column; gap:4px; margin-top:10px; }
+  .qh-vers li { list-style:none; display:flex; gap:8px; color:var(--gray-500); }
+  .qh-vers li b { width:28px; font-weight:600; } .qh-vers li em { margin-left:auto; font-style:normal; }
+  .qh-vers li:not(.now) em { text-decoration:line-through; }
+  .qh-vers li.now { color:#000; } .qh-vers li.now em { font-weight:600; color:var(--teal-700); }
+  .qh-diff { display:flex; flex-direction:column; gap:4px; margin-top:10px; padding:10px 12px; border-radius:8px; background:var(--gray-50); color:var(--gray-700); }
+  .qh-diff li { list-style:none; padding-left:10px; position:relative; } .qh-diff li::before { content:""; position:absolute; left:0; top:9px; width:3px; height:3px; border-radius:50%; background:var(--gray-400); }
+  .qh-why { margin-top:10px; color:var(--gray-600); } .qh-why b { display:block; font-size:12px; color:var(--gray-500); }
   /* 계약정보 */
   .kv .amt { font-size:16px; color:var(--teal-700); } .kv .sub { color:var(--gray-500); font-size:13px; }
   .kv .dday { margin-left:6px; font-style:normal; font-weight:600; color:var(--orange-600); }
@@ -562,6 +576,31 @@
     return '<div class="ftodo ' + T[0] + '"><div><b>' + esc(T[1]) + '</b><p>' + esc(T[2]) + '</p></div>' + (T[3] ? '<div class="acts">' + T[3] + '</div>' : '') + '</div>';
   }
   // 견적서 탭: 컨설턴트가 전달한 견적 비교 → 하나 선택
+  // n차 견적 변경 내역: 차수별 날짜·금액 + 직전 차수와 달라진 항목(단가·수량·추가/삭제·할인·소요 기간) + 수정 사유
+  function qdiff(a, b) {
+    var cur = b.cur || 'KRW', M = function (q) { var m = {}; (q.groups || []).forEach(function (g) { g.lines.forEach(function (l) { m[(g.name || '') + '|' + (l.d || '')] = l; }); }); return m; };
+    var A = M(a), B = M(b), out = [], nm = function (k) { return k.split('|')[1] || k.split('|')[0]; };
+    Object.keys(B).forEach(function (k) {
+      var x = A[k], y = B[k];
+      if (!x) { out.push('추가 · ' + nm(k) + ' ' + F.money(F.num(y.q) * F.num(y.p), cur)); return; }
+      if (F.num(x.p) !== F.num(y.p)) out.push(nm(k) + ' 단가 ' + F.money(F.num(x.p), cur) + ' → ' + F.money(F.num(y.p), cur));
+      if (F.num(x.q) !== F.num(y.q)) out.push(nm(k) + ' 수량 ' + F.num(x.q) + ' → ' + F.num(y.q));
+    });
+    Object.keys(A).forEach(function (k) { if (!B[k]) out.push('삭제 · ' + nm(k)); });
+    var sa = F.num(a.sale) + F.num(a.addSale), sb = F.num(b.sale) + F.num(b.addSale);
+    if (sa !== sb) out.push('할인 ' + (sa ? F.money(sa, cur) : '없음') + ' → ' + (sb ? F.money(sb, cur) : '없음'));
+    if (String(a.weeks || '') !== String(b.weeks || '')) out.push('소요 기간 ' + (a.weeks || '-') + '주 → ' + (b.weeks || '-') + '주');
+    return out;
+  }
+  function histHTML(X) {
+    var H = X.hist || [], V = H.map(function (h) { return { q: h.quote, at: h.at, why: h.why }; }).concat([{ q: X.quote, at: X.ver2At || X.subAt, why: X.why }]), n = V.length, last = V[n - 2], now = V[n - 1];
+    var D = qdiff(last.q, now.q);
+    return '<details class="qc-hist"><summary>변경 내역 (' + (n - 1) + '차 → ' + n + '차)<img src="assets/find/ic-chevron-down.svg" alt=""></summary>' +
+      '<ol class="qh-vers">' + V.slice().reverse().map(function (v, i) { return '<li' + (i ? '' : ' class="now"') + '><b>' + (n - i) + '차</b><span>' + ymd(v.at) + '</span><em>' + F.money(F.total(v.q).final, v.q.cur) + '</em></li>'; }).join('') + '</ol>' +
+      (D.length ? '<ul class="qh-diff">' + D.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' : '') +
+      (now.why || last.why ? '<p class="qh-why"><b>수정 사유</b>' + esc(F.mask(FS, now.why || last.why)) + '</p>' : '') +
+    '</details>';
+  }
   function drawQuotes() {
     var box = $('#tp-quote'); if (!box) return;
     if (!FK.length) {
@@ -580,9 +619,9 @@
         return '<article class="qcard' + (win ? ' win' : done ? ' dim' : '') + '">' +
           '<div class="qc-top"><div class="tags">' + (H.length ? '<span class="badge done">' + (H.length + 1) + '차 견적</span>' : '') + (win ? '<span class="badge ok">선택한 견적</span>' : '') + (k === low ? '<span class="badge tag">최저가</span>' : '') + (k === fast ? '<span class="badge tag">최단 기간</span>' : '') + '</div>' +
             '<h4>' + F.qname(FS, k) + '</h4><p class="qc-sub">' + esc(p.svc.join(' · ')) + (p.done ? ' · 수행 ' + p.done + '건' : '') + '</p></div>' +
-          '<div class="qc-price"><em>최종 견적</em><b>' + F.money(t.final, q.cur) + '</b><span>공급가 ' + F.money(t.net, q.cur) + ' + VAT</span>' + (prev ? '<span class="prev">' + H.length + '차 견적 <s>' + F.money(prev, q.cur) + '</s></span>' : '') + '</div>' +
+          '<div class="qc-price"><em>최종 견적</em><b>' + F.money(t.final, q.cur) + '</b>' + (prev && prev !== t.final ? '<i class="delta ' + (t.final < prev ? 'down' : 'up') + '">' + H.length + '차 대비 ' + (t.final < prev ? '▼ ' : '▲ ') + F.money(Math.abs(t.final - prev), q.cur) + '</i>' : '') + '<span>공급가 ' + F.money(t.net, q.cur) + ' + VAT</span></div>' +
           '<dl class="qc-kv"><div><dt>소요 기간</dt><dd>시료 수령 후 ' + esc(q.weeks || '-') + '주</dd></div><div><dt>할인</dt><dd>' + (F.num(q.sale) + F.num(q.addSale) ? '-' + F.money(F.num(q.sale) + F.num(q.addSale), q.cur) : '없음') + '</dd></div><div><dt>시험 항목</dt><dd>' + esc(q.groups.map(function (g) { return g.name; }).filter(Boolean).join(', ')) + '</dd></div></dl>' +
-          (q.memo ? '<p class="qc-memo">' + esc(q.memo) + '</p>' : '') +
+          (q.memo ? '<p class="qc-memo">' + esc(q.memo) + '</p>' : '') + (H.length ? histHTML(FS.P[k]) : '') +
           '<div class="qc-acts"><button type="button" class="btn" data-doc="' + k + '">견적서 보기</button>' + (done ? '' : '<button type="button" class="btn primary" data-pick="' + k + '">이 견적 선택</button>') + '</div>' +
         '</article>';
       }).join('') + '</div>' +
