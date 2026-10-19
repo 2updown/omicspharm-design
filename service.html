@@ -7,8 +7,8 @@
 <title>분석 서비스 안내 · OmicsPharm</title>
 <!-- 서비스 소개 > 분석 서비스 안내 (Figma 시안 없음 — 현재 홈페이지 /projects/guide 내용·이미지를 그대로 옮기고 우리 컴포넌트로 구성)
      레이아웃: Overview → 분석 서비스 탭(고른 서비스만 표시, 마크로젠 NGS 페이지 참고) → 시료 안내. 섹션 id: overview, genomics, transcriptomics, proteomics, glycoproteomics, metabolomics, olink, bioinformatics, biopharma, adc, specialized, samples -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261019d">
-<script src="assets/common/site.js?v=20261019d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261019e">
+<script src="assets/common/site.js?v=20261019e"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -73,14 +73,15 @@
   .ov { position:relative; z-index:1; border-top:2px solid var(--gray-400); border-bottom:2px solid var(--gray-400); }
   .ov-row { display:flex; }
   .ov-row + .ov-row { border-top:1px solid var(--gray-300); }
-  .ov-card { display:flex; flex-direction:column; gap:20px; min-width:0; min-height:294px; padding:50px 40px; background:rgba(255,255,255,.5); word-break:keep-all; }
+  .ov-card { display:flex; flex-direction:column; gap:20px; min-width:0; min-height:260px; padding:60px 40px 50px; background:rgba(255,255,255,.5); word-break:keep-all; }
+  .ov-row:first-child .ov-card { min-height:240px; } /* 1줄 높이 = 사진 높이 240 */
   .ov-row:first-child .ov-card { flex:none; width:520px; }
   .ov-row:last-child .ov-card { flex:1; }
   .ov-row:last-child .ov-card + .ov-card { border-left:1px solid var(--gray-300); }
   .ov-card b { font-size:28px; font-weight:700; line-height:36px; letter-spacing:-.28px; color:#000; } /* Display/Small/B */
-  .ov-card p { font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; color:var(--gray-600); } /* Heading/Medium/B */
+  .ov-card p { font-size:18px; font-weight:500; line-height:24px; letter-spacing:-.18px; color:var(--gray-600); } /* Body/Large/M */
   .ov-pic { position:relative; flex:1; min-width:0; box-shadow:0 13px 100px rgba(199,199,199,.25); }
-  .ov-pic img { position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:cover; } /* 사진은 칸 높이(특징 카드 294)에 맞춰 잘림 */
+  .ov-pic img { position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:cover; } /* 사진은 칸 높이(240)에 맞춰 잘림 */
 
   /* Bioinformatics 그룹 */
   .groups { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; margin-top:28px; }
@@ -135,7 +136,7 @@
     .sec, .sec.rev, .head-row { grid-template-columns:1fr; gap:28px; }
     /* Overview: 1줄은 사진 아래로, 2줄은 한 줄에 하나씩 */
     .ov-row { flex-direction:column; }
-    .ov-row:first-child .ov-card { width:auto; }
+    .ov-row:first-child .ov-card { width:auto; min-height:0; }
     .ov-row:last-child .ov-card + .ov-card { border-left:0; border-top:1px solid var(--gray-300); }
     .ov-card { min-height:0; padding:36px 28px; }
     .ov-pic img { position:static; height:auto; aspect-ratio:16 / 7; }
