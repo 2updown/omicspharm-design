@@ -81,6 +81,7 @@ Phosphor 아이콘이 아니라 프로토타입용으로 직접 만든 SVG 이�
 | 파일 | 쓰이는 화면 | 비고 |
 |---|---|---|
 | `verify/step1.svg` · `verify/step2.svg` · `verify/step3.svg` | 마이페이지 > 파트너 인증 > 인증 절차 3단계 | 안내 일러스트 (등록 · 검토 · 완료) |
+| `faq/help-ask.svg` | 고객지원 > FAQ 하단 문의 안내 카드 | 안내 일러스트 (질문 말풍선 + 이메일 답변 배지) |
 | `guide/tip-org.svg` · `guide/tip-private.svg` · `guide/tip-qna.svg` · `guide/tip-split.svg` | 이용 가이드 > TIP 카드 | 카드 일러스트 |
 | `main/features/feature-report.svg` · `feature-interpret.svg` · `feature-matching.svg` · `feature-support.svg` | 메인 > Features 4개 항목 | **임시 이미지** — 실제 화면·디자인 확정 후 교체 |
 | `main/features/feature-manage.svg` · `feature-request.svg` | 사용 안 함 | 예전 Features 구성용 (삭제 가능) |
