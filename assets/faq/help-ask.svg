@@ -1,11 +1,10 @@
-<!-- FAQ 하단 '원하는 답변을 찾지 못하셨나요?' 안내 일러스트: 질문 말풍선 + 이메일 답변 배지 (직접 제작, 아이콘 아님 — verify/step*.svg와 같은 스타일) -->
+<!-- FAQ 하단 '원하는 답변을 찾지 못하셨나요?' 안내 일러스트: 질문 말풍선 (직접 제작, 아이콘 아님 — verify/step*.svg와 같은 스타일) -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M34 24h50a12 12 0 0 1 12 12v24a12 12 0 0 1-12 12H54l-14 12V72h-6a12 12 0 0 1-12-12V36a12 12 0 0 1 12-12z" fill="#fff" stroke="#222" stroke-width="3"/>
-  <circle cx="44" cy="48" r="10" fill="#F5C451" stroke="#222" stroke-width="2.5"/>
-  <path d="M40.5 45a3.6 3.6 0 1 1 5 3.3c-.9.4-1.5 1.1-1.5 2v.7" stroke="#222" stroke-width="2.5"/>
-  <circle cx="44" cy="54.6" r="1.4" fill="#222"/>
-  <path d="M62 43h20M62 52h13" stroke="#222" stroke-width="3"/>
-  <circle cx="86" cy="84" r="15" fill="#009788" stroke="#fff" stroke-width="3"/>
-  <rect x="78" y="78" width="16" height="12" rx="2" stroke="#fff" stroke-width="2.5"/>
-  <path d="M78.5 79.5L86 85l7.5-5.5" stroke="#fff" stroke-width="2.5"/>
+  <g transform="translate(1 6)">
+    <path d="M34 24h50a12 12 0 0 1 12 12v24a12 12 0 0 1-12 12H54l-14 12V72h-6a12 12 0 0 1-12-12V36a12 12 0 0 1 12-12z" fill="#fff" stroke="#222" stroke-width="3"/>
+    <circle cx="44" cy="48" r="10" fill="#F5C451" stroke="#222" stroke-width="2.5"/>
+    <path d="M40.5 45a3.6 3.6 0 1 1 5 3.3c-.9.4-1.5 1.1-1.5 2v.7" stroke="#222" stroke-width="2.5"/>
+    <circle cx="44" cy="54.6" r="1.4" fill="#222"/>
+    <path d="M62 43h20M62 52h13" stroke="#222" stroke-width="3"/>
+  </g>
 </svg>
