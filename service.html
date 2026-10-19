@@ -7,8 +7,8 @@
 <title>분석 서비스 안내 · OmicsPharm</title>
 <!-- 서비스 소개 > 분석 서비스 안내 (Figma 시안 없음 — 현재 홈페이지 /projects/guide 내용·이미지를 그대로 옮기고 우리 컴포넌트로 구성)
      레이아웃: Overview → 분석 서비스 탭(고른 서비스만 표시, 마크로젠 NGS 페이지 참고) → 시료 안내. 섹션 id: overview, genomics, transcriptomics, proteomics, glycoproteomics, metabolomics, olink, bioinformatics, biopharma, adc, specialized, samples -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261019g">
-<script src="assets/common/site.js?v=20261019g"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261019h">
+<script src="assets/common/site.js?v=20261019h"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -22,7 +22,7 @@
   .in { max-width:1320px; margin:0 auto; }
   .ico { display:inline-block; flex:none; background:currentColor; -webkit-mask:var(--i) center/contain no-repeat; mask:var(--i) center/contain no-repeat; }
 
-  .page-head { padding:64px 60px 24px; text-align:center; }
+  .page-head { position:relative; z-index:1; padding:64px 60px 24px; text-align:center; } /* 아래 그라데이션이 제목 위로 덮이지 않게 */
   .page-head h1 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; }
 
   /* 분석 서비스 탭 (마크로젠 NGS 페이지 참고): Overview 아래 탭 → 고른 서비스 내용만 표시 */
@@ -66,12 +66,12 @@
   .items li .ico { width:20px; height:20px; margin-top:1px; color:var(--teal-600); --i:url(assets/service/ic-check-circle.svg); }
 
   /* Overview (Figma 1635:23356): 위아래 굵은 선 안에 특징 4칸 — 1줄 = 특징 1칸 + 사진, 2줄 = 특징 3칸. 뒤에 연한 그라데이션 2장 */
-  #overview { padding:40px 0 60px; } /* 위 40 + 제목 아래 24 = 제목과 박스 사이 64 */
-  /* 그라데이션은 굵은 선 안쪽에서만 보이게 (밖으로 비치면 박스가 떠 보임) */
+  #overview { position:relative; padding:20px 0 60px; overflow-x:clip; } /* 그라데이션이 화면 밖으로 나가 가로 스크롤 생기지 않게 */
+  /* 그라데이션 2장: 박스 위쪽까지 올려 잘리지 않게 (Figma 1635:23356) */
   #overview .glow { position:absolute; z-index:0; pointer-events:none; width:703.5px; max-width:none; }
-  #overview .glow.peach { left:392px; top:55px; opacity:.7; }
-  #overview .glow.blue { left:-10px; top:93.5px; opacity:.5; }
-  .ov { position:relative; overflow:hidden; border-top:2px solid var(--gray-400); border-bottom:2px solid var(--gray-400); }
+  #overview .glow.peach { left:392px; top:-48px; opacity:.7; }
+  #overview .glow.blue { left:-10px; top:-9.5px; opacity:.5; }
+  .ov { position:relative; z-index:1; border-top:2px solid var(--gray-300); border-bottom:2px solid var(--gray-300); }
   .ov-row { position:relative; z-index:1; display:flex; }
   .ov-row + .ov-row { border-top:1px solid var(--gray-300); }
   .ov-card { display:flex; flex-direction:column; gap:20px; min-width:0; min-height:260px; padding:60px 40px 50px; background:rgba(255,255,255,.5); word-break:keep-all; }
@@ -81,7 +81,7 @@
   .ov-row.r2 .ov-card + .ov-card { border-left:1px solid var(--gray-300); }
   .ov-card b { font-size:28px; font-weight:700; line-height:36px; letter-spacing:-.28px; color:#000; } /* Display/Small/B */
   .ov-card p { font-size:18px; font-weight:500; line-height:24px; letter-spacing:-.18px; color:var(--gray-600); } /* Body/Large/M */
-  .ov-pic { position:relative; flex:1; min-width:0; }
+  .ov-pic { position:relative; flex:1; min-width:0; box-shadow:0 13px 100px rgba(199,199,199,.25); }
   .ov-pic img { position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:cover; } /* 사진은 칸 높이(240)에 맞춰 잘림 */
 
   /* Bioinformatics 그룹 */
@@ -279,8 +279,8 @@
 
   var pic = function (n) { return '<div class="pic"><img src="' + I + 'guide-' + n + '.jpg" alt="" loading="lazy"></div>'; };
   var card = function (f) { return '<div class="ov-card"><b>' + f[1] + '</b><p>' + f[2] + '</p></div>'; };
-  var html = '<section id="overview"><div class="ov"><img class="glow peach" src="' + I + 'grad-peach.png" alt=""><img class="glow blue" src="' + I + 'grad-blue.png" alt="">' +
-    '<div class="ov-row r1">' + card(FEATS[0]) + '<div class="ov-pic"><img src="' + I + 'guide-01.jpg" alt=""></div></div>' +
+  var html = '<section id="overview"><img class="glow peach" src="' + I + 'grad-peach.png" alt=""><img class="glow blue" src="' + I + 'grad-blue.png" alt="">' +
+    '<div class="ov"><div class="ov-row r1">' + card(FEATS[0]) + '<div class="ov-pic"><img src="' + I + 'guide-01.jpg" alt=""></div></div>' +
     '<div class="ov-row r2">' + FEATS.slice(1).map(card).join('') + '</div></div></section>';
 
   var TABS = S.map(function (s) { return [s.id, s.id === 'biopharma' ? '바이오의약품' : s.id === 'adc' ? 'ADC' : s.name.replace(' Analysis', '').replace(' Proteomics', '')]; });
