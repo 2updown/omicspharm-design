@@ -7,8 +7,8 @@
 <title>분석 서비스 안내 · OmicsPharm</title>
 <!-- 서비스 소개 > 분석 서비스 안내 (Figma 시안 없음 — 현재 홈페이지 /projects/guide 내용·이미지를 그대로 옮기고 우리 컴포넌트로 구성)
      레이아웃: Overview → 분석 서비스 탭(고른 서비스만 표시, 마크로젠 NGS 페이지 참고) → 시료 안내. 섹션 id: overview, genomics, transcriptomics, proteomics, glycoproteomics, metabolomics, olink, bioinformatics, biopharma, adc, specialized, samples -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261019h">
-<script src="assets/common/site.js?v=20261019h"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261020a">
+<script src="assets/common/site.js?v=20261020a"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -52,7 +52,11 @@
   .sec.rev { grid-template-columns:minmax(0,1fr) minmax(0,530px); }
   .sec.rev .pic { order:2; }
   .sec.full { display:block; }
-  .pic img { display:block; width:100%; aspect-ratio:529 / 407; object-fit:cover; border-radius:16px; }
+  .pic { overflow:hidden; border-radius:16px; } /* 확대돼도 둥근 모서리 밖으로 안 나가게 */
+  .pic img { display:block; width:100%; aspect-ratio:529 / 407; object-fit:cover; border-radius:16px; transition:transform .8s cubic-bezier(.2,.7,.2,1); }
+  /* 사진 hover 시 살짝 확대 (시료 안내 타일과 같은 효과) */
+  .pic:hover img, .ov-pic:hover img { transform:scale(1.05); }
+  @media (prefers-reduced-motion:reduce) { .pic img, .ov-pic img { transition:none; } .pic:hover img, .ov-pic:hover img { transform:none; } }
   .eyebrow { font-size:14px; font-weight:600; line-height:20px; letter-spacing:.04em; color:var(--teal-600); text-transform:uppercase; }
   .sec h2 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; word-break:keep-all; }
   .desc { margin-top:20px; font-size:16px; line-height:1.75; color:var(--gray-700); word-break:keep-all; }
@@ -81,8 +85,8 @@
   .ov-row.r2 .ov-card + .ov-card { border-left:1px solid var(--gray-300); }
   .ov-card b { font-size:28px; font-weight:700; line-height:36px; letter-spacing:-.28px; color:#000; } /* Display/Small/B */
   .ov-card p { font-size:18px; font-weight:500; line-height:24px; letter-spacing:-.18px; color:var(--gray-600); } /* Body/Large/M */
-  .ov-pic { position:relative; flex:1; min-width:0; box-shadow:0 13px 100px rgba(199,199,199,.25); }
-  .ov-pic img { position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:cover; } /* 사진은 칸 높이(240)에 맞춰 잘림 */
+  .ov-pic { position:relative; flex:1; min-width:0; overflow:hidden; box-shadow:0 13px 100px rgba(199,199,199,.25); }
+  .ov-pic img { position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:cover; transition:transform .8s cubic-bezier(.2,.7,.2,1); } /* 사진은 칸 높이(240)에 맞춰 잘림 */
 
   /* Bioinformatics 그룹 */
   .groups { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; margin-top:28px; }
@@ -165,7 +169,7 @@
     /* 모바일: 탭 줄은 손으로 밀어 자유롭게 움직이고, 서비스는 탭을 눌러야 바뀜 */
     .body { padding:0 16px 64px; }
     .sec { padding:48px 0; }
-    .pic img { border-radius:12px; }
+    .pic, .pic img { border-radius:12px; }
     .sec h2, .samples h2 { font-size:24px; line-height:34px; }
     .desc { margin-top:14px; font-size:15px; }
     .items { margin-top:20px; padding:18px 16px; }
