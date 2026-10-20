@@ -7,8 +7,8 @@
 <title>분석 서비스 안내 · OmicsPharm</title>
 <!-- 서비스 소개 > 분석 서비스 안내 (Figma 시안 없음 — 현재 홈페이지 /projects/guide 내용·이미지를 그대로 옮기고 우리 컴포넌트로 구성)
      레이아웃: Overview → 분석 서비스 탭(고른 서비스만 표시, 마크로젠 NGS 페이지 참고) → 시료 안내. 섹션 id: overview, genomics, transcriptomics, proteomics, glycoproteomics, metabolomics, olink, bioinformatics, biopharma, adc, specialized, samples -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261020g">
-<script src="assets/common/site.js?v=20261020g"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261020h">
+<script src="assets/common/site.js?v=20261020h"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -48,7 +48,7 @@
   @media (prefers-reduced-motion:reduce) { .panel.pop .rv { animation:none; } }
 
   .body { padding:0 60px 96px; }
-  .sec { display:grid; grid-template-columns:minmax(0,530px) minmax(0,1fr); gap:64px; align-items:stretch; padding:48px 0; border-bottom:1px solid var(--gray-200); } /* 사진 높이를 오른쪽 글(제목~분석항목) 높이에 맞춤 */
+  .sec { display:grid; grid-template-columns:minmax(0,530px) minmax(0,1fr); gap:64px; align-items:stretch; padding:48px 0 64px; border-bottom:1px solid var(--gray-200); } /* 위 48 = 탭과 가깝게, 아래 64 + 시료 위 72 = 섹션 사이 */ /* 사진 높이를 오른쪽 글(제목~분석항목) 높이에 맞춤 */
   .sec.rev { grid-template-columns:minmax(0,1fr) minmax(0,530px); }
   .sec.rev .pic { order:2; }
   .sec.full { display:block; }
@@ -91,9 +91,10 @@
   .ov-pic img { position:absolute; left:-9.79%; top:-24.36%; display:block; width:119.58%; height:148.95%; max-width:none; object-fit:cover; transition:transform .8s cubic-bezier(.2,.7,.2,1); } /* 넓게 확장한 사진(guide-01-wide)을 Figma 1641:7183과 같은 위치로 잘라 보여 줌 */
 
   /* Bioinformatics 그룹 */
-  .groups { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; margin-top:28px; }
+  /* 분석 그룹이 있는 서비스(Multiomics): 위 = 사진 + 제목·설명, 아래 = 그룹 카드를 전체 폭 3열로 (사진이 세로로 길어지지 않게) */
+  .sec.wide { row-gap:40px; }
+  .groups { grid-column:1 / -1; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; }
   .groups .items { margin-top:0; padding:20px; }
-  .groups .items:last-child { grid-column:1 / -1; }
 
   /* 바이오의약품 특성분석 표 */
   .head-row { display:grid; grid-template-columns:minmax(0,530px) minmax(0,1fr); gap:64px; align-items:center; }
@@ -105,7 +106,7 @@
   .bp tr.first td { border-top:1px solid var(--gray-300); }
 
   /* 시료 */
-  .samples { padding:48px 0 0; }
+  .samples { padding:72px 0 0; }
   .samples h2 { font-size:32px; font-weight:700; line-height:44px; letter-spacing:-.32px; word-break:keep-all; }
   .samples h2 em { font-style:normal; color:var(--teal-600); }
   /* 시료 안내: 큰 이미지 4칸 안에 텍스트 (현재 홈페이지 레이아웃). 스크롤하면 텍스트가 차례로 떠오르고, hover 시 이미지 살짝 확대 */
@@ -141,6 +142,7 @@
   }
   @media (max-width:900px) {
     .sec, .sec.rev, .head-row { grid-template-columns:1fr; gap:28px; }
+    .groups { grid-template-columns:repeat(2, minmax(0,1fr)); }
     /* Overview: 1줄은 사진 아래로, 2줄은 한 줄에 하나씩 */
     .ov, .ov-row { gap:0; }
     .ov-row { flex-direction:column; }
@@ -174,13 +176,15 @@
     .arrows { display:none; }
     /* 모바일: 탭 줄은 손으로 밀어 자유롭게 움직이고, 서비스는 탭을 눌러야 바뀜 */
     .body { padding:0 16px 64px; }
-    .sec { padding:48px 0; }
+    .sec { padding:40px 0 48px; }
+    .samples { padding-top:48px; }
     .pic, .pic img { border-radius:12px; }
     .sec h2, .samples h2 { font-size:24px; line-height:34px; }
     .desc { margin-top:14px; font-size:15px; }
     .items { margin-top:20px; padding:18px 16px; }
     .items li { font-size:14px; }
     .groups { grid-template-columns:1fr; }
+    .sec.wide { row-gap:20px; }
     /* 표 → 분류별 블록 */
     .bp, .bp tbody, .bp tr, .bp td { display:block; width:100%; }
     .bp thead { display:none; }
@@ -307,7 +311,12 @@
         }).join(''); }).join('') + '</tbody></table></section>';
       return;
     }
-    var body = s.groups ? '<div class="groups">' + s.groups.map(function (g) { return items(g[1], g[0]); }).join('') + '</div>' : items(s.items);
+    if (s.groups) {
+      html += '<section class="sec panel wide" role="tabpanel" id="' + s.id + '">' + pic(s.img) + '<div>' + head + '</div>' +
+        '<div class="groups">' + s.groups.map(function (g) { return items(g[1], g[0]); }).join('') + '</div></section>';
+      return;
+    }
+    var body = items(s.items);
     // 한 번에 하나만 보이므로 사진 위치는 모두 왼쪽으로 통일
     html += '<section class="sec panel" role="tabpanel" id="' + s.id + '">' + pic(s.img) + '<div>' + head + body + '</div></section>';
   });
