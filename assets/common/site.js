@@ -239,7 +239,8 @@
 
   /* ── 휴대폰 번호: 국가번호 드롭다운 + 3칸 (회원가입·내 정보 관리·의뢰 등록 공통, Figma 1222:69206) ──
      저장 형식 '+82 010-1234-5678' */
-  var CC = ['+82', '+1', '+81', '+86', '+44', '+49', '+65'];
+  var CC = ['+82', '+81']; // 한국(기본값)·일본. 다른 국가는 출시 국가가 늘면 추가
+  OP.PH_HINT = { '+82': '010', '+81': '090' }; // 첫 칸 안내 문구 (일본 휴대폰도 3-4-4자리: 090·080·070)
   OP.phoneParse = function (v) { var m = String(v || '').match(/^(\+\d+)\s*(\d*)-?(\d*)-?(\d*)$/); return m ? { cc: m[1], p: [m[2], m[3], m[4]] } : { cc: '+82', p: ['', '', ''] }; };
   // host 안에 칸을 그린다. { value, disabled, id } → { get(), valid(), el }
   OP.phoneField = function (host, o) {
@@ -247,10 +248,11 @@
     var cc = CC.indexOf(v.cc) < 0 ? CC.concat([v.cc]) : CC;
     host.innerHTML = '<div class="op-phone">' +
       '<select id="' + id + 'Cc" aria-label="국가번호"' + dis + '>' + cc.map(function (c) { return '<option' + (c === v.cc ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select>' +
-      [[3, '010', '앞자리'], [4, '0000', '가운데 자리'], [4, '0000', '끝자리']].map(function (f, i) {
+      [[3, OP.PH_HINT[v.cc] || '010', '앞자리'], [4, '0000', '가운데 자리'], [4, '0000', '끝자리']].map(function (f, i) {
         return (i ? '<span aria-hidden="true">-</span>' : '') + '<input id="' + id + (i + 1) + '" inputmode="numeric" maxlength="' + f[0] + '" placeholder="' + f[1] + '" value="' + (v.p[i] || '') + '" aria-label="휴대폰 번호 ' + f[2] + '"' + dis + '>';
       }).join('') + '</div>';
     var ins = [].slice.call(host.querySelectorAll('input'));
+    host.querySelector('select').addEventListener('change', function () { ins[0].placeholder = OP.PH_HINT[this.value] || '010'; });
     ins.forEach(function (i, k) {
       i.addEventListener('input', function () { i.value = i.value.replace(/\D/g, ''); if (i.value.length >= i.maxLength && ins[k + 1]) ins[k + 1].focus(); });
       i.addEventListener('keydown', function (e) { if (e.key === 'Backspace' && !i.value && ins[k - 1]) ins[k - 1].focus(); });
