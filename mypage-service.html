@@ -9,12 +9,12 @@
      회원가입 '추가 정보 입력'에서 고른 서비스(복수)를 보고, 서비스를 더 등록·수정·삭제한다.
      서비스를 고르면 R&D 사례작성 v5 공급자 입력 항목(assets/common/svc-spec.js)이 펼쳐짐. 같은 서비스를 여러 번 등록 = 수행 조건 나누기
      데모: 저장은 이 브라우저 localStorage(op.accounts의 services)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261020v">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261020v">
-<script src="assets/common/site.js?v=20261020v"></script>
-<script src="assets/common/mypage.js?v=20261020v"></script>
-<script src="assets/common/flow.js?v=20261020v"></script>
-<script src="assets/common/svc-spec.js?v=20261020v"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261020u">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261020u">
+<script src="assets/common/site.js?v=20261020u"></script>
+<script src="assets/common/mypage.js?v=20261020u"></script>
+<script src="assets/common/flow.js?v=20261020u"></script>
+<script src="assets/common/svc-spec.js?v=20261020u"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .cnt { margin-left:6px; color:var(--teal-600); }
@@ -69,7 +69,6 @@
     .fbody { padding:10px 0 14px; }
     .actions .btn { width:100%; }
   }
-  .svc-val { font-size:14px; font-weight:500; line-height:20px; padding:0 4px; }
 </style>
 </head>
 <body>
@@ -116,7 +115,7 @@
   var filled = function (A) { return A.length && A.every(function (o) { return !SPEC[o.svc] || Object.keys(o.f || {}).some(function (k) { return [].concat(o.f[k] || []).length; }); }); };
   var uid = 0, saved = filled(L);
   // 서비스는 1개 이상 필수 (회원가입과 같음) → '등록된 서비스 없음' 화면은 없음. 서비스가 비어 있으면(기존 회원 이관 등) 빈 카드 1개로 시작
-  var blank = !L.length; if (blank) L.push({ svc: '', st: '', from: '', to: '', f: {}, x: {}, _new: 1 });
+  var blank = !L.length; if (blank) L.push({ svc: '', st: '', from: '', to: '', f: {}, x: {} });
   // 펼친 서비스 (저장하지 않는 화면 상태). 처음엔 모두 접어서 서비스 이름·요약만 보임 (가입·이관 때 서비스는 이미 선택됨). 빈 카드만 펼침
   var OPEN = new Set(blank ? L : []);
 
@@ -154,9 +153,7 @@
     var open = OPEN.has(o), sum = summary(o);
     var h = '<div class="item' + (open ? '' : ' fold') + '" data-i="' + i + '"><div class="item-head"><button type="button" class="tg" data-tg aria-expanded="' + open + '"><img src="assets/find/ic-caret-down.svg" alt=""><b>서비스 ' + (i + 1) + (o.svc ? ' · ' + esc(o.svc) : '') + (dup ? ' · 수행 조건 ' + same : '') + '</b></button><span class="acts">' + (o.svc ? '<button type="button" data-copy>복사</button>' : '') + '<button type="button" data-del>삭제</button></span></div>' +
       (open ? '' : '<div class="sum" data-tg>' + sum + '</div>') +
-      '<div class="tbl"' + (open ? '' : ' hidden') + '>' + (o.svc && !o._new
-        ? row('서비스', true, '<p class="svc-val">' + esc(o.svc) + '</p>') // 이미 고른 서비스(가입·저장)는 이름만. 다른 서비스는 [+ 서비스 추가]로
-        : row('서비스', true, chips(n + '-svc', SVC, sel) + '<input class="inp etc" data-k="etc" placeholder="서비스명 직접 입력" value="' + esc(etc) + '"' + (sel === '기타' ? '' : ' hidden') + '>'));
+      '<div class="tbl"' + (open ? '' : ' hidden') + '>' + row('서비스', true, chips(n + '-svc', SVC, sel) + '<input class="inp etc" data-k="etc" placeholder="서비스명 직접 입력" value="' + esc(etc) + '"' + (sel === '기타' ? '' : ' hidden') + '>');
     if (sp) {
       var sec = '';
       sp.fields.forEach(function (fd) {
@@ -187,7 +184,7 @@
   function pull() {
     [].forEach.call(document.querySelectorAll('#items .item'), function (el) {
       var o = L[+el.dataset.i], s = el.querySelector('input[name$="-svc"]:checked'), t = el.querySelector('input[name$="-st"]:checked');
-      var svc = !el.querySelector('input[name$="-svc"]') ? o.svc : s ? (s.value === '기타' ? (el.querySelector('[data-k=etc]').value.trim() || '기타') : s.value) : '';
+      var svc = s ? (s.value === '기타' ? (el.querySelector('[data-k=etc]').value.trim() || '기타') : s.value) : '';
       if (svc !== o.svc && o.svc) { o.f = {}; o.x = {}; } // 서비스를 바꾸면 세부 항목은 새로
       o.svc = svc; o.st = t ? t.value : o.st || '';
       var fr = el.querySelector('[data-k=from]'), to = el.querySelector('[data-k=to]'); if (fr) { o.from = fr.value; o.to = to.value; }
@@ -228,7 +225,7 @@
     }
   });
   $('#foldAll').addEventListener('click', function () { pull(); var any = L.some(function (o) { return !OPEN.has(o); }); L.forEach(function (o) { if (any) OPEN.add(o); else OPEN.delete(o); }); draw(); });
-  $('#add').addEventListener('click', function () { pull(); var nw = { svc: '', st: '', from: '', to: '', f: {}, x: {}, _new: 1 }; L.push(nw); OPEN.add(nw); draw(); var all = document.querySelectorAll('#items .item'); all[all.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+  $('#add').addEventListener('click', function () { pull(); var nw = { svc: '', st: '', from: '', to: '', f: {}, x: {} }; L.push(nw); OPEN.add(nw); draw(); var all = document.querySelectorAll('#items .item'); all[all.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' }); });
 
   // 저장: 보이는 필수 항목 · 기타 상세 · 소요일 확인. 체크하지 않은 값은 '미지원'으로 저장된 것으로 봄 (v5 기준)
   function check() {
@@ -257,7 +254,6 @@
     if (bad) { if (bad.el.classList.contains('field')) bad.el.classList.add('err'); bad.el.scrollIntoView({ behavior: 'smooth', block: 'center' }); OP.toast(bad.msg); return; }
     // 숨겨진 조건부 항목 값은 저장하지 않음
     L.forEach(function (o) { var sp = SPEC[o.svc]; if (!sp) { o.f = {}; o.x = {}; return; } sp.fields.forEach(function (fd) { if (!shown(o, fd)) { delete o.f[fd.id]; delete o.x[fd.id]; } }); });
-    L.forEach(function (o) { delete o._new; }); // 저장한 뒤로는 서비스 이름만 보임
     OP.saveAccount(email, { services: L }); saved = filled(L);
     draw(); OP.toast('분석 서비스 정보가 저장되었습니다.');
   });
