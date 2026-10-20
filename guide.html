@@ -7,8 +7,8 @@
 <title>이용방법 · OmicsPharm</title>
 <!-- 서비스 소개 > 이용방법 (Figma 시안 없음 — 현재 홈페이지 /Instructions-for-use 내용 그대로, 분석 서비스 소개 섹션은 service.html로 분리되어 제외)
      하단 CTA 배너는 메인(index.html) 하단 배너와 동일 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261021a">
-<script src="assets/common/site.js?v=20261021a"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261021b">
+<script src="assets/common/site.js?v=20261021b"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-100:#bffdf1; --orange-600:#fd4900; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9; --white:#fff;
@@ -89,7 +89,7 @@
   .faq-head .more { flex:none; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-700); }
   .faq-head .more:hover { color:var(--teal-600); }
   .sec-head p a { color:var(--teal-600); font-weight:500; text-decoration:underline; text-underline-offset:3px; }
-  .qa { margin-top:32px; border-top:2px solid #000; }
+  .qa { margin-top:12px; border-top:2px solid #000; } /* 설명·전체 보기와 표 사이 12 (PC·태블릿·모바일 동일) */
   .qa details { border-bottom:1px solid var(--gray-200); }
   .qa summary { display:flex; align-items:center; gap:16px; padding:22px 24px; cursor:pointer; list-style:none; }
   .qa summary::-webkit-details-marker { display:none; }
@@ -151,7 +151,6 @@
     .step .card, .step:nth-child(even) .card { grid-column:2; grid-row:2; margin-top:10px; padding:20px; border-radius:16px; }
     .faq-head { flex-direction:column; align-items:stretch; gap:12px; }
     .faq-head .more { align-self:flex-end; } /* 모바일: 전체 보기는 표 오른쪽 위 */
-    .faq-head + .qa { margin-top:12px; } /* 전체 보기와 표 사이 12 */
     .qa summary { gap:10px; padding:16px; align-items:flex-start; }
     .qa .t { font-size:15px; line-height:22px; }
     .qa .a { gap:10px; padding:16px; font-size:14px; line-height:22px; }
