@@ -8,11 +8,11 @@
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261020k">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261020k">
-<script src="assets/common/site.js?v=20261020k"></script>
-<script src="assets/common/mypage.js?v=20261020k"></script>
-<script src="assets/common/flow.js?v=20261020k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261020m">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261020m">
+<script src="assets/common/site.js?v=20261020m"></script>
+<script src="assets/common/mypage.js?v=20261020m"></script>
+<script src="assets/common/flow.js?v=20261020m"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -146,18 +146,27 @@
           <div class="field"><label class="flabel" for="ph1">연락처<span class="req">*</span></label><div class="fbody"><div id="phoneHost" class="phwrap"></div></div></div>
           <!-- 국가: 회원가입과 같은 선택지 (기존 사이트도 가입 후 변경 가능) -->
           <div class="field"><label class="flabel" for="country">국가<span class="req">*</span></label><div class="fbody"><select class="inp" id="country"><option>South Korea</option><option>United States</option><option>Japan</option><option>China</option><option>Other</option></select></div></div>
-          <!-- 기관 정보 (클라이언트): 가입 '추가 정보' 단계에서 받은 값. 견적서·계약서의 클라이언트 기관 정보로 사용 (선택 항목)
-               사업자등록증과 같이 OmicsPharm 확인 후에는 보기 전용 -->
-          <div class="field cOrg" hidden><label class="flabel" for="ceo">대표자명</label><div class="fbody"><input class="inp" id="ceo" placeholder="이름" autocomplete="off"></div></div>
-          <div class="field cOrg" hidden><label class="flabel" for="bizno">사업자등록번호</label><div class="fbody"><input class="inp" id="bizno" inputmode="numeric" placeholder="000-00-00000" maxlength="12" autocomplete="off"></div></div>
-          <div class="field cOrg" hidden><label class="flabel" for="addr">주소</label><div class="fbody"><div class="addr" style="max-width:420px" data-addr-box><input class="inp" id="addr" placeholder="예) 세화로 168, 도산대로 33" readonly data-addr><button type="button" class="btn line" data-addr>검색</button></div></div></div>
+        </div>
+        <div class="actions"><button type="submit" class="btn primary lg">저장하기</button></div>
+      </form>
+    </section>
+
+    <!-- 기관 정보 (클라이언트): 가입 '추가 정보' 단계에서 받은 값 + 사업자등록증. 견적서·계약서의 클라이언트 기관 정보로 사용 (선택 항목)
+         OmicsPharm이 사업자등록증을 확인한 뒤에는 보기 전용 (변경은 문의하기). 분석파트너는 [파트너 인증] 메뉴에서 -->
+    <section class="card" id="secOrg" hidden>
+      <div class="card-head"><h3>기관 정보</h3></div>
+      <form id="fOrg" novalidate>
+        <div class="tbl">
+          <div class="field"><label class="flabel" for="ceo">대표자명</label><div class="fbody"><input class="inp" id="ceo" placeholder="이름" autocomplete="off"></div></div>
+          <div class="field"><label class="flabel" for="bizno">사업자등록번호</label><div class="fbody"><input class="inp" id="bizno" inputmode="numeric" placeholder="000-00-00000" maxlength="12" autocomplete="off"></div></div>
+          <div class="field"><label class="flabel" for="addr">주소</label><div class="fbody"><div class="addr" style="max-width:420px" data-addr-box><input class="inp" id="addr" placeholder="예) 세화로 168, 도산대로 33" readonly data-addr><button type="button" class="btn line" data-addr>검색</button></div></div></div>
           <div class="field" id="rowDoc" hidden><div class="flabel">사업자등록증</div><div class="fbody">
             <div class="doc"><span class="fname" id="docName"></span><span class="op-vchip ok lg" id="docBadge" hidden>인증완료</span><label class="btn" for="docFile" id="docBtn">파일 선택</label><button type="button" class="btn del" id="docDel" hidden>삭제</button>
               <input type="file" id="docFile" accept=".pdf,.jpg,.jpeg,.png"></div>
             <p class="help" id="docHelp"></p>
             <p class="note" id="docNote" hidden style="font-size:12px;line-height:18px;color:var(--teal-700);font-weight:500">아래 저장하기를 눌러야 반영됩니다.</p></div></div>
         </div>
-        <div class="actions"><button type="submit" class="btn primary lg">저장하기</button></div>
+        <div class="actions" id="orgActions"><button type="submit" class="btn primary lg">저장하기</button></div>
       </form>
       <div class="op-ibox simple" id="docLock" hidden><p class="t"><span>OmicsPharm 확인이 완료된 기관 정보와 사업자등록증은 프로젝트 등록·계약에 사용되어 직접 수정할 수 없습니다. 변경이 필요하면 <a href="contact.html?type=service">문의하기</a>로 알려 주세요.</span></p></div>
     </section>
@@ -267,13 +276,13 @@
     n.innerHTML = '<span>' + OP.my.esc(bizDoc || '등록된 파일 없음') + '</span>';
     $('#docBtn').hidden = cOk; $('#docHelp').hidden = cOk;
     $('#docDel').hidden = cOk || !bizDoc;
-    ['#ceo', '#bizno', '#addr'].forEach(function (k) { $(k).disabled = cOk; }); document.querySelector('.cOrg .addr .btn').hidden = cOk;
+    ['#ceo', '#bizno', '#addr'].forEach(function (k) { $(k).disabled = cOk; }); document.querySelector('#secOrg .addr .btn').hidden = cOk; $('#orgActions').hidden = cOk;
     if (cOk) return;
     $('#docBtn').textContent = bizDoc ? '파일 변경' : '파일 선택';
     $('#docHelp').textContent = bizDoc ? '프로젝트 등록 시 이 파일이 함께 제출됩니다.' : '프로젝트 등록 시 필요합니다. 미리 올려 두면 의뢰할 때 다시 올리지 않아도 됩니다. (PDF, JPG, PNG)';
   }
   if (hasDoc) {
-    [].forEach.call(document.querySelectorAll('.cOrg'), function (r) { r.hidden = false; });
+    $('#secOrg').hidden = false;
     $('#ceo').value = acc.ceo || ''; $('#bizno').value = acc.bizno || ''; $('#addr').value = acc.addr || '';
     $('#bizno').addEventListener('input', function () { // 000-00-00000
       var d = this.value.replace(/\D/g, '').slice(0, 10);
@@ -312,11 +321,19 @@
     var pOk = PHN.valid(); PHN.el.classList.toggle('bad', !pOk); err(PHN.inputs[0], pOk ? '' : '휴대폰 번호를 정확히 입력해주세요.');
     if (!pOk) return;
     var data = { name: n.value.trim(), nick: nk.value.trim(), country: $('#country').value, org: o.value.trim(), dept: $('#dept').value.trim(), phone: PHN.get(), photo: photo };
-    if (hasDoc && !okd()) { data.ceo = $('#ceo').value.trim(); data.bizno = $('#bizno').value; data.addr = $('#addr').value.trim(); data.bizDoc = savedDoc = bizDoc; $('#docNote').hidden = true; if (bizFile) { OP.files.put('biz:acc:' + email, bizFile); bizFile = null; } } // 원본은 컨설턴트가 의뢰 승인 때 확인
     OP.saveAccount(email, data);
     OP.saveOrg(data.org, data.dept);
-    refresh(); pending(false); vrole(); if (hasDoc) showDoc();
+    refresh(); pending(false); vrole();
     OP.toast('회원 정보가 저장되었습니다.');
+  });
+  // 기관 정보 (클라이언트): 확인 완료 후에는 저장 버튼이 숨겨짐
+  $('#fOrg').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!hasDoc || okd()) return;
+    OP.saveAccount(email, { ceo: $('#ceo').value.trim(), bizno: $('#bizno').value, addr: $('#addr').value.trim(), bizDoc: (savedDoc = bizDoc) });
+    $('#docNote').hidden = true; if (bizFile) { OP.files.put('biz:acc:' + email, bizFile); bizFile = null; } // 원본은 컨설턴트가 의뢰 승인 때 확인
+    showDoc();
+    OP.toast('기관 정보가 저장되었습니다.');
   });
 
   $('#fPw').addEventListener('submit', function (e) {
