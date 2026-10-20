@@ -21,7 +21,7 @@
     ['partners', '분석파트너 관리', 'mypage-partners.html', ['admin'], 'mgmt'], // 파트너 인증 검토 (인증 완료 / 재제출 요청)
     ['admin', '관리자 페이지', '#', ['admin']] // 백오피스 연결은 나중에 (누르면 '준비 중' 안내만). 화면 예시는 admin.html에 따로 있음
   ];
-  var GROUP = { prj: '프로젝트', me: '회원정보', mgmt: '파트너 관리' };
+  var GROUP = { prj: '프로젝트', me: '회원정보', mgmt: '회원 관리' };
   function read(k, f) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch (e) { return f; } }
   function write(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); };
