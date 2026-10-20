@@ -85,8 +85,11 @@
   .ov-card::before { content:""; position:absolute; left:0; right:0; top:-2px; height:2px; background:var(--teal-600); transform:scaleX(0); transform-origin:left; transition:transform .5s cubic-bezier(.2,.7,.2,1); }
   @media (hover:hover) { .ov-card:hover::before { transform:scaleX(1); } }
   @media (prefers-reduced-motion:reduce) { .ov-card::before { transition:none; } }
-  /* 카드 번호 01~04: 제목 위 작은 청록 숫자 (Body/Medium/B), 제목과는 12 */
-  .ov-card .num { margin-bottom:-12px; font-style:normal; font-size:16px; font-weight:700; line-height:22px; letter-spacing:.02em; color:var(--teal-600); }
+  /* 카드 번호 01~04 (Figma 1641:7178): 제목 위 큰 청록 숫자 Display/Medium+/B 36, 제목과 간격 4 */
+  .ov-card .num { margin-bottom:-20px; font-style:normal; font-size:36px; font-weight:700; line-height:1.4; letter-spacing:-.36px; color:var(--teal-600); }
+  /* hover: 선 채움과 함께 카드 배경이 아주 연한 회색으로 */
+  .ov-card { transition:background-color .4s ease; }
+  @media (hover:hover) { .ov-card:hover { background:var(--gray-50); } }
   .ov-card b { font-size:28px; font-weight:700; line-height:36px; letter-spacing:-.28px; color:#000; } /* Display/Small/B */
   .ov-card p { font-size:18px; font-weight:500; line-height:24px; letter-spacing:-.18px; color:var(--gray-600); } /* Body/Large/M */
   .ov-pic { position:relative; flex:1; min-width:0; overflow:hidden; box-shadow:0 13px 100px rgba(199,199,199,.25); }
@@ -171,6 +174,7 @@
     #overview .glow.blue { left:-120px; top:auto; bottom:0; }
     .ov-card { gap:10px; padding:28px 4px; }
     .ov-card b { font-size:22px; line-height:30px; letter-spacing:-.22px; }
+    .ov-card .num { margin-bottom:-6px; font-size:28px; line-height:36px; letter-spacing:-.28px; }
     .ov-card p { font-size:16px; line-height:24px; letter-spacing:0; }
     .svc > h2 { font-size:24px; line-height:34px; }
     .tabs { gap:20px; }
