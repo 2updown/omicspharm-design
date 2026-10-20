@@ -26,7 +26,7 @@
   .page-head h1 { font-size:50px; font-weight:700; line-height:64px; letter-spacing:-.5px; }
 
   /* 분석 서비스 탭 (마크로젠 NGS 페이지 참고): Overview 아래 탭 → 고른 서비스 내용만 표시 */
-  .svc { padding-top:32px; scroll-margin-top:70px; }
+  .svc { padding-top:100px; scroll-margin-top:70px; } /* 큰 섹션 3개(Overview · 분석 서비스 · 시료) 사이 = 160 (위 섹션 아래 60 + 100) */
   .svc > h2 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; }
   .svc-bar { display:flex; align-items:center; gap:16px; margin-top:24px; border-bottom:1px solid var(--gray-200); }
   .tabs { flex:1; min-width:0; display:flex; gap:32px; overflow-x:auto; scrollbar-width:none; scroll-behavior:smooth; }
@@ -47,8 +47,8 @@
   @keyframes panelUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:none; } }
   @media (prefers-reduced-motion:reduce) { .panel.pop .rv { animation:none; } }
 
-  .body { padding:0 60px 96px; }
-  .sec { display:grid; grid-template-columns:minmax(0,530px) minmax(0,1fr); gap:64px; align-items:stretch; padding:48px 0 64px; border-bottom:1px solid var(--gray-200); } /* 위 48 = 탭과 가깝게, 아래 64 + 시료 위 72 = 섹션 사이 */ /* 사진 높이를 오른쪽 글(제목~분석항목) 높이에 맞춤 */
+  .body { padding:0 60px 120px; }
+  .sec { display:grid; grid-template-columns:minmax(0,530px) minmax(0,1fr); gap:64px; align-items:stretch; padding:48px 0 80px; border-bottom:1px solid var(--gray-200); } /* 위 48 = 탭과 가깝게, 아래 80 + 시료 위 80 = 섹션 사이 160 */ /* 사진 높이를 오른쪽 글(제목~분석항목) 높이에 맞춤 */
   .sec.rev { grid-template-columns:minmax(0,1fr) minmax(0,530px); }
   .sec.rev .pic { order:2; }
   .sec.full { display:block; }
@@ -106,7 +106,7 @@
   .bp tr.first td { border-top:1px solid var(--gray-300); }
 
   /* 시료 */
-  .samples { padding:72px 0 0; }
+  .samples { padding:80px 0 0; }
   .samples h2 { font-size:32px; font-weight:700; line-height:44px; letter-spacing:-.32px; word-break:keep-all; }
   .samples h2 em { font-style:normal; color:var(--teal-600); }
   /* 시료 안내: 큰 이미지 4칸 안에 텍스트 (현재 홈페이지 레이아웃). 스크롤하면 텍스트가 차례로 떠오르고, hover 시 이미지 살짝 확대 */
@@ -162,7 +162,7 @@
     html { scroll-padding-top:128px; }
     .page-head { padding:40px 16px 16px; }
     .page-head h1 { font-size:32px; line-height:42px; letter-spacing:-.32px; }
-    .svc { padding-top:16px; }
+    .svc { padding-top:40px; }
     #overview { padding:8px 0 40px; }
     #overview .glow { width:420px; }
     #overview .glow.peach { left:auto; right:-120px; top:40px; }
@@ -177,7 +177,7 @@
     /* 모바일: 탭 줄은 손으로 밀어 자유롭게 움직이고, 서비스는 탭을 눌러야 바뀜 */
     .body { padding:0 16px 64px; }
     .sec { padding:40px 0 48px; }
-    .samples { padding-top:48px; }
+    .samples { padding-top:64px; }
     .pic, .pic img { border-radius:12px; }
     .sec h2, .samples h2 { font-size:24px; line-height:34px; }
     .desc { margin-top:14px; font-size:15px; }
