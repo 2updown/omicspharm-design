@@ -70,16 +70,16 @@
   .items li .ico { width:20px; height:20px; margin-top:2px; color:var(--teal-600); --i:url(assets/service/ic-check-circle.svg); }
 
   /* Overview (Figma 1641:7172): 칸마다 따로 떨어진 카드(간격 12) — 카드 위아래에 굵은 선, 칸 사이에 가는 세로선. 1줄 = 특징 1칸 + 사진, 2줄 = 특징 3칸. 뒤에 연한 그라데이션 2장 */
-  #overview { position:relative; padding:40px 0 60px; overflow-x:clip; } /* 제목 아래 24 + 40 = 64 */ /* 그라데이션이 화면 밖으로 나가 가로 스크롤 생기지 않게 */
+  #overview { position:relative; padding:60px 0; overflow-x:clip; } /* Figma 1641:7172: 위아래 60 (제목 아래 24 + 60 = 84) */ /* 그라데이션이 화면 밖으로 나가 가로 스크롤 생기지 않게 */
   #overview .glow { position:absolute; z-index:0; pointer-events:none; width:703.5px; max-width:none; }
-  #overview .glow.peach { left:392px; top:-28px; opacity:.35; }
-  #overview .glow.blue { left:-10px; top:10.5px; opacity:.25; }
+  #overview .glow.peach { left:392px; top:-48px; opacity:.35; }
+  #overview .glow.blue { left:-10px; top:-9.5px; opacity:.25; }
   .ov { position:relative; z-index:1; display:flex; flex-direction:column; gap:12px; }
   .ov-row { display:flex; gap:12px; }
   .ov-div { flex:none; align-self:stretch; width:1px; background:var(--gray-300); } /* 칸 사이 세로선 */
-  .ov-card { display:flex; flex-direction:column; gap:20px; min-width:0; padding:60px 40px 50px; border-top:2px solid var(--gray-300); word-break:keep-all; }
-  .ov-row.r1 .ov-card { flex:none; width:424px; min-height:240px; } /* 1줄 높이 = 사진 높이 240 */
-  .ov-row.r2 .ov-card { flex:1; min-height:260px; border-bottom:2px solid var(--gray-300); }
+  .ov-card { display:flex; flex-direction:column; justify-content:center; gap:24px; min-width:0; padding:60px 40px 50px; border-top:2px solid var(--gray-300); word-break:keep-all; }
+  .ov-row.r1 .ov-card { flex:none; width:424px; min-height:312px; } /* 1줄 높이 = 사진 높이 312 */
+  .ov-row.r2 .ov-card { flex:1; min-height:312px; border-bottom:2px solid var(--gray-300); }
   /* hover: 위쪽 회색 선 위로 청록 선이 왼쪽→오른쪽으로 채워짐 (마우스가 있는 기기만) */
   .ov-card { position:relative; }
   .ov-card::before { content:""; position:absolute; left:0; right:0; top:-2px; height:2px; background:var(--teal-600); transform:scaleX(0); transform-origin:left; transition:transform .5s cubic-bezier(.2,.7,.2,1); }
@@ -88,7 +88,7 @@
   .ov-card b { font-size:28px; font-weight:700; line-height:36px; letter-spacing:-.28px; color:#000; } /* Display/Small/B */
   .ov-card p { font-size:18px; font-weight:500; line-height:24px; letter-spacing:-.18px; color:var(--gray-600); } /* Body/Large/M */
   .ov-pic { position:relative; flex:1; min-width:0; overflow:hidden; box-shadow:0 13px 100px rgba(199,199,199,.25); }
-  .ov-pic img { position:absolute; left:-9.79%; top:-24.36%; display:block; width:119.58%; height:148.95%; max-width:none; object-fit:cover; transition:transform .8s cubic-bezier(.2,.7,.2,1); } /* 넓게 확장한 사진(guide-01-wide)을 Figma 1641:7183과 같은 위치로 잘라 보여 줌 */
+  .ov-pic img { position:absolute; left:-2.18%; top:0; display:block; width:104.37%; height:100%; max-width:none; object-fit:cover; transition:transform .8s cubic-bezier(.2,.7,.2,1); } /* 넓게 확장한 사진(guide-01-wide)을 Figma 1641:7183과 같은 위치로 잘라 보여 줌 */
 
   /* Bioinformatics 그룹 */
   /* 분석 그룹이 있는 서비스(Multiomics): 위 = 사진 + 제목·설명, 아래 = 그룹 카드를 전체 폭 3열로 (사진이 세로로 길어지지 않게) */
