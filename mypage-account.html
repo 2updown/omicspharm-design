@@ -26,6 +26,7 @@
   .inp { width:100%; max-width:420px; height:40px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font-size:14px; line-height:20px; }
   .inp:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
   .inp.bad { border-color:var(--red-600); }
+  select.inp { padding-right:34px; appearance:none; -webkit-appearance:none; background:#fff url(assets/find/ic-chevron-down.svg) right 12px center/16px no-repeat; cursor:pointer; }
   .phwrap { max-width:420px; }
   .help { font-size:12px; line-height:18px; color:var(--gray-500); }
   .msg { font-size:12px; line-height:18px; color:var(--red-600); }
@@ -138,9 +139,12 @@
           <div class="field" id="rowMail"><div class="flabel">이메일(아이디)</div><div class="fbody"><div class="mailrow"><p class="val" id="vEmail"></p><span class="op-vchip" id="mailChip" hidden>메일 미인증</span><button type="button" class="btn line" id="mailResend" hidden>인증 메일 다시 보내기</button></div><div class="op-ibox simple" id="mailHelp" hidden><p class="t"><span>가입하신 메일함에서 인증 메일을 확인해 주세요. 메일이 오지 않았다면 스팸함도 확인해 주세요.</span></p></div></div></div>
           <div class="field"><div class="flabel">회원 유형</div><div class="fbody"><p class="val" id="vRole"></p></div></div>
           <div class="field"><label class="flabel" for="name">이름<span class="req">*</span></label><div class="fbody"><input class="inp" id="name" autocomplete="name"></div></div>
+          <div class="field"><label class="flabel" for="nick">닉네임<span class="req">*</span></label><div class="fbody"><input class="inp" id="nick" placeholder="닉네임"></div></div>
           <div class="field"><label class="flabel" for="org">소속(기관·회사)<span class="req">*</span></label><div class="fbody"><input class="inp" id="org" placeholder="소속 검색 또는 입력"></div></div>
           <div class="field"><label class="flabel" for="dept">부서·직책</label><div class="fbody"><input class="inp" id="dept" placeholder="부서 검색 또는 입력"></div></div>
           <div class="field"><label class="flabel" for="ph1">연락처<span class="req">*</span></label><div class="fbody"><div id="phoneHost" class="phwrap"></div></div></div>
+          <!-- 국가: 회원가입과 같은 선택지 (기존 사이트도 가입 후 변경 가능) -->
+          <div class="field"><label class="flabel" for="country">국가<span class="req">*</span></label><div class="fbody"><select class="inp" id="country"><option>South Korea</option><option>United States</option><option>Japan</option><option>China</option><option>Other</option></select></div></div>
           <div class="field" id="rowDoc" hidden><div class="flabel">사업자등록증</div><div class="fbody">
             <div class="doc"><span class="fname" id="docName"></span><span class="op-vchip ok lg" id="docBadge" hidden>인증완료</span><label class="btn" for="docFile" id="docBtn">파일 선택</label><button type="button" class="btn del" id="docDel" hidden>삭제</button>
               <input type="file" id="docFile" accept=".pdf,.jpg,.jpeg,.png"></div>
@@ -242,7 +246,7 @@
   }
   vrole();
   OP.orgCombo($('#org'), $('#dept')); // 소속·부서: DB 자동완성 + 직접 입력
-  $('#name').value = acc.name || ''; $('#org').value = acc.org || me.org || ''; $('#dept').value = acc.dept || '';
+  $('#name').value = acc.name || ''; $('#nick').value = acc.nick || ''; $('#country').value = acc.country || 'South Korea'; $('#org').value = acc.org || me.org || ''; $('#dept').value = acc.dept || '';
   var PHN = OP.phoneField($('#phoneHost'), { value: acc.phone || '', id: 'ph' });
 
   // 사업자등록증 (클라이언트, 프로젝트 등록·계약에 사용)
@@ -287,13 +291,14 @@
 
   $('#fInfo').addEventListener('submit', function (e) {
     e.preventDefault();
-    var n = $('#name'), o = $('#org');
+    var n = $('#name'), nk = $('#nick'), o = $('#org');
     err(n, n.value.trim() ? '' : '이름을 입력해주세요.');
+    err(nk, nk.value.trim() ? '' : '닉네임을 입력해주세요.');
     err(o, o.value.trim() ? '' : '소속을 입력해주세요.');
-    if (!n.value.trim() || !o.value.trim()) return;
+    if (!n.value.trim() || !nk.value.trim() || !o.value.trim()) return;
     var pOk = PHN.valid(); PHN.el.classList.toggle('bad', !pOk); err(PHN.inputs[0], pOk ? '' : '휴대폰 번호를 정확히 입력해주세요.');
     if (!pOk) return;
-    var data = { name: n.value.trim(), org: o.value.trim(), dept: $('#dept').value.trim(), phone: PHN.get(), photo: photo };
+    var data = { name: n.value.trim(), nick: nk.value.trim(), country: $('#country').value, org: o.value.trim(), dept: $('#dept').value.trim(), phone: PHN.get(), photo: photo };
     if (hasDoc && !okd()) { data.bizDoc = savedDoc = bizDoc; $('#docNote').hidden = true; if (bizFile) { OP.files.put('biz:acc:' + email, bizFile); bizFile = null; } } // 원본은 컨설턴트가 의뢰 승인 때 확인
     OP.saveAccount(email, data);
     OP.saveOrg(data.org, data.dept);

@@ -358,7 +358,7 @@
     // 분석파트너: 추가 정보(대표 서비스)와 기관 정보도 저장 → 마이페이지 [분석 서비스 정보]·[파트너 인증]에서 이어서 수정
     var on = function (g) { var b = $('[data-group="' + g + '"] .on'); return b ? b.textContent.trim() : ''; };
     var extra = type === 'partner' ? { services: [{ svc: on('service'), st: on('status'), from: $('#dayFrom').value, to: $('#dayTo').value }], ceo: $('#ceo').value.trim(), bizno: $('#bizno').value.trim(), addr: $('#addr').value.trim() } : {};
-    if (who) { OP.saveAccount(who, Object.assign(extra, { profileDone: true, bizDoc: doc ? doc.name : '', name: $('#name').value.trim(), org: $('#org').value.trim(), dept: $('#dept').value.trim(), phone: $('#cc').value + ' ' + PH.map(function (i) { return i.value; }).join('-') })); OP.saveOrg($('#org').value, $('#dept').value); OP.login(who); }
+    if (who) { OP.saveAccount(who, Object.assign(extra, { profileDone: true, bizDoc: doc ? doc.name : '', name: $('#name').value.trim(), nick: $('#nick').value.trim(), country: $('#country').value, org: $('#org').value.trim(), dept: $('#dept').value.trim(), phone: $('#cc').value + ' ' + PH.map(function (i) { return i.value; }).join('-') })); OP.saveOrg($('#org').value, $('#dept').value); OP.login(who); }
     show('done');
   });
 
