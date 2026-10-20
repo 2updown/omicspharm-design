@@ -40,7 +40,8 @@
   .board td.t { text-align:left; }
   .board td.t a { display:inline-flex; align-items:center; gap:8px; max-width:100%; color:#000; font-size:16px; font-weight:500; }
   .board td.t a span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .board tr:hover td.t a span { color:var(--teal-700); text-decoration:underline; text-underline-offset:3px; }
+  /* 제목에만 hover (공지 배지 제외), 마우스가 있는 기기만 — 모바일은 누르면 바로 상세로 이동 */
+  @media (hover:hover) { .board tr:hover td.t a > span:not(.pin-badge) { color:var(--teal-700); text-decoration:underline; text-underline-offset:3px; } }
   .board tr.pin td { background:#f6faf9; }
   .board tr.pin td.t a { font-weight:600; }
   .pin-badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:8px; background:var(--teal-600); font-size:12px; font-weight:500; line-height:18px; color:#fff; }
