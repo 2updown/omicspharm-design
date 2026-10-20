@@ -376,8 +376,13 @@
   function revealTiles() { tiles.forEach(function (t) { if (!t.classList.contains('in') && t.getBoundingClientRect().top < innerHeight * 0.88) t.classList.add('in'); }); }
   window.addEventListener('scroll', revealTiles, { passive: true }); window.addEventListener('resize', revealTiles); revealTiles();
   var h = location.hash.slice(1);
-  // 새로고침이면 고른 탭만 다시 열고 스크롤은 브라우저가 기억한 위치 그대로 (탭을 누르면 주소에 #서비스id가 붙어서, 새로고침 때 분석 서비스로 튀던 문제)
+  // 새로고침이면 고른 탭만 다시 열고 페이지 맨 위에서 시작 (탭을 누르면 주소에 #서비스id가 붙어서, 새로고침 때 아래로 내려가 있던 문제)
   var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0], reload = nav && nav.type === 'reload';
+  if (reload) {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; // 브라우저가 기억한 스크롤 위치로 돌아가지 않게
+    var toTop = function () { window.scrollTo(0, 0); };
+    toTop(); window.addEventListener('load', toTop); // #서비스id 앵커로 내려가는 것도 막음
+  }
   if (ids.indexOf(h) > -1) show(h, !reload, reload); else show(ids[0], false, true);
   window.addEventListener('hashchange', function () { var x = location.hash.slice(1); if (ids.indexOf(x) > -1) show(x, true); });
   if (h === 'samples' || h === 'overview') document.getElementById(h).scrollIntoView();
