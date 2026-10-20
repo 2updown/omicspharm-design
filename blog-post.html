@@ -91,11 +91,15 @@
     .article { padding:36px 16px 0; font-size:16px; }
     .article h2 { margin:36px 0 12px; font-size:20px; line-height:28px; }
     .article table { display:block; overflow-x:auto; font-size:14px; }
+    /* 모바일: 좌우 2칸 대신 목록형 2줄 — [이전 글|다음 글] 제목 … › (한 줄 전체를 누름) */
     .post-nav { max-width:calc(100% - 32px); margin-top:48px; grid-template-columns:1fr; }
-    .post-nav .next { align-items:flex-start; text-align:left; border-left:0; border-top:1px solid var(--gray-200); padding-left:0; }
+    .post-nav a, .post-nav span { flex-direction:row; align-items:center; gap:12px; min-height:56px; padding:14px 0; }
+    .post-nav .next { align-items:center; text-align:left; border-left:0; border-top:1px solid var(--gray-200); padding-left:0; }
     .post-nav .prev { padding-right:0; }
-    .post-nav a, .post-nav span { padding:18px 0; }
-    .post-nav b { font-size:15px; line-height:22px; }
+    .post-nav small { flex:none; width:52px; font-size:13px; line-height:18px; }
+    .post-nav small img { display:none; }
+    .post-nav b { flex:1; min-width:0; font-size:15px; line-height:22px; }
+    .post-nav a::after { content:""; flex:none; width:16px; height:16px; background:var(--gray-400); -webkit-mask:url(assets/find/ic-caret-right.svg) center/contain no-repeat; mask:url(assets/find/ic-caret-right.svg) center/contain no-repeat; }
     .post-foot { max-width:calc(100% - 32px); }
     .post-foot .btn { flex:1; min-width:0; }
     .related { margin-top:64px; padding:0 16px 64px; }
