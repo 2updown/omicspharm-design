@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>내 정보 관리 · 마이페이지 · OmicsPharm</title>
-<!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 비밀번호 변경 / 알림 설정 / 회원 탈퇴.
+<!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 기관 정보(클라이언트) / 비밀번호 변경 / 회원 탈퇴. 알림 설정은 없음 (기존 사이트에 없고 가입 때도 받지 않음).
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
-     데모: 저장은 이 브라우저 localStorage(op.accounts, op.alarmPref)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261020m">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261020m">
-<script src="assets/common/site.js?v=20261020m"></script>
-<script src="assets/common/mypage.js?v=20261020m"></script>
-<script src="assets/common/flow.js?v=20261020m"></script>
+     데모: 저장은 이 브라우저 localStorage(op.accounts)에만 된다 -->
+<link rel="stylesheet" href="assets/common/site.css?v=20261020n">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261020n">
+<script src="assets/common/site.js?v=20261020n"></script>
+<script src="assets/common/mypage.js?v=20261020n"></script>
+<script src="assets/common/flow.js?v=20261020n"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -39,18 +39,6 @@
   .svcs label:has(input:checked) { border-color:var(--teal-600); background:var(--teal-50); color:var(--teal-700); font-weight:500; }
   .svcs label:has(input:focus-visible) { box-shadow:0 0 0 3px #00786e33; }
 
-  /* 알림 설정: 토글 */
-  .prefs { border-top:1px solid var(--gray-200); }
-  .pref { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 4px; border-bottom:1px solid var(--gray-200); cursor:pointer; }
-  .pref b { display:block; font-size:15px; font-weight:500; line-height:22px; }
-  .pref span { display:block; margin-top:2px; font-size:13px; line-height:18px; color:var(--gray-500); }
-  .sw { position:relative; flex:none; width:44px; height:24px; }
-  .sw input { position:absolute; inset:0; opacity:0; margin:0; cursor:pointer; }
-  .sw i { position:absolute; inset:0; border-radius:99px; background:var(--gray-300); transition:background .15s; pointer-events:none; }
-  .sw i::after { content:""; position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#fff; box-shadow:0 1px 2px #00000033; transition:transform .15s; }
-  .sw input:checked + i { background:var(--teal-600); }
-  .sw input:checked + i::after { transform:translateX(20px); }
-  .sw input:focus-visible + i { box-shadow:0 0 0 3px #00786e33; }
 
   /* 비밀번호 재확인 */
   .gate { align-items:center; padding:56px 24px; text-align:center; }
@@ -181,11 +169,6 @@
         </div>
         <div class="actions"><button type="submit" class="btn lg">비밀번호 변경</button></div>
       </form>
-    </section>
-
-    <section class="card">
-      <div class="card-head"><h3>알림 설정</h3></div>
-      <div class="prefs" id="prefs"></div>
     </section>
 
     <div class="leave" id="leave">
@@ -351,25 +334,6 @@
     OP.toast('비밀번호가 변경되었습니다.');
   });
 
-  // 알림 설정 (이메일 수신)
-  var PREFS = [
-    ['quote', partner ? '새 프로젝트 · 선정 결과' : '견적 도착 · 프로젝트 진행', partner ? '관심 분야 새 프로젝트, 견적 선정 여부, 진행 상태 변경을 알려드립니다.' : '분석파트너의 견적 도착, 계약·분석·결과 단계 변경을 알려드립니다.', true],
-    ['inquiry', '문의 답변', '문의하신 내용에 답변이 등록되면 알려드립니다.', true],
-    ['notice', '공지 · 서비스 소식', '서비스 변경, 점검 등 주요 공지를 알려드립니다.', true],
-    ['mkt', '마케팅 정보 수신 (선택)', '뉴스레터, 이벤트, 신규 서비스 소식을 받아보실 수 있습니다.', false]
-  ];
-  var pref = {}; try { pref = JSON.parse(localStorage.getItem('op.alarmPref') || '{}')[email] || {}; } catch (e2) {}
-  $('#prefs').innerHTML = PREFS.map(function (p) {
-    var on = p[0] in pref ? pref[p[0]] : p[3];
-    return '<label class="pref"><div><b>' + p[1] + '</b><span>' + p[2] + '</span></div><span class="sw"><input type="checkbox" role="switch" data-k="' + p[0] + '"' + (on ? ' checked' : '') + ' aria-label="' + p[1] + ' 이메일 알림"><i></i></span></label>';
-  }).join('');
-  $('#prefs').addEventListener('change', function (e) {
-    var k = e.target.dataset.k; if (!k) return;
-    var all = {}; try { all = JSON.parse(localStorage.getItem('op.alarmPref') || '{}'); } catch (e3) {}
-    all[email] = Object.assign(all[email] || {}, (function () { var o = {}; o[k] = e.target.checked; return o; })());
-    try { localStorage.setItem('op.alarmPref', JSON.stringify(all)); } catch (e4) {}
-    OP.toast(e.target.checked ? '알림을 켰습니다.' : '알림을 껐습니다.');
-  });
 })();
 </script>
 </body>
