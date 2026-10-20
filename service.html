@@ -78,7 +78,7 @@
   .ov-row { display:flex; gap:12px; }
   .ov-div { flex:none; align-self:stretch; width:1px; background:var(--gray-300); } /* 칸 사이 세로선 */
   .ov-card { display:flex; flex-direction:column; justify-content:flex-start; gap:24px; min-width:0; padding:60px 40px 50px; border-top:2px solid var(--gray-300); word-break:keep-all; }
-  .ov-row.r1 .ov-card { flex:none; width:424px; min-height:312px; } /* 1줄 높이 = 사진 높이 312 */
+  .ov-row.r1 .ov-card { flex:none; width:calc((100% - 50px) / 3); min-height:312px; } /* 2줄 카드 1칸과 같은 폭(세로선 2px + 간격 48 제외 ÷ 3)이라 화면이 줄어도 세로선이 맞음, 1440에서 424 */
   .ov-row.r2 .ov-card { flex:1; min-height:312px; border-bottom:2px solid var(--gray-300); }
   /* hover: 위쪽 회색 선 위로 청록 선이 왼쪽→오른쪽으로 채워짐 (마우스가 있는 기기만) */
   .ov-card { position:relative; }
