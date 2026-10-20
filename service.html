@@ -7,8 +7,8 @@
 <title>분석 서비스 안내 · OmicsPharm</title>
 <!-- 서비스 소개 > 분석 서비스 안내 (Figma 시안 없음 — 현재 홈페이지 /projects/guide 내용·이미지를 그대로 옮기고 우리 컴포넌트로 구성)
      레이아웃: Overview → 분석 서비스 탭(고른 서비스만 표시, 마크로젠 NGS 페이지 참고) → 시료 안내. 섹션 id: overview, genomics, transcriptomics, proteomics, glycoproteomics, metabolomics, olink, bioinformatics, biopharma, adc, specialized, samples -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261020b">
-<script src="assets/common/site.js?v=20261020b"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261020c">
+<script src="assets/common/site.js?v=20261020c"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -80,6 +80,11 @@
   .ov-card { display:flex; flex-direction:column; gap:20px; min-width:0; padding:60px 40px 50px; border-top:2px solid var(--gray-300); word-break:keep-all; }
   .ov-row.r1 .ov-card { flex:none; width:424px; min-height:240px; } /* 1줄 높이 = 사진 높이 240 */
   .ov-row.r2 .ov-card { flex:1; min-height:260px; border-bottom:2px solid var(--gray-300); }
+  /* hover: 위쪽 회색 선 위로 청록 선이 왼쪽→오른쪽으로 채워짐 (마우스가 있는 기기만) */
+  .ov-card { position:relative; }
+  .ov-card::before { content:""; position:absolute; left:0; right:0; top:-2px; height:2px; background:var(--teal-600); transform:scaleX(0); transform-origin:left; transition:transform .5s cubic-bezier(.2,.7,.2,1); }
+  @media (hover:hover) { .ov-card:hover::before { transform:scaleX(1); } }
+  @media (prefers-reduced-motion:reduce) { .ov-card::before { transition:none; } }
   .ov-card b { font-size:28px; font-weight:700; line-height:36px; letter-spacing:-.28px; color:#000; } /* Display/Small/B */
   .ov-card p { font-size:18px; font-weight:500; line-height:24px; letter-spacing:-.18px; color:var(--gray-600); } /* Body/Large/M */
   .ov-pic { position:relative; flex:1; min-width:0; overflow:hidden; box-shadow:0 13px 100px rgba(199,199,199,.25); }
