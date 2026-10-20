@@ -7,8 +7,8 @@
 <title>분석 서비스 안내 · OmicsPharm</title>
 <!-- 서비스 소개 > 분석 서비스 안내 (Figma 시안 없음 — 현재 홈페이지 /projects/guide 내용·이미지를 그대로 옮기고 우리 컴포넌트로 구성)
      레이아웃: Overview → 분석 서비스 탭(고른 서비스만 표시, 마크로젠 NGS 페이지 참고) → 시료 안내. 섹션 id: overview, genomics, transcriptomics, proteomics, glycoproteomics, metabolomics, olink, bioinformatics, biopharma, adc, specialized, samples -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261020e">
-<script src="assets/common/site.js?v=20261020e"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261020f">
+<script src="assets/common/site.js?v=20261020f"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -48,7 +48,7 @@
   @media (prefers-reduced-motion:reduce) { .panel.pop .rv { animation:none; } }
 
   .body { padding:0 60px 96px; }
-  .sec { display:grid; grid-template-columns:minmax(0,530px) minmax(0,1fr); gap:64px; align-items:start; padding:72px 0; border-bottom:1px solid var(--gray-200); }
+  .sec { display:grid; grid-template-columns:minmax(0,530px) minmax(0,1fr); gap:64px; align-items:center; padding:48px 0; border-bottom:1px solid var(--gray-200); } /* 글이 사진보다 짧아도 아래가 비지 않게 세로 가운데 정렬 */
   .sec.rev { grid-template-columns:minmax(0,1fr) minmax(0,530px); }
   .sec.rev .pic { order:2; }
   .sec.full { display:block; }
@@ -59,15 +59,15 @@
   @media (prefers-reduced-motion:reduce) { .pic img, .ov-pic img { transition:none; } .pic:hover img, .ov-pic:hover img { transform:none; } }
   .eyebrow { font-size:14px; font-weight:600; line-height:20px; letter-spacing:.04em; color:var(--teal-600); text-transform:uppercase; }
   .sec h2 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; word-break:keep-all; }
-  .desc { margin-top:20px; font-size:16px; line-height:1.75; color:var(--gray-700); word-break:keep-all; }
+  .desc { margin-top:20px; font-size:17px; line-height:1.75; color:var(--gray-700); word-break:keep-all; }
   .desc p + p { margin-top:12px; }
 
   /* 분석항목 카드 */
   .items { margin-top:28px; padding:24px; border:1px solid var(--gray-200); border-radius:12px; background:var(--gray-50); }
   .items h3 { font-size:16px; font-weight:600; line-height:22px; }
   .items ul { display:flex; flex-direction:column; gap:10px; margin-top:14px; }
-  .items li { display:flex; gap:10px; font-size:15px; line-height:22px; color:var(--gray-700); word-break:keep-all; }
-  .items li .ico { width:20px; height:20px; margin-top:1px; color:var(--teal-600); --i:url(assets/service/ic-check-circle.svg); }
+  .items li { display:flex; gap:10px; font-size:16px; line-height:24px; color:var(--gray-700); word-break:keep-all; }
+  .items li .ico { width:20px; height:20px; margin-top:2px; color:var(--teal-600); --i:url(assets/service/ic-check-circle.svg); }
 
   /* Overview (Figma 1641:7172): 칸마다 따로 떨어진 카드(간격 12) — 카드 위아래에 굵은 선, 칸 사이에 가는 세로선. 1줄 = 특징 1칸 + 사진, 2줄 = 특징 3칸. 뒤에 연한 그라데이션 2장 */
   #overview { position:relative; padding:20px 0 60px; overflow-x:clip; } /* 그라데이션이 화면 밖으로 나가 가로 스크롤 생기지 않게 */
@@ -105,20 +105,20 @@
   .bp tr.first td { border-top:1px solid var(--gray-300); }
 
   /* 시료 */
-  .samples { padding:72px 0 0; }
+  .samples { padding:48px 0 0; }
   .samples h2 { font-size:32px; font-weight:700; line-height:44px; letter-spacing:-.32px; word-break:keep-all; }
   .samples h2 em { font-style:normal; color:var(--teal-600); }
   /* 시료 안내: 큰 이미지 4칸 안에 텍스트 (현재 홈페이지 레이아웃). 스크롤하면 텍스트가 차례로 떠오르고, hover 시 이미지 살짝 확대 */
   .stiles { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; margin-top:40px; }
-  .stile { position:relative; width:100%; overflow:hidden; aspect-ratio:538 / 360; border-radius:16px; background:#0b2a26; isolation:isolate; }
+  .stile { position:relative; width:100%; overflow:hidden; aspect-ratio:652 / 320; border-radius:16px; background:#0b2a26; isolation:isolate; }
   .stile img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .8s cubic-bezier(.2,.7,.2,1); }
   .stile::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.38) 45%, rgba(0,0,0,.08) 100%); transition:opacity .4s; z-index:1; }
   .stile .tx { position:absolute; left:40px; right:40px; bottom:40px; z-index:2; color:#fff; }
-  .stile b { display:block; font-size:24px; font-weight:700; line-height:32px; letter-spacing:-.24px; word-break:keep-all; }
-  .stile small { display:block; margin-top:2px; font-size:15px; font-weight:500; line-height:22px; color:rgba(255,255,255,.8); }
+  .stile b { display:block; font-size:28px; font-weight:700; line-height:36px; letter-spacing:-.28px; word-break:keep-all; }
+  .stile small { display:block; margin-top:2px; font-size:16px; font-weight:500; line-height:22px; color:rgba(255,255,255,.8); }
   .stile ul { display:flex; flex-direction:column; gap:6px; margin-top:16px; }
-  .stile li { display:flex; gap:8px; font-size:15px; line-height:22px; color:rgba(255,255,255,.92); word-break:keep-all; }
-  .stile li::before { content:""; flex:none; width:4px; height:4px; margin-top:9px; border-radius:50%; background:#5ee6d3; }
+  .stile li { display:flex; gap:8px; font-size:16px; line-height:24px; color:rgba(255,255,255,.92); word-break:keep-all; }
+  .stile li::before { content:""; flex:none; width:4px; height:4px; margin-top:10px; border-radius:50%; background:#5ee6d3; }
   .stile:hover img { transform:scale(1.05); }
   .stile:hover::after { opacity:.85; }
   /* 스크롤 진입 시 텍스트만 떠오름 */
