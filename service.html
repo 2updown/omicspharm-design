@@ -7,8 +7,8 @@
 <title>분석 서비스 안내 · OmicsPharm</title>
 <!-- 서비스 소개 > 분석 서비스 안내 (Figma 시안 없음 — 현재 홈페이지 /projects/guide 내용·이미지를 그대로 옮기고 우리 컴포넌트로 구성)
      레이아웃: Overview → 분석 서비스 탭(고른 서비스만 표시, 마크로젠 NGS 페이지 참고) → 시료 안내. 섹션 id: overview, genomics, transcriptomics, proteomics, glycoproteomics, metabolomics, olink, bioinformatics, biopharma, adc, specialized, samples -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261020c">
-<script src="assets/common/site.js?v=20261020c"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261020d">
+<script src="assets/common/site.js?v=20261020d"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -88,7 +88,7 @@
   .ov-card b { font-size:28px; font-weight:700; line-height:36px; letter-spacing:-.28px; color:#000; } /* Display/Small/B */
   .ov-card p { font-size:18px; font-weight:500; line-height:24px; letter-spacing:-.18px; color:var(--gray-600); } /* Body/Large/M */
   .ov-pic { position:relative; flex:1; min-width:0; overflow:hidden; box-shadow:0 13px 100px rgba(199,199,199,.25); }
-  .ov-pic img { position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:cover; transition:transform .8s cubic-bezier(.2,.7,.2,1); } /* 사진은 칸 높이(240)에 맞춰 잘림 */
+  .ov-pic img { position:absolute; left:-9.79%; top:-24.36%; display:block; width:119.58%; height:148.95%; max-width:none; object-fit:cover; transition:transform .8s cubic-bezier(.2,.7,.2,1); } /* 넓게 확장한 사진(guide-01-wide)을 Figma 1641:7183과 같은 위치로 잘라 보여 줌 */
 
   /* Bioinformatics 그룹 */
   .groups { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; margin-top:28px; }
@@ -148,7 +148,7 @@
     .ov-row.r1 .ov-card, .ov-row.r2 .ov-card { width:auto; min-height:0; border-bottom:0; }
     .ov-row.r2 .ov-card:last-child { border-bottom:2px solid var(--gray-300); }
     .ov-card { padding:36px 28px; }
-    .ov-pic img { position:static; height:auto; aspect-ratio:16 / 7; }
+    .ov-pic img { position:static; width:100%; height:auto; aspect-ratio:16 / 7; }
     .ov-row.r1 .ov-pic { order:-1; } /* 모바일·태블릿: 사진을 맨 위로 */
     .sec.rev .pic { order:0; }
     .bp td.cat { width:auto; }
@@ -288,7 +288,7 @@
   var pic = function (n) { return '<div class="pic"><img src="' + I + 'guide-' + n + '.jpg" alt="" loading="lazy"></div>'; };
   var card = function (f) { return '<div class="ov-card"><b>' + f[1] + '</b><p>' + f[2] + '</p></div>'; };
   var html = '<section id="overview"><img class="glow peach" src="' + I + 'grad-peach.png" alt=""><img class="glow blue" src="' + I + 'grad-blue.png" alt="">' +
-    '<div class="ov"><div class="ov-row r1">' + card(FEATS[0]) + '<i class="ov-div"></i><div class="ov-pic"><img src="' + I + 'guide-01.jpg" alt=""></div></div>' +
+    '<div class="ov"><div class="ov-row r1">' + card(FEATS[0]) + '<i class="ov-div"></i><div class="ov-pic"><img src="' + I + 'guide-01-wide.jpg" alt=""></div></div>' +
     '<div class="ov-row r2">' + FEATS.slice(1).map(card).join('<i class="ov-div"></i>') + '</div></div></section>';
 
   var TABS = S.map(function (s) { return [s.id, s.id === 'biopharma' ? '바이오의약품' : s.id === 'adc' ? 'ADC' : s.name.replace(' Analysis', '').replace(' Proteomics', '')]; });
