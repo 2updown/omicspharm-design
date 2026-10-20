@@ -87,9 +87,9 @@
   @media (prefers-reduced-motion:reduce) { .ov-card::before { transition:none; } }
   /* 카드 번호 01~04 (Figma 1641:7178): 제목 위 큰 청록 숫자 Display/Medium+/B 36, 제목과 간격 4 */
   .ov-card .num { margin-bottom:-20px; font-style:normal; font-size:36px; font-weight:700; line-height:1.4; letter-spacing:-.36px; color:var(--teal-600); }
-  /* hover: 선 채움과 함께 카드 배경이 아주 연한 회색으로 */
+  /* hover: 선 채움과 함께 카드 배경이 흰색으로 (뒤 그라데이션을 가려 카드가 또렷해짐) */
   .ov-card { transition:background-color .4s ease; }
-  @media (hover:hover) { .ov-card:hover { background:var(--gray-50); } }
+  @media (hover:hover) { .ov-card:hover { background:var(--white, #fff); } }
   .ov-card b { font-size:28px; font-weight:700; line-height:36px; letter-spacing:-.28px; color:#000; } /* Display/Small/B */
   .ov-card p { font-size:18px; font-weight:500; line-height:24px; letter-spacing:-.18px; color:var(--gray-600); } /* Body/Large/M */
   .ov-pic { position:relative; flex:1; min-width:0; overflow:hidden; box-shadow:0 13px 100px rgba(199,199,199,.25); }
