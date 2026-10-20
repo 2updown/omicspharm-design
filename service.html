@@ -26,7 +26,7 @@
   .page-head h1 { font-size:50px; font-weight:700; line-height:64px; letter-spacing:-.5px; }
 
   /* 분석 서비스 탭 (마크로젠 NGS 페이지 참고): Overview 아래 탭 → 고른 서비스 내용만 표시 */
-  .svc { padding-top:80px; scroll-margin-top:70px; } /* Overview → 분석 서비스 = 140 (Overview 아래 60 + 80) */
+  .svc { padding-top:60px; scroll-margin-top:70px; } /* Overview → 분석 서비스 = 120 (Overview 아래 60 + 60) */
   .svc > h2 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; }
   .svc-bar { display:flex; align-items:center; gap:16px; margin-top:24px; border-bottom:1px solid var(--gray-200); }
   .tabs { flex:1; min-width:0; display:flex; gap:32px; overflow-x:auto; scrollbar-width:none; scroll-behavior:smooth; }
@@ -48,7 +48,7 @@
   @media (prefers-reduced-motion:reduce) { .panel.pop .rv { animation:none; } }
 
   .body { padding:0 60px 120px; }
-  .sec { display:grid; grid-template-columns:minmax(0,530px) minmax(0,1fr); gap:64px; align-items:stretch; padding:48px 0 100px; border-bottom:1px solid var(--gray-200); } /* 위 48 = 탭과 가깝게, 아래 100 + 시료 위 100 = 분석 서비스 → 시료 200 */ /* 사진 높이를 오른쪽 글(제목~분석항목) 높이에 맞춤 */
+  .sec { display:grid; grid-template-columns:minmax(0,530px) minmax(0,1fr); gap:64px; align-items:stretch; padding:48px 0 160px; border-bottom:1px solid var(--gray-200); } /* 위 48 = 탭과 가깝게, 아래 160 + 시료 위 100 = 분석 서비스 → 시료 260 */ /* 사진 높이를 오른쪽 글(제목~분석항목) 높이에 맞춤 */
   .sec.rev { grid-template-columns:minmax(0,1fr) minmax(0,530px); }
   .sec.rev .pic { order:2; }
   .sec.full { display:block; }
