@@ -9,12 +9,12 @@
      회원가입 '추가 정보 입력'에서 고른 서비스(복수)를 보고, 서비스를 더 등록·수정·삭제한다.
      서비스를 고르면 R&D 사례작성 v5 공급자 입력 항목(assets/common/svc-spec.js)이 펼쳐짐. 같은 서비스를 여러 번 등록 = 수행 조건 나누기
      데모: 저장은 이 브라우저 localStorage(op.accounts의 services)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261020s">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261020s">
-<script src="assets/common/site.js?v=20261020s"></script>
-<script src="assets/common/mypage.js?v=20261020s"></script>
-<script src="assets/common/flow.js?v=20261020s"></script>
-<script src="assets/common/svc-spec.js?v=20261020s"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261020t">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261020t">
+<script src="assets/common/site.js?v=20261020t"></script>
+<script src="assets/common/mypage.js?v=20261020t"></script>
+<script src="assets/common/flow.js?v=20261020t"></script>
+<script src="assets/common/svc-spec.js?v=20261020t"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .cnt { margin-left:6px; color:var(--teal-600); }
@@ -63,7 +63,6 @@
   .inp.ta { width:100%; height:auto; padding:10px 12px; resize:vertical; font:inherit; font-size:14px; }
   .field.err .flabel { color:var(--red-600); }
   .field.err .fbody { box-shadow:inset 3px 0 0 var(--red-600); }
-  .empty-s { padding:32px 16px; border:1px dashed var(--gray-300); border-radius:12px; text-align:center; font-size:14px; color:var(--gray-500); }
   @media (max-width:640px) {
     .field { grid-template-columns:1fr; }
     .flabel { padding:10px 12px; }
@@ -85,7 +84,7 @@
   <div class="main">
     <section class="card">
       <div class="card-head"><h3>분석 서비스 정보<span class="cnt" id="cnt"></span></h3><button type="button" class="fold-all" id="foldAll" hidden></button></div>
-      <div class="op-ibox warn simple" id="askBox" hidden><p class="t"><span>OmicsPharm이 분석 서비스 정보 입력을 요청했습니다. 제공하는 서비스를 등록해 주세요.</span></p></div>
+      <div class="op-ibox warn simple" id="askBox" hidden><p class="t"><span>OmicsPharm이 분석 서비스 정보 입력을 요청했습니다. 서비스별 세부 항목을 입력해 주세요.</span></p></div>
       <div class="op-ibox"><p class="t">등록한 서비스는 견적 확인과 OmicsPharm 컨설턴트의 프로젝트 매칭에 활용됩니다.</p>
         <ul><li>서비스를 고르면 그 서비스에서 지원하는 항목을 체크할 수 있습니다.</li>
           <li>같은 서비스라도 함께 제공할 수 없는 조건이 있으면(예: 혈장은 비표적만, 조직은 표적만) [복사]로 하나 더 만들어 수행 조건을 나눠 주세요.</li></ul></div>
@@ -112,7 +111,11 @@
   var ST = ['즉시 수행 가능', '사전협의 필요'];
   var MAP = { execution_status: 'st', days_min: 'from', days_max: 'to' }; // v5 항목 ↔ 기존 저장 키
   var L = JSON.parse(JSON.stringify(me.acc.services || []));
-  var uid = 0, saved = L.length > 0;
+  // 세부 항목까지 저장했는지 (입력 요청 기준과 같음: 서비스만 있고 세부 항목이 없으면 미입력. '기타'처럼 세부 항목이 없는 서비스는 제외)
+  var filled = function (A) { return A.length && A.every(function (o) { return !SPEC[o.svc] || Object.keys(o.f || {}).some(function (k) { return [].concat(o.f[k] || []).length; }); }); };
+  var uid = 0, saved = filled(L);
+  // 서비스는 1개 이상 필수 (회원가입과 같음) → '등록된 서비스 없음' 화면은 없음. 서비스가 비어 있으면(기존 회원 이관 등) 빈 카드 1개로 시작
+  if (!L.length) L.push({ svc: '', st: '', from: '', to: '', f: {}, x: {} });
   // 펼친 서비스 (저장하지 않는 화면 상태). 처음엔 서비스가 하나면 펼치고, 여러 개면 모두 접음
   var OPEN = new Set(L.length === 1 ? L : []);
 
@@ -173,9 +176,9 @@
   }
   function draw() {
     var fa = $('#foldAll'); fa.hidden = L.length < 2; fa.textContent = L.some(function (o) { return !OPEN.has(o); }) ? '모두 펼치기' : '모두 접기';
-    $('#askBox').hidden = !(OP.flow && OP.flow.svcAsked(email)) || saved; // 컨설턴트 요청을 받았고 아직 저장된 서비스가 없을 때
+    $('#askBox').hidden = !(OP.flow && OP.flow.svcAsked(email)) || saved; // 컨설턴트 요청을 받았고 아직 세부 항목을 채우지 않은 서비스가 있을 때
     $('#cnt').textContent = L.length ? L.length : '';
-    $('#items').innerHTML = L.length ? L.map(itemHTML).join('') : '<div class="empty-s">등록된 분석 서비스가 없습니다. [+ 서비스 추가]로 제공하는 서비스를 등록해 주세요.</div>';
+    $('#items').innerHTML = L.map(itemHTML).join('');
   }
   // 화면 입력값 → L
   function pull() {
@@ -217,6 +220,7 @@
     }
     if (e.target.closest('[data-del]')) {
       pull();
+      if (L.length === 1) { OP.toast('분석 서비스는 1개 이상 등록해야 합니다. 다른 서비스를 먼저 추가해 주세요.'); return; }
       OP.my.confirm("'" + name() + "' 항목을 삭제할까요?", '입력한 지원 항목이 함께 지워집니다. [저장하기]를 눌러야 반영됩니다.', '삭제', function () { L.splice(i, 1); draw(); });
     }
   });
@@ -250,7 +254,7 @@
     if (bad) { if (bad.el.classList.contains('field')) bad.el.classList.add('err'); bad.el.scrollIntoView({ behavior: 'smooth', block: 'center' }); OP.toast(bad.msg); return; }
     // 숨겨진 조건부 항목 값은 저장하지 않음
     L.forEach(function (o) { var sp = SPEC[o.svc]; if (!sp) { o.f = {}; o.x = {}; return; } sp.fields.forEach(function (fd) { if (!shown(o, fd)) { delete o.f[fd.id]; delete o.x[fd.id]; } }); });
-    OP.saveAccount(email, { services: L }); saved = L.length > 0;
+    OP.saveAccount(email, { services: L }); saved = filled(L);
     draw(); OP.toast('분석 서비스 정보가 저장되었습니다.');
   });
 })();
