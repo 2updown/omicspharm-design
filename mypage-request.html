@@ -11,12 +11,12 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261020n">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261020n">
-<script src="assets/common/site.js?v=20261020n"></script>
-<script src="assets/common/mypage.js?v=20261020n"></script>
-<script src="assets/common/svc-spec.js?v=20261020n"></script>
-<script src="assets/common/flow.js?v=20261020n"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261020p">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261020p">
+<script src="assets/common/site.js?v=20261020p"></script>
+<script src="assets/common/mypage.js?v=20261020p"></script>
+<script src="assets/common/svc-spec.js?v=20261020p"></script>
+<script src="assets/common/flow.js?v=20261020p"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -589,6 +589,16 @@
     return { svc: k, st: '즉시 수행 가능', from: '20', to: '30', f: f };
   });
   function svcInfoOf(k) { var a = OP.account(k); return a && a.role === 'partner' ? (a.services || []) : (DEMO_SVC[k] || []); }
+  // 입력 요청 기준 (견적서 확인 목록·AI 매칭 공통): 이 의뢰 서비스의 세부 항목이 없으면 '정보 부족'
+  // 가입 때 대표 서비스는 필수라 '서비스 0개'는 거의 없음 → 서비스만 있고 세부 항목이 없으면 요청 대상
+  function svcGap(k) {
+    var sk = ['단백체', '대사체', '유전체', '전사체', 'Olink', '바이오의약품'].filter(function (x) { return String(r.svc).indexOf(x) > -1; })[0] || '';
+    var specKey = sk === '바이오의약품' ? '바이오의약품·ADC' : sk;
+    var all = svcInfoOf(k), conds = all.filter(function (o) { return o.svc === specKey || o.svc === sk; });
+    var detail = conds.filter(function (o) { return o.f && Object.keys(o.f).some(function (x) { return [].concat(o.f[x] || []).length; }); });
+    if (detail.length) return '';
+    return !all.length ? '분석 서비스 정보 미입력' : !conds.length ? '이 의뢰 서비스 미등록' : '세부 항목 미입력';
+  }
   function agent() {
     var sk = ['단백체', '대사체', '유전체', '전사체', 'Olink', '바이오의약품'].filter(function (k) { return String(r.svc).indexOf(k) > -1; })[0] || '';
     var specKey = sk === '바이오의약품' ? '바이오의약품·ADC' : sk, sp = SPEC[specKey] || { fields: [] };
@@ -925,11 +935,11 @@
       (s.msg && s.st !== 'quoting' ? '<div class="msg"><b>클라이언트에게 전달한 메시지 · ' + F.ymd(s.sentAt) + '</b>' + esc(s.msg) + '</div>' : '') +
     '</div>';
   }
-  // 분석 서비스 정보 미입력 파트너: 견적 확인 중에 입력 요청 (안내만, 견적 전달은 그대로 가능)
+  // 분석 서비스 정보가 부족한 파트너: 견적 확인 중에 입력 요청 (안내만, 견적 전달은 그대로 가능). 기준은 svcGap (AI 매칭과 같음)
   function svcMiss(k) {
-    if (F.svcInfo(k)) return '';
+    var gap = svcGap(k); if (!gap) return '';
     var at = F.svcAsked(k);
-    return '<p class="svcm">분석 서비스 정보 미입력' + (at ? ' <em>· 입력 요청함</em>' : ' <button type="button" class="tbtn xs primary" data-svcask="' + k + '">입력 요청</button>') + '</p>';
+    return '<p class="svcm">' + gap + (at ? ' <em>· 입력 요청함</em>' : ' <button type="button" class="tbtn xs primary" data-svcask="' + k + '">입력 요청</button>') + '</p>';
   }
   function order(x) { return { sub: 0, rev: 1, draft: 2, req: 2, dec: 3 }[x.status]; }
 
