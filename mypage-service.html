@@ -9,12 +9,12 @@
      회원가입 '추가 정보 입력'에서 고른 서비스(복수)를 보고, 서비스를 더 등록·수정·삭제한다.
      서비스를 고르면 R&D 사례작성 v5 공급자 입력 항목(assets/common/svc-spec.js)이 펼쳐짐. 같은 서비스를 여러 번 등록 = 수행 조건 나누기
      데모: 저장은 이 브라우저 localStorage(op.accounts의 services)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261020w">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261020w">
-<script src="assets/common/site.js?v=20261020w"></script>
-<script src="assets/common/mypage.js?v=20261020w"></script>
-<script src="assets/common/flow.js?v=20261020w"></script>
-<script src="assets/common/svc-spec.js?v=20261020w"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261020x">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261020x">
+<script src="assets/common/site.js?v=20261020x"></script>
+<script src="assets/common/mypage.js?v=20261020x"></script>
+<script src="assets/common/flow.js?v=20261020x"></script>
+<script src="assets/common/svc-spec.js?v=20261020x"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .cnt { margin-left:6px; color:var(--teal-600); }
@@ -199,7 +199,17 @@
   draw();
   $('#items').addEventListener('change', function (e) {
     var t = e.target;
-    if (/-svc$/.test(t.name || '')) { pull(); draw(); return; } // 서비스 선택 → 그 서비스 항목 펼침
+    if (/-svc$/.test(t.name || '')) { // 서비스 선택 → 그 서비스 항목 펼침
+      // 세부 항목을 입력한 뒤 다른 서비스로 바꾸면 확인 모달 (바꾸면 세부 항목 초기화). 입력한 게 없으면 바로 바꿈
+      var it = t.closest('.item'), o = L[+it.dataset.i], old = o.svc ? (SVC.indexOf(o.svc) < 0 ? '기타' : o.svc) : '';
+      var typed = it.querySelector('input[data-f]:checked') || [].some.call(it.querySelectorAll('[data-text], [data-x]'), function (i) { return i.value.trim(); });
+      if (old && t.value !== old && typed) {
+        var back = it.querySelector('input[name$="-svc"][value="' + old + '"]'); if (back) back.checked = true;
+        OP.my.confirm('서비스를 변경할까요?', '입력한 세부 항목이 모두 초기화됩니다.', '변경', function () { t.checked = true; pull(); draw(); });
+        return;
+      }
+      pull(); draw(); return;
+    }
     if (t.dataset.f && DEP[t.dataset.f]) { pull(); draw(); return; } // 조건부 항목 다시 그림
     if (t.dataset.all) { [].forEach.call(t.closest('.opts').querySelectorAll('input[data-f]:not([value="기타"])'), function (i) { i.checked = t.checked; }); } // '전체' = 기타 뺀 모든 항목
     else if (t.dataset.f && t.type === 'checkbox') { var ab = t.closest('.opts').querySelector('[data-all]'); if (ab) ab.checked = ![].some.call(t.closest('.opts').querySelectorAll('input[data-f]:not([value="기타"])'), function (i) { return !i.checked; }); }
