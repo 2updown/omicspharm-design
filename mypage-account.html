@@ -8,11 +8,11 @@
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 기관 정보(클라이언트) / 비밀번호 변경 / 회원 탈퇴. 알림 설정은 없음 (기존 사이트에 없고 가입 때도 받지 않음).
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261020y">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261020y">
-<script src="assets/common/site.js?v=20261020y"></script>
-<script src="assets/common/mypage.js?v=20261020y"></script>
-<script src="assets/common/flow.js?v=20261020y"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261020z">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261020z">
+<script src="assets/common/site.js?v=20261020z"></script>
+<script src="assets/common/mypage.js?v=20261020z"></script>
+<script src="assets/common/flow.js?v=20261020z"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -127,11 +127,12 @@
           </div></div>
           <div class="field" id="rowMail"><div class="flabel">이메일(아이디)</div><div class="fbody"><div class="mailrow"><p class="val" id="vEmail"></p><span class="op-vchip" id="mailChip" hidden>메일 미인증</span><button type="button" class="btn line" id="mailResend" hidden>인증 메일 다시 보내기</button></div><div class="op-ibox simple" id="mailHelp" hidden><p class="t"><span>가입하신 메일함에서 인증 메일을 확인해 주세요. 메일이 오지 않았다면 스팸함도 확인해 주세요.</span></p></div></div></div>
           <div class="field"><div class="flabel">회원 유형</div><div class="fbody"><p class="val" id="vRole"></p></div></div>
-          <div class="field"><label class="flabel" for="name">이름<span class="req">*</span></label><div class="fbody"><input class="inp" id="name" autocomplete="name"></div></div>
+          <!-- 회원가입 '기본정보 입력'과 같은 항목·순서·이름 (가입 필수 = 여기서도 필수) -->
+          <div class="field"><label class="flabel" for="name">이름<span class="req">*</span></label><div class="fbody"><input class="inp" id="name" placeholder="이름" autocomplete="name"></div></div>
           <div class="field"><label class="flabel" for="nick">닉네임<span class="req">*</span></label><div class="fbody"><input class="inp" id="nick" placeholder="닉네임"></div></div>
+          <div class="field"><label class="flabel" for="ph1">휴대폰 번호<span class="req">*</span></label><div class="fbody"><div id="phoneHost" class="phwrap"></div></div></div>
           <div class="field"><label class="flabel" for="org">소속(기관·회사)<span class="req">*</span></label><div class="fbody"><input class="inp" id="org" placeholder="소속 검색 또는 입력"></div></div>
-          <div class="field"><label class="flabel" for="dept">부서·직책</label><div class="fbody"><input class="inp" id="dept" placeholder="부서 검색 또는 입력"></div></div>
-          <div class="field"><label class="flabel" for="ph1">연락처<span class="req">*</span></label><div class="fbody"><div id="phoneHost" class="phwrap"></div></div></div>
+          <div class="field"><label class="flabel" for="dept">부서<span class="req">*</span></label><div class="fbody"><input class="inp" id="dept" placeholder="부서 검색 또는 입력"></div></div>
           <!-- 국가: 회원가입과 같은 선택지 (기존 사이트도 가입 후 변경 가능) -->
           <div class="field"><label class="flabel" for="country">국가<span class="req">*</span></label><div class="fbody"><select class="inp" id="country"><option>South Korea</option><option>United States</option><option>Japan</option><option>China</option><option>Other</option></select></div></div>
         </div>
@@ -296,13 +297,16 @@
 
   $('#fInfo').addEventListener('submit', function (e) {
     e.preventDefault();
-    var n = $('#name'), nk = $('#nick'), o = $('#org');
+    var n = $('#name'), nk = $('#nick'), o = $('#org'), dp = $('#dept');
     err(n, n.value.trim() ? '' : '이름을 입력해주세요.');
     err(nk, nk.value.trim() ? '' : '닉네임을 입력해주세요.');
     err(o, o.value.trim() ? '' : '소속을 입력해주세요.');
-    if (!n.value.trim() || !nk.value.trim() || !o.value.trim()) return;
-    var pOk = PHN.valid(); PHN.el.classList.toggle('bad', !pOk); err(PHN.inputs[0], pOk ? '' : '휴대폰 번호를 정확히 입력해주세요.');
-    if (!pOk) return;
+    err(dp, dp.value.trim() ? '' : '부서를 입력해주세요.');
+    if (!n.value.trim() || !nk.value.trim() || !o.value.trim() || !dp.value.trim()) return;
+    // 휴대폰 번호: 형식 + 중복 (회원가입과 같음. 같은 번호는 한 계정만)
+    var pOk = PHN.valid(), dup = pOk && OP.phoneTaken(PHN.get(), email);
+    PHN.el.classList.toggle('bad', !pOk || dup); err(PHN.inputs[0], !pOk ? '휴대폰 번호를 정확히 입력해주세요.' : dup ? '이미 사용중인 연락처입니다.' : '');
+    if (!pOk || dup) return;
     var data = { name: n.value.trim(), nick: nk.value.trim(), country: $('#country').value, org: o.value.trim(), dept: $('#dept').value.trim(), phone: PHN.get(), photo: photo };
     OP.saveAccount(email, data);
     OP.saveOrg(data.org, data.dept);

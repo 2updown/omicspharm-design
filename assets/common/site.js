@@ -241,6 +241,11 @@
      저장 형식 '+82 010-1234-5678' */
   var CC = ['+82', '+81']; // 한국(기본값)·일본. 다른 국가는 출시 국가가 늘면 추가
   OP.PH_HINT = { '+82': '010', '+81': '090' }; // 첫 칸 안내 문구 (일본 휴대폰도 3-4-4자리: 090·080·070)
+  // 같은 휴대폰 번호로 가입한 다른 계정이 있는지 (국가번호 포함 숫자 비교). except = 본인 이메일
+  OP.phoneTaken = function (tel, except) {
+    var d = function (v) { return String(v || '').replace(/\D/g, ''); }, t = d(tel), A = OP.accounts();
+    return !!t && Object.keys(A).some(function (k) { return k !== except && d(A[k].phone) === t; });
+  };
   OP.phoneParse = function (v) { var m = String(v || '').match(/^(\+\d+)\s*(\d*)-?(\d*)-?(\d*)$/); return m ? { cc: m[1], p: [m[2], m[3], m[4]] } : { cc: '+82', p: ['', '', ''] }; };
   // host 안에 칸을 그린다. { value, disabled, id } → { get(), valid(), el }
   OP.phoneField = function (host, o) {
