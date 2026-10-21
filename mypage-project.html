@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261021zm">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261021zm">
-<script src="assets/common/site.js?v=20261021zm"></script>
-<script src="assets/common/mypage.js?v=20261021zm"></script>
-<script src="assets/common/flow.js?v=20261021zm"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261021zn">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261021zn">
+<script src="assets/common/site.js?v=20261021zn"></script>
+<script src="assets/common/mypage.js?v=20261021zn"></script>
+<script src="assets/common/flow.js?v=20261021zn"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -290,6 +290,15 @@
   .b-tabs button.on { border-color:var(--teal-600); color:var(--teal-700); font-weight:700; } .b-tabs button.on b { background:var(--teal-600); color:#fff; }
   @media (max-width:640px) { .b-tabw { margin:0 -16px; } .b-tabs { padding:0 16px; } .b-arr { width:28px; height:28px; margin-top:-14px; } .b-arr.l { left:6px; } .b-arr.r { right:6px; } }
   @media (max-width:960px) { .prow:has(.pright) { flex-direction:column; align-items:flex-start; } .prow:has(.pright) .ptitle { flex:none; width:100%; } } /* 세로 배치일 때 제목 너비 기준(360px)이 높이로 잡히지 않게 */
+  /* 프로젝트 취소 모달: 사유 선택 */
+  .cx-r { display:flex; flex-direction:column; gap:8px; margin-top:4px; text-align:left; }
+  .cx-r b { font-size:14px; font-weight:600; }
+  .cx-r > div { display:flex; flex-wrap:wrap; gap:6px; }
+  .cx-r label { cursor:pointer; } .cx-r input { position:absolute; opacity:0; pointer-events:none; }
+  .cx-r label span { display:inline-flex; align-items:center; height:34px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; font-size:14px; }
+  .cx-r input:checked + span { border-color:var(--teal-600); background:var(--teal-50); color:var(--teal-700); font-weight:600; }
+  .cx-r textarea { min-height:72px; padding:10px 12px; border:1px solid var(--gray-300); border-radius:8px; font:inherit; font-size:14px; resize:vertical; }
+  .op-confirm .yes.del { background:var(--red-600); border-color:var(--red-600); }
 </style>
 </head>
 <body>
@@ -511,7 +520,7 @@
     };
     $('.toprow').hidden = true; // 탭·문의하기는 프로젝트 상세에서만
     // 단계 필터 (대시보드 진행 현황에서 ?stage=단계 로 들어오면 그 단계만)
-    var cst = new URLSearchParams(location.search).get('stage'); if (F.CLIENT_STEPS.indexOf(cst) < 0 && cst !== '임시저장') cst = '전체';
+    var cst = new URLSearchParams(location.search).get('stage'); if (F.CLIENT_STEPS.indexOf(cst) < 0 && cst !== '임시저장' && cst !== '취소') cst = '전체';
     var cq = '', DR = '임시저장';
     $('#project').outerHTML =
       '<form class="psearch" id="cq" role="search"><input type="search" id="cqIn" placeholder="프로젝트명을 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
@@ -526,7 +535,7 @@
       var q = cq.trim().toLowerCase(), hit = function (x) { return !q || String(x.title || '').toLowerCase().indexOf(q) > -1; };
       var B = (cOnly ? list.filter(function (x) { return newQN(x); }) : list).filter(hit); // 미열람글만 보기
       var DB = cOnly ? [] : drafts.filter(hit).sort(function (a, b) { return b.at - a.at; }); // 임시저장은 '전체'에도 포함 (맨 위)
-      $('#cChips').innerHTML = ['전체'].concat(F.CLIENT_STEPS, [DR]).map(function (t) {
+      $('#cChips').innerHTML = ['전체'].concat(F.CLIENT_STEPS, ['취소', DR]).map(function (t) {
         var n = t === '전체' ? B.length + DB.length : t === DR ? DB.length : B.filter(function (x) { return F.clientStage(x.id) === t; }).length;
         return '<button type="button" role="tab" data-st="' + t + '"' + (cst === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b></button>';
       }).join('');
@@ -561,6 +570,7 @@
   var dd = function (v) { var n = Math.ceil((new Date(v) - new Date(new Date().toDateString())) / 864e5); return isNaN(n) ? '-' : n > 0 ? 'D-' + n : n === 0 ? 'D-Day' : 'D+' + -n; };
   if (FK.length && FS.st === 'sent') { $('#qCnt').hidden = false; $('#qCnt').textContent = FK.length; }
   function todoHTML() {
+    if (FS.cancel) return '<div class="ftodo gray"><div><b>취소된 프로젝트입니다.</b><p>' + esc(ymd(FS.cancel.at) + ' 취소' + (FS.cancel.reason ? ' · 사유: ' + FS.cancel.reason : '') + '\n견적을 요청받은 분석파트너에게 취소 알림이 전달되었고, 프로젝트 찾기에서 내려갔습니다.') + '</p></div></div>';
     var n = Object.keys(FS.P).length;
     var T = {
       review: FS.ok ? ['', '의뢰가 승인되어 등록되었습니다.', 'OmicsPharm 컨설턴트가 의뢰에 맞는 분석파트너를 선정해 견적을 요청해드립니다.', '']
@@ -613,7 +623,7 @@
     var amt = function (k) { return F.total(FS.P[k].quote).final; };
     var low = FK.length > 1 ? FK.reduce(function (a, b) { return amt(b) < amt(a) ? b : a; }) : null;
     var fast = FK.length > 1 ? FK.reduce(function (a, b) { return +FS.P[b].quote.weeks < +FS.P[a].quote.weeks ? b : a; }) : null;
-    var done = FS.st === 'matched';
+    var done = FS.st === 'matched' || !!FS.cancel; // 취소한 프로젝트는 견적 선택 없음
     box.innerHTML =
       (FS.msg ? '<div class="cmsg"><b>OmicsPharm 컨설턴트 의견</b>' + esc(F.mask(FS, FS.msg)) + '</div>' : '') +
       '<div class="qhead"><h3>' + (done ? '견적 비교 결과' : '받은 견적 ' + FK.length + '건') + '</h3><span>분석파트너 견적을 OmicsPharm이 검토해 ㈜셀키에이아이 명의로 전달해드립니다. 금액은 VAT 포함입니다.</span></div>' +
@@ -718,11 +728,13 @@
           sec.rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl></section>';
       }).join('') +
     '</div>' +
-    // 의뢰접수(견적 선정 전) 단계에서만 수정·삭제 가능 (예시 의뢰는 제외)
-    (sk === 0 && !d.demo ? '<div class="pacts"><p>분석파트너의 견적이 선정되기 전까지 의뢰 내용을 수정하거나 삭제할 수 있습니다.</p>' +
+    // 승인 전(의뢰접수)에만 수정·삭제 (예시 의뢰는 제외). 승인 후 ~ 견적 협의는 [프로젝트 취소], 계약 진행 중은 컨설턴트 문의
+    (FS.st === 'review' && !FS.ok && !d.demo ? '<div class="pacts"><p>분석파트너의 견적이 선정되기 전까지 의뢰 내용을 수정하거나 삭제할 수 있습니다.</p>' +
       '<div><button type="button" class="btn del" id="pDel">삭제</button><a class="btn primary" href="omicspharm-register.html?edit=' + encodeURIComponent(d.id) + '&t=' + Date.now() + '">수정하기</a></div></div>' : '') +
     (d.demo ? '<p class="demo-note">※ 견적 중개 과정을 확인하기 위한 예시 의뢰입니다.</p>' : '') +
-    '</details>';
+    '</details>' +
+    (F.canCancel(d.id) ? '<div class="pacts"><p>계약 전까지 프로젝트를 취소할 수 있습니다. 취소하면 견적을 요청받은 분석파트너에게 알림이 가고 프로젝트 찾기에서 내려갑니다.</p><div><button type="button" class="btn del" id="pCancel">프로젝트 취소</button></div></div>'
+      : FS.st === 'matched' && !FS.ct && !FS.cancel ? '<div class="pacts"><p>계약 진행 중에는 직접 취소할 수 없습니다. 취소가 필요하면 OmicsPharm 컨설턴트에게 문의해 주세요.</p><div>' + OP.askBtn({ key: d.id, cat: d.svc, no: d.id, title: d.title }) + '</div></div>' : '');
   $('#project').outerHTML = html;
   drawQuotes();
   // 섹션으로 이동 (?tab=quote|contract|report|req 로 들어오면 그 섹션으로)
@@ -755,6 +767,26 @@
         OP.flash('사업자등록증을 다시 제출했습니다.'); location.reload();
       });
     });
+  });
+  // 프로젝트 취소: 사유(선택) 고르기 + 직접 입력
+  if ($('#pCancel')) $('#pCancel').addEventListener('click', function () {
+    var R = ['예산 문제', '일정 변경', '다른 곳에서 진행', '기타'];
+    var m = document.createElement('div');
+    m.className = 'op-confirm fask'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
+    m.innerHTML = '<div class="box"><h3>프로젝트를 취소하시겠습니까?</h3><p>"' + esc(d.title) + '" 프로젝트가 취소되며 다시 진행할 수 없습니다. 견적을 요청받은 분석파트너에게 취소 알림이 갑니다.</p>' +
+      '<div class="cx-r"><b>취소 사유 (선택)</b><div>' + R.map(function (r) { return '<label><input type="radio" name="cxr" value="' + r + '"><span>' + r + '</span></label>'; }).join('') + '</div>' +
+      '<textarea placeholder="자세한 사유가 있다면 적어 주세요 (선택)"></textarea></div>' +
+      '<div class="btns"><button type="button" class="no">닫기</button><button type="button" class="yes go del">프로젝트 취소</button></div></div>';
+    var close = function () { m.remove(); document.removeEventListener('keydown', key); }, key = function (e) { if (e.key === 'Escape') close(); };
+    m.addEventListener('click', function (e) {
+      if (e.target === m || e.target.classList.contains('no')) close();
+      else if (e.target.classList.contains('yes')) {
+        var r = m.querySelector('input[name=cxr]:checked'), t = m.querySelector('textarea').value.trim();
+        F.cancel(d.id, [r ? r.value : '', t].filter(Boolean).join(' · ')); close();
+        OP.flash('프로젝트를 취소했습니다.'); location.replace('mypage-project.html?id=' + encodeURIComponent(d.id));
+      }
+    });
+    document.addEventListener('keydown', key); document.body.appendChild(m); m.querySelector('.no').focus();
   });
   if ($('#pDel')) $('#pDel').addEventListener('click', function () {
     OP.my.confirm('의뢰를 삭제하시겠습니까?', '"' + d.title + '" 의뢰가 삭제되며 복구할 수 없습니다.', '삭제', function () {

@@ -178,6 +178,7 @@
   function repReset(S) {
     var nav = window.performance && performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
     if (!nav || nav.type !== 'reload') return false;
+    DEMO_REQS.forEach(function (r) { if (S[r.id]) delete S[r.id].cancel; }); // 예시 의뢰 취소도 처음 상태로
     var a = S['PRJ-2026-0036'], b = S['PRJ-2026-0035'];
     if (a) { delete a.raw; delete a.rep; delete a.fin; delete a.rate; }
     if (b && b.rep) { b.rep = b.rep.slice(0, 1); delete b.raw; delete b.fin; delete b.rate; }
@@ -228,9 +229,9 @@
     // 단계 이름
     ADMIN_ST: { review: '검토 대기', quoting: '견적 수집 중', sent: '클라이언트 검토', matched: '매칭 완료' },
     // 컨설턴트 프로젝트 관리 단계 (요구사항정의서 '프로젝트상태' 시트 이름, 이름은 추후 맞출 예정)
-    ADMIN_STAGES: ['의뢰접수', '견적 대기', '견적 협의', '계약 진행 중', '분석 진행 중', '보고서 등록', '보고서 검토', '보고서 승인', '프로젝트 완료'],
+    ADMIN_STAGES: ['의뢰접수', '견적 대기', '견적 협의', '계약 진행 중', '분석 진행 중', '보고서 등록', '보고서 검토', '보고서 승인', '프로젝트 완료', '취소'],
     P2A: { '계약': '계약 진행 중', '분석': '분석 진행 중', '보고서 등록': '보고서 등록', '보고서 검토': '보고서 검토', '보고서 승인': '보고서 승인', '완료': '프로젝트 완료' },
-    adminStage: function (id) { var s = state(id); return s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 승인' : s.raw && s.raw.length ? '보고서 검토' : s.ct ? '분석 진행 중' : s.st === 'matched' ? '계약 진행 중' : s.st === 'review' ? (s.ok ? '견적 대기' : '의뢰접수') : '견적 협의'; },
+    adminStage: function (id) { var s = state(id); return s.cancel ? '취소' : s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 승인' : s.raw && s.raw.length ? '보고서 검토' : s.ct ? '분석 진행 중' : s.st === 'matched' ? '계약 진행 중' : s.st === 'review' ? (s.ok ? '견적 대기' : '의뢰접수') : '견적 협의'; },
     quoteCount: function (id) { var s = state(id); return Object.keys(s.P).filter(function (k) { return s.P[k].status === 'sub'; }).length; },
     CLIENT_ST: { review: '의뢰접수', quoting: '의뢰접수', sent: '견적 비교', matched: '계약' }, // 계약서 등록 후에는 '분석 진행'
     CLIENT_STEPS: ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'],
@@ -349,14 +350,17 @@
     // 프로젝트 찾기에 게시된 의뢰 (컨설턴트 승인 후)
     posted: function () {
       var d = db().S;
-      return requests().filter(function (r) { return d[r.id] && d[r.id].ok; }).map(function (r) { return { r: r, s: d[r.id] }; });
+      return requests().filter(function (r) { return d[r.id] && d[r.id].ok && !d[r.id].cancel; }).map(function (r) { return { r: r, s: d[r.id] }; });
     },
     reset: function () {
       try { localStorage.removeItem(KEY); localStorage.removeItem('op.alarmRead'); } catch (e) {}
       var A = OP.accounts(); Object.keys(A).forEach(function (k) { if (A[k].bizOk) OP.saveAccount(k, { bizOk: 0, bizOkName: '' }); }); // 사업자등록증 확인 완료도 처음 상태로 (올린 파일은 유지)
     },
     // 클라이언트 단계
-    clientStage: function (id) { var s = state(id); return s.rep && s.rep.length ? '결과 수령' : s.ct ? '분석 진행' : F.CLIENT_ST[s.st]; },
+    clientStage: function (id) { var s = state(id); return s.cancel ? '취소' : s.rep && s.rep.length ? '결과 수령' : s.ct ? '분석 진행' : F.CLIENT_ST[s.st]; },
+    // 프로젝트 취소 (2026-10-21): 승인 후 ~ 견적 협의까지 클라이언트가 직접. 계약 진행 중은 컨설턴트 문의, 계약 후 불가. 승인 전(의뢰접수)은 삭제
+    canCancel: function (id) { var s = state(id); return !!s.ok && !s.cancel && ['review', 'quoting', 'sent'].indexOf(s.st) > -1; },
+    cancel: function (id, reason) { return put(id, function (s) { s.cancel = { at: Date.now(), reason: reason || '' }; }); },
     // 결과보고서 최종 확인(프로젝트 완료) · 만족도 평가
     finish: function (id) { return put(id, function (s) { s.fin = Date.now(); }); },
     rate: function (id, star, text) { return put(id, function (s) { s.rate = { star: star, text: text, at: Date.now() }; }); },
@@ -399,6 +403,7 @@
         if (s.biz && s.biz.reAt) L.push({ id: 'f-biz-re-' + r.id + s.biz.reAt, k: '사업자등록증재제출', cat: 'project', at: s.biz.reAt, t: cl + '의 ' + nm + ' 의뢰 사업자등록증이 다시 제출되었습니다. 확인 후 승인처리 해주세요.', href: href });
         if (s.pick) L.push({ id: 'f-pick-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: josa(cl, '이', '가') + ' ' + nm + ' 프로젝트의 최종 견적을 확정 했습니다.', sub: '공급사: ' + partner(s.pick).org + ' · 견적금액: ' + won(total(s.P[s.pick].quote).final), href: href });
         (s.raw || []).forEach(function (x, i) { L.push({ id: 'f-raw-' + r.id + i, k: '결과등록', cat: 'project', at: x.at, t: josa(partner(s.pick).org, '이', '가') + ' ' + nm + ' 프로젝트의 ' + (i + 1) + '차 분석 결과를 등록했습니다. AI 보고서 초안을 검토해주세요.', href: href }); });
+        if (s.cancel) L.push({ id: 'f-cancel-' + r.id, k: '의뢰취소', cat: 'project', at: s.cancel.at, t: cl + '의 ' + nm + ' 프로젝트가 취소되었습니다.', sub: s.cancel.reason ? '사유: ' + s.cancel.reason : '', href: href });
         if (s.rate) L.push({ id: 'f-rate-' + r.id, k: '리뷰등록', cat: 'project', at: s.rate.at, t: cl + '의 ' + nm + ' 프로젝트에 만족도 평가(별점 ' + s.rate.star + '점)가 등록되었습니다.', href: href });
         if (s.fin) L.push({ id: 'f-fin-' + r.id, k: '프로젝트완료', cat: 'project', at: s.fin, t: josa(cl, '이', '가') + ' ' + nm + ' 결과보고서를 최종 확인해 프로젝트가 완료되었습니다.', href: href });
       } else if (role === 'partner') {
@@ -407,11 +412,11 @@
         if (r.updatedAt && r.updatedAt > x.at) L.push({ id: 'f-ed-' + r.id + r.updatedAt, k: '의뢰수정', cat: 'project', at: r.updatedAt, t: nm + ' 프로젝트의 의뢰 내용이 수정되었습니다. 견적서 작성 전 변경 내용을 확인해주세요.', href: qh });
         if (s.ct && s.pick === ses.email) L.push({ id: 'f-ct-' + r.id, k: '계약', cat: 'project', at: s.ct.at, t: nm + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
         if (s.fin && s.pick === ses.email) L.push({ id: 'f-fin-' + r.id, k: '프로젝트완료', cat: 'project', at: s.fin, t: nm + ' 프로젝트가 완료되었습니다. 클라이언트가 결과보고서를 최종 확인했습니다.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
+        if (s.cancel) L.push({ id: 'f-cancel-' + r.id, k: '의뢰취소', cat: 'project', at: s.cancel.at, t: nm + ' 프로젝트가 의뢰사 사정으로 취소되어 견적 요청이 종료되었습니다.', href: 'mypage-quote.html' });
         if (!x.self) L.push({ id: 'f-req-' + r.id, k: '견적제안', cat: 'project', at: x.at, t: nm + ' 프로젝트 검토 후 견적서를 작성해주세요.', sub: '견적 마감일: ' + (s.due ? s.due.replace(/-/g, '.') : '-'), href: qh });
         if (x.rev) L.push({ id: 'f-rev-' + r.id + x.revN, k: '견적수정요청', cat: 'project', at: x.rev.at, t: nm + ' 프로젝트 견적서의 수정을 요청드립니다.', sub: x.rev.note, href: qh });
-        if (s.st === 'matched' && x.status === 'sub') L.push(s.pick === ses.email
-          ? { id: 'f-win-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: nm + '의 견적이 최종 선정되었습니다.', sub: '견적서명: ' + qname(x) + ' · 견적금액: ' + won(total(x.quote).final), href: 'mypage-project.html?id=' + encodeURIComponent(r.id) }
-          : { id: 'f-lose-' + r.id, k: '견적미선정', cat: 'project', at: s.pickAt, t: nm + '의 견적은 이번에 선정되지 않았습니다.', sub: '참여해주셔서 감사합니다.', href: qh });
+        // 선정 알림만 (2026-10-21: 미선정 알림은 보내지 않음)
+        if (s.st === 'matched' && x.status === 'sub' && s.pick === ses.email) L.push({ id: 'f-win-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: nm + '의 견적이 최종 선정되었습니다.', sub: '견적서명: ' + qname(x) + ' · 견적금액: ' + won(total(x.quote).final), href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
       } else if (role === 'client' && (!r.demo || (r.owner || 'client@omicspharm.test') === ses.email)) {
         var ph = 'mypage-project.html?id=' + encodeURIComponent(r.id);
         if (s.ct) L.push({ id: 'f-ct-' + r.id, k: '계약', cat: 'project', at: s.ct.at, t: nm + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: ph + '&tab=contract' });
