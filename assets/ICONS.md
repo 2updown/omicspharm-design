@@ -89,3 +89,15 @@ Phosphor 아이콘이 아니라 프로토타입용으로 직접 만든 SVG 이�
 | `project/ic-download-simple.svg` | DownloadSimple | Phosphor (결과보고서 파일 다운로드, #525252) |
 | `project/ic-file-pdf.svg` · `project/ic-file-xls.svg` · `project/ic-image.svg` | FilePdf / FileXls / Image | Phosphor (결과보고서 파일 종류, #525252) |
 | `project/ic-chat-circle-dots.svg` | ChatCircleDots | Phosphor (프로젝트 상세 제목 줄 [문의하기], #525252) |
+
+## AI Agent (BioEOS 디자인 시스템 · 오믹스팜 DS와 별개)
+Figma 1665:7158 (Stand_alone_home)에서 내보낸 그대로 사용. Phosphor 아님 — BioEOS 시안 전용.
+
+| 파일 | Figma 레이어 | 비고 |
+|---|---|---|
+| `ai/logo-mark.svg` · `ai/logo-bioeos.svg` | Logo / BioEOS / medium | 왼쪽 위 로고 (마이페이지로 이동) |
+| `ai/ic-menubar.svg` | Icons / large / menuBar | 메뉴 접기 (접힌 화면은 아직 미구현) |
+| `ai/ic-add.svg` | Icons / medium / add | New chat |
+| `ai/ic-attach.svg` · `ai/ic-options.svg` | Icons / medium / attach · options | 입력창 왼쪽 버튼 |
+| `ai/ic-enter.svg` | Icons / large / enter | 보내기 |
+| `ai/ic-profile.svg` | Icons / large / profil | 왼쪽 아래 프로필 |
