@@ -307,7 +307,7 @@ span.tbtn { cursor:default; }
 /* 프로젝트 상세 제목 줄 [문의하기] (클라이언트·분석파트너·컨설턴트 공통) */
 .op-ask { flex:none; } .op-ask img { width:20px; height:20px; }
 
-/* ── 비교용 시안: 화이트 + 카드 없음 (주소에 ?ui=white). 확정 전까지 기본 화면은 그대로 ── */
+/* ── 마이페이지 기본 디자인 (PC): 화이트 + 카드 없음 = html.ui-white (mypage.js가 붙임). 예전 회색+카드는 ?ui=gray (보관) ── */
 .ui-white body { background:#fff; }
 .ui-white .body > .in { gap:64px; }
 .ui-white .side { width:240px; background:none; border:0; border-radius:0; }
