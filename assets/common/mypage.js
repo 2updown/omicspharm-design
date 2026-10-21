@@ -199,6 +199,13 @@ if (/[?&]ui=white\b/.test(location.search)) document.documentElement.classList.a
     var name = acc.name || s.email.split('@')[0];
     var org = acc.org || (D.projects()[0] || {}).org || '';
     var side = document.querySelector('[data-op-side]');
+    // 화이트 시안: '마이페이지' 제목 오른쪽에 로그인한 사람 정보 한 줄 (왼쪽 메뉴의 프로필을 대신함)
+    var ph0 = document.querySelector('.ui-white .page-head .in');
+    if (ph0 && side && !ph0.querySelector('.me-line')) {
+      var vchip = !OP.mailVerified() && s.role !== 'admin' ? '<span class="op-vchip">메일 미인증</span>' : s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증 완료' : '">미인증') + '</span>' : '';
+      var act = s.role === 'partner' && !OP.partnerVerified() ? '<a class="me-act" href="mypage-verify.html">인증하기 ›</a>' : '<a class="me-link" href="mypage-account.html">내 정보 관리 ›</a>';
+      ph0.insertAdjacentHTML('beforeend', '<div class="me-line"><span class="nm"><b>' + esc(name) + ' 님</b>' + (org ? '<span>' + esc(org) + '</span>' : '') + '</span><span class="role">' + esc(OP.ROLE_LABEL[s.role] || '') + '</span>' + vchip + act + '</div>');
+    }
     if (side) {
       var n = D.unread();
       // 새 소식 'N' 배지 (Figma badge_number new 605:41276): 안 읽은 알림이 가리키는 메뉴 옆에 표시. 알림은 안 읽은 게 하나라도 있으면

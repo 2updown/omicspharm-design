@@ -414,3 +414,17 @@ span.tbtn { cursor:default; }
 .ui-white .card.box #alarms, .ui-white .card.box #inqs { height:277px; }
 .ui-white .card.bare .card-head, .ui-white .card.box .card-head { align-items:flex-end; } /* 대시보드 섹션: [전체 보기]를 제목 아래쪽 선에 맞춤 */
 .ui-white .card.bare { gap:8px; } /* 진행 현황도 제목–박스 8 (다른 섹션과 같음) */
+
+/* 화이트 시안: 제목 오른쪽 내 정보 한 줄 */
+.ui-white .page-head .in { display:flex; align-items:center; justify-content:space-between; gap:24px; }
+.me-line { display:none; }
+.ui-white .me-line { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end; font-size:15px; line-height:22px; }
+.ui-white .me-line .nm { display:flex; align-items:baseline; gap:6px; }
+.ui-white .me-line .nm b { font-size:16px; font-weight:600; }
+.ui-white .me-line .nm span { color:var(--gray-500); }
+.ui-white .me-line .role { padding:2px 8px; border-radius:8px; border:1px solid var(--teal-600); color:var(--teal-600); font-size:12px; font-weight:500; line-height:18px; }
+.ui-white .me-line .op-vchip { margin-left:0; }
+.ui-white .me-line .me-link { margin-left:8px; font-size:14px; color:var(--gray-500); }
+.ui-white .me-line .me-link:hover { color:var(--teal-700); }
+.ui-white .me-line .me-act { margin-left:8px; font-size:14px; font-weight:600; color:var(--teal-700); }
+@media (max-width:960px) { .ui-white .me-line { display:none; } }
