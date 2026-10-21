@@ -165,6 +165,13 @@
     var x = S['PRJ-2026-0045'] && S['PRJ-2026-0045'].P['p-omx'];
     if (x && x.hist && x.hist[0] && !x.why) { x.hist[0].quote.weeks = '8'; x.why = '클라이언트의 일정 단축 요청에 따라 기기 분석 단가와 소요 기간을 조정했습니다.'; return true; }
   }
+  // 보고서 에이전트 예시: 0036 = 분석파트너가 결과를 올려 AI 초안이 생성된 상태(컨설턴트 검토 대기), 0035 = 1·2차 결과를 보고서로 전달한 이력
+  function repDemo(S) {
+    var a = S['PRJ-2026-0036'], b = S['PRJ-2026-0035'], ch = false;
+    if (a && a.ct && !a.raw && !a.rep) { a.raw = [{ at: T0 - DAY * 2, files: ['RawData_PhosphoProteome.zip', 'PeptideSummary.xlsx', '분석결과_정리_누리멀티오믹스.docx'], ai: '결과보고서_AI초안_2026-0036_v1.docx' }]; ch = true; }
+    if (b && b.rep && !b.raw) { b.raw = b.rep.map(function (v, i) { return { at: v.at - DAY, files: i ? ['RawData_v2.xlsx', '수정사항_정리.docx'] : ['RawData.xlsx', 'SCFA_분석결과.docx'], ai: '결과보고서_AI초안_2026-0035_v' + (i + 1) + '.docx', pdf: v.files[0], sent: v.at, repN: i + 1 }; }); ch = true; }
+    return ch;
+  }
   function req2(id) { return DEMO_REQS.filter(function (r) { return r.id === id; })[0]; }
   // 버전 3 → 4: 진행하던 기록은 그대로 두고 새 예시(0046·0047)만 추가
   function db() {
@@ -181,6 +188,7 @@
     if (d && d.v === 6) { ['PRJ-2026-0040', 'PRJ-2026-0041'].forEach(function (k) { var x = d.S[k]; if (x && (x.pick === 'p-met' || x.pick === 'p-mlt')) delete d.S[k]; }); seed6(d.S); d.v = VER; write(KEY, d); }
     if (!d || d.v !== VER) { d = seed(); write(KEY, d); }
     if (d && histDemo(d.S)) write(KEY, d);
+    if (d && repDemo(d.S)) write(KEY, d);
     d.X = d.X || []; return d;
   }
   function save(d) { write(KEY, d); }
@@ -199,7 +207,7 @@
     // 컨설턴트 프로젝트 관리 단계 (요구사항정의서 '프로젝트상태' 시트 이름, 이름은 추후 맞출 예정)
     ADMIN_STAGES: ['의뢰접수', '의뢰확인', '견적 협의', '계약 진행 중', '분석 진행 중', '보고서 등록', '보고서 검토', '보고서 승인', '프로젝트 완료'],
     P2A: { '계약': '계약 진행 중', '분석': '분석 진행 중', '보고서 등록': '보고서 등록', '보고서 검토': '보고서 검토', '보고서 승인': '보고서 승인', '완료': '프로젝트 완료' },
-    adminStage: function (id) { var s = state(id); return s.ct ? '분석 진행 중' : s.st === 'matched' ? '계약 진행 중' : s.st === 'review' ? (s.ok ? '의뢰확인' : '의뢰접수') : '견적 협의'; },
+    adminStage: function (id) { var s = state(id); return s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 승인' : s.raw && s.raw.length ? '보고서 검토' : s.ct ? '분석 진행 중' : s.st === 'matched' ? '계약 진행 중' : s.st === 'review' ? (s.ok ? '의뢰확인' : '의뢰접수') : '견적 협의'; },
     quoteCount: function (id) { var s = state(id); return Object.keys(s.P).filter(function (k) { return s.P[k].status === 'sub'; }).length; },
     CLIENT_ST: { review: '의뢰접수', quoting: '의뢰접수', sent: '견적 비교', matched: '계약' }, // 계약서 등록 후에는 '분석 진행'
     CLIENT_STEPS: ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'],
