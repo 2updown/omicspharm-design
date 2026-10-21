@@ -41,7 +41,11 @@
   .arrows button:hover:not(:disabled) { border-color:var(--gray-500); }
   .arrows button:disabled { opacity:.35; cursor:default; }
   .arrows img { width:18px; height:18px; }
-  .panel[hidden] { display:none !important; } /* .sec.full의 display:block보다 우선 */
+  .panel[hidden] { display:none !important; }
+  /* 스크롤로 화면에 들어오면 아래에서 떠오름 (이용방법 '활용 가이드' 카드와 같은 효과) — 분석 서비스 제목·탭·내용, 시료 제목 */
+  .sv-rv { opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; transition-delay:var(--d, 0s); }
+  .sv-rv.shown { opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce) { .sv-rv { opacity:1; transform:none; transition:none; } } /* .sec.full의 display:block보다 우선 */
   /* 탭을 누르면 새 패널의 사진·제목·설명·항목이 차례로 떠오름 */
   .panel.pop .rv { animation:panelUp .6s cubic-bezier(.2,.7,.2,1) both; animation-delay:var(--d, 0s); }
   @keyframes panelUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:none; } }
@@ -381,6 +385,16 @@
   var tiles = [].slice.call(document.querySelectorAll('.stile'));
   function revealTiles() { tiles.forEach(function (t) { if (!t.classList.contains('in') && t.getBoundingClientRect().top < innerHeight * 0.88) t.classList.add('in'); }); }
   window.addEventListener('scroll', revealTiles, { passive: true }); window.addEventListener('resize', revealTiles); revealTiles();
+  // 분석 서비스·시료 제목: 화면에 들어오면 차례로 떠오름. 서비스 내용(패널)은 탭으로 바뀌므로 한 번 보이면 전체 패널을 함께 표시
+  var svh = document.querySelector('#service > h2'), bar = document.querySelector('.svc-bar'), panels = [].slice.call(document.querySelectorAll('.panel')), smh = document.querySelector('#samples > h2');
+  [[svh, 0], [bar, .1]].concat(panels.map(function (p) { return [p, .2]; })).concat([[smh, 0]]).forEach(function (x) { x[0].classList.add('sv-rv'); x[0].setAttribute('data-op-skip-enter', ''); x[0].style.setProperty('--d', x[1] + 's'); });
+  function revealSv() {
+    var lim = innerHeight * 0.88;
+    [svh, bar, smh].forEach(function (el) { if (!el.classList.contains('shown') && el.getBoundingClientRect().top < lim) el.classList.add('shown'); });
+    var cur = panels.filter(function (p) { return !p.hidden; })[0];
+    if (cur && !cur.classList.contains('shown') && cur.getBoundingClientRect().top < lim) panels.forEach(function (p) { p.classList.add('shown'); });
+  }
+  window.addEventListener('scroll', revealSv, { passive: true }); window.addEventListener('resize', revealSv); revealSv();
   var h = location.hash.slice(1);
   // 새로고침: 고른 탭은 다시 열고, 스크롤은 보던 위치 그대로.
   // 주소에 #서비스id가 남아 있으면 브라우저가 (특히 맨 위에서 새로고침할 때) 그 앵커로 내려가 버려서, 위치를 직접 저장했다가 되돌림
