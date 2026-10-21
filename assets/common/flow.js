@@ -177,6 +177,7 @@
   function repDemo(S) {
     var a = S['PRJ-2026-0036'], b = S['PRJ-2026-0035'], ch = false;
     if (a && a.ct && !a.raw && !a.rep) { a.raw = [{ at: T0 - DAY * 2, files: ['RawData_PhosphoProteome.zip', 'PeptideSummary.xlsx', '분석결과_정리_누리멀티오믹스.docx'], ai: '결과보고서_AI초안_2026-0036_v1.docx' }]; ch = true; }
+    if (b && b.rep && b.rep.length > 1 && !b.one) { b.rep = [b.rep[0]]; if (b.raw) b.raw = [b.raw[0]]; b.one = 1; ch = true; } // 지금은 1차 결과만 (2·3차는 미정)
     if (b && b.rep && !b.raw) { b.raw = b.rep.map(function (v, i) { return { at: v.at - DAY, files: i ? ['RawData_v2.xlsx', '수정사항_정리.docx'] : ['RawData.xlsx', 'SCFA_분석결과.docx'], ai: '결과보고서_AI초안_2026-0035_v' + (i + 1) + '.docx', pdf: v.files[0], sent: v.at, repN: i + 1 }; }); ch = true; }
     return ch;
   }
@@ -601,14 +602,15 @@
     var files = function (L) { return '<ul class="rp-files">' + L.map(function (n) { return '<li><img src="assets/auth/ic-paperclip.svg" alt="">' + esc(n) + '</li>'; }).join('') + '</ul>'; };
     var h = '<section class="rp" data-rp-id="' + esc(id) + '"><div class="rp-h"><h3>결과보고서</h3>' + (adm ? '<span class="rp-ai"><img src="assets/common/ic-sparkle-fill.svg" alt="">보고서 에이전트</span>' : '') + '</div>';
     if (!adm) {
-      h += (fin ? '' : '<div class="rp-up"><div><b>분석 결과 등록</b><p>raw 파일, 워드 결과 등 형식에 상관없이 올려 주세요. OmicsPharm이 검토해 결과보고서로 클라이언트에게 전달합니다.</p></div>' +
+      // 지금은 1차 결과만 (2·3차 흐름은 미정): 한 번 등록하면 등록 칸을 닫음
+      h += (fin || raw.length ? '' : '<div class="rp-up"><div><b>분석 결과 등록</b><p>raw 파일, 워드 결과 등 형식에 상관없이 올려 주세요. OmicsPharm이 검토해 결과보고서로 클라이언트에게 전달합니다.</p></div>' +
         '<div class="rp-up-act"><label class="btn">파일 선택<input type="file" multiple hidden data-rp-pick></label></div>' +
         // 고른 파일은 목록에 쌓이고(✕로 빼기), [결과 등록]이 최종 버튼
         (RP_STAGE[id] && RP_STAGE[id].length ? '<ul class="rp-stage">' + RP_STAGE[id].map(function (n, j) { return '<li><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(n) + '</span><button type="button" data-rp="rm" data-j="' + j + '" aria-label="' + esc(n) + ' 빼기">✕</button></li>'; }).join('') + '</ul>' : '') +
         '<div class="rp-up-go"><button type="button" class="btn primary" data-rp="raw"' + (RP_STAGE[id] && RP_STAGE[id].length ? '' : ' disabled') + '>결과 등록</button></div></div>');
       h += raw.length ? raw.map(function (x, i) {
         return '<div class="rp-item"><div class="rp-ih"><b>' + (i + 1) + '차 결과</b><em>' + ymd(x.at) + ' 등록</em><span class="badge ' + (x.sent ? 'done">클라이언트 전달 완료' : 'wait">OmicsPharm 검토 중') + '</span></div>' + files(x.files) + '</div>';
-      }).reverse().join('') : '';
+      }).reverse().join('') + (fin ? '' : '<p class="rp-more">결과를 다시 보내야 하면 [문의하기]로 OmicsPharm에 알려 주세요.</p>') : '';
       return h + '</section>';
     }
     if (!raw.length) h += '<div class="rp-empty">분석파트너가 결과를 등록하면 AI가 결과보고서 초안(워드)을 만들어 여기에 보여 드립니다.' + (fin ? '' : '<button type="button" class="tbtn primary" data-rp="demo">데모: 분석파트너 결과 등록</button>') + '</div>';
@@ -641,7 +643,13 @@
     var b = e.target.closest('[data-rp]'); if (!b) return;
     var sec = b.closest('.rp'), id = sec.dataset.rpId, a = b.dataset.rp, it = b.closest('[data-rp-i]'), i = it ? +it.dataset.rpI : -1;
     if (a === 'rm') { RP_STAGE[id].splice(+b.dataset.j, 1); if (F.repRedraw) F.repRedraw(); return; }
-    if (a === 'raw') { var L = RP_STAGE[id] || []; if (!L.length) return; F.repRaw(id, L.slice()); RP_STAGE[id] = []; OP.toast('분석 결과를 등록했습니다. OmicsPharm이 검토 후 클라이언트에게 전달합니다.'); if (F.repRedraw) F.repRedraw(); return; }
+    if (a === 'raw') {
+      var L = RP_STAGE[id] || []; if (!L.length) return;
+      F.ask({ title: '분석 결과를 등록할까요?', desc: '선택한 파일 ' + L.length + '개를 1차 결과로 제출합니다. 제출한 뒤에는 파일을 바꾸거나 추가할 수 없으며, OmicsPharm이 검토해 클라이언트에게 전달합니다.', label: false, yes: '등록하기' }, function () {
+        F.repRaw(id, L.slice()); RP_STAGE[id] = []; OP.toast('분석 결과를 등록했습니다. OmicsPharm이 검토 후 클라이언트에게 전달합니다.'); if (F.repRedraw) F.repRedraw();
+      });
+      return;
+    }
     if (a === 'demo') { F.repRaw(id, ['RawData_' + String(id).replace(/^PRJ-/, '') + '.zip', '분석결과_정리.docx']); OP.toast('데모: 분석파트너가 결과를 등록했습니다. AI 보고서 초안이 생성되었습니다.'); if (F.repRedraw) F.repRedraw(); }
     if (a === 'dl') OP.toast('데모: AI 보고서 초안(워드)이 내려받아집니다.');
     if (a === 'send') F.ask({ title: '클라이언트에게 결과보고서를 전달할까요?', desc: '등록한 PDF가 클라이언트 결과보고서에 등록되고 알림이 갑니다.', label: '클라이언트에게 남길 메모 (선택)', ph: '예) 요청하신 그룹별 Boxplot을 추가했습니다.', yes: '전달하기' }, function (v) { F.repSend(id, i, v); OP.toast('클라이언트에게 결과보고서를 전달했습니다.'); if (F.repRedraw) F.repRedraw(); });
