@@ -7,11 +7,11 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261021k">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261021k">
-<script src="assets/common/site.js?v=20261021k"></script>
-<script src="assets/common/mypage.js?v=20261021k"></script>
-<script src="assets/common/flow.js?v=20261021k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261021l">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261021l">
+<script src="assets/common/site.js?v=20261021l"></script>
+<script src="assets/common/mypage.js?v=20261021l"></script>
+<script src="assets/common/flow.js?v=20261021l"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -160,7 +160,7 @@
     $('#pipeCard').hidden = false; $('#pipeH').textContent = pipe[0]; $('#pipeMore').href = pipe[1]; $('#pipeMore').textContent = '전체 보기';
     var AC = pipe[2].map(function (a) { return [a[0], a[1], pipe[1] + a[2]]; });
     var SHORT = { '계약 진행 중': '계약 진행', '분석 진행 중': '분석 진행', '프로젝트 완료': '완료' }; // 칸이 좁아 표시 이름만 짧게 (묶음 제목이 맥락)
-    groupFlow($('#pipe'), [['견적 중개', 'red', pick(AC, ['의뢰접수', '의뢰확인', '견적 협의'])], ['계약 · 분석', 'teal', pick(AC, ['계약 진행 중', '분석 진행 중'])],
+    groupFlow($('#pipe'), [['견적 중개', 'red', pick(AC, ['의뢰접수', '견적 대기', '견적 협의'])], ['계약 · 분석', 'teal', pick(AC, ['계약 진행 중', '분석 진행 중'])],
       ['보고서', 'gray', pick(AC, ['보고서 등록', '보고서 검토', '보고서 승인'])], ['완료', 'blue', pick(AC, ['프로젝트 완료'])]].map(function (g) {
         return [g[0], g[1], g[2].map(function (c) { return [SHORT[c[0]] || c[0], c[1], c[2]]; })];
       }));

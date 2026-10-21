@@ -86,7 +86,14 @@
       purpose: '프로바이오틱스 투여 전후 분변 시료의 단쇄지방산 농도 변화를 정량하고자 합니다.',
       sections: [{ title: '분석 서비스 : 대사체 분석', rows: [['분석 유형', '표적 대사체'], ['플랫폼', 'GC-MS'], ['표적 패널', '단쇄지방산(SCFA)'], ['정량 방식', '절대정량']] },
         { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', '분변'], ['총 시료 수', '18개'], ['보관상태', '초저온 (-80℃)']] },
-        { title: '희망 산출물', rows: [['희망 산출물', '국문 보고서, 영문 보고서, 결과 이미지, Raw data'], ['산출물 용도', '논문 학술용']] }] }
+        { title: '희망 산출물', rows: [['희망 산출물', '국문 보고서, 영문 보고서, 결과 이미지, Raw data'], ['산출물 용도', '논문 학술용']] }] },
+    // 견적 대기 예시: 승인되어 게시됐지만 아직 견적이 없음 (state는 waitDemo)
+    { id: 'PRJ-2026-0048', demo: true, at: T0 - DAY * 2, svc: '유전체 분석', title: '폐암 FFPE 조직 표적 유전자 패널 시퀀싱', org: '해솔대학교 의과대학', manager: '김민준', bizDoc: '사업자등록증_해솔대학교.pdf', owner: 'user01@example.test', samples: '30', due: '2027-01-15', from: '2026-10-20', to: '2026-11-03', budget: '500~1,000만원', open: '공개',
+      purpose: '폐암 환자 FFPE 조직 30건에서 표적 유전자 패널로 변이를 확인하고자 합니다.',
+      sections: [{ title: '분석 서비스 : 유전체 분석', rows: [['분석 유형', '변이·암 유전체'], ['연구 목적', '변이 발굴, 암 유전체'], ['원하는 분석 결과', 'SNV·Indel, CNV·SV'], ['참조정보', 'GRCh38']] },
+        { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', 'FFPE 조직'], ['총 시료 수', '30개']] },
+        { title: '요구사항', rows: [['희망완료일', '2027-01-15'], ['일정 협의 가능 여부', '가능'], ['예상금액', '500~1,000만원']] },
+        { title: '희망 산출물', rows: [['희망 산출물', 'Raw data, 결과표, 국문 보고서'], ['산출물 용도', '논문 학술용']] }] }
   ];
 
   // 가상 파트너 견적 (서비스·시료 수 기준으로 만든 예시)
@@ -166,6 +173,7 @@
     if (x && x.hist && x.hist[0] && !x.why) { x.hist[0].quote.weeks = '8'; x.why = '클라이언트의 일정 단축 요청에 따라 기기 분석 단가와 소요 기간을 조정했습니다.'; return true; }
   }
   // 보고서 에이전트 예시: 0036 = 분석파트너가 결과를 올려 AI 초안이 생성된 상태(컨설턴트 검토 대기), 0035 = 1·2차 결과를 보고서로 전달한 이력
+  function waitDemo(S) { if (S['PRJ-2026-0048']) return false; S['PRJ-2026-0048'] = { st: 'review', ok: T0 - DAY * 1, P: {} }; return true; }
   function repDemo(S) {
     var a = S['PRJ-2026-0036'], b = S['PRJ-2026-0035'], ch = false;
     if (a && a.ct && !a.raw && !a.rep) { a.raw = [{ at: T0 - DAY * 2, files: ['RawData_PhosphoProteome.zip', 'PeptideSummary.xlsx', '분석결과_정리_누리멀티오믹스.docx'], ai: '결과보고서_AI초안_2026-0036_v1.docx' }]; ch = true; }
@@ -189,6 +197,7 @@
     if (!d || d.v !== VER) { d = seed(); write(KEY, d); }
     if (d && histDemo(d.S)) write(KEY, d);
     if (d && repDemo(d.S)) write(KEY, d);
+    if (d && waitDemo(d.S)) write(KEY, d);
     d.X = d.X || []; return d;
   }
   function save(d) { write(KEY, d); }
@@ -205,9 +214,9 @@
     // 단계 이름
     ADMIN_ST: { review: '검토 대기', quoting: '견적 수집 중', sent: '클라이언트 검토', matched: '매칭 완료' },
     // 컨설턴트 프로젝트 관리 단계 (요구사항정의서 '프로젝트상태' 시트 이름, 이름은 추후 맞출 예정)
-    ADMIN_STAGES: ['의뢰접수', '의뢰확인', '견적 협의', '계약 진행 중', '분석 진행 중', '보고서 등록', '보고서 검토', '보고서 승인', '프로젝트 완료'],
+    ADMIN_STAGES: ['의뢰접수', '견적 대기', '견적 협의', '계약 진행 중', '분석 진행 중', '보고서 등록', '보고서 검토', '보고서 승인', '프로젝트 완료'],
     P2A: { '계약': '계약 진행 중', '분석': '분석 진행 중', '보고서 등록': '보고서 등록', '보고서 검토': '보고서 검토', '보고서 승인': '보고서 승인', '완료': '프로젝트 완료' },
-    adminStage: function (id) { var s = state(id); return s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 승인' : s.raw && s.raw.length ? '보고서 검토' : s.ct ? '분석 진행 중' : s.st === 'matched' ? '계약 진행 중' : s.st === 'review' ? (s.ok ? '의뢰확인' : '의뢰접수') : '견적 협의'; },
+    adminStage: function (id) { var s = state(id); return s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 승인' : s.raw && s.raw.length ? '보고서 검토' : s.ct ? '분석 진행 중' : s.st === 'matched' ? '계약 진행 중' : s.st === 'review' ? (s.ok ? '견적 대기' : '의뢰접수') : '견적 협의'; },
     quoteCount: function (id) { var s = state(id); return Object.keys(s.P).filter(function (k) { return s.P[k].status === 'sub'; }).length; },
     CLIENT_ST: { review: '의뢰접수', quoting: '의뢰접수', sent: '견적 비교', matched: '계약' }, // 계약서 등록 후에는 '분석 진행'
     CLIENT_STEPS: ['의뢰접수', '견적 비교', '계약', '분석 진행', '결과 수령'],
@@ -592,7 +601,7 @@
     var h = '<section class="rp" data-rp-id="' + esc(id) + '"><div class="rp-h"><h3>결과보고서</h3>' + (adm ? '<span class="rp-ai"><img src="assets/common/ic-sparkle-fill.svg" alt="">보고서 에이전트</span>' : '') + '</div>';
     if (!adm) {
       h += (fin ? '' : '<div class="rp-up"><div><b>분석 결과 등록</b><p>raw 파일, 워드 결과 등 형식에 상관없이 올려 주세요. OmicsPharm이 검토해 결과보고서로 클라이언트에게 전달합니다.</p></div>' +
-        '<div class="rp-up-act"><label class="btn">파일 선택<input type="file" multiple hidden data-rp-pick></label><span class="rp-fn" data-rp-fn>선택된 파일 없음</span><button type="button" class="btn primary" data-rp="raw" disabled>결과 등록</button></div></div>');
+        '<div class="rp-up-act"><label class="btn primary">파일 선택<input type="file" multiple hidden data-rp-pick></label></div></div>'); // 파일을 고르면 확인 모달 → 등록 (상단 [결과 등록하기]도 이 파일 선택을 엶)
       h += raw.length ? raw.map(function (x, i) {
         return '<div class="rp-item"><div class="rp-ih"><b>' + (i + 1) + '차 결과</b><em>' + ymd(x.at) + ' 등록</em><span class="badge ' + (x.sent ? 'done">클라이언트 전달 완료' : 'wait">OmicsPharm 검토 중') + '</span></div>' + files(x.files) + '</div>';
       }).reverse().join('') : '';
@@ -616,13 +625,16 @@
   document.addEventListener('change', function (e) {
     var sec = e.target.closest('.rp'); if (!sec) return;
     var id = sec.dataset.rpId, t = e.target;
-    if (t.matches('[data-rp-pick]')) { var n = [].map.call(t.files, function (f) { return f.name; }); sec.querySelector('[data-rp-fn]').textContent = n.length ? n.join(', ') : '선택된 파일 없음'; sec.querySelector('[data-rp="raw"]').disabled = !n.length; return; }
+    if (t.matches('[data-rp-pick]')) {
+      var n = [].map.call(t.files, function (f) { return f.name; }); t.value = ''; if (!n.length) return;
+      F.ask({ title: '분석 결과 ' + n.length + '개를 등록할까요?', desc: 'OmicsPharm이 검토해 결과보고서로 클라이언트에게 전달합니다. (' + n.join(', ') + ')', label: false, yes: '등록하기' }, function () { F.repRaw(id, n); OP.toast('분석 결과를 등록했습니다. OmicsPharm이 검토 후 클라이언트에게 전달합니다.'); if (F.repRedraw) F.repRedraw(); });
+      return;
+    }
     if (t.matches('[data-rp-file]') && t.files[0]) { var i = +t.closest('[data-rp-i]').dataset.rpI; F.repSet(id, i, t.dataset.rpFile, t.files[0].name); OP.toast(t.dataset.rpFile === 'pdf' ? 'PDF를 등록했습니다.' : '수정본을 올렸습니다.'); if (F.repRedraw) F.repRedraw(); }
   });
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-rp]'); if (!b) return;
     var sec = b.closest('.rp'), id = sec.dataset.rpId, a = b.dataset.rp, it = b.closest('[data-rp-i]'), i = it ? +it.dataset.rpI : -1;
-    if (a === 'raw') { var n = [].map.call(sec.querySelector('[data-rp-pick]').files, function (f) { return f.name; }); if (!n.length) return; F.repRaw(id, n); OP.toast('분석 결과를 등록했습니다. OmicsPharm이 검토 후 클라이언트에게 전달합니다.'); if (F.repRedraw) F.repRedraw(); }
     if (a === 'demo') { F.repRaw(id, ['RawData_' + String(id).replace(/^PRJ-/, '') + '.zip', '분석결과_정리.docx']); OP.toast('데모: 분석파트너가 결과를 등록했습니다. AI 보고서 초안이 생성되었습니다.'); if (F.repRedraw) F.repRedraw(); }
     if (a === 'dl') OP.toast('데모: AI 보고서 초안(워드)이 내려받아집니다.');
     if (a === 'send') F.ask({ title: '클라이언트에게 결과보고서를 전달할까요?', desc: '등록한 PDF가 클라이언트 결과보고서에 등록되고 알림이 갑니다.', label: '클라이언트에게 남길 메모 (선택)', ph: '예) 요청하신 그룹별 Boxplot을 추가했습니다.', yes: '전달하기' }, function (v) { F.repSend(id, i, v); OP.toast('클라이언트에게 결과보고서를 전달했습니다.'); if (F.repRedraw) F.repRedraw(); });
