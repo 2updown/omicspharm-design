@@ -385,3 +385,9 @@ span.tbtn { cursor:default; }
 .rp-stars { display:inline-flex; gap:2px; } .rp-stars img { width:18px; height:18px; }
 .rp-rate p { font-size:14px; line-height:22px; color:var(--gray-700); white-space:pre-line; } .rp-rate p.none { color:var(--gray-500); }
 .rp-note { font-size:12px; line-height:18px; color:var(--gray-400); }
+/* 화이트 시안 (2026-10-21): 위쪽 프로필 숨김(대시보드 메뉴부터 시작), 메뉴 사이 회색 줄 없음 */
+.ui-white .me { display:none; }
+.ui-white .menu { padding-top:0; }
+.ui-white .menu .grp { border-top:0; margin-top:0; padding-top:0; }
+.ui-white .menu .grp + a, .ui-white .side .menu > a + a { margin-top:0; }
+.ui-white .menu .grp + a::before, .ui-white .side .menu > a + a::before { display:none; }
