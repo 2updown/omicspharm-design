@@ -173,6 +173,18 @@
     if (x && x.hist && x.hist[0] && !x.why) { x.hist[0].quote.weeks = '8'; x.why = '클라이언트의 일정 단축 요청에 따라 기기 분석 단가와 소요 기간을 조정했습니다.'; return true; }
   }
   // 보고서 에이전트 예시: 0036 = 분석파트너가 결과를 올려 AI 초안이 생성된 상태(컨설턴트 검토 대기), 0035 = 1·2차 결과를 보고서로 전달한 이력
+  // 보고서 에이전트 예시는 새로고침(F5)하면 처음 상태로: 0036 = AI 초안 검토 대기, 0035 = 1차 전달 완료(클라이언트 검수 대기), 분석파트너 예시(0037~0042) = 결과 등록 전
+  // 다른 화면으로 이동하거나 계정을 바꿀 때는 그대로 둠 (전달 → 클라이언트 화면 확인처럼 이어서 볼 수 있게)
+  function repReset(S) {
+    var nav = window.performance && performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+    if (!nav || nav.type !== 'reload') return false;
+    var a = S['PRJ-2026-0036'], b = S['PRJ-2026-0035'];
+    if (a) { delete a.raw; delete a.rep; delete a.fin; delete a.rate; }
+    if (b && b.rep) { b.rep = b.rep.slice(0, 1); delete b.raw; delete b.fin; delete b.rate; }
+    ['PRJ-2026-0037', 'PRJ-2026-0038', 'PRJ-2026-0039', 'PRJ-2026-0040', 'PRJ-2026-0041', 'PRJ-2026-0042'].forEach(function (k) { if (S[k]) { delete S[k].raw; delete S[k].rep; } });
+    repDemo(S);
+    return true;
+  }
   function waitDemo(S) { if (S['PRJ-2026-0048']) return false; S['PRJ-2026-0048'] = { st: 'review', ok: T0 - DAY * 1, P: {} }; return true; }
   function repDemo(S) {
     var a = S['PRJ-2026-0036'], b = S['PRJ-2026-0035'], ch = false;
@@ -199,6 +211,7 @@
     if (d && histDemo(d.S)) write(KEY, d);
     if (d && repDemo(d.S)) write(KEY, d);
     if (d && waitDemo(d.S)) write(KEY, d);
+    if (d && !repReset.done) { repReset.done = 1; if (repReset(d.S)) write(KEY, d); }
     d.X = d.X || []; return d;
   }
   function save(d) { write(KEY, d); }
