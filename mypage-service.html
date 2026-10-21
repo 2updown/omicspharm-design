@@ -9,12 +9,12 @@
      회원가입 '추가 정보 입력'에서 고른 서비스(복수)를 보고, 서비스를 더 등록·수정·삭제한다.
      서비스를 고르면 R&D 사례작성 v5 공급자 입력 항목(assets/common/svc-spec.js)이 펼쳐짐. 같은 서비스를 여러 번 등록 = 수행 조건 나누기
      데모: 저장은 이 브라우저 localStorage(op.accounts의 services)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261021f">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261021f">
-<script src="assets/common/site.js?v=20261021f"></script>
-<script src="assets/common/mypage.js?v=20261021f"></script>
-<script src="assets/common/flow.js?v=20261021f"></script>
-<script src="assets/common/svc-spec.js?v=20261021f"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261021g">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261021g">
+<script src="assets/common/site.js?v=20261021g"></script>
+<script src="assets/common/mypage.js?v=20261021g"></script>
+<script src="assets/common/flow.js?v=20261021g"></script>
+<script src="assets/common/svc-spec.js?v=20261021g"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .cnt { margin-left:6px; color:var(--teal-600); }
@@ -119,6 +119,13 @@
   var hasDetail = function (o) { return Object.keys(o.f || {}).some(function (k) { return [].concat(o.f[k] || []).filter(Boolean).length; }); };
   var filled = function (A) { return A.length && A.every(function (o) { return !SPEC[o.svc] || hasDetail(o); }); };
   var uid = 0, saved = filled(L);
+  // 바뀐 게 있는지 (저장 버튼 활성화): 저장된 카드는 마지막 저장값과 비교, 새 카드는 서비스를 고르면 활성
+  var norm = function (o) {
+    var keep = function (m) { var r = {}; Object.keys(m || {}).sort().forEach(function (k) { var v = m[k]; if (Array.isArray(v) ? v.filter(Boolean).length : v) r[k] = Array.isArray(v) ? v.filter(Boolean).slice().sort() : v; }); return r; };
+    return JSON.stringify([o.svc || '', o.st || '', o.from || '', o.to || '', keep(o.f), keep(o.x)]);
+  };
+  var dirty = function (o) { return o._snap ? norm(o) !== norm(o._snap) : !!o.svc; };
+  function syncSave(read) { if (read) pull(); [].forEach.call(document.querySelectorAll('#items .item'), function (el) { var b = el.querySelector('[data-save]'); if (b) b.disabled = !dirty(L[+el.dataset.i]); }); }
   function persist() { var arr = L.filter(function (o) { return o._snap; }).map(function (o) { return o._snap; }); OP.saveAccount(email, { services: arr }); saved = filled(arr); }
   // 서비스는 1개 이상 필수 (회원가입과 같음) → '등록된 서비스 없음' 화면은 없음. 서비스가 비어 있으면(기존 회원 이관 등) 빈 카드 1개로 시작
   var blank = !L.length; if (blank) L.push({ svc: '', st: '', from: '', to: '', f: {}, x: {} });
@@ -185,6 +192,7 @@
     $('#askBox').hidden = !(OP.flow && OP.flow.svcAsked(email)) || saved; // 컨설턴트 요청을 받았고 아직 세부 항목을 채우지 않은 서비스가 있을 때
     $('#cnt').textContent = L.length ? L.length : '';
     $('#items').innerHTML = L.map(itemHTML).join('');
+    syncSave();
   }
   // 화면 입력값 → L
   function pull() {
@@ -221,8 +229,9 @@
     else if (t.dataset.f && t.type === 'checkbox') { var ab = t.closest('.opts').querySelector('[data-all]'); if (ab) ab.checked = ![].some.call(t.closest('.opts').querySelectorAll('input[data-f]:not([value="기타"])'), function (i) { return !i.checked; }); }
     if (t.dataset.f && t.value === '기타') { var x = t.closest('.fbody').querySelector('[data-x]'); if (x) { x.hidden = !t.checked; if (t.checked) x.focus(); } }
     var f = t.closest('.field'); if (f) f.classList.remove('err');
+    syncSave(true);
   });
-  $('#items').addEventListener('input', function (e) { if (e.target.classList.contains('day')) { var v = e.target.value.replace(/\D/g, '').slice(0, 3); e.target.value = v && +v > 365 ? '365' : v; } }); // 1~365 (회원가입과 같음)
+  $('#items').addEventListener('input', function (e) { if (e.target.classList.contains('day')) { var v = e.target.value.replace(/\D/g, '').slice(0, 3); e.target.value = v && +v > 365 ? '365' : v; } syncSave(true); }); // 1~365 (회원가입과 같음). 입력하면 저장 버튼 상태 갱신
   $('#items').addEventListener('click', function (e) {
     var it = e.target.closest('.item'); if (!it) return;
     if (e.target.closest('[data-tg]')) { pull(); var o0 = L[+it.dataset.i]; if (OPEN.has(o0)) OPEN.delete(o0); else OPEN.add(o0); draw(); return; }
@@ -279,6 +288,16 @@
     return bad;
   }
   $('#fSvc').addEventListener('submit', function (e) { e.preventDefault(); }); // 저장은 서비스마다 [저장]
+  // 저장하지 않은 입력이 있는 채로 다른 페이지로 가면 확인 모달 (프로젝트 의뢰 작성과 같은 문구). 새로고침·창 닫기는 브라우저 기본 경고
+  var leaving = false, anyDirty = function () { pull(); return L.some(dirty); };
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href]'); if (!a || leaving || e.defaultPrevented) return;
+    var h = a.getAttribute('href'); if (!h || h.charAt(0) === '#' || a.target === '_blank' || /^(mailto|tel|javascript):/.test(h)) return;
+    if (!anyDirty()) return;
+    e.preventDefault();
+    OP.my.confirm('작성을 취소하시겠습니까?', '지금 나가면 저장되지 않은 내용이 사라집니다.', '나가기', function () { leaving = true; location.href = a.href; });
+  }, true);
+  window.addEventListener('beforeunload', function (e) { if (!leaving && anyDirty()) { e.preventDefault(); e.returnValue = ''; } });
 })();
 </script>
 </body>
