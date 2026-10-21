@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261021r">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261021r">
-<script src="assets/common/site.js?v=20261021r"></script>
-<script src="assets/common/mypage.js?v=20261021r"></script>
-<script src="assets/common/flow.js?v=20261021r"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261021s">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261021s">
+<script src="assets/common/site.js?v=20261021s"></script>
+<script src="assets/common/mypage.js?v=20261021s"></script>
+<script src="assets/common/flow.js?v=20261021s"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -678,7 +678,7 @@
   }
   function rateHTML() {
     var R = FS.rate, st = function (on) { return '<img src="assets/project/ic-star' + (on ? '-fill' : '') + '.svg" alt="">'; };
-    if (R) return '<section class="rrate done"><h4>서비스 만족도 평가</h4><div class="stars" aria-label="별점 ' + R.star + '점">' + [1, 2, 3, 4, 5].map(function (i) { return st(i <= R.star); }).join('') + '</div>' + (R.text ? '<p>' + esc(R.text) + '</p>' : '') + '<em>' + ymd(R.at) + ' 제출 · 공급자와 OmicsPharm 컨설턴트가 확인합니다.</em></section>';
+    if (R) return '<section class="rrate done"><h4>서비스 만족도 평가</h4><div class="stars" aria-label="별점 ' + R.star + '점">' + [1, 2, 3, 4, 5].map(function (i) { return st(i <= R.star); }).join('') + '</div>' + (R.text ? '<p>' + esc(R.text) + '</p>' : '') + '<em>' + ymd(R.at) + ' 제출 · OmicsPharm이 확인합니다.</em></section>';
     return '<section class="rrate" id="rate"><h4>서비스 만족도 평가</h4><p class="lead">이용하신 분석 서비스는 만족스러우셨나요? 별점과 함께 의견을 남겨주시면 더 나은 서비스를 위해 반영하겠습니다.</p>' +
       '<div class="stars" role="radiogroup" aria-label="별점">' + [1, 2, 3, 4, 5].map(function (i) { return '<button type="button" role="radio" aria-checked="false" data-star="' + i + '" aria-label="' + i + '점">' + st(false) + '</button>'; }).join('') + '</div>' +
       '<textarea id="rateText" placeholder="의견을 작성해주세요 (선택)"></textarea><div class="rv-acts"><button type="button" class="btn primary" id="rateGo" disabled>제출</button></div></section>';

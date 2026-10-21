@@ -399,6 +399,7 @@
         if (s.biz && s.biz.reAt) L.push({ id: 'f-biz-re-' + r.id + s.biz.reAt, k: '사업자등록증재제출', cat: 'project', at: s.biz.reAt, t: cl + '의 ' + nm + ' 의뢰 사업자등록증이 다시 제출되었습니다. 확인 후 승인처리 해주세요.', href: href });
         if (s.pick) L.push({ id: 'f-pick-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: josa(cl, '이', '가') + ' ' + nm + ' 프로젝트의 최종 견적을 확정 했습니다.', sub: '공급사: ' + partner(s.pick).org + ' · 견적금액: ' + won(total(s.P[s.pick].quote).final), href: href });
         (s.raw || []).forEach(function (x, i) { L.push({ id: 'f-raw-' + r.id + i, k: '결과등록', cat: 'project', at: x.at, t: josa(partner(s.pick).org, '이', '가') + ' ' + nm + ' 프로젝트의 ' + (i + 1) + '차 분석 결과를 등록했습니다. AI 보고서 초안을 검토해주세요.', href: href }); });
+        if (s.rate) L.push({ id: 'f-rate-' + r.id, k: '리뷰등록', cat: 'project', at: s.rate.at, t: cl + '의 ' + nm + ' 프로젝트에 만족도 평가(별점 ' + s.rate.star + '점)가 등록되었습니다.', href: href });
         if (s.fin) L.push({ id: 'f-fin-' + r.id, k: '프로젝트완료', cat: 'project', at: s.fin, t: josa(cl, '이', '가') + ' ' + nm + ' 결과보고서를 최종 확인해 프로젝트가 완료되었습니다.', href: href });
       } else if (role === 'partner') {
         var x = s.P[ses.email]; if (!x) return;
@@ -638,6 +639,9 @@
         '</ol></div></div>';
     }).reverse().join('');
     if (rep.length) h += '<div class="rp-sent"><b>클라이언트 결과보고서</b><span>' + rep.length + '차까지 전달 · ' + (fin ? '클라이언트 최종 확인 완료 (' + ymd(s.fin) + ')' : '클라이언트 검수 대기') + '</span></div>';
+    // 클라이언트 만족도 평가: 지금은 컨설턴트만 봄 (분석파트너 공개는 미정). 별점·후기는 프로젝트별로 모아 두고 나중에 매칭·AI에 활용
+    if (fin) h += s.rate ? '<div class="rp-rate"><div class="rp-rh"><b>클라이언트 만족도 평가</b><span class="rp-stars" aria-label="별점 ' + s.rate.star + '점">' + [1, 2, 3, 4, 5].map(function (i) { return '<img src="assets/project/ic-star' + (i <= s.rate.star ? '-fill' : '') + '.svg" alt="">'; }).join('') + '</span><em>' + ymd(s.rate.at) + ' 제출</em></div>' + (s.rate.text ? '<p>' + esc(s.rate.text) + '</p>' : '<p class="none">남긴 의견이 없습니다.</p>') + '<span class="rp-note">컨설턴트만 볼 수 있습니다.</span></div>'
+      : '<div class="rp-rate"><div class="rp-rh"><b>클라이언트 만족도 평가</b></div><p class="none">아직 평가가 등록되지 않았습니다.</p></div>';
     return h + '</section>';
   };
   // 결과보고서 영역 동작 (화면마다 다시 그리는 함수를 F.repRedraw에 넣어 둠)
