@@ -403,3 +403,9 @@ span.tbtn { cursor:default; }
 @media (min-width:961px) { .ui-white .page-head { padding-top:64px; padding-bottom:40px; } }
 .ui-white .card.box { padding:24px; border:1px solid var(--gray-200); border-radius:16px; }
 .ui-white .main:has(.card.box) { gap:32px; } /* 박스로 묶은 대시보드는 섹션 사이 32 (선만 있는 화면은 64) */
+/* 화이트 시안: '마이페이지' 제목 조금 크게, 대시보드 목록 영역도 진행 현황처럼 제목은 박스 밖(22px)·내용만 박스 */
+@media (min-width:961px) { .ui-white .page-head h1 { font-size:56px; line-height:68px; letter-spacing:-.56px; } }
+.ui-white .card.box { padding:0; gap:14px; border:0; border-radius:0; }
+.ui-white .card.box .card-head h3 { font-size:22px; font-weight:700; line-height:30px; letter-spacing:-.22px; }
+.ui-white .card.box > :not(.card-head) { padding:8px 24px; border:1px solid var(--gray-200); border-radius:16px; }
+.ui-white .card.box .plist a:first-child { border-top:0; } .ui-white .card.box .plist a:last-child { border-bottom:0; } /* 박스 테두리와 겹치는 맨 위·아래 줄 없앰 */
