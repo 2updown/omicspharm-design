@@ -204,7 +204,7 @@ if (!/[?&]ui=gray\b/.test(location.search) && !/mypage-ai\.html/.test(location.p
     // 화이트 시안: '마이페이지' 제목 오른쪽 = 역할별 바로가기 + AI Agent 입구 (이름·인증 상태는 GNB 프로필 드롭다운에서)
     var ph0 = document.querySelector('.ui-white .page-head .in');
     if (ph0 && side && !ph0.querySelector('.ph-acts')) {
-      var main = s.role === 'client' ? '<a class="pbtn pri" href="omicspharm-register.html">+ 프로젝트 의뢰하기</a>'
+      var main = s.role === 'client' ? '<a class="pbtn pri" href="omicspharm-register.html">프로젝트 의뢰하기</a>'
         : s.role === 'partner' ? (OP.partnerVerified() ? '<a class="pbtn pri" href="projects.html">프로젝트 찾기</a>' : '<a class="pbtn pri" href="mypage-verify.html">파트너 인증하기</a>')
         : (function () { var n = OP.flow ? OP.flow.requests().filter(function (r) { var x = OP.flow.state(r.id); return x.st === 'review' && !x.ok; }).length : 0; return '<a class="pbtn pri" href="mypage-request.html' + (n ? '?stage=' + encodeURIComponent('의뢰접수') : '') + '">' + (n ? '의뢰 접수 ' + n + '건 확인' : '프로젝트 관리') + '</a>'; })();
       ph0.insertAdjacentHTML('beforeend', '<div class="ph-acts"><button type="button" class="pbtn ai" data-ph-ai><img src="assets/common/ic-sparkle-fill.svg" alt="">AI Agent에게 물어보기<span class="beta">beta</span></button>' + main + '</div>');
