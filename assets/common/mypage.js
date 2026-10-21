@@ -11,6 +11,7 @@ if (/[?&]ui=white\b/.test(location.search)) document.documentElement.classList.a
   // 묶음별 드롭다운(기본 모두 펼침, 접으면 마이페이지 안에서는 계속 접힘). 보이는 메뉴가 1개뿐인 묶음은 묶음 없이 그 메뉴만 보임
   var MENU = [
     ['dash', '대시보드', 'mypage.html'],
+    ['ai', 'AI Agent', 'mypage-ai.html'], // 로그인 회원용 AI 에이전트 (beta, 2026-10-21 내부 미팅). CS 챗봇(오른쪽 아래·문의하기)과는 별개
     ['quote', '견적관리', 'mypage-quote.html', ['partner'], 'prj'], // 분석파트너: 받은 견적 요청 → 견적서 작성·제출
     ['project', '프로젝트 관리', 'mypage-project.html', null, 'prj'], // 컨설턴트는 mypage-request.html (의뢰접수~완료 전 단계)
     ['inquiry', '문의내역', 'mypage-inquiry.html'],
@@ -199,7 +200,7 @@ if (/[?&]ui=white\b/.test(location.search)) document.documentElement.classList.a
       var link = function (m) {
         var on = m[0] === key, label = m[1];
         var href = m[0] === 'project' && s.role === 'admin' ? 'mypage-request.html' : m[2];
-        return '<a href="' + href + '"' + (m[2] === '#' ? ' data-soon="' + label + '"' : '') + (/^https?:/.test(href) ? ' target="_blank" rel="noopener"' : '') + (on ? ' class="on" aria-current="page"' : '') + '>' + label +
+        return '<a href="' + href + '"' + (m[2] === '#' ? ' data-soon="' + label + '"' : '') + (/^https?:/.test(href) ? ' target="_blank" rel="noopener"' : '') + (on ? ' class="on" aria-current="page"' : '') + '>' + label + (m[0] === 'ai' ? '<span class="beta">beta</span>' : '') +
           (NEW[m[0]] ? NB : '') + '</a>';
       };
       // 접은 묶음: 마이페이지 안에서 이동하는 동안만 유지 (계정 전환·마이페이지 밖으로 나가면 site.js가 지워서 다시 모두 펼침)
