@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261021l">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261021l">
-<script src="assets/common/site.js?v=20261021l"></script>
-<script src="assets/common/mypage.js?v=20261021l"></script>
-<script src="assets/common/flow.js?v=20261021l"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261021m">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261021m">
+<script src="assets/common/site.js?v=20261021m"></script>
+<script src="assets/common/mypage.js?v=20261021m"></script>
+<script src="assets/common/flow.js?v=20261021m"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -397,7 +397,7 @@
       var TODO = {
         '계약': x.flow ? ['계약서를 준비하고 있습니다', 'OmicsPharm 컨설턴트가 계약서를 등록하면 분석 단계로 넘어갑니다.', ''] : ['계약서를 확인해주세요', '계약 내용 확인 후 시료 수령 일정을 클라이언트와 협의합니다.', '계약서 확인'],
         '분석': ['분석이 진행 중입니다', '분석이 끝나면 결과보고서를 등록해주세요.', '진행 상황 공유'],
-        '보고서 등록': ['결과보고서를 등록해주세요', '보고서를 등록하면 OmicsPharm이 검토합니다.', '결과보고서 등록'],
+        '보고서 등록': ['결과보고서를 등록해주세요', '아래 결과보고서에서 분석 결과를 올려 주세요. 등록하면 OmicsPharm이 검토합니다.', ''],
         '보고서 검토': ['등록한 보고서를 OmicsPharm이 확인하고 있습니다', '수정이 필요하면 알림으로 알려드립니다.', ''],
         '보고서 승인': ['등록한 보고서를 클라이언트가 확인하고 있습니다', '승인되면 프로젝트가 완료됩니다.', ''],
         '완료': ['프로젝트가 완료되었습니다', x.review ? '클라이언트가 남긴 리뷰를 확인해보세요.' : '수고하셨습니다.', x.review ? '리뷰 보기' : '']
@@ -410,7 +410,7 @@
             '<div class="pright"><div class="period"><b>납기일</b><span>' + dotd(x.due) + '</span>' + (x.stage === '완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div>' + OP.askBtn({ key: x.id, cat: OP.my.svcKo(x.svc), no: x.id, title: x.title }) + '</div></div>' +
         '</div>' +
         '<ol class="stages" aria-label="진행 단계" style="grid-template-columns:repeat(' + STAGES.length + ', minmax(0,1fr))">' + STAGES.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
-        '<div class="todo"><div><b>' + TODO[0] + '</b><p>' + TODO[1] + '</p></div>' + (TODO[2] ? (TODO[2] === '계약서 확인' && CS ? '<button type="button" class="btn primary" data-ct="partner">계약서 확인</button>' : TODO[2] === '결과보고서 등록' ? '<button type="button" class="btn primary" data-go-rp>결과 등록하기</button>' : '<a class="btn primary" href="#" data-soon="' + TODO[2] + '">' + TODO[2] + '</a>') : '') + '</div>' +
+        '<div class="todo"><div><b>' + TODO[0] + '</b><p>' + TODO[1] + '</p></div>' + (TODO[2] ? (TODO[2] === '계약서 확인' && CS ? '<button type="button" class="btn primary" data-ct="partner">계약서 확인</button>' : '<a class="btn primary" href="#" data-soon="' + TODO[2] + '">' + TODO[2] + '</a>') : '') + '</div>' +
         // 결과보고서: 분석파트너는 결과 등록, 컨설턴트는 보고서 에이전트 (계약 후 = 분석 단계부터)
         ((x.flow ? FS && FS.ct : (['분석', '보고서 등록'].indexOf(x.stage) > -1 || (OP.flow.state(x.id).raw || []).length)) ? OP.flow.repSec(x.id, ADM ? 'admin' : 'partner') : '') +
         // 견적 중개로 매칭된 프로젝트: 컨설턴트가 올린 계약서
@@ -423,7 +423,6 @@
         (x.flow ? '<p class="demo-note">※ 견적 중개로 매칭된 프로젝트입니다. ' + (OP.session().role === 'admin' ? '<a href="mypage-request.html?id=' + encodeURIComponent(x.id) + '" style="text-decoration:underline">견적 내역 보기</a>' : '<a href="mypage-quote.html?rid=' + encodeURIComponent(x.id) + '" style="text-decoration:underline">제출한 견적서 보기</a>') + '</p>' : '<p class="demo-note">※ 화면 확인용 예시 프로젝트입니다.</p>');
       document.title = x.title + ' · 마이페이지 · OmicsPharm';
       OP.flow.repRedraw = function () { var el = document.querySelector('.rp'); if (el) el.outerHTML = OP.flow.repSec(x.id, ADM ? 'admin' : 'partner'); };
-      document.addEventListener('click', function (e) { if (e.target.closest('[data-go-rp]')) { var p = document.querySelector('.rp [data-rp-pick]'); if (p) p.click(); } }); // 상단 [결과 등록하기] = 결과보고서 영역의 파일 선택
       document.addEventListener('click', function (e) { var b = e.target.closest('[data-ct]'); if (!b) return; e.preventDefault(); if (CS) OP.flow.showContract(CR, CS, b.dataset.ct); else OP.flow.showContract(OP.flow.req(x.id), FS, b.dataset.ct); });
       return;
     }
