@@ -342,7 +342,8 @@
               // 프로필 (2026-10-21: 마이페이지 왼쪽 프로필 영역을 없애고 여기서 보여줌) — 사진·이름·이메일·소속·역할·인증 상태
               (function () {
                 var acc = OP.account(s.email) || {}, e = function (t) { return String(t || '').replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
-                var chip = !OP.mailVerified() && s.role !== 'admin' ? '<span class="vchip">메일 미인증</span>' : s.role === 'partner' ? '<span class="vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '';
+                // 인증 배지: 사업자등록증 '인증완료' 배지와 같은 모양 (op-vchip lg, SealCheck 16)
+                var chip = !OP.mailVerified() && s.role !== 'admin' ? '<span class="op-vchip lg">메일 미인증</span>' : s.role === 'partner' ? (OP.partnerVerified() ? '<span class="op-vchip ok lg">인증완료</span>' : '<span class="op-vchip lg">인증 미완료</span>') : '';
                 var todo = !OP.mailVerified() && s.role !== 'admin' ? '<a class="who-todo" href="mypage-account.html#mail">메일 인증하기 ›</a>' : s.role === 'partner' && !OP.partnerVerified() ? '<a class="who-todo" href="mypage-verify.html">파트너 인증하기 ›</a>' : '';
                 return '<div class="who"><div class="who-top"><img src="' + e(acc.photo || A + 'user-icon.svg?v=2') + '" alt=""><div><b>' + e(acc.name || s.email.split('@')[0]) + ' 님</b><em>' + e(s.email) + '</em></div></div>' +
                   (acc.org ? '<p class="who-org">' + e(acc.org) + '</p>' : '') +
