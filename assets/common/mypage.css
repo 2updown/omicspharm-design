@@ -412,3 +412,4 @@ span.tbtn { cursor:default; }
 .ui-white .card.box > :not(.card-head) { display:flex; flex-direction:column; justify-content:center; overflow:hidden; }
 .ui-white .card.box #plist { height:188px; }
 .ui-white .card.box #alarms, .ui-white .card.box #inqs { height:277px; }
+.ui-white .card.bare .card-head, .ui-white .card.box .card-head { align-items:flex-end; } /* 대시보드 섹션: [전체 보기]를 제목 아래쪽 선에 맞춤 */
