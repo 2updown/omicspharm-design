@@ -397,3 +397,5 @@ span.tbtn { cursor:default; }
 .ui-white .menu .sub a { height:44px; padding-left:24px; font-size:17px; }
 .ui-white .menu a.on { background:var(--gray-100); }
 .ui-white .menu a:hover:not(.on), .ui-white .menu .gh:hover { background:var(--gray-50); }
+.ui-white .side .menu > a, .ui-white .menu .gh { height:56px; } /* 메뉴 칸 높이 56 (하위 메뉴는 48) */
+.ui-white .menu .sub a { height:48px; }
