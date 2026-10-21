@@ -9,13 +9,13 @@
      파트너 인증 검토: 목록(상태별) → 상세(기관 정보 · 사업자등록증 [보기] [인증 완료] [재제출 요청]).
      재제출 요청은 클라이언트 사업자등록증 재제출 요청(mypage-request.html)과 같은 방식. 규칙: docs/partner-verification.md
      데모: 로그인 가능한 분석파트너(partner@omicspharm.test)는 계정 값(op.accounts)을, 가상 파트너는 op.partnerReview를 바꾼다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261021s">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261021s">
-<script src="assets/common/site.js?v=20261021s"></script>
-<script src="assets/common/projects-data.js?v=20261021s"></script>
-<script src="assets/common/mypage.js?v=20261021s"></script>
-<script src="assets/common/flow.js?v=20261021s"></script>
-<script src="assets/common/manage.js?v=20261021s"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261021t">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261021t">
+<script src="assets/common/site.js?v=20261021t"></script>
+<script src="assets/common/projects-data.js?v=20261021t"></script>
+<script src="assets/common/mypage.js?v=20261021t"></script>
+<script src="assets/common/flow.js?v=20261021t"></script>
+<script src="assets/common/manage.js?v=20261021t"></script>
 <style>
   .chips { display:flex; flex-wrap:wrap; gap:8px; }
   .chips button { height:36px; padding:0 14px; border-radius:99px; border:1px solid var(--gray-300); background:#fff; font-size:14px; font-weight:500; color:var(--gray-600); }
@@ -60,6 +60,7 @@
     .prow2 { flex-wrap:wrap; gap:6px 12px; } .prow2 .t { flex-basis:100%; order:2; } .prow2 .m { width:auto; margin-left:auto; }
     .field { grid-template-columns:1fr; } .flabel { padding:10px 12px; } .fbody { padding:10px 0 14px; }
   }
+  .rate { color:#d97706; font-weight:600; white-space:nowrap; } .rate-n { font-size:12px; color:var(--gray-500); }
 </style>
 </head>
 <body>
@@ -127,7 +128,7 @@
         '<select class="mg-sel" id="fOrg"><option value="">소속</option>' + L.map(function (o) { return '<option>' + esc(o.org) + '</option>'; }).join('') + '</select>' +
         '<div class="mg-q"><input type="search" id="fQ" placeholder="부서, 성함, 닉네임, 연락처 검색"><button type="button" class="btn" id="go">검색</button></div></div>' +
       '<p class="mg-total">총 <b id="n">0</b>건</p>' +
-      '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">No</th><th>분석 서비스</th><th>소속</th><th>부서</th><th>성명</th><th>이메일</th><th>연락처</th><th class="c">진행 프로젝트</th><th class="c">인증 상태</th><th class="c">프로젝트 관리</th></tr></thead><tbody id="tb"></tbody></table></div>';
+      '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">No</th><th>분석 서비스</th><th>소속</th><th>부서</th><th>성명</th><th>이메일</th><th class="c">평균 별점</th><th class="c">진행 프로젝트</th><th class="c">인증 상태</th><th class="c">프로젝트 관리</th></tr></thead><tbody id="tb"></tbody></table></div>';
     var draw = function () {
       $('#chips').innerHTML = TABS.map(function (t) {
         var n = L.filter(function (o) { return !t[2] || t[2].indexOf(o.st) > -1; }).length;
@@ -137,7 +138,7 @@
       var R = L.filter(function (o) { return (!tab[2] || tab[2].indexOf(o.st) > -1) && (!sv || svcTxt(o).indexOf(sv) > -1) && (!og || o.org === og) && (!q || [o.dept, o.name, o.tel].join(' ').indexOf(q) > -1); });
       $('#n').textContent = R.length;
       $('#tb').innerHTML = R.length ? R.map(function (o, i) {
-        return '<tr><td class="c">' + (R.length - i) + '</td><td>' + esc(svcTxt(o)) + '</td><td class="t">' + esc(o.org) + '</td><td>' + esc(o.dept || '-') + '</td><td>' + esc(o.name || '-') + '</td><td class="mail">' + esc(o.mail || '-') + '</td><td>' + esc(o.tel || '-') + '</td>' +
+        return '<tr><td class="c">' + (R.length - i) + '</td><td>' + esc(svcTxt(o)) + '</td><td class="t">' + esc(o.org) + '</td><td>' + esc(o.dept || '-') + '</td><td>' + esc(o.name || '-') + '</td><td class="mail">' + esc(o.mail || '-') + '</td><td class="c">' + rateTxt(o.key) + '</td>' +
           '<td class="c">' + projectsOf(o).length + '</td><td class="c"><span class="st ' + CLS[o.st] + '">' + LABEL[o.st] + '</span></td><td class="c"><a class="mg-view" href="mypage-partners.html?key=' + encodeURIComponent(o.key) + '">상세보기</a></td></tr>';
       }).join('') : '<tr><td colspan="10" class="mg-empty">해당하는 분석파트너가 없습니다.</td></tr>';
     };
@@ -147,6 +148,8 @@
     draw();
   }
 
+  // 평균 별점 (클라이언트 만족도 평가, 컨설턴트만 봄). 목록에서는 연락처 대신 이 칸 (연락처는 상세에서)
+  function rateTxt(k) { var R = OP.flow.partnerRating(k); return R.n ? '<span class="rate">★ ' + R.avg.toFixed(1) + '</span> <span class="rate-n">(' + R.n + ')</span>' : '-'; }
   // ── 상세 ──
   function detail(k) {
     var o = list().filter(function (x) { return x.key === k; })[0];
@@ -161,7 +164,7 @@
     $('#card').innerHTML =
       '<div class="mg-head"><a href="mypage-partners.html" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3><em>' + esc(o.org) + '</em> 프로젝트 리스트</h3><span class="st ' + CLS[o.st] + '">' + LABEL[o.st] + '</span></div>' +
       '<p class="mg-sub">분석파트너 기본 정보</p>' +
-      '<div class="mg-info">' + kv('이메일', esc(o.mail || '-') + (o.mailOk ? '' : ' <span class="op-vchip">메일 미인증</span>')) + kv('소속', esc(o.org)) + kv('부서', esc(o.dept || '-')) + kv('연락처', esc(o.tel || '-')) + kv('담당업무', esc(o.job || '-')) + kv('국가', esc(o.country || '-')) + '</div>' +
+      '<div class="mg-info">' + kv('이메일', esc(o.mail || '-') + (o.mailOk ? '' : ' <span class="op-vchip">메일 미인증</span>')) + kv('소속', esc(o.org)) + kv('부서', esc(o.dept || '-')) + kv('연락처', esc(o.tel || '-')) + kv('평균 별점', rateTxt(o.key) + (OP.flow.partnerRating(o.key).list.length ? ' · ' + OP.flow.partnerRating(o.key).list.map(function (x) { return esc(x.title) + ' ★' + x.star; }).join(', ') : '')) + kv('담당업무', esc(o.job || '-')) + kv('국가', esc(o.country || '-')) + '</div>' +
       '<p class="mg-sub">파트너 인증</p>' +
       '<div class="tbl">' +
         row('대표자명', esc(o.ceo || '-')) + row('사업자등록번호', esc(o.bizno || '-')) + row('주소', esc(o.addr || '-')) +

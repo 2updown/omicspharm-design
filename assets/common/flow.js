@@ -610,6 +610,14 @@
   F.repRaw = function (id, files) { return put(id, function (s) { s.raw = (s.raw || []).concat([{ at: Date.now(), files: files, ai: '결과보고서_AI초안_' + String(id).replace(/^PRJ-/, '') + '_v' + ((s.raw || []).length + 1) + '.docx' }]); }); };
   F.repSet = function (id, i, k, v) { return put(id, function (s) { s.raw[i][k] = v; }); };
   F.repSend = function (id, i, note) { return put(id, function (s) { var x = s.raw[i]; s.rep = (s.rep || []).concat([{ at: Date.now(), files: [x.pdf], note: note || '' }]); x.sent = Date.now(); x.repN = s.rep.length; }); };
+  // 분석파트너별 만족도 (컨설턴트만 봄): 완료 프로젝트의 클라이언트 별점 평균. 예시 파트너는 이전 실적(DEMO_RATE)을 함께 반영
+  var DEMO_RATE = { 'p-bio': [4.6, 9], 'p-omx': [4.3, 6], 'p-gen': [4.8, 12], 'p-met': [4.1, 7], 'p-adc': [4.5, 4], 'p-mlt': [4.7, 10], 'partner@omicspharm.test': [4.4, 5] };
+  F.partnerRating = function (k) {
+    var d = db().S, L = [];
+    requests().forEach(function (r) { var s = d[r.id]; if (s && s.pick === k && s.rate) L.push({ id: r.id, title: r.title, star: s.rate.star, text: s.rate.text, at: s.rate.at }); });
+    var base = DEMO_RATE[k] || [0, 0], n = base[1] + L.length, sum = base[0] * base[1] + L.reduce(function (a, x) { return a + x.star; }, 0);
+    return { avg: n ? sum / n : 0, n: n, list: L };
+  };
   var RP_STAGE = {}; // 분석파트너가 고른(아직 등록 전) 파일 이름, 프로젝트별
   F.repSec = function (id, role) {
     var s = state(id), raw = s.raw || [], rep = s.rep || [], adm = role === 'admin', fin = !!s.fin;
