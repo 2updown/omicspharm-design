@@ -77,12 +77,12 @@
   .ov { position:relative; z-index:1; display:flex; flex-direction:column; gap:12px; }
   .ov-row { display:flex; gap:12px; }
   .ov-div { flex:none; align-self:stretch; width:1px; background:var(--gray-300); } /* 칸 사이 세로선 */
-  .ov-card { display:flex; flex-direction:column; justify-content:flex-start; gap:24px; min-width:0; padding:60px 40px 50px; border-top:2px solid var(--gray-300); word-break:keep-all; }
+  .ov-card { display:flex; flex-direction:column; justify-content:flex-start; gap:24px; min-width:0; padding:60px 40px 50px; border-top:1px solid var(--gray-300); word-break:keep-all; }
   .ov-row.r1 .ov-card { flex:none; width:calc((100% - 50px) / 3); min-height:312px; } /* 2줄 카드 1칸과 같은 폭(세로선 2px + 간격 48 제외 ÷ 3)이라 화면이 줄어도 세로선이 맞음, 1440에서 424 */
-  .ov-row.r2 .ov-card { flex:1; min-height:312px; border-bottom:2px solid var(--gray-300); }
+  .ov-row.r2 .ov-card { flex:1; min-height:312px; border-bottom:1px solid var(--gray-300); }
   /* hover: 위쪽 회색 선 위로 청록 선이 왼쪽→오른쪽으로 채워짐 (마우스가 있는 기기만) */
   .ov-card { position:relative; }
-  .ov-card::before { content:""; position:absolute; left:0; right:0; top:-2px; height:2px; background:var(--teal-600); transform:scaleX(0); transform-origin:left; transition:transform .5s cubic-bezier(.2,.7,.2,1); }
+  .ov-card::before { content:""; position:absolute; left:0; right:0; top:-1px; height:1px; background:var(--teal-600); transform:scaleX(0); transform-origin:left; transition:transform .5s cubic-bezier(.2,.7,.2,1); }
   @media (hover:hover) { .ov-card:hover::before { transform:scaleX(1); } }
   @media (prefers-reduced-motion:reduce) { .ov-card::before { transition:none; } }
   /* 카드 번호 01~04 (Figma 1641:7178): 제목 위 큰 청록 숫자 Display/Medium+/B 36, 제목과 간격 4 */
@@ -153,7 +153,7 @@
     .ov-row { flex-direction:column; }
     .ov-div { display:none; }
     .ov-row.r1 .ov-card, .ov-row.r2 .ov-card { width:auto; min-height:0; border-bottom:0; }
-    .ov-row.r2 .ov-card:last-child { border-bottom:2px solid var(--gray-300); }
+    .ov-row.r2 .ov-card:last-child { border-bottom:1px solid var(--gray-300); }
     .ov-card { padding:36px 28px; }
     .ov-pic img { position:static; width:100%; height:auto; aspect-ratio:16 / 7; }
     .ov-row.r1 .ov-pic { order:-1; } /* 모바일·태블릿: 사진을 맨 위로 */
