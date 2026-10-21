@@ -99,7 +99,7 @@ if (!/[?&]ui=gray\b/.test(location.search) && !/mypage-ai\.html/.test(location.p
     // 클라이언트 데모 계정은 예시 의뢰(견적 중개 단계별)도 함께 본다
     myProjects: function () {
       var s = OP.session(); if (!s || s.role !== 'client') return [];
-      return OP.flow ? OP.flow.requests().filter(function (r) { return !r.demo || (r.owner || 'client@omicspharm.test') === s.email; }) : D.projects();
+      return OP.flow ? OP.flow.requests().filter(function (r) { return (!r.demo || (r.owner || 'client@omicspharm.test') === s.email) && !OP.flow.state(r.id).cancel; }) : D.projects(); // 삭제한 프로젝트는 클라이언트 목록에서 사라짐
     },
     alarms: function () {
       var readIds = read('op.alarmRead', []), L = [];

@@ -567,9 +567,9 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261021zn">
-<script src="assets/common/site.js?v=20261021zn"></script>
-<script>OP.requireClient(); /* 클라이언트만 접근: 비로그인 → 로그인, 파트너·관리자 → 메인 */</script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261021zp">
+<script src="assets/common/site.js?v=20261021zp"></script>
+<script>if (!((OP.session() || {}).role === 'admin' && /[?&]edit=/.test(location.search))) OP.requireClient(); /* 클라이언트만 접근 (컨설턴트는 의뢰 수정(?edit=)만): 비로그인 → 로그인, 파트너 → 메인 */</script>
 </head>
 <body>
 
@@ -1289,8 +1289,8 @@
     var d=collectSubmission(), list=[];
     d.ver=FORM_VER; d.form=collect(); d.form.id=null; // 수정하기에서 입력값을 그대로 다시 불러오기 위해 보관
     d.bizDoc=DOC;
-    var ss=OP.session(); if(ss) d.owner=ss.email;
-    var fp=null; if(ss&&DOC&&DOC!==DOC_SAVED){ OP.saveAccount(ss.email,{bizDoc:DOC}); if(DOC_FILE) fp=OP.files.put('biz:acc:'+ss.email,DOC_FILE); } // 새로 올린 파일은 내 정보 관리에도 저장 (원본은 컨설턴트 확인용)
+    var ss=OP.session(), ADM=ss&&ss.role==='admin'; d.owner=EDIT&&EDIT.owner?EDIT.owner:(ss?ss.email:d.owner); // 컨설턴트가 수정해도 의뢰한 계정은 그대로
+    var fp=null; if(ss&&!ADM&&DOC&&DOC!==DOC_SAVED){ OP.saveAccount(ss.email,{bizDoc:DOC}); if(DOC_FILE) fp=OP.files.put('biz:acc:'+ss.email,DOC_FILE); } // 새로 올린 파일은 내 정보 관리에도 저장 (원본은 컨설턴트 확인용)
     try{ list=JSON.parse(localStorage.getItem('op.submitted')||'[]'); }catch(e){}
     var k=EDIT?list.findIndex(function(x){return x.id===EDIT.id}):-1;
     if(k>-1){ d.id=EDIT.id; d.at=EDIT.at; d.updatedAt=Date.now(); list[k]=d; }
@@ -1298,7 +1298,7 @@
     try{ localStorage.setItem('op.submitted', JSON.stringify(list.slice(0,20))); }catch(e){}
     dirty=false;
     OP.flash(k>-1?'의뢰 내용이 수정되었습니다.':'분석 의뢰가 제출되었습니다.');
-    var go=function(){ location.href='mypage-project.html?id='+encodeURIComponent(d.id); };
+    var go=function(){ location.href=(ADM?'mypage-request.html?id=':'mypage-project.html?id=')+encodeURIComponent(d.id); };
     if(fp) fp.then(go,go); else go(); // 파일 저장이 끝난 뒤 이동
   }
   prev.onclick=function(){ if(cur>1){ clearErr(); cur--; render(); } };

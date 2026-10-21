@@ -7,11 +7,11 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261021zn">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261021zn">
-<script src="assets/common/site.js?v=20261021zn"></script>
-<script src="assets/common/mypage.js?v=20261021zn"></script>
-<script src="assets/common/flow.js?v=20261021zn"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261021zp">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261021zp">
+<script src="assets/common/site.js?v=20261021zp"></script>
+<script src="assets/common/mypage.js?v=20261021zp"></script>
+<script src="assets/common/flow.js?v=20261021zp"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -127,7 +127,7 @@
   .reqbox[open] > summary img { transform:rotate(180deg); }
   .reqbox:not([open]) { gap:0; }
   .ptabs .tcnt { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; margin-left:6px; padding:0 5px; border-radius:99px; background:var(--orange-600); color:#fff; font-size:11px; font-weight:700; }
-  /* 견적 비교 */
+  /* 견적 확인 */
   .cmsg { padding:16px 20px; border-left:3px solid var(--teal-600); border-radius:0 8px 8px 0; background:var(--bg-green); font-size:14px; line-height:22px; white-space:pre-line; }
   .cmsg b { display:block; margin-bottom:4px; font-size:13px; color:var(--teal-700); }
   .qhead { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
@@ -155,6 +155,22 @@
   .qc-acts .btn { flex:1; }
   .qc-price .delta { font-style:normal; font-size:13px; font-weight:600; line-height:18px; }
   .qc-price .delta.down { color:var(--blue-600, #2563eb); } .qc-price .delta.up { color:#f00011; }
+  .qacc { display:flex; flex-direction:column; gap:8px; }
+  .qv { border:1px solid var(--gray-200); border-radius:12px; background:#fff; }
+  .qv.cur { border-color:var(--teal-600); }
+  .qv summary { display:flex; align-items:center; gap:10px; padding:16px 20px; list-style:none; cursor:pointer; font-size:15px; line-height:22px; }
+  .qv summary::-webkit-details-marker { display:none; }
+  .qv summary b { font-weight:600; }
+  .qv summary .amt { margin-left:auto; font-style:normal; font-weight:600; }
+  .qv:not(.cur) summary .amt { color:var(--gray-500); }
+  .qv summary .dt { width:84px; text-align:right; font-size:13px; color:var(--gray-500); }
+  .qv summary img { width:16px; height:16px; transition:transform .15s; }
+  .qv[open] summary img { transform:rotate(180deg); }
+  .qv-in { display:flex; flex-direction:column; gap:16px; padding:0 20px 20px; }
+  .qv-in .qc-acts { justify-content:flex-end; } .qv-in .qc-acts .btn { flex:none; min-width:120px; }
+  .qv-chg > b { display:block; font-size:13px; font-weight:600; color:var(--gray-700); }
+  .qv-chg .qh-diff { margin-top:6px; font-size:13px; line-height:20px; }
+  @media (max-width:640px) { .qv summary { flex-wrap:wrap; padding:14px 16px; } .qv summary .dt { width:auto; } .qv-in { padding:0 16px 16px; } .qv-in .qc-acts { flex-wrap:wrap; } .qv-in .qc-acts .btn { flex:1; min-width:0; } }
   .qc-hist { border-top:1px solid var(--gray-200); padding-top:12px; font-size:13px; line-height:20px; }
   .qc-hist summary { display:flex; align-items:center; justify-content:space-between; list-style:none; cursor:pointer; font-weight:600; color:var(--gray-700); }
   .qc-hist summary::-webkit-details-marker { display:none; }
@@ -290,7 +306,7 @@
   .b-tabs button.on { border-color:var(--teal-600); color:var(--teal-700); font-weight:700; } .b-tabs button.on b { background:var(--teal-600); color:#fff; }
   @media (max-width:640px) { .b-tabw { margin:0 -16px; } .b-tabs { padding:0 16px; } .b-arr { width:28px; height:28px; margin-top:-14px; } .b-arr.l { left:6px; } .b-arr.r { right:6px; } }
   @media (max-width:960px) { .prow:has(.pright) { flex-direction:column; align-items:flex-start; } .prow:has(.pright) .ptitle { flex:none; width:100%; } } /* 세로 배치일 때 제목 너비 기준(360px)이 높이로 잡히지 않게 */
-  /* 프로젝트 취소 모달: 사유 선택 */
+  /* 프로젝트 삭제 모달: 사유 선택 */
   .cx-r { display:flex; flex-direction:column; gap:8px; margin-top:4px; text-align:left; }
   .cx-r b { font-size:14px; font-weight:600; }
   .cx-r > div { display:flex; flex-wrap:wrap; gap:6px; }
@@ -483,10 +499,10 @@
   var dot = function (v) { return v ? v.replace(/-/g, '.') : '-'; };
   var ymd = function (t) { var x = new Date(t); return x.getFullYear() + '.' + ('0' + (x.getMonth() + 1)).slice(-2) + '.' + ('0' + x.getDate()).slice(-2); };
 
-  // 견적 중개 단계 (flow.js): 의뢰접수 → 견적 비교 → 계약
+  // 견적 중개 단계 (flow.js): 의뢰접수 → 견적 확인 → 계약
   var F = OP.flow;
   var stB = function (pid) { var t = F.clientStage(pid); return '<span class="badge ' + (t === '계약' || t === '분석 진행' ? 'ok' : 'state') + '">' + t + '</span>'; };
-  var newQ = function (pid) { var s = F.state(pid); return s.st === 'sent' ? '<span class="badge wait">견적 ' + fwdKeys(s).length + '건 도착</span>' : ''; };
+  var newQ = function (pid) { var s = F.state(pid); return s.st === 'sent' ? '<span class="badge wait">견적 도착</span>' : ''; };
   var fwdKeys = function (s) { return Object.keys(s.P).filter(function (k) { return s.P[k].fwd && s.P[k].status === 'sub'; }); };
 
   // 임시저장한 의뢰서 (의뢰 등록 화면의 [임시저장], localStorage omicspharm:drafts). 클릭하면 의뢰 등록 화면에서 이어서 작성
@@ -520,7 +536,7 @@
     };
     $('.toprow').hidden = true; // 탭·문의하기는 프로젝트 상세에서만
     // 단계 필터 (대시보드 진행 현황에서 ?stage=단계 로 들어오면 그 단계만)
-    var cst = new URLSearchParams(location.search).get('stage'); if (F.CLIENT_STEPS.indexOf(cst) < 0 && cst !== '임시저장' && cst !== '취소') cst = '전체';
+    var cst = new URLSearchParams(location.search).get('stage'); if (F.CLIENT_STEPS.indexOf(cst) < 0 && cst !== '임시저장') cst = '전체';
     var cq = '', DR = '임시저장';
     $('#project').outerHTML =
       '<form class="psearch" id="cq" role="search"><input type="search" id="cqIn" placeholder="프로젝트명을 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
@@ -535,7 +551,7 @@
       var q = cq.trim().toLowerCase(), hit = function (x) { return !q || String(x.title || '').toLowerCase().indexOf(q) > -1; };
       var B = (cOnly ? list.filter(function (x) { return newQN(x); }) : list).filter(hit); // 미열람글만 보기
       var DB = cOnly ? [] : drafts.filter(hit).sort(function (a, b) { return b.at - a.at; }); // 임시저장은 '전체'에도 포함 (맨 위)
-      $('#cChips').innerHTML = ['전체'].concat(F.CLIENT_STEPS, ['취소', DR]).map(function (t) {
+      $('#cChips').innerHTML = ['전체'].concat(F.CLIENT_STEPS, [DR]).map(function (t) {
         var n = t === '전체' ? B.length + DB.length : t === DR ? DB.length : B.filter(function (x) { return F.clientStage(x.id) === t; }).length;
         return '<button type="button" role="tab" data-st="' + t + '"' + (cst === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b></button>';
       }).join('');
@@ -570,7 +586,7 @@
   var dd = function (v) { var n = Math.ceil((new Date(v) - new Date(new Date().toDateString())) / 864e5); return isNaN(n) ? '-' : n > 0 ? 'D-' + n : n === 0 ? 'D-Day' : 'D+' + -n; };
   if (FK.length && FS.st === 'sent') { $('#qCnt').hidden = false; $('#qCnt').textContent = FK.length; }
   function todoHTML() {
-    if (FS.cancel) return '<div class="ftodo gray"><div><b>취소된 프로젝트입니다.</b><p>' + esc(ymd(FS.cancel.at) + ' 취소' + (FS.cancel.reason ? ' · 사유: ' + FS.cancel.reason : '') + '\n견적을 요청받은 분석파트너에게 취소 알림이 전달되었고, 프로젝트 찾기에서 내려갔습니다.') + '</p></div></div>';
+    if (FS.cancel) return '<div class="ftodo gray"><div><b>삭제된 프로젝트입니다.</b><p>' + esc(ymd(FS.cancel.at) + ' 삭제' + (FS.cancel.reason ? ' · 사유: ' + FS.cancel.reason : '') + '\n견적을 요청받은 분석파트너에게 알림이 전달되었고, 프로젝트 찾기에서 내려갔습니다.') + '</p></div></div>';
     var n = Object.keys(FS.P).length;
     var T = {
       review: FS.ok ? ['', '의뢰가 승인되어 등록되었습니다.', 'OmicsPharm 컨설턴트가 의뢰에 맞는 분석파트너를 선정해 견적을 요청해드립니다.', '']
@@ -588,7 +604,7 @@
     else if (FS.st === 'review' && !FS.ok && B.st === 're') T = ['gray', '다시 올린 사업자등록증을 확인하고 있습니다.', '승인되면 프로젝트로 등록되고 알림으로 알려드립니다.', ''];
     return '<div class="ftodo ' + T[0] + '"><div><b>' + esc(T[1]) + '</b><p>' + esc(T[2]) + '</p></div>' + (T[3] ? '<div class="acts">' + T[3] + '</div>' : '') + '</div>';
   }
-  // 견적서 탭: 컨설턴트가 전달한 견적 비교 → 하나 선택
+  // 견적서 탭: 컨설턴트가 보낸 ㈜셀키에이아이 견적(차수별) → 최종 견적 확인
   // n차 견적 변경 내역: 차수별 날짜·금액 + 직전 차수와 달라진 항목(단가·수량·추가/삭제·할인·소요 기간) + 수정 사유
   function qdiff(a, b) {
     var cur = b.cur || 'KRW', M = function (q) { var m = {}; (q.groups || []).forEach(function (g) { g.lines.forEach(function (l) { m[(g.name || '') + '|' + (l.d || '')] = l; }); }); return m; };
@@ -605,51 +621,44 @@
     if (String(a.weeks || '') !== String(b.weeks || '')) out.push('소요 기간 ' + (a.weeks || '-') + '주 → ' + (b.weeks || '-') + '주');
     return out;
   }
-  function histHTML(X) {
-    var H = X.hist || [], V = H.map(function (h) { return { q: h.quote, at: h.at, why: h.why }; }).concat([{ q: X.quote, at: X.ver2At || X.subAt, why: X.why }]), n = V.length, last = V[n - 2], now = V[n - 1];
-    var D = qdiff(last.q, now.q);
-    return '<details class="qc-hist"><summary>변경 내역 (' + (n - 1) + '차 → ' + n + '차)<img src="assets/find/ic-chevron-down.svg" alt=""></summary>' +
-      '<ol class="qh-vers">' + V.slice().reverse().map(function (v, i) { return '<li' + (i ? '' : ' class="now"') + '><b>' + (n - i) + '차</b><span>' + ymd(v.at) + '</span><em>' + F.money(F.total(v.q).final, v.q.cur) + '</em></li>'; }).join('') + '</ol>' +
-      (D.length ? '<ul class="qh-diff">' + D.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' : '') +
-      (now.why || last.why ? '<p class="qh-why"><b>수정 사유</b>' + esc(F.mask(FS, now.why || last.why)) + '</p>' : '') +
-    '</details>';
-  }
   function drawQuotes() {
     var box = $('#tp-quote'); if (!box) return;
     if (!FK.length) {
       box.innerHTML = '<div class="empty"><b>아직 도착한 견적이 없습니다</b><p>' + (FS.st === 'review' && !FS.ok ? 'OmicsPharm 컨설턴트가 의뢰서를 승인하면 프로젝트 찾기에 게시되어 분석파트너의 견적을 받습니다.' : '분석파트너 ' + Object.keys(FS.P).length + '곳이 견적을 준비하고 있습니다. 견적은 컨설턴트가 확인한 뒤 전달해드리며, 도착하면 알림으로 알려드립니다.') + '</p></div>';
       return;
     }
-    var amt = function (k) { return F.total(FS.P[k].quote).final; };
-    var low = FK.length > 1 ? FK.reduce(function (a, b) { return amt(b) < amt(a) ? b : a; }) : null;
-    var fast = FK.length > 1 ? FK.reduce(function (a, b) { return +FS.P[b].quote.weeks < +FS.P[a].quote.weeks ? b : a; }) : null;
-    var done = FS.st === 'matched' || !!FS.cancel; // 취소한 프로젝트는 견적 선택 없음
+    // 견적 아코디언 (2026-10-21): 클라이언트는 ㈜셀키에이아이 견적 1건만 받고, 차수(1차·2차·3차)가 쌓임. 최신 차수 펼침 + [최종 견적 확인]
+    // 컨설턴트가 여러 파트너 견적을 전달한 예전 데이터면 선택한 견적, 없으면 가장 최근에 전달한 견적 1건만 보여줌
+    var K = FS.pick || (function () { var E = (FS.sends || []).filter(function (e) { return e.keys && e.keys.some(function (k) { return FK.indexOf(k) > -1; }); }), L = E.length ? E[E.length - 1].keys.filter(function (k) { return FK.indexOf(k) > -1; }) : FK; return L[L.length - 1]; })();
+    var X = FS.P[K], done = FS.st === 'matched' || !!FS.cancel; // 확정·삭제한 프로젝트는 견적 확인 버튼 없음
+    var V = (X.hist || []).map(function (h) { return { q: h.quote, at: h.at, why: h.why }; }).concat([{ q: X.quote, at: X.ver2At || X.subAt, why: X.why }]), n = V.length;
+    var row = function (v, i) {
+      var q = v.q, t = F.total(q), last = i === n - 1, prev = i ? F.total(V[i - 1].q).final : 0, D = i ? qdiff(V[i - 1].q, q) : [];
+      return '<details class="qv' + (last ? ' cur' : '') + '"' + (last ? ' open' : '') + '><summary>' +
+          '<b>' + (i + 1) + '차 견적</b>' + (last ? (FS.pick ? '<span class="badge ok">최종 확인</span>' : '<span class="badge wait">최신</span>') : '') +
+          '<em class="amt">' + F.money(t.final, q.cur) + '</em><span class="dt">' + ymd(v.at) + '</span><img src="assets/find/ic-chevron-down.svg" alt="">' +
+        '</summary><div class="qv-in">' +
+          '<div class="qc-price"><em>최종 견적 (VAT 포함)</em><b>' + F.money(t.final, q.cur) + '</b>' + (prev && prev !== t.final ? '<i class="delta ' + (t.final < prev ? 'down' : 'up') + '">' + i + '차 대비 ' + (t.final < prev ? '▼ ' : '▲ ') + F.money(Math.abs(t.final - prev), q.cur) + '</i>' : '') + '<span>공급가 ' + F.money(t.net, q.cur) + ' + VAT</span></div>' +
+          '<dl class="qc-kv"><div><dt>공급자</dt><dd>' + F.SELLER.s_org + '</dd></div><div><dt>소요 기간</dt><dd>시료 수령 후 ' + esc(q.weeks || '-') + '주</dd></div><div><dt>할인</dt><dd>' + (F.num(q.sale) + F.num(q.addSale) ? '-' + F.money(F.num(q.sale) + F.num(q.addSale), q.cur) : '없음') + '</dd></div><div><dt>시험 항목</dt><dd>' + esc(q.groups.map(function (g) { return g.name; }).filter(Boolean).join(', ')) + '</dd></div></dl>' +
+          (q.memo ? '<p class="qc-memo">' + esc(F.mask(FS, q.memo)) + '</p>' : '') +
+          (D.length || v.why ? '<div class="qv-chg"><b>' + i + '차 대비 변경 내용</b>' + (D.length ? '<ul class="qh-diff">' + D.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' : '') + (v.why ? '<p class="qh-why"><b>수정 사유</b>' + esc(F.mask(FS, v.why)) + '</p>' : '') + '</div>' : '') +
+          '<div class="qc-acts"><button type="button" class="btn" data-doc="' + i + '">견적서 보기</button>' +
+            (last && !done ? '<button type="button" class="btn" data-chat>문의하기</button><button type="button" class="btn primary" data-pick>최종 견적 확인</button>' : '') + '</div>' +
+        '</div></details>';
+    };
     box.innerHTML =
       (FS.msg ? '<div class="cmsg"><b>OmicsPharm 컨설턴트 의견</b>' + esc(F.mask(FS, FS.msg)) + '</div>' : '') +
-      '<div class="qhead"><h3>' + (done ? '견적 비교 결과' : '받은 견적 ' + FK.length + '건') + '</h3><span>분석파트너 견적을 OmicsPharm이 검토해 ㈜셀키에이아이 명의로 전달해드립니다. 금액은 VAT 포함입니다.</span></div>' +
-      '<div class="qcards">' + FK.map(function (k) {
-        var p = F.partner(k), q = FS.P[k].quote, t = F.total(q), win = FS.pick === k, H = FS.P[k].hist || [], prev = H.length ? F.total(H[H.length - 1].quote).final : 0;
-        return '<article class="qcard' + (win ? ' win' : done ? ' dim' : '') + '">' +
-          '<div class="qc-top"><div class="tags">' + (H.length ? '<span class="badge done">' + (H.length + 1) + '차 견적</span>' : '') + (win ? '<span class="badge ok">선택한 견적</span>' : '') + (k === low ? '<span class="badge tag">최저가</span>' : '') + (k === fast ? '<span class="badge tag">최단 기간</span>' : '') + '</div>' +
-            '<h4>' + F.qname(FS, k) + '</h4><p class="qc-sub">' + esc(p.svc.join(' · ')) + (p.done ? ' · 수행 ' + p.done + '건' : '') + '</p></div>' +
-          '<div class="qc-price"><em>최종 견적</em><b>' + F.money(t.final, q.cur) + '</b>' + (prev && prev !== t.final ? '<i class="delta ' + (t.final < prev ? 'down' : 'up') + '">' + H.length + '차 대비 ' + (t.final < prev ? '▼ ' : '▲ ') + F.money(Math.abs(t.final - prev), q.cur) + '</i>' : '') + '<span>공급가 ' + F.money(t.net, q.cur) + ' + VAT</span></div>' +
-          '<dl class="qc-kv"><div><dt>소요 기간</dt><dd>시료 수령 후 ' + esc(q.weeks || '-') + '주</dd></div><div><dt>할인</dt><dd>' + (F.num(q.sale) + F.num(q.addSale) ? '-' + F.money(F.num(q.sale) + F.num(q.addSale), q.cur) : '없음') + '</dd></div><div><dt>시험 항목</dt><dd>' + esc(q.groups.map(function (g) { return g.name; }).filter(Boolean).join(', ')) + '</dd></div></dl>' +
-          (q.memo ? '<p class="qc-memo">' + esc(q.memo) + '</p>' : '') + (H.length ? histHTML(FS.P[k]) : '') +
-          '<div class="qc-acts"><button type="button" class="btn" data-doc="' + k + '">견적서 보기</button>' + (done ? '' : '<button type="button" class="btn primary" data-pick="' + k + '">이 견적 선택</button>') + '</div>' +
-        '</article>';
-      }).join('') + '</div>' +
-      (done ? '' : '<p class="qnote">견적 내용에 궁금한 점이 있으면 <a href="#" data-chat>문의하기</a>로 OmicsPharm 컨설턴트에게 물어보세요.</p>');
+      '<div class="qhead"><h3>견적서</h3><span>OmicsPharm이 분석 의뢰를 검토해 ㈜셀키에이아이 명의로 견적을 보내드립니다. 견적이 바뀌면 차수가 올라갑니다. 금액은 VAT 포함입니다.</span></div>' +
+      '<div class="qacc">' + V.map(row).reverse().join('') + '</div>';
     box.onclick = function (e) {
       var b = e.target.closest('[data-doc]'), c = e.target.closest('[data-pick]');
       if (b) {
-        var bk = b.dataset.doc, X = FS.P[bk], V = [{ q: X.quote }].concat((X.hist || []).slice().reverse().map(function (h) { return { q: h.quote }; }));
-        V.forEach(function (v, i) { v.t = (V.length - i) + '차'; });
-        F.showDoc(d, X.quote, bk, F.qname(FS, bk) + ' 견적서', { client: true, no: F.qno(FS, bk), vers: V });
+        var vi = +b.dataset.doc, W = V.map(function (v, i) { return { q: v.q, t: (i + 1) + '차' }; }).reverse();
+        F.showDoc(d, V[vi].q, K, (vi + 1) + '차 견적서', { client: true, no: F.qno(FS, K), vers: W, ver: n - 1 - vi });
       }
       if (c) {
-        var k = c.dataset.pick, org = F.qname(FS, k);
-        F.ask({ title: org + ' 견적으로 진행할까요?', desc: '선택하면 이 견적이 최종 확정되고 계약 단계로 넘어갑니다. 확정 후에는 견적을 수정하거나 다른 견적으로 바꿀 수 없습니다.', label: false, yes: '선택하기' }, function () {
-          F.pick(d.id, k); OP.flash(org + ' 견적으로 확정되었습니다.'); location.replace('mypage-project.html?id=' + encodeURIComponent(d.id) + '&tab=quote');
+        F.ask({ title: '최종 견적을 확인하시겠습니까?', desc: n + '차 견적(' + F.money(F.total(X.quote).final, X.quote.cur) + ')으로 확정되고 계약 단계로 넘어갑니다. 확정 후에는 견적을 바꿀 수 없으며, 변경이 필요하면 문의하기로 알려 주세요.', label: false, yes: '최종 견적 확인' }, function () {
+          F.pick(d.id, K); OP.flash('최종 견적을 확인했습니다. OmicsPharm 컨설턴트가 계약을 진행합니다.'); location.replace('mypage-project.html?id=' + encodeURIComponent(d.id) + '&tab=quote');
         });
       }
     };
@@ -728,13 +737,13 @@
           sec.rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl></section>';
       }).join('') +
     '</div>' +
-    // 승인 전(의뢰접수)에만 수정·삭제 (예시 의뢰는 제외). 승인 후 ~ 견적 협의는 [프로젝트 취소], 계약 진행 중은 컨설턴트 문의
+    // 승인 전(의뢰접수)에만 수정·삭제 (예시 의뢰는 제외). 승인 후 ~ 견적 협의는 [삭제](기록은 남김), 계약 진행 중은 컨설턴트 문의
     (FS.st === 'review' && !FS.ok && !d.demo ? '<div class="pacts"><p>분석파트너의 견적이 선정되기 전까지 의뢰 내용을 수정하거나 삭제할 수 있습니다.</p>' +
       '<div><button type="button" class="btn del" id="pDel">삭제</button><a class="btn primary" href="omicspharm-register.html?edit=' + encodeURIComponent(d.id) + '&t=' + Date.now() + '">수정하기</a></div></div>' : '') +
     (d.demo ? '<p class="demo-note">※ 견적 중개 과정을 확인하기 위한 예시 의뢰입니다.</p>' : '') +
     '</details>' +
-    (F.canCancel(d.id) ? '<div class="pacts"><p>계약 전까지 프로젝트를 취소할 수 있습니다. 취소하면 견적을 요청받은 분석파트너에게 알림이 가고 프로젝트 찾기에서 내려갑니다.</p><div><button type="button" class="btn del" id="pCancel">프로젝트 취소</button></div></div>'
-      : FS.st === 'matched' && !FS.ct && !FS.cancel ? '<div class="pacts"><p>계약 진행 중에는 직접 취소할 수 없습니다. 취소가 필요하면 OmicsPharm 컨설턴트에게 문의해 주세요.</p><div>' + OP.askBtn({ key: d.id, cat: d.svc, no: d.id, title: d.title }) + '</div></div>' : '');
+    (F.canCancel(d.id) ? '<div class="pacts"><p>계약 전까지 프로젝트를 삭제할 수 있습니다. 삭제하면 견적을 요청받은 분석파트너에게 알림이 가고 프로젝트 찾기에서 내려갑니다.</p><div><button type="button" class="btn del" id="pCancel">삭제</button></div></div>'
+      : FS.st === 'matched' && !FS.ct && !FS.cancel ? '<div class="pacts"><p>계약 진행 중에는 직접 삭제할 수 없습니다. 삭제가 필요하면 OmicsPharm 컨설턴트에게 문의해 주세요.</p><div>' + OP.askBtn({ key: d.id, cat: d.svc, no: d.id, title: d.title }) + '</div></div>' : '');
   $('#project').outerHTML = html;
   drawQuotes();
   // 섹션으로 이동 (?tab=quote|contract|report|req 로 들어오면 그 섹션으로)
@@ -753,7 +762,7 @@
     if (sb) { var nn = +sb.dataset.star; [].forEach.call(document.querySelectorAll('#rate [data-star]'), function (x) { var on = +x.dataset.star <= nn; x.setAttribute('aria-checked', +x.dataset.star === nn); x.querySelector('img').src = 'assets/project/ic-star' + (on ? '-fill' : '') + '.svg'; }); $('#rate').dataset.v = nn; $('#rateGo').disabled = false; }
     if (e.target.closest('#rateGo')) { F.rate(d.id, +$('#rate').dataset.v, $('#rateText').value.trim()); OP.flash('만족도 평가를 제출했습니다. 감사합니다.'); location.replace('mypage-project.html?id=' + encodeURIComponent(d.id) + '&tab=report'); }
   });
-  // 처음 보이는 탭은 단계에 맞춤: 의뢰접수 = 의뢰내용 / 견적 비교·견적 확정 = 견적서 / 계약서 등록 후 = 계약정보 (?tab= 이 있으면 그 탭)
+  // 처음 보이는 탭은 단계에 맞춤: 의뢰접수 = 의뢰내용 / 견적 확인·견적 확정 = 견적서 / 계약서 등록 후 = 계약정보 (?tab= 이 있으면 그 탭)
   var qtab = new URLSearchParams(location.search).get('tab'); if (qtab) setTimeout(function () { showTab(qtab); }, 50);
   // 사업자등록증 다시 올리기: 이 의뢰의 파일로 저장하고 내 정보 관리에도 반영
   if ($('#bizRe')) $('#bizRe').addEventListener('change', function () {
@@ -768,22 +777,22 @@
       });
     });
   });
-  // 프로젝트 취소: 사유(선택) 고르기 + 직접 입력
+  // 프로젝트 삭제 (승인 후 ~ 견적 협의): 사유(선택) 고르기 + 직접 입력. 기록은 남고 클라이언트 목록에서는 사라짐
   if ($('#pCancel')) $('#pCancel').addEventListener('click', function () {
     var R = ['예산 문제', '일정 변경', '다른 곳에서 진행', '기타'];
     var m = document.createElement('div');
     m.className = 'op-confirm fask'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
-    m.innerHTML = '<div class="box"><h3>프로젝트를 취소하시겠습니까?</h3><p>"' + esc(d.title) + '" 프로젝트가 취소되며 다시 진행할 수 없습니다. 견적을 요청받은 분석파트너에게 취소 알림이 갑니다.</p>' +
-      '<div class="cx-r"><b>취소 사유 (선택)</b><div>' + R.map(function (r) { return '<label><input type="radio" name="cxr" value="' + r + '"><span>' + r + '</span></label>'; }).join('') + '</div>' +
+    m.innerHTML = '<div class="box"><h3>프로젝트를 삭제하시겠습니까?</h3><p>"' + esc(d.title) + '" 프로젝트가 삭제되며 다시 진행할 수 없습니다. 견적을 요청받은 분석파트너에게 알림이 갑니다.</p>' +
+      '<div class="cx-r"><b>삭제 사유 (선택)</b><div>' + R.map(function (r) { return '<label><input type="radio" name="cxr" value="' + r + '"><span>' + r + '</span></label>'; }).join('') + '</div>' +
       '<textarea placeholder="자세한 사유가 있다면 적어 주세요 (선택)"></textarea></div>' +
-      '<div class="btns"><button type="button" class="no">닫기</button><button type="button" class="yes go del">프로젝트 취소</button></div></div>';
+      '<div class="btns"><button type="button" class="no">닫기</button><button type="button" class="yes go del">삭제</button></div></div>';
     var close = function () { m.remove(); document.removeEventListener('keydown', key); }, key = function (e) { if (e.key === 'Escape') close(); };
     m.addEventListener('click', function (e) {
       if (e.target === m || e.target.classList.contains('no')) close();
       else if (e.target.classList.contains('yes')) {
         var r = m.querySelector('input[name=cxr]:checked'), t = m.querySelector('textarea').value.trim();
         F.cancel(d.id, [r ? r.value : '', t].filter(Boolean).join(' · ')); close();
-        OP.flash('프로젝트를 취소했습니다.'); location.replace('mypage-project.html?id=' + encodeURIComponent(d.id));
+        OP.flash('프로젝트를 삭제했습니다.'); location.replace('mypage-project.html');
       }
     });
     document.addEventListener('keydown', key); document.body.appendChild(m); m.querySelector('.no').focus();

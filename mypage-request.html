@@ -11,12 +11,12 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261021zn">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261021zn">
-<script src="assets/common/site.js?v=20261021zn"></script>
-<script src="assets/common/mypage.js?v=20261021zn"></script>
-<script src="assets/common/svc-spec.js?v=20261021zn"></script>
-<script src="assets/common/flow.js?v=20261021zn"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261021zp">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261021zp">
+<script src="assets/common/site.js?v=20261021zp"></script>
+<script src="assets/common/mypage.js?v=20261021zp"></script>
+<script src="assets/common/svc-spec.js?v=20261021zp"></script>
+<script src="assets/common/flow.js?v=20261021zp"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -364,6 +364,10 @@
     .lc .meta > span + span::before { margin-right:10px; }
   }
   @media (max-width:960px) { .prow:has(.pright) { flex-direction:column; align-items:flex-start; } .prow:has(.pright) .ptitle { flex:none; width:100%; } } /* 세로 배치일 때 제목 너비 기준(360px)이 높이로 잡히지 않게 */
+  .adm-acts { display:flex; align-items:center; justify-content:space-between; gap:16px; padding-top:24px; border-top:1px solid var(--gray-200); }
+  .adm-acts p { font-size:14px; line-height:20px; color:var(--gray-500); }
+  .adm-acts div { display:flex; gap:8px; flex:none; }
+  .adm-acts .btn.del { border-color:var(--red-600); color:var(--red-600); background:#fff; }
 </style>
 </head>
 <body>
@@ -410,7 +414,7 @@
         quotes: c.sub, all: c.all,
         noQuote: !!s.ok && s.st !== 'matched' && !c.sub && now - s.ok > DAY * 3, // 장기 견적 미수신: 게시 후 3일 넘게 견적 0건
         waitPick: s.st === 'sent', // 견적 채택 대기: 클라이언트에게 전달 후 선택 전
-        next: s.st === 'review' ? (s.ok ? '견적제안메일 발송 가능' : '의뢰 승인 필요') : s.st === 'quoting' ? (c.sub ? '견적 ' + c.sub + '건 도착 · 전달 가능' : '견적 대기 중') : s.st === 'sent' ? '클라이언트 선택 대기' : s.ct ? (repWait(s) ? 'AI 보고서 초안 검토 필요' : s.rate ? '만족도 ★' + s.rate.star + ' 등록' : '') : '계약서 등록 필요',
+        next: s.st === 'review' ? (s.ok ? '견적제안메일 발송 가능' : '의뢰 승인 필요') : s.st === 'quoting' ? (c.sub ? '견적 ' + c.sub + '건 도착 · 전달 가능' : '견적 대기 중') : s.st === 'sent' ? '클라이언트 견적 확인 대기' : s.ct ? (repWait(s) ? 'AI 보고서 초안 검토 필요' : s.rate ? '만족도 ★' + s.rate.star + ' 등록' : '') : '계약서 등록 필요',
         urgent: (s.st === 'review' && !s.ok) || (s.st === 'matched' && !s.ct) || repWait(s) };
     }).concat(OP.my.partnerProjects().filter(function (p) { return !p.flow; }).map(function (p) {
       return { href: 'mypage-project.html?id=' + encodeURIComponent(p.id), id: p.id, title: p.title, cat: EN[p.svc] || '기타 분석', st: F.P2A[p.stage], open: false, at: p.at,
@@ -662,7 +666,7 @@
     }[s.st];
     var bizWait = s.st === 'review' && !s.ok && (s.biz || {}).st === 'ask';
     if (bizWait) todo = ['gray', '의뢰사의 사업자등록증 재제출을 기다리고 있습니다.', '다시 제출되면 알림으로 알려드립니다. 확인 후 승인해주세요.'];
-    if (s.cancel) todo = ['gray', '클라이언트가 취소한 프로젝트입니다.', F.ymd(s.cancel.at) + ' 취소' + (s.cancel.reason ? ' · 사유: ' + s.cancel.reason : '') + '\n견적을 요청받은 분석파트너에게 취소 알림이 전달되었고, 프로젝트 찾기에서 내려갔습니다.'];
+    if (s.cancel) todo = ['gray', (s.cancel.by === 'admin' ? '컨설턴트가 삭제한' : '클라이언트가 삭제한') + ' 프로젝트입니다.', F.ymd(s.cancel.at) + ' 삭제' + (s.cancel.reason ? ' · 사유: ' + s.cancel.reason : '') + '\n견적을 요청받은 분석파트너에게 알림이 전달되었고, 프로젝트 찾기에서 내려갔습니다.'];
     else if (c.rev && s.st === 'quoting') todo = ['warn', '수정 요청한 견적 ' + c.rev + '건을 기다리고 있습니다.', todo[1] + '\n' + todo[2]];
 
     card.innerHTML =
@@ -679,8 +683,17 @@
       (s.st === 'matched' ? contractHTML(s) : '') +
       (s.st === 'review' && !s.ok ? '' : quotesHTML(s)) +
       (s.ok ? bizHTML(s) : '') +
-      '<details class="req"' + (s.st === 'review' ? ' open' : '') + '><summary>의뢰 내용</summary><div class="in">' + F.reqHTML(r) + '</div></details>';
+      '<details class="req"' + (s.st === 'review' ? ' open' : '') + '><summary>의뢰 내용</summary><div class="in">' + F.reqHTML(r) + '</div></details>' +
+      // 컨설턴트 수정·삭제 (2026-10-21): 수정은 의뢰서 화면(?edit=)으로, 삭제는 계약서 등록 전까지 (기록은 남고 클라이언트·분석파트너에게 알림)
+      (s.cancel ? '' : '<div class="adm-acts"><p>' + (s.ct ? '계약서 등록 후에는 수정·삭제할 수 없습니다.' : '의뢰 내용을 수정하거나 프로젝트를 삭제할 수 있습니다. 삭제하면 클라이언트와 견적을 요청받은 분석파트너에게 알림이 갑니다.') + '</p>' +
+        (s.ct ? '' : '<div><button type="button" class="btn del" id="aDel">삭제</button>' + (r.form && !r.demo ? '<a class="btn primary" href="omicspharm-register.html?edit=' + encodeURIComponent(r.id) + '&t=' + Date.now() + '">수정하기</a>' : '<button type="button" class="btn" disabled title="예시 의뢰는 수정할 수 없습니다 (직접 제출한 의뢰만)">수정하기</button>') + '</div>') + '</div>');
     bind(s);
+    var aDel = card.querySelector('#aDel');
+    if (aDel) aDel.addEventListener('click', function () {
+      F.ask({ title: '프로젝트를 삭제할까요?', desc: '"' + r.title + '" 프로젝트가 삭제되고 프로젝트 찾기에서 내려갑니다. 클라이언트와 견적을 요청받은 분석파트너에게 알림이 갑니다.', label: '삭제 사유 (클라이언트에게 전달됩니다)', ph: '예) 클라이언트 요청으로 삭제합니다. / 중복 등록된 의뢰입니다.', yes: '삭제', required: true }, function (v) {
+        F.cancel(id, v, 'admin'); OP.toast('프로젝트를 삭제했습니다.'); render();
+      });
+    });
   }
 
   // 계약서 등록 (견적 확정 후): 클라이언트·분석파트너 계약서 각각 기본 양식 또는 기관 양식 파일
