@@ -3,6 +3,7 @@
    컨설턴트의 프로젝트 관리는 mypage-request.html
    (기존 '분석결과 관리'는 프로젝트 상세의 '결과보고서' 탭으로 통합)
    사용: <aside class="side" data-op-side></aside> + var me = OP.mypage('dash'); */
+if (/[?&]ui=white\b/.test(location.search)) document.documentElement.classList.add('ui-white'); // 비교용 시안: 화이트 + 카드 없음
 (function () {
   // [키, 이름, 주소, 보이는 유형(없으면 모두)]
   // admin = 컨설턴트(셀키): 당분간 분석파트너와 같은 화면 + 관리 메뉴 추가 (메뉴는 바뀌거나 통폐합될 수 있음)

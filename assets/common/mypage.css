@@ -306,3 +306,14 @@ span.tbtn { cursor:default; }
 
 /* 프로젝트 상세 제목 줄 [문의하기] (클라이언트·분석파트너·컨설턴트 공통) */
 .op-ask { flex:none; } .op-ask img { width:20px; height:20px; }
+
+/* ── 비교용 시안: 화이트 + 카드 없음 (주소에 ?ui=white). 확정 전까지 기본 화면은 그대로 ── */
+.ui-white body { background:#fff; }
+.ui-white .body > .in { gap:64px; }
+.ui-white .side { width:240px; background:none; border:0; border-radius:0; }
+.ui-white .me { align-items:flex-start; padding:4px 16px 24px; text-align:left; }
+.ui-white .me img { width:48px; height:48px; }
+.ui-white .menu { padding:8px 0; }
+.ui-white .main { gap:64px; }
+.ui-white .card { padding:0; background:none; border:0; border-radius:0; }
+.ui-white .intro { border-radius:12px; }
