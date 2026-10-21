@@ -339,8 +339,15 @@
           '<div class="op-user">' +
             '<button type="button" aria-haspopup="menu" aria-label="내 계정"><img src="' + ((OP.account(s.email) || {}).photo || A + 'user-icon.svg?v=2') + '" alt=""></button>' +
             '<div class="op-user-menu" role="menu">' +
-              '<div class="who"><b>' + s.email.replace(/</g, '&lt;') + '</b><span>' + (ROLE_LABEL[s.role] || '') + '</span>' +
-                (!OP.mailVerified() && s.role !== 'admin' ? '<span class="vchip">메일 미인증</span>' : s.role === 'partner' ? '<span class="vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '') + '</div>' +
+              // 프로필 (2026-10-21: 마이페이지 왼쪽 프로필 영역을 없애고 여기서 보여줌) — 사진·이름·이메일·소속·역할·인증 상태
+              (function () {
+                var acc = OP.account(s.email) || {}, e = function (t) { return String(t || '').replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+                var chip = !OP.mailVerified() && s.role !== 'admin' ? '<span class="vchip">메일 미인증</span>' : s.role === 'partner' ? '<span class="vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '';
+                var todo = !OP.mailVerified() && s.role !== 'admin' ? '<a class="who-todo" href="mypage-account.html#mail">메일 인증하기 ›</a>' : s.role === 'partner' && !OP.partnerVerified() ? '<a class="who-todo" href="mypage-verify.html">파트너 인증하기 ›</a>' : '';
+                return '<div class="who"><div class="who-top"><img src="' + e(acc.photo || A + 'user-icon.svg?v=2') + '" alt=""><div><b>' + e(acc.name || s.email.split('@')[0]) + ' 님</b><em>' + e(s.email) + '</em></div></div>' +
+                  (acc.org ? '<p class="who-org">' + e(acc.org) + '</p>' : '') +
+                  '<div class="who-chips"><span>' + (ROLE_LABEL[s.role] || '') + '</span>' + chip + '</div>' + todo + '</div>';
+              })() +
               // 프로토타입 확인용: 로그아웃 없이 데모 계정으로 유형 전환
               '<div class="op-switch"><p>화면 전환 (데모)</p><div>' +
                 [['client', '클라이언트'], ['partner', '분석파트너'], ['admin', '컨설턴트']].map(function (r) {
@@ -359,6 +366,7 @@
                   return '<button type="button" data-op-mail="' + v[0] + '"' + (on ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + v[1] + '</button>';
                 }).join('') + '</div>' : '') + '</div>' +
               '<a href="mypage.html" role="menuitem">마이페이지</a>' +
+              '<a href="mypage-account.html" role="menuitem">내 정보 관리</a>' +
               '<button type="button" data-op-logout role="menuitem">로그아웃</button>' +
             '</div>' +
           '</div>' +
