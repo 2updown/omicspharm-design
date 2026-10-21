@@ -9,12 +9,12 @@
      회원가입 '추가 정보 입력'에서 고른 서비스(복수)를 보고, 서비스를 더 등록·수정·삭제한다.
      서비스를 고르면 R&D 사례작성 v5 공급자 입력 항목(assets/common/svc-spec.js)이 펼쳐짐. 같은 서비스를 여러 번 등록 = 수행 조건 나누기
      데모: 저장은 이 브라우저 localStorage(op.accounts의 services)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261021d">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261021d">
-<script src="assets/common/site.js?v=20261021d"></script>
-<script src="assets/common/mypage.js?v=20261021d"></script>
-<script src="assets/common/flow.js?v=20261021d"></script>
-<script src="assets/common/svc-spec.js?v=20261021d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261021e">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261021e">
+<script src="assets/common/site.js?v=20261021e"></script>
+<script src="assets/common/mypage.js?v=20261021e"></script>
+<script src="assets/common/flow.js?v=20261021e"></script>
+<script src="assets/common/svc-spec.js?v=20261021e"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .cnt { margin-left:6px; color:var(--teal-600); }
@@ -112,7 +112,7 @@
   var MAP = { execution_status: 'st', days_min: 'from', days_max: 'to' }; // v5 항목 ↔ 기존 저장 키
   var L = JSON.parse(JSON.stringify(me.acc.services || []));
   // 세부 항목까지 저장했는지 (입력 요청 기준과 같음: 서비스만 있고 세부 항목이 없으면 미입력. '기타'처럼 세부 항목이 없는 서비스는 제외)
-  // 저장은 서비스·수행 상태만 필수 (회원가입에서 받는 항목). 세부 항목은 덜 채워도 저장되고 카드에 '세부 항목 미입력' 표시
+  // 저장: 서비스·수행 상태는 항상 필수. 세부 항목은 카드별로 — 입력을 시작한 카드는 필수 항목을 모두 채워야 하고, 손대지 않은 카드는 '세부 항목 미입력'으로 저장
   var hasDetail = function (o) { return Object.keys(o.f || {}).some(function (k) { return [].concat(o.f[k] || []).filter(Boolean).length; }); };
   var filled = function (A) { return A.length && A.every(function (o) { return !SPEC[o.svc] || hasDetail(o); }); };
   var uid = 0, saved = filled(L);
@@ -251,9 +251,12 @@
       if ([o.from, o.to].some(function (v) { return v && (+v < 1 || +v > 365); })) return mark('days_min', '표준 소요 기간은 1~365 영업일로 적어주세요.');
       if (o.from && o.to && +o.from > +o.to) return mark('days_min', '최소 소요 일수가 최대보다 깁니다.');
       var sp = SPEC[o.svc]; if (!sp) return;
+      // 세부 항목을 하나라도 입력한 카드는 필수(*) 항목을 모두 채워야 저장. 손대지 않은 카드는 서비스·수행 상태만으로 저장 ('세부 항목 미입력' 표시)
+      var touched = hasDetail(o);
       sp.fields.forEach(function (fd) {
         if (bad || MAP[fd.id] || fd.type === 'text' || fd.type === 'number' || !shown(o, fd)) return;
         var v = [].concat(o.f[fd.id] || []).filter(Boolean);
+        if (touched && fd.required && !v.length) return mark(fd.id, fd.label + '을(를) 선택해주세요.');
         if (v.indexOf('기타') > -1 && !(o.x[fd.id] || '')) return mark(fd.id, fd.label + '의 기타 내용을 적어주세요.');
       });
     });
