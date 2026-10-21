@@ -177,6 +177,21 @@ if (/[?&]ui=white\b/.test(location.search)) document.documentElement.classList.a
   // ctx = { key: 프로젝트 번호, cat: 분석 서비스, no: 프로젝트 번호, title } — 오른쪽 아래 챗봇 버튼도 같은 프로젝트로 열리게 OP.chatCtx에 둠
   OP.askBtn = function (ctx) { OP.chatCtx = ctx; return '<button type="button" class="btn op-ask" data-chat><img src="assets/project/ic-chat-circle-dots.svg" alt="">문의하기</button>'; };
   OP.my = D;
+  // AI Agent 띄우기 (2026-10-21: 전체 화면 페이지보다 지금 화면 위에 띄우는 쪽으로). 내용은 mypage-ai.html을 그대로 iframe으로
+  OP.openAI = function (mode) {
+    mode = mode || (/[?&]ai=panel\b/.test(location.search) ? 'panel' : 'overlay');
+    if (document.querySelector('.op-ai')) return;
+    var w = document.createElement('div');
+    w.className = 'op-ai ' + mode; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-label', 'AI Agent');
+    w.innerHTML = '<div class="op-ai-dim" data-ai-close></div><div class="op-ai-win"><button type="button" class="op-ai-x" data-ai-close aria-label="닫기"></button><iframe src="mypage-ai.html?embed=' + mode + '" title="AI Agent"></iframe></div>';
+    var close = function () { w.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', key); window.removeEventListener('message', msg); };
+    var key = function (e) { if (e.key === 'Escape') close(); };
+    var msg = function (e) { if (e.data === 'op-ai-close') close(); };
+    w.addEventListener('click', function (e) { if (e.target.closest('[data-ai-close]')) close(); });
+    document.addEventListener('keydown', key); window.addEventListener('message', msg);
+    document.body.appendChild(w); if (mode === 'overlay') document.body.style.overflow = 'hidden';
+    w.querySelector('.op-ai-x').focus();
+  };
   OP.mypage = function (key) {
     var s = OP.session();
     if (!s) { location.replace('login.html?next=' + encodeURIComponent(location.pathname.split('/').pop() + location.search)); return null; }
@@ -226,6 +241,8 @@ if (/[?&]ui=white\b/.test(location.search)) document.documentElement.classList.a
       if (!side.dataset.bound) {
         side.dataset.bound = 1;
         side.addEventListener('click', function (e) {
+          // AI Agent: 페이지 이동 대신 지금 화면 위에 띄움 (기본 = 화면 전체 덮는 창 + 오른쪽 위 X, ?ai=panel = 오른쪽 패널). 모바일 탭은 전체 화면 페이지로 이동
+          var ai = e.target.closest('a[href="mypage-ai.html"]'); if (ai && !e.metaKey && !e.ctrlKey) { e.preventDefault(); OP.openAI(); return; }
           var b = e.target.closest('.gh'); if (!b) return;
           var g = b.parentNode, open = !g.classList.contains('open');
           g.classList.toggle('open', open); b.setAttribute('aria-expanded', open);

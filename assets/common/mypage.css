@@ -362,3 +362,17 @@ span.tbtn { cursor:default; }
 
 /* AI Agent 메뉴의 beta 표시 */
 .menu a .beta { padding:0 6px; border-radius:6px; background:var(--teal-50); color:var(--teal-700); font-size:11px; font-weight:600; line-height:18px; }
+
+/* AI Agent 띄우기 (OP.openAI): overlay = 화면 전체 + 오른쪽 위 X (Airtable AI처럼), panel = 오른쪽 패널 */
+.op-ai { position:fixed; inset:0; z-index:300; }
+.op-ai-win { position:absolute; background:#fff; overflow:hidden; }
+.op-ai-win iframe { display:block; width:100%; height:100%; border:0; }
+.op-ai-x { position:absolute; top:16px; right:20px; z-index:2; width:36px; height:36px; border-radius:8px; }
+.op-ai-x::before, .op-ai-x::after { content:""; position:absolute; left:50%; top:50%; width:18px; height:1.5px; background:#333; }
+.op-ai-x::before { transform:translate(-50%, -50%) rotate(45deg); } .op-ai-x::after { transform:translate(-50%, -50%) rotate(-45deg); }
+.op-ai-x:hover { background:rgba(0,0,0,.05); }
+.op-ai.overlay .op-ai-win { inset:0; }
+.op-ai.overlay .op-ai-dim { display:none; }
+.op-ai.panel { inset:auto 0 0 auto; top:0; width:100%; pointer-events:none; }
+.op-ai.panel .op-ai-dim { display:none; }
+.op-ai.panel .op-ai-win { top:0; right:0; bottom:0; width:min(560px, 100vw); border-left:1px solid #e5e5e5; box-shadow:-8px 0 24px rgba(0,0,0,.08); pointer-events:auto; }
