@@ -399,3 +399,7 @@ span.tbtn { cursor:default; }
 .ui-white .menu a:hover:not(.on), .ui-white .menu .gh:hover { background:var(--gray-50); }
 .ui-white .side .menu > a, .ui-white .menu .gh { height:56px; } /* 메뉴 칸 높이 56 (하위 메뉴는 48) */
 .ui-white .menu .sub a { height:48px; }
+/* 화이트 시안: 위쪽 여백은 다른 페이지(문의하기·이용 가이드 등 64px)와 맞춤, 대시보드의 목록 영역은 테두리 박스로 묶음 */
+@media (min-width:961px) { .ui-white .page-head { padding-top:64px; padding-bottom:40px; } }
+.ui-white .card.box { padding:24px; border:1px solid var(--gray-200); border-radius:16px; }
+.ui-white .main:has(.card.box) { gap:32px; } /* 박스로 묶은 대시보드는 섹션 사이 32 (선만 있는 화면은 64) */
