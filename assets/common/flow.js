@@ -259,7 +259,7 @@
     // 의뢰별 재제출 요청: s.biz = { st:'ask'|'re', askAt, note, reAt, name }, s.bizSeen = 이번 의뢰에서 컨설턴트가 열어봤는지
     // 의뢰한 계정: 예시 의뢰 = 클라이언트 데모 계정, 제출한 의뢰 = r.owner. 계정 정보 없이 저장된 예전 의뢰는 소속·담당자 또는 파일 이름이 같은 클라이언트 계정으로 찾음
     bizOwner: function (r) {
-      if (r.demo) return 'client@omicspharm.test';
+      if (r.demo) return r.owner || 'client@omicspharm.test'; // 예시 의뢰도 owner가 있으면 그 계정 (0048 = 다른 클라이언트)
       if (r.owner) return r.owner;
       var A = OP.accounts(), K = Object.keys(A).filter(function (k) { return A[k].role === 'client'; });
       var hit = K.filter(function (k) { return r.bizDoc && A[k].bizDoc === r.bizDoc; })[0] ||
@@ -412,7 +412,7 @@
         if (s.st === 'matched' && x.status === 'sub') L.push(s.pick === ses.email
           ? { id: 'f-win-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: nm + '의 견적이 최종 선정되었습니다.', sub: '견적서명: ' + qname(x) + ' · 견적금액: ' + won(total(x.quote).final), href: 'mypage-project.html?id=' + encodeURIComponent(r.id) }
           : { id: 'f-lose-' + r.id, k: '견적미선정', cat: 'project', at: s.pickAt, t: nm + '의 견적은 이번에 선정되지 않았습니다.', sub: '참여해주셔서 감사합니다.', href: qh });
-      } else if (role === 'client' && (!r.demo || ses.email === 'client@omicspharm.test')) {
+      } else if (role === 'client' && (!r.demo || (r.owner || 'client@omicspharm.test') === ses.email)) {
         var ph = 'mypage-project.html?id=' + encodeURIComponent(r.id);
         if (s.ct) L.push({ id: 'f-ct-' + r.id, k: '계약', cat: 'project', at: s.ct.at, t: nm + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: ph + '&tab=contract' });
         (s.rep || []).forEach(function (v, i) { L.push({ id: 'f-rep-' + r.id + i, k: '보고서등록', cat: 'project', at: v.at, t: nm + ' 프로젝트의 ' + (i + 1) + '차 결과보고서가 등록되었습니다. 확인 후 최종 확인 또는 수정 요청을 해주세요.', href: ph + '&tab=report' }); });

@@ -428,3 +428,17 @@ span.tbtn { cursor:default; }
 .ui-white .me-line .me-link:hover { color:var(--teal-700); }
 .ui-white .me-line .me-act { margin-left:8px; font-size:14px; font-weight:600; color:var(--teal-700); }
 @media (max-width:960px) { .ui-white .me-line { display:none; } }
+
+/* 화이트 시안: 제목 오른쪽 바로가기 버튼 (내 정보 한 줄 대신) */
+.ui-white .me-line { display:none !important; }
+.ph-acts { display:none; }
+.ui-white .ph-acts { display:flex; align-items:center; gap:8px; }
+.ui-white .pbtn { display:inline-flex; align-items:center; gap:6px; height:48px; padding:0 20px; border-radius:8px; font-size:16px; font-weight:600; line-height:22px; white-space:nowrap; }
+.ui-white .pbtn.pri { background:var(--teal-600); color:#fff; } .ui-white .pbtn.pri:hover { background:var(--teal-700); }
+.ui-white .pbtn.ai { border:1px solid #cdeee8; background:#f4fbfa; color:var(--teal-700); }
+.ui-white .pbtn.ai:hover { background:#e8f7f4; }
+.ui-white .pbtn.ai img { width:18px; height:18px; }
+.ui-white .pbtn .beta { padding:0 6px; border-radius:6px; background:#fff; font-size:11px; line-height:18px; }
+@media (max-width:960px) { .ui-white .ph-acts { display:none; } }
+.ui-white .card.box > :not(.card-head) { justify-content:flex-start; } /* 목록은 위에서부터 */
+.ui-white .card.box > :not(.card-head):has(> .mini-empty, > .empty, > p:only-child) { justify-content:center; } /* 빈 안내만 가운데 */
