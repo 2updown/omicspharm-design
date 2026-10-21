@@ -8,10 +8,10 @@
 <!-- Figma 회원가입/로그인 섹션 (254:18355)
      클라이언트: Signup-Filled 281:23123 → 기본정보 1/2 806:5078 → 추가정보 2/2 806:5117 → 완료 1120:43157
      분석파트너: Signup-Filled 1109:37231 → 1/3 1109:37368 → 2/3 1109:37427 → 3/3 1117:42815 → 완료 1120:42976 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261021q">
-<link rel="stylesheet" href="assets/auth/auth.css?v=20261021q">
-<script src="assets/common/site.js?v=20261021q"></script>
-<script src="assets/auth/auth.js?v=20261021q"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261021r">
+<link rel="stylesheet" href="assets/auth/auth.css?v=20261021r">
+<script src="assets/common/site.js?v=20261021r"></script>
+<script src="assets/auth/auth.js?v=20261021r"></script>
 </head>
 <body>
 <div class="auth">
@@ -228,6 +228,8 @@
     if (!v) return '';
     if (!AUTH.EMAIL_RE.test(v)) return '올바른 이메일 형식으로 입력해주세요.';
     if (OP.account(v)) return '이미 가입된 이메일입니다.';
+    var left = (function () { try { return JSON.parse(localStorage.getItem('op.left') || '{}')[v.toLowerCase()]; } catch (e) { return 0; } })();
+    if (left && Date.now() - left < 7 * 864e5) return '탈퇴한 이메일은 7일이 지나야 다시 가입할 수 있습니다.'; // 회원탈퇴 정책: 탈퇴 후 7일 재가입 제한
     return 'ok';
   }
   function syncAccount() {
