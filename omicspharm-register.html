@@ -575,8 +575,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261022f">
-<script src="assets/common/site.js?v=20261022f"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261022g">
+<script src="assets/common/site.js?v=20261022g"></script>
 <script>if (!((OP.session() || {}).role === 'admin' && /[?&]edit=/.test(location.search))) OP.requireClient(); /* 클라이언트만 접근 (컨설턴트는 의뢰 수정(?edit=)만): 비로그인 → 로그인, 파트너 → 메인 */</script>
 </head>
 <body>
@@ -887,8 +887,8 @@
     <!-- 진행 단계 (Figma 1683:16825): 단계 위치만큼 채워지는 막대 + 단계마다 무엇을 쓰는지 짧은 설명 (2026-10-22) -->
     <div class="sphead"><p class="sh">진행 단계</p><p class="spsub" id="spSub">총 4단계 중 1단계 작성 중</p><div class="spbar" aria-hidden="true"><i id="spBar"></i></div></div>
     <ul class="steps" id="steps">
-      <li class="st on" data-go="1"><i class="n">1</i><div><b>의뢰 정보</b><span class="ds">의뢰명 및 연구 목적 작성</span><span class="cnt"></span></div></li>
-      <li class="st" data-go="2"><i class="n">2</i><div><b>분석 내용</b><span class="ds">분석 유형 및 원하는 결과 선택</span><span class="cnt"></span></div></li>
+      <li class="st on" data-go="1"><i class="n">1</i><div><b>기본 정보</b><span class="ds">의뢰명 및 연구 목적 작성</span><span class="cnt"></span></div></li>
+      <li class="st" data-go="2"><i class="n">2</i><div><b>분석 상세</b><span class="ds">분석 유형 및 원하는 결과 선택</span><span class="cnt"></span></div></li>
       <li class="st" data-go="3"><i class="n">3</i><div><b>시료 정보</b><span class="ds">시료 종류 및 수량 입력</span><span class="cnt"></span></div></li>
       <li class="st" data-go="4"><i class="n">4</i><div><b>요구사항</b><span class="ds">입력 정보 확인 및 승인 요청</span><span class="cnt"></span></div></li>
     </ul>
@@ -1199,8 +1199,8 @@
     prev.disabled = cur===1;
     next.textContent = cur===MAX ? (EDIT ? '수정 완료' : '분석 의뢰 제출') : '다음';
     $('#svcTitle').textContent = svcName()||'단백체 분석';
-    var TITLES=[['의뢰 정보','분석 서비스를 고르고 의뢰 제목과 연구 목적을 작성해 주세요.'],
-                ['분석 내용','수행할 분석 유형과 세부 항목을 선택해 주세요.'],
+    var TITLES=[['기본 정보','분석 서비스를 고르고 의뢰 제목과 연구 목적을 작성해 주세요.'],
+                ['분석 상세','수행할 분석 유형과 세부 항목을 선택해 주세요.'],
                 ['시료 정보','보내실 시료의 종류와 수량, 분석 그룹을 알려주세요.'],
                 ['요구사항','일정과 예산, 받고 싶은 산출물을 알려주세요. 마지막으로 입력 내용을 확인합니다.']];
     $('#stepTitle').textContent=TITLES[cur-1][0];
