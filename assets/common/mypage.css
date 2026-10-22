@@ -443,7 +443,7 @@ span.tbtn { cursor:default; }
 .ui-white .card.box > :not(.card-head) { justify-content:flex-start; } /* 목록은 위에서부터 */
 .ui-white .card.box > :not(.card-head):has(> .mini-empty, > .empty, > p:only-child) { justify-content:center; } /* 빈 안내만 가운데 */
 
-/* [시안 C · 검토용, ?head=c] 상단 제목 줄 없앰 → 본문 맨 위에 메뉴 이름, 공통 버튼은 왼쪽 메뉴 위·아래 (2026-10-22) */
+/* 상단 (2026-10-23 기본, 예전은 ?head=a): 제목 줄 없앰 → 본문 맨 위에 메뉴 이름, 공통 버튼은 왼쪽 메뉴 아래 */
 .ui-headc .page-head { display:none; }
 .ui-headc .body { padding-top:48px; }
 .ui-headc .mtitle { margin:0 0 -20px; font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; } /* 제목–첫 섹션 12 (Figma 1692:7204) */
@@ -452,6 +452,8 @@ span.tbtn { cursor:default; }
 .ui-headc .card-head .more:hover { filter:brightness(.6); }
 .ui-headc .card.bare .card-head, .ui-headc .card.box .card-head { align-items:center; }
 .ui-headc .card-head.dup { display:none; }
+.ui-headc .mtitle { display:flex; align-items:center; gap:10px; }
+.ui-headc .mtitle .op-vchip, .ui-headc .mtitle .cnt { font-size:14px; font-weight:600; line-height:20px; letter-spacing:0; }
 .ui-headc .side { display:flex; flex-direction:column; gap:20px; }
 .ui-headc .side-cta { display:flex; align-items:center; justify-content:center; height:52px; border-radius:10px; background:var(--teal-600); color:#fff; font-size:16px; font-weight:600; }
 .ui-headc .side-cta:hover { background:var(--teal-700); }

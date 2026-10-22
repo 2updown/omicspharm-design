@@ -6,8 +6,9 @@
 // 마이페이지 기본 디자인 = 화이트 + 카드 없음 (2026-10-21 확정). 예전 회색+카드 디자인은 ?ui=gray 로 볼 수 있게 보관 (git 태그 mypage-gray-20261021)
 // 모바일(≤960px)은 기존 모바일 구성(프로필 허브 + 가로 메뉴 탭) 그대로
 if (!/[?&]ui=gray\b/.test(location.search) && !/mypage-ai\.html/.test(location.pathname) && window.matchMedia('(min-width:961px)').matches) document.documentElement.classList.add('ui-white');
-// [시안 C · 검토용] 상단 '마이페이지' 제목 대신 메뉴 이름을 본문 제목으로, 공통 버튼은 왼쪽 메뉴 위(바로가기)·아래(AI Agent)로. ?head=c 일 때만 (2026-10-22, Figma에 먼저 반영)
-if (/[?&]head=c\b/.test(location.search) && document.documentElement.classList.contains('ui-white')) document.documentElement.classList.add('ui-headc');
+// 상단 (2026-10-23 시안 C를 기본으로): '마이페이지' 제목 줄 없앰 → 본문 맨 위에 메뉴 이름, 왼쪽 메뉴 아래에 AI Agent 카드·역할별 바로가기
+// 예전 제목 줄 디자인은 ?head=a (Figma 1646:7138에 시안 A·B로 비교용)
+if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.contains('ui-white')) document.documentElement.classList.add('ui-headc');
 (function () {
   // [키, 이름, 주소, 보이는 유형(없으면 모두)]
   // admin = 컨설턴트(셀키): 당분간 분석파트너와 같은 화면 + 관리 메뉴 추가 (메뉴는 바뀌거나 통폐합될 수 있음)
@@ -278,7 +279,11 @@ if (/[?&]head=c\b/.test(location.search) && document.documentElement.classList.c
             var h = mn.querySelector('.card .card-head h3'), t = h && h.firstChild;
             if (!t || t.nodeType !== 3 || t.nodeValue.trim() !== lab) return;
             var head = h.closest('.card-head');
-            if (h.childNodes.length === 1 && head.children.length === 1) head.classList.add('dup'); else t.nodeValue = '';
+            if (h.childNodes.length === 1 && head.children.length === 1) { head.classList.add('dup'); return; }
+            // 칩·개수(인증 상태, 서비스 개수 등)는 큰 제목 옆으로 옮기고, 남는 게 없으면 원래 제목 줄은 숨김 (버튼이 있으면 줄은 남김)
+            t.nodeValue = ''; var mt = mn.querySelector('.mtitle');
+            while (h.firstChild) { if (h.firstChild.nodeType === 1) mt.appendChild(h.firstChild); else h.removeChild(h.firstChild); }
+            if (head.children.length === 1) head.classList.add('dup');
           }, 0);
         }
         var ai0 = side.querySelector('.side-ai'); if (ai0) ai0.addEventListener('click', function () { OP.openAI(); });
