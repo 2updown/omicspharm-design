@@ -89,7 +89,8 @@ if (/[?&]head=c\b/.test(location.search) && document.documentElement.classList.c
         renumber(old, p.id); changed = true;
       });
       if (changed) write('op.submitted', V);
-      return V;
+      // 분석 서비스 없이 저장된 예전 테스트 의뢰는 숨김 (실제로는 서비스 선택이 필수라 제출될 수 없음, 2026-10-22). 저장 기록은 지우지 않음
+      return V.filter(function (p) { return p.svc && p.svc !== '분석 서비스 미선택'; });
     },
     // 로그인한 계정이 보낸 문의만 (+ 클라이언트에게는 답변 완료 예시 1건)
     inquiries: function () {
