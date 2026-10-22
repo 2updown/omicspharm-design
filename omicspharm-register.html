@@ -510,6 +510,11 @@
   .st .n{width:32px;height:32px;border:1px solid var(--n400);font-size:16px;font-weight:500;color:var(--n400)}
   .st b{font-size:16px;font-weight:700;line-height:22px;color:#000;padding-top:5px}
   .st .cnt{display:none}
+  .st .ds{display:block;margin-top:2px;font-size:14px;line-height:20px;color:var(--n500)}
+  .sphead{display:flex;flex-direction:column;gap:8px}
+  .spsub{margin:0;font-size:14px;line-height:20px;color:var(--n500)}
+  .spbar{height:6px;margin-top:4px;border-radius:99px;background:var(--n100)}
+  .spbar i{display:block;height:100%;width:25%;border-radius:99px;background:var(--teal);transition:width .3s}
   .st.on .n, .st.prog .n{border-color:var(--teal);color:var(--teal);background:#fff}
   .st.on b{color:#000;font-weight:700}
   .st.done .n{background:var(--teal);border-color:var(--teal);color:transparent;font-size:0;
@@ -563,12 +568,15 @@
     .flabel{padding:10px 14px}
     .svc{grid-template-columns:repeat(2,1fr)}
     .st:not(:last-child)::after{display:none}
+    .st .ds{display:none} /* 좁은 화면은 단계가 가로로 놓여 설명은 숨김 (제목만) */
+    .st{flex:1;min-width:0;flex-direction:column;align-items:center;gap:6px;text-align:center}
+    .st b{padding-top:0;font-size:13px;line-height:18px;word-break:keep-all}
     .st{padding:0}
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261022d">
-<script src="assets/common/site.js?v=20261022d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261022e">
+<script src="assets/common/site.js?v=20261022e"></script>
 <script>if (!((OP.session() || {}).role === 'admin' && /[?&]edit=/.test(location.search))) OP.requireClient(); /* 클라이언트만 접근 (컨설턴트는 의뢰 수정(?edit=)만): 비로그인 → 로그인, 파트너 → 메인 */</script>
 </head>
 <body>
@@ -876,12 +884,13 @@
 
 <aside class="side">
   <div class="scard">
-    <p class="sh" style="margin-bottom:12px">작성 진행 상황</p>
+    <!-- 진행 단계 (Figma 1683:16825): 단계 위치만큼 채워지는 막대 + 단계마다 무엇을 쓰는지 짧은 설명 (2026-10-22) -->
+    <div class="sphead"><p class="sh">진행 단계</p><p class="spsub" id="spSub">총 4단계 중 1단계 작성 중</p><div class="spbar" aria-hidden="true"><i id="spBar"></i></div></div>
     <ul class="steps" id="steps">
-      <li class="st on" data-go="1"><i class="n">1</i><div><b>기본 정보</b><span class="cnt"></span></div></li>
-      <li class="st" data-go="2"><i class="n">2</i><div><b>분석 상세</b><span class="cnt"></span></div></li>
-      <li class="st" data-go="3"><i class="n">3</i><div><b>시료 정보</b><span class="cnt"></span></div></li>
-      <li class="st" data-go="4"><i class="n">4</i><div><b>요구사항</b><span class="cnt"></span></div></li>
+      <li class="st on" data-go="1"><i class="n">1</i><div><b>의뢰 정보</b><span class="ds">의뢰명 · 연구 목적 · 공개 여부</span><span class="cnt"></span></div></li>
+      <li class="st" data-go="2"><i class="n">2</i><div><b>분석 내용</b><span class="ds">분석 유형 · 분석 목적 · 원하는 결과</span><span class="cnt"></span></div></li>
+      <li class="st" data-go="3"><i class="n">3</i><div><b>시료 정보</b><span class="ds">시료 종류 · 수량 · 분석 그룹</span><span class="cnt"></span></div></li>
+      <li class="st" data-go="4"><i class="n">4</i><div><b>일정 · 요구사항</b><span class="ds">희망 일정 · 예산 · 산출물</span><span class="cnt"></span></div></li>
     </ul>
     <div class="ptot" hidden>
       <div class="ptxt">필수 항목 <b id="pTotal">0</b>개 중 <b id="pDone" class="t">0</b>개 입력</div>
@@ -1178,6 +1187,10 @@
     $('#pTotal').textContent=T; $('#pDone').textContent=D;
     var pct=T?Math.round(D/T*100):0;
     $('#pBar').style.width=pct+'%'; $('#pPct').textContent=pct+'%';
+    // 진행 단계 막대: 지금 단계 위치만큼 (1단계 25% … 4단계 100%), 모든 단계 작성 완료면 문구 변경
+    var allDone=tabs.every(function(li){return li.classList.contains('done')});
+    $('#spBar').style.width=(cur/tabs.length*100)+'%';
+    $('#spSub').textContent=allDone?'모든 단계 작성 완료':'총 '+tabs.length+'단계 중 '+cur+'단계 작성 중';
   }
   var visited={1:true};
   function render(){
@@ -1187,9 +1200,9 @@
     next.textContent = cur===MAX ? (EDIT ? '수정 완료' : '분석 의뢰 제출') : '다음';
     $('#svcTitle').textContent = svcName()||'단백체 분석';
     var TITLES=[['의뢰 정보','분석 서비스를 고르고 의뢰 제목과 연구 목적을 작성해 주세요.'],
-                ['분석 상세','수행할 분석 유형과 세부 항목을 선택해 주세요.'],
+                ['분석 내용','수행할 분석 유형과 세부 항목을 선택해 주세요.'],
                 ['시료 정보','보내실 시료의 종류와 수량, 분석 그룹을 알려주세요.'],
-                ['요구사항','일정과 예산, 받고 싶은 산출물을 알려주세요. 마지막으로 입력 내용을 확인합니다.']];
+                ['일정 · 요구사항','일정과 예산, 받고 싶은 산출물을 알려주세요. 마지막으로 입력 내용을 확인합니다.']];
     $('#stepTitle').textContent=TITLES[cur-1][0];
     $('#stepNo').textContent=cur;
     $('#stepLead').textContent=TITLES[cur-1][1];
