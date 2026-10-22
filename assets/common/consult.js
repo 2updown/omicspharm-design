@@ -1,5 +1,5 @@
-/* 상담하기 → 상담내역 (2026-10-22 결정)
-   비회원은 상담하기(contact.html)에 문의 유형·이름·이메일·제목·내용만 쓰고, 메일로 받은 링크(consult-view.html?t=)에서 답변을 본다.
+/* Contact Us → 상담내역 (2026-10-22 결정)
+   비회원은 Contact Us(contact.html)에 문의 유형·이름·이메일·제목·내용만 쓰고, 메일로 받은 링크(consult-view.html?t=)에서 답변을 본다.
    추가 상담은 회원가입 후 (이름·이메일 자동 입력, 메일 링크로 들어왔으니 이메일 인증 생략). 첫 문의부터 한 대화로 이어짐.
    컨설턴트는 마이페이지 > 상담내역에서 답변 + 상담 기록(컨설턴트만 보임). 프로젝트 문의 챗봇·문의내역과는 별개.
    데모: localStorage op.consults = [{ id, at, type, svc, name, email, title, file, owner, token, linkAt, msgs:[{at, by:'user'|'admin', text}], note, noteAt }] */
@@ -48,7 +48,7 @@
     // 답변대기 = 마지막 메시지가 문의자, 답변완료 = 마지막 메시지가 컨설턴트 (실서비스의 '처리상태 대기/처리완료' 대신 자동)
     waiting: function (c) { return last(c).by !== 'admin'; },
     lastAt: function (c) { return last(c).at || c.at; },
-    // 상담하기 제출 (비회원이면 메일 링크 발급, 회원이면 내 상담내역에 바로)
+    // Contact Us 제출 (비회원이면 메일 링크 발급, 회원이면 내 상담내역에 바로)
     create: function (o) {
       var s = OP.session && OP.session(), c = { id: 'C-' + Date.now().toString(36).toUpperCase(), at: Date.now(), type: o.type, svc: o.svc || '', ref: o.ref || '', name: o.name, email: o.email.toLowerCase(), title: o.title,
         file: o.file || '', owner: s && s.email === o.email.toLowerCase() ? s.email : '', token: tok(), linkAt: Date.now(), msgs: [{ at: Date.now(), by: 'user', text: o.body, file: o.file || '' }], note: '' };

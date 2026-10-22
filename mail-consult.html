@@ -7,9 +7,9 @@
 <title>받은 메일 · 상담 · OmicsPharm</title>
 <!-- [데모] 상담 메일 미리보기. 실제 서비스에서는 이 내용이 문의자 메일함으로 감 (메일 템플릿 참고용)
      ?t=상담 링크 토큰 (consult.js) · &k=new(접수, 기본) | reply(답변 등록) | renew(새 링크) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261022k">
-<script src="assets/common/site.js?v=20261022k"></script>
-<script src="assets/common/consult.js?v=20261022k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261022l">
+<script src="assets/common/site.js?v=20261022l"></script>
+<script src="assets/common/consult.js?v=20261022l"></script>
 <style>
   body { background:#eef1f4; }
   .bar { display:flex; align-items:center; justify-content:space-between; gap:12px; max-width:680px; margin:24px auto 12px; padding:0 16px; font-size:13px; color:var(--gray-500, #737373); }
@@ -35,7 +35,7 @@
 <script>
 (function () {
   var P = new URLSearchParams(location.search), t = P.get('t'), k = P.get('k') || 'new', C = OP.consult, c = C.byToken(t), v = document.getElementById('view'), esc = C.esc;
-  if (!c) { v.innerHTML = '<div class="none">메일을 찾을 수 없습니다. <a href="contact.html">상담하기</a>에서 다시 문의해주세요.</div>'; return; }
+  if (!c) { v.innerHTML = '<div class="none">메일을 찾을 수 없습니다. <a href="contact.html">Contact Us</a>에서 다시 문의해주세요.</div>'; return; }
   var M = {
     new: ['[OmicsPharm] 상담이 접수되었습니다', '상담이 접수되었습니다', esc(c.name) + '님, 남겨주신 상담이 접수되었습니다.<br>OmicsPharm 컨설턴트가 확인 후 답변드리며, 아래 버튼에서 상담 내용과 답변을 볼 수 있습니다.'],
     reply: ['[OmicsPharm] 상담에 답변이 등록되었습니다', '답변이 등록되었습니다', esc(c.name) + '님, 남겨주신 상담에 OmicsPharm 컨설턴트의 답변이 등록되었습니다.<br>아래 버튼에서 답변을 확인해주세요.'],
@@ -43,7 +43,7 @@
   }[k] || null;
   var ts = C.ymdhm(k === 'reply' ? C.lastAt(c) : c.linkAt);
   v.innerHTML =
-    '<div class="bar"><span>데모 · 받은 메일 미리보기 (실제로는 문의자 메일함으로 발송)</span><a href="contact.html">상담하기로</a></div>' +
+    '<div class="bar"><span>데모 · 받은 메일 미리보기 (실제로는 문의자 메일함으로 발송)</span><a href="contact.html">Contact Us로</a></div>' +
     '<div class="head"><b>' + M[0] + '</b><span>보낸 사람</span>OmicsPharm &lt;no-reply@omicspharm.test&gt;<br><span>받는 사람</span>' + esc(c.email) + '<br><span>받은 시각</span>' + ts + '</div>' +
     '<div class="mail"><div class="card">' +
       '<img class="logo" src="assets/auth/logo-bg.svg" alt="OmicsPharm">' +

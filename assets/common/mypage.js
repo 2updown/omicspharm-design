@@ -15,7 +15,7 @@ if (!/[?&]ui=gray\b/.test(location.search) && !/mypage-ai\.html/.test(location.p
     ['dash', '대시보드', 'mypage.html'],
     ['quote', '견적관리', 'mypage-quote.html', ['partner'], 'prj'], // 분석파트너: 받은 견적 요청 → 견적서 작성·제출
     ['project', '프로젝트 관리', 'mypage-project.html', null, 'prj'], // 컨설턴트는 mypage-request.html (의뢰접수~완료 전 단계)
-    ['consult', '상담내역', 'mypage-consult.html'], // 상담하기(contact.html)로 들어온 상담. 첫 문의부터 한 대화로 (consult.js, 2026-10-22). 실서비스 메뉴명과 같음
+    ['consult', '상담내역', 'mypage-consult.html'], // Contact Us(contact.html)로 들어온 상담. 첫 문의부터 한 대화로 (consult.js, 2026-10-22). 실서비스 메뉴명과 같음
     ['inquiry', '문의내역', 'mypage-inquiry.html'],
     ['alarm', '알림', 'mypage-alarm.html'], // 알림은 묶지 않고 최상위에 (안 읽은 수가 항상 보이게)
     ['account', '내 정보 관리', 'mypage-account.html', null, 'me'],
