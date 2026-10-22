@@ -442,3 +442,18 @@ span.tbtn { cursor:default; }
 @media (max-width:960px) { .ui-white .ph-acts { display:none; } }
 .ui-white .card.box > :not(.card-head) { justify-content:flex-start; } /* 목록은 위에서부터 */
 .ui-white .card.box > :not(.card-head):has(> .mini-empty, > .empty, > p:only-child) { justify-content:center; } /* 빈 안내만 가운데 */
+
+/* [시안 C · 검토용, ?head=c] 상단 제목 줄 없앰 → 본문 맨 위에 메뉴 이름, 공통 버튼은 왼쪽 메뉴 위·아래 (2026-10-22) */
+.ui-headc .page-head { display:none; }
+.ui-headc .body { padding-top:48px; }
+.ui-headc .mtitle { margin:0 0 -8px; font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; }
+.ui-headc .card-head.dup { display:none; }
+.ui-headc .side { display:flex; flex-direction:column; gap:20px; }
+.ui-headc .side-cta { display:flex; align-items:center; justify-content:center; height:52px; border-radius:10px; background:var(--teal-600); color:#fff; font-size:16px; font-weight:600; }
+.ui-headc .side-cta:hover { background:var(--teal-700); }
+.ui-headc .side-ai { display:flex; align-items:center; gap:10px; width:100%; padding:14px 16px; border:1px solid #cdeee8; border-radius:12px; background:#f4fbfa; text-align:left; cursor:pointer; }
+.ui-headc .side-ai:hover { background:#e8f7f4; }
+.ui-headc .side-ai img { width:20px; height:20px; }
+.ui-headc .side-ai b { display:block; font-size:15px; font-weight:600; line-height:20px; color:var(--teal-700); }
+.ui-headc .side-ai em { font-style:normal; font-size:12px; color:var(--teal-700); opacity:.8; }
+.ui-headc .menu a[href="mypage-ai.html"] { display:none; } /* 메뉴 맨 아래 AI Agent 항목은 카드로 대신 */

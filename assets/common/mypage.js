@@ -6,6 +6,8 @@
 // 마이페이지 기본 디자인 = 화이트 + 카드 없음 (2026-10-21 확정). 예전 회색+카드 디자인은 ?ui=gray 로 볼 수 있게 보관 (git 태그 mypage-gray-20261021)
 // 모바일(≤960px)은 기존 모바일 구성(프로필 허브 + 가로 메뉴 탭) 그대로
 if (!/[?&]ui=gray\b/.test(location.search) && !/mypage-ai\.html/.test(location.pathname) && window.matchMedia('(min-width:961px)').matches) document.documentElement.classList.add('ui-white');
+// [시안 C · 검토용] 상단 '마이페이지' 제목 대신 메뉴 이름을 본문 제목으로, 공통 버튼은 왼쪽 메뉴 위(바로가기)·아래(AI Agent)로. ?head=c 일 때만 (2026-10-22, Figma에 먼저 반영)
+if (/[?&]head=c\b/.test(location.search) && document.documentElement.classList.contains('ui-white')) document.documentElement.classList.add('ui-headc');
 (function () {
   // [키, 이름, 주소, 보이는 유형(없으면 모두)]
   // admin = 컨설턴트(셀키): 당분간 분석파트너와 같은 화면 + 관리 메뉴 추가 (메뉴는 바뀌거나 통폐합될 수 있음)
@@ -212,12 +214,19 @@ if (!/[?&]ui=gray\b/.test(location.search) && !/mypage-ai\.html/.test(location.p
     var side = document.querySelector('[data-op-side]');
     // 화이트 시안: '마이페이지' 제목 오른쪽 = 역할별 바로가기 + AI Agent 입구 (이름·인증 상태는 GNB 프로필 드롭다운에서)
     var ph0 = document.querySelector('.ui-white .page-head .in');
-    if (ph0 && side && !ph0.querySelector('.ph-acts')) {
+    var HC = document.documentElement.classList.contains('ui-headc');
+    if (ph0 && side && !ph0.querySelector('.ph-acts') && !HC) {
       var main = s.role === 'client' ? '<a class="pbtn pri" href="omicspharm-register.html">프로젝트 의뢰하기</a>'
         : s.role === 'partner' ? (OP.partnerVerified() ? '<a class="pbtn pri" href="projects.html">프로젝트 찾기</a>' : '<a class="pbtn pri" href="mypage-verify.html">파트너 인증하기</a>')
         : (function () { var n = OP.flow ? OP.flow.requests().filter(function (r) { var x = OP.flow.state(r.id); return x.st === 'review' && !x.ok; }).length : 0; return '<a class="pbtn pri" href="mypage-request.html' + (n ? '?stage=' + encodeURIComponent('의뢰접수') : '') + '">' + (n ? '의뢰 접수 ' + n + '건 확인' : '프로젝트 관리') + '</a>'; })();
       ph0.insertAdjacentHTML('beforeend', '<div class="ph-acts"><button type="button" class="pbtn ai" data-ph-ai><img src="assets/common/ic-sparkle-fill.svg" alt="">AI Agent에게 물어보기<span class="beta">beta</span></button>' + main + '</div>');
       ph0.querySelector('[data-ph-ai]').addEventListener('click', function () { OP.openAI(); });
+    }
+    // 시안 C: 왼쪽 메뉴 맨 위 역할별 바로가기 (지금 제목 줄 오른쪽 버튼과 같은 내용)
+    function headC() {
+      return s.role === 'client' ? '<a class="side-cta" href="omicspharm-register.html">프로젝트 의뢰하기</a>'
+        : s.role === 'partner' ? (OP.partnerVerified() ? '<a class="side-cta" href="projects.html">프로젝트 찾기</a>' : '<a class="side-cta" href="mypage-verify.html">파트너 인증하기</a>')
+        : (function () { var n = OP.flow ? OP.flow.requests().filter(function (r) { var x = OP.flow.state(r.id); return x.st === 'review' && !x.ok; }).length : 0; return '<a class="side-cta" href="mypage-request.html' + (n ? '?stage=' + encodeURIComponent('의뢰접수') : '') + '">' + (n ? '의뢰 접수 ' + n + '건 확인' : '프로젝트 관리') + '</a>'; })();
     }
     if (side) {
       var n = D.unread();
@@ -257,7 +266,22 @@ if (!/[?&]ui=gray\b/.test(location.search) && !/mypage-ai\.html/.test(location.p
             // 메일 인증 전: '메일 미인증'만 (분석파트너 기관 인증은 메일 인증 다음 단계), 메일 인증 후: 분석파트너만 기관 인증 여부
             (!OP.mailVerified() && s.role !== 'admin' ? '<span class="op-vchip">메일 미인증</span>' : s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '') + '</span>' +
           '<b>' + esc(name) + ' 님</b><span>(' + esc(s.email) + ')</span>' + (org ? '<span>' + esc(org) + '</span>' : '') + '</div>' +
-        '<nav class="menu" aria-label="마이페이지 메뉴">' + html + '</nav>';
+        (HC ? headC() : '') + '<nav class="menu" aria-label="마이페이지 메뉴">' + html + '</nav>' + (HC ? '<button type="button" class="side-ai" data-ph-ai><img src="assets/common/ic-sparkle-fill.svg" alt=""><span><b>AI Agent에게 물어보기</b><em>beta</em></span></button>' : '');
+      if (HC) {
+        var lab = (MENU.filter(function (m) { return m[0] === key; })[0] || [])[1] || '마이페이지', mn = document.querySelector('.main');
+        if (mn && !mn.querySelector('.mtitle')) {
+          mn.insertAdjacentHTML('afterbegin', '<h1 class="mtitle">' + esc(lab) + '</h1>');
+          // 본문 첫 제목이 메뉴 이름과 같으면 겹치므로 숨김 (예: 상담내역)
+          // 첫 제목 글자만 겹치면 그 글자만 지우고 옆의 칩·버튼(인증 상태, 서비스 개수, [추가] 등)은 남김
+          setTimeout(function () {
+            var h = mn.querySelector('.card .card-head h3'), t = h && h.firstChild;
+            if (!t || t.nodeType !== 3 || t.nodeValue.trim() !== lab) return;
+            var head = h.closest('.card-head');
+            if (h.childNodes.length === 1 && head.children.length === 1) head.classList.add('dup'); else t.nodeValue = '';
+          }, 0);
+        }
+        var ai0 = side.querySelector('.side-ai'); if (ai0) ai0.addEventListener('click', function () { OP.openAI(); });
+      }
       if (!side.dataset.bound) {
         side.dataset.bound = 1;
         side.addEventListener('click', function (e) {
