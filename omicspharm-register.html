@@ -581,8 +581,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261022h">
-<script src="assets/common/site.js?v=20261022h"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261022i">
+<script src="assets/common/site.js?v=20261022i"></script>
 <script>if (!((OP.session() || {}).role === 'admin' && /[?&]edit=/.test(location.search))) OP.requireClient(); /* 클라이언트만 접근 (컨설턴트는 의뢰 수정(?edit=)만): 비로그인 → 로그인, 파트너 → 메인 */</script>
 </head>
 <body>
@@ -907,7 +907,8 @@
 
   <div class="scard">
     <!-- 임시저장 (2026-10-22): 저장과 불러오기를 한곳에. 불러오기는 마이페이지 > 프로젝트 관리 '임시저장'에서도 가능 -->
-    <div class="dbtns"><button class="sbtn save" id="saveBtn" type="button">임시저장</button><button class="sbtn ghost" id="openList" type="button">불러오기 <b id="draftCount">0</b></button></div>
+    <div class="draftrow"><span>임시 저장된 의뢰서</span><b id="draftCount">0건</b></div>
+    <div class="dbtns"><button class="sbtn save" id="saveBtn" type="button">임시저장</button><button class="sbtn ghost" id="openList" type="button">불러오기</button></div>
     <p class="savedat" id="savedAt" hidden></p>
   </div>
 
@@ -1577,7 +1578,7 @@
 
   async function refresh(){
     var list=await STORE.get();
-    $('#draftCount').textContent=list.length;
+    $('#draftCount').textContent=list.length+'건';
     var l=list.slice().sort(function(a,b){return b.at-a.at})[0];
     $('#savedAt').textContent = l ? '최근 저장 '+when(l.at) : '';
     $('#savedAt').hidden = !l;
