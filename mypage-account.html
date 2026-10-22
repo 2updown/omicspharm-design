@@ -8,11 +8,11 @@
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 기관 정보(클라이언트) / 비밀번호 변경 / 회원 탈퇴. 알림 설정은 없음 (기존 사이트에 없고 가입 때도 받지 않음).
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261021zq">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261021zq">
-<script src="assets/common/site.js?v=20261021zq"></script>
-<script src="assets/common/mypage.js?v=20261021zq"></script>
-<script src="assets/common/flow.js?v=20261021zq"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261022a">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261022a">
+<script src="assets/common/site.js?v=20261022a"></script>
+<script src="assets/common/mypage.js?v=20261022a"></script>
+<script src="assets/common/flow.js?v=20261022a"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -130,7 +130,7 @@
           <!-- 회원가입 '기본정보 입력'과 같은 항목·순서·이름 (가입 필수 = 여기서도 필수) -->
           <div class="field"><label class="flabel" for="name">이름<span class="req">*</span></label><div class="fbody"><input class="inp" id="name" placeholder="이름" autocomplete="name"></div></div>
           <div class="field"><label class="flabel" for="nick">닉네임<span class="req">*</span></label><div class="fbody"><input class="inp" id="nick" placeholder="닉네임"></div></div>
-          <div class="field"><label class="flabel" for="ph1">휴대폰 번호<span class="req">*</span></label><div class="fbody"><div id="phoneHost" class="phwrap"></div></div></div>
+          <div class="field"><label class="flabel" for="ph">휴대폰 번호<span class="req">*</span></label><div class="fbody"><div id="phoneHost" class="phwrap"></div></div></div>
           <div class="field"><label class="flabel" for="org">소속(기관·회사)<span class="req">*</span></label><div class="fbody"><input class="inp" id="org" placeholder="소속 검색 또는 입력"></div></div>
           <div class="field"><label class="flabel" for="dept">부서<span class="req">*</span></label><div class="fbody"><input class="inp" id="dept" placeholder="부서 검색 또는 입력"></div></div>
           <!-- 국가: 회원가입과 같은 선택지 (기존 사이트도 가입 후 변경 가능) -->

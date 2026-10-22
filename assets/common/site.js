@@ -237,35 +237,38 @@
     });
   };
 
-  /* ── 휴대폰 번호: 국가번호 드롭다운 + 3칸 (회원가입·내 정보 관리·의뢰 등록 공통, Figma 1222:69206) ──
-     저장 형식 '+82 010-1234-5678' */
+  /* ── 휴대폰 번호: 국가번호 드롭다운 + 입력란 한 칸, 하이픈 자동 (회원가입·아이디 찾기·내 정보 관리·의뢰 등록 공통)
+     2026-10-22 외주사 미팅: 3칸 → 한 칸으로 확정. 저장 형식 '+82 010-1234-5678' */
   var CC = ['+82', '+81']; // 한국(기본값)·일본. 다른 국가는 출시 국가가 늘면 추가
-  OP.PH_HINT = { '+82': '010', '+81': '090' }; // 첫 칸 안내 문구 (일본 휴대폰도 3-4-4자리: 090·080·070)
+  OP.PH_HINT = { '+82': '010-0000-0000', '+81': '090-0000-0000' }; // 국가번호에 따라 안내 문구 (일본 휴대폰도 3-4-4자리: 090·080·070)
+  // 숫자만 남기고 3-4-4 (10자리면 3-3-4)로 하이픈. 최대 11자리
+  OP.phoneFmt = function (v) {
+    var d = String(v || '').replace(/\D/g, '').slice(0, 11);
+    return d.length < 4 ? d : d.length < 8 ? d.slice(0, 3) + '-' + d.slice(3) : d.length < 11 ? d.slice(0, 3) + '-' + d.slice(3, 6) + '-' + d.slice(6) : d.slice(0, 3) + '-' + d.slice(3, 7) + '-' + d.slice(7);
+  };
+  OP.phoneOk = function (v) { return /^\d{3}-\d{3,4}-\d{4}$/.test(OP.phoneFmt(v)); };
+  // 입력하는 동안 하이픈 자동 (커서는 맨 끝 기준)
+  OP.phoneInput = function (input) { input.addEventListener('input', function () { input.value = OP.phoneFmt(input.value); }); };
   // 같은 휴대폰 번호로 가입한 다른 계정이 있는지 (국가번호 포함 숫자 비교). except = 본인 이메일
   OP.phoneTaken = function (tel, except) {
     var d = function (v) { return String(v || '').replace(/\D/g, ''); }, t = d(tel), A = OP.accounts();
     return !!t && Object.keys(A).some(function (k) { return k !== except && d(A[k].phone) === t; });
   };
-  OP.phoneParse = function (v) { var m = String(v || '').match(/^(\+\d+)\s*(\d*)-?(\d*)-?(\d*)$/); return m ? { cc: m[1], p: [m[2], m[3], m[4]] } : { cc: '+82', p: ['', '', ''] }; };
-  // host 안에 칸을 그린다. { value, disabled, id } → { get(), valid(), el }
+  OP.phoneParse = function (v) { var m = String(v || '').match(/^(\+\d+)\s*(.*)$/); return m ? { cc: m[1], n: OP.phoneFmt(m[2]) } : { cc: '+82', n: '' }; };
+  // host 안에 칸을 그린다. { value, disabled, id } → { get(), valid(), el, inputs }
   OP.phoneField = function (host, o) {
     o = o || {}; var v = OP.phoneParse(o.value), id = o.id || 'ph', dis = o.disabled ? ' disabled' : '';
     var cc = CC.indexOf(v.cc) < 0 ? CC.concat([v.cc]) : CC;
     host.innerHTML = '<div class="op-phone">' +
       '<select id="' + id + 'Cc" aria-label="국가번호"' + dis + '>' + cc.map(function (c) { return '<option' + (c === v.cc ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select>' +
-      [[3, OP.PH_HINT[v.cc] || '010', '앞자리'], [4, '0000', '가운데 자리'], [4, '0000', '끝자리']].map(function (f, i) {
-        return (i ? '<span aria-hidden="true">-</span>' : '') + '<input id="' + id + (i + 1) + '" inputmode="numeric" maxlength="' + f[0] + '" placeholder="' + f[1] + '" value="' + (v.p[i] || '') + '" aria-label="휴대폰 번호 ' + f[2] + '"' + dis + '>';
-      }).join('') + '</div>';
-    var ins = [].slice.call(host.querySelectorAll('input'));
-    host.querySelector('select').addEventListener('change', function () { ins[0].placeholder = OP.PH_HINT[this.value] || '010'; });
-    ins.forEach(function (i, k) {
-      i.addEventListener('input', function () { i.value = i.value.replace(/\D/g, ''); if (i.value.length >= i.maxLength && ins[k + 1]) ins[k + 1].focus(); });
-      i.addEventListener('keydown', function (e) { if (e.key === 'Backspace' && !i.value && ins[k - 1]) ins[k - 1].focus(); });
-    });
+      '<input id="' + id + '" type="tel" inputmode="numeric" maxlength="13" placeholder="' + (OP.PH_HINT[v.cc] || OP.PH_HINT['+82']) + '" value="' + v.n + '" aria-label="휴대폰 번호" autocomplete="tel-national"' + dis + '></div>';
+    var inp = host.querySelector('input'), sel = host.querySelector('select');
+    sel.addEventListener('change', function () { inp.placeholder = OP.PH_HINT[this.value] || OP.PH_HINT['+82']; });
+    OP.phoneInput(inp);
     return {
-      el: host.querySelector('.op-phone'), inputs: ins,
-      get: function () { var p = ins.map(function (i) { return i.value; }); return p.join('') ? host.querySelector('select').value + ' ' + p.join('-') : ''; },
-      valid: function () { return /^\d{2,3}$/.test(ins[0].value) && /^\d{3,4}$/.test(ins[1].value) && /^\d{4}$/.test(ins[2].value); }
+      el: host.querySelector('.op-phone'), inputs: [inp],
+      get: function () { return inp.value ? sel.value + ' ' + OP.phoneFmt(inp.value) : ''; },
+      valid: function () { return OP.phoneOk(inp.value); }
     };
   };
 
