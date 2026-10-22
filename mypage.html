@@ -7,12 +7,12 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261022c">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261022c">
-<script src="assets/common/site.js?v=20261022c"></script>
-<script src="assets/common/consult.js?v=20261022c"></script>
-<script src="assets/common/mypage.js?v=20261022c"></script>
-<script src="assets/common/flow.js?v=20261022c"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261022d">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261022d">
+<script src="assets/common/site.js?v=20261022d"></script>
+<script src="assets/common/consult.js?v=20261022d"></script>
+<script src="assets/common/mypage.js?v=20261022d"></script>
+<script src="assets/common/flow.js?v=20261022d"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -57,6 +57,8 @@
   .plist a:hover h4 { color:var(--teal-700); text-decoration:underline; text-underline-offset:3px; }
   .plist .badges { display:flex; gap:6px; flex:none; }
   .plist h4 { flex:1; min-width:0; font-size:16px; font-weight:600; line-height:22px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .plist .nx { flex:none; font-size:13px; font-weight:600; line-height:18px; color:var(--gray-600); }
+  .plist .nx.hot { color:var(--orange-600, #ea580c); }
   .plist .dt { flex:none; font-size:13px; line-height:18px; color:var(--gray-500); }
 
   /* 알림·문의 짧은 목록 */
@@ -81,7 +83,7 @@
     .flow span { font-size:13px; }
     .plist a { flex-wrap:wrap; gap:6px 12px; }
     .plist h4 { flex-basis:100%; order:2; white-space:normal; }
-    .plist .dt { margin-left:auto; }
+    .plist .dt, .plist .nx { margin-left:auto; }
   }
 </style>
 </head>
@@ -117,7 +119,7 @@
         <div class="mini" id="alarms"></div>
       </section>
       <section class="card box">
-        <div class="card-head"><h3>최근 문의</h3><a class="more" href="mypage-inquiry.html">전체 보기</a></div>
+        <div class="card-head"><h3>최근 문의</h3><a class="more" href="mypage-consult.html">전체 보기</a></div>
         <div class="mini" id="inqs"></div>
       </section>
     </div>
@@ -190,21 +192,43 @@
     ? [['견적', 'red', pick(cells, ['의뢰접수', '견적 확인'])], ['진행', 'teal', pick(cells, ['계약', '분석 진행'])], ['완료', 'blue', pick(cells, ['결과 수령'])]]
     : [['견적', 'red', pick(cells, ['견적 작성', '견적 제출'])], ['프로젝트 진행', 'teal', pick(cells, ['계약', '분석'])], ['보고서', 'gray', pick(cells, ['보고서 등록', '보고서 검토', '보고서 승인'])], ['완료', 'blue', pick(cells, ['완료'])]]);
 
-  if (!client && PP.length) {
-    $('#plist').innerHTML = '<div class="plist">' + PP.slice(0, 3).map(function (p) {
-      var ps = admin ? p.stage : D.pStage(p);
-      return '<a href="mypage-project.html?id=' + p.id + '"><span class="badges"><span class="badge tag">' + esc(D.svcKo(p.svc)) + '</span><span class="badge ' + (ps === '완료' ? 'done' : 'state') + '">' + ps + '</span>' + (!admin && D.pWaiting(p) ? '<span class="badge wait">확인 대기</span>' : '') + '</span>' +
-        '<h4>' + esc(p.title) + '</h4><span class="dt">' + esc(p.client) + '</span></a>';
-    }).join('') + '</div>';
-  } else
-  $('#plist').innerHTML = client && P.length
-    ? '<div class="plist">' + P.slice(0, 3).map(function (p) {
-        var t = F.clientStage(p.id);
-        return '<a href="mypage-project.html?id=' + encodeURIComponent(p.id) + (t === '견적 확인' ? '&tab=quote' : '') + '"><span class="badges"><span class="badge tag">' + esc(p.svc) + '</span><span class="badge ' + (t === '계약' ? 'ok' : t === '견적 확인' ? 'wait' : 'state') + '">' + t + '</span></span>' +
-          '<h4>' + esc(p.title) + '</h4><span class="dt">' + D.ymd(p.at) + '</span></a>';
+  // 최근 프로젝트 (2026-10-22): 내가 처리할 게 있는 프로젝트를 위로 + 오른쪽에 다음 할 일. 할 게 없으면 최근 순. 제목은 그대로
+  // 항목: { href, svc, st, stCls, title, sub, next, urgent, at }
+  var IT = [];
+  if (client) {
+    IT = P.map(function (p) {
+      var x = F.state(p.id), t = F.clientStage(p.id), rep = (x.rep || []).length;
+      var nx = t === '견적 확인' ? '최종 견적 확인 필요' : rep && !x.fin ? '결과보고서 확인 필요' : x.fin && !x.rate ? '만족도 평가 남기기' : '';
+      return { href: 'mypage-project.html?id=' + encodeURIComponent(p.id) + (t === '견적 확인' ? '&tab=quote' : rep ? '&tab=report' : ''), svc: p.svc, st: t, stCls: t === '계약' ? 'ok' : t === '견적 확인' ? 'wait' : 'state', title: p.title, sub: D.ymd(p.at), next: nx, urgent: !!nx, at: p.at };
+    });
+  } else if (admin) {
+    // 컨설턴트: 프로젝트 관리 목록과 같은 다음 할 일 (mypage-request.html)
+    IT = F.requests().map(function (r) {
+      var x = F.state(r.id), sub = Object.keys(x.P || {}).filter(function (k) { return x.P[k].status === 'sub'; }).length, rw = (x.raw || []).some(function (v) { return !v.sent; });
+      if (x.cancel) return null;
+      var nx = x.st === 'review' ? (x.ok ? '견적 요청 가능' : '의뢰 승인 필요') : x.st === 'quoting' ? (sub ? '견적 ' + sub + '건 도착 · 전달 가능' : '') : x.st === 'matched' && !x.ct ? '계약서 등록 필요' : rw ? 'AI 보고서 초안 검토 필요' : '';
+      var urgent = (x.st === 'review' && !x.ok) || (x.st === 'matched' && !x.ct) || rw || (x.st === 'quoting' && sub > 0);
+      return { href: 'mypage-request.html?id=' + encodeURIComponent(r.id), svc: r.svc, st: F.adminStage(r.id), stCls: 'state', title: r.title, sub: r.org || '-', next: nx, urgent: urgent, at: r.at };
+    }).filter(Boolean);
+  } else {
+    // 분석파트너: 견적 작성이 필요한 요청 + 계약된 프로젝트 (분석 중이면 결과 등록)
+    var MY = me.s.email;
+    IT = (OP.canQuote() ? F.inbox(MY) : []).map(function (o) {
+      var t = F.pst(o.s, MY); if (!/작성 대기|임시저장|수정 요청/.test(t)) return null;
+      return { href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, st: '견적 요청', stCls: 'wait', title: o.r.title, sub: o.r.org || '-', next: t === '수정 요청' ? '견적 수정 요청' : '견적 작성 필요', urgent: true, at: o.x.at };
+    }).filter(Boolean).concat(PP.map(function (p) {
+      var ps = D.pStage(p), nx = ps === '분석' && !(p.flow && (F.state(p.id).raw || []).length) ? '결과 등록 필요' : '';
+      return { href: 'mypage-project.html?id=' + encodeURIComponent(p.id), svc: D.svcKo(p.svc), st: ps, stCls: ps === '완료' ? 'done' : 'state', title: p.title, sub: p.client, next: nx, urgent: !!nx, at: p.at };
+    }));
+  }
+  IT.sort(function (a, b) { return (b.urgent - a.urgent) || (b.at - a.at); });
+  $('#plist').innerHTML = IT.length
+    ? '<div class="plist">' + IT.slice(0, 3).map(function (o) {
+        return '<a href="' + o.href + '"><span class="badges"><span class="badge tag">' + esc(o.svc) + '</span><span class="badge ' + o.stCls + '">' + esc(o.st) + '</span></span>' +
+          '<h4>' + esc(o.title) + '</h4>' + (o.next ? '<span class="nx' + (o.urgent ? ' hot' : '') + '">' + esc(o.next) + '</span>' : '<span class="dt">' + esc(o.sub) + '</span>') + '</a>';
       }).join('') + '</div>'
     : '<div class="empty"><b>' + (client ? '의뢰한 프로젝트가 없습니다' : '진행 중인 프로젝트가 없습니다') + '</b>' +
-      '<p>' + (client ? '분석 의뢰를 등록하면 분석파트너들의 견적을 비교해 받아볼 수 있습니다.' : !OP.partnerVerified() && OP.isPartner() ? '인증된 분석파트너만 프로젝트 매칭·계약이 가능합니다. OmicsPharm이 기관 정보 및 사업자등록증을 확인한 뒤 인증해 드립니다.' : 'OmicsPharm이 분석 의뢰에 맞는 파트너로 선정해 견적을 요청하면 여기에서 확인할 수 있습니다.') + '</p>' +
+      '<p>' + (client ? '분석 의뢰를 등록하면 OmicsPharm이 분석파트너 견적을 받아 정리해 드립니다.' : admin ? '접수된 의뢰가 없습니다.' : !OP.partnerVerified() && OP.isPartner() ? '인증된 분석파트너만 프로젝트 매칭·계약이 가능합니다. OmicsPharm이 기관 정보 및 사업자등록증을 확인한 뒤 인증해 드립니다.' : 'OmicsPharm이 분석 의뢰에 맞는 파트너로 선정해 견적을 요청하면 여기에서 확인할 수 있습니다.') + '</p>' +
       (client ? '<a class="btn primary lg" href="omicspharm-register.html" data-client-only>프로젝트 의뢰하기</a>' : '') + '</div>';
 
   var A = D.alarms().slice(0, 4);
@@ -213,11 +237,13 @@
   }).join('') || '<p class="mini-empty">새 알림이 없습니다.</p>';
   $('#alarms').addEventListener('click', function (e) { var a = e.target.closest('[data-id]'); if (a) D.markRead([a.dataset.id]); });
 
-  var Q = D.inquiries().slice(0, 4);
-  $('#inqs').innerHTML = Q.map(function (q) {
-    return '<a href="mypage-inquiry.html?id=' + q.id + '">' + (q.answer ? '<span class="badge done">답변완료</span>' : '<span class="badge wait">답변대기</span>') +
-      '<span class="tx"><span class="t">' + esc(q.title) + '</span><span class="d">' + esc(q.type) + ' · ' + D.ymd(q.at) + '</span></span></a>';
-  }).join('') || '<p class="mini-empty">문의 내역이 없습니다.</p>';
+  // 최근 문의 = 상담내역 (consult.js, 2026-10-22). 챗봇 문의는 대시보드에 보이지 않음. 컨설턴트는 답변대기 먼저
+  var CS = OP.consult ? (admin ? OP.consult.all() : OP.consult.mine()) : [];
+  CS.sort(function (a, b) { return (admin ? OP.consult.waiting(b) - OP.consult.waiting(a) : 0) || (OP.consult.lastAt(b) - OP.consult.lastAt(a)); });
+  $('#inqs').innerHTML = CS.slice(0, 4).map(function (c) {
+    return '<a href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">' + (OP.consult.waiting(c) ? '<span class="badge wait">답변대기</span>' : '<span class="badge done">답변완료</span>') +
+      '<span class="tx"><span class="t">' + esc(c.title) + '</span><span class="d">' + (admin ? esc(c.name) + ' · ' : '') + esc(c.type) + ' · ' + D.ymd(OP.consult.lastAt(c)) + '</span></span></a>';
+  }).join('') || '<p class="mini-empty">상담 내역이 없습니다.</p>';
 })();
 </script>
 </body>
