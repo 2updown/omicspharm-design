@@ -581,8 +581,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261022j">
-<script src="assets/common/site.js?v=20261022j"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261022k">
+<script src="assets/common/site.js?v=20261022k"></script>
 <script>if (!((OP.session() || {}).role === 'admin' && /[?&]edit=/.test(location.search))) OP.requireClient(); /* 클라이언트만 접근 (컨설턴트는 의뢰 수정(?edit=)만): 비로그인 → 로그인, 파트너 → 메인 */</script>
 </head>
 <body>
@@ -1580,7 +1580,7 @@
     var list=await STORE.get();
     $('#draftCount').textContent=list.length+'건';
     var l=list.slice().sort(function(a,b){return b.at-a.at})[0];
-    $('#savedAt').textContent = l ? '최근 저장 '+when(l.at) : '';
+    $('#savedAt').textContent = l ? '최근 수정 '+when(l.at) : '';
     $('#savedAt').hidden = !l;
   }
 
