@@ -524,6 +524,12 @@
   .draftrow b{font-size:16px;font-weight:600}
   .sbtn.ghost{height:48px;padding:0 16px;border:1px solid var(--n300);border-radius:8px;font-size:16px;font-weight:500;line-height:22px;color:var(--n500)}
   .sbtn.ghost:hover{background:var(--n100)}
+  .dbtns{display:flex;gap:8px}
+  .dbtns .sbtn{flex:1;justify-content:center;height:48px;margin:0}
+  .sbtn.save{padding:0 16px;border:1px solid var(--teal);border-radius:8px;background:#fff;font-size:16px;font-weight:500;line-height:22px;color:var(--teal)}
+  .sbtn.save:hover{background:#f0faf8}
+  .sbtn.ghost b{margin-left:4px;font-weight:600;color:var(--teal)}
+  .scard .savedat{margin:-12px 0 0;font-size:13px;line-height:18px;color:var(--n500);text-align:center}
 
   /* 모달 (Figma modal 1201:62178 · 1181:56862) */
   .modal{background:rgba(0,0,0,.5)} /* 회원가입 약관 모달과 같은 농도 */
@@ -575,8 +581,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261022g">
-<script src="assets/common/site.js?v=20261022g"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261022h">
+<script src="assets/common/site.js?v=20261022h"></script>
 <script>if (!((OP.session() || {}).role === 'admin' && /[?&]edit=/.test(location.search))) OP.requireClient(); /* 클라이언트만 접근 (컨설턴트는 의뢰 수정(?edit=)만): 비로그인 → 로그인, 파트너 → 메인 */</script>
 </head>
 <body>
@@ -591,7 +597,7 @@
     <div class="crumb">
       <button type="button" class="back"><img src="assets/detail/ic-caret-left.svg" alt="">목록으로 돌아가기</button>
       <h1 class="ptitle">분석 의뢰 등록</h1>
-      <button type="button" class="tb" id="saveBtn">임시저장</button>
+      <span aria-hidden="true"></span><!-- 임시저장 버튼은 오른쪽 카드로 이동 (2026-10-22, 스크롤해도 보이게) -->
     </div>
     <!-- 단계 안내·저장 시각: 스크립트가 갱신하지만 Figma 화면에는 없어 숨김 -->
     <div class="sr-keep" hidden><span id="savedLine">임시저장 전</span><b id="stepNo">1</b><span id="stepTitle">기본 정보</span><span id="stepLead"></span></div>
@@ -900,9 +906,9 @@
   </div>
 
   <div class="scard">
-    <div class="draftrow"><span>임시 저장된 의뢰서</span><b id="draftCount">0건</b></div>
+    <!-- 임시저장 (2026-10-22): 저장과 불러오기를 한곳에. 불러오기는 마이페이지 > 프로젝트 관리 '임시저장'에서도 가능 -->
+    <div class="dbtns"><button class="sbtn save" id="saveBtn" type="button">임시저장</button><button class="sbtn ghost" id="openList" type="button">불러오기 <b id="draftCount">0</b></button></div>
     <p class="savedat" id="savedAt" hidden></p>
-    <button class="sbtn ghost" id="openList" type="button">불러오기</button>
   </div>
 
 </aside>
@@ -1571,9 +1577,10 @@
 
   async function refresh(){
     var list=await STORE.get();
-    $('#draftCount').textContent=list.length+'건';
+    $('#draftCount').textContent=list.length;
     var l=list.slice().sort(function(a,b){return b.at-a.at})[0];
-    $('#savedAt').textContent = l ? '최근 저장 · '+l.title+' ('+when(l.at)+')' : '작성 중인 의뢰서를 임시저장하면 여기서 다시 불러올 수 있습니다.';
+    $('#savedAt').textContent = l ? '최근 저장 '+when(l.at) : '';
+    $('#savedAt').hidden = !l;
   }
 
   markPhone(); drawSmp();
