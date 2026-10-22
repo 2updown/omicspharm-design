@@ -224,12 +224,6 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       ph0.insertAdjacentHTML('beforeend', '<div class="ph-acts"><button type="button" class="pbtn ai" data-ph-ai><img src="assets/common/ic-sparkle-fill.svg" alt="">AI Agent에게 물어보기<span class="beta">beta</span></button>' + main + '</div>');
       ph0.querySelector('[data-ph-ai]').addEventListener('click', function () { OP.openAI(); });
     }
-    // 시안 C: 왼쪽 메뉴 맨 위 역할별 바로가기 (지금 제목 줄 오른쪽 버튼과 같은 내용)
-    function headC() {
-      return s.role === 'client' ? '<a class="side-cta" href="omicspharm-register.html">프로젝트 의뢰하기</a>'
-        : s.role === 'partner' ? (OP.partnerVerified() ? '<a class="side-cta" href="projects.html">프로젝트 찾기</a>' : '<a class="side-cta" href="mypage-verify.html">파트너 인증하기</a>')
-        : (function () { var n = OP.flow ? OP.flow.requests().filter(function (r) { var x = OP.flow.state(r.id); return x.st === 'review' && !x.ok; }).length : 0; return '<a class="side-cta" href="mypage-request.html' + (n ? '?stage=' + encodeURIComponent('의뢰접수') : '') + '">' + (n ? '의뢰 접수 ' + n + '건 확인' : '프로젝트 관리') + '</a>'; })();
-    }
     if (side) {
       var n = D.unread();
       // 새 소식 'N' 배지 (Figma badge_number new 605:41276): 안 읽은 알림이 가리키는 메뉴 옆에 표시. 알림은 안 읽은 게 하나라도 있으면
@@ -268,7 +262,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
             // 메일 인증 전: '메일 미인증'만 (분석파트너 기관 인증은 메일 인증 다음 단계), 메일 인증 후: 분석파트너만 기관 인증 여부
             (!OP.mailVerified() && s.role !== 'admin' ? '<span class="op-vchip">메일 미인증</span>' : s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '') + '</span>' +
           '<b>' + esc(name) + ' 님</b><span>(' + esc(s.email) + ')</span>' + (org ? '<span>' + esc(org) + '</span>' : '') + '</div>' +
-        '<nav class="menu" aria-label="마이페이지 메뉴">' + html + '</nav>' + (HC ? '<button type="button" class="side-ai" data-ph-ai><img src="assets/common/ic-sparkle-fill.svg" alt=""><span><b>AI Agent에게 물어보기</b><em>beta</em></span></button>' + headC() : ''); // 메뉴 → AI Agent → 역할별 바로가기 (2026-10-22)
+        '<nav class="menu" aria-label="마이페이지 메뉴">' + html + '</nav>' + (HC ? '<button type="button" class="side-ai" data-ph-ai><img src="assets/common/ic-sparkle-fill.svg" alt=""><span><b>AI Agent에게 물어보기</b><em>beta</em></span></button>' : ''); // 메뉴 → AI Agent (역할별 바로가기 버튼은 2026-10-23 뺌 — 클라이언트만 필요해서)
       if (HC) {
         // 본문 맨 위에 지금 메뉴 이름을 큰 제목으로 (간격은 조정 예정)
         var lab = (MENU.filter(function (m) { return m[0] === key; })[0] || [])[1] || '마이페이지', mn = document.querySelector('.main');

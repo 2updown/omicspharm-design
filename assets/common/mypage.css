@@ -452,11 +452,10 @@ span.tbtn { cursor:default; }
 .ui-headc .card-head .more:hover { filter:brightness(.6); }
 .ui-headc .card.bare .card-head, .ui-headc .card.box .card-head { align-items:center; }
 .ui-headc .card-head.dup { display:none; }
+.ui-headc .main:not(:has(.card.box)) > .mtitle { margin-bottom:-48px; } /* 대시보드 외 화면(섹션 간격 64): 제목–첫 내용 16 */
 .ui-headc .mtitle { display:flex; align-items:center; gap:10px; }
 .ui-headc .mtitle .op-vchip, .ui-headc .mtitle .cnt { font-size:14px; font-weight:600; line-height:20px; letter-spacing:0; }
 .ui-headc .side { display:flex; flex-direction:column; gap:20px; }
-.ui-headc .side-cta { display:flex; align-items:center; justify-content:center; height:52px; border-radius:10px; background:var(--teal-600); color:#fff; font-size:16px; font-weight:600; }
-.ui-headc .side-cta:hover { background:var(--teal-700); }
 .ui-headc .side-ai { display:flex; align-items:center; gap:10px; width:100%; padding:14px 16px; border:1px solid #cdeee8; border-radius:12px; background:#f4fbfa; text-align:left; cursor:pointer; }
 .ui-headc .side-ai:hover { background:#e8f7f4; }
 .ui-headc .side-ai img { width:20px; height:20px; }
