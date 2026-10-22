@@ -266,7 +266,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       if (HC) {
         // 본문 맨 위에 지금 메뉴 이름을 큰 제목으로 (간격은 조정 예정)
         var lab = (MENU.filter(function (m) { return m[0] === key; })[0] || [])[1] || '마이페이지', mn = document.querySelector('.main');
-        if (mn && !mn.querySelector('.mtitle')) {
+        if (mn && !mn.querySelector('.mtitle') && key !== 'dash') { // 대시보드는 제목 없이 (2026-10-23)
           mn.insertAdjacentHTML('afterbegin', '<h1 class="mtitle">' + esc(lab) + '</h1>');
           // 첫 제목 글자만 겹치면 그 글자만 지우고 옆의 칩·버튼은 남김 (예: 상담내역)
           setTimeout(function () {
