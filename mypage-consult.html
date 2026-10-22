@@ -9,13 +9,13 @@
      컨설턴트: 실서비스 상담내역(목록: 처리상태·기간·키워드 / 번호·제목·성함·소속·처리상태·등록일, 상세: 문의 정보 + 처리내용) 기준.
        처리상태는 마지막 메시지로 자동(답변대기/답변완료), 처리내용 → '상담 기록'(컨설턴트만 보임), 답변은 대화로 문의자에게 보이고 메일로도 알림
      회원(클라이언트·분석파트너): 내 상담 목록 → 대화 + 이어서 작성. 프로젝트 문의 챗봇(문의내역)과는 별개 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261022l">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261022l">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261022l">
-<script src="assets/common/site.js?v=20261022l"></script>
-<script src="assets/common/consult.js?v=20261022l"></script>
-<script src="assets/common/mypage.js?v=20261022l"></script>
-<script src="assets/common/flow.js?v=20261022l"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261022m">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261022m">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261022m">
+<script src="assets/common/site.js?v=20261022m"></script>
+<script src="assets/common/consult.js?v=20261022m"></script>
+<script src="assets/common/mypage.js?v=20261022m"></script>
+<script src="assets/common/flow.js?v=20261022m"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
   .cs-list { border-top:2px solid #000; }
@@ -35,6 +35,8 @@
   .note label span { margin-left:6px; font-size:12px; font-weight:400; color:var(--gray-500); }
   .note textarea { width:100%; min-height:88px; padding:10px 14px; border:1px solid var(--gray-300); border-radius:8px; font:inherit; font-size:14px; line-height:1.6; resize:vertical; background:#fff; }
   .note .row { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; color:var(--gray-500); }
+  .cs-ttl { width:100%; height:44px; padding:0 16px; border:1px solid var(--gray-300); border-radius:12px; font:inherit; font-size:15px; }
+  .cs-ttl:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
   .lead { font-size:14px; line-height:20px; color:var(--gray-500); }
   @media (max-width:640px) {
     .cs-row { flex-wrap:wrap; gap:6px 10px; padding:14px 4px; }
@@ -61,11 +63,44 @@
 (function () {
   var me = OP.mypage('consult'); if (!me) return;
   var C = OP.consult, esc = C.esc, $ = function (s) { return document.querySelector(s); };
-  var adm = me.s.role === 'admin', id = new URLSearchParams(location.search).get('id');
+  var Q = new URLSearchParams(location.search), adm = me.s.role === 'admin', id = Q.get('id'), pid = Q.get('project');
   var badge = function (c) { return C.waiting(c) ? '<span class="badge wait">답변대기</span>' : '<span class="badge done">답변완료</span>'; };
   var src = function () { return adm ? C.all() : C.mine(); };
   if (!adm) C.claim(me.s.email); // 같은 이메일로 남긴 상담은 이 계정에 붙임
-  if (id) detail(id); else (adm ? adminList : memberList)();
+  // 프로젝트 문의 (?project=): 마이페이지 프로젝트 상세 / 프로젝트 찾기 상세의 [문의하기]에서 옴
+  var projOf = function (rid) {
+    var r = OP.flow && OP.flow.req(rid); if (r) return { id: rid, title: r.title, svc: r.svc, flow: true };
+    var p = OP.my.partnerProjects().filter(function (x) { return x.id === rid; })[0]; // 계약 이후 예시 프로젝트 (분석파트너)
+    return p ? { id: rid, title: p.title, svc: OP.my.svcKo(p.svc), flow: false } : null;
+  };
+  var projHref = function (rid) { var P = projOf(rid); if (!P) return ''; if (adm) return P.flow ? 'mypage-request.html?id=' + encodeURIComponent(rid) : 'mypage-project.html?id=' + encodeURIComponent(rid);
+    var s = P.flow ? OP.flow.state(rid) : null; return me.s.role === 'partner' && s && s.st !== 'matched' ? 'mypage-quote.html?rid=' + encodeURIComponent(rid) : 'mypage-project.html?id=' + encodeURIComponent(rid); };
+  if (pid && !adm) {
+    var P0 = projOf(pid), mine0 = C.byProject(pid, me.s.email);
+    if (mine0) { history.replaceState(null, '', 'mypage-consult.html?id=' + encodeURIComponent(mine0.id)); detail(mine0.id); }
+    else if (P0 && (!P0.flow || C.participant(pid, me.s.email))) compose(P0);
+    else location.replace('contact.html?type=project&rid=' + encodeURIComponent(pid) + (P0 ? '&ref=' + encodeURIComponent(P0.title) : ''));
+  } else if (id) detail(id); else (adm ? adminList : memberList)();
+
+  // 프로젝트 문의 첫 작성: 문의 유형 '의뢰 프로젝트' 고정, 제목 기본값 '[프로젝트명] 관련 문의드립니다'
+  function compose(P) {
+    var acc = OP.account(me.s.email) || {};
+    $('#card').innerHTML =
+      '<div class="mg-head"><a href="javascript:history.back()" aria-label="뒤로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>프로젝트 문의</h3></div>' +
+      '<div class="det"><dl class="cs-info"><div class="wide"><dt>관련 프로젝트</dt><dd><a href="' + projHref(P.id) + '" style="text-decoration:underline">' + esc(P.title) + '</a> <span style="color:var(--gray-500)">(' + esc(P.svc) + ' · ' + esc(P.id) + ')</span></dd></div>' +
+        '<div class="wide"><dt>문의 유형</dt><dd>의뢰 프로젝트</dd></div></dl>' +
+        '<form class="cs-compose" id="first" novalidate><label class="sr-only" for="ttl">제목</label><input id="ttl" class="cs-ttl" value="' + esc('[' + P.title + '] 관련 문의드립니다') + '">' +
+          '<label class="sr-only" for="msg">내용</label><textarea id="msg" placeholder="이 프로젝트에 대해 문의할 내용을 입력하세요. OmicsPharm 컨설턴트가 확인 후 답변드립니다."></textarea>' +
+          '<div class="row"><span>답변은 마이페이지 &gt; 상담내역과 알림으로 알려드립니다.</span><button class="btn primary" type="submit" id="go" disabled>문의 보내기</button></div></form></div>';
+    var msg = $('#msg'), go = $('#go'), ttl = $('#ttl');
+    var sync = function () { go.disabled = !msg.value.trim() || !ttl.value.trim(); };
+    msg.addEventListener('input', sync); ttl.addEventListener('input', sync);
+    $('#first').addEventListener('submit', function (e) {
+      e.preventDefault(); if (go.disabled) return;
+      var c = C.create({ type: '의뢰 프로젝트', svc: P.svc, ref: P.title, rid: P.id, name: acc.name || me.s.email.split('@')[0], email: me.s.email, title: ttl.value.trim(), body: msg.value.trim() });
+      OP.toast('문의를 보냈습니다.'); location.replace('mypage-consult.html?id=' + encodeURIComponent(c.id));
+    });
+  }
 
   // 회원: 내 상담 목록
   function memberList() {
@@ -80,7 +115,7 @@
       $('#list').innerHTML = L.length ? '<div class="cs-list">' + L.map(function (c) {
         var m = c.msgs[c.msgs.length - 1];
         return '<a class="cs-row" href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '"><span class="st">' + badge(c) + '</span>' +
-          '<span class="mid"><span class="t">' + esc(c.title) + '</span><span class="sub">' + esc(c.type) + ' · ' + (m.by === 'admin' ? 'OmicsPharm 컨설턴트: ' : '나: ') + esc(m.text.replace(/\s+/g, ' ')) + '</span></span>' +
+          '<span class="mid"><span class="t">' + esc(c.title) + '</span><span class="sub">' + esc(c.type) + (c.rid ? ' · ' + esc(c.ref) : '') + ' · ' + (m.by === 'admin' ? 'OmicsPharm 컨설턴트: ' : '나: ') + esc(m.text.replace(/\s+/g, ' ')) + '</span></span>' +
           '<span class="dt">' + C.ymd(C.lastAt(c)) + '</span></a>';
       }).join('') + '</div>' : '<div class="empty"><b>' + (f === 'all' ? '상담 내역이 없습니다' : '해당하는 상담이 없습니다') + '</b><p>분석 의뢰·견적 등 궁금한 점은 Contact Us로 남겨주세요.</p></div>';
     };
@@ -94,16 +129,17 @@
       '<div class="mg-filter"><select class="mg-sel" id="fSt"><option value="">처리상태</option><option value="wait">답변대기</option><option value="done">답변완료</option></select>' +
         '<select class="mg-sel" id="fMem"><option value="">회원 여부</option><option value="y">회원</option><option value="n">비회원</option></select>' +
         '<div class="mg-q"><input type="search" id="fQ" placeholder="제목, 성함, 이메일 검색"><button type="button" class="btn" id="go">검색</button></div></div>' +
+      (pid ? '<p class="lead">관련 프로젝트 <b>' + esc((projOf(pid) || {}).title || pid) + '</b>의 상담만 보는 중 · <a href="mypage-consult.html" style="text-decoration:underline">전체 보기</a></p>' : '') +
       '<p class="mg-total">(<b style="color:var(--red-600)" id="nw">0</b>건 답변대기 / 총 <b id="n">0</b>건)</p>' +
       '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">번호</th><th>제목</th><th>문의 유형</th><th>성함</th><th>이메일</th><th class="c">회원</th><th class="c">처리상태</th><th class="c">최근 대화</th><th class="c">등록일</th></tr></thead><tbody id="tb"></tbody></table></div>';
     var draw = function () {
       var st = $('#fSt').value, mem = $('#fMem').value, q = $('#fQ').value.trim().toLowerCase();
       var A = src().sort(function (a, b) { return b.at - a.at; });
-      var L = A.filter(function (c) { var m = !!OP.account(c.email); return (!st || (st === 'wait') === C.waiting(c)) && (!mem || (mem === 'y') === m) && (!q || [c.title, c.name, c.email].join(' ').toLowerCase().indexOf(q) > -1); });
+      var L = A.filter(function (c) { var m = !!OP.account(c.email); return (!pid || c.rid === pid) && (!st || (st === 'wait') === C.waiting(c)) && (!mem || (mem === 'y') === m) && (!q || [c.title, c.name, c.email].join(' ').toLowerCase().indexOf(q) > -1); });
       $('#n').textContent = A.length; $('#nw').textContent = A.filter(C.waiting).length;
       $('#tb').innerHTML = L.length ? L.map(function (c, i) {
         var m = !!OP.account(c.email);
-        return '<tr><td class="c">' + (L.length - i) + '</td><td class="t"><a href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">' + esc(c.title) + '</a></td><td>' + esc(c.type) + '</td><td>' + esc(c.name) + '</td><td class="mail">' + esc(c.email) + '</td>' +
+        return '<tr><td class="c">' + (L.length - i) + '</td><td class="t"><a href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">' + esc(c.title) + '</a>' + (c.rid ? '<br><small>관련 프로젝트 · ' + esc(c.ref) + '</small>' : '') + '</td><td>' + esc(c.type) + '</td><td>' + esc(c.name) + '</td><td class="mail">' + esc(c.email) + '</td>' +
           '<td class="c">' + (m ? '<span class="mem">회원</span>' : '비회원') + '</td><td class="c">' + badge(c) + '</td><td class="c">' + C.ymd(C.lastAt(c)) + '</td><td class="c">' + C.ymd(c.at) + '</td></tr>';
       }).join('') : '<tr><td colspan="9" class="mg-empty">검색 결과가 없습니다.</td></tr>';
     };
@@ -121,8 +157,8 @@
       '<div class="det">' +
         (adm ? '<dl class="cs-info">' + kv('문의 유형', esc(c.type + (c.svc ? ' · ' + c.svc : ''))) + kv('접수번호', esc(c.id)) + kv('성함', esc(c.name)) + kv('이메일', esc(c.email)) +
             kv('회원 여부', acc ? '회원 (' + (OP.ROLE_LABEL[acc.role] || '') + (acc.org ? ' · ' + esc(acc.org) : '') + ')' : '비회원 · 메일 링크로 답변 확인') + kv('접수일', C.ymdhm(c.at)) +
-            (c.ref ? kv('관련 프로젝트', esc(c.ref), 1) : '') + (acc ? '' : kv('링크 유효기간', C.ymd(C.linkUntil(c)) + '까지' + (C.expired(c) ? ' (만료 · 문의자가 링크 화면에서 새로 받을 수 있음)' : ''), 1)) + '</dl>'
-           : '<p class="lead">' + esc(c.type + (c.svc ? ' · ' + c.svc : '')) + ' · 접수번호 ' + esc(c.id) + ' · ' + C.ymd(c.at) + ' 접수</p>') +
+            (c.ref ? kv('관련 프로젝트', c.rid && projHref(c.rid) ? '<a href="' + projHref(c.rid) + '" style="text-decoration:underline">' + esc(c.ref) + '</a>' : esc(c.ref), 1) : '') + (acc ? '' : kv('링크 유효기간', C.ymd(C.linkUntil(c)) + '까지' + (C.expired(c) ? ' (만료 · 문의자가 링크 화면에서 새로 받을 수 있음)' : ''), 1)) + '</dl>'
+           : '<p class="lead">' + esc(c.type + (c.svc ? ' · ' + c.svc : '')) + ' · 접수번호 ' + esc(c.id) + ' · ' + C.ymd(c.at) + ' 접수' + (c.rid && projHref(c.rid) ? ' · 관련 프로젝트 <a href="' + projHref(c.rid) + '" style="text-decoration:underline">' + esc(c.ref) + '</a>' : '') + '</p>') +
         '<div><h4 style="margin-bottom:12px">상담 내용</h4>' + C.thread(c, adm ? 'admin' : 'user') + '</div>' +
         '<form class="cs-compose" id="send" novalidate><label class="sr-only" for="msg">' + (adm ? '답변' : '메시지') + '</label>' +
           '<textarea id="msg" placeholder="' + (adm ? '답변을 입력하세요. 문의자에게 보이고 메일로도 알림이 갑니다.' : '이어서 상담할 내용을 입력하세요.') + '"></textarea>' +

@@ -487,9 +487,12 @@
       OP.toast('실제 서비스에서는 주소 검색 API로 주소를 선택합니다. 데모에서는 예시 주소를 넣었습니다.', { title: '주소 검색', type: 'info' });
       return;
     }
-    // 상담 챗봇: 오른쪽 아래 버튼 / [문의하기](data-chat). 프로젝트 상세면 그 프로젝트(OP.chatCtx) 문의로 열림
+    // 프로젝트 [문의하기](data-chat, 마이페이지 프로젝트 상세): 챗봇이 아니라 마이페이지 > 상담내역의 그 프로젝트 대화로 (2026-10-22)
+    var pj = e.target.closest('[data-chat]');
+    if (pj && OP.chatCtx && OP.chatCtx.key) { e.preventDefault(); location.href = 'mypage-consult.html?project=' + encodeURIComponent(OP.chatCtx.key); return; }
+    // 상담 챗봇: 오른쪽 아래 버튼 (프로젝트와 무관한 일반 챗봇) / 프로젝트 밖의 [문의하기](data-chat)
     var ch = e.target.closest('.op-chat, [data-chat]');
-    if (ch) { e.preventDefault(); if (ch.classList.contains('op-chat') && OP.chat && OP.chat.isOpen()) OP.chat.close(); else OP.chatOpen(OP.chatCtx); return; }
+    if (ch) { e.preventDefault(); if (ch.classList.contains('op-chat') && OP.chat && OP.chat.isOpen()) OP.chat.close(); else OP.chatOpen(ch.classList.contains('op-chat') ? null : OP.chatCtx); return; }
     var soon = e.target.closest('[data-soon]');
     if (soon) { e.preventDefault(); OP.toast("'" + soon.getAttribute('data-soon') + "' 화면은 준비 중입니다."); return; }
     // 프로젝트 등록(의뢰)은 클라이언트만: 비로그인 → 로그인 화면, 파트너·관리자 → 안내

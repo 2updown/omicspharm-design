@@ -184,8 +184,8 @@ if (!/[?&]ui=gray\b/.test(location.search) && !/mypage-ai\.html/.test(location.p
   };
   D.removeProject = function (id) { if (OP.flow) OP.flow.remove(id); write('op.submitted', D.projects().filter(function (p) { return p.id !== id; })); };
 
-  // 프로젝트 상세 [문의하기]: 세 계정 모두 제목 줄 오른쪽. 누르면 상담 챗봇이 이 프로젝트 문의로 열림 (site.js OP.chatOpen)
-  // ctx = { key: 프로젝트 번호, cat: 분석 서비스, no: 프로젝트 번호, title } — 오른쪽 아래 챗봇 버튼도 같은 프로젝트로 열리게 OP.chatCtx에 둠
+  // 프로젝트 상세 [문의하기]: 세 계정 모두 제목 줄 오른쪽. 누르면 마이페이지 > 상담내역의 이 프로젝트 대화로 (site.js, 챗봇과 무관 · 2026-10-22)
+  // ctx = { key: 프로젝트 번호, cat: 분석 서비스, no: 프로젝트 번호, title }. 컨설턴트는 이 프로젝트의 상담 목록으로
   OP.askBtn = function (ctx) { OP.chatCtx = ctx; return '<button type="button" class="btn op-ask" data-chat><img src="assets/project/ic-chat-circle-dots.svg" alt="">문의하기</button>'; };
   OP.my = D;
   // AI Agent 띄우기 (2026-10-21: 전체 화면 페이지보다 지금 화면 위에 띄우는 쪽으로). 내용은 mypage-ai.html을 그대로 iframe으로

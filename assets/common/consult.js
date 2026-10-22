@@ -50,10 +50,20 @@
     lastAt: function (c) { return last(c).at || c.at; },
     // Contact Us 제출 (비회원이면 메일 링크 발급, 회원이면 내 상담내역에 바로)
     create: function (o) {
-      var s = OP.session && OP.session(), c = { id: 'C-' + Date.now().toString(36).toUpperCase(), at: Date.now(), type: o.type, svc: o.svc || '', ref: o.ref || '', name: o.name, email: o.email.toLowerCase(), title: o.title,
+      var s = OP.session && OP.session(), c = { id: 'C-' + Date.now().toString(36).toUpperCase(), at: Date.now(), type: o.type, svc: o.svc || '', ref: o.ref || '', rid: o.rid || '', name: o.name, email: o.email.toLowerCase(), title: o.title,
         file: o.file || '', owner: s && s.email === o.email.toLowerCase() ? s.email : '', token: tok(), linkAt: Date.now(), msgs: [{ at: Date.now(), by: 'user', text: o.body, file: o.file || '' }], note: '' };
       return save(c);
     },
+    // 프로젝트 문의 (2026-10-22): 그 프로젝트의 의뢰 클라이언트 · 견적 요청을 받은 분석파트너(선정 전까지, 선정되면 선정된 곳만)는
+    // 프로젝트 상세 [문의하기] → 상담내역의 그 프로젝트 대화로 바로. 그 외(비회원·관계없는 회원)는 Contact Us 폼(제목 '[프로젝트명] 관련 문의드립니다')
+    participant: function (rid, email) {
+      var F = OP.flow, r = F && F.req(rid); if (!r || !email) return false;
+      if ((r.owner || 'client@omicspharm.test') === email) return true;
+      var s = F.state(rid), x = s.P && s.P[email];
+      return !!x && !(s.st === 'matched' && s.pick !== email) && !s.cancel;
+    },
+    // 내 그 프로젝트 대화 (한 사람당 프로젝트 하나에 대화 하나)
+    byProject: function (rid, email) { return all().filter(function (c) { return c.rid === rid && (c.owner === email || c.email === email); })[0] || null; },
     add: function (id, by, text) { var c = get(id); if (!c) return null; c.msgs.push({ at: Date.now(), by: by, text: text }); return save(c); },
     setNote: function (id, text) { var c = get(id); if (!c) return null; c.note = text; c.noteAt = Date.now(); return save(c); },
     // 만료된 링크 다시 받기: 같은 이메일의 상담마다 새 링크 (데모: 첫 번째 것을 돌려줌)
