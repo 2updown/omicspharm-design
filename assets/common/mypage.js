@@ -266,20 +266,9 @@ if (/[?&]head=c\b/.test(location.search) && document.documentElement.classList.c
             // 메일 인증 전: '메일 미인증'만 (분석파트너 기관 인증은 메일 인증 다음 단계), 메일 인증 후: 분석파트너만 기관 인증 여부
             (!OP.mailVerified() && s.role !== 'admin' ? '<span class="op-vchip">메일 미인증</span>' : s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '') + '</span>' +
           '<b>' + esc(name) + ' 님</b><span>(' + esc(s.email) + ')</span>' + (org ? '<span>' + esc(org) + '</span>' : '') + '</div>' +
-        (HC ? headC() : '') + '<nav class="menu" aria-label="마이페이지 메뉴">' + html + '</nav>' + (HC ? '<button type="button" class="side-ai" data-ph-ai><img src="assets/common/ic-sparkle-fill.svg" alt=""><span><b>AI Agent에게 물어보기</b><em>beta</em></span></button>' : '');
+        '<nav class="menu" aria-label="마이페이지 메뉴">' + html + '</nav>' + (HC ? '<button type="button" class="side-ai" data-ph-ai><img src="assets/common/ic-sparkle-fill.svg" alt=""><span><b>AI Agent에게 물어보기</b><em>beta</em></span></button>' + headC() : ''); // 메뉴 → AI Agent → 역할별 바로가기 (2026-10-22)
       if (HC) {
-        var lab = (MENU.filter(function (m) { return m[0] === key; })[0] || [])[1] || '마이페이지', mn = document.querySelector('.main');
-        if (mn && !mn.querySelector('.mtitle')) {
-          mn.insertAdjacentHTML('afterbegin', '<h1 class="mtitle">' + esc(lab) + '</h1>');
-          // 본문 첫 제목이 메뉴 이름과 같으면 겹치므로 숨김 (예: 상담내역)
-          // 첫 제목 글자만 겹치면 그 글자만 지우고 옆의 칩·버튼(인증 상태, 서비스 개수, [추가] 등)은 남김
-          setTimeout(function () {
-            var h = mn.querySelector('.card .card-head h3'), t = h && h.firstChild;
-            if (!t || t.nodeType !== 3 || t.nodeValue.trim() !== lab) return;
-            var head = h.closest('.card-head');
-            if (h.childNodes.length === 1 && head.children.length === 1) head.classList.add('dup'); else t.nodeValue = '';
-          }, 0);
-        }
+        // 본문 맨 위 메뉴 이름 제목은 빼봄 (2026-10-22) — 각 화면의 원래 첫 제목을 그대로 씀
         var ai0 = side.querySelector('.side-ai'); if (ai0) ai0.addEventListener('click', function () { OP.openAI(); });
       }
       if (!side.dataset.bound) {
