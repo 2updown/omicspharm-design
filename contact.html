@@ -4,11 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
-<title>Contact Us · OmicsPharm</title>
-<!-- 문의하기 (Figma 시안 없음 — 04_Resource/Component 토큰·컴포넌트로 구성)
+<title>상담하기 · OmicsPharm</title>
+<!-- 상담하기 (Figma 시안 없음 — 04_Resource/Component 토큰·컴포넌트로 구성). 실서비스 메뉴명 '상담하기'에 맞춤 (2026-10-22)
+     비회원: 문의 유형·이름·이메일·제목·내용만 → 메일 링크(consult-view.html)로 답변 확인, 추가 상담은 회원가입 후. 회원: 마이페이지 > 상담내역으로 (assets/common/consult.js)
      ?type=quote|project|service|partner|data|etc  문의 유형 미리 선택(분석 견적일 때만 관련 분석 서비스 노출) / ?ref=제목 또는 프로젝트 번호  관련 프로젝트 표시 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261022a">
-<script src="assets/common/site.js?v=20261022a"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261022c">
+<script src="assets/common/site.js?v=20261022c"></script>
+<script src="assets/common/consult.js?v=20261022c"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -48,6 +50,7 @@
   .select { appearance:none; -webkit-appearance:none; padding-right:36px; background:#fff url(assets/find/ic-chevron-down.svg) right 12px center/16px no-repeat; cursor:pointer; }
   .textarea { min-height:200px; padding:10px 16px; resize:vertical; }
   .input::placeholder, .textarea::placeholder { color:var(--gray-400); }
+  .input:read-only { background:var(--gray-100); color:var(--gray-500); }
   .input:focus, .select:focus, .textarea:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
   .help { display:flex; justify-content:space-between; gap:12px; font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
   .field.error .input, .field.error .select, .field.error .textarea { border-color:var(--red-600); }
@@ -121,8 +124,8 @@
 <div data-op-gnb></div>
 
 <section class="page-head"><div class="in">
-  <h1>Contact Us</h1>
-  <p>분석 의뢰, 견적, 파트너 제휴 등 궁금한 점을 남겨주시면 담당 매니저가 확인 후 답변드립니다.</p>
+  <h1>상담하기</h1>
+  <p>분석 의뢰, 견적, 파트너 제휴 등 궁금한 점을 남겨주시면 OmicsPharm 컨설턴트가 확인 후 답변드립니다.</p>
 </div></section>
 
 <main class="body"><div class="in">
@@ -154,14 +157,12 @@
     </section>
 
     <section class="group">
-      <h2>연락처 정보</h2>
+      <h2>작성자 정보</h2>
       <div class="tbl">
         <div class="field" id="f-name"><label class="flabel" for="name">이름<span class="req">*</span></label><div class="fbody"><input class="input" id="name" autocomplete="name" placeholder="이름을 입력해주세요"></div></div>
-        <div class="field" id="f-org"><label class="flabel" for="org">소속(기관·회사)<span class="req">*</span></label><div class="fbody"><input class="input" id="org" autocomplete="organization" placeholder="예) 해솔대학교, 다인제약"></div></div>
         <div class="field" id="f-email"><label class="flabel" for="email">이메일<span class="req">*</span></label><div class="fbody"><input class="input" id="email" type="email" autocomplete="email" placeholder="email@domain.com"></div></div>
-        <div class="field" id="f-phone"><label class="flabel" for="phone">연락처</label><div class="fbody"><input class="input" id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000"></div></div>
       </div>
-      <p class="note">답변은 입력하신 이메일로 보내드립니다.</p>
+      <p class="note" id="mailNote">입력하신 이메일로 상담 내용을 볼 수 있는 링크를 보내드립니다. 답변도 이 링크에서 확인할 수 있습니다.</p>
     </section>
 
     <section class="group">
@@ -181,7 +182,7 @@
           <div class="agree-box" tabindex="0">
             <ol>
               <li>수집 이용 목적 : 문의 고객과의 상담을 위한 경로 확보</li>
-              <li>수집 항목(선택) : 성명(필수·익명 가능), 회사명, 이메일</li>
+              <li>수집 항목 : 성명, 이메일</li>
               <li>보유 및 이용 기간 : 당사는 개인 정보 수집 및 이용목적이 달성된 후에는 예외 없이 그리고 지체 없이 해당 정보를 파기합니다.</li>
             </ol>
             <p>※ 귀하께서는 본 선택항목의 수집에 대해 거부하실 수 있습니다.</p>
@@ -199,13 +200,10 @@
 
   <section class="card done" id="done" hidden>
     <div class="ok"><i></i></div>
-    <h2>문의가 접수되었습니다</h2>
-    <p>담당 매니저가 확인 후 <b id="doneMail"></b>(으)로 답변드리겠습니다.</p>
+    <h2>상담이 접수되었습니다</h2>
+    <p id="doneMsg"></p>
     <dl id="doneSum"></dl>
-    <div class="actions" style="justify-content:center">
-      <a class="btn line" href="index.html">메인으로</a>
-      <a class="btn pri" href="projects.html">프로젝트 찾기</a>
-    </div>
+    <div class="actions" style="justify-content:center" id="doneBtns"></div>
   </section>
 
 </div></main>
@@ -226,7 +224,9 @@
     var acc = OP.account(s.email) || {};
     $('#email').value = s.email;
     if (acc.name) $('#name').value = acc.name;
-    if (acc.org) $('#org').value = acc.org;
+    // 회원은 이름·이메일을 고칠 수 없음 (상담내역이 계정에 바로 쌓임)
+    $('#name').readOnly = $('#email').readOnly = true;
+    $('#mailNote').textContent = '상담 내용과 답변은 마이페이지 > 상담내역에서 확인할 수 있습니다.';
   }
 
   // 다른 화면에서 넘어온 값: 문의 유형·관련 프로젝트·서비스
@@ -279,7 +279,7 @@
     var m = box.querySelector('.msg'); if (!m && msg) { m = document.createElement('p'); m.className = 'msg'; box.appendChild(m); }
     if (m) { m.textContent = msg || ''; m.hidden = !msg; }
   }
-  [['name', 'f-name'], ['org', 'f-org'], ['email', 'f-email'], ['title', 'f-title'], ['body', 'f-body']].forEach(function (p) {
+  [['name', 'f-name'], ['email', 'f-email'], ['title', 'f-title'], ['body', 'f-body']].forEach(function (p) {
     document.getElementById(p[0]).addEventListener('input', function () { setErr(p[1], ''); });
   });
   // 개인정보 수집·이용에 동의해야 [문의 보내기] 활성화
@@ -293,7 +293,6 @@
     var chk = function (ok, id, msg) { setErr(id, ok ? '' : msg); if (!ok) bad.push(id); };
     chk(!!type.value, 'f-type', '문의 유형을 선택해주세요.');
     chk($('#name').value.trim(), 'f-name', '이름을 입력해주세요.');
-    chk($('#org').value.trim(), 'f-org', '소속을 입력해주세요.');
     var em = $('#email').value.trim();
     chk(em && EMAIL_RE.test(em), 'f-email', em ? '올바른 이메일 형식으로 입력해주세요.' : '이메일을 입력해주세요.');
     chk($('#title').value.trim(), 'f-title', '제목을 입력해주세요.');
@@ -301,26 +300,20 @@
     chk($('#agree').checked, 'f-agree', '개인정보 수집 및 이용에 동의해주세요.');
     if (bad.length) { document.getElementById(bad[0]).scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
 
-    // 데모: 이 브라우저에만 저장 (추후 마이페이지 문의내역에서 사용)
+    // 데모: 이 브라우저에만 저장 (op.consults). 비회원은 메일 링크, 회원은 상담내역
     var typeLabel = type.options[type.selectedIndex].textContent;
-    var item = { id: 'Q-' + Date.now().toString(36).toUpperCase(), at: Date.now(), owner: (OP.session() || {}).email || '', type: typeLabel, svc: type.value === 'quote' ? $('#svc').value : '', ref: P.get('ref') || '',
-      name: $('#name').value.trim(), org: $('#org').value.trim(), email: em, phone: $('#phone').value.trim(), title: $('#title').value.trim(), body: body.value.trim(),
-      file: file.files[0] ? file.files[0].name : '', fileImg: file.files[0] ? fileImg : '' };
-    var L = []; try { L = JSON.parse(localStorage.getItem('op.inquiries') || '[]'); } catch (err) {}
-    L.unshift(item);
-    try { localStorage.setItem('op.inquiries', JSON.stringify(L.slice(0, 50))); }
-    catch (err) { // 저장 공간이 부족하면 예전 문의의 사진부터 비우고 다시 저장
-      L.slice(1).forEach(function (q) { q.fileImg = ''; });
-      try { localStorage.setItem('op.inquiries', JSON.stringify(L.slice(0, 50))); } catch (err2) { item.fileImg = ''; try { localStorage.setItem('op.inquiries', JSON.stringify(L.slice(0, 50))); } catch (err3) {} }
-    }
-
-    var esc = function (v) { return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
-    $('#doneMail').textContent = em;
-    $('#doneSum').innerHTML = [['접수번호', item.id], ['문의 유형', item.type + (item.svc ? ' · ' + item.svc : '')], ['제목', item.title]].concat(item.ref ? [['관련 프로젝트', item.ref]] : [])
+    var c = OP.consult.create({ type: typeLabel, svc: type.value === 'quote' ? $('#svc').value : '', ref: P.get('ref') || '', name: $('#name').value.trim(), email: em,
+      title: $('#title').value.trim(), body: body.value.trim(), file: file.files[0] ? file.files[0].name : '' });
+    var esc = OP.consult.esc;
+    $('#doneMsg').innerHTML = c.owner ? '마이페이지 &gt; 상담내역에서 답변을 확인하고 이어서 상담할 수 있습니다.'
+      : '<b>' + esc(em) + '</b>(으)로 상담 내용을 볼 수 있는 링크를 보냈습니다.<br>답변이 등록되면 메일로 알려드리며, 같은 링크에서 확인할 수 있습니다. (링크 유효기간 ' + OP.consult.LINK_DAYS + '일)';
+    $('#doneSum').innerHTML = [['접수번호', c.id], ['문의 유형', c.type + (c.svc ? ' · ' + c.svc : '')], ['제목', c.title]].concat(c.ref ? [['관련 프로젝트', c.ref]] : [])
       .map(function (r) { return '<div><dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('');
+    $('#doneBtns').innerHTML = c.owner ? '<a class="btn line" href="index.html">메인으로</a><a class="btn pri" href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">상담내역 보기</a>'
+      : '<a class="btn line" href="index.html">메인으로</a><a class="btn pri" href="mail-consult.html?t=' + encodeURIComponent(c.token) + '" target="_blank">받은 메일 보기 (데모)</a>';
     $('#form').hidden = true; $('#done').hidden = false;
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    OP.toast('문의가 접수되었습니다.');
+    OP.toast('상담이 접수되었습니다.');
   });
 })();
 </script>

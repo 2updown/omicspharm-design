@@ -6,10 +6,10 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>회원가입 · OmicsPharm</title>
 <!-- Figma: Signup-Empty (399:30557) · hover (407:30720, 407:30699) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261022a">
-<link rel="stylesheet" href="assets/auth/auth.css?v=20261022a">
-<script src="assets/common/site.js?v=20261022a"></script>
-<script src="assets/auth/auth.js?v=20261022a"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261022c">
+<link rel="stylesheet" href="assets/auth/auth.css?v=20261022c">
+<script src="assets/common/site.js?v=20261022c"></script>
+<script src="assets/auth/auth.js?v=20261022c"></script>
 </head>
 <body>
 <div class="auth">
@@ -27,5 +27,15 @@
     </div>
   </main>
 </div>
+<script>
+// 상담 메일 링크에서 온 경우 (?consult=토큰): 회원 유형을 고른 뒤 이름·이메일이 채워진 가입 양식으로
+(function () {
+  var t = AUTH.param('consult'); if (!t) return;
+  [].forEach.call(document.querySelectorAll('.role'), function (a) { a.href += '&consult=' + encodeURIComponent(t); });
+  var p = document.createElement('p'); p.className = 'consult-note';
+  p.textContent = '가입하면 남기신 상담을 이어서 작성할 수 있습니다. 이름과 이메일은 상담 때 입력한 정보로 채워집니다.';
+  document.querySelector('.auth-title').appendChild(p);
+})();
+</script>
 </body>
 </html>

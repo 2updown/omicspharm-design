@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
+<title>받은 메일 · 상담 · OmicsPharm</title>
+<!-- [데모] 상담 메일 미리보기. 실제 서비스에서는 이 내용이 문의자 메일함으로 감 (메일 템플릿 참고용)
+     ?t=상담 링크 토큰 (consult.js) · &k=new(접수, 기본) | reply(답변 등록) | renew(새 링크) -->
+<link rel="stylesheet" href="assets/common/site.css?v=20261022c">
+<script src="assets/common/site.js?v=20261022c"></script>
+<script src="assets/common/consult.js?v=20261022c"></script>
+<style>
+  body { background:#eef1f4; }
+  .bar { display:flex; align-items:center; justify-content:space-between; gap:12px; max-width:680px; margin:24px auto 12px; padding:0 16px; font-size:13px; color:var(--gray-500, #737373); }
+  .bar a { color:var(--gray-600, #525252); text-decoration:underline; }
+  .head { max-width:680px; margin:0 auto; padding:16px 20px; border-radius:12px 12px 0 0; background:#fff; border-bottom:1px solid #e5e5e5; font-size:13px; line-height:20px; color:#525252; }
+  .head b { display:block; margin-bottom:6px; font-size:18px; line-height:26px; color:#0a0a0c; }
+  .head span { display:inline-block; min-width:72px; color:#a3a3a3; }
+  .mail { max-width:680px; margin:0 auto 40px; padding:40px 20px; border-radius:0 0 12px 12px; background:#fff; }
+  .card { max-width:520px; margin:0 auto; text-align:center; }
+  .card .logo { height:16px; margin-bottom:32px; }
+  .card h1 { font-size:24px; font-weight:700; line-height:34px; color:#0a0a0c; }
+  .card p { margin-top:12px; font-size:15px; line-height:24px; color:#414143; word-break:keep-all; }
+  .card .go { text-decoration:none; display:inline-flex; align-items:center; justify-content:center; height:52px; margin-top:28px; padding:0 32px; border-radius:99px; background:#009788; color:#fff; font-size:16px; font-weight:500; }
+  .card .go:hover { background:#00796d; }
+  .card .note { margin-top:28px; padding:14px 16px; border-radius:8px; background:#f5f5f5; font-size:13px; line-height:20px; color:#737373; text-align:left; }
+  .card .foot { margin-top:32px; font-size:12px; line-height:18px; color:#a3a3a3; }
+  .none { max-width:680px; margin:80px auto; padding:40px 20px; border-radius:12px; background:#fff; text-align:center; font-size:15px; color:#525252; }
+  .none a { color:#009788; text-decoration:underline; }
+</style>
+</head>
+<body>
+<div id="view"></div>
+<script>
+(function () {
+  var P = new URLSearchParams(location.search), t = P.get('t'), k = P.get('k') || 'new', C = OP.consult, c = C.byToken(t), v = document.getElementById('view'), esc = C.esc;
+  if (!c) { v.innerHTML = '<div class="none">메일을 찾을 수 없습니다. <a href="contact.html">상담하기</a>에서 다시 문의해주세요.</div>'; return; }
+  var M = {
+    new: ['[OmicsPharm] 상담이 접수되었습니다', '상담이 접수되었습니다', esc(c.name) + '님, 남겨주신 상담이 접수되었습니다.<br>OmicsPharm 컨설턴트가 확인 후 답변드리며, 아래 버튼에서 상담 내용과 답변을 볼 수 있습니다.'],
+    reply: ['[OmicsPharm] 상담에 답변이 등록되었습니다', '답변이 등록되었습니다', esc(c.name) + '님, 남겨주신 상담에 OmicsPharm 컨설턴트의 답변이 등록되었습니다.<br>아래 버튼에서 답변을 확인해주세요.'],
+    renew: ['[OmicsPharm] 상담 보기 링크를 다시 보내드립니다', '상담 보기 링크', esc(c.name) + '님, 요청하신 상담 보기 링크입니다.<br>아래 버튼에서 상담 내용과 답변을 확인해주세요.']
+  }[k] || null;
+  var ts = C.ymdhm(k === 'reply' ? C.lastAt(c) : c.linkAt);
+  v.innerHTML =
+    '<div class="bar"><span>데모 · 받은 메일 미리보기 (실제로는 문의자 메일함으로 발송)</span><a href="contact.html">상담하기로</a></div>' +
+    '<div class="head"><b>' + M[0] + '</b><span>보낸 사람</span>OmicsPharm &lt;no-reply@omicspharm.test&gt;<br><span>받는 사람</span>' + esc(c.email) + '<br><span>받은 시각</span>' + ts + '</div>' +
+    '<div class="mail"><div class="card">' +
+      '<img class="logo" src="assets/auth/logo-bg.svg" alt="OmicsPharm">' +
+      '<h1>' + M[1] + '</h1>' +
+      '<p>' + M[2] + '</p>' +
+      '<div class="note" style="margin-top:20px">· 제목: ' + esc(c.title) + '<br>· 접수번호: ' + esc(c.id) + '</div>' +
+      '<a class="go" href="consult-view.html?t=' + encodeURIComponent(c.token) + '">상담 내용 보기</a>' +
+      '<div class="note">· 이 링크는 발송 후 ' + C.LINK_DAYS + '일 동안 사용할 수 있습니다. 기간이 지나면 링크 화면에서 새 링크를 받을 수 있습니다.<br>· 추가로 상담하시려면 링크 화면에서 회원가입 후 이어서 작성할 수 있습니다. (이름·이메일은 자동으로 입력됩니다)</div>' +
+      '<p class="foot">본 메일은 발신 전용입니다. 답장 대신 링크 화면을 이용해주세요.</p>' +
+    '</div></div>';
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+/* 상담 대화창 (consult-view.html · mypage-consult.html 공통). 챗봇처럼 쌓이는 형태 */
+.cs-thread { display:flex; flex-direction:column; gap:20px; padding:24px; border-radius:16px; background:#f6faf9; list-style:none; }
+.cs-thread li { display:flex; align-items:flex-end; gap:8px; max-width:100%; }
+.cs-thread li.mine { flex-direction:row-reverse; }
+.cs-thread .av { flex:none; align-self:flex-start; display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:#009788; color:#fff; font-size:14px; font-weight:700; }
+.cs-thread .bub { max-width:min(560px, 78%); padding:14px 16px; border-radius:16px; background:#fff; border:1px solid #e5e5e5; }
+.cs-thread li.adm .bub { border-top-left-radius:4px; }
+.cs-thread li.mine .bub { border-top-left-radius:16px; border-top-right-radius:4px; }
+.cs-thread li.usr .bub { background:#e7f6f3; border-color:#d3ece7; }
+.cs-thread .bub b { display:block; margin-bottom:4px; font-size:13px; font-weight:600; line-height:18px; color:#00786e; }
+.cs-thread li.usr .bub b { color:#404040; }
+.cs-thread .bub p { font-size:15px; line-height:1.65; color:#262626; white-space:pre-line; word-break:break-word; }
+.cs-thread .bub .att { display:inline-block; margin-top:8px; font-size:12px; color:#737373; }
+.cs-thread time { flex:none; font-size:12px; line-height:16px; color:#a3a3a3; white-space:nowrap; }
+
+/* 입력창 */
+.cs-compose { display:flex; flex-direction:column; gap:8px; }
+.cs-compose textarea { width:100%; min-height:96px; padding:12px 16px; border:1px solid #d4d4d4; border-radius:12px; font:inherit; font-size:15px; line-height:1.6; resize:vertical; }
+.cs-compose textarea:focus { outline:0; border-color:#00786e; box-shadow:0 0 0 3px #00786e33; }
+.cs-compose .row { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:13px; color:#737373; }
+
+/* 상담 정보 */
+.cs-info { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); border-top:2px solid #000; font-size:14px; line-height:20px; }
+.cs-info div { display:flex; border-bottom:1px solid #e5e5e5; min-width:0; }
+.cs-info dt { flex:none; width:120px; padding:12px 16px; background:#f5f5f5; font-weight:500; }
+.cs-info dd { flex:1; min-width:0; padding:12px 16px; word-break:break-all; }
+.cs-info .wide { grid-column:1 / -1; }
+
+@media (max-width:640px) {
+  .cs-thread { padding:16px 12px; gap:16px; }
+  .cs-thread .bub { max-width:84%; }
+  .cs-thread time { display:none; }
+  .cs-info { grid-template-columns:1fr; }
+  .cs-info dt { width:96px; padding:10px 12px; }
+  .cs-info dd { padding:10px 12px; }
+}
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
