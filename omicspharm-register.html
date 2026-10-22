@@ -581,8 +581,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261022i">
-<script src="assets/common/site.js?v=20261022i"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261022j">
+<script src="assets/common/site.js?v=20261022j"></script>
 <script>if (!((OP.session() || {}).role === 'admin' && /[?&]edit=/.test(location.search))) OP.requireClient(); /* 클라이언트만 접근 (컨설턴트는 의뢰 수정(?edit=)만): 비로그인 → 로그인, 파트너 → 메인 */</script>
 </head>
 <body>
@@ -1196,7 +1196,7 @@
     $('#pBar').style.width=pct+'%'; $('#pPct').textContent=pct+'%';
     // 진행 단계 막대: 지금 단계 위치만큼 (1단계 25% … 4단계 100%), 모든 단계 작성 완료면 문구 변경
     var allDone=tabs.every(function(li){return li.classList.contains('done')});
-    $('#spBar').style.width=(cur/tabs.length*100)+'%';
+    $('#spBar').style.width=(allDone?100:cur/tabs.length*100)+'%'; // 모두 작성하면 어느 단계에 있든 100%
     $('#spSub').textContent=allDone?'모든 단계 작성 완료':'총 '+tabs.length+'단계 중 '+cur+'단계 작성 중';
   }
   var visited={1:true};
