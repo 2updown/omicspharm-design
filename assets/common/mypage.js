@@ -198,7 +198,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     if (document.querySelector('.op-ai')) return;
     var w = document.createElement('div');
     w.className = 'op-ai ' + mode; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-label', 'AI Agent');
-    w.innerHTML = '<div class="op-ai-dim" data-ai-close></div><div class="op-ai-win"><button type="button" class="op-ai-x" data-ai-close aria-label="닫기"></button><iframe src="mypage-ai.html?embed=' + mode + '" title="AI Agent"></iframe></div>';
+    w.innerHTML = '<div class="op-ai-dim" data-ai-close></div><div class="op-ai-win"><button type="button" class="op-ai-x" data-ai-close aria-label="닫기"></button><iframe src="mypage-ai.html?embed=' + mode + '&v=' + Date.now() + '" title="AI Agent"></iframe></div>';
     var close = function () { w.remove(); document.body.style.overflow = ''; document.body.classList.remove('op-ai-open'); document.removeEventListener('keydown', key); window.removeEventListener('message', msg); };
     var key = function (e) { if (e.key === 'Escape') close(); };
     var msg = function (e) { if (e.data === 'op-ai-close') close(); };
