@@ -477,16 +477,19 @@ span.tbtn { cursor:default; }
 .ui-headc .side-ai b { display:block; font-size:18px; font-weight:600; line-height:22px; color:#000; white-space:nowrap; } /* 메뉴 이름과 같은 18px·600, 아이콘도 메뉴와 같은 20px (2026-10-23) */
 .ui-headc .side-ai em { font-style:normal; padding:2px 8px; border-radius:8px; background:#edfefa; color:#009788; font-size:12px; font-weight:500; line-height:18px; } /* badge_basic tertiary teal */
 .ui-headc .side-ai::after { content:""; margin-left:auto; flex:none; width:16px; height:16px; background:url(../detail/ic-caret-right-20.svg) center/16px no-repeat; opacity:.6; transition:transform .2s; }
-/* hover: 빛번짐 없이 테두리 그라데이션만 둘레를 따라 계속 흐름 (2026-10-23) */
-@property --ai-angle { syntax:'<angle>'; inherits:false; initial-value:0deg; }
-.ui-headc .side-ai:hover { background:linear-gradient(#fff, #fff) padding-box, conic-gradient(from var(--ai-angle), #eefcf6, #22c57e, #3d7bff, #22c57e, #eefcf6) border-box; animation:aiBorder 2s linear infinite; }
-@keyframes aiBorder { to { --ai-angle:360deg; } }
+/* hover: 빛번짐 없이, 그라데이션 테두리 위로 흰 빛줄기(둘레의 35%)가 일정한 속도로 돎 (2026-10-23)
+   SVG 테두리(rect)의 점선 위치를 둘레 길이 기준으로 옮겨서 긴 변·짧은 변 모두 같은 속도 (conic-gradient 회전은 좌우 짧은 변에서 빨라져 끊겨 보였음). 크기는 mypage.js가 맞춤 */
+.ui-headc .side-ai .ai-ring { position:absolute; inset:-2px; width:calc(100% + 4px); height:calc(100% + 4px); overflow:visible; pointer-events:none; opacity:0; transition:opacity .2s; }
+.ui-headc .side-ai .ai-ring rect { fill:none; stroke:#f4fdf9; stroke-width:2; stroke-linecap:round; stroke-dasharray:35 65; }
+.ui-headc .side-ai:hover .ai-ring { opacity:1; }
+.ui-headc .side-ai:hover .ai-ring rect { animation:aiRing 1.8s linear infinite; }
+@keyframes aiRing { to { stroke-dashoffset:-100; } }
 .ui-headc .side-ai:hover b { background:var(--ai-text); -webkit-background-clip:text; background-clip:text; color:transparent; }
 .ui-headc .side-ai:hover img { transform:rotate(90deg) scale(1.1); }
 .ui-headc .side-ai:hover::after { transform:translateX(3px); }
 .ui-headc .side-ai:active { transform:scale(.98); }
 .ui-headc .side-ai:focus-visible { outline:2px solid #3d7bff; outline-offset:3px; }
-@media (prefers-reduced-motion:reduce) { .ui-headc .side-ai, .ui-headc .side-ai img, .ui-headc .side-ai::after { transition:none; } .ui-headc .side-ai:active { transform:none; } .ui-headc .side-ai:hover { animation:none; } }
+@media (prefers-reduced-motion:reduce) { .ui-headc .side-ai, .ui-headc .side-ai img, .ui-headc .side-ai::after { transition:none; } .ui-headc .side-ai:active { transform:none; } .ui-headc .side-ai:hover .ai-ring rect { animation:none; } }
 .ui-headc .menu a[href="mypage-ai.html"] { display:none; } /* 메뉴 맨 아래 AI Agent 항목은 카드로 대신 */
 /* 메뉴 아이콘 (2026-10-23 기본, ?micon=0이면 없음): 위쪽 메뉴·묶음 제목에만 Phosphor Regular 20px, 글자색을 따라감 (선택 = 청록). 하위 메뉴는 아이콘 없음 */
 .ui-white.ui-micon .side .menu > a::before, .ui-white.ui-micon .side .menu .gh::before { content:""; display:block; position:static; border:0; flex:none; width:20px; height:20px; background:currentColor; -webkit-mask:var(--mi) center/contain no-repeat; mask:var(--mi) center/contain no-repeat; }
