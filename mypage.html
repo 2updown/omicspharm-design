@@ -7,12 +7,12 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261023k">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261023k">
-<script src="assets/common/site.js?v=20261023k"></script>
-<script src="assets/common/consult.js?v=20261023k"></script>
-<script src="assets/common/mypage.js?v=20261023k"></script>
-<script src="assets/common/flow.js?v=20261023k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261023m">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261023m">
+<script src="assets/common/site.js?v=20261023m"></script>
+<script src="assets/common/consult.js?v=20261023m"></script>
+<script src="assets/common/mypage.js?v=20261023m"></script>
+<script src="assets/common/flow.js?v=20261023m"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -229,7 +229,7 @@
   }
   IT.sort(function (a, b) { return (b.urgent - a.urgent) || (b.at - a.at); });
   $('#plist').innerHTML = IT.length
-    ? '<div class="plist">' + IT.slice(0, 3).map(function (o) {
+    ? '<div class="plist">' + IT.slice(0, 5).map(function (o) {
         return '<a href="' + o.href + '"><span class="badges"><span class="badge tag">' + esc(o.svc) + '</span><span class="badge ' + o.stCls + '">' + esc(o.st) + '</span></span>' +
           '<h4>' + esc(o.title) + '</h4>' + (o.next ? '<span class="nx' + (o.urgent ? ' hot' : '') + '">' + esc(o.next) + '</span>' : '<span class="dt">' + esc(o.sub) + '</span>') + '</a>';
       }).join('') + '</div>'
@@ -243,7 +243,7 @@
     var n = [].reduce.call(g.querySelectorAll('.cells b'), function (a, b) { return a + (parseInt(b.textContent, 10) || 0); }, 0);
     h.insertAdjacentHTML('beforeend', '<span class="h-cnt">전체 <b>' + n + '</b>건</span>');
   });
-  var A = D.alarms().slice(0, 4);
+  var A = D.alarms().slice(0, 5);
   $('#alarms').innerHTML = A.map(function (a) {
     return '<a href="' + a.href + '" data-id="' + a.id + '"><i class="dot' + (a.read ? ' read' : '') + '"></i><span class="tx"><span class="t">' + esc(a.t) + '</span><span class="d">' + D.ymdhm(a.at) + '</span></span></a>';
   }).join('') || '<p class="mini-empty">새 알림이 없습니다.</p>';
@@ -252,7 +252,7 @@
   // 최근 문의 = 상담내역 (consult.js, 2026-10-22). 챗봇 문의는 대시보드에 보이지 않음. 컨설턴트는 답변대기 먼저
   var CS = OP.consult ? (admin ? OP.consult.all() : OP.consult.mine()) : [];
   CS.sort(function (a, b) { return (admin ? OP.consult.waiting(b) - OP.consult.waiting(a) : 0) || (OP.consult.lastAt(b) - OP.consult.lastAt(a)); });
-  $('#inqs').innerHTML = CS.slice(0, 4).map(function (c) {
+  $('#inqs').innerHTML = CS.slice(0, 5).map(function (c) {
     return '<a href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">' + (OP.consult.waiting(c) ? '<span class="badge wait">답변대기</span>' : '<span class="badge done">답변완료</span>') +
       '<span class="tx"><span class="t">' + esc(c.title) + '</span><span class="d">' + (admin ? esc(c.name) + ' · ' : '') + esc(c.type) + ' · ' + D.ymd(OP.consult.lastAt(c)) + '</span></span></a>';
   }).join('') || '<p class="mini-empty">상담 내역이 없습니다.</p>';

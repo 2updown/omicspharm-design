@@ -410,8 +410,8 @@ span.tbtn { cursor:default; }
 .ui-white .card.box .plist a:first-child { border-top:0; } .ui-white .card.box .plist a:last-child { border-bottom:0; } /* 박스 테두리와 겹치는 맨 위·아래 줄 없앰 */
 /* 대시보드 목록 박스는 내용이 없어도 높이 고정 (최근 프로젝트 3건, 최근 알림·문의 4건 기준), 빈 안내는 가운데 */
 .ui-white .card.box > :not(.card-head) { display:flex; flex-direction:column; justify-content:center; overflow:hidden; }
-.ui-white .card.box #plist { height:188px; }
-.ui-white .card.box #alarms, .ui-white .card.box #inqs { height:277px; }
+.ui-white .card.box #plist { height:302px; } /* 5건 (2026-10-23, 3→5) */
+.ui-white .card.box #alarms, .ui-white .card.box #inqs { height:342px; } /* 5건 (4→5) */
 .ui-white .card.bare .card-head, .ui-white .card.box .card-head { align-items:flex-end; } /* 대시보드 섹션: [전체 보기]를 제목 아래쪽 선에 맞춤 */
 .ui-white .card.bare { gap:12px; } /* 진행 현황도 제목–박스 12 (다른 섹션과 같음) */
 
