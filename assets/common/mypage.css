@@ -487,7 +487,7 @@ span.tbtn { cursor:default; }
 @keyframes aiRing { to { stroke-dashoffset:-100; } }
 .ui-headc .side-ai:hover { background:linear-gradient(#fff, #fff) padding-box, linear-gradient(#e3efed, #e3efed) border-box; } /* hover 중에는 고정 그라데이션 테두리를 연하게 → 도는 빛줄기만 보이게 (같은 색이라 묻혔음) */
 .ui-headc .side-ai:hover b { background:var(--ai-text); -webkit-background-clip:text; background-clip:text; color:transparent; }
-.ui-headc .side-ai:hover img { transform:rotate(90deg) scale(1.1); }
+.ui-headc .side-ai:hover img { transform:rotate(90deg); } /* 크기 키우기(scale)는 뺌 — 아이콘 이미지가 확대되며 뿌옇게 보였음 */
 .ui-headc .side-ai:hover::after { transform:translateX(3px); }
 .ui-headc .side-ai:active { transform:scale(.98); }
 .ui-headc .side-ai:focus-visible { outline:2px solid #3d7bff; outline-offset:3px; }
