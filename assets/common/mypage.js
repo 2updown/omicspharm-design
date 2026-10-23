@@ -194,17 +194,18 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
   OP.my = D;
   // AI Agent 띄우기 (2026-10-21: 전체 화면 페이지보다 지금 화면 위에 띄우는 쪽으로). 내용은 mypage-ai.html을 그대로 iframe으로
   OP.openAI = function (mode) {
-    mode = mode || (/[?&]ai=panel\b/.test(location.search) ? 'panel' : 'overlay');
+    mode = mode || (/[?&]ai=panel\b/.test(location.search) ? 'panel' : /[?&]ai=under\b/.test(location.search) ? 'under' : 'overlay'); // under = GNB는 남기고 그 아래 화면 전체 (검토용)
     if (document.querySelector('.op-ai')) return;
     var w = document.createElement('div');
     w.className = 'op-ai ' + mode; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-label', 'AI Agent');
     w.innerHTML = '<div class="op-ai-dim" data-ai-close></div><div class="op-ai-win"><button type="button" class="op-ai-x" data-ai-close aria-label="닫기"></button><iframe src="mypage-ai.html?embed=' + mode + '" title="AI Agent"></iframe></div>';
-    var close = function () { w.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', key); window.removeEventListener('message', msg); };
+    var close = function () { w.remove(); document.body.style.overflow = ''; document.body.classList.remove('op-ai-open'); document.removeEventListener('keydown', key); window.removeEventListener('message', msg); };
     var key = function (e) { if (e.key === 'Escape') close(); };
     var msg = function (e) { if (e.data === 'op-ai-close') close(); };
     w.addEventListener('click', function (e) { if (e.target.closest('[data-ai-close]')) close(); });
     document.addEventListener('keydown', key); window.addEventListener('message', msg);
-    document.body.appendChild(w); if (mode === 'overlay') document.body.style.overflow = 'hidden';
+    if (mode === 'under') { var g = document.querySelector('.op-gnb, header'); w.style.top = (g ? Math.round(g.getBoundingClientRect().bottom) : 70) + 'px'; }
+    document.body.appendChild(w); if (mode === 'overlay' || mode === 'under') document.body.style.overflow = 'hidden'; document.body.classList.add('op-ai-open'); // 열려 있는 동안 오른쪽 아래 챗봇 버튼 숨김
     w.querySelector('.op-ai-x').focus();
   };
   OP.mypage = function (key) {
