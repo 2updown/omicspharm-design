@@ -316,7 +316,7 @@
     }
     return '<div class="op-drawer" id="opDrawer" hidden>' + me +
       '<nav class="op-dr-nav" aria-label="전체 메뉴">' +
-        '<a class="op-dr-link" href="omicspharm-register.html" data-client-only>프로젝트 의뢰</a>' +
+        '<a class="op-dr-link" href="omicspharm-register.html?from=gnb" data-client-only>프로젝트 의뢰</a>' +
         '<a class="op-dr-link" href="projects.html">프로젝트 찾기</a>' +
         groups +
       '</nav>' +
@@ -331,7 +331,7 @@
     var on = function (k) { return active === k ? ' class="on"' : ''; };
     var menu =
       '<nav class="op-gnb-menu">' +
-        '<a href="omicspharm-register.html" data-client-only' + on('register') + '>프로젝트 의뢰</a>' +
+        '<a href="omicspharm-register.html?from=gnb" data-client-only' + on('register') + '>프로젝트 의뢰</a>' /* GNB에서 들어오면 [목록으로 돌아가기] 숨김 */ +
         '<a href="projects.html"' + on('find') + '>프로젝트 찾기</a>' +
         dropdown('community') + dropdown('service') + dropdown('support') +
       '</nav>';

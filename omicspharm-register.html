@@ -581,8 +581,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261023m">
-<script src="assets/common/site.js?v=20261023m"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261023n">
+<script src="assets/common/site.js?v=20261023n"></script>
 <script>if (!((OP.session() || {}).role === 'admin' && /[?&]edit=/.test(location.search))) OP.requireClient(); /* 클라이언트만 접근 (컨설턴트는 의뢰 수정(?edit=)만): 비로그인 → 로그인, 파트너 → 메인 */</script>
 </head>
 <body>
@@ -1527,6 +1527,8 @@
     $('#savedLine').textContent='임시저장 전'; dirty=false; toast('새 의뢰서를 시작합니다');
   }
 
+  // GNB '프로젝트 의뢰'로 바로 들어오면 돌아갈 목록이 없으니 [목록으로 돌아가기] 숨김 (2026-10-23). 제목 가운데 정렬은 유지
+  if(new URLSearchParams(location.search).get('from')==='gnb' && !EDIT) $('.crumb .back').style.visibility='hidden';
   // 목록으로 돌아가기 → 프로젝트 찾기 (Figma 프로토타입). 저장 안 한 내용이 있으면 확인 모달(1181:56862) 먼저
   $('.crumb .back').onclick=function(){
     var go=function(){ location.href=EDIT ? 'mypage-project.html?id='+encodeURIComponent(EDIT.id) : 'projects.html' };
