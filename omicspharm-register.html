@@ -581,8 +581,8 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261023o">
-<script src="assets/common/site.js?v=20261023o"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261023p">
+<script src="assets/common/site.js?v=20261023p"></script>
 <script>if (!((OP.session() || {}).role === 'admin' && /[?&]edit=/.test(location.search))) OP.requireClient(); /* 클라이언트만 접근 (컨설턴트는 의뢰 수정(?edit=)만): 비로그인 → 로그인, 파트너 → 메인 */</script>
 </head>
 <body>
@@ -1532,9 +1532,17 @@
   // [이전으로] → 직전 화면 (없으면 프로젝트 찾기). 수정 모드는 의뢰 상세로. 저장 안 한 내용이 있으면 확인 모달(1181:56862) 먼저
   $('.crumb .back').onclick=function(){
     var go=function(){ dirty=false; if(EDIT) location.href='mypage-project.html?id='+encodeURIComponent(EDIT.id); else OP.goBack('projects.html'); };
-    if(dirty) confirmBox('작성을 취소하시겠습니까?','지금 나가면 저장되지 않은 내용이 사라집니다.','삭제',go);
+    if(dirty) confirmBox('작성을 취소하시겠습니까?','지금 나가면 저장되지 않은 내용이 사라집니다.','나가기',go);
     else go();
   };
+  // 작성 중에 다른 페이지로 가면 확인 모달 (마이페이지 분석 서비스 정보와 같은 방식·문구, 2026-10-23). 새로고침·창 닫기는 브라우저 기본 경고
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a[href]'); if(!a||!dirty||e.defaultPrevented) return;
+    var h=a.getAttribute('href'); if(!h||h.charAt(0)==='#'||a.target==='_blank'||/^(mailto|tel|javascript):/.test(h)) return;
+    e.preventDefault(); e.stopPropagation();
+    confirmBox('작성을 취소하시겠습니까?','지금 나가면 저장되지 않은 내용이 사라집니다.','나가기',function(){ dirty=false; location.href=a.href; });
+  },true);
+  window.addEventListener('beforeunload',function(e){ if(dirty){ e.preventDefault(); e.returnValue=''; } });
   var pick=null;
   function syncPick(){
     $('#loadDraft').disabled=!pick; $('#delDraft').disabled=!pick;
