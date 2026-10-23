@@ -475,7 +475,7 @@ span.tbtn { cursor:default; }
 .ui-headc .side-ai:focus-visible { outline:2px solid #3d7bff; outline-offset:3px; }
 @media (prefers-reduced-motion:reduce) { .ui-headc .side-ai, .ui-headc .side-ai img, .ui-headc .side-ai::after { transition:none; } .ui-headc .side-ai:active { transform:none; } }
 .ui-headc .menu a[href="mypage-ai.html"] { display:none; } /* 메뉴 맨 아래 AI Agent 항목은 카드로 대신 */
-/* 메뉴 아이콘 비교안 (?micon=1): 위쪽 메뉴·묶음 제목에만 Phosphor Regular 20px, 글자색을 따라감 (선택 = 청록). 하위 메뉴는 아이콘 없음 */
+/* 메뉴 아이콘 (2026-10-23 기본, ?micon=0이면 없음): 위쪽 메뉴·묶음 제목에만 Phosphor Regular 20px, 글자색을 따라감 (선택 = 청록). 하위 메뉴는 아이콘 없음 */
 .ui-white.ui-micon .side .menu > a::before, .ui-white.ui-micon .side .menu .gh::before { content:""; display:block; position:static; border:0; flex:none; width:20px; height:20px; background:currentColor; -webkit-mask:var(--mi) center/contain no-repeat; mask:var(--mi) center/contain no-repeat; }
 .ui-micon .side .menu > a[href="mypage.html"] { --mi:url(menu/squares-four.svg); }
 .ui-micon .side .menu > a[href="mypage-project.html"], .ui-micon .side .menu > a[href="mypage-request.html"], .ui-micon .side .menu .grp[data-g="prj"] .gh { --mi:url(menu/folders.svg); }

@@ -9,8 +9,8 @@ if (!/[?&]ui=gray\b/.test(location.search) && !/mypage-ai\.html/.test(location.p
 // 상단 (2026-10-23 시안 C를 기본으로): '마이페이지' 제목 줄 없앰 → 본문 맨 위에 메뉴 이름, 왼쪽 메뉴 아래에 AI Agent 카드·역할별 바로가기
 // 예전 제목 줄 디자인은 ?head=a (Figma 1646:7138에 시안 A·B로 비교용)
 if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.contains('ui-white')) document.documentElement.classList.add('ui-headc');
-// 메뉴 아이콘 비교안 (2026-10-23, 미정): ?micon=1 켜기 / ?micon=0 끄기. 마이페이지 안에서 이동해도 유지
-(function () { var m = /[?&]micon=([01])/.exec(location.search); try { if (m) sessionStorage.setItem('op.micon', m[1]); if (sessionStorage.getItem('op.micon') === '1') document.documentElement.classList.add('ui-micon'); } catch (e) {} })();
+// 메뉴 아이콘 (2026-10-23 기본 적용). 아이콘 없는 비교: ?micon=0 (마이페이지 안에서 이동해도 유지), 다시 켜기 ?micon=1
+(function () { var m = /[?&]micon=([01])/.exec(location.search), off = false; try { if (m) sessionStorage.setItem('op.micon', m[1]); off = sessionStorage.getItem('op.micon') === '0'; } catch (e) {} if (!off) document.documentElement.classList.add('ui-micon'); })();
 (function () {
   // [키, 이름, 주소, 보이는 유형(없으면 모두)]
   // admin = 컨설턴트(셀키): 당분간 분석파트너와 같은 화면 + 관리 메뉴 추가 (메뉴는 바뀌거나 통폐합될 수 있음)
