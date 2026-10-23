@@ -475,3 +475,14 @@ span.tbtn { cursor:default; }
 .ui-headc .side-ai:focus-visible { outline:2px solid #3d7bff; outline-offset:3px; }
 @media (prefers-reduced-motion:reduce) { .ui-headc .side-ai, .ui-headc .side-ai img, .ui-headc .side-ai::after { transition:none; } .ui-headc .side-ai:active { transform:none; } }
 .ui-headc .menu a[href="mypage-ai.html"] { display:none; } /* 메뉴 맨 아래 AI Agent 항목은 카드로 대신 */
+/* 메뉴 아이콘 비교안 (?micon=1): 위쪽 메뉴·묶음 제목에만 Phosphor Regular 20px, 글자색을 따라감 (선택 = 청록). 하위 메뉴는 아이콘 없음 */
+.ui-white.ui-micon .side .menu > a::before, .ui-white.ui-micon .side .menu .gh::before { content:""; display:block; position:static; border:0; flex:none; width:20px; height:20px; background:currentColor; -webkit-mask:var(--mi) center/contain no-repeat; mask:var(--mi) center/contain no-repeat; }
+.ui-micon .side .menu > a[href="mypage.html"] { --mi:url(menu/squares-four.svg); }
+.ui-micon .side .menu > a[href="mypage-project.html"], .ui-micon .side .menu > a[href="mypage-request.html"], .ui-micon .side .menu .grp[data-g="prj"] .gh { --mi:url(menu/folders.svg); }
+.ui-micon .side .menu > a[href="mypage-consult.html"] { --mi:url(menu/chats-circle.svg); }
+.ui-micon .side .menu > a[href="mypage-inquiry.html"] { --mi:url(menu/question.svg); }
+.ui-micon .side .menu > a[href="mypage-alarm.html"] { --mi:url(menu/bell.svg); }
+.ui-micon .side .menu > a[href="mypage-account.html"], .ui-micon .side .menu .grp[data-g="me"] .gh { --mi:url(menu/user-circle.svg); }
+.ui-micon .side .menu .grp[data-g="mgmt"] .gh { --mi:url(menu/users-three.svg); }
+.ui-micon .side .menu > a[href="#"] { --mi:url(menu/gear-six.svg); }
+.ui-micon .side .menu .sub a { padding-left:40px; } /* 하위 메뉴 글자를 위 메뉴 글자 시작(아이콘 20 + 간격 8 뒤)에 맞춤 */
