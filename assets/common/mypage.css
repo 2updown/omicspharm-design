@@ -460,7 +460,7 @@ span.tbtn { cursor:default; }
 .ui-headc .side { display:flex; flex-direction:column; gap:8px; } /* 메뉴 마지막 항목 ↔ AI 버튼 16px (메뉴 아래 여백 8 포함) */
 /* AI Agent 버튼 (2026-10-23, Figma AI_btn_gradient 1714:8168): 그라데이션 테두리 버튼 · 모서리 12 · 메뉴 항목 박스와 같은 폭 (왼쪽 -12px, 아이콘은 메뉴 글자 시작에 맞춤) (참고 gradient-border-buttons.framer.website)
    흰 바탕 + 민트→초록→파랑 테두리 (검정 바탕은 2026-10-23 뺌). hover = 테두리 빛번짐 + 글자 그라데이션 + 화살표 이동 */
-.ui-headc .side-ai { --ai-grad:linear-gradient(90deg, #6ee7b7, #22c57e 45%, #3d7bff); --ai-text:linear-gradient(90deg, #00a070, #2f6bff); position:relative; display:flex; align-items:center; gap:0; width:calc(100% + 12px); margin-left:-12px; height:52px; padding:0 14px 0 10.5px; border:1.5px solid transparent; border-radius:12px; background:linear-gradient(#fff, #fff) padding-box, var(--ai-grad) border-box; text-align:left; cursor:pointer; transition:box-shadow .25s, transform .2s; }
+.ui-headc .side-ai { --ai-grad:linear-gradient(90deg, #6ee7b7, #22c57e 45%, #3d7bff); --ai-text:linear-gradient(90deg, #00a070, #2f6bff); position:relative; display:flex; align-items:center; gap:0; width:calc(100% + 12px); margin-left:-12px; height:52px; padding:0 13.5px 0 10px; border:2px solid transparent; border-radius:12px; background:linear-gradient(#fff, #fff) padding-box, var(--ai-grad) border-box; text-align:left; cursor:pointer; transition:box-shadow .25s, transform .2s; }
 .ui-headc .side-ai img { flex:none; width:16px; height:16px; transition:transform .5s cubic-bezier(.3,1.6,.5,1); }
 .ui-headc .side-ai span { display:flex; align-items:center; gap:5px; flex:none; margin-left:8px; }
 .ui-headc .side-ai b { display:block; font-size:16px; font-weight:500; line-height:22px; color:#171717; white-space:nowrap; }
