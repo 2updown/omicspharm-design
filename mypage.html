@@ -7,12 +7,12 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261024g">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261024g">
-<script src="assets/common/site.js?v=20261024g"></script>
-<script src="assets/common/consult.js?v=20261024g"></script>
-<script src="assets/common/mypage.js?v=20261024g"></script>
-<script src="assets/common/flow.js?v=20261024g"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261024h">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261024h">
+<script src="assets/common/site.js?v=20261024h"></script>
+<script src="assets/common/consult.js?v=20261024h"></script>
+<script src="assets/common/mypage.js?v=20261024h"></script>
+<script src="assets/common/flow.js?v=20261024h"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -78,7 +78,7 @@
   .mini .d { display:block; margin-top:2px; font-size:12px; line-height:18px; color:var(--gray-500); }
   .mini .badge { flex:none; margin-top:1px; }
   .mini .at { flex:none; font-size:13px; line-height:20px; color:var(--gray-500); } /* 날짜는 오른쪽 (최근 프로젝트와 같은 위치) */
-  .mini a.unread .t { font-weight:600; }
+  #alarms .t { font-weight:400; color:var(--gray-700); } #alarms a.unread .t { font-weight:500; color:#000; } /* 읽음 = Body/Small/R, 안 읽음 = Body/Small/M (DS에 14px 굵은 스타일이 없어 Figma와 맞춤) */
   .mini-empty { padding:32px 0; text-align:center; font-size:14px; color:var(--gray-500); }
 
   @media (max-width:1180px) { .grid2 { grid-template-columns:minmax(0,1fr); } }
