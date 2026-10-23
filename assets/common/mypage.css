@@ -482,7 +482,7 @@ span.tbtn { cursor:default; }
 .ui-micon .side .menu > a[href="mypage-consult.html"] { --mi:url(menu/chats-circle.svg); }
 .ui-micon .side .menu > a[href="mypage-inquiry.html"] { --mi:url(menu/question.svg); }
 .ui-micon .side .menu > a[href="mypage-alarm.html"] { --mi:url(menu/bell.svg); }
-.ui-micon .side .menu > a[href="mypage-account.html"], .ui-micon .side .menu .grp[data-g="me"] .gh { --mi:url(menu/user-circle.svg); }
+.ui-micon .side .menu > a[href="mypage-account.html"], .ui-micon .side .menu .grp[data-g="me"] .gh { --mi:url(menu/user.svg); }
 .ui-micon .side .menu .grp[data-g="mgmt"] .gh { --mi:url(menu/users-three.svg); }
 .ui-micon .side .menu > a[href="#"] { --mi:url(menu/gear-six.svg); }
 .ui-micon .side .menu .sub a { padding-left:40px; } /* 하위 메뉴 글자를 위 메뉴 글자 시작(아이콘 20 + 간격 8 뒤)에 맞춤 */
