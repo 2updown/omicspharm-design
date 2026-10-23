@@ -8,12 +8,12 @@
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 기관 정보(클라이언트) / 비밀번호 변경 / 회원 탈퇴. 알림 설정은 없음 (기존 사이트에 없고 가입 때도 받지 않음).
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261023w">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261023w">
-<script src="assets/common/site.js?v=20261023w"></script>
-<script src="assets/common/consult.js?v=20261023w"></script>
-<script src="assets/common/mypage.js?v=20261023w"></script>
-<script src="assets/common/flow.js?v=20261023w"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261023x">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261023x">
+<script src="assets/common/site.js?v=20261023x"></script>
+<script src="assets/common/consult.js?v=20261023x"></script>
+<script src="assets/common/mypage.js?v=20261023x"></script>
+<script src="assets/common/flow.js?v=20261023x"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -47,7 +47,7 @@
   .gate .lock img { width:40px; height:40px; }
   .gfield { display:flex; flex-direction:column; gap:6px; }
   .gate h3 { font-size:20px; font-weight:700; line-height:28px; letter-spacing:-.2px; }
-  .gate p { margin-top:-16px; font-size:14px; line-height:20px; color:var(--gray-500); }
+  .gate > p { margin-top:-16px; font-size:14px; line-height:20px; color:var(--gray-500); } /* 안내 문구만 (입력란 아래 에러 문구에는 적용 안 함 — 겹침 수정 2026-10-23) */
   .gate form { display:flex; flex-direction:column; align-items:stretch; gap:8px; width:100%; max-width:360px; text-align:left; }
   .gate .inp { max-width:none; height:48px; }
   .gate .btn { width:100%; margin-top:8px; }
@@ -190,16 +190,19 @@
   var email = me.s.email, acc = me.acc, partner = me.s.role === 'partner', client = me.s.role === 'client';
   var hasDoc = client; // 사업자등록증: 클라이언트(프로젝트 등록 시 필요). 분석파트너는 [파트너 인증] 메뉴에서
 
-  // 비밀번호 재확인 (데모: 아무 값이나 입력하면 통과 — 화면에는 표시하지 않음)
+  // 비밀번호 재확인: 틀리면 입력란 아래 '현재 비밀번호가 일치하지 않습니다.' (개발팀 문의 5번 회신대로, 2026-10-23)
   $('#fGate').addEventListener('submit', function (e) {
     e.preventDefault();
     var g = $('#gpw');
     if (!g.value) { err(g, '비밀번호를 입력해주세요.'); g.focus(); return; }
+    if (acc.pw && g.value !== acc.pw) { err(g, '현재 비밀번호가 일치하지 않습니다.'); g.select(); return; }
+    err(g, '');
     $('#gate').hidden = true; $('#secure').hidden = false;
     $('#name').focus({ preventScroll: true });
     if (location.hash === '#doc' && hasDoc) $('#rowDoc').scrollIntoView({ behavior: 'smooth', block: 'center' }); // 미인증 안내의 [사업자등록증 올리기]에서 온 경우
     if (location.hash === '#mail') $('#rowMail').scrollIntoView({ behavior: 'smooth', block: 'center' }); // 인증 안내 팝업의 [이메일 인증]에서 온 경우
   });
+  $('#gpw').addEventListener('input', function () { err(this, ''); });
   $('#gpw').focus();
 
   // 프로필 사진: 가운데를 정사각형으로 잘라 240px로 줄여 저장
