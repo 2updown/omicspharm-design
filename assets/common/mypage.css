@@ -458,7 +458,7 @@ span.tbtn { cursor:default; }
 
 /* 상단 (2026-10-23 기본, 예전은 ?head=a): 제목 줄 없앰 → 본문 맨 위에 메뉴 이름, 공통 버튼은 왼쪽 메뉴 아래 */
 .ui-headc .page-head { display:none; }
-.ui-headc .body { padding-top:48px; }
+.ui-headc .body { padding-top:24px; } /* GNB–본문 48 → 24 (2026-10-23) */
 .ui-headc .mtitle { margin:0 0 -20px; font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; } /* 제목–첫 섹션 12 (Figma 1692:7204) */
 /* 대시보드 섹션 제목 오른쪽 '전체 보기' 글자 → 오른쪽 쉐브론 아이콘 (Figma CaretRight 20, gray-500) */
 .ui-headc .card-head .more { width:20px; height:20px; flex:none; font-size:0; color:transparent; background:url(../detail/ic-caret-right-20.svg) center/20px no-repeat; }
