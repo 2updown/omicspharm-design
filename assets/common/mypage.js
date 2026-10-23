@@ -267,7 +267,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
             // 메일 인증 전: '메일 미인증'만 (분석파트너 기관 인증은 메일 인증 다음 단계), 메일 인증 후: 분석파트너만 기관 인증 여부
             (!OP.mailVerified() && s.role !== 'admin' ? '<span class="op-vchip">메일 미인증</span>' : s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '') + '</span>' +
           '<b>' + esc(name) + ' 님</b><span>(' + esc(s.email) + ')</span>' + (org ? '<span>' + esc(org) + '</span>' : '') + '</div>' +
-        (HC ? '<button type="button" class="side-ai" data-ph-ai><img src="assets/common/ic-sparkle-fill.svg" alt=""><span><b>AI Agent</b><em>beta</em></span><svg class="ai-ring" aria-hidden="true"><defs><linearGradient id="aiRingG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#22c57e"/><stop offset="1" stop-color="#3d7bff"/></linearGradient></defs><rect x="1" y="1" rx="11" pathLength="100"/></svg></button>' : '') + '<nav class="menu" aria-label="마이페이지 메뉴">' + html + '</nav>'; // AI Agent 버튼은 메뉴 위 (2026-10-23, 정식 진입점) · // 이름은 'AI Agent' (사이드 폭에 맞춰 2026-10-24 줄임) · 메뉴 → AI Agent (역할별 바로가기 버튼은 2026-10-23 뺌 — 클라이언트만 필요해서)
+        (HC ? '<button type="button" class="side-ai" data-ph-ai><img src="assets/common/ic-sparkle-fill.svg" alt=""><span><b>AI Agent</b><em>beta</em></span></button>' : '') + '<nav class="menu" aria-label="마이페이지 메뉴">' + html + '</nav>'; // AI Agent 버튼은 메뉴 위 (2026-10-23, 정식 진입점) · // 이름은 'AI Agent' (사이드 폭에 맞춰 2026-10-24 줄임) · 메뉴 → AI Agent (역할별 바로가기 버튼은 2026-10-23 뺌 — 클라이언트만 필요해서)
       if (HC) {
         // 본문 맨 위에 지금 메뉴 이름을 큰 제목으로 (간격은 조정 예정)
         var lab = document.body.dataset.mtitle || (MENU.filter(function (m) { return m[0] === key; })[0] || [])[1] || '마이페이지', mn = document.querySelector('.main'); // data-mtitle: 메뉴 이름과 다른 화면 제목 (예: 회원 탈퇴)
@@ -286,9 +286,6 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
           }, 0);
         }
         var ai0 = side.querySelector('.side-ai'); if (ai0) ai0.addEventListener('click', function () { OP.openAI(); });
-        // hover 빛줄기 테두리(SVG rect)를 버튼 크기에 맞춤
-        var ring = ai0 && ai0.querySelector('.ai-ring rect');
-        if (ring) { var fit = function () { ring.setAttribute('width', Math.max(0, ai0.offsetWidth - 2)); ring.setAttribute('height', Math.max(0, ai0.offsetHeight - 2)); }; fit(); if (window.ResizeObserver) new ResizeObserver(fit).observe(ai0); }
       }
       if (!side.dataset.bound) {
         side.dataset.bound = 1;
