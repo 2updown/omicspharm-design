@@ -479,7 +479,7 @@ span.tbtn { cursor:default; }
 .ui-headc .side-ai::after { content:""; margin-left:auto; flex:none; width:16px; height:16px; background:url(../detail/ic-caret-right-20.svg) center/16px no-repeat; opacity:.6; transition:transform .2s; }
 /* hover: 빛번짐 없이 테두리 그라데이션만 둘레를 따라 계속 흐름 (2026-10-23) */
 @property --ai-angle { syntax:'<angle>'; inherits:false; initial-value:0deg; }
-.ui-headc .side-ai:hover { background:linear-gradient(#fff, #fff) padding-box, conic-gradient(from var(--ai-angle), #6ee7b7, #22c57e, #3d7bff, #22c57e, #6ee7b7) border-box; animation:aiBorder 2s linear infinite; }
+.ui-headc .side-ai:hover { background:linear-gradient(#fff, #fff) padding-box, conic-gradient(from var(--ai-angle), #eefcf6, #22c57e, #3d7bff, #22c57e, #eefcf6) border-box; animation:aiBorder 2s linear infinite; }
 @keyframes aiBorder { to { --ai-angle:360deg; } }
 .ui-headc .side-ai:hover b { background:var(--ai-text); -webkit-background-clip:text; background-clip:text; color:transparent; }
 .ui-headc .side-ai:hover img { transform:rotate(90deg) scale(1.1); }
