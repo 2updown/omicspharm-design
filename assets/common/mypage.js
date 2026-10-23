@@ -315,4 +315,9 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     }
     return { s: s, acc: acc, name: name, org: org };
   };
+  // 상세 화면 제목 옆 [‹] (2026-10-23): 원래 왔던 화면으로 (대시보드 알림 → 상세 → ‹ = 대시보드). 링크로 바로 들어왔으면 원래 주소(목록)로
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a.back, .mg-head > a'); if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    e.preventDefault(); OP.goBack(/^javascript:/.test(a.getAttribute('href')) ? 'mypage.html' : a.href);
+  });
 })();
