@@ -8,10 +8,10 @@
   var ACC_KEY = 'op.accounts', SES_KEY = 'op.session';
   var DEMO_PW = 'Demo@1234';
   var SEED = {
-    'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true, name: '홍길동', org: '한결연구소', phone: '+82 010-1234-5678', bizDoc: '사업자등록증_한결연구소.pdf', bizOk: 1788220800000, bizOkName: '사업자등록증_한결연구소.pdf' }, // 예시 클라이언트: 사업자등록증 확인(인증) 완료 상태
-    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', org: '세움분석센터', phone: '+82 010-2345-6789', verified: true, bizDoc: '사업자등록증_세움분석센터.pdf', ceo: '홍길동', bizno: '000-00-00000', addr: '서울특별시 강서구 마곡중앙로 00',
+    'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true, name: '홍길동', nick: 'cli05', org: '한결연구소', dept: '연구실', country: 'South Korea', ceo: '홍길동', bizno: '000-00-00000', addr: '서울특별시 강서구 마곡중앙로 00', phone: '+82 010-1234-5678', bizDoc: '사업자등록증_한결연구소.pdf', bizOk: 1788220800000, bizOkName: '사업자등록증_한결연구소.pdf' }, // 예시 클라이언트: 사업자등록증 확인(인증) 완료 상태
+    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', nick: 'seum01', org: '세움분석센터', dept: '분석팀', country: 'South Korea', phone: '+82 010-2345-6789', verified: true, bizDoc: '사업자등록증_세움분석센터.pdf', ceo: '홍길동', bizno: '000-00-00000', addr: '서울특별시 강서구 마곡중앙로 00',
       services: SEED_SVC },
-    'admin@omicspharm.test':   { role: 'admin',   pw: DEMO_PW, profileDone: true, name: '셀키 컨설턴트', org: '셀키', phone: '+82 010-3456-7890' }
+    'admin@omicspharm.test':   { role: 'admin',   pw: DEMO_PW, profileDone: true, name: '셀키 컨설턴트', nick: 'consultant', org: '셀키', dept: '컨설팅팀', country: 'South Korea', phone: '+82 010-3456-7890' } // 예시 계정은 필수 항목(닉네임·부서·국가)을 채워 둠 (2026-10-23)
   };
   var ROLE_LABEL = { client: '클라이언트', partner: '분석파트너', admin: '컨설턴트' }; // admin = 셀키 컨설턴트
 

@@ -266,7 +266,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
         '<nav class="menu" aria-label="마이페이지 메뉴">' + html + '</nav>' + (HC ? '<button type="button" class="side-ai" data-ph-ai><img src="assets/common/ic-sparkle-fill.svg" alt=""><span><b>AI Agent에게 물어보기</b><em>beta</em></span></button>' : ''); // 메뉴 → AI Agent (역할별 바로가기 버튼은 2026-10-23 뺌 — 클라이언트만 필요해서)
       if (HC) {
         // 본문 맨 위에 지금 메뉴 이름을 큰 제목으로 (간격은 조정 예정)
-        var lab = (MENU.filter(function (m) { return m[0] === key; })[0] || [])[1] || '마이페이지', mn = document.querySelector('.main');
+        var lab = document.body.dataset.mtitle || (MENU.filter(function (m) { return m[0] === key; })[0] || [])[1] || '마이페이지', mn = document.querySelector('.main'); // data-mtitle: 메뉴 이름과 다른 화면 제목 (예: 회원 탈퇴)
         if (mn && !mn.querySelector('.mtitle') && (key !== 'dash' || /[?&]dtitle=1\b/.test(location.search))) { // 대시보드는 제목 없이 (2026-10-23). ?dtitle=1 이면 비교용으로 제목 표시
           mn.insertAdjacentHTML('afterbegin', '<h1 class="mtitle">' + esc(lab) + '</h1>');
           // 첫 제목 글자만 겹치면 그 글자만 지우고 옆의 칩·버튼은 남김 (예: 상담내역)
