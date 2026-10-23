@@ -404,7 +404,7 @@ span.tbtn { cursor:default; }
 .ui-white .card.box { padding:24px; border:1px solid var(--gray-200); border-radius:16px; }
 .ui-white .main:has(.card.box) { gap:32px; } /* 박스로 묶은 대시보드는 섹션 사이 32 (선만 있는 화면은 64) */
 /* 화이트 시안: '마이페이지' 제목 조금 크게, 대시보드 목록 영역도 진행 현황처럼 제목은 박스 밖(22px)·내용만 박스 */
-.ui-white .card.box { padding:0; gap:8px; border:0; border-radius:0; } /* 제목줄([전체 보기])과 박스 사이 8 */
+.ui-white .card.box { padding:0; gap:12px; border:0; border-radius:0; } /* 제목줄과 박스 사이 12 (2026-10-23, 8→12) */
 .ui-white .card.box .card-head h3 { font-size:22px; font-weight:700; line-height:30px; letter-spacing:-.22px; }
 .ui-white .card.box > :not(.card-head) { padding:8px 24px; border:1px solid var(--gray-200); border-radius:16px; }
 .ui-white .card.box .plist a:first-child { border-top:0; } .ui-white .card.box .plist a:last-child { border-bottom:0; } /* 박스 테두리와 겹치는 맨 위·아래 줄 없앰 */
@@ -413,7 +413,7 @@ span.tbtn { cursor:default; }
 .ui-white .card.box #plist { height:188px; }
 .ui-white .card.box #alarms, .ui-white .card.box #inqs { height:277px; }
 .ui-white .card.bare .card-head, .ui-white .card.box .card-head { align-items:flex-end; } /* 대시보드 섹션: [전체 보기]를 제목 아래쪽 선에 맞춤 */
-.ui-white .card.bare { gap:8px; } /* 진행 현황도 제목–박스 8 (다른 섹션과 같음) */
+.ui-white .card.bare { gap:12px; } /* 진행 현황도 제목–박스 12 (다른 섹션과 같음) */
 
 /* 화이트 시안: 제목 오른쪽 내 정보 한 줄 */
 .ui-white .page-head .in { display:flex; align-items:center; justify-content:space-between; gap:24px; }
@@ -456,9 +456,19 @@ span.tbtn { cursor:default; }
 .ui-headc .mtitle { display:flex; align-items:center; gap:10px; }
 .ui-headc .mtitle .op-vchip, .ui-headc .mtitle .cnt { font-size:14px; font-weight:600; line-height:20px; letter-spacing:0; }
 .ui-headc .side { display:flex; flex-direction:column; gap:20px; }
-.ui-headc .side-ai { display:flex; align-items:center; gap:10px; width:100%; padding:14px 16px; border:1px solid #cdeee8; border-radius:12px; background:#f4fbfa; text-align:left; cursor:pointer; }
-.ui-headc .side-ai:hover { background:#e8f7f4; }
-.ui-headc .side-ai img { width:20px; height:20px; }
+.ui-headc .side-ai { position:relative; overflow:hidden; display:flex; align-items:center; gap:10px; width:100%; padding:14px 16px; border:1px solid #cdeee8; border-radius:12px; background:#f4fbfa; text-align:left; cursor:pointer; transition:border-color .2s, box-shadow .2s, transform .2s, background .2s; }
+.ui-headc .side-ai img { width:20px; height:20px; transition:transform .5s cubic-bezier(.3,1.6,.5,1); }
 .ui-headc .side-ai b { display:block; font-size:15px; font-weight:600; line-height:20px; color:var(--teal-700); }
 .ui-headc .side-ai em { font-style:normal; font-size:12px; color:var(--teal-700); opacity:.8; }
+/* hover (2026-10-23): 살짝 떠오르고 테두리 진해짐 + 반짝이 아이콘 회전 + 빛이 한 번 쓸고 지나감 + 오른쪽 화살표 등장 */
+.ui-headc .side-ai::before { content:""; position:absolute; top:0; bottom:0; left:-60%; width:50%; background:linear-gradient(100deg, transparent, rgba(255,255,255,.75), transparent); transform:skewX(-20deg); pointer-events:none; }
+.ui-headc .side-ai::after { content:""; margin-left:auto; flex:none; width:18px; height:18px; background:url(../detail/ic-caret-right-20.svg) center/18px no-repeat; opacity:0; transform:translateX(-6px); transition:opacity .2s, transform .2s; filter:invert(36%) sepia(85%) saturate(560%) hue-rotate(134deg) brightness(88%); }
+.ui-headc .side-ai:hover { border-color:var(--teal-500, #00bba6); background:#eaf8f5; box-shadow:0 6px 16px rgba(0,151,136,.16); transform:translateY(-2px); }
+.ui-headc .side-ai:hover img { transform:rotate(90deg) scale(1.15); }
+.ui-headc .side-ai:hover::before { animation:sideAiShine .8s ease-out; }
+.ui-headc .side-ai:hover::after { opacity:1; transform:none; }
+.ui-headc .side-ai:active { transform:translateY(0); box-shadow:0 2px 6px rgba(0,151,136,.14); }
+.ui-headc .side-ai:focus-visible { outline:2px solid var(--teal-600); outline-offset:2px; }
+@keyframes sideAiShine { from { left:-60%; } to { left:120%; } }
+@media (prefers-reduced-motion:reduce) { .ui-headc .side-ai, .ui-headc .side-ai img, .ui-headc .side-ai::after { transition:none; } .ui-headc .side-ai:hover { transform:none; } .ui-headc .side-ai:hover::before { animation:none; } }
 .ui-headc .menu a[href="mypage-ai.html"] { display:none; } /* 메뉴 맨 아래 AI Agent 항목은 카드로 대신 */
