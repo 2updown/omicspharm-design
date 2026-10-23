@@ -144,6 +144,11 @@
   var domainOf = function (email) { return String(email || '').toLowerCase().split('@')[1] || ''; };
   function myEmail() { var s = OP.session(); if (s) return s.email; try { return sessionStorage.getItem('op.pendingSignup') || ''; } catch (e) { return ''; } }
   // { 소속: { domains:[], depts:{ 부서: 가입자 수 }, seed, owners:[] } }
+  // [‹ 이전으로] 공통 (2026-10-23): 같은 사이트 안에서 왔으면 직전 화면으로, 아니면(링크로 바로 들어옴 등) fallback 주소로
+  OP.goBack = function (fallback) {
+    var same = document.referrer && document.referrer.indexOf(location.origin) === 0 && document.referrer !== location.href;
+    if (same && history.length > 1) history.back(); else location.href = fallback || 'index.html';
+  };
   OP.orgDB = function () {
     var db = {};
     var get = function (o) { return db[o] = db[o] || { domains: [], depts: {}, owners: [] }; };
@@ -331,7 +336,7 @@
     var on = function (k) { return active === k ? ' class="on"' : ''; };
     var menu =
       '<nav class="op-gnb-menu">' +
-        '<a href="omicspharm-register.html?from=gnb" data-client-only' + on('register') + '>프로젝트 의뢰</a>' /* GNB에서 들어오면 [목록으로 돌아가기] 숨김 */ +
+        '<a href="omicspharm-register.html?from=gnb" data-client-only' + on('register') + '>프로젝트 의뢰</a>' /* GNB에서 들어오면 [이전으로] 숨김 */ +
         '<a href="projects.html"' + on('find') + '>프로젝트 찾기</a>' +
         dropdown('community') + dropdown('service') + dropdown('support') +
       '</nav>';
