@@ -8,10 +8,10 @@
 <!-- Contact Us (Figma 시안 없음 — 04_Resource/Component 토큰·컴포넌트로 구성). 2026-10-22 상담 흐름으로 변경
      비회원: 문의 유형·이름·이메일·제목·내용만 → 메일 링크(consult-view.html)로 답변 확인, 추가 상담은 회원가입 후. 회원: 마이페이지 > 상담내역으로 (assets/common/consult.js)
      ?type=quote|project|service|partner|data|etc  문의 유형 미리 선택(분석 견적일 때만 관련 분석 서비스 노출) / ?ref=제목 또는 프로젝트 번호  관련 프로젝트 표시 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261024d">
-<script src="assets/common/site.js?v=20261024d"></script>
-<script src="assets/common/flow.js?v=20261024d"></script>
-<script src="assets/common/consult.js?v=20261024d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261024e">
+<script src="assets/common/site.js?v=20261024e"></script>
+<script src="assets/common/flow.js?v=20261024e"></script>
+<script src="assets/common/consult.js?v=20261024e"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -26,13 +26,13 @@
   [hidden] { display:none !important; }
 
   /* 상단: FAQ 상단과 같은 크기·여백, 배경은 흰색 */
-  .page-head { padding:64px 60px 56px; background:#fff; text-align:center; }
+  .page-head { padding:64px 60px 40px; background:#fff; text-align:center; }
   .page-head .in, .body .in { max-width:1320px; margin:0 auto; }
   .page-head h1 { font-size:50px; font-weight:700; line-height:64px; letter-spacing:-.5px; }
   .page-head p { margin-top:12px; font-size:16px; line-height:22px; color:var(--gray-600); }
   .body { padding:0 60px 60px; } /* 상단 이미지가 들어가면 위 여백 다시 추가 */
 
-  .card { min-width:0; display:flex; flex-direction:column; gap:32px; padding:24px; background:#fff; border:1px solid var(--gray-200); border-radius:16px; }
+  .card { min-width:0; display:flex; flex-direction:column; gap:32px; padding:0 25px 25px; background:#fff; } /* 테두리 없음 (Figma 1629:6963, 2026-10-23) */
   .group > h2 { margin:0 0 12px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
   .group > .note { margin:8px 0 0; font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
 
@@ -110,11 +110,11 @@
   }
   @media (max-width:640px) {
     .page-head, .body { padding-left:16px; padding-right:16px; }
-    .page-head { padding-top:40px; padding-bottom:32px; }
+    .page-head { padding-top:40px; padding-bottom:24px; }
     .page-head h1 { font-size:32px; line-height:42px; letter-spacing:-.32px; }
     .page-head p { font-size:14px; line-height:20px; }
     .body { padding-top:0; }
-    .card { padding:20px 16px; }
+    .card { padding:0 0 20px; }
     .field { grid-template-columns:1fr; }
     .flabel { padding:10px 12px; }
     .actions .btn { flex:1; }
