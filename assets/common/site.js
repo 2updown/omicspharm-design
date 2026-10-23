@@ -31,7 +31,7 @@
       // 예전 기호 이름(○○…)으로 저장된 데모 계정 값을 새 가상 이름으로
       var REN = [['○○분석센터', '세움분석센터'], ['○○연구소', '한결연구소']];
       Object.keys(st).forEach(function (k) { var a = st[k]; if (!a) return; ['org', 'bizDoc', 'bizOkName'].forEach(function (f) { if (typeof a[f] === 'string') REN.forEach(function (r) { a[f] = a[f].split(r[0]).join(r[1]); }); }); });
-      Object.keys(SEED).forEach(function (k) { if (st[k]) { all[k] = Object.assign({}, SEED[k], st[k]); if (!st[k].phone) all[k].phone = SEED[k].phone; } });
+      Object.keys(SEED).forEach(function (k) { if (st[k]) { all[k] = Object.assign({}, SEED[k], st[k]); ['phone', 'nick', 'dept', 'country'].forEach(function (f) { if (!st[k][f]) all[k][f] = SEED[k][f]; }); } }); // 예전에 빈 값으로 저장된 데모 계정도 필수값(부서 등)이 채워지게
       return all;
     },
     account: function (email) { return OP.accounts()[String(email || '').trim().toLowerCase()] || null; },
