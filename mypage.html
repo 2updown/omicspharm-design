@@ -7,12 +7,12 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261024f">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261024f">
-<script src="assets/common/site.js?v=20261024f"></script>
-<script src="assets/common/consult.js?v=20261024f"></script>
-<script src="assets/common/mypage.js?v=20261024f"></script>
-<script src="assets/common/flow.js?v=20261024f"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261024g">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261024g">
+<script src="assets/common/site.js?v=20261024g"></script>
+<script src="assets/common/consult.js?v=20261024g"></script>
+<script src="assets/common/mypage.js?v=20261024g"></script>
+<script src="assets/common/flow.js?v=20261024g"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -58,26 +58,27 @@
 
   /* 최근 프로젝트 */
   .plist { display:flex; flex-direction:column; }
-  .plist a { display:flex; align-items:center; gap:16px; padding:16px 4px; border-bottom:1px solid var(--gray-200); }
+  .plist a { display:flex; align-items:center; gap:16px; min-height:55px; padding:11px 4px; border-bottom:1px solid var(--gray-200); } /* 버튼(32) 있는 줄도 높이 같게 */
   .plist a:first-child { border-top:1px solid var(--gray-200); }
   .plist a:hover h4 { color:var(--teal-700); text-decoration:underline; text-underline-offset:3px; }
   .plist .badges { display:flex; gap:6px; flex:none; }
   .plist h4 { flex:1; min-width:0; font-size:16px; font-weight:600; line-height:22px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .plist .nx { flex:none; font-size:13px; font-weight:600; line-height:18px; color:var(--gray-600); }
-  .plist .nx.hot { color:var(--orange-600, #ea580c); }
+  .plist .nxb { flex:none; height:32px; padding:0 12px; font-size:13px; line-height:18px; } /* 처리할 일 = 낮은 outline 버튼 (2026-10-23, 주황 글씨 대신) */
+  .plist a:hover .nxb { background:var(--gray-50); }
   .plist .dt { flex:none; font-size:13px; line-height:18px; color:var(--gray-500); }
 
   /* 알림·문의 짧은 목록 */
   .mini { display:flex; flex-direction:column; }
-  .mini a { display:flex; align-items:flex-start; gap:10px; padding:12px 0; border-bottom:1px solid var(--gray-100); }
+  .mini a { display:flex; align-items:flex-start; gap:12px; padding:12px 0; border-bottom:1px solid var(--gray-100); }
   .mini a:last-child { border-bottom:0; }
   .mini a:hover .t { color:var(--teal-700); }
-  .mini .dot { flex:none; width:6px; height:6px; margin-top:8px; border-radius:50%; background:var(--orange-600); }
-  .mini .dot.read { background:transparent; }
   .mini .tx { flex:1; min-width:0; }
   .mini .t { display:block; font-size:14px; font-weight:500; line-height:20px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .mini .d { display:block; margin-top:2px; font-size:12px; line-height:18px; color:var(--gray-500); }
   .mini .badge { flex:none; margin-top:1px; }
+  .mini .at { flex:none; font-size:13px; line-height:20px; color:var(--gray-500); } /* 날짜는 오른쪽 (최근 프로젝트와 같은 위치) */
+  .mini a.unread .t { font-weight:600; }
   .mini-empty { padding:32px 0; text-align:center; font-size:14px; color:var(--gray-500); }
 
   @media (max-width:1180px) { .grid2 { grid-template-columns:minmax(0,1fr); } }
@@ -89,7 +90,7 @@
     .flow span { font-size:13px; }
     .plist a { flex-wrap:wrap; gap:6px 12px; }
     .plist h4 { flex-basis:100%; order:2; white-space:normal; }
-    .plist .dt, .plist .nx { margin-left:auto; }
+    .plist .dt, .plist .nx, .plist .nxb { margin-left:auto; }
   }
 </style>
 </head>
@@ -227,11 +228,13 @@
       return { href: 'mypage-project.html?id=' + encodeURIComponent(p.id), svc: D.svcKo(p.svc), st: ps, stCls: ps === '완료' ? 'done' : 'state', title: p.title, sub: p.client, next: nx, urgent: !!nx, at: p.at };
     }));
   }
+  // 버튼 이름은 할 일 그대로, '필요'·'가능'만 뺌 (예: 최종 견적 확인 필요 → 최종 견적 확인)
+  var btnLabel = function (t) { return t.replace(/^견적 (\d+)건 도착 · 전달 가능$/, '견적 $1건 전달').replace(/ (필요|가능)$/, ''); };
   IT.sort(function (a, b) { return (b.urgent - a.urgent) || (b.at - a.at); });
   $('#plist').innerHTML = IT.length
     ? '<div class="plist">' + IT.slice(0, 5).map(function (o) {
         return '<a href="' + o.href + '"><span class="badges"><span class="badge tag">' + esc(o.svc) + '</span><span class="badge ' + o.stCls + '">' + esc(o.st) + '</span></span>' +
-          '<h4>' + esc(o.title) + '</h4>' + (o.next ? '<span class="nx' + (o.urgent ? ' hot' : '') + '">' + esc(o.next) + '</span>' : '<span class="dt">' + esc(o.sub) + '</span>') + '</a>';
+          '<h4>' + esc(o.title) + '</h4>' + (o.next ? (o.urgent ? '<span class="btn line nxb">' + esc(btnLabel(o.next)) + '</span>' : '<span class="nx">' + esc(o.next) + '</span>') : '<span class="dt">' + esc(o.sub) + '</span>') + '</a>';
       }).join('') + '</div>'
     : '<div class="empty"><b>' + (client ? '의뢰한 프로젝트가 없습니다' : '진행 중인 프로젝트가 없습니다') + '</b>' +
       '<p>' + (client ? '분석 의뢰를 등록하면 OmicsPharm이 분석파트너 견적을 받아 정리해 드립니다.' : admin ? '접수된 의뢰가 없습니다.' : !OP.partnerVerified() && OP.isPartner() ? '인증된 분석파트너만 프로젝트 매칭·계약이 가능합니다. OmicsPharm이 기관 정보 및 사업자등록증을 확인한 뒤 인증해 드립니다.' : 'OmicsPharm이 분석 의뢰에 맞는 파트너로 선정해 견적을 요청하면 여기에서 확인할 수 있습니다.') + '</p>' +
@@ -243,9 +246,17 @@
     var n = [].reduce.call(g.querySelectorAll('.cells b'), function (a, b) { return a + (parseInt(b.textContent, 10) || 0); }, 0);
     h.insertAdjacentHTML('beforeend', '<span class="h-cnt">전체 <b>' + n + '</b>건</span>');
   });
+  // 최근 알림 (2026-10-23): 제목 = 무슨 일인지 짧게, 아래 = 프로젝트명(상담·문의는 제목), 오른쪽 = 날짜. 앞의 점은 뺌 (안 읽은 건 제목만 굵게)
+  var HEAD = { '의뢰접수': '새 의뢰서가 접수되었습니다', '의뢰승인': '프로젝트가 승인되었습니다', '의뢰수정': '의뢰서가 수정되었습니다', '의뢰취소': '프로젝트가 삭제되었습니다', '의뢰삭제': '프로젝트가 삭제되었습니다',
+    '견적확인요청': '새 견적서가 도착했습니다', '견적등록': '새 견적서가 등록되었습니다', '견적제안': '새 견적 요청이 도착했습니다', '견적수정요청': '견적서 수정 요청이 도착했습니다', '견적거절': '견적 요청이 거절되었습니다',
+    '견적확정': admin ? '최종 견적이 확정되었습니다' : '견적이 최종 선정되었습니다', '계약': '계약서가 등록되었습니다', '결과등록': '분석 결과가 등록되었습니다', '보고서등록': '결과보고서가 등록되었습니다', '보고서 등록': '결과보고서가 등록되었습니다',
+    '보고서 최종 확인': '결과보고서가 최종 확인되었습니다', '프로젝트완료': '프로젝트가 완료되었습니다', '리뷰등록': '만족도 평가가 등록되었습니다', 'Q&A': '프로젝트 Q&A에 새 글이 등록되었습니다',
+    '사업자등록증재제출요청': '사업자등록증을 다시 제출해주세요', '사업자등록증재제출': '사업자등록증이 다시 제출되었습니다', '파트너인증요청': '파트너 인증 요청이 도착했습니다', '파트너인증': '파트너 인증이 완료되었습니다', '분석서비스정보요청': '분석 서비스 정보를 입력해주세요',
+    '상담 답변': '상담 답변이 등록되었습니다', '상담 접수': '새 상담이 접수되었습니다', '상담 추가 문의': '상담에 추가 문의가 등록되었습니다', '문의 답변': '문의 답변이 등록되었습니다', '문의 접수': '문의가 접수되었습니다' };
   var A = D.alarms().slice(0, 5);
   $('#alarms').innerHTML = A.map(function (a) {
-    return '<a href="' + a.href + '" data-id="' + a.id + '"><i class="dot' + (a.read ? ' read' : '') + '"></i><span class="tx"><span class="t">' + esc(a.t) + '</span><span class="d">' + D.ymdhm(a.at) + '</span></span></a>';
+    var head = HEAD[a.k] || a.t, sub = HEAD[a.k] ? a.pj || '' : a.sub || ''; // 공지 등 구분이 없는 알림은 원래 문장 그대로
+    return '<a href="' + a.href + '" data-id="' + a.id + '"' + (a.read ? '' : ' class="unread"') + '><span class="tx"><span class="t">' + esc(head) + '</span>' + (sub ? '<span class="d">' + esc(sub) + '</span>' : '') + '</span><span class="at">' + D.ymd(a.at) + '</span></a>';
   }).join('') || '<p class="mini-empty">새 알림이 없습니다.</p>';
   $('#alarms').addEventListener('click', function (e) { var a = e.target.closest('[data-id]'); if (a) D.markRead([a.dataset.id]); });
 
@@ -254,7 +265,7 @@
   CS.sort(function (a, b) { return (admin ? OP.consult.waiting(b) - OP.consult.waiting(a) : 0) || (OP.consult.lastAt(b) - OP.consult.lastAt(a)); });
   $('#inqs').innerHTML = CS.slice(0, 5).map(function (c) {
     return '<a href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">' + (OP.consult.waiting(c) ? '<span class="badge wait">답변대기</span>' : '<span class="badge done">답변완료</span>') +
-      '<span class="tx"><span class="t">' + esc(c.title) + '</span><span class="d">' + (admin ? esc(c.name) + ' · ' : '') + esc(c.type) + ' · ' + D.ymd(OP.consult.lastAt(c)) + '</span></span></a>';
+      '<span class="tx"><span class="t">' + esc(c.title) + '</span><span class="d">' + (admin ? esc(c.name) + ' · ' : '') + esc(c.type) + '</span></span><span class="at">' + D.ymd(OP.consult.lastAt(c)) + '</span></a>';
   }).join('') || '<p class="mini-empty">상담 내역이 없습니다.</p>';
 })();
 </script>

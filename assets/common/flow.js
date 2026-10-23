@@ -392,6 +392,7 @@
     var L = [], d = db().S, R = requests(), role = ses.role;
     R.forEach(function (r) {
       var s = d[r.id] || { st: 'review', P: {} }, nm = r.title || r.id, cl = r.org || '의뢰사';
+      var n0 = L.length; // 아래에서 넣은 알림에 프로젝트명(pj)을 붙임 (대시보드 최근 알림 두 번째 줄)
       if (role === 'admin') {
         var href = 'mypage-request.html?id=' + encodeURIComponent(r.id);
         L.push({ id: 'f-new-' + r.id, k: '의뢰접수', cat: 'project', at: r.at, t: cl + '의 ' + nm + ' 의뢰서가 접수 되었습니다. 확인 후 승인처리 해주세요.', href: href });
@@ -432,11 +433,12 @@
             sub: '견적금액: ' + won(A[A.length - 1] || 0), href: ph + '&tab=quote' }); // 클라이언트는 셀키 견적 1건 (차수)
         });
       }
+      for (var i0 = n0; i0 < L.length; i0++) L[i0].pj = nm;
     });
     // 삭제된 의뢰
     db().X.forEach(function (x) {
-      if (role === 'admin') L.push({ id: 'f-del-' + x.id, k: '의뢰삭제', cat: 'project', at: x.at, t: (x.org || '의뢰사') + '의 ' + x.title + ' 의뢰가 삭제되었습니다.', sub: x.keys.length ? '견적을 요청한 분석파트너 ' + x.keys.length + '곳에도 알림이 전달되었습니다.' : '', href: 'mypage-request.html' });
-      if (role === 'partner' && x.keys.indexOf(ses.email) > -1) L.push({ id: 'f-del-' + x.id, k: '의뢰삭제', cat: 'project', at: x.at, t: x.title + ' 프로젝트 의뢰가 취소되어 견적 요청이 종료되었습니다.', href: 'mypage-quote.html' });
+      if (role === 'admin') L.push({ id: 'f-del-' + x.id, k: '의뢰삭제', cat: 'project', pj: x.title, at: x.at, t: (x.org || '의뢰사') + '의 ' + x.title + ' 의뢰가 삭제되었습니다.', sub: x.keys.length ? '견적을 요청한 분석파트너 ' + x.keys.length + '곳에도 알림이 전달되었습니다.' : '', href: 'mypage-request.html' });
+      if (role === 'partner' && x.keys.indexOf(ses.email) > -1) L.push({ id: 'f-del-' + x.id, k: '의뢰삭제', cat: 'project', pj: x.title, at: x.at, t: x.title + ' 프로젝트 의뢰가 취소되어 견적 요청이 종료되었습니다.', href: 'mypage-quote.html' });
     });
     return L;
   };

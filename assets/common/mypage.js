@@ -111,8 +111,8 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       // 프로젝트 알림은 요구사항정의서 '20260210_내부프로세스_알림' 기준 (의뢰~견적 단계는 flow.js, 계약 이후는 아래 예시 프로젝트)
       // 의뢰접수 알림은 컨설턴트에게만 간다 (의뢰사는 '의뢰승인' 알림부터 받음)
       D.inquiries().forEach(function (q) {
-        if (q.answer) L.push({ id: 'a-' + q.id, cat: 'inquiry', at: q.answer.at, t: "'" + q.title + "' 문의에 답변이 등록되었습니다.", href: 'mypage-inquiry.html?id=' + q.id });
-        L.push({ id: 'q-' + q.id, cat: 'inquiry', at: q.at, t: "'" + q.title + "' 문의가 접수되었습니다.", href: 'mypage-inquiry.html?id=' + q.id });
+        if (q.answer) L.push({ id: 'a-' + q.id, k: '문의 답변', pj: q.title, cat: 'inquiry', at: q.answer.at, t: "'" + q.title + "' 문의에 답변이 등록되었습니다.", href: 'mypage-inquiry.html?id=' + q.id });
+        L.push({ id: 'q-' + q.id, k: '문의 접수', pj: q.title, cat: 'inquiry', at: q.at, t: "'" + q.title + "' 문의가 접수되었습니다.", href: 'mypage-inquiry.html?id=' + q.id });
       });
       // 계약 이후 단계 (예시 프로젝트, 공급사 = 세움분석센터)
       var ses = OP.session() || {}, adm = ses.role === 'admin', PS = P_STAGES;
@@ -120,13 +120,14 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       if (OP.consult) (adm ? OP.consult.all() : OP.consult.mine()).forEach(function (c) {
         var h = 'mypage-consult.html?id=' + encodeURIComponent(c.id);
         c.msgs.forEach(function (m, i) {
-          if (adm && m.by === 'user') L.push({ id: 'cs-' + c.id + '-' + i, k: i ? '상담 추가 문의' : '상담 접수', cat: 'inquiry', at: m.at, t: c.name + '님의 ' + (i ? "'" + c.title + "' 상담에 추가 문의가 등록되었습니다." : "상담 '" + c.title + "'이(가) 접수되었습니다."), href: h });
-          if (!adm && m.by === 'admin') L.push({ id: 'cs-' + c.id + '-' + i, k: '상담 답변', cat: 'inquiry', at: m.at, t: "'" + c.title + "' 상담에 OmicsPharm 컨설턴트의 답변이 등록되었습니다.", href: h });
+          if (adm && m.by === 'user') L.push({ id: 'cs-' + c.id + '-' + i, k: i ? '상담 추가 문의' : '상담 접수', pj: c.title, cat: 'inquiry', at: m.at, t: c.name + '님의 ' + (i ? "'" + c.title + "' 상담에 추가 문의가 등록되었습니다." : "상담 '" + c.title + "'이(가) 접수되었습니다."), href: h });
+          if (!adm && m.by === 'admin') L.push({ id: 'cs-' + c.id + '-' + i, k: '상담 답변', pj: c.title, cat: 'inquiry', at: m.at, t: "'" + c.title + "' 상담에 OmicsPharm 컨설턴트의 답변이 등록되었습니다.", href: h });
         });
       });
       var J = function (w, a, b) { return OP.flow ? OP.flow.josa(w, a, b) : w + a; };
       D.partnerProjects().forEach(function (p) {
         if (p.flow) return; // 견적 중개로 매칭된 프로젝트 알림은 flow.js
+        var n0 = L.length;
         var i = PS.indexOf(p.stage), h = 'mypage-project.html?id=' + p.id, c0 = new Date(p.contract).getTime();
         if (!adm && i === 0) L.push({ id: 'ct-' + p.id, k: '견적확정', cat: 'project', at: p.at, t: p.title + '의 견적이 최종 선정되었습니다.', sub: '견적금액: ' + p.amount, href: h });
         if (!adm && i >= 1) L.push({ id: 'cf-' + p.id, k: '계약', cat: 'project', at: c0 + 864e5 * 3, t: p.title + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: h });
@@ -134,6 +135,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
         if (adm && i === 5) L.push({ id: 'ra-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.client + '의 ' + p.title + ' 프로젝트 1차 결과보고서가 최종 승인 처리 되었습니다.', href: h });
         if (!adm && i === 5) L.push({ id: 'rf-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.title + ' 프로젝트의 1차 결과보고서가 최종 확인 처리 되었습니다.', sub: p.title + ' 프로젝트가 최종 완료 처리 되었습니다.', href: h });
         if (p.qa) L.push({ id: 'qa-' + p.id, k: 'Q&A', cat: 'project', at: p.at + 864e5 * 10, t: p.title + ' Q&A에 새로운 글이 등록 되었습니다.', sub: '문의제목: 시료 발송 일정 문의 · 작성자: ' + p.client, href: h });
+        for (var i0 = n0; i0 < L.length; i0++) L[i0].pj = p.title;
       });
       // 파트너 인증 결과 (분석파트너): 재제출 요청 / 인증 완료
       if (ses.role === 'partner') {
