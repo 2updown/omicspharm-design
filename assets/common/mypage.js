@@ -4,8 +4,8 @@
    (기존 '분석결과 관리'는 프로젝트 상세의 '결과보고서' 탭으로 통합)
    사용: <aside class="side" data-op-side></aside> + var me = OP.mypage('dash'); */
 // 마이페이지 기본 디자인 = 화이트 + 카드 없음 (2026-10-21 확정). 예전 회색+카드 디자인은 ?ui=gray 로 볼 수 있게 보관 (git 태그 mypage-gray-20261021)
-// 모바일(≤960px)은 기존 모바일 구성(프로필 허브 + 가로 메뉴 탭) 그대로
-if (!/[?&]ui=gray\b/.test(location.search) && !/mypage-ai\.html/.test(location.pathname) && window.matchMedia('(min-width:961px)').matches) document.documentElement.classList.add('ui-white');
+// 모바일도 화이트 (2026-10-23). 화면 폭과 관계없이 붙여서 창 크기를 바꿔도 디자인이 그대로 (전에는 처음 열 때 폭으로만 정해서 모바일→PC로 늘리면 예전 디자인이 나왔음)
+if (!/[?&]ui=gray\b/.test(location.search) && !/mypage-ai\.html/.test(location.pathname)) document.documentElement.classList.add('ui-white');
 // 상단 (2026-10-23 시안 C를 기본으로): '마이페이지' 제목 줄 없앰 → 본문 맨 위에 메뉴 이름, 왼쪽 메뉴 아래에 AI Agent 카드·역할별 바로가기
 // 예전 제목 줄 디자인은 ?head=a (Figma 1646:7138에 시안 A·B로 비교용)
 if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.contains('ui-white')) document.documentElement.classList.add('ui-headc');

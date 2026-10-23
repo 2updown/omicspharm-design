@@ -496,3 +496,18 @@ span.tbtn { cursor:default; }
 .ui-micon .side .menu .grp[data-g="mgmt"] .gh { --mi:url(menu/users-three.svg); }
 .ui-micon .side .menu > a[href="#"] { --mi:url(menu/gear-six.svg); }
 .ui-micon .side .menu .sub a { padding-left:40px; } /* 하위 메뉴 글자를 위 메뉴 글자 시작(아이콘 20 + 간격 8 뒤)에 맞춤 */
+
+/* ── 모바일·태블릿(≤960px)도 화이트 (2026-10-23). PC용 화이트 규칙 중 좁은 화면에 안 맞는 것만 되돌림 ── */
+@media (max-width:960px) {
+  .ui-headc .page-head { display:block; } /* 모바일은 위에 '마이페이지'/'‹ 마이페이지' + 가로 탭 */
+  .ui-white .page-head .in { display:block; } /* PC 제목 줄(제목 + 오른쪽 버튼) 가로 배치 해제 */
+  .ui-headc .body { padding-top:0; }
+  .ui-white .main { gap:40px; }
+  .ui-white .main:has(.card.box) { gap:32px; }
+  .ui-headc .mtitle { font-size:24px; line-height:32px; letter-spacing:-.24px; }
+  .ui-headc .main:not(:has(.card.box)) > .mtitle { margin-bottom:-24px; } /* 제목–첫 내용 16 */
+  .ui-headc .main:has(.card.box) > .mtitle { margin-bottom:-16px; }
+  .ui-white .card.box #plist, .ui-white .card.box #alarms, .ui-white .card.box #inqs { height:auto; min-height:120px; } /* 줄이 두 줄로 바뀌어 고정 높이 해제 */
+  .ui-white .card.box > :not(.card-head) { padding:4px 16px; }
+  .ui-white .fgrid .fg + .fg { border-left:0 !important; border-top:1px solid var(--gray-200) !important; } /* 묶음이 세로로 쌓이면 구분선도 가로 */
+}
