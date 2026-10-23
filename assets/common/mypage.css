@@ -107,6 +107,16 @@ button { background:none; border:0; cursor:pointer; }
   body.mp-sub .m-head { display:block; }
   body.mp-sub .body { padding-top:0; } /* 화면마다 다른 위 여백(프로젝트 관리 등)을 같게 */
   body.mp-sub .page-head h1 { display:none; }
+  /* 모바일 대시보드 (2026-10-23): 제목 '마이페이지' + [AI Agent] + 가로 탭(대시보드 선택). 프로필 카드·세로 메뉴는 숨김 */
+  body.mp-dash .side { display:none; }
+  body.mp-dash .m-head { display:block; }
+  body.mp-dash .page-head { padding-bottom:0; margin-bottom:20px; background:#fff; border-bottom:1px solid var(--gray-200); }
+  body.mp-dash .body { padding-top:0; }
+  .m-ai { display:flex; align-items:center; gap:8px; width:100%; height:52px; margin-top:16px; padding:0 14px; border:2px solid transparent; border-radius:12px; background:linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #6ee7b7, #22c57e 45%, #3d7bff) border-box; text-align:left; cursor:pointer; }
+  .m-ai img { flex:none; width:20px; height:20px; }
+  .m-ai b { font-size:16px; font-weight:600; line-height:22px; color:#000; }
+  .m-ai em { font-style:normal; padding:2px 8px; border-radius:8px; background:#edfefa; color:#009788; font-size:12px; font-weight:500; line-height:18px; }
+  .m-ai::after { content:""; margin-left:auto; flex:none; width:16px; height:16px; background:url(../detail/ic-caret-right-20.svg) center/16px no-repeat; opacity:.6; }
   body.mp-sub .m-back { display:inline-flex; align-items:center; gap:4px; margin-left:-4px; font-size:18px; font-weight:600; line-height:26px; color:#000; }
   .m-back img { width:24px; height:24px; }
   .m-tabs { margin:12px -24px 0; }

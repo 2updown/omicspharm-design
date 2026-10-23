@@ -300,17 +300,20 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       }
     }
     // 모바일(≤960px): 대시보드 = 허브(가운데 정렬 프로필 + 세로 메뉴), 하위 화면 = 메뉴 카드 대신 '‹ 마이페이지' + 가로 메뉴 탭 (CSS body.mp-sub, 이랜서 참고)
-    if (key !== 'dash' && side) {
-      document.body.classList.add('mp-sub');
+    // 모바일 대시보드 (2026-10-23): 프로필 카드·세로 메뉴 대신 [AI Agent] + 가로 메뉴 탭(대시보드 포함)으로 하위 화면과 통일 (CSS body.mp-dash)
+    if (side) {
+      var dash = key === 'dash';
+      document.body.classList.add(dash ? 'mp-dash' : 'mp-sub');
       var ph = document.querySelector('.page-head .in');
-      if (ph && !ph.querySelector('.m-back')) {
-        var tabs = MENU.filter(function (m) { return m[0] !== 'dash' && (!m[3] || m[3].indexOf(s.role) > -1); }).map(function (m) {
+      if (ph && !ph.querySelector('.m-head')) {
+        var tabs = MENU.filter(function (m) { return (dash || m[0] !== 'dash') && m[0] !== 'ai' && (!m[3] || m[3].indexOf(s.role) > -1); }).map(function (m) {
           var href = m[0] === 'project' && s.role === 'admin' ? 'mypage-request.html' : m[2];
           return '<a href="' + href + '"' + (m[2] === '#' ? ' data-soon="' + m[1] + '"' : '') + (m[0] === key ? ' class="on" aria-current="page"' : '') + '>' + m[1] + (side.querySelector('a[href="' + href + '"] .nb') ? NB : '') + '</a>';
         }).join('');
         // '‹ 마이페이지'와 탭을 한 덩어리로 (등장 효과도 같이). site.js 등장 효과에서 빼고 여기서 직접 붙임
-        ph.insertAdjacentHTML('afterbegin', '<div class="m-head op-enter" data-op-skip-enter><a class="m-back" href="mypage.html"><img src="assets/detail/ic-caret-left.svg" alt="">마이페이지</a>' +
+        ph.insertAdjacentHTML(dash ? 'beforeend' : 'afterbegin', '<div class="m-head op-enter" data-op-skip-enter>' + (dash ? '<button type="button" class="m-ai" data-ph-ai><img src="assets/common/ic-sparkle-fill.svg" alt=""><b>AI Agent</b><em>beta</em></button>' : '<a class="m-back" href="mypage.html"><img src="assets/detail/ic-caret-left.svg" alt="">마이페이지</a>') +
           '<nav class="m-tabs" aria-label="마이페이지 메뉴"><div>' + tabs + '</div></nav></div>');
+        var mai = ph.querySelector('.m-ai'); if (mai) mai.addEventListener('click', function () { OP.openAI(); });
         var mt = document.querySelector('.m-tabs > div'), on = mt.querySelector('.on');
         if (on) mt.scrollLeft = on.offsetLeft - (mt.clientWidth - on.offsetWidth) / 2; // 지금 메뉴를 가운데로
       }
