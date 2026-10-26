@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026i">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261026i">
-<script src="assets/common/site.js?v=20261026i"></script>
-<script src="assets/common/consult.js?v=20261026i"></script>
-<script src="assets/common/mypage.js?v=20261026i"></script>
-<script src="assets/common/flow.js?v=20261026i"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026j">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261026j">
+<script src="assets/common/site.js?v=20261026j"></script>
+<script src="assets/common/consult.js?v=20261026j"></script>
+<script src="assets/common/mypage.js?v=20261026j"></script>
+<script src="assets/common/flow.js?v=20261026j"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -590,7 +590,7 @@
       review: FS.ok ? ['', '의뢰가 승인되어 등록되었습니다.', 'OmicsPharm 컨설턴트가 의뢰에 맞는 분석파트너를 선정해 견적을 요청해드립니다.', '']
                     : ['gray', 'OmicsPharm 컨설턴트가 의뢰서를 확인하고 있습니다.', '승인되면 프로젝트로 등록되고 알림으로 알려드립니다.', ''],
       quoting: ['gray', '분석파트너에게 견적을 받고 있습니다.', '현재 분석파트너 ' + n + '곳이 견적을 준비하고 있습니다. 견적이 모이면 컨설턴트가 확인해 전달해드립니다.', ''],
-      sent: ['warn', '견적 ' + FK.length + '건이 도착했습니다.', '견적을 비교하고 진행할 분석파트너를 선택해주세요.', ''],
+      sent: ['warn', F.cqList(FS).length + '차 견적서가 도착했습니다.', '견적서를 확인하고 [최종 견적 확인]을 눌러주세요. 궁금한 점은 문의하기로 남겨 주세요.', ''],
       matched: FS.fin ? ['', '프로젝트가 완료되었습니다.', FS.rate ? '만족도 평가를 남겨주셔서 감사합니다.' : '서비스 만족도 평가를 남겨주시면 더 나은 서비스를 위해 반영하겠습니다.', FS.rate ? '' : '<button type="button" class="btn primary" data-open-tab="report">만족도 평가하기</button>']
              : REP.length ? ['warn', REP.length + '차 결과보고서가 등록되었습니다.', '내용을 검수하신 뒤 수정 요청 또는 최종 확인을 진행해주세요.', '<button type="button" class="btn primary" data-open-tab="report">결과보고서 확인</button>']
              : FS.ct ? ['', '분석이 진행 중입니다.', '납기일 ' + dot(DUE) + ' (' + dd(DUE) + ')까지 결과보고서를 등록해드립니다. 등록되면 알림으로 알려드립니다.', '']
@@ -621,15 +621,15 @@
   }
   function drawQuotes() {
     var box = $('#tp-quote'); if (!box) return;
-    if (!FK.length) {
+    var CQL = F.cqList(FS); // 컨설턴트가 보낸 ㈜셀키에이아이 견적 차수 (2026-10-26)
+    if (!CQL.length) {
       box.innerHTML = '<div class="empty"><b>아직 도착한 견적이 없습니다</b><p>' + (FS.st === 'review' && !FS.ok ? 'OmicsPharm 컨설턴트가 의뢰서를 승인하면 프로젝트 찾기에 게시되어 분석파트너의 견적을 받습니다.' : '분석파트너 ' + Object.keys(FS.P).length + '곳이 견적을 준비하고 있습니다. 견적은 컨설턴트가 확인한 뒤 전달해드리며, 도착하면 알림으로 알려드립니다.') + '</p></div>';
       return;
     }
     // 견적 아코디언 (2026-10-21): 클라이언트는 ㈜셀키에이아이 견적 1건만 받고, 차수(1차·2차·3차)가 쌓임. 최신 차수 펼침 + [최종 견적 확인]
-    // 컨설턴트가 여러 파트너 견적을 전달한 예전 데이터면 선택한 견적, 없으면 가장 최근에 전달한 견적 1건만 보여줌
-    var K = FS.pick || (function () { var E = (FS.sends || []).filter(function (e) { return e.keys && e.keys.some(function (k) { return FK.indexOf(k) > -1; }); }), L = E.length ? E[E.length - 1].keys.filter(function (k) { return FK.indexOf(k) > -1; }) : FK; return L[L.length - 1]; })();
-    var X = FS.P[K], done = FS.st === 'matched' || !!FS.cancel; // 확정·삭제한 프로젝트는 견적 확인 버튼 없음
-    var V = (X.hist || []).map(function (h) { return { q: h.quote, at: h.at, why: h.why }; }).concat([{ q: X.quote, at: X.ver2At || X.subAt, why: X.why }]), n = V.length;
+    // 차수 = F.cqList (예전 데이터는 전달한 파트너 견적과 그 이전 차수로 만듦). 확정하면 최신 차수의 기준 파트너가 선정됨
+    var K = CQL[CQL.length - 1].base, X = { quote: CQL[CQL.length - 1].quote }, done = FS.st === 'matched' || !!FS.cancel; // 확정·삭제한 프로젝트는 견적 확인 버튼 없음
+    var V = CQL.map(function (v) { return { q: v.quote, at: v.at, why: v.why }; }), n = V.length;
     var row = function (v, i) {
       var q = v.q, t = F.total(q), last = i === n - 1, prev = i ? F.total(V[i - 1].q).final : 0, D = i ? qdiff(V[i - 1].q, q) : [];
       return '<details class="qv' + (last ? ' cur' : '') + '"' + (last ? ' open' : '') + '><summary>' +
@@ -662,7 +662,7 @@
   }
   // 계약정보 탭 (기획 PPT 57p): 최종 계약 금액·계약일·납기일·계약서 파일
   function contractHTML() {
-    var q = FS.P[FS.pick].quote, t = F.total(q);
+    var q = (F.cqLast(FS) || {}).quote || FS.P[FS.pick].quote, t = F.total(q); // 클라이언트 계약 금액 = 확정한 ㈜셀키에이아이 견적
     return '<section class="sec"><h3>계약 정보</h3><dl class="kv">' +
         '<div><dt>최종 계약 금액</dt><dd><b class="amt">' + F.money(t.final, q.cur) + '</b> <span class="sub">(공급가 ' + F.money(t.net, q.cur) + ' + VAT)</span></dd></div>' +
         '<div><dt>계약 견적</dt><dd>' + F.qname(FS, FS.pick) + ' 견적 <button type="button" class="lnk" data-doc-pick>견적서 보기</button></dd></div>' +

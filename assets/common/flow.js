@@ -340,6 +340,18 @@
         s.st = 'sent'; s.sentAt = s.sentAt || Date.now(); if (msg) s.msg = msg;
       });
     },
+    // 클라이언트 견적 보내기 (2026-10-26): 컨설턴트가 분석파트너 견적 1건(base)을 바탕으로 만든 ㈜셀키에이아이 견적을 차수로 쌓음
+    // s.CQ = [{ n, at, base, quote, why }]. 전달한 파트너는 컨설턴트 화면에서 '선정' (알림은 클라이언트가 최종 견적 확인할 때)
+    sendCQ: function (id, base, quote, why) {
+      return put(id, function (s) {
+        if (!s.CQ) s.CQ = F.cqList(s).map(function (v) { return { n: v.n, at: v.at, base: v.base, quote: v.quote, why: v.why || '' }; }); // 예전 데이터는 이어서 차수 매김
+        var n = s.CQ.length + 1, at = Date.now();
+        s.CQ.push({ n: n, at: at, base: base, quote: quote, why: why || '' });
+        Object.keys(s.P).forEach(function (k) { s.P[k].fwd = k === base; });
+        s.st = 'sent'; s.sentAt = s.sentAt || at;
+        s.sends = (s.sends || []).concat([{ at: at, keys: [base], cq: n }]);
+      });
+    },
     // 클라이언트 선택 → 매칭 완료
     pick: function (id, k) { return put(id, function (s) { s.st = 'matched'; s.pick = k; s.pickAt = Date.now(); }); },
     // 의뢰 삭제: 기록을 남겨 컨설턴트·견적 요청받은 파트너에게 알림
@@ -406,7 +418,7 @@
         });
         if (r.updatedAt) L.push({ id: 'f-ed-' + r.id + r.updatedAt, k: '의뢰수정', cat: 'project', at: r.updatedAt, t: cl + '의 ' + nm + ' 의뢰서가 수정되었습니다. 변경 내용을 확인해주세요.', href: href });
         if (s.biz && s.biz.reAt) L.push({ id: 'f-biz-re-' + r.id + s.biz.reAt, k: '사업자등록증재제출', cat: 'project', at: s.biz.reAt, t: cl + '의 ' + nm + ' 의뢰 사업자등록증이 다시 제출되었습니다. 확인 후 승인처리 해주세요.', href: href });
-        if (s.pick) L.push({ id: 'f-pick-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: josa(cl, '이', '가') + ' ' + nm + ' 프로젝트의 최종 견적을 확정 했습니다.', sub: '공급사: ' + partner(s.pick).org + ' · 견적금액: ' + won(total(s.P[s.pick].quote).final), href: href });
+        if (s.pick) L.push({ id: 'f-pick-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: josa(cl, '이', '가') + ' ' + nm + ' 프로젝트의 최종 견적을 확정 했습니다.', sub: '공급사: ' + partner(s.pick).org + ' · 클라이언트 견적금액: ' + won(total((F.cqLast(s) || {}).quote || s.P[s.pick].quote).final), href: href });
         (s.raw || []).forEach(function (x, i) { L.push({ id: 'f-raw-' + r.id + i, k: '결과등록', cat: 'project', at: x.at, t: josa(partner(s.pick).org, '이', '가') + ' ' + nm + ' 프로젝트의 ' + (i + 1) + '차 분석 결과를 등록했습니다. AI 보고서 초안을 검토해주세요.', href: href }); });
         if (s.cancel) L.push({ id: 'f-cancel-' + r.id, k: '의뢰취소', cat: 'project', at: s.cancel.at, t: s.cancel.by === 'admin' ? nm + ' 프로젝트를 삭제했습니다.' : cl + '의 ' + nm + ' 프로젝트가 삭제되었습니다.', sub: s.cancel.reason ? '사유: ' + s.cancel.reason : '', href: href });
         if (s.rate) L.push({ id: 'f-rate-' + r.id, k: '리뷰등록', cat: 'project', at: s.rate.at, t: cl + '의 ' + nm + ' 프로젝트에 만족도 평가(별점 ' + s.rate.star + '점)가 등록되었습니다.', href: href });
@@ -429,11 +441,9 @@
         (s.rep || []).forEach(function (v, i) { L.push({ id: 'f-rep-' + r.id + i, k: '보고서등록', cat: 'project', at: v.at, t: nm + ' 프로젝트의 ' + (i + 1) + '차 결과보고서가 등록되었습니다. 확인 후 최종 확인 또는 수정 요청을 해주세요.', href: ph + '&tab=report' }); });
         if (s.ok) L.push({ id: 'f-ok-' + r.id, k: '의뢰승인', cat: 'project', at: s.ok, t: '의뢰하신 ' + nm + ' 프로젝트가 승인되어 등록되었습니다.', href: ph });
         if (s.biz && s.biz.askAt) L.push({ id: 'f-biz-ask-' + r.id + s.biz.askAt, k: '사업자등록증재제출요청', cat: 'project', at: s.biz.askAt, t: '의뢰하신 ' + nm + ' 의뢰의 사업자등록증을 다시 제출해주세요.', sub: '사유: ' + s.biz.note, href: ph });
-        var SE = s.sends || (s.sentAt ? [{ at: s.sentAt, keys: Object.keys(s.P).filter(function (k) { return s.P[k].fwd; }) }] : []);
-        SE.forEach(function (e, i) {
-          var A = e.keys.map(function (k) { return total(s.P[k].quote).final; }), x = s.P[e.keys[e.keys.length - 1]] || {}, nv = i === SE.length - 1 ? Math.max(i, (x.hist || []).length) + 1 : i + 1; // 마지막 전달 = 화면의 최신 차수
-          L.push({ id: 'f-arr-' + r.id + (i ? '-' + i : ''), k: '견적확인요청', cat: 'project', at: e.at, t: '의뢰하신 ' + nm + ' 프로젝트의 ' + nv + '차 견적서가 도착했습니다. 견적 관련 문의사항은 문의하기로 남겨 주세요.',
-            sub: '견적금액: ' + won(A[A.length - 1] || 0), href: ph + '&tab=quote' }); // 클라이언트는 셀키 견적 1건 (차수)
+        F.cqList(s).forEach(function (v) { // 컨설턴트가 보낸 ㈜셀키에이아이 견적 차수마다
+          L.push({ id: 'f-arr-' + r.id + (v.n > 1 ? '-' + (v.n - 1) : ''), k: '견적확인요청', cat: 'project', at: v.at, t: '의뢰하신 ' + nm + ' 프로젝트의 ' + v.n + '차 견적서가 도착했습니다. 견적 관련 문의사항은 문의하기로 남겨 주세요.',
+            sub: '견적금액: ' + won(total(v.quote).final), href: ph + '&tab=quote' });
         });
       }
       for (var i0 = n0; i0 < L.length; i0++) L[i0].pj = nm;
@@ -476,6 +486,15 @@
   };
   F.qname = function (s, k) { return F.qno(s, k) + '사'; }; // 클라이언트에게는 기관명 대신 A사·B사
   // 클라이언트에게 전달하는 견적서의 공급자 = 셀키에이아이 (분석파트너 견적을 셀키 명의로 전달). 공개 사이트라 대표자·번호·주소는 예시값
+  // 클라이언트가 받은 ㈜셀키에이아이 견적 차수 목록. s.CQ가 없던 예전 데이터는 전달한 파트너 견적(선택했거나 가장 최근 전달)과 그 이전 차수(hist)로 만듦
+  F.cqList = function (s) {
+    if (s.CQ && s.CQ.length) return s.CQ;
+    var FK = Object.keys(s.P || {}).filter(function (k) { return s.P[k].fwd && s.P[k].status === 'sub'; }); if (!FK.length) return [];
+    var K = s.pick && s.P[s.pick] ? s.pick : (function () { var E = (s.sends || []).filter(function (e) { return e.keys && e.keys.some(function (k) { return FK.indexOf(k) > -1; }); }), L = E.length ? E[E.length - 1].keys.filter(function (k) { return FK.indexOf(k) > -1; }) : FK; return L[L.length - 1]; })();
+    var X = s.P[K], H = X.hist || [];
+    return H.map(function (h, i) { return { n: i + 1, at: h.at, base: K, quote: h.quote, why: h.why, legacy: true }; }).concat([{ n: H.length + 1, at: X.ver2At || X.subAt, base: K, quote: X.quote, why: X.why, legacy: true }]);
+  };
+  F.cqLast = function (s) { var L = F.cqList(s); return L[L.length - 1] || null; };
   F.SELLER = { s_org: '㈜셀키에이아이', s_ceo: '홍길동', s_tel: '02-0000-0000', s_biz: '000-00-00000', s_mgr: 'OmicsPharm 컨설턴트', s_mail: 'help@omicspharm.test', s_addr: '서울특별시 강서구 마곡중앙로 00' };
   // 견적서 문서 (A4) — 파트너가 쓴 그대로. o.client면 클라이언트용: 공급자를 셀키로, 견적번호 끝은 o.no(A·B·C)
   F.docHTML = function (r, q, k, o) {
@@ -595,7 +614,7 @@
   };
   // 계약서 보기: 기본 양식이면 의뢰서 + 별첨1 견적서, 업로드 파일이면 파일 안내
   F.showContract = function (r, s, side) {
-    var c = s.ct && s.ct[side], q = s.P[s.pick].quote, label = side === 'client' ? '클라이언트 계약서' : '분석파트너 계약서';
+    var c = s.ct && s.ct[side], q = side === 'client' ? ((F.cqLast(s) || {}).quote || s.P[s.pick].quote) : s.P[s.pick].quote, label = side === 'client' ? '클라이언트 계약서' : '분석파트너 계약서';
     var body = !c || c.type === 'form'
       ? F.contractHTML(r, s, side) + '<p class="attach-t"># 별첨1. 분석 견적서</p>' + F.docHTML(r, q, s.pick, side === 'client' ? { client: true, no: F.qno(s, s.pick) } : null)
       : '<article class="doc cdoc file"><div class="c-brand">C E L L K E Y</div><div class="fileph"><b>' + esc(c.name) + '</b><p>기관 자체 양식으로 업로드한 계약서입니다.<br>프로토타입에서는 파일 내용을 표시하지 않습니다.</p></div></article>';
