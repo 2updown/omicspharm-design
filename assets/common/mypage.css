@@ -516,14 +516,3 @@ span.tbtn { cursor:default; }
   .ui-white .card.box > :not(.card-head) { padding:4px 16px; }
   .ui-white .fgrid .fg + .fg { border-left:0 !important; border-top:1px solid var(--gray-200) !important; } /* 묶음이 세로로 쌓이면 구분선도 가로 */
 }
-
-/* ── 회색 비교안 (?ui=gray, 2026-10-26): 화이트와 같은 구조에 바탕 회색 + 사이드·본문 흰 카드 ── */
-.ui-gray body { background:var(--gray-50); }
-.ui-gray .card:not(.box):not(.bare) { padding:24px; background:#fff; border:1px solid var(--gray-200); border-radius:16px; }
-.ui-gray .card.box > :not(.card-head), .ui-gray .fgrid { background:#fff; }
-@media (min-width:961px) {
-  .ui-gray .side { width:272px; padding:16px; background:#fff; border:1px solid var(--gray-200); border-radius:16px; align-self:flex-start; } /* 안쪽 16 (메뉴 박스·AI 버튼이 왼쪽으로 12px 나오는 만큼 여유) */
-}
-@media (max-width:960px) {
-  .ui-gray .card:not(.box):not(.bare) { padding:20px 16px; }
-}
