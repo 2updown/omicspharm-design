@@ -241,6 +241,7 @@
     // 파트너 쪽에서 본 견적 상태
     pst: function (s, k) {
       var x = s.P[k]; if (!x) return null;
+      if (x.chg) return '변경 확인 요청'; // 컨설턴트가 바꾼 견적을 파트너가 확인하기 전 (2026-10-26)
       if (s.st === 'matched' && x.status === 'sub') return s.pick === k ? '선정' : '미선정';
       if (x.status === 'sub') return x.fwd && s.st === 'sent' ? '클라이언트 검토 중' : '제출 완료';
       return { req: '작성 대기', draft: '임시저장', rev: '수정 요청', dec: '거절' }[x.status];
@@ -340,6 +341,17 @@
         s.st = 'sent'; s.sentAt = s.sentAt || Date.now(); if (msg) s.msg = msg;
       });
     },
+    // 파트너 견적 변경 (2026-10-26): 공급가·분석 범위·일정이 바뀌면 컨설턴트가 고치고 파트너가 확인 (팀 규칙). 오프라인으로 확인받았으면 컨설턴트가 [확인 완료로 변경]
+    // x.chg = { at, quote, note } → 확인하면 이전 견적은 hist로, 새 견적이 다음 차수 (x.revN+1)
+    chgReq: function (id, k, quote, note) { return put(id, function (s) { var x = s.P[k]; if (x) x.chg = { at: Date.now(), quote: quote, note: note || '' }; }); },
+    chgOk: function (id, k, by) {
+      return put(id, function (s) {
+        var x = s.P[k]; if (!x || !x.chg) return; var c = x.chg, now = Date.now();
+        x.hist = (x.hist || []).concat([{ quote: x.quote, at: x.ver2At || x.subAt, why: x.why }]);
+        x.quote = c.quote; x.ver2At = now; x.why = c.note; x.revN = (x.revN || 0) + 1;
+        x.chgLog = (x.chgLog || []).concat([{ at: c.at, okAt: now, by: by, note: c.note }]); delete x.chg;
+      });
+    },
     // 클라이언트 견적 보내기 (2026-10-26): 컨설턴트가 분석파트너 견적 1건(base)을 바탕으로 만든 ㈜셀키에이아이 견적을 차수로 쌓음
     // s.CQ = [{ n, at, base, quote, why }]. 전달한 파트너는 컨설턴트 화면에서 '선정' (알림은 클라이언트가 최종 견적 확인할 때)
     sendCQ: function (id, base, quote, why) {
@@ -414,6 +426,7 @@
         Object.keys(s.P).forEach(function (k) {
           var x = s.P[k], o = partner(k).org;
           if (x.subAt && x.quote) L.push({ id: 'f-sub-' + r.id + k + (x.revN || 0), k: '견적등록', cat: 'project', at: x.subAt, t: o + '의 ' + qname(x) + '가 등록되었습니다.', sub: '프로젝트명: ' + nm + ' · 견적금액: ' + won(total(x.quote).final), href: href });
+          (x.chgLog || []).forEach(function (c, ci) { if (c.by === 'partner') L.push({ id: 'f-chgok-' + r.id + k + ci, k: '견적변경확인', cat: 'project', at: c.okAt, t: josa(o, '이', '가') + ' ' + nm + ' 프로젝트의 견적 변경 내용을 확인했습니다.', sub: c.note ? '변경 사유: ' + c.note : '', href: href }); });
           if (x.dec) L.push({ id: 'f-dec-' + r.id + k, k: '견적거절', cat: 'project', at: x.dec.at, t: josa(o, '이', '가') + ' ' + nm + ' 견적 요청을 거절했습니다.', sub: x.dec.why, href: href });
         });
         if (r.updatedAt) L.push({ id: 'f-ed-' + r.id + r.updatedAt, k: '의뢰수정', cat: 'project', at: r.updatedAt, t: cl + '의 ' + nm + ' 의뢰서가 수정되었습니다. 변경 내용을 확인해주세요.', href: href });
@@ -431,6 +444,7 @@
         if (s.fin && s.pick === ses.email) L.push({ id: 'f-fin-' + r.id, k: '프로젝트완료', cat: 'project', at: s.fin, t: nm + ' 프로젝트가 완료되었습니다. 클라이언트가 결과보고서를 최종 확인했습니다.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
         if (s.cancel) L.push({ id: 'f-cancel-' + r.id, k: '의뢰취소', cat: 'project', at: s.cancel.at, t: nm + ' 프로젝트가 삭제되어 견적 요청이 종료되었습니다.', href: 'mypage-quote.html' });
         if (!x.self) L.push({ id: 'f-req-' + r.id, k: '견적제안', cat: 'project', at: x.at, t: nm + ' 프로젝트 검토 후 견적서를 작성해주세요.', sub: '견적 마감일: ' + (s.due ? s.due.replace(/-/g, '.') : '-'), href: qh });
+        if (x.chg) L.push({ id: 'f-chg-' + r.id + x.chg.at, k: '견적변경확인요청', cat: 'project', at: x.chg.at, t: nm + ' 프로젝트 견적서의 변경 내용을 확인해주세요.', sub: x.chg.note ? '변경 사유: ' + x.chg.note : '', href: qh });
         if (x.rev) L.push({ id: 'f-rev-' + r.id + x.revN, k: '견적수정요청', cat: 'project', at: x.rev.at, t: nm + ' 프로젝트 견적서의 수정을 요청드립니다.', sub: x.rev.note, href: qh });
         // 선정 알림만 (2026-10-21: 미선정 알림은 보내지 않음)
         if (s.st === 'matched' && x.status === 'sub' && s.pick === ses.email) L.push({ id: 'f-win-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: nm + '의 견적이 최종 선정되었습니다.', sub: '견적서명: ' + qname(x) + ' · 견적금액: ' + won(total(x.quote).final), href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
@@ -493,6 +507,16 @@
     var K = s.pick && s.P[s.pick] ? s.pick : (function () { var E = (s.sends || []).filter(function (e) { return e.keys && e.keys.some(function (k) { return FK.indexOf(k) > -1; }); }), L = E.length ? E[E.length - 1].keys.filter(function (k) { return FK.indexOf(k) > -1; }) : FK; return L[L.length - 1]; })();
     var X = s.P[K], H = X.hist || [];
     return H.map(function (h, i) { return { n: i + 1, at: h.at, base: K, quote: h.quote, why: h.why, legacy: true }; }).concat([{ n: H.length + 1, at: X.ver2At || X.subAt, base: K, quote: X.quote, why: X.why, legacy: true }]);
+  };
+  // 두 견적의 달라진 항목 (단가·수량·추가/삭제·할인·소요 기간)
+  F.qdiff = function (a, b) {
+    var cur = b.cur || 'KRW', M = function (q) { var m = {}; (q.groups || []).forEach(function (g) { g.lines.forEach(function (l) { m[(g.name || '') + '|' + (l.d || '')] = l; }); }); return m; };
+    var A = M(a), B = M(b), out = [], nm = function (k) { return k.split('|')[1] || k.split('|')[0]; };
+    Object.keys(B).forEach(function (k) { var x = A[k], y = B[k]; if (!x) { out.push('추가 · ' + nm(k) + ' ' + money(num(y.q) * num(y.p), cur)); return; } if (num(x.p) !== num(y.p)) out.push(nm(k) + ' 단가 ' + money(num(x.p), cur) + ' → ' + money(num(y.p), cur)); if (num(x.q) !== num(y.q)) out.push(nm(k) + ' 수량 ' + num(x.q) + ' → ' + num(y.q)); });
+    Object.keys(A).forEach(function (k) { if (!B[k]) out.push('삭제 · ' + nm(k)); });
+    var sa = num(a.sale) + num(a.addSale), sb = num(b.sale) + num(b.addSale); if (sa !== sb) out.push('할인 ' + (sa ? money(sa, cur) : '없음') + ' → ' + (sb ? money(sb, cur) : '없음'));
+    if (String(a.weeks || '') !== String(b.weeks || '')) out.push('소요 기간 ' + (a.weeks || '-') + '주 → ' + (b.weeks || '-') + '주');
+    return out;
   };
   F.cqLast = function (s) { var L = F.cqList(s); return L[L.length - 1] || null; };
   F.SELLER = { s_org: '㈜셀키에이아이', s_ceo: '홍길동', s_tel: '02-0000-0000', s_biz: '000-00-00000', s_mgr: 'OmicsPharm 컨설턴트', s_mail: 'help@omicspharm.test', s_addr: '서울특별시 강서구 마곡중앙로 00' };

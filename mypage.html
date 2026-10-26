@@ -7,12 +7,12 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026j">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261026j">
-<script src="assets/common/site.js?v=20261026j"></script>
-<script src="assets/common/consult.js?v=20261026j"></script>
-<script src="assets/common/mypage.js?v=20261026j"></script>
-<script src="assets/common/flow.js?v=20261026j"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026k">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261026k">
+<script src="assets/common/site.js?v=20261026k"></script>
+<script src="assets/common/consult.js?v=20261026k"></script>
+<script src="assets/common/mypage.js?v=20261026k"></script>
+<script src="assets/common/flow.js?v=20261026k"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -189,7 +189,7 @@
     // 분석파트너: 견적(견적관리) → 프로젝트(프로젝트 관리). 보고서는 실제 단계(등록·검토·승인) 그대로
     var IN = OP.canQuote() ? F.inbox(me.s.email).map(function (o) { return F.pst(o.s, me.s.email); }) : [];
     var cnt = function (re) { return IN.filter(function (t) { return re.test(t); }).length; };
-    cells = [['견적 작성', cnt(/작성 대기|임시저장|수정 요청/), 'mypage-quote.html?t=' + encodeURIComponent('작성 필요'), '', true],
+    cells = [['견적 작성', cnt(/작성 대기|임시저장|수정 요청|변경 확인 요청/), 'mypage-quote.html?t=' + encodeURIComponent('작성 필요'), '', true],
              ['견적 제출', cnt(/제출 완료|클라이언트 검토 중/), 'mypage-quote.html?t=' + encodeURIComponent('제출 완료')]]
       .concat(D.P4.map(function (t, i) { return [t, PP.filter(function (p) { return D.pStage(p) === t; }).length, 'mypage-project.html?stage=' + encodeURIComponent(t)]; }));
     var ended = cnt(/미선정|거절/);
@@ -223,8 +223,8 @@
     // 분석파트너: 견적 작성이 필요한 요청 + 계약된 프로젝트 (분석 중이면 결과 등록)
     var MY = me.s.email;
     IT = (OP.canQuote() ? F.inbox(MY) : []).map(function (o) {
-      var t = F.pst(o.s, MY); if (!/작성 대기|임시저장|수정 요청/.test(t)) return null;
-      return { href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, st: '견적 요청', stCls: 'wait', title: o.r.title, sub: o.r.org || '-', next: t === '수정 요청' ? '견적 수정 요청' : '견적 작성 필요', urgent: true, at: o.x.at };
+      var t = F.pst(o.s, MY); if (!/작성 대기|임시저장|수정 요청|변경 확인 요청/.test(t)) return null;
+      return { href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, st: '견적 요청', stCls: 'wait', title: o.r.title, sub: o.r.org || '-', next: t === '수정 요청' ? '견적 수정 요청' : t === '변경 확인 요청' ? '견적 변경 확인 필요' : '견적 작성 필요', urgent: true, at: o.x.at };
     }).filter(Boolean).concat(PP.map(function (p) {
       var ps = D.pStage(p), nx = ps === '분석 진행 중' && !(p.flow && (F.state(p.id).raw || []).length) ? '결과 등록 필요' : '';
       return { href: 'mypage-project.html?id=' + encodeURIComponent(p.id), svc: D.svcKo(p.svc), st: ps, stCls: ps === '프로젝트 완료' ? 'done' : 'state', title: p.title, sub: p.client, next: nx, urgent: !!nx, at: p.at };
@@ -250,7 +250,7 @@
   });
   // 최근 알림 (2026-10-23): 제목 = 무슨 일인지 짧게, 아래 = 프로젝트명(상담·문의는 제목), 오른쪽 = 날짜. 앞의 점은 뺌 (안 읽은 건 제목만 굵게)
   var HEAD = { '의뢰접수': '새 의뢰서가 접수되었습니다', '의뢰승인': '프로젝트가 승인되었습니다', '의뢰수정': '의뢰서가 수정되었습니다', '의뢰취소': '프로젝트가 삭제되었습니다', '의뢰삭제': '프로젝트가 삭제되었습니다',
-    '견적확인요청': '새 견적서가 도착했습니다', '견적등록': '새 견적서가 등록되었습니다', '견적제안': '새 견적 요청이 도착했습니다', '견적수정요청': '견적서 수정 요청이 도착했습니다', '견적거절': '견적 요청이 거절되었습니다',
+    '견적확인요청': '새 견적서가 도착했습니다', '견적등록': '새 견적서가 등록되었습니다', '견적제안': '새 견적 요청이 도착했습니다', '견적수정요청': '견적서 수정 요청이 도착했습니다', '견적변경확인요청': '견적 변경 확인 요청이 도착했습니다', '견적변경확인': '파트너가 견적 변경을 확인했습니다', '견적거절': '견적 요청이 거절되었습니다',
     '견적확정': admin ? '최종 견적이 확정되었습니다' : '견적이 최종 선정되었습니다', '계약': '계약서가 등록되었습니다', '결과등록': '분석 결과가 등록되었습니다', '보고서등록': '결과보고서가 등록되었습니다', '보고서 등록': '결과보고서가 등록되었습니다',
     '보고서 최종 확인': '결과보고서가 최종 확인되었습니다', '프로젝트완료': '프로젝트가 완료되었습니다', '리뷰등록': '만족도 평가가 등록되었습니다', 'Q&A': '프로젝트 Q&A에 새 글이 등록되었습니다',
     '사업자등록증재제출요청': '사업자등록증을 다시 제출해주세요', '사업자등록증재제출': '사업자등록증이 다시 제출되었습니다', '파트너인증요청': '파트너 인증 요청이 도착했습니다', '파트너인증': '파트너 인증이 완료되었습니다', '분석서비스정보요청': '분석 서비스 정보를 입력해주세요',
