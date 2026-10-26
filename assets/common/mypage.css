@@ -381,9 +381,8 @@ span.tbtn { cursor:default; }
 .op-ai-win { position:absolute; background:#fff; overflow:hidden; }
 .op-ai-win iframe { display:block; width:100%; height:100%; border:0; }
 .op-ai-x { position:absolute; top:16px; right:20px; z-index:2; width:36px; height:36px; border-radius:8px; }
-.op-ai-x::before, .op-ai-x::after { content:""; position:absolute; left:50%; top:50%; width:18px; height:1.5px; background:#333; }
-.op-ai-x::before { transform:translate(-50%, -50%) rotate(45deg); } .op-ai-x::after { transform:translate(-50%, -50%) rotate(-45deg); }
-.op-ai-x:hover { background:rgba(0,0,0,.05); }
+.op-ai-x { background:url(../ai/ic-close.svg) center/24px no-repeat; } /* AI Agent 디자인 시스템 아이콘 (Figma 2016:22105 Icons/medium/close, #000) */
+.op-ai-x:hover { background-color:rgba(0,0,0,.05); }
 .op-ai.overlay .op-ai-win { inset:0; }
 .op-ai.overlay .op-ai-dim { display:none; }
 .op-ai.under { top:70px; z-index:40; } .op-ai.under .op-ai-win { inset:0; border-top:1px solid #e5e5e5; } .op-ai.under .op-ai-dim { display:none; } /* GNB 아래로 열기 (?ai=under, 검토용) */
