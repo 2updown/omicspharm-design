@@ -478,18 +478,20 @@ span.tbtn { cursor:default; }
 .ui-headc .side-ai b { display:block; font-size:18px; font-weight:600; line-height:22px; color:#000; white-space:nowrap; } /* 18px·SemiBold (AI Agent는 특별 기능이라 일반 메뉴(Medium)보다 굵게, 2026-10-26), 아이콘은 메뉴와 같은 20px */
 .ui-headc .side-ai em { font-style:normal; padding:2px 8px; border-radius:8px; background:#edfefa; color:#009788; font-size:12px; font-weight:500; line-height:18px; } /* badge_basic tertiary teal */
 .ui-headc .side-ai::after { content:""; margin-left:auto; flex:none; width:16px; height:16px; background:url(../detail/ic-caret-right-20.svg) center/16px no-repeat; opacity:.6; transition:transform .2s; }
-/* hover: 빛번짐 없이 테두리 그라데이션(민트→초록→파랑→초록) 색이 둘레를 따라 같은 속도로 흐름 (2026-10-23). 조각 SVG는 mypage.js가 만듦 */
-.ui-headc .side-ai .ai-ring { position:absolute; inset:-2px; width:calc(100% + 4px); height:calc(100% + 4px); overflow:visible; pointer-events:none; opacity:0; transition:opacity .2s; }
-.ui-headc .side-ai .ai-ring rect { fill:none; stroke-width:2; }
-.ui-headc .side-ai:hover .ai-ring { opacity:1; }
-.ui-headc .side-ai:hover .ai-ring rect { animation-name:aiRing; animation-timing-function:linear; animation-iteration-count:infinite; } /* 길이·지연은 mypage.js가 조각마다 넣음 */
-@keyframes aiRing { to { stroke-dashoffset:calc(var(--p, 100px) * -1); } } /* 한 바퀴 = 둘레 길이(px, mypage.js가 --p로 넣음) */
+/* hover (2026-10-26): 테두리 그라데이션(민트→초록→파랑→초록)이 둘레를 따라 같은 속도로 흐름 + 안쪽이 아주 연하게 물듦. 빛번짐 없음
+   테두리는 한 장(conic-gradient)으로 그려서 매끄럽게 (전에는 색 조각 16개를 이어 붙여 경계가 깨져 보였음).
+   회전 각도는 mypage.js가 버튼 크기에 맞춰 키프레임(aiFlow)으로 만듦: 둘레를 같은 간격으로 나눈 지점의 각도 → 긴 변·짧은 변 모두 같은 속도 */
+@property --ai-angle { syntax:'<angle>'; inherits:false; initial-value:0deg; }
+.ui-headc .side-ai { isolation:isolate; }
+.ui-headc .side-ai::before { content:""; position:absolute; inset:0; z-index:-1; border-radius:10px; background:linear-gradient(90deg, rgba(110,231,183,.12), rgba(61,123,255,.09)); opacity:0; transition:opacity .25s; pointer-events:none; }
+.ui-headc .side-ai:hover::before { opacity:1; }
+.ui-headc .side-ai:hover { background:linear-gradient(#fff, #fff) padding-box, conic-gradient(from var(--ai-angle), #6ee7b7, #22c57e, #3d7bff, #22c57e, #6ee7b7) border-box; animation:aiFlow 2.4s linear infinite; }
 .ui-headc .side-ai:hover b { background:var(--ai-text); -webkit-background-clip:text; background-clip:text; color:transparent; }
 .ui-headc .side-ai:hover img { transform:rotate(90deg) scale(1.1); }
 .ui-headc .side-ai:hover::after { transform:translateX(3px); }
 .ui-headc .side-ai:active { transform:scale(.98); }
 .ui-headc .side-ai:focus-visible { outline:2px solid #3d7bff; outline-offset:3px; }
-@media (prefers-reduced-motion:reduce) { .ui-headc .side-ai, .ui-headc .side-ai img, .ui-headc .side-ai::after { transition:none; } .ui-headc .side-ai:active { transform:none; } .ui-headc .side-ai .ai-ring { display:none; } }
+@media (prefers-reduced-motion:reduce) { .ui-headc .side-ai, .ui-headc .side-ai img, .ui-headc .side-ai::after { transition:none; } .ui-headc .side-ai:active { transform:none; } .ui-headc .side-ai:hover { animation:none; } }
 .ui-headc .menu a[href="mypage-ai.html"] { display:none; } /* 메뉴 맨 아래 AI Agent 항목은 카드로 대신 */
 /* 메뉴 아이콘 (2026-10-23 기본, ?micon=0이면 없음): 위쪽 메뉴·묶음 제목에만 Phosphor Regular 20px, 글자색을 따라감 (선택 = 청록). 하위 메뉴는 아이콘 없음 */
 .ui-white.ui-micon .side .menu > a::before, .ui-white.ui-micon .side .menu .gh::before { content:""; display:block; position:static; border:0; flex:none; width:20px; height:20px; background:currentColor; -webkit-mask:var(--mi) center/contain no-repeat; mask:var(--mi) center/contain no-repeat; }
