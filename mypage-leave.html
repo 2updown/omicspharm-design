@@ -7,17 +7,18 @@
 <title>회원 탈퇴 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 내 정보 관리 > 회원 탈퇴 (Figma 시안 없음, 레퍼런스 화면 구성: 탈퇴 안내 → 탈퇴 사유·개선사항 → 동의 → 취소/탈퇴).
      진행 중인 프로젝트·계약이 있으면 탈퇴 불가. 데모: 탈퇴하면 이 브라우저의 계정(op.accounts)을 지우고 로그아웃 (데모 계정은 로그아웃만) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026ze">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261026ze">
-<script src="assets/common/site.js?v=20261026ze"></script>
-<script src="assets/common/consult.js?v=20261026ze"></script>
-<script src="assets/common/mypage.js?v=20261026ze"></script>
-<script src="assets/common/flow.js?v=20261026ze"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026zf">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261026zf">
+<script src="assets/common/site.js?v=20261026zf"></script>
+<script src="assets/common/consult.js?v=20261026zf"></script>
+<script src="assets/common/mypage.js?v=20261026zf"></script>
+<script src="assets/common/flow.js?v=20261026zf"></script>
 <style>
   .leave-card { gap:40px; }
   .sec h4 { margin-bottom:12px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
   /* 탈퇴 안내 = infobox default, 진행 중 프로젝트 = infobox warning (site.css .op-ibox) */
   .op-ibox { align-self:stretch; }
+  #block { margin-top:-16px; } /* 안내 박스 두 개 사이 24 (카드 gap 40, Figma 1729:8010) */
   .op-ibox li.strong { font-weight:600; text-decoration:underline; text-underline-offset:3px; }
   .op-ibox .rows { display:flex; flex-direction:column; gap:6px; width:100%; }
   .op-ibox .rows div { display:flex; align-items:center; gap:8px; min-width:0; font-size:14px; line-height:20px; }
@@ -54,7 +55,7 @@
   .check input:focus-visible + i { outline:2px solid var(--teal-600); outline-offset:2px; border-radius:4px; }
   .check input:disabled ~ * { opacity:.5; }
   .agree { display:flex; flex-direction:column; gap:2px; padding:0 4px; }
-  .agree .check { align-items:flex-start; padding:8px 0; min-height:0; }
+  .agree .check { align-items:flex-start; padding:0 0 8px; min-height:0; } /* 표 ↔ 동의 체크 24 (fieldset gap 그대로) */
   .agree .check i { margin-top:0; }
   .agree .req { color:var(--gray-500); }
   .agree .msg { padding-left:28px; }
@@ -68,7 +69,7 @@
   fieldset:disabled { opacity:.55; }
 
   @media (max-width:640px) {
-    .leave-card { gap:28px; }
+    .leave-card { gap:28px; } #block { margin-top:-4px; }
     .field { grid-template-columns:1fr; }
     .flabel { padding:10px 12px; }
     .fbody { padding:10px 0 14px; }
@@ -144,7 +145,8 @@
   // 탈퇴 안내 (회원 유형별)
   var N = [
     '탈퇴 후 계정 정보(이메일, 이름, 소속, 연락처, 사업자등록증)는 삭제되며 복구할 수 없습니다.',
-    '진행 중인 프로젝트(의뢰 접수·견적 협의·계약·분석·보고서 단계) 또는 계약이 있는 경우, 모든 절차가 완료된 후 탈퇴할 수 있습니다.',
+    partner ? '진행 중인 프로젝트(계약·분석·보고서 단계)가 있으면 모든 절차가 완료된 후 탈퇴할 수 있습니다.'
+      : '진행 중인 프로젝트가 있으면 탈퇴할 수 없습니다. 계약 전 프로젝트는 삭제하고, 계약 이후 프로젝트는 모든 절차가 완료된 후 탈퇴해주세요.', // 계약 전(의뢰접수·의뢰승인·견적 확인)만 삭제 가능 (2026-10-26)
     '작성한 상담·문의 글은 자동으로 삭제되지 않으므로, 삭제가 필요한 내용은 탈퇴 전에 직접 삭제해주세요.',
     '결과보고서, 견적서, 계약서 등 프로젝트 자료는 탈퇴 후 열람·다운로드할 수 없으니 필요한 자료는 미리 저장해주세요.'
   ];
@@ -164,14 +166,14 @@
   // 데모 계정은 예시 프로젝트가 있어 항상 막히므로 ?free=1 로 '진행 중 프로젝트 없음' 상태를 볼 수 있게 함
   var free = /[?&]free=1/.test(location.search);
   var ING = free ? [] : role === 'client'
-    ? OP.my.myProjects().map(function (r) { return { id: r.id, t: r.title, st: OP.flow ? OP.flow.clientStage(r.id) : '진행 중', h: 'mypage-project.html?id=' + r.id }; })
+    ? OP.my.myProjects().filter(function (r) { return !OP.flow || (OP.flow.clientStage(r.id) !== '프로젝트 완료' && !OP.flow.state(r.id).cancel); }).map(function (r) { return { id: r.id, t: r.title, st: OP.flow ? OP.flow.clientStage(r.id) : '진행 중', h: 'mypage-project.html?id=' + r.id }; })
     : partner ? OP.my.partnerProjects().filter(function (p) { return p.stage !== '프로젝트 완료'; }).map(function (p) { return { id: p.id, t: p.title, st: OP.my.pStage(p), h: 'mypage-project.html?id=' + p.id }; })
     : [];
 
   if (role === 'admin') {
     lock('컨설턴트 계정은 탈퇴할 수 없습니다.', '컨설턴트 계정은 OmicsPharm 관리자가 발급·해지합니다. 계정 해지가 필요하면 관리자에게 요청해주세요.', '');
   } else if (ING.length) {
-    lock('진행 중인 프로젝트가 ' + ING.length + '건 있어 탈퇴할 수 없습니다.', '아래 프로젝트의 모든 절차(분석·결과 수령·계약)가 완료되거나 관리자 문의 후 탈퇴할 수 있습니다.',
+    lock('진행 중인 프로젝트가 ' + ING.length + '건 있어 탈퇴할 수 없습니다.', partner ? '아래 프로젝트의 모든 절차(분석·결과 등록·보고서)가 완료되면 탈퇴할 수 있습니다.' : '계약 전(의뢰접수·의뢰승인·견적 확인) 프로젝트는 삭제하고, 계약 진행 중 이후 프로젝트는 모든 절차가 완료되면 탈퇴할 수 있습니다.',
       '<div class="rows">' + ING.slice(0, 3).map(function (p) { return '<div><span>' + esc(p.st) + '</span><a href="' + p.h + '">' + esc(p.t) + '</a></div>'; }).join('') + (ING.length > 3 ? '<div class="more-n">외 ' + (ING.length - 3) + '건</div>' : '') + '</div>' +
       '<div class="acts"><a class="btn" href="mypage-project.html">프로젝트 관리로 이동</a>' +
       '<a class="demo" href="?free=1">데모: 진행 중 프로젝트가 없는 상태로 보기</a></div>');
