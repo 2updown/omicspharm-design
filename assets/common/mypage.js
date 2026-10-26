@@ -209,7 +209,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     var w = document.createElement('div');
     w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-label', 'AI Agent');
     w.innerHTML = '<div class="op-ai-dim" data-ai-close></div><div class="op-ai-win">' +
-      (WANT === 'inline' ? '<button type="button" class="op-ai-fit" aria-label="넓게 보기" title="넓게 보기"><img class="o" src="assets/common/menu/arrows-out-simple.svg" alt=""><img class="i" src="assets/common/menu/arrows-in-simple.svg" alt=""></button>' : '') +
+      (WANT === 'inline' ? '<button type="button" class="op-ai-fit" aria-label="넓게 보기" title="넓게 보기"><img class="o" src="assets/common/menu/expand_content.svg" alt=""><img class="i" src="assets/common/menu/collapse_content.svg" alt=""></button>' : '') +
       '<button type="button" class="op-ai-x" data-ai-close aria-label="닫기"></button><iframe src="mypage-ai.html?embed=' + WANT + '&v=' + Date.now() + '" title="AI Agent"></iframe></div>';
     var close = function () { w.remove(); document.body.style.overflow = ''; document.body.classList.remove('op-ai-open', 'op-ai-inline'); document.removeEventListener('keydown', key); window.removeEventListener('message', msg); window.removeEventListener('resize', place);
       if (aiBtn) aiBtn.classList.remove('on'); if (onA) onA.classList.add('on'); };
