@@ -7,12 +7,12 @@
 <title>파트너 인증 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > (분석파트너 카드) 파트너 인증 (Figma 시안 없음, 위시켓 '신원 인증' 구성 참고).
      인증 상태 안내 / 인증 절차 / 기관 정보 + 사업자등록증. 데모: 저장은 이 브라우저 localStorage(op.accounts)와 IndexedDB(op-files)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026x">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261026x">
-<script src="assets/common/site.js?v=20261026x"></script>
-<script src="assets/common/consult.js?v=20261026x"></script>
-<script src="assets/common/mypage.js?v=20261026x"></script>
-<script src="assets/common/flow.js?v=20261026x"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026z">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261026z">
+<script src="assets/common/site.js?v=20261026z"></script>
+<script src="assets/common/consult.js?v=20261026z"></script>
+<script src="assets/common/mypage.js?v=20261026z"></script>
+<script src="assets/common/flow.js?v=20261026z"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   .card-head .op-vchip { margin-left:8px; }
@@ -93,7 +93,7 @@
           <div class="field"><div class="flabel">소속(기관·회사)</div><div class="fbody"><p class="val"><span id="vOrg"></span></p></div></div>
           <div class="field"><label class="flabel" for="ceo">대표자명<span class="req">*</span></label><div class="fbody"><input class="inp" id="ceo" placeholder="이름" autocomplete="off"></div></div>
           <div class="field"><label class="flabel" for="bizno">사업자등록번호<span class="req">*</span></label><div class="fbody"><input class="inp" id="bizno" inputmode="numeric" placeholder="000-00-00000" maxlength="12" autocomplete="off"></div></div>
-          <div class="field"><label class="flabel" for="addr">주소<span class="req">*</span></label><div class="fbody"><div class="addr" style="max-width:420px" data-addr-box><input class="inp" id="addr" placeholder="예) 세화로 168, 도산대로 33" readonly data-addr><button type="button" class="btn line" data-addr>검색</button></div></div></div>
+          <div class="field"><label class="flabel" for="addr">주소<span class="req">*</span></label><div class="fbody"><div class="addr" style="max-width:420px" data-addr-box><input class="inp" id="addr" placeholder="예) 세화로 168, 도산대로 33" readonly data-addr><button type="button" class="btn line" data-addr>검색</button></div><input class="inp" style="max-width:420px" id="addr2" placeholder="상세주소를 입력하세요." autocomplete="off" data-addr2></div></div>
           <div class="field"><div class="flabel">사업자등록증<span class="req">*</span></div><div class="fbody">
             <div class="doc"><span class="fname" id="docName"></span><label class="btn" for="docFile" id="docBtn">파일 선택</label><button type="button" class="btn del" id="docDel" hidden>삭제</button>
               <input type="file" id="docFile" accept=".pdf,.jpg,.jpeg,.png"></div>
@@ -136,7 +136,7 @@
   }
 
   $('#vOrg').textContent = acc.org || '-';
-  $('#ceo').value = acc.ceo || ''; $('#bizno').value = acc.bizno || ''; $('#addr').value = acc.addr || '';
+  $('#ceo').value = acc.ceo || ''; $('#bizno').value = acc.bizno || ''; $('#addr').value = acc.addr || ''; $('#addr2').value = acc.addr2 || '';
   $('#bizno').addEventListener('input', function () { // 000-00-00000
     var d = this.value.replace(/\D/g, '').slice(0, 10);
     this.value = d.length > 5 ? d.slice(0, 3) + '-' + d.slice(3, 5) + '-' + d.slice(5) : d.length > 3 ? d.slice(0, 3) + '-' + d.slice(3) : d;
@@ -150,8 +150,8 @@
   function showDoc() {
     var n = $('#docName'), v = V();
     $('#lockBox').hidden = !v;
-    ['#ceo', '#bizno', '#addr'].forEach(function (k) { $(k).disabled = v; });
-    document.querySelector('.addr .btn').hidden = v; $('#save').closest('.actions').hidden = v;
+    ['#ceo', '#bizno', '#addr', '#addr2'].forEach(function (k) { $(k).disabled = v; });
+    document.querySelector('.addr .btn').disabled = v; // 인증 후: 검색 버튼은 보이되 비활성 (내 정보 관리와 같음) $('#save').closest('.actions').hidden = v;
     n.classList.toggle('none', !bizDoc);
     n.innerHTML = '<span>' + esc(bizDoc || '등록된 파일 없음') + '</span>';
     if (v) { $('#docBtn').hidden = true; $('#docDel').hidden = true; $('#docHelp').textContent = ''; $('#docHelp').hidden = true; return; }
@@ -196,7 +196,7 @@
     err($('#docBtn'), bizDoc ? '' : '사업자등록증을 올려 주세요.'); ok = ok && !!bizDoc;
     if (!ok) return;
     if (V()) return; // 인증 후에는 저장 없음 (보기 전용)
-    var data = { ceo: c.value.trim(), bizno: b.value, addr: a.value.trim(), bizDoc: bizDoc };
+    var data = { ceo: c.value.trim(), bizno: b.value, addr: a.value.trim(), addr2: $('#addr2').value.trim(), bizDoc: bizDoc };
     if (bizFile) { var a0 = OP.account(email) || {}; data.bizAt = Date.now(); data.bizReAt = a0.bizAsk ? data.bizAt : 0; data.bizAsk = null; } // 새 파일 → 재제출 요청 해제, 다시 검토
     var msg = bizDoc !== (OP.account(email) || {}).bizDoc ? (OP.mailVerified() ? '인증 검토를 요청했습니다.' : '저장되었습니다. 이메일 인증을 완료하면 인증 검토가 시작됩니다.') : '기관 정보가 저장되었습니다.'; // 새 파일 → 인증 검토 시작 (메일 인증 후)
     if (bizFile) { OP.files.put('biz:acc:' + email, bizFile); bizFile = null; }

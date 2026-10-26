@@ -9,14 +9,14 @@
      파트너 인증 검토: 목록(상태별) → 상세(기관 정보 · 사업자등록증 [보기] [인증 완료] [재제출 요청]).
      재제출 요청은 클라이언트 사업자등록증 재제출 요청(mypage-request.html)과 같은 방식. 규칙: docs/partner-verification.md
      데모: 로그인 가능한 분석파트너(partner@omicspharm.test)는 계정 값(op.accounts)을, 가상 파트너는 op.partnerReview를 바꾼다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026x">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261026x">
-<script src="assets/common/site.js?v=20261026x"></script>
-<script src="assets/common/projects-data.js?v=20261026x"></script>
-<script src="assets/common/consult.js?v=20261026x"></script>
-<script src="assets/common/mypage.js?v=20261026x"></script>
-<script src="assets/common/flow.js?v=20261026x"></script>
-<script src="assets/common/manage.js?v=20261026x"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026z">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261026z">
+<script src="assets/common/site.js?v=20261026z"></script>
+<script src="assets/common/projects-data.js?v=20261026z"></script>
+<script src="assets/common/consult.js?v=20261026z"></script>
+<script src="assets/common/mypage.js?v=20261026z"></script>
+<script src="assets/common/flow.js?v=20261026z"></script>
+<script src="assets/common/manage.js?v=20261026z"></script>
 <style>
   .chips { display:flex; flex-wrap:wrap; gap:8px; }
   .chips button { height:36px; padding:0 14px; border-radius:99px; border:1px solid var(--gray-300); background:#fff; font-size:14px; font-weight:500; color:var(--gray-600); }
@@ -97,7 +97,7 @@
       var o = { key: p.key, org: p.org, name: p.name, mail: p.mail, tel: p.tel, svc: p.svc, at: T0 - 864e5 * (30 + i * 9), dept: ['분석팀', '연구소', 'Bio R&D센터', '오믹스분석팀', '분석서비스팀', '바이오분석실', '연구개발팀'][i % 7], job: '분석 서비스 담당', country: 'SOUTH KOREA' };
       if (p.login) { // 실제 로그인 가능한 데모 분석파트너: 계정 값 기준
         var a = OP.account(p.key) || {};
-        o.org = a.org || p.org; o.name = a.name || p.name; o.dept = a.dept || o.dept; o.tel = a.phone || p.tel; o.ceo = a.ceo; o.bizno = a.bizno; o.addr = a.addr; o.doc = a.bizDoc; o.mailOk = a.mailOk !== false;
+        o.org = a.org || p.org; o.name = a.name || p.name; o.dept = a.dept || o.dept; o.tel = a.phone || p.tel; o.ceo = a.ceo; o.bizno = a.bizno; o.addr = [a.addr, a.addr2].filter(Boolean).join(' '); o.doc = a.bizDoc; o.mailOk = a.mailOk !== false;
         o.svc = (a.services || []).map(function (x) { return x.svc; }).filter(Boolean); if (!o.svc.length) o.svc = p.svc;
         o.ask = a.bizAsk || null; o.okAt = a.bizOkAt || (a.verified ? T0 - 864e5 * 20 : 0); o.real = true; o.at = a.bizAt || o.at;
         o.st = a.verified && o.mailOk ? 'ok' : o.ask ? 'ask' : !o.doc ? 'none' : o.mailOk ? 'review' : 'mail';

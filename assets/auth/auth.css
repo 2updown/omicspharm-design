@@ -238,5 +238,5 @@ input { font:inherit; color:inherit; }
 /* 상담 메일 링크에서 온 가입 안내 (signup.html · signup-form.html ?consult=) */
 .consult-note { margin-top:8px; font-size:13px; line-height:20px; color:var(--teal-700, #00786e); word-break:keep-all; }
 .auth-title .consult-note { margin-top:12px; font-size:14px; }
-.input input:read-only { color:var(--gray-500, #737373); }
-.input:has(input:read-only) { background:var(--gray-100, #f5f5f5); }
+.input input:read-only:not([data-addr]) { color:var(--gray-500, #737373); }
+.input:has(input:read-only:not([data-addr])) { background:var(--gray-100, #f5f5f5); } /* 주소 입력란은 readonly여도 검색으로 고르는 칸이라 흰 바탕 (Figma 1211:63158) */

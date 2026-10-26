@@ -8,11 +8,11 @@
 <!-- Figma 회원가입/로그인 섹션 (254:18355)
      클라이언트: Signup-Filled 281:23123 → 기본정보 1/2 806:5078 → 추가정보 2/2 806:5117 → 완료 1120:43157
      분석파트너: Signup-Filled 1109:37231 → 1/3 1109:37368 → 2/3 1109:37427 → 3/3 1117:42815 → 완료 1120:42976 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026x">
-<link rel="stylesheet" href="assets/auth/auth.css?v=20261026x">
-<script src="assets/common/site.js?v=20261026x"></script>
-<script src="assets/auth/auth.js?v=20261026x"></script>
-<script src="assets/common/consult.js?v=20261026x"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026z">
+<link rel="stylesheet" href="assets/auth/auth.css?v=20261026z">
+<script src="assets/common/site.js?v=20261026z"></script>
+<script src="assets/auth/auth.js?v=20261026z"></script>
+<script src="assets/common/consult.js?v=20261026z"></script>
 </head>
 <body>
 <div class="auth">
@@ -136,6 +136,7 @@
             </div>
             <div class="field"><label for="addr">주소</label>
               <div class="with-btn" data-addr-box><div class="input"><input id="addr" placeholder="예) 세화로 168, 도산대로 33" readonly data-addr></div><button type="button" class="btn-outline" data-addr>검색</button></div>
+              <div class="input"><input id="addr2" placeholder="상세주소를 입력하세요." autocomplete="off" data-addr2></div>
             </div>
             <div class="field" id="f-file">
               <span class="label">사업자등록증<img class="info" src="assets/auth/ic-warning-circle.svg" alt="안내" tabindex="0"><span class="tip client-only">해당 파일은 '프로젝트 등록'시 업로드가 필수입니다.</span><span class="tip partner-only">인증 검토에 필요한 파일입니다. 인증 후 견적서 작성과 비공개 프로젝트 열람이 가능합니다.</span></span>
@@ -384,7 +385,7 @@
     // 기관 정보는 클라이언트·분석파트너 모두 저장 → 클라이언트 [내 정보 관리], 분석파트너 [파트너 인증]에서 이어서 수정
     // 분석파트너는 추가 정보(제공 서비스, 복수 선택)도 저장 → [분석 서비스 정보]에 서비스마다 카드 1개. 수행 상태·소요 기간은 같은 값으로 시작
     var on = function (g) { var b = $('[data-group="' + g + '"] .on'); return b ? b.textContent.trim() : ''; };
-    var extra = { ceo: $('#ceo').value.trim(), bizno: $('#bizno').value.trim(), addr: $('#addr').value.trim() };
+    var extra = { ceo: $('#ceo').value.trim(), bizno: $('#bizno').value.trim(), addr: $('#addr').value.trim(), addr2: $('#addr2').value.trim() };
     if (type === 'partner') extra.services = $$('[data-group="service"] .on').map(function (b) { return { svc: b.textContent.trim(), st: on('status'), from: $('#dayFrom').value, to: $('#dayTo').value }; });
     if (who) { OP.saveAccount(who, Object.assign(extra, { profileDone: true, bizDoc: doc ? doc.name : '', name: $('#name').value.trim(), nick: $('#nick').value.trim(), country: $('#country').value, org: $('#org').value.trim(), dept: $('#dept').value.trim(), phone: $('#cc').value + ' ' + OP.phoneFmt(PH.value) })); OP.saveOrg($('#org').value, $('#dept').value); OP.login(who); }
     show('done');
