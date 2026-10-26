@@ -8,8 +8,8 @@
   var ACC_KEY = 'op.accounts', SES_KEY = 'op.session';
   var DEMO_PW = 'Demo@1234';
   var SEED = {
-    'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true, name: '홍길동', nick: 'cli05', org: '한결연구소', dept: '연구실', country: 'South Korea', ceo: '홍길동', bizno: '000-00-00000', addr: '서울특별시 강서구 마곡중앙로 00', phone: '+82 010-1234-5678', bizDoc: '사업자등록증_한결연구소.pdf', bizOk: 1788220800000, bizOkName: '사업자등록증_한결연구소.pdf' }, // 예시 클라이언트: 사업자등록증 확인(인증) 완료 상태
-    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', nick: 'seum01', org: '세움분석센터', dept: '분석팀', country: 'South Korea', phone: '+82 010-2345-6789', verified: true, bizDoc: '사업자등록증_세움분석센터.pdf', ceo: '홍길동', bizno: '000-00-00000', addr: '서울특별시 강서구 마곡중앙로 00',
+    'client@omicspharm.test':  { role: 'client',  pw: DEMO_PW, profileDone: true, name: '홍길동', nick: 'cli05', org: '한결연구소', dept: '연구실', country: 'South Korea', ceo: '홍길동', bizno: '214-86-37105', addr: '서울특별시 강서구 마곡중앙로 00', phone: '+82 010-1234-5678', bizDoc: '사업자등록증_한결연구소.pdf', bizOk: 1788220800000, bizOkName: '사업자등록증_한결연구소.pdf' }, // 예시 클라이언트: 사업자등록증 확인(인증) 완료 상태
+    'partner@omicspharm.test': { role: 'partner', pw: DEMO_PW, profileDone: true, name: '김파트너', nick: 'seum01', org: '세움분석센터', dept: '분석팀', country: 'South Korea', phone: '+82 010-2345-6789', verified: true, bizDoc: '사업자등록증_세움분석센터.pdf', ceo: '홍길동', bizno: '138-81-52946', addr: '서울특별시 강서구 마곡중앙로 00',
       services: SEED_SVC },
     'admin@omicspharm.test':   { role: 'admin',   pw: DEMO_PW, profileDone: true, name: '셀키 컨설턴트', nick: 'consultant', org: '셀키', dept: '컨설팅팀', country: 'South Korea', phone: '+82 010-3456-7890' } // 예시 계정은 필수 항목(닉네임·부서·국가)을 채워 둠 (2026-10-23)
   };
@@ -31,7 +31,7 @@
       // 예전 기호 이름(○○…)으로 저장된 데모 계정 값을 새 가상 이름으로
       var REN = [['○○분석센터', '세움분석센터'], ['○○연구소', '한결연구소']];
       Object.keys(st).forEach(function (k) { var a = st[k]; if (!a) return; ['org', 'bizDoc', 'bizOkName'].forEach(function (f) { if (typeof a[f] === 'string') REN.forEach(function (r) { a[f] = a[f].split(r[0]).join(r[1]); }); }); });
-      Object.keys(SEED).forEach(function (k) { if (st[k]) { all[k] = Object.assign({}, SEED[k], st[k]); ['phone', 'nick', 'dept', 'country'].forEach(function (f) { if (!st[k][f]) all[k][f] = SEED[k][f]; }); } }); // 예전에 빈 값으로 저장된 데모 계정도 필수값(부서 등)이 채워지게
+      Object.keys(SEED).forEach(function (k) { if (st[k]) { all[k] = Object.assign({}, SEED[k], st[k]); ['phone', 'nick', 'dept', 'country'].forEach(function (f) { if (!st[k][f]) all[k][f] = SEED[k][f]; }); if (st[k].bizno === '000-00-00000') all[k].bizno = SEED[k].bizno; } }); // 예전 데모 사업자등록번호(000-00-00000)는 예시 번호로 // 예전에 빈 값으로 저장된 데모 계정도 필수값(부서 등)이 채워지게
       return all;
     },
     account: function (email) { return OP.accounts()[String(email || '').trim().toLowerCase()] || null; },

@@ -8,12 +8,12 @@
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 기관 정보(클라이언트) / 비밀번호 변경 / 회원 탈퇴. 알림 설정은 없음 (기존 사이트에 없고 가입 때도 받지 않음).
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026t">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261026t">
-<script src="assets/common/site.js?v=20261026t"></script>
-<script src="assets/common/consult.js?v=20261026t"></script>
-<script src="assets/common/mypage.js?v=20261026t"></script>
-<script src="assets/common/flow.js?v=20261026t"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026u">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261026u">
+<script src="assets/common/site.js?v=20261026u"></script>
+<script src="assets/common/consult.js?v=20261026u"></script>
+<script src="assets/common/mypage.js?v=20261026u"></script>
+<script src="assets/common/flow.js?v=20261026u"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -61,9 +61,25 @@
   .photo .btn { height:36px; padding:0 14px; }
   .photo input[type=file] { display:none; }
   .photo .note { font-size:12px; line-height:18px; color:var(--teal-700); font-weight:500; }
+  .photo .rule { display:flex; flex-direction:column; gap:4px; }
+  .photo .rule li { display:flex; align-items:center; gap:4px; font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); list-style:none; }
+  .photo .rule li::before { content:""; flex:none; width:10px; height:10px; background:var(--gray-500); -webkit-mask:url(assets/auth/ic-check.svg) center/contain no-repeat; mask:url(assets/auth/ic-check.svg) center/contain no-repeat; }
+  /* 이미지 자르기 모달 (공통 확인 모달 op-confirm 기반). 정사각형 영역을 옮기거나 모서리로 크기 조절 → 240px로 저장 */
+  .op-confirm.crop .box { max-width:560px; }
+  .crop .ch { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .crop .cx { display:flex; width:24px; height:24px; } .crop .cx img { width:24px; height:24px; }
+  .crop .stage { position:relative; height:360px; margin-top:16px; overflow:hidden; border-radius:8px; background:var(--gray-100); touch-action:none; user-select:none; -webkit-user-select:none; }
+  .crop .stage > img { position:absolute; max-width:none; pointer-events:none; }
+  .crop .sel { position:absolute; border:1px dashed #fff; outline:1px dashed rgba(0,0,0,.45); box-shadow:0 0 0 9999px rgba(0,0,0,.45); cursor:move; }
+  .crop .sel i { position:absolute; width:12px; height:12px; border:1px solid var(--gray-500); background:#fff; }
+  .crop .sel i[data-h=nw] { left:-6px; top:-6px; cursor:nwse-resize; } .crop .sel i[data-h=ne] { right:-6px; top:-6px; cursor:nesw-resize; }
+  .crop .sel i[data-h=sw] { left:-6px; bottom:-6px; cursor:nesw-resize; } .crop .sel i[data-h=se] { right:-6px; bottom:-6px; cursor:nwse-resize; }
+  .crop .cnote { margin-top:8px; font-size:12px; line-height:18px; color:var(--gray-500); }
+  .op-confirm.crop .yes { background:var(--teal-600); color:#fff; } .op-confirm.crop .yes:hover { background:var(--teal-700); }
+  @media (max-width:640px) { .crop .stage { height:280px; } }
   /* 사업자등록증 (분석파트너): 인증 검토용 */
   .doc { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-  .doc .fname { display:inline-flex; align-items:center; gap:6px; min-width:0; max-width:300px; height:40px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; background:var(--gray-50); font-size:14px; color:var(--gray-700); }
+  .doc .fname { display:inline-flex; align-items:center; gap:6px; width:343px; min-width:0; max-width:100%; height:40px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; background:var(--gray-50); font-size:14px; color:var(--gray-700); }
   .doc .fname span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .doc .fname.none { color:var(--gray-400); background:#fff; }
   .doc .btn { height:40px; padding:0 14px; }
@@ -77,8 +93,8 @@
   .mailrow .btn { height:32px; padding:0 12px; font-size:13px; }
   #docLock a { color:inherit; font-weight:600; text-decoration:underline; text-underline-offset:3px; }
 
-  .leave { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 24px; border:1px solid var(--gray-200); border-radius:16px; background:#fff; }
-  .leave p { font-size:14px; line-height:20px; color:var(--gray-500); }
+  #secOrg + .card { margin-top:24px; } /* 기관 정보 → 비밀번호 변경 48 (기본 정보는 저장하기 버튼이 있어 24 그대로, Figma 1728:7929) */
+  .leave { display:flex; justify-content:flex-end; margin-top:-4px; } /* 테두리 없이 링크만, 비밀번호 변경 버튼 아래 20 */
   .leave a { flex:none; font-size:14px; font-weight:500; color:var(--gray-500); text-decoration:underline; text-underline-offset:3px; }
   .leave a:hover { color:var(--red-600); }
 
@@ -88,7 +104,6 @@
     .fbody { padding:10px 0 14px; }
     .inp { max-width:none; }
     .actions .btn { width:100%; }
-    .leave { flex-direction:column; align-items:flex-start; padding:16px; }
   }
 </style>
 </head>
@@ -122,9 +137,9 @@
           <div class="field"><div class="flabel">프로필 사진</div><div class="fbody">
             <div class="photo"><img id="pImg" src="assets/main/user-icon.svg?v=2" alt="프로필 사진">
               <div class="pbtns"><div><label class="btn" for="pFile">사진 변경</label><button type="button" class="btn" id="pDel">삭제</button></div>
-                <p class="help">JPG, PNG 파일 · 10MB 이하. 정사각형으로 잘려 표시됩니다.</p>
+                <ul class="rule"><li>jpeg, jpg, png 파일</li><li>10MB 이하 이미지</li></ul>
                 <p class="note" id="pNote" hidden>아래 저장하기를 눌러야 변경한 사진이 반영됩니다.</p></div>
-              <input type="file" id="pFile" accept="image/png,image/jpeg,image/webp"></div>
+              <input type="file" id="pFile" accept=".jpg,.jpeg,.png"></div>
           </div></div>
           <div class="field" id="rowMail"><div class="flabel">이메일(아이디)</div><div class="fbody"><div class="mailrow"><p class="val" id="vEmail"></p><span class="op-vchip" id="mailChip" hidden>메일 미인증</span><button type="button" class="btn line" id="mailResend" hidden>인증 메일 다시 보내기</button></div><div class="op-ibox simple" id="mailHelp" hidden><p class="t"><span>가입하신 메일함에서 인증 메일을 확인해 주세요. 메일이 오지 않았다면 스팸함도 확인해 주세요.</span></p></div></div></div>
           <div class="field"><div class="flabel">회원 유형</div><div class="fbody"><p class="val" id="vRole"></p></div></div>
@@ -158,7 +173,7 @@
         </div>
         <div class="actions" id="orgActions"><button type="submit" class="btn primary lg">저장하기</button></div>
       </form>
-      <div class="op-ibox simple" id="docLock" hidden><p class="t"><span>OmicsPharm 확인이 완료된 기관 정보와 사업자등록증은 프로젝트 등록·계약에 사용되어 직접 수정할 수 없습니다. 변경이 필요하면 <a href="contact.html?type=service">문의하기</a>로 알려 주세요.</span></p></div>
+      <div class="op-ibox simple hl" id="docLock" style="--ibt:#000" hidden><p class="t"><span>OmicsPharm 확인이 완료된 기관 정보와 사업자등록증은 프로젝트 등록·계약에 사용되어 직접 수정할 수 없습니다. 변경이 필요하면 <a href="contact.html?type=service">문의하기</a>로 알려 주세요.</span></p></div>
     </section>
 
     <section class="card">
@@ -174,7 +189,6 @@
     </section>
 
     <div class="leave" id="leave">
-      <p>탈퇴하면 계정 정보와 프로젝트 자료를 복구할 수 없습니다. 진행 중인 프로젝트가 있으면 완료 후 탈퇴할 수 있습니다.</p>
       <a href="mypage-leave.html">회원 탈퇴</a>
     </div>
     </div>
@@ -205,7 +219,7 @@
   $('#gpw').addEventListener('input', function () { err(this, ''); });
   $('#gpw').focus();
 
-  // 프로필 사진: 가운데를 정사각형으로 잘라 240px로 줄여 저장
+  // 프로필 사진: [이미지 자르기] 모달에서 정사각형 영역을 고르면 240px로 줄여 저장
   var DEF = 'assets/main/user-icon.svg?v=2';
   var photo = acc.photo || ''; // 화면에 보이는 사진(저장 전 미리보기 포함). 저장하기를 눌러야 계정에 반영
   var showPhoto = function () { $('#pImg').src = photo || DEF; $('#pDel').disabled = !photo; };
@@ -213,18 +227,71 @@
   $('#pFile').addEventListener('change', function () {
     var f = this.files[0]; this.value = '';
     if (!f) return;
-    if (!/^image\/(png|jpeg|webp)$/.test(f.type)) { OP.toast('JPG, PNG 파일만 올릴 수 있습니다.'); return; }
-    if (f.size > 10 * 1024 * 1024) { OP.toast('10MB 이하 파일만 올릴 수 있습니다.'); return; }
+    if (!/^image\/(png|jpeg)$/.test(f.type)) { OP.toast('jpeg, jpg, png 파일만 올릴 수 있습니다.'); return; }
+    if (f.size > 10 * 1024 * 1024) { OP.toast('10MB 이하 이미지만 올릴 수 있습니다.'); return; }
     var img = new Image();
-    img.onload = function () {
-      var n = Math.min(img.width, img.height), c = document.createElement('canvas');
+    img.onload = function () { cropModal(img, function (sx, sy, n) {
+      var c = document.createElement('canvas');
       c.width = c.height = 240;
-      c.getContext('2d').drawImage(img, (img.width - n) / 2, (img.height - n) / 2, n, n, 0, 0, 240, 240);
-      photo = c.toDataURL('image/jpeg', .85); URL.revokeObjectURL(img.src);
+      c.getContext('2d').drawImage(img, sx, sy, n, n, 0, 0, 240, 240);
+      photo = c.toDataURL('image/jpeg', .85);
       showPhoto(); pending(true);
-    };
+    }); };
     img.src = URL.createObjectURL(f);
   });
+  // 이미지 자르기 모달: 처음엔 가운데 정사각형(짧은 변의 90%). 영역 드래그 = 이동, 모서리 = 크기 조절(정사각형 유지)
+  // 선택 영역은 원본 이미지 픽셀 기준(x, y, n)으로 들고 있다가 화면 크기에 맞춰 그린다
+  function cropModal(img, done) {
+    var W = img.naturalWidth, H = img.naturalHeight, n = Math.round(Math.min(W, H) * .9), x = (W - n) / 2, y = (H - n) / 2;
+    var m = document.createElement('div');
+    m.className = 'op-confirm crop'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-labelledby', 'cropT');
+    m.innerHTML = '<div class="box"><div class="ch"><h3 id="cropT">이미지 자르기</h3><button type="button" class="cx" aria-label="닫기"><img src="assets/main/ic-x.svg" alt=""></button></div>' +
+      '<div class="stage"><img alt="" src="' + img.src + '"><div class="sel" tabindex="0" aria-label="자를 영역"><i data-h="nw"></i><i data-h="ne"></i><i data-h="sw"></i><i data-h="se"></i></div></div>' +
+      '<p class="cnote">영역을 끌어 옮기고, 모서리로 크기를 조절하세요. 프로필에는 동그랗게 표시됩니다.</p>' +
+      '<div class="btns"><button type="button" class="no">취소</button><button type="button" class="yes">확인</button></div></div>';
+    document.body.appendChild(m); document.body.style.overflow = 'hidden';
+    var st = m.querySelector('.stage'), pic = st.querySelector('img'), sel = st.querySelector('.sel'), k = 1, ox = 0, oy = 0;
+    var MIN = Math.min(40, W, H); // 원본 기준 최소 크기
+    var draw = function () {
+      var sw = st.clientWidth, sh = st.clientHeight; k = Math.min(sw / W, sh / H); ox = (sw - W * k) / 2; oy = (sh - H * k) / 2;
+      pic.style.cssText = 'left:' + ox + 'px;top:' + oy + 'px;width:' + W * k + 'px;height:' + H * k + 'px';
+      sel.style.cssText = 'left:' + (ox + x * k) + 'px;top:' + (oy + y * k) + 'px;width:' + n * k + 'px;height:' + n * k + 'px';
+    };
+    var cl = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+    var drag = null;
+    st.addEventListener('pointerdown', function (e) {
+      if (!e.target.closest('.sel')) return;
+      e.preventDefault(); sel.setPointerCapture(e.pointerId);
+      drag = { h: e.target.dataset.h || '', px: e.clientX, py: e.clientY, x: x, y: y, n: n };
+    });
+    sel.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      var dx = (e.clientX - drag.px) / k, dy = (e.clientY - drag.py) / k, h = drag.h;
+      if (!h) { x = cl(drag.x + dx, 0, W - n); y = cl(drag.y + dy, 0, H - n); }
+      else { // 반대쪽 모서리를 고정하고 정사각형으로
+        var ax = h[1] === 'w' ? drag.x + drag.n : drag.x, ay = h[0] === 'n' ? drag.y + drag.n : drag.y;
+        var d = Math.max(h[1] === 'w' ? -dx : dx, h[0] === 'n' ? -dy : dy);
+        var lim = Math.min(h[1] === 'w' ? ax : W - ax, h[0] === 'n' ? ay : H - ay);
+        n = cl(drag.n + d, MIN, lim); x = h[1] === 'w' ? ax - n : ax; y = h[0] === 'n' ? ay - n : ay;
+      }
+      draw();
+    });
+    var up = function () { drag = null; };
+    sel.addEventListener('pointerup', up); sel.addEventListener('pointercancel', up);
+    sel.addEventListener('keydown', function (e) { // 방향키로도 이동
+      var s = Math.max(1, Math.round(10 / k)), mv = { ArrowLeft: [-s, 0], ArrowRight: [s, 0], ArrowUp: [0, -s], ArrowDown: [0, s] }[e.key];
+      if (!mv) return; e.preventDefault(); x = cl(x + mv[0], 0, W - n); y = cl(y + mv[1], 0, H - n); draw();
+    });
+    var ro = new ResizeObserver(draw); ro.observe(st);
+    var close = function () { ro.disconnect(); m.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', key); URL.revokeObjectURL(img.src); };
+    var key = function (e) { if (e.key === 'Escape') close(); };
+    document.addEventListener('keydown', key);
+    m.addEventListener('click', function (e) {
+      if (e.target === m || e.target.closest('.no, .cx')) close();
+      else if (e.target.closest('.yes')) { done(Math.round(x), Math.round(y), Math.round(n)); close(); }
+    });
+    draw(); sel.focus();
+  }
   $('#pDel').addEventListener('click', function () {
     photo = ''; showPhoto(); pending(true);
   });
@@ -245,7 +312,7 @@
   $('#vRole').innerHTML = OP.my.esc(OP.ROLE_LABEL[me.s.role] || '') +
     (me.s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' +
       (OP.partnerVerified() ? '<small>기관 정보 및 사업자등록증 확인이 완료된 분석파트너입니다.</small>' : '')
-      : '<small>회원 유형은 변경할 수 없습니다.</small>');
+      : '');
   }
   vrole();
   OP.orgCombo($('#org'), $('#dept')); // 소속·부서: DB 자동완성 + 직접 입력
