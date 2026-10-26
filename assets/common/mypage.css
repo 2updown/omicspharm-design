@@ -483,7 +483,7 @@ span.tbtn { cursor:default; }
    회전 각도는 mypage.js가 버튼 크기에 맞춰 키프레임(aiFlow)으로 만듦: 둘레를 같은 간격으로 나눈 지점의 각도 → 긴 변·짧은 변 모두 같은 속도 */
 @property --ai-angle { syntax:'<angle>'; inherits:false; initial-value:0deg; }
 .ui-headc .side-ai { isolation:isolate; }
-.ui-headc .side-ai::before { content:""; position:absolute; inset:0; z-index:-1; border-radius:10px; background:linear-gradient(105deg, transparent 38%, rgba(110,231,183,.22) 50%, transparent 62%) 130% 0 / 260% 100% no-repeat; pointer-events:none; } /* hover 안쪽: 색을 깔지 않고 연한 빛이 한 번 쓱 지나감 (2026-10-26, 그라데이션 배경은 어둡고 뱃지 색과 겹쳐서 뺌) */
+.ui-headc .side-ai::before { content:""; position:absolute; inset:0; z-index:-1; border-radius:10px; background:linear-gradient(105deg, transparent 38%, rgba(110,231,183,.14) 50%, transparent 62%) 130% 0 / 260% 100% no-repeat; pointer-events:none; } /* hover 안쪽: 색을 깔지 않고 연한 빛이 한 번 쓱 지나감 (2026-10-26, 그라데이션 배경은 어둡고 뱃지 색과 겹쳐서 뺌) */
 .ui-headc .side-ai:hover::before { animation:aiSheen .9s ease-out; }
 @keyframes aiSheen { from { background-position:130% 0; } to { background-position:-30% 0; } }
 .ui-headc .side-ai:hover { background:linear-gradient(#fff, #fff) padding-box, conic-gradient(from var(--ai-angle), #6ee7b7, #22c57e, #3d7bff, #22c57e, #6ee7b7) border-box; animation:aiFlow 2.4s linear infinite; }
