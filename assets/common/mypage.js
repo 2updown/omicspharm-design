@@ -208,7 +208,8 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     var w = document.createElement('div');
     w.className = 'op-ai ' + mode; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-label', 'AI Agent');
     w.innerHTML = '<div class="op-ai-dim" data-ai-close></div><div class="op-ai-win"><button type="button" class="op-ai-x" data-ai-close aria-label="닫기"></button><iframe src="mypage-ai.html?embed=' + mode + '&v=' + Date.now() + '" title="AI Agent"></iframe></div>';
-    var aiBtn = document.querySelector('.side-ai'), onA = null;
+    var aiBtn = document.querySelector('.side-ai'), onA = null, FULL = /[?&]aifit=full\b/.test(location.search);
+    if (mode === 'inline' && FULL) w.classList.add('full');
     var close = function () { w.remove(); document.body.style.overflow = ''; document.body.classList.remove('op-ai-open', 'op-ai-inline'); document.removeEventListener('keydown', key); window.removeEventListener('message', msg); window.removeEventListener('resize', place);
       if (aiBtn) aiBtn.classList.remove('on'); if (onA) onA.classList.add('on'); };
     var key = function (e) { if (e.key === 'Escape') close(); };
@@ -218,7 +219,8 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     // under·inline: GNB 아래부터. inline은 왼쪽 마이페이지 메뉴 오른쪽부터 화면 끝까지 (메뉴는 그대로 보이고 AI Agent 버튼이 선택 상태)
     var place = function () {
       var g = document.querySelector('.op-gnb, header'); w.style.top = (g ? Math.round(g.getBoundingClientRect().bottom) : 70) + 'px';
-      if (mode === 'inline') { var m = document.querySelector('.main').getBoundingClientRect(), r = side0.getBoundingClientRect(); w.style.left = Math.round(m.left) + 'px'; w.style.right = Math.round(document.documentElement.clientWidth - m.right) + 'px'; w.style.top = Math.round(r.top) + 'px'; } // 본문 칸(1320 컨테이너 안 .main)에 맞춤: 위 = AI 버튼과 같은 줄
+      if (mode === 'inline' && FULL) { var r0 = side0.getBoundingClientRect(); w.style.left = Math.round(r0.right + 24) + 'px'; } // ?aifit=full (비교용): 왼쪽 메뉴 오른쪽 ~ 화면 끝, GNB 아래 ~ 바닥
+      else if (mode === 'inline') { var m = document.querySelector('.main').getBoundingClientRect(), r = side0.getBoundingClientRect(); w.style.left = Math.round(m.left) + 'px'; w.style.right = Math.round(document.documentElement.clientWidth - m.right) + 'px'; w.style.top = Math.round(r.top) + 'px'; } // 기본: 본문 칸(1320 컨테이너 안 .main)에 맞춤, 위 = AI 버튼과 같은 줄
     };
     if (mode === 'inline') {
       window.scrollTo(0, 0); document.body.classList.add('op-ai-inline');
