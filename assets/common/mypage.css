@@ -74,11 +74,13 @@ button { background:none; border:0; cursor:pointer; }
 .btn.primary { border-color:var(--teal-600); background:var(--teal-600); color:#fff; }
 .btn.primary:hover { background:var(--teal-700); border-color:var(--teal-700); }
 .btn.lg { height:48px; padding:0 24px; font-size:16px; }
-/* 비활성 (button_filled/outline disabled): gray/200 배경 · gray/400 글자 */
-.btn:disabled, .btn.primary:disabled, .btn.line:disabled { background:var(--gray-200); border-color:var(--gray-200); color:var(--gray-400); cursor:default; }
+/* 비활성 (button_filled disabled): gray/200 배경 · gray/400 글자 */
+.btn:disabled, .btn.primary:disabled { background:var(--gray-200); border-color:var(--gray-200); color:var(--gray-400); cursor:default; }
 /* button_outline primary (Figma 281:24286): 흰 바탕 + teal 테두리·글자 */
 .btn.line { border-color:var(--teal-600); color:var(--teal-600); }
 .btn.line:hover { background:var(--gray-50); }
+/* button_outline disabled (Figma 1997:21556): 흰 바탕 · gray/300 테두리 · gray/400 글자 */
+.btn.line:disabled, .btn.line:disabled:hover { background:#fff; border-color:var(--gray-300); color:var(--gray-400); cursor:default; }
 /* 주소 칸 (Figma text-field 806:5152): 입력칸 + [검색] 버튼, 간격 8 */
 .addr { display:flex; gap:8px; width:100%; }
 .addr .inp { flex:1; min-width:0; max-width:none; }
