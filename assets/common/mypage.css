@@ -394,7 +394,7 @@ span.tbtn { cursor:default; }
 /* 넓게 보기 버튼 (inline만): 닫기(X) 왼쪽 */
 .op-ai-fit { position:absolute; top:16px; right:60px; z-index:2; display:none; place-items:center; width:36px; height:36px; border-radius:8px; }
 .op-ai.inline .op-ai-fit { display:grid; }
-.op-ai-fit img { width:20px; height:20px; opacity:.8; } .op-ai-fit .i, .op-ai.full .op-ai-fit .o { display:none; } .op-ai.full .op-ai-fit .i { display:block; }
+.op-ai-fit img { width:24px; height:24px; } /* Material 아이콘은 24 안에 여백이 있어 24로 (20이면 닫기보다 작아 보임) */ .op-ai-fit .i, .op-ai.full .op-ai-fit .o { display:none; } .op-ai.full .op-ai-fit .i { display:block; }
 .op-ai-fit:hover { background:rgba(0,0,0,.05); }
 .op-ai.drawer .op-ai-x, .op-ai.drawer .op-ai-fit { display:none !important; } /* 모바일 AI 메뉴(drawer)가 열린 동안 */
 .op-ai.inline.full { right:0; bottom:0; } .op-ai.inline.full .op-ai-win { border:0; border-left:1px solid #e5e5e5; border-top:1px solid #e5e5e5; border-radius:0; } /* ?aifit=full 비교용: 오른쪽·아래 끝까지 */
