@@ -7,12 +7,12 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026p">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261026p">
-<script src="assets/common/site.js?v=20261026p"></script>
-<script src="assets/common/consult.js?v=20261026p"></script>
-<script src="assets/common/mypage.js?v=20261026p"></script>
-<script src="assets/common/flow.js?v=20261026p"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026q">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261026q">
+<script src="assets/common/site.js?v=20261026q"></script>
+<script src="assets/common/consult.js?v=20261026q"></script>
+<script src="assets/common/mypage.js?v=20261026q"></script>
+<script src="assets/common/flow.js?v=20261026q"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -42,7 +42,7 @@
   .ui-white .fgrid { gap:0 !important; padding:8px 0; border:1px solid var(--gray-200); border-radius:16px; background:#fff; }
   .ui-white .fgrid .fg { border:0 !important; border-radius:0 !important; box-shadow:none !important; background:transparent !important; padding:8px 16px !important; } /* 묶음 흰 배경이 큰 박스 둥근 모서리 테두리를 덮지 않게 */ /* 묶음 그림자 없앰 (박스 아래 선처럼 보였음) */
   .ui-white .fgrid .fg + .fg { border-left:1px solid var(--gray-200) !important; }
-  @media (max-width:900px) { .ui-white .fgrid .fg + .fg { border-left:0 !important; border-top:1px solid var(--gray-200) !important; } } /* 묶음이 세로로 쌓이면 왼쪽 선 대신 위 선 (왼쪽 선이 박스 테두리와 겹쳐 2px로 보였음) */
+  @media (max-width:960px) { .ui-white .fgrid .fg + .fg { border-left:0 !important; border-top:1px solid var(--gray-200) !important; } } /* 묶음이 세로로 쌓이면 왼쪽 선 대신 위 선 (왼쪽 선이 박스 테두리와 겹쳐 2px로 보였음) */
   .card-head h3 .h-cnt { margin-left:12px; font-size:16px; font-weight:500; line-height:22px; letter-spacing:0; color:var(--gray-500); vertical-align:1px; }
   .card-head h3 .h-cnt b { font-weight:600; color:var(--teal-600); }
   .fg h4 { font-size:16px; font-weight:700; line-height:22px; text-align:center; color:#000; } /* 묶음 제목(견적·진행·완료)은 검정 (2026-10-23). 숫자만 묶음 색 */
@@ -54,7 +54,7 @@
   .fg .cells a b { color:var(--fc); }
   .fg .cells em { font-style:normal; font-size:12px; line-height:16px; color:var(--orange-600); }
   .fg.red { --fc:#f00011; --fb:#fff5f5; --fs:#ffc7c9; } .fg.teal { --fc:var(--teal-600); --fb:#f2fbf9; --fs:#a6e3d9; } .fg.gray { --fc:#000; --fb:#f7f7f7; --fs:#d4d4d4; } .fg.blue { --fc:#0065f4; --fb:#f2f7ff; --fs:#b8dcff; }
-  @media (max-width:900px) { .fgrid { grid-template-columns:1fr !important; } }
+  @media (max-width:960px) { .fgrid { grid-template-columns:1fr !important; } } /* 모바일 배치(960 이하)와 같은 기준으로 세로로 쌓음 (901~960에서 가로 배치가 박스 밖으로 넘쳤음) */
 
 
   /* 최근 프로젝트 */
@@ -149,7 +149,7 @@
   // 진행 현황 묶음형 그리기: G = [[묶음 이름, 색, [[단계, 건수, 주소, 아래 작은 글], …]], …]
   function groupFlow(el, G) {
     el.className = 'fgrid';
-    el.style.gridTemplateColumns = G.map(function (g) { return g[2].length + 'fr'; }).join(' ');
+    el.style.gridTemplateColumns = G.map(function (g) { return 'minmax(0,' + g[2].length + 'fr)'; }).join(' '); // minmax(0,…): 좁아져도 박스 밖으로 넘치지 않게
     el.innerHTML = G.map(function (g) {
       return '<div class="fg ' + g[1] + '"><h4>' + g[0] + '</h4><div class="cells">' + g[2].map(function (c) {
         var inner = '<span>' + c[0] + '</span><b>' + c[1] + '건</b>' + (c[3] ? '<em>' + c[3] + '</em>' : '');
