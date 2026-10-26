@@ -387,6 +387,11 @@ span.tbtn { cursor:default; }
 .op-ai.overlay .op-ai-dim { display:none; }
 .op-ai.under { top:70px; z-index:40; } .op-ai.under .op-ai-win { inset:0; border-top:1px solid #e5e5e5; } .op-ai.under .op-ai-dim { display:none; } /* GNB 아래로 열기 (?ai=under, 검토용) */
 .op-ai-open .op-float, .op-ai-open .op-chat { display:none !important; }
+/* 마이페이지 콘텐츠 자리에 열기 (?ai=inline, 2026-10-26 검토용): 왼쪽 메뉴 오른쪽 ~ 화면 끝, GNB 아래 ~ 바닥. 푸터는 가림 */
+.op-ai.inline { right:0; bottom:0; z-index:40; } .op-ai.inline .op-ai-dim { display:none; }
+.op-ai.inline .op-ai-win { inset:0; border-left:1px solid #e5e5e5; }
+.op-ai-inline [data-op-footer], .op-ai-inline .op-footer { visibility:hidden; }
+.ui-headc .side-ai.on b { background:var(--ai-text); -webkit-background-clip:text; background-clip:text; color:transparent; } /* inline으로 열려 있는 동안 = 선택된 메뉴 */
 .op-ai.panel { inset:auto 0 0 auto; top:0; width:100%; pointer-events:none; }
 .op-ai.panel .op-ai-dim { display:none; }
 .op-ai.panel .op-ai-win { top:0; right:0; bottom:0; width:min(560px, 100vw); border-left:1px solid #e5e5e5; box-shadow:-8px 0 24px rgba(0,0,0,.08); pointer-events:auto; }

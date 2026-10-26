@@ -201,18 +201,31 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
   OP.my = D;
   // AI Agent 띄우기 (2026-10-21: 전체 화면 페이지보다 지금 화면 위에 띄우는 쪽으로). 내용은 mypage-ai.html을 그대로 iframe으로
   OP.openAI = function (mode) {
-    mode = mode || (/[?&]ai=panel\b/.test(location.search) ? 'panel' : /[?&]ai=under\b/.test(location.search) ? 'under' : 'overlay'); // under = GNB는 남기고 그 아래 화면 전체 (검토용)
+    mode = mode || ((location.search.match(/[?&]ai=(panel|under|inline)\b/) || [])[1] || 'overlay'); // under = GNB는 남기고 그 아래 화면 전체, inline = 마이페이지 왼쪽 메뉴는 두고 콘텐츠 자리에 (검토용)
+    var side0 = document.querySelector('.side'), sideR = side0 && side0.getBoundingClientRect();
+    if (mode === 'inline' && (!sideR || !sideR.width)) mode = 'under'; // 왼쪽 메뉴가 없는 폭(모바일·태블릿)은 GNB 아래로
     if (document.querySelector('.op-ai')) return;
     var w = document.createElement('div');
     w.className = 'op-ai ' + mode; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-label', 'AI Agent');
     w.innerHTML = '<div class="op-ai-dim" data-ai-close></div><div class="op-ai-win"><button type="button" class="op-ai-x" data-ai-close aria-label="닫기"></button><iframe src="mypage-ai.html?embed=' + mode + '&v=' + Date.now() + '" title="AI Agent"></iframe></div>';
-    var close = function () { w.remove(); document.body.style.overflow = ''; document.body.classList.remove('op-ai-open'); document.removeEventListener('keydown', key); window.removeEventListener('message', msg); };
+    var aiBtn = document.querySelector('.side-ai'), onA = null;
+    var close = function () { w.remove(); document.body.style.overflow = ''; document.body.classList.remove('op-ai-open', 'op-ai-inline'); document.removeEventListener('keydown', key); window.removeEventListener('message', msg); window.removeEventListener('resize', place);
+      if (aiBtn) aiBtn.classList.remove('on'); if (onA) onA.classList.add('on'); };
     var key = function (e) { if (e.key === 'Escape') close(); };
     var msg = function (e) { if (e.data === 'op-ai-close') close(); };
     w.addEventListener('click', function (e) { if (e.target.closest('[data-ai-close]')) close(); });
     document.addEventListener('keydown', key); window.addEventListener('message', msg);
-    if (mode === 'under') { var g = document.querySelector('.op-gnb, header'); w.style.top = (g ? Math.round(g.getBoundingClientRect().bottom) : 70) + 'px'; }
-    document.body.appendChild(w); if (mode === 'overlay' || mode === 'under') document.body.style.overflow = 'hidden'; document.body.classList.add('op-ai-open'); // 열려 있는 동안 오른쪽 아래 챗봇 버튼 숨김
+    // under·inline: GNB 아래부터. inline은 왼쪽 마이페이지 메뉴 오른쪽부터 화면 끝까지 (메뉴는 그대로 보이고 AI Agent 버튼이 선택 상태)
+    var place = function () {
+      var g = document.querySelector('.op-gnb, header'); w.style.top = (g ? Math.round(g.getBoundingClientRect().bottom) : 70) + 'px';
+      if (mode === 'inline') { var r = side0.getBoundingClientRect(); w.style.left = Math.round(r.right + 24) + 'px'; }
+    };
+    if (mode === 'inline') {
+      window.scrollTo(0, 0); document.body.classList.add('op-ai-inline');
+      onA = document.querySelector('.side .menu a.on'); if (onA) onA.classList.remove('on'); if (aiBtn) aiBtn.classList.add('on');
+    }
+    if (mode === 'under' || mode === 'inline') { place(); window.addEventListener('resize', place); }
+    document.body.appendChild(w); if (mode !== 'panel') document.body.style.overflow = 'hidden'; document.body.classList.add('op-ai-open'); // 열려 있는 동안 오른쪽 아래 챗봇 버튼 숨김
     w.querySelector('.op-ai-x').focus();
   };
   OP.mypage = function (key) {

@@ -10,9 +10,9 @@
      아이콘·로고는 Figma에서 내보낸 파일(assets/ai). 로고는 OmicsPharm으로 교체(1665:7162), 왼쪽 메뉴 접기 = Figma 1700:18104 (2026-10-23)
      프로토타입: 실제 답변 없음. 보내면 예시 답변, 대화는 이 화면에서만 유지 (새로고침하면 처음 상태) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<script src="assets/common/site.js?v=20261026zc"></script>
-<script src="assets/common/consult.js?v=20261026zc"></script>
-<script src="assets/common/mypage.js?v=20261026zc"></script>
+<script src="assets/common/site.js?v=20261026zd"></script>
+<script src="assets/common/consult.js?v=20261026zd"></script>
+<script src="assets/common/mypage.js?v=20261026zd"></script>
 <style>
   :root { --p30:#1db3a4; --p40:#0ac4b2; --g0:#000; --g20:#333; --g30:#4d4d4d; --g40:#666; --g50:#808080; --g60:#999; --g90:#e5e5e5; --g95:#f2f2f2; --glass:0 4px 10px rgba(55,55,55,.05); }
   * { box-sizing:border-box; margin:0; padding:0; }
@@ -37,7 +37,7 @@
   .logo img { display:block; }
   .ai-title { display:none; align-items:center; gap:6px; width:132px; padding-left:8px; font-size:18px; font-weight:700; line-height:26px; color:var(--g0); }
   .ai-title span { padding:0 6px; border-radius:6px; border:1px solid #cdeee8; background:#f4fbfa; font-size:11px; font-weight:600; line-height:18px; color:#00786e; }
-  .emb-under .logo { display:none; } .emb-under .ai-title { display:flex; }
+  .emb-under .logo, .emb-inline .logo { display:none; } .emb-under .ai-title, .emb-inline .ai-title { display:flex; }
   .folded .ai-title { display:none !important; }
   /* 접힌 메뉴 (Figma 1700:18104): 폭 72, 위 = 메뉴 버튼(회색 배경·청록 아이콘) + 새 대화(+), 아래 = 크레딧·설정 */
   .rail-foot { display:none; flex-direction:column; align-items:center; gap:16px; }
@@ -88,14 +88,14 @@
   .msg.bot { align-self:flex-start; background:rgba(255,255,255,.7); box-shadow:var(--glass); color:var(--g20); }
   .chat .pbox { margin:0 auto; }
   .toast { position:fixed; left:50%; bottom:64px; transform:translateX(-50%); padding:10px 16px; border-radius:8px; background:rgba(51,51,51,.92); color:#fff; font-size:14px; line-height:20px; }
-  /* 오른쪽 패널로 띄운 경우: 왼쪽 메뉴 숨기고 위에 제목 줄 (오른쪽 위 X는 바깥 창에 있음) */
-  .emb-panel .bar { display:none; }
+  /* 오른쪽 패널로 띄운 경우: 왼쪽 메뉴는 접힌 상태(아이콘 줄)로 시작 + 위에 로고 줄 (오른쪽 위 X는 바깥 창에 있음, 2026-10-26 메뉴 추가) */
   .emb-panel .content { padding:56px 20px 56px; }
   .emb-panel .prompt h1 { font-size:26px; line-height:34px; }
   .emb-panel .pnl-head { display:flex; }
-  .pnl-head { display:none; position:absolute; top:0; left:0; right:0; align-items:center; gap:8px; height:56px; padding:0 20px; z-index:1; }
+  .pnl-head { display:none; position:absolute; top:0; left:72px; right:0; align-items:center; gap:8px; height:56px; padding:0 20px; z-index:1; }
   .emb-panel .chat { padding-top:64px; }
-  @media (max-width:900px) { .bar { display:none; } .prompt h1 { font-size:26px; line-height:34px; } }
+  .emb-panel:not(.folded) .pnl-head { display:none; } /* 메뉴를 펼치면 메뉴에 로고가 있으니 위 로고 줄 숨김 */
+  @media (max-width:900px) { .bar { display:none; } .prompt h1 { font-size:26px; line-height:34px; } .emb-panel .bar, .emb-inline .bar { display:flex; } }
 </style>
 </head>
 <body>
@@ -124,7 +124,8 @@
 (function () {
   var me = OP.mypage('ai'); if (!me) return; // 로그인 확인
   // 마이페이지 위에 띄운 경우(?embed=overlay|panel): 로고·Esc = 닫기, panel은 좁아서 왼쪽 메뉴 숨김
-  var EMB = (location.search.match(/[?&]embed=(overlay|panel|under)/) || [])[1];
+  var EMB = (location.search.match(/[?&]embed=(overlay|panel|under|inline)/) || [])[1];
+  var RAIL = EMB === 'panel' || EMB === 'inline'; // 좁은 자리(오른쪽 패널·마이페이지 콘텐츠 자리)는 왼쪽 메뉴를 접어서 시작, 접힘 기억도 안 함
   if (EMB) {
     document.documentElement.classList.add('emb', 'emb-' + EMB);
     document.querySelector('.logo').addEventListener('click', function (e) { e.preventDefault(); parent.postMessage('op-ai-close', '*'); });
@@ -174,11 +175,11 @@
     if (e.target.closest('#newChat')) { cur = -1; live = []; draw(); $('#q').focus(); return; }
     if (e.target.closest('#att')) { toast('베타: 파일·KB 프로젝트 첨부는 준비 중입니다.'); return; }
     if (e.target.closest('#opt')) { toast('베타: 답변 옵션은 준비 중입니다.'); return; }
-    if (e.target.closest('#fold')) { var f = document.documentElement.classList.toggle('folded'); e.target.closest('#fold').setAttribute('aria-expanded', !f); e.target.closest('#fold').setAttribute('aria-label', f ? '메뉴 펼치기' : '메뉴 접기'); try { localStorage.setItem('op.aiFold', f ? '1' : ''); } catch (er) {} return; }
+    if (e.target.closest('#fold')) { var f = document.documentElement.classList.toggle('folded'); e.target.closest('#fold').setAttribute('aria-expanded', !f); e.target.closest('#fold').setAttribute('aria-label', f ? '메뉴 펼치기' : '메뉴 접기'); if (!RAIL) try { localStorage.setItem('op.aiFold', f ? '1' : ''); } catch (er) {} return; }
     if (e.target.closest('#credit')) { toast('베타: 크레딧은 준비 중입니다.'); return; }
     if (e.target.closest('#setting')) { toast('베타: 설정은 준비 중입니다.'); return; }
   });
-  try { if (localStorage.getItem('op.aiFold')) { document.documentElement.classList.add('folded'); $('#fold').setAttribute('aria-expanded', 'false'); $('#fold').setAttribute('aria-label', '메뉴 펼치기'); } } catch (er) {} // 접힘 상태 기억 (이 브라우저)
+  try { if (RAIL || localStorage.getItem('op.aiFold')) { document.documentElement.classList.add('folded'); $('#fold').setAttribute('aria-expanded', 'false'); $('#fold').setAttribute('aria-label', '메뉴 펼치기'); } } catch (er) {} // 접힘 상태 기억 (이 브라우저)
   draw();
 })();
 </script>
