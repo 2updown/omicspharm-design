@@ -123,7 +123,7 @@ button { background:none; border:0; cursor:pointer; }
   .m-tabs > div { display:flex; gap:20px; padding:0 24px; overflow-x:auto; scrollbar-width:none; white-space:nowrap; }
   .m-tabs > div::-webkit-scrollbar { display:none; }
   .m-tabs a { position:relative; display:inline-flex; align-items:center; gap:4px; flex:none; height:48px; font-size:15px; font-weight:500; color:var(--gray-500); }
-  .m-tabs a.on { font-weight:600; color:var(--teal-600); }
+  .m-tabs a.on { font-weight:700; color:var(--teal-600); } /* 메뉴와 같이 기본 Medium, 선택 Bold */
   .m-tabs a.on::after { content:""; position:absolute; left:0; right:0; bottom:0; height:2px; background:var(--teal-600); }
   .m-tabs .nb { flex:none; display:grid; place-items:center; width:16px; height:16px; border-radius:50%; background:#f00011; color:#fff; font-size:10px; font-weight:600; line-height:16px; }
 }
@@ -409,6 +409,7 @@ span.tbtn { cursor:default; }
 .ui-white .side .menu > a, .ui-white .menu .gh { height:48px; font-size:18px; }
 .ui-white .menu .sub a { height:44px; padding-left:24px; font-size:17px; }
 .ui-white .menu a.on { background:var(--gray-50); } /* 선택된 메뉴 = hover와 같은 gray-50 (2026-10-23) */
+.ui-white .side .menu > a, .ui-white .menu .gh, .ui-white .menu a { font-weight:500; } .ui-white .menu a.on { font-weight:700; } /* 굵기: 기본 Medium, 선택된 메뉴만 Bold (2026-10-26) */
 .ui-white .menu a:hover, .ui-white .menu .gh:hover { background:var(--gray-50); }
 .ui-white .side .menu > a, .ui-white .menu .gh { height:56px; } /* 메뉴 칸 높이 56 (하위 메뉴는 48) */
 .ui-white .menu .sub a { height:48px; }
@@ -474,7 +475,7 @@ span.tbtn { cursor:default; }
 .ui-headc .side-ai { --ai-grad:linear-gradient(90deg, #6ee7b7, #22c57e 45%, #3d7bff); --ai-text:linear-gradient(90deg, #00a070, #2f6bff); position:relative; display:flex; align-items:center; gap:0; width:calc(100% + 12px); margin-left:-12px; height:56px; padding:0 13.5px 0 10px; border:2px solid transparent; border-radius:12px; background:linear-gradient(#fff, #fff) padding-box, var(--ai-grad) border-box; text-align:left; cursor:pointer; transition:box-shadow .25s, transform .2s; }
 .ui-headc .side-ai img { flex:none; width:20px; height:20px; transition:transform .5s cubic-bezier(.3,1.6,.5,1); }
 .ui-headc .side-ai span { display:flex; align-items:center; gap:5px; flex:none; margin-left:8px; }
-.ui-headc .side-ai b { display:block; font-size:18px; font-weight:600; line-height:22px; color:#000; white-space:nowrap; } /* 메뉴 이름과 같은 18px·600, 아이콘도 메뉴와 같은 20px (2026-10-23) */
+.ui-headc .side-ai b { display:block; font-size:18px; font-weight:500; line-height:22px; color:#000; white-space:nowrap; } /* 메뉴 이름과 같은 18px·600, 아이콘도 메뉴와 같은 20px (2026-10-23) */
 .ui-headc .side-ai em { font-style:normal; padding:2px 8px; border-radius:8px; background:#edfefa; color:#009788; font-size:12px; font-weight:500; line-height:18px; } /* badge_basic tertiary teal */
 .ui-headc .side-ai::after { content:""; margin-left:auto; flex:none; width:16px; height:16px; background:url(../detail/ic-caret-right-20.svg) center/16px no-repeat; opacity:.6; transition:transform .2s; }
 /* hover: 빛번짐 없이 테두리 그라데이션(민트→초록→파랑→초록) 색이 둘레를 따라 같은 속도로 흐름 (2026-10-23). 조각 SVG는 mypage.js가 만듦 */
