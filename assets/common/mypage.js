@@ -203,7 +203,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
   OP.openAI = function (mode) {
     mode = mode || ((location.search.match(/[?&]ai=(panel|under|inline)\b/) || [])[1] || 'overlay'); // under = GNB는 남기고 그 아래 화면 전체, inline = 마이페이지 왼쪽 메뉴는 두고 콘텐츠 자리에 (검토용)
     var side0 = document.querySelector('.side'), sideR = side0 && side0.getBoundingClientRect();
-    if (mode === 'inline' && (!sideR || !sideR.width)) mode = 'under'; // 왼쪽 메뉴가 없는 폭(모바일·태블릿)은 GNB 아래로
+    if (mode === 'inline' && (!sideR || !sideR.width)) mode = 'overlay'; // 왼쪽 메뉴가 없는 폭(모바일·태블릿)은 전체 화면으로
     if (document.querySelector('.op-ai')) return;
     var w = document.createElement('div');
     w.className = 'op-ai ' + mode; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-label', 'AI Agent');
