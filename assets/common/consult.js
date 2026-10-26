@@ -64,7 +64,7 @@
     },
     // 내 그 프로젝트 대화 (한 사람당 프로젝트 하나에 대화 하나)
     byProject: function (rid, email) { return all().filter(function (c) { return c.rid === rid && (c.owner === email || c.email === email); })[0] || null; },
-    add: function (id, by, text) { var c = get(id); if (!c) return null; c.msgs.push({ at: Date.now(), by: by, text: text }); return save(c); },
+    add: function (id, by, text, file) { var c = get(id); if (!c) return null; c.msgs.push({ at: Date.now(), by: by, text: text, file: file || '' }); return save(c); }, // file: 첨부 파일 이름 (이어 쓰는 글에도 첨부, 2026-10-26)
     setNote: function (id, text) { var c = get(id); if (!c) return null; c.note = text; c.noteAt = Date.now(); return save(c); },
     // 만료된 링크 다시 받기: 같은 이메일의 상담마다 새 링크 (데모: 첫 번째 것을 돌려줌)
     renew: function (email) {
@@ -81,7 +81,7 @@
         var me = m.by === viewer;
         return '<li class="' + (m.by === 'admin' ? 'adm' : 'usr') + (me ? ' mine' : '') + '">' +
           (m.by === 'admin' ? '<span class="av" aria-hidden="true">O</span>' : '') +
-          '<div class="bub"><b>' + (m.by === 'admin' ? 'OmicsPharm 컨설턴트' : esc(c.name)) + '</b><p>' + esc(m.text) + '</p>' + (m.file ? '<span class="att">첨부 · ' + esc(m.file) + '</span>' : '') + '</div>' +
+          '<div class="bub"><b>' + (m.by === 'admin' ? 'OmicsPharm 컨설턴트' : esc(c.name)) + '</b>' + (m.text ? '<p>' + esc(m.text) + '</p>' : '') + (m.file ? '<span class="att">첨부 · ' + esc(m.file) + '</span>' : '') + '</div>' +
           '<time>' + ymdhm(m.at) + '</time></li>';
       }).join('') + '</ol>';
     }
