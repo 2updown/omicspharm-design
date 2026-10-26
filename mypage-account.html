@@ -8,12 +8,12 @@
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 기관 정보(클라이언트) / 비밀번호 변경 / 회원 탈퇴. 알림 설정은 없음 (기존 사이트에 없고 가입 때도 받지 않음).
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026u">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261026u">
-<script src="assets/common/site.js?v=20261026u"></script>
-<script src="assets/common/consult.js?v=20261026u"></script>
-<script src="assets/common/mypage.js?v=20261026u"></script>
-<script src="assets/common/flow.js?v=20261026u"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026v">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261026v">
+<script src="assets/common/site.js?v=20261026v"></script>
+<script src="assets/common/consult.js?v=20261026v"></script>
+<script src="assets/common/mypage.js?v=20261026v"></script>
+<script src="assets/common/flow.js?v=20261026v"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -60,7 +60,6 @@
   .photo .pbtns div { display:flex; gap:8px; }
   .photo .btn { height:36px; padding:0 14px; }
   .photo input[type=file] { display:none; }
-  .photo .note { font-size:12px; line-height:18px; color:var(--teal-700); font-weight:500; }
   .photo .rule { display:flex; flex-direction:column; gap:4px; }
   .photo .rule li { display:flex; align-items:center; gap:4px; font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); list-style:none; }
   .photo .rule li::before { content:""; flex:none; width:10px; height:10px; background:var(--gray-500); -webkit-mask:url(assets/auth/ic-check.svg) center/contain no-repeat; mask:url(assets/auth/ic-check.svg) center/contain no-repeat; }
@@ -137,8 +136,7 @@
           <div class="field"><div class="flabel">프로필 사진</div><div class="fbody">
             <div class="photo"><img id="pImg" src="assets/main/user-icon.svg?v=2" alt="프로필 사진">
               <div class="pbtns"><div><label class="btn" for="pFile">사진 변경</label><button type="button" class="btn" id="pDel">삭제</button></div>
-                <ul class="rule"><li>jpeg, jpg, png 파일</li><li>10MB 이하 이미지</li></ul>
-                <p class="note" id="pNote" hidden>아래 저장하기를 눌러야 변경한 사진이 반영됩니다.</p></div>
+                <ul class="rule"><li>jpeg, jpg, png 파일</li><li>10MB 이하 이미지</li></ul></div>
               <input type="file" id="pFile" accept=".jpg,.jpeg,.png"></div>
           </div></div>
           <div class="field" id="rowMail"><div class="flabel">이메일(아이디)</div><div class="fbody"><div class="mailrow"><p class="val" id="vEmail"></p><span class="op-vchip" id="mailChip" hidden>메일 미인증</span><button type="button" class="btn line" id="mailResend" hidden>인증 메일 다시 보내기</button></div><div class="op-ibox simple" id="mailHelp" hidden><p class="t"><span>가입하신 메일함에서 인증 메일을 확인해 주세요. 메일이 오지 않았다면 스팸함도 확인해 주세요.</span></p></div></div></div>
@@ -235,7 +233,7 @@
       c.width = c.height = 240;
       c.getContext('2d').drawImage(img, sx, sy, n, n, 0, 0, 240, 240);
       photo = c.toDataURL('image/jpeg', .85);
-      showPhoto(); pending(true);
+      showPhoto();
     }); };
     img.src = URL.createObjectURL(f);
   });
@@ -293,9 +291,8 @@
     draw(); sel.focus();
   }
   $('#pDel').addEventListener('click', function () {
-    photo = ''; showPhoto(); pending(true);
+    photo = ''; showPhoto();
   });
-  function pending(on) { $('#pNote').hidden = !on; }
   // 저장 후 왼쪽 프로필·GNB 아이콘 반영
   function refresh() {
     OP.mypage('account');
@@ -381,7 +378,7 @@
     var data = { name: n.value.trim(), nick: nk.value.trim(), country: $('#country').value, org: o.value.trim(), dept: $('#dept').value.trim(), phone: PHN.get(), photo: photo };
     OP.saveAccount(email, data);
     OP.saveOrg(data.org, data.dept);
-    refresh(); pending(false); vrole();
+    refresh(); vrole();
     OP.toast('회원 정보가 저장되었습니다.');
   });
   // 기관 정보 (클라이언트): 확인 완료 후에는 저장 버튼이 숨겨짐
