@@ -8,12 +8,12 @@
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 기관 정보(클라이언트) / 비밀번호 변경 / 회원 탈퇴. 알림 설정은 없음 (기존 사이트에 없고 가입 때도 받지 않음).
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026zg">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261026zg">
-<script src="assets/common/site.js?v=20261026zg"></script>
-<script src="assets/common/consult.js?v=20261026zg"></script>
-<script src="assets/common/mypage.js?v=20261026zg"></script>
-<script src="assets/common/flow.js?v=20261026zg"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026zh">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261026zh">
+<script src="assets/common/site.js?v=20261026zh"></script>
+<script src="assets/common/consult.js?v=20261026zh"></script>
+<script src="assets/common/mypage.js?v=20261026zh"></script>
+<script src="assets/common/flow.js?v=20261026zh"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -361,6 +361,20 @@
         OP.toast('사업자등록증을 삭제했습니다.');
       });
     });
+  }
+
+  // 기관 정보 (분석파트너, 2026-10-26): 보기 전용. 수정·인증 심사는 [파트너 인증] 한 곳에서만 → 제목 옆 [파트너 인증에서 수정]
+  if (partner) {
+    $('#secOrg').hidden = false; $('#rowDoc').hidden = false; $('#orgActions').hidden = true;
+    $('#secOrg .card-head').insertAdjacentHTML('beforeend', '<a class="btn line" href="mypage-verify.html" style="height:36px;padding:0 14px">파트너 인증에서 수정</a>');
+    $('#ceo').value = acc.ceo || ''; $('#bizno').value = acc.bizno || ''; $('#addr').value = acc.addr || ''; $('#addr2').value = acc.addr2 || '';
+    ['#ceo', '#bizno', '#addr', '#addr2'].forEach(function (k) { $(k).disabled = true; $(k).placeholder = '-'; }); document.querySelector('#secOrg .addr .btn').disabled = true;
+    $('#docName').classList.toggle('none', !acc.bizDoc); $('#docName').innerHTML = '<span>' + OP.my.esc(acc.bizDoc || '등록된 파일 없음') + '</span>';
+    $('#docBtn').hidden = true; $('#docDel').hidden = true; $('#docHelp').hidden = true;
+    // 인증 상태 (파트너 인증 화면과 같은 기준): 인증완료 / 재제출 요청 / 인증 검토 중 / 미제출
+    var b = $('#docBadge'), ok = OP.partnerVerified(); b.hidden = false;
+    b.textContent = ok ? '인증완료' : acc.bizAsk ? '재제출 요청' : acc.bizDoc ? '인증 검토 중' : '미제출';
+    b.className = 'op-vchip lg' + (ok ? ' ok' : '');
   }
 
   function err(input, msg) {
