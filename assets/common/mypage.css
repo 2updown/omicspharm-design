@@ -322,6 +322,7 @@ span.tbtn { cursor:default; }
 /* ── 마이페이지 기본 디자인 (PC): 화이트 + 카드 없음 = html.ui-white (mypage.js가 붙임). 예전 회색+카드는 ?ui=gray (보관) ── */
 .ui-white body { background:#fff; }
 .ui-white .body > .in { gap:64px; }
+@media (min-width:961px) { .ui-white .body > .in { gap:36px; } } /* 메뉴 ↔ 본문 36 (2026-10-26, 64에서 줄임). 모바일 세로 간격은 그대로 */
 .ui-white .side { width:240px; background:none; border:0; border-radius:0; }
 .ui-white .me { align-items:flex-start; padding:4px 16px 24px; text-align:left; }
 .ui-white .me img { width:48px; height:48px; }
@@ -390,6 +391,11 @@ span.tbtn { cursor:default; }
 /* 마이페이지 콘텐츠 자리에 열기 (?ai=inline, 2026-10-26 검토용): 왼쪽 메뉴 오른쪽 ~ 화면 끝, GNB 아래 ~ 바닥. 푸터는 가림 */
 .op-ai.inline { bottom:24px; z-index:40; } .op-ai.inline .op-ai-dim { display:none; }
 .op-ai.inline .op-ai-win { inset:0; border:1px solid #e5e5e5; border-radius:16px; } /* 본문 칸에 맞춘 박스 (좌우 = .main, 위 = AI 버튼 줄, 아래 24) */
+/* 넓게 보기 버튼 (inline만): 닫기(X) 왼쪽 */
+.op-ai-fit { position:absolute; top:16px; right:60px; z-index:2; display:none; place-items:center; width:36px; height:36px; border-radius:8px; }
+.op-ai.inline .op-ai-fit { display:grid; }
+.op-ai-fit img { width:20px; height:20px; opacity:.8; } .op-ai-fit .i, .op-ai.full .op-ai-fit .o { display:none; } .op-ai.full .op-ai-fit .i { display:block; }
+.op-ai-fit:hover { background:rgba(0,0,0,.05); }
 .op-ai.inline.full { right:0; bottom:0; } .op-ai.inline.full .op-ai-win { border:0; border-left:1px solid #e5e5e5; border-top:1px solid #e5e5e5; border-radius:0; } /* ?aifit=full 비교용: 오른쪽·아래 끝까지 */
 .op-ai-inline [data-op-footer], .op-ai-inline .op-footer, .op-ai-inline .main { visibility:hidden; } /* 박스 아래·옆으로 본문이 비치지 않게 */
 .ui-headc .side-ai.on b { background:var(--ai-text); -webkit-background-clip:text; background-clip:text; color:transparent; } /* inline으로 열려 있는 동안 = 선택된 메뉴 */

@@ -201,33 +201,45 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
   OP.my = D;
   // AI Agent 띄우기 (2026-10-21: 전체 화면 페이지보다 지금 화면 위에 띄우는 쪽으로). 내용은 mypage-ai.html을 그대로 iframe으로
   OP.openAI = function (mode) {
-    mode = mode || ((location.search.match(/[?&]ai=(overlay|panel|under|inline)\b/) || [])[1] || 'inline'); // 2026-10-26 D안(inline = 마이페이지 본문 칸) 확정. overlay·under·panel은 ?ai= 비교용
-    var side0 = document.querySelector('.side'), sideR = side0 && side0.getBoundingClientRect();
-    if (mode === 'inline' && (!sideR || !sideR.width)) mode = 'overlay'; // 왼쪽 메뉴가 없는 폭(모바일·태블릿)은 전체 화면으로
+    // 2026-10-26 D안(inline = 마이페이지 본문 칸) 확정. overlay·under·panel은 ?ai= 비교용
+    var WANT = mode || ((location.search.match(/[?&]ai=(overlay|panel|under|inline)\b/) || [])[1] || 'inline');
     if (document.querySelector('.op-ai')) return;
+    var side0 = document.querySelector('.side'), aiBtn = document.querySelector('.side-ai'), onA = null;
+    var FULL = /[?&]aifit=full\b/.test(location.search); // 넓게 보기(작업 모드): 본문 칸 대신 왼쪽 메뉴 오른쪽 ~ 화면 끝
     var w = document.createElement('div');
-    w.className = 'op-ai ' + mode; w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-label', 'AI Agent');
-    w.innerHTML = '<div class="op-ai-dim" data-ai-close></div><div class="op-ai-win"><button type="button" class="op-ai-x" data-ai-close aria-label="닫기"></button><iframe src="mypage-ai.html?embed=' + mode + '&v=' + Date.now() + '" title="AI Agent"></iframe></div>';
-    var aiBtn = document.querySelector('.side-ai'), onA = null, FULL = /[?&]aifit=full\b/.test(location.search);
-    if (mode === 'inline' && FULL) w.classList.add('full');
+    w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-label', 'AI Agent');
+    w.innerHTML = '<div class="op-ai-dim" data-ai-close></div><div class="op-ai-win">' +
+      (WANT === 'inline' ? '<button type="button" class="op-ai-fit" aria-label="넓게 보기" title="넓게 보기"><img class="o" src="assets/common/menu/arrows-out-simple.svg" alt=""><img class="i" src="assets/common/menu/arrows-in-simple.svg" alt=""></button>' : '') +
+      '<button type="button" class="op-ai-x" data-ai-close aria-label="닫기"></button><iframe src="mypage-ai.html?embed=' + WANT + '&v=' + Date.now() + '" title="AI Agent"></iframe></div>';
     var close = function () { w.remove(); document.body.style.overflow = ''; document.body.classList.remove('op-ai-open', 'op-ai-inline'); document.removeEventListener('keydown', key); window.removeEventListener('message', msg); window.removeEventListener('resize', place);
       if (aiBtn) aiBtn.classList.remove('on'); if (onA) onA.classList.add('on'); };
     var key = function (e) { if (e.key === 'Escape') close(); };
     var msg = function (e) { if (e.data === 'op-ai-close') close(); };
-    w.addEventListener('click', function (e) { if (e.target.closest('[data-ai-close]')) close(); });
+    w.addEventListener('click', function (e) {
+      if (e.target.closest('[data-ai-close]')) { close(); return; }
+      var fb = e.target.closest('.op-ai-fit'); if (fb) { FULL = !FULL; place(); }
+    });
     document.addEventListener('keydown', key); window.addEventListener('message', msg);
-    // under·inline: GNB 아래부터. inline은 왼쪽 마이페이지 메뉴 오른쪽부터 화면 끝까지 (메뉴는 그대로 보이고 AI Agent 버튼이 선택 상태)
+    // 자리 잡기 (창 크기가 바뀔 때마다 다시):
+    // - inline: 왼쪽 메뉴가 보이는 폭이면 본문 칸(1320 컨테이너 안 .main)에 맞춘 박스, 위 = AI 버튼 줄. 넓게 보기면 메뉴 오른쪽 ~ 화면 끝
+    //           왼쪽 메뉴가 없는 폭(모바일·태블릿, 960 이하)이면 전체 화면 (창을 줄여도 바로 전환, 다시 넓히면 박스로)
+    // - under: GNB 아래부터
     var place = function () {
-      var g = document.querySelector('.op-gnb, header'); w.style.top = (g ? Math.round(g.getBoundingClientRect().bottom) : 70) + 'px';
-      if (mode === 'inline' && FULL) { var r0 = side0.getBoundingClientRect(); w.style.left = Math.round(r0.right + 24) + 'px'; } // ?aifit=full (비교용): 왼쪽 메뉴 오른쪽 ~ 화면 끝, GNB 아래 ~ 바닥
-      else if (mode === 'inline') { var m = document.querySelector('.main').getBoundingClientRect(), r = side0.getBoundingClientRect(); w.style.left = Math.round(m.left) + 'px'; w.style.right = Math.round(document.documentElement.clientWidth - m.right) + 'px'; w.style.top = Math.round(r.top) + 'px'; } // 기본: 본문 칸(1320 컨테이너 안 .main)에 맞춤, 위 = AI 버튼과 같은 줄
+      var mode = WANT, g = document.querySelector('.op-gnb, header'), gb = g ? Math.round(g.getBoundingClientRect().bottom) : 70;
+      var sr = side0 && side0.getBoundingClientRect(), small = !sr || !sr.width;
+      if (WANT === 'inline' && small) mode = 'overlay';
+      w.className = 'op-ai ' + mode + (mode === 'inline' && FULL ? ' full' : '');
+      w.style.top = w.style.left = w.style.right = '';
+      document.body.classList.toggle('op-ai-inline', mode === 'inline');
+      if (aiBtn) aiBtn.classList.toggle('on', mode === 'inline');
+      var fb = w.querySelector('.op-ai-fit'); if (fb) { fb.setAttribute('aria-label', FULL ? '기본 크기로' : '넓게 보기'); fb.title = FULL ? '기본 크기로' : '넓게 보기'; }
+      if (mode === 'under') w.style.top = gb + 'px';
+      if (mode === 'inline' && FULL) { w.style.top = gb + 'px'; w.style.left = Math.round(sr.right + 24) + 'px'; }
+      else if (mode === 'inline') { var m = document.querySelector('.main').getBoundingClientRect(); w.style.left = Math.round(m.left) + 'px'; w.style.right = Math.round(document.documentElement.clientWidth - m.right) + 'px'; w.style.top = Math.round(sr.top) + 'px'; }
     };
-    if (mode === 'inline') {
-      window.scrollTo(0, 0); document.body.classList.add('op-ai-inline');
-      onA = document.querySelector('.side .menu a.on'); if (onA) onA.classList.remove('on'); if (aiBtn) aiBtn.classList.add('on');
-    }
-    if (mode === 'under' || mode === 'inline') { place(); window.addEventListener('resize', place); }
-    document.body.appendChild(w); if (mode !== 'panel') document.body.style.overflow = 'hidden'; document.body.classList.add('op-ai-open'); // 열려 있는 동안 오른쪽 아래 챗봇 버튼 숨김
+    if (WANT === 'inline') { window.scrollTo(0, 0); onA = document.querySelector('.side .menu a.on'); if (onA) onA.classList.remove('on'); }
+    place(); if (WANT === 'inline' || WANT === 'under') window.addEventListener('resize', place);
+    document.body.appendChild(w); if (WANT !== 'panel') document.body.style.overflow = 'hidden'; document.body.classList.add('op-ai-open'); // 열려 있는 동안 오른쪽 아래 챗봇 버튼 숨김
     w.querySelector('.op-ai-x').focus();
   };
   OP.mypage = function (key) {
