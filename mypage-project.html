@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026zh">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261026zh">
-<script src="assets/common/site.js?v=20261026zh"></script>
-<script src="assets/common/consult.js?v=20261026zh"></script>
-<script src="assets/common/mypage.js?v=20261026zh"></script>
-<script src="assets/common/flow.js?v=20261026zh"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026zj">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261026zj">
+<script src="assets/common/site.js?v=20261026zj"></script>
+<script src="assets/common/consult.js?v=20261026zj"></script>
+<script src="assets/common/mypage.js?v=20261026zj"></script>
+<script src="assets/common/flow.js?v=20261026zj"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -438,7 +438,9 @@
         ((x.flow ? FS && FS.ct : (x.stage === '분석 진행 중' || (OP.flow.state(x.id).raw || []).length)) ? OP.flow.repSec(x.id, ADM ? 'admin' : 'partner') : '') +
         // 견적 중개로 매칭된 프로젝트: 컨설턴트가 올린 계약서
         (CS ? '<section class="sec"><h3>계약서</h3>' + OP.flow.contractListHTML(CS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) + '</section>' : '') +
-        (x.flow ? '<section class="sec"><h3>계약서</h3>' + (FS.ct ? OP.flow.contractListHTML(FS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) : '<p class="note" style="font-size:14px">OmicsPharm 컨설턴트가 계약서를 준비하고 있습니다. 등록되면 알림으로 알려드립니다.</p>') + '</section>' : '') +
+        (x.flow ? '<section class="sec"><h3>계약서</h3>' + (FS.ct ? OP.flow.contractListHTML(FS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) +
+          // 분석파트너 쪽 대금 지급 방법·기타 (컨설턴트 입력, 2026-10-26)
+          (FS.ct.partner && (FS.ct.partner.pay || FS.ct.partner.etc) && OP.session().role !== 'admin' ? '<dl class="kv" style="margin-top:12px">' + (FS.ct.partner.pay ? '<div><dt>대금 지급 방법</dt><dd>' + esc(FS.ct.partner.pay) + '</dd></div>' : '') + (FS.ct.partner.etc ? '<div><dt>기타</dt><dd style="white-space:pre-line">' + esc(FS.ct.partner.etc) + '</dd></div>' : '') + '</dl>' : '') : '<p class="note" style="font-size:14px">OmicsPharm 컨설턴트가 계약서를 준비하고 있습니다. 등록되면 알림으로 알려드립니다.</p>') + '</section>' : '') +
         '<div class="sections"><section class="sec"><h3>프로젝트 정보</h3><dl class="kv">' +
           [['클라이언트', x.client]].concat(x.partner && OP.session().role === 'admin' ? [['분석파트너', x.partner]] : []).concat([['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['계약 금액', x.amount + ' (VAT 별도)'], ['계약일', dotd(x.contract)], ['납기일', dotd(x.due)]])
             .map(function (r) { return '<div><dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') +
@@ -664,10 +666,15 @@
   function contractHTML() {
     var q = (F.cqLast(FS) || {}).quote || FS.P[FS.pick].quote, t = F.total(q); // 클라이언트 계약 금액 = 확정한 ㈜셀키에이아이 견적
     return '<section class="sec"><h3>계약 정보</h3><dl class="kv">' +
-        '<div><dt>최종 계약 금액</dt><dd><b class="amt">' + F.money(t.final, q.cur) + '</b> <span class="sub">(공급가 ' + F.money(t.net, q.cur) + ' + VAT)</span></dd></div>' +
+        (FS.ct.amt != null // 컨설턴트가 계약 정보에 입력한 금액 (2026-10-26). 예전 데이터는 견적 금액
+          ? '<div><dt>최종 계약 금액</dt><dd><b class="amt">' + F.money(FS.ct.amt, FS.ct.cur) + '</b>' + (FS.ct.cur === 'KRW' ? ' <span class="sub">(공급가, VAT 별도)</span>' : '') + '</dd></div>'
+          : '<div><dt>최종 계약 금액</dt><dd><b class="amt">' + F.money(t.final, q.cur) + '</b> <span class="sub">(공급가 ' + F.money(t.net, q.cur) + ' + VAT)</span></dd></div>') +
         '<div><dt>계약 견적</dt><dd>' + F.qname(FS, FS.pick) + ' 견적 <button type="button" class="lnk" data-doc-pick>견적서 보기</button></dd></div>' +
-        '<div><dt>계약일</dt><dd>' + ymd(FS.ct.at) + '</dd></div>' +
+        '<div><dt>계약일</dt><dd>' + (FS.ct.date ? dot(FS.ct.date) : ymd(FS.ct.at)) + '</dd></div>' +
         '<div><dt>납기일</dt><dd>' + dot(DUE) + (FS.fin || REP.length ? '' : ' <em class="dday">' + dd(DUE) + '</em>') + '</dd></div>' +
+        // 대금 지급 방법·기타: 클라이언트 쪽 계약 내용만 (분석파트너 쪽은 보이지 않음)
+        (FS.ct.client && FS.ct.client.pay ? '<div><dt>대금 지급 방법</dt><dd>' + esc(FS.ct.client.pay) + '</dd></div>' : '') +
+        (FS.ct.client && FS.ct.client.etc ? '<div><dt>기타</dt><dd style="white-space:pre-line">' + esc(FS.ct.client.etc) + '</dd></div>' : '') +
       '</dl></section>' +
       '<section class="sec"><h3>계약서 파일</h3>' + F.contractListHTML(FS, ['client']) + '</section>';
   }

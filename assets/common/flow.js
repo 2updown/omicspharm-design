@@ -373,7 +373,9 @@
       delete d.S[id]; save(d);
     },
     // 계약서 등록 (컨설턴트): c = { client:{type:'form'|'file', name}, partner:{...} } → 분석 진행 단계로
-    contract: function (id, c) { return put(id, function (s) { s.ct = { at: Date.now(), client: c.client, partner: c.partner }; }); },
+    // 계약 정보 (2026-10-26, 기존 사이트 항목 그대로): 최종 계약 금액·통화, 계약일, 납기일 + 쪽마다 계약서·대금 지급 방법·기타. 임시저장 = ctDraft
+    contract: function (id, c) { return put(id, function (s) { s.ct = Object.assign({ at: Date.now() }, c); delete s.ctDraft; }); },
+    contractDraft: function (id, c) { return put(id, function (s) { s.ctDraft = Object.assign({ savedAt: Date.now() }, c); }); },
     // 프로젝트 찾기에 게시된 의뢰 (컨설턴트 승인 후)
     posted: function () {
       var d = db().S;
@@ -403,7 +405,7 @@
       var d = db().S;
       return requests().filter(function (r) { var s = d[r.id]; return s && s.st === 'matched' && (!k || s.pick === k); }).map(function (r) {
         var s = d[r.id], q = s.P[s.pick].quote;
-        return { id: r.id, flow: true, ct: s.ct, svc: r.svc, stage: s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 검토' : s.raw && s.raw.length ? '보고서 등록' : s.ct ? '분석 진행 중' : '계약 진행 중', title: r.title, client: r.org || '-', partner: partner(s.pick).org, samples: r.samples || '-', amount: man(total(q).net), contract: iso(s.ct ? s.ct.at : s.pickAt), due: r.due || iso(s.pickAt + DAY * 7 * (+q.weeks || 6)), at: s.pickAt, qa: 0 };
+        return { id: r.id, flow: true, ct: s.ct, svc: r.svc, stage: s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 검토' : s.raw && s.raw.length ? '보고서 등록' : s.ct ? '분석 진행 중' : '계약 진행 중', title: r.title, client: r.org || '-', partner: partner(s.pick).org, samples: r.samples || '-', amount: man(total(q).net), contract: (s.ct && s.ct.date) || iso(s.ct ? s.ct.at : s.pickAt), due: (s.ct && s.ct.due) || r.due || iso(s.pickAt + DAY * 7 * (+q.weeks || 6)), at: s.pickAt, qa: 0 };
       });
     }
   };
