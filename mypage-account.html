@@ -8,12 +8,12 @@
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 기관 정보(클라이언트) / 비밀번호 변경 / 회원 탈퇴. 알림 설정은 없음 (기존 사이트에 없고 가입 때도 받지 않음).
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026w">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261026w">
-<script src="assets/common/site.js?v=20261026w"></script>
-<script src="assets/common/consult.js?v=20261026w"></script>
-<script src="assets/common/mypage.js?v=20261026w"></script>
-<script src="assets/common/flow.js?v=20261026w"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026x">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261026x">
+<script src="assets/common/site.js?v=20261026x"></script>
+<script src="assets/common/consult.js?v=20261026x"></script>
+<script src="assets/common/mypage.js?v=20261026x"></script>
+<script src="assets/common/flow.js?v=20261026x"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -230,15 +230,15 @@
     var f = this.files[0]; this.value = '';
     if (!f) return;
     var okT = /^image\/(png|jpeg)$/.test(f.type) || /\.(jpe?g|png)$/i.test(f.name), okS = f.size <= 10 * 1024 * 1024;
-    rule({ type: okT, size: okS });
-    if (!okT || !okS) return;
+    if (!okT || !okS) { rule({ type: okT, size: okS }); return; } // 조건 미충족: 자르기 모달 없이 바로 빨강
+    rule(); // 조건 충족: 자르기에서 [확인]을 누른 뒤에 초록
     var img = new Image();
     img.onload = function () { cropModal(img, function (sx, sy, n) {
       var c = document.createElement('canvas');
       c.width = c.height = 240;
       c.getContext('2d').drawImage(img, sx, sy, n, n, 0, 0, 240, 240);
       photo = c.toDataURL('image/jpeg', .85);
-      showPhoto();
+      showPhoto(); rule({ type: true, size: true });
     }); };
     img.src = URL.createObjectURL(f);
   });
