@@ -8,12 +8,12 @@
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 기관 정보(클라이언트) / 비밀번호 변경 / 회원 탈퇴. 알림 설정은 없음 (기존 사이트에 없고 가입 때도 받지 않음).
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026zb">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261026zb">
-<script src="assets/common/site.js?v=20261026zb"></script>
-<script src="assets/common/consult.js?v=20261026zb"></script>
-<script src="assets/common/mypage.js?v=20261026zb"></script>
-<script src="assets/common/flow.js?v=20261026zb"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026zc">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261026zc">
+<script src="assets/common/site.js?v=20261026zc"></script>
+<script src="assets/common/consult.js?v=20261026zc"></script>
+<script src="assets/common/mypage.js?v=20261026zc"></script>
+<script src="assets/common/flow.js?v=20261026zc"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -96,6 +96,7 @@
   .mailrow .btn { height:32px; padding:0 12px; font-size:13px; }
   #docLock a { color:inherit; font-weight:600; text-decoration:underline; text-underline-offset:3px; }
 
+  .secure .card-head + form { margin-top:-12px; } /* 섹션 제목 ↔ 표 12 (카드 gap 24에서 줄임, Figma 1728:7929) */
   #secOrg + .card { margin-top:24px; } /* 기관 정보 → 비밀번호 변경 48 (기본 정보는 저장하기 버튼이 있어 24 그대로, Figma 1728:7929) */
   .leave { display:flex; justify-content:flex-end; margin-top:-4px; } /* 테두리 없이 링크만, 비밀번호 변경 버튼 아래 20 */
   .leave a { flex:none; font-size:14px; font-weight:500; color:var(--gray-500); text-decoration:underline; text-underline-offset:3px; }
