@@ -396,6 +396,7 @@ span.tbtn { cursor:default; }
 .op-ai.inline .op-ai-fit { display:grid; }
 .op-ai-fit img { width:20px; height:20px; opacity:.8; } .op-ai-fit .i, .op-ai.full .op-ai-fit .o { display:none; } .op-ai.full .op-ai-fit .i { display:block; }
 .op-ai-fit:hover { background:rgba(0,0,0,.05); }
+.op-ai.drawer .op-ai-x, .op-ai.drawer .op-ai-fit { display:none !important; } /* 모바일 AI 메뉴(drawer)가 열린 동안 */
 .op-ai.inline.full { right:0; bottom:0; } .op-ai.inline.full .op-ai-win { border:0; border-left:1px solid #e5e5e5; border-top:1px solid #e5e5e5; border-radius:0; } /* ?aifit=full 비교용: 오른쪽·아래 끝까지 */
 .op-ai-inline [data-op-footer], .op-ai-inline .op-footer, .op-ai-inline .main { visibility:hidden; } /* 박스 아래·옆으로 본문이 비치지 않게 */
 .ui-headc .side-ai.on b { background:var(--ai-text); -webkit-background-clip:text; background-clip:text; color:transparent; } /* inline으로 열려 있는 동안 = 선택된 메뉴 */

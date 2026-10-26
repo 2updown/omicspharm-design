@@ -214,7 +214,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     var close = function () { w.remove(); document.body.style.overflow = ''; document.body.classList.remove('op-ai-open', 'op-ai-inline'); document.removeEventListener('keydown', key); window.removeEventListener('message', msg); window.removeEventListener('resize', place);
       if (aiBtn) aiBtn.classList.remove('on'); if (onA) onA.classList.add('on'); };
     var key = function (e) { if (e.key === 'Escape') close(); };
-    var msg = function (e) { if (e.data === 'op-ai-close') close(); };
+    var msg = function (e) { if (e.data === 'op-ai-close') close(); else if (e.data === 'op-ai-drawer-on' || e.data === 'op-ai-drawer-off') w.classList.toggle('drawer', e.data === 'op-ai-drawer-on'); };
     w.addEventListener('click', function (e) {
       if (e.target.closest('[data-ai-close]')) { close(); return; }
       var fb = e.target.closest('.op-ai-fit'); if (fb) { FULL = !FULL; place(); }
@@ -228,7 +228,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       var mode = WANT, g = document.querySelector('.op-gnb, header'), gb = g ? Math.round(g.getBoundingClientRect().bottom) : 70;
       var sr = side0 && side0.getBoundingClientRect(), small = !sr || !sr.width;
       if (WANT === 'inline' && small) mode = 'overlay';
-      w.className = 'op-ai ' + mode + (mode === 'inline' && FULL ? ' full' : '');
+      w.className = 'op-ai ' + mode + (mode === 'inline' && FULL ? ' full' : '') + (w.classList.contains('drawer') ? ' drawer' : '');
       w.style.top = w.style.left = w.style.right = '';
       document.body.classList.toggle('op-ai-inline', mode === 'inline');
       if (aiBtn) aiBtn.classList.toggle('on', mode === 'inline');

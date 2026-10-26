@@ -10,9 +10,9 @@
      아이콘·로고는 Figma에서 내보낸 파일(assets/ai). 로고는 OmicsPharm으로 교체(1665:7162), 왼쪽 메뉴 접기 = Figma 1700:18104 (2026-10-23)
      프로토타입: 실제 답변 없음. 보내면 예시 답변, 대화는 이 화면에서만 유지 (새로고침하면 처음 상태) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<script src="assets/common/site.js?v=20261026zm"></script>
-<script src="assets/common/consult.js?v=20261026zm"></script>
-<script src="assets/common/mypage.js?v=20261026zm"></script>
+<script src="assets/common/site.js?v=20261026zp"></script>
+<script src="assets/common/consult.js?v=20261026zp"></script>
+<script src="assets/common/mypage.js?v=20261026zp"></script>
 <style>
   :root { --p30:#1db3a4; --p40:#0ac4b2; --g0:#000; --g20:#333; --g30:#4d4d4d; --g40:#666; --g50:#808080; --g60:#999; --g90:#e5e5e5; --g95:#f2f2f2; --glass:0 4px 10px rgba(55,55,55,.05); }
   * { box-sizing:border-box; margin:0; padding:0; }
@@ -45,7 +45,7 @@
   .folded .bar { width:72px; padding:24px 16px; align-items:center; background:#fcfcfc; }
   .folded .bar-top { gap:16px; }
   .folded .brand { gap:0; }
-  .folded .logo, .folded .recent, .folded .me { display:none; }
+  .folded .logo, .folded .recent, .folded .bar .me { display:none; } /* .bar 안 프로필만 (대화의 .msg.me는 숨기지 않음, 2026-10-26 수정) */
   .folded .menubtn { background:var(--g95); }
   .folded .menubtn .i-off { display:none; } .folded .menubtn .i-on { display:block; }
   .folded .newchat { width:40px; padding:0; font-size:0; }
@@ -60,8 +60,8 @@
   .recent ul { list-style:none; display:flex; flex-direction:column; }
   .recent li button { height:32px; padding-right:16px; font-size:14px; line-height:20px; color:var(--g50); text-align:left; white-space:nowrap; }
   .recent li button:hover, .recent li button.on { color:var(--g20); }
-  .me { display:flex; align-items:center; gap:8px; padding:0 8px 0 16px; font-size:16px; line-height:23px; letter-spacing:.15px; color:var(--g20); }
-  .me .av { display:grid; place-items:center; width:40px; height:40px; }
+  .bar .me { display:flex; align-items:center; gap:8px; padding:0 8px 0 16px; font-size:16px; line-height:23px; letter-spacing:.15px; color:var(--g20); }
+  .bar .me .av { display:grid; place-items:center; width:40px; height:40px; }
   /* Content */
   .content { position:relative; flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 24px 56px; }
   .foot { position:absolute; left:0; right:0; bottom:0; padding-bottom:16px; font-size:14px; line-height:23px; letter-spacing:.25px; color:var(--g60); text-align:center; }
@@ -95,7 +95,18 @@
   .pnl-head { display:none; position:absolute; top:0; left:72px; right:0; align-items:center; gap:8px; height:56px; padding:0 20px; z-index:1; }
   .emb-panel .chat { padding-top:64px; }
   .emb-panel:not(.folded) .pnl-head { display:none; }
-  .emb-mob .bar { display:none !important; } .emb-mob .content { padding-top:56px; } /* 메뉴를 펼치면 메뉴에 로고가 있으니 위 로고 줄 숨김 */
+  .emb-mob .bar { display:none !important; } .emb-mob .content { padding-top:56px; }
+  /* 모바일 (2026-10-26, Figma 2011:22085 Icons/Large/menu bar): 왼쪽 위 메뉴 버튼 → 누르면 왼쪽에서 메뉴가 밀려 나옴 (ChatGPT·Claude 방식) */
+  .mbtn { display:none; position:absolute; top:12px; left:12px; z-index:5; width:40px; height:40px; border-radius:4px; }
+  .mbtn img { position:absolute; left:8px; top:11px; } .mbtn .i-on { display:none; }
+  .drawer .mbtn { background:var(--g95); } .drawer .mbtn .i-off { display:none; } .drawer .mbtn .i-on { display:block; }
+  @media (max-width:900px) { html:not(.emb-panel):not(.emb-inline) .mbtn { display:block; } html:not(.emb-panel):not(.emb-inline) .content { padding-top:64px; } }
+  .emb-mob .mbtn { display:block; } .emb-mob .content { padding-top:64px; }
+  .mdim { display:none; position:fixed; inset:0; z-index:19; background:rgba(0,0,0,.32); }
+  html.drawer .mdim { display:block; }
+  html.drawer .bar { display:flex !important; position:fixed; top:0; left:0; bottom:0; z-index:20; width:min(300px, 84vw); height:auto; background:#fff; box-shadow:8px 0 24px rgba(0,0,0,.12); animation:drawIn .22s ease-out; }
+  @keyframes drawIn { from { transform:translateX(-100%); } to { transform:none; } }
+  @media (prefers-reduced-motion:reduce) { html.drawer .bar { animation:none; } } /* 메뉴를 펼치면 메뉴에 로고가 있으니 위 로고 줄 숨김 */
   @media (max-width:900px) { .bar { display:none; } .prompt h1 { font-size:26px; line-height:34px; } .emb-panel .bar, .emb-inline .bar { display:flex; } }
 </style>
 </head>
@@ -118,6 +129,8 @@
     <!-- 접힌 메뉴 (Figma 1700:18104): 아래쪽 크레딧·설정 -->
     <div class="rail-foot"><button type="button" id="credit" aria-label="크레딧"><img src="assets/ai/ic-credit.svg" width="20" height="20" alt=""></button><button type="button" id="setting" aria-label="설정"><img src="assets/ai/ic-setting.svg" width="24" height="24" alt=""></button></div>
   </aside>
+  <button type="button" class="mbtn" id="mMenu" aria-label="메뉴 열기" aria-expanded="false"><img class="i-off" src="assets/ai/ic-sidebar.svg" width="24" height="18" alt=""><img class="i-on" src="assets/ai/ic-sidebar-on.svg" width="24" height="18" alt=""></button>
+  <div class="mdim" id="mDim"></div>
   <div class="pnl-head"><img src="assets/ai/logo-omicspharm.svg" width="114" height="12" alt="OmicsPharm"></div>
   <main class="content" id="content"></main>
 </div>
@@ -173,7 +186,22 @@
     if (cur < 0) { CHATS.unshift({ t: text.slice(0, 22), m: live }); cur = 0; live = []; }
     draw(); $('#q').focus();
   }
+  // 모바일 메뉴 (drawer): 열 때는 접힘 상태를 잠시 풀어 전체 메뉴(새 대화·최근 대화·프로필)를 보여주고, 닫으면 원래대로
+  var wasFold = false;
+  var drawer = function (on) {
+    var h = document.documentElement; if (on === h.classList.contains('drawer')) return;
+    if (on) { wasFold = h.classList.contains('folded'); h.classList.remove('folded'); h.classList.add('drawer'); }
+    else { h.classList.remove('drawer'); if (wasFold) h.classList.add('folded'); }
+    try { if (parent !== window) parent.postMessage(on ? 'op-ai-drawer-on' : 'op-ai-drawer-off', '*'); } catch (e) {} // 바깥 창의 닫기(X)를 메뉴가 열린 동안 숨김
+    $('#mMenu').setAttribute('aria-expanded', on); $('#mMenu').setAttribute('aria-label', on ? '메뉴 닫기' : '메뉴 열기');
+  };
+  window.addEventListener('resize', function () { if (getComputedStyle($('#mMenu')).display === 'none') drawer(false); }); // 넓어져서 메뉴 버튼이 사라지면 닫기
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && document.documentElement.classList.contains('drawer')) { e.stopImmediatePropagation(); drawer(false); } }, true);
   document.addEventListener('click', function (e) {
+    if (e.target.closest('#mMenu')) { drawer(!document.documentElement.classList.contains('drawer')); return; }
+    if (e.target.closest('#mDim')) { drawer(false); return; }
+    if (document.documentElement.classList.contains('drawer') && e.target.closest('#fold')) { drawer(false); return; } // 메뉴 안의 접기 버튼 = 닫기
+    if (document.documentElement.classList.contains('drawer') && e.target.closest('[data-c], #newChat')) drawer(false); // 대화를 고르면 닫힘
     var c = e.target.closest('[data-c]'); if (c) { cur = +c.dataset.c; draw(); return; }
     var ch = e.target.closest('[data-chip]'); if (ch) { var v = CHIPS[+ch.dataset.chip][1]; if (!v) { toast('베타: Smart prompt는 준비 중입니다.'); return; } var q = $('#q'); q.value = v; q.dispatchEvent(new Event('input')); q.focus(); return; }
     if (e.target.closest('#newChat')) { cur = -1; live = []; draw(); $('#q').focus(); return; }
