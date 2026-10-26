@@ -8,12 +8,12 @@
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 기관 정보(클라이언트) / 비밀번호 변경 / 회원 탈퇴. 알림 설정은 없음 (기존 사이트에 없고 가입 때도 받지 않음).
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026v">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261026v">
-<script src="assets/common/site.js?v=20261026v"></script>
-<script src="assets/common/consult.js?v=20261026v"></script>
-<script src="assets/common/mypage.js?v=20261026v"></script>
-<script src="assets/common/flow.js?v=20261026v"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026w">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261026w">
+<script src="assets/common/site.js?v=20261026w"></script>
+<script src="assets/common/consult.js?v=20261026w"></script>
+<script src="assets/common/mypage.js?v=20261026w"></script>
+<script src="assets/common/flow.js?v=20261026w"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -62,7 +62,11 @@
   .photo input[type=file] { display:none; }
   .photo .rule { display:flex; flex-direction:column; gap:4px; }
   .photo .rule li { display:flex; align-items:center; gap:4px; font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); list-style:none; }
-  .photo .rule li::before { content:""; flex:none; width:10px; height:10px; background:var(--gray-500); -webkit-mask:url(assets/auth/ic-check.svg) center/contain no-repeat; mask:url(assets/auth/ic-check.svg) center/contain no-repeat; }
+  .photo .rule li::before { content:""; flex:none; width:10px; height:10px; background:currentColor; -webkit-mask:url(assets/auth/ic-check.svg) center/contain no-repeat; mask:url(assets/auth/ic-check.svg) center/contain no-repeat; }
+  /* 사진을 고르면 조건마다 충족 = 초록(회원가입 비밀번호 조건과 같은 green-700), 미충족 = 빨강 + X */
+  .photo .rule li.ok { color:#008234; }
+  .photo .rule li.bad { color:var(--red-600); }
+  .photo .rule li.bad::before { -webkit-mask-image:url(assets/main/ic-x.svg); mask-image:url(assets/main/ic-x.svg); }
   /* 이미지 자르기 모달 (공통 확인 모달 op-confirm 기반). 정사각형 영역을 옮기거나 모서리로 크기 조절 → 240px로 저장 */
   .op-confirm.crop .box { max-width:560px; }
   .crop .ch { display:flex; align-items:center; justify-content:space-between; gap:12px; }
@@ -136,7 +140,7 @@
           <div class="field"><div class="flabel">프로필 사진</div><div class="fbody">
             <div class="photo"><img id="pImg" src="assets/main/user-icon.svg?v=2" alt="프로필 사진">
               <div class="pbtns"><div><label class="btn" for="pFile">사진 변경</label><button type="button" class="btn" id="pDel">삭제</button></div>
-                <ul class="rule"><li>jpeg, jpg, png 파일</li><li>10MB 이하 이미지</li></ul></div>
+                <ul class="rule" id="pRule"><li data-r="type">jpeg, jpg, png 파일</li><li data-r="size">10MB 이하 이미지</li></ul></div>
               <input type="file" id="pFile" accept=".jpg,.jpeg,.png"></div>
           </div></div>
           <div class="field" id="rowMail"><div class="flabel">이메일(아이디)</div><div class="fbody"><div class="mailrow"><p class="val" id="vEmail"></p><span class="op-vchip" id="mailChip" hidden>메일 미인증</span><button type="button" class="btn line" id="mailResend" hidden>인증 메일 다시 보내기</button></div><div class="op-ibox simple" id="mailHelp" hidden><p class="t"><span>가입하신 메일함에서 인증 메일을 확인해 주세요. 메일이 오지 않았다면 스팸함도 확인해 주세요.</span></p></div></div></div>
@@ -225,8 +229,9 @@
   $('#pFile').addEventListener('change', function () {
     var f = this.files[0]; this.value = '';
     if (!f) return;
-    if (!/^image\/(png|jpeg)$/.test(f.type)) { OP.toast('jpeg, jpg, png 파일만 올릴 수 있습니다.'); return; }
-    if (f.size > 10 * 1024 * 1024) { OP.toast('10MB 이하 이미지만 올릴 수 있습니다.'); return; }
+    var okT = /^image\/(png|jpeg)$/.test(f.type) || /\.(jpe?g|png)$/i.test(f.name), okS = f.size <= 10 * 1024 * 1024;
+    rule({ type: okT, size: okS });
+    if (!okT || !okS) return;
     var img = new Image();
     img.onload = function () { cropModal(img, function (sx, sy, n) {
       var c = document.createElement('canvas');
@@ -291,9 +296,11 @@
     draw(); sel.focus();
   }
   $('#pDel').addEventListener('click', function () {
-    photo = ''; showPhoto();
+    photo = ''; showPhoto(); rule();
   });
   // 저장 후 왼쪽 프로필·GNB 아이콘 반영
+  // 사진 조건 표시: rule() = 기본(회색), rule({ type, size }) = 조건별 초록/빨강
+  function rule(r) { [].forEach.call(document.querySelectorAll('#pRule li'), function (li) { var v = r ? r[li.dataset.r] : null; li.classList.toggle('ok', v === true); li.classList.toggle('bad', v === false); }); }
   function refresh() {
     OP.mypage('account');
     var g = document.querySelector('.op-user > button img'); if (g) g.src = photo || DEF;
@@ -378,7 +385,7 @@
     var data = { name: n.value.trim(), nick: nk.value.trim(), country: $('#country').value, org: o.value.trim(), dept: $('#dept').value.trim(), phone: PHN.get(), photo: photo };
     OP.saveAccount(email, data);
     OP.saveOrg(data.org, data.dept);
-    refresh(); vrole();
+    refresh(); vrole(); rule();
     OP.toast('회원 정보가 저장되었습니다.');
   });
   // 기관 정보 (클라이언트): 확인 완료 후에는 저장 버튼이 숨겨짐
