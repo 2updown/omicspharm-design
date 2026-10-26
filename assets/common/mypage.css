@@ -123,7 +123,7 @@ button { background:none; border:0; cursor:pointer; }
   .m-tabs > div { display:flex; gap:20px; padding:0 24px; overflow-x:auto; scrollbar-width:none; white-space:nowrap; }
   .m-tabs > div::-webkit-scrollbar { display:none; }
   .m-tabs a { position:relative; display:inline-flex; align-items:center; gap:4px; flex:none; height:48px; font-size:15px; font-weight:500; color:var(--gray-500); }
-  .m-tabs a.on { font-weight:700; color:var(--teal-600); } /* 메뉴와 같이 기본 Medium, 선택 Bold */
+  .m-tabs a.on { font-weight:600; color:var(--teal-600); } /* 메뉴와 같이 기본 Medium, 선택 SemiBold */
   .m-tabs a.on::after { content:""; position:absolute; left:0; right:0; bottom:0; height:2px; background:var(--teal-600); }
   .m-tabs .nb { flex:none; display:grid; place-items:center; width:16px; height:16px; border-radius:50%; background:#f00011; color:#fff; font-size:10px; font-weight:600; line-height:16px; }
 }
@@ -409,7 +409,7 @@ span.tbtn { cursor:default; }
 .ui-white .side .menu > a, .ui-white .menu .gh { height:48px; font-size:18px; }
 .ui-white .menu .sub a { height:44px; padding-left:24px; font-size:17px; }
 .ui-white .menu a.on { background:var(--gray-50); } /* 선택된 메뉴 = hover와 같은 gray-50 (2026-10-23) */
-.ui-white .side .menu > a, .ui-white .menu .gh, .ui-white .menu a { font-weight:500; } .ui-white .menu a.on { font-weight:700; } /* 굵기: 기본 Medium, 선택된 메뉴만 Bold (2026-10-26) */
+.ui-white .side .menu > a, .ui-white .menu .gh, .ui-white .menu a { font-weight:500; } .ui-white .menu a.on { font-weight:600; } /* 굵기: 기본 Medium, 선택된 메뉴만 SemiBold (2026-10-26, Bold는 너무 두꺼워서) */
 .ui-white .menu a:hover, .ui-white .menu .gh:hover { background:var(--gray-50); }
 .ui-white .side .menu > a, .ui-white .menu .gh { height:56px; } /* 메뉴 칸 높이 56 (하위 메뉴는 48) */
 .ui-white .menu .sub a { height:48px; }
