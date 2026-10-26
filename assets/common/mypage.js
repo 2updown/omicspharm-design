@@ -5,7 +5,10 @@
    사용: <aside class="side" data-op-side></aside> + var me = OP.mypage('dash'); */
 // 마이페이지 기본 디자인 = 화이트 + 카드 없음 (2026-10-21 확정). 예전 회색+카드 디자인은 ?ui=gray 로 볼 수 있게 보관 (git 태그 mypage-gray-20261021)
 // 모바일도 화이트 (2026-10-23). 화면 폭과 관계없이 붙여서 창 크기를 바꿔도 디자인이 그대로 (전에는 처음 열 때 폭으로만 정해서 모바일→PC로 늘리면 예전 디자인이 나왔음)
-if (!/[?&]ui=gray\b/.test(location.search) && !/mypage-ai\.html/.test(location.pathname)) document.documentElement.classList.add('ui-white');
+// 회색 비교안 (2026-10-26, 고민 중): ?ui=gray = 구조·메뉴·AI 버튼은 지금과 같고 바탕만 회색 + 사이드·본문을 흰 카드로. ?ui=white로 돌아감. 마이페이지 안에서 이동해도 유지
+// (2026-10-21 이전 회색 디자인 원본은 git 태그 mypage-gray-20261021)
+var OP_UI_GRAY = (function () { var m = /[?&]ui=(gray|white)\b/.exec(location.search); try { if (m) sessionStorage.setItem('op.ui', m[1]); return sessionStorage.getItem('op.ui') === 'gray'; } catch (e) { return !!m && m[1] === 'gray'; } })();
+if (!/mypage-ai\.html/.test(location.pathname)) { document.documentElement.classList.add('ui-white'); if (OP_UI_GRAY) document.documentElement.classList.add('ui-gray'); }
 // 상단 (2026-10-23 시안 C를 기본으로): '마이페이지' 제목 줄 없앰 → 본문 맨 위에 메뉴 이름, 왼쪽 메뉴 아래에 AI Agent 카드·역할별 바로가기
 // 예전 제목 줄 디자인은 ?head=a (Figma 1646:7138에 시안 A·B로 비교용)
 if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.contains('ui-white')) document.documentElement.classList.add('ui-headc');
