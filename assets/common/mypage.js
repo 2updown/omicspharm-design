@@ -50,15 +50,15 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     answer: { at: new Date(2026, 8, 19, 10, 5).getTime(), body: '안녕하세요, OmicsPharm입니다.\n문의하신 조건(혈장 20개, 정량 단백체 분석)은 프로젝트로 등록하시면 분석파트너들의 견적을 비교해 받아보실 수 있습니다.\n일반적으로 시료 수령 후 4~6주 정도 소요되며, 고농도 단백질 제거(depletion) 여부에 따라 비용이 달라집니다.' }
   };
 
-  // 분석파트너 프로젝트 관리 예시: 셀키 매칭 후 계약된 프로젝트만 (계약 → 분석 → 보고서 등록 → 보고서 검토 → 보고서 승인 → 완료)
-  var P_STAGES = ['계약', '분석', '보고서 등록', '보고서 검토', '보고서 승인', '완료'];
+  // 분석파트너 프로젝트 관리 예시: 셀키 매칭 후 계약된 프로젝트만 (계약 진행 중 → 분석 진행 중 → 보고서 등록 → 보고서 검토 → 프로젝트 완료)
+  var P_STAGES = ['계약 진행 중', '분석 진행 중', '보고서 등록', '보고서 검토', '프로젝트 완료']; // 2026-10-26 시트 이름 (보고서 등록 = 결과를 올려 OmicsPharm 검토 중, 보고서 검토 = 클라이언트 확인 중)
   var PARTNER_DEMO = [
-    { id: 'PRJ-2026-0037', svc: 'Glycoproteomics', stage: '계약', title: '항체 의약품 N-glycan 당쇄 프로파일링', client: '그린셀바이오', samples: 6, amount: '920만원', contract: '2026-09-26', due: '2026-12-05', at: new Date(2026, 8, 26).getTime(), qa: 0 },
-    { id: 'PRJ-2026-0038', svc: 'Metabolomics', stage: '분석', title: '대장암 환자 혈청 대사체 프로파일링', client: '해솔대학교 의과대학', samples: 48, amount: '1,850만원', contract: '2026-09-12', due: '2026-11-20', at: new Date(2026, 8, 12).getTime(), qa: 1 },
-    { id: 'PRJ-2026-0039', svc: 'Transcriptomics', stage: '보고서 등록', title: '마우스 간 조직 RNA-seq 발현 차이 분석', client: '한결연구소', samples: 24, amount: '1,200만원', contract: '2026-08-04', due: '2026-10-10', at: new Date(2026, 7, 4).getTime(), qa: 0 },
-    { id: 'PRJ-2026-0040', svc: 'Olink', stage: '보고서 검토', title: '혈장 Olink Target 96 염증 패널 분석', client: '한마음병원', samples: 80, amount: '2,400만원', contract: '2026-07-21', due: '2026-09-30', at: new Date(2026, 6, 21).getTime(), qa: 2 },
-    { id: 'PRJ-2026-0041', svc: 'Genomics', stage: '보고서 승인', title: '세포주 전장 유전체 변이 분석 (WGS)', client: '다인제약', samples: 12, amount: '1,560만원', contract: '2026-07-02', due: '2026-09-15', at: new Date(2026, 6, 2).getTime(), qa: 0 },
-    { id: 'PRJ-2026-0042', svc: 'Proteomics', stage: '완료', title: '인슐린 유사체 LC-MS 펩타이드 매핑', client: '소담바이오로직스', samples: 4, amount: '680만원', contract: '2026-05-18', due: '2026-07-31', at: new Date(2026, 4, 18).getTime(), qa: 0, review: 1 }
+    { id: 'PRJ-2026-0037', svc: 'Glycoproteomics', stage: '계약 진행 중', title: '항체 의약품 N-glycan 당쇄 프로파일링', client: '그린셀바이오', samples: 6, amount: '920만원', contract: '2026-09-26', due: '2026-12-05', at: new Date(2026, 8, 26).getTime(), qa: 0 },
+    { id: 'PRJ-2026-0038', svc: 'Metabolomics', stage: '분석 진행 중', title: '대장암 환자 혈청 대사체 프로파일링', client: '해솔대학교 의과대학', samples: 48, amount: '1,850만원', contract: '2026-09-12', due: '2026-11-20', at: new Date(2026, 8, 12).getTime(), qa: 1 },
+    { id: 'PRJ-2026-0039', svc: 'Transcriptomics', stage: '분석 진행 중', title: '마우스 간 조직 RNA-seq 발현 차이 분석', client: '한결연구소', samples: 24, amount: '1,200만원', contract: '2026-08-04', due: '2026-10-10', at: new Date(2026, 7, 4).getTime(), qa: 0 },
+    { id: 'PRJ-2026-0040', svc: 'Olink', stage: '보고서 등록', title: '혈장 Olink Target 96 염증 패널 분석', client: '한마음병원', samples: 80, amount: '2,400만원', contract: '2026-07-21', due: '2026-09-30', at: new Date(2026, 6, 21).getTime(), qa: 2 },
+    { id: 'PRJ-2026-0041', svc: 'Genomics', stage: '보고서 검토', title: '세포주 전장 유전체 변이 분석 (WGS)', client: '다인제약', samples: 12, amount: '1,560만원', contract: '2026-07-02', due: '2026-09-15', at: new Date(2026, 6, 2).getTime(), qa: 0 },
+    { id: 'PRJ-2026-0042', svc: 'Proteomics', stage: '프로젝트 완료', title: '인슐린 유사체 LC-MS 펩타이드 매핑', client: '소담바이오로직스', samples: 4, amount: '680만원', contract: '2026-05-18', due: '2026-07-31', at: new Date(2026, 4, 18).getTime(), qa: 0, review: 1 }
   ];
 
   // 의뢰 번호가 바뀌면 그 의뢰의 견적 중개 기록(op.flow)과 다시 올린 사업자등록증 파일도 새 번호로 옮김
@@ -136,9 +136,9 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
         var i = PS.indexOf(p.stage), h = 'mypage-project.html?id=' + p.id, c0 = new Date(p.contract).getTime();
         if (!adm && i === 0) L.push({ id: 'ct-' + p.id, k: '견적확정', cat: 'project', at: p.at, t: p.title + '의 견적이 최종 선정되었습니다.', sub: '견적금액: ' + p.amount, href: h });
         if (!adm && i >= 1) L.push({ id: 'cf-' + p.id, k: '계약', cat: 'project', at: c0 + 864e5 * 3, t: p.title + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: h });
-        if (adm && i >= 3) L.push({ id: 'rr-' + p.id, k: '보고서 등록', cat: 'project', at: c0 + 864e5 * 40, t: J('세움분석센터', '이', '가') + ' ' + p.title + ' 프로젝트의 분석 결과 보고서를 등록 했습니다.', href: h });
-        if (adm && i === 5) L.push({ id: 'ra-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.client + '의 ' + p.title + ' 프로젝트 1차 결과보고서가 최종 승인 처리 되었습니다.', href: h });
-        if (!adm && i === 5) L.push({ id: 'rf-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.title + ' 프로젝트의 1차 결과보고서가 최종 확인 처리 되었습니다.', sub: p.title + ' 프로젝트가 최종 완료 처리 되었습니다.', href: h });
+        if (adm && i >= 2) L.push({ id: 'rr-' + p.id, k: '보고서 등록', cat: 'project', at: c0 + 864e5 * 40, t: J('세움분석센터', '이', '가') + ' ' + p.title + ' 프로젝트의 분석 결과 보고서를 등록 했습니다.', href: h });
+        if (adm && i === 4) L.push({ id: 'ra-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.client + '의 ' + p.title + ' 프로젝트 1차 결과보고서가 최종 승인 처리 되었습니다.', href: h });
+        if (!adm && i === 4) L.push({ id: 'rf-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.title + ' 프로젝트의 1차 결과보고서가 최종 확인 처리 되었습니다.', sub: p.title + ' 프로젝트가 최종 완료 처리 되었습니다.', href: h });
         if (p.qa) L.push({ id: 'qa-' + p.id, k: 'Q&A', cat: 'project', at: p.at + 864e5 * 10, t: p.title + ' Q&A에 새로운 글이 등록 되었습니다.', sub: '문의제목: 시료 발송 일정 문의 · 작성자: ' + p.client, href: h });
         for (var i0 = n0; i0 < L.length; i0++) L[i0].pj = p.title;
       });

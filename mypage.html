@@ -7,12 +7,12 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026e">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261026e">
-<script src="assets/common/site.js?v=20261026e"></script>
-<script src="assets/common/consult.js?v=20261026e"></script>
-<script src="assets/common/mypage.js?v=20261026e"></script>
-<script src="assets/common/flow.js?v=20261026e"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026f">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261026f">
+<script src="assets/common/site.js?v=20261026f"></script>
+<script src="assets/common/consult.js?v=20261026f"></script>
+<script src="assets/common/mypage.js?v=20261026f"></script>
+<script src="assets/common/flow.js?v=20261026f"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -162,7 +162,7 @@
   var pipe = null;
   if (admin) {
     // 컨설턴트: 의뢰접수 ~ 프로젝트 완료 전 단계 (프로젝트 관리와 같은 단계)
-    var AS = F.requests().map(function (r) { return F.adminStage(r.id); }).concat(D.partnerProjects().filter(function (p) { return !p.flow; }).map(function (p) { return F.P2A[p.stage]; }));
+    var AS = F.requests().map(function (r) { return F.adminStage(r.id); }).concat(D.partnerProjects().filter(function (p) { return !p.flow; }).map(function (p) { return F.P2A[p.stage] || p.stage; }));
     pipe = ['프로젝트 진행 현황', 'mypage-request.html', F.ADMIN_STAGES.map(function (t) {
       return [t, AS.filter(function (x) { return x === t; }).length, '?stage=' + encodeURIComponent(t)];
     })];
@@ -171,9 +171,9 @@
   if (pipe) {
     $('#pipeCard').hidden = false; $('#pipeH').textContent = pipe[0]; $('#pipeMore').href = pipe[1]; $('#pipeMore').textContent = '전체 보기';
     var AC = pipe[2].map(function (a) { return [a[0], a[1], pipe[1] + a[2]]; });
-    var SHORT = { '계약 진행 중': '계약 진행', '분석 진행 중': '분석 진행', '프로젝트 완료': '완료' }; // 칸이 좁아 표시 이름만 짧게 (묶음 제목이 맥락)
-    groupFlow($('#pipe'), [['견적 중개', 'red', pick(AC, ['의뢰접수', '견적 대기', '견적 협의'])], ['계약 · 분석', 'teal', pick(AC, ['계약 진행 중', '분석 진행 중'])],
-      ['보고서', 'gray', pick(AC, ['보고서 등록', '보고서 검토', '보고서 승인'])], ['완료', 'blue', pick(AC, ['프로젝트 완료'])]].map(function (g) {
+    var SHORT = {}; // 2026-10-26 단계 이름을 시트 이름 그대로 (줄이지 않음)
+    groupFlow($('#pipe'), [['견적 중개', 'red', pick(AC, ['의뢰접수', '의뢰확인', '견적 협의'])], ['계약 · 분석', 'teal', pick(AC, ['계약 진행 중', '분석 진행 중'])],
+      ['보고서', 'gray', pick(AC, ['보고서 등록', '보고서 검토'])], ['완료', 'blue', pick(AC, ['프로젝트 완료'])]].map(function (g) {
         return [g[0], g[1], g[2].map(function (c) { return [SHORT[c[0]] || c[0], c[1], c[2]]; })];
       }));
   }
@@ -183,8 +183,8 @@
   // 칸: [이름, 개수, 주소, 아래 작은 글, 주황 강조]
   var cells;
   if (client) {
-    // 클라이언트: 견적 중개 단계(의뢰접수 → 견적 확인 → 계약 → 분석 진행)
-    cells = ['의뢰접수', '견적 확인', '계약', '분석 진행', '결과 수령'].map(function (t) { return [t, P.filter(function (p) { return F.clientStage(p.id) === t; }).length, 'mypage-project.html?stage=' + encodeURIComponent(t)]; });
+    // 클라이언트: flow.js CLIENT_STEPS (시트 기준, 2026-10-26)
+    cells = F.CLIENT_STEPS.map(function (t) { return [t, P.filter(function (p) { return F.clientStage(p.id) === t; }).length, 'mypage-project.html?stage=' + encodeURIComponent(t)]; });
   } else {
     // 분석파트너: 견적(견적관리) → 프로젝트(프로젝트 관리). 보고서는 실제 단계(등록·검토·승인) 그대로
     var IN = OP.canQuote() ? F.inbox(me.s.email).map(function (o) { return F.pst(o.s, me.s.email); }) : [];
@@ -195,11 +195,11 @@
     var ended = cnt(/미선정|거절/);
     if (ended) $('#flow').insertAdjacentHTML('afterend', '<a class="flow-end" href="mypage-quote.html?t=' + encodeURIComponent('종료') + '">미선정·거절 ' + ended + '건 ›</a>');
   }
-  // 묶음: 클라이언트 = 견적(의뢰접수·견적 확인) / 진행(계약·분석 진행) / 완료(결과 수령)
-  //       분석파트너 = 견적(작성·제출) / 프로젝트 진행(계약·분석) / 보고서(보고서 등록) / 완료
+  // 묶음: 클라이언트 = 견적(의뢰접수·의뢰승인·견적 확인) / 진행(계약 진행 중·분석 진행 중) / 보고서(보고서 검토) / 완료(프로젝트 완료)
+  //       분석파트너 = 견적(작성·제출) / 프로젝트 진행(계약 진행 중·분석 진행 중) / 보고서(보고서 등록·검토) / 완료(프로젝트 완료)
   groupFlow($('#flow'), client
-    ? [['견적', 'red', pick(cells, ['의뢰접수', '견적 확인'])], ['진행', 'teal', pick(cells, ['계약', '분석 진행'])], ['완료', 'blue', pick(cells, ['결과 수령'])]]
-    : [['견적', 'red', pick(cells, ['견적 작성', '견적 제출'])], ['프로젝트 진행', 'teal', pick(cells, ['계약', '분석'])], ['보고서', 'gray', pick(cells, ['보고서 등록', '보고서 검토', '보고서 승인'])], ['완료', 'blue', pick(cells, ['완료'])]]);
+    ? [['견적', 'red', pick(cells, ['의뢰접수', '의뢰승인', '견적 확인'])], ['진행', 'teal', pick(cells, ['계약 진행 중', '분석 진행 중'])], ['보고서', 'gray', pick(cells, ['보고서 검토'])], ['완료', 'blue', pick(cells, ['프로젝트 완료'])]]
+    : [['견적', 'red', pick(cells, ['견적 작성', '견적 제출'])], ['프로젝트 진행', 'teal', pick(cells, ['계약 진행 중', '분석 진행 중'])], ['보고서', 'gray', pick(cells, ['보고서 등록', '보고서 검토'])], ['완료', 'blue', pick(cells, ['프로젝트 완료'])]]);
 
   // 최근 프로젝트 (2026-10-22): 내가 처리할 게 있는 프로젝트를 위로 + 오른쪽에 다음 할 일. 할 게 없으면 최근 순. 제목은 그대로
   // 항목: { href, svc, st, stCls, title, sub, next, urgent, at }
@@ -208,7 +208,7 @@
     IT = P.map(function (p) {
       var x = F.state(p.id), t = F.clientStage(p.id), rep = (x.rep || []).length;
       var nx = t === '견적 확인' ? '최종 견적 확인 필요' : rep && !x.fin ? '결과보고서 확인 필요' : x.fin && !x.rate ? '만족도 평가 남기기' : '';
-      return { href: 'mypage-project.html?id=' + encodeURIComponent(p.id) + (t === '견적 확인' ? '&tab=quote' : rep ? '&tab=report' : ''), svc: p.svc, st: t, stCls: t === '계약' ? 'ok' : t === '견적 확인' ? 'wait' : 'state', title: p.title, sub: D.ymd(p.at), next: nx, urgent: !!nx, at: p.at };
+      return { href: 'mypage-project.html?id=' + encodeURIComponent(p.id) + (t === '견적 확인' ? '&tab=quote' : rep ? '&tab=report' : ''), svc: p.svc, st: t, stCls: t === '계약 진행 중' ? 'ok' : t === '견적 확인' ? 'wait' : t === '프로젝트 완료' ? 'done' : 'state', title: p.title, sub: D.ymd(p.at), next: nx, urgent: !!nx, at: p.at };
     });
   } else if (admin) {
     // 컨설턴트: 프로젝트 관리 목록과 같은 다음 할 일 (mypage-request.html)
@@ -226,8 +226,8 @@
       var t = F.pst(o.s, MY); if (!/작성 대기|임시저장|수정 요청/.test(t)) return null;
       return { href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, st: '견적 요청', stCls: 'wait', title: o.r.title, sub: o.r.org || '-', next: t === '수정 요청' ? '견적 수정 요청' : '견적 작성 필요', urgent: true, at: o.x.at };
     }).filter(Boolean).concat(PP.map(function (p) {
-      var ps = D.pStage(p), nx = ps === '분석' && !(p.flow && (F.state(p.id).raw || []).length) ? '결과 등록 필요' : '';
-      return { href: 'mypage-project.html?id=' + encodeURIComponent(p.id), svc: D.svcKo(p.svc), st: ps, stCls: ps === '완료' ? 'done' : 'state', title: p.title, sub: p.client, next: nx, urgent: !!nx, at: p.at };
+      var ps = D.pStage(p), nx = ps === '분석 진행 중' && !(p.flow && (F.state(p.id).raw || []).length) ? '결과 등록 필요' : '';
+      return { href: 'mypage-project.html?id=' + encodeURIComponent(p.id), svc: D.svcKo(p.svc), st: ps, stCls: ps === '프로젝트 완료' ? 'done' : 'state', title: p.title, sub: p.client, next: nx, urgent: !!nx, at: p.at };
     }));
   }
   // 버튼 이름은 할 일 그대로, '필요'·'가능'만 뺌 (예: 최종 견적 확인 필요 → 최종 견적 확인)

@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026e">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261026e">
-<script src="assets/common/site.js?v=20261026e"></script>
-<script src="assets/common/consult.js?v=20261026e"></script>
-<script src="assets/common/mypage.js?v=20261026e"></script>
-<script src="assets/common/flow.js?v=20261026e"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026f">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261026f">
+<script src="assets/common/site.js?v=20261026f"></script>
+<script src="assets/common/consult.js?v=20261026f"></script>
+<script src="assets/common/mypage.js?v=20261026f"></script>
+<script src="assets/common/flow.js?v=20261026f"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -379,9 +379,9 @@
   }
   if (OP.session().role !== 'client') { partnerView(); return; } // 분석파트너·컨설턴트 같은 화면
 
-  // 분석파트너: 셀키 매칭 후 계약된 프로젝트만 (계약 → 분석 → 보고서 등록 → 보고서 검토 → 보고서 승인 → 완료)
+  // 분석파트너: 셀키 매칭 후 계약된 프로젝트만 (계약 진행 중 → 분석 진행 중 → 보고서 등록 → 보고서 검토 → 프로젝트 완료)
   function partnerView() {
-    // 6단계(계약 → 분석 → 보고서 등록 → 보고서 검토 → 보고서 승인 → 완료). 분석파트너·컨설턴트 같은 이름
+    // 5단계(계약 진행 중 → 분석 진행 중 → 보고서 등록 → 보고서 검토 → 프로젝트 완료). 분석파트너·컨설턴트 같은 이름 (시트 기준)
     var D = OP.my, ADM = OP.session().role === 'admin', STAGES = ADM ? D.P_STAGES : D.P4, ALL = D.partnerProjects();
     var SG = function (x) { return ADM ? x.stage : D.pStage(x); };
     if (OP.isPartner() && !OP.partnerVerified()) { // 미인증: 매칭·계약된 프로젝트 없음
@@ -392,7 +392,7 @@
     var pid = new URLSearchParams(location.search).get('id');
     var dotd = function (v) { return v ? v.replace(/-/g, '.') : '-'; };
     var dday = function (v) { var n = Math.round((new Date(v) - new Date(2026, 9, 1)) / 864e5); return n >= 0 ? '납기 D-' + String(n).padStart(2, '0') : '납기 ' + (-n) + '일 경과'; };
-    var stBadge = function (x) { return '<span class="badge ' + (x.stage === '완료' ? 'fin' : 'state') + '">' + SG(x) + '</span>' + (!ADM && D.pWaiting(x) ? '<span class="badge wait">확인 대기</span>' : ''); };
+    var stBadge = function (x) { return '<span class="badge ' + (x.stage === '프로젝트 완료' ? 'fin' : 'state') + '">' + SG(x) + '</span>' + (!ADM && D.pWaiting(x) ? '<span class="badge wait">확인 대기</span>' : ''); };
     $('.toprow').hidden = true;
 
     if (pid) {
@@ -419,24 +419,23 @@
         CS.P[me] = { quote: { cur: 'KRW', weeks: '', memo: '', subAt: new Date(x.contract).getTime(), supplier: { s_org: OP.flow.partner(me).org }, groups: [{ name: CR.svc, lines: [{ d: '시료 분석 및 결과 보고서', q: String(n), u: 'EA', p: String(Math.round(won / n)) }] }] } };
       }
       var TODO = {
-        '계약': x.flow ? ['계약서를 준비하고 있습니다', 'OmicsPharm 컨설턴트가 계약서를 등록하면 분석 단계로 넘어갑니다.', ''] : ['계약서를 확인해주세요', '계약 내용 확인 후 시료 수령 일정을 클라이언트와 협의합니다.', '계약서 확인'],
-        '분석': ['분석이 진행 중입니다', '분석이 끝나면 결과보고서를 등록해주세요.', '진행 상황 공유'],
-        '보고서 등록': ['결과보고서를 등록해주세요', '아래 결과보고서에서 분석 결과를 올려 주세요. 등록하면 OmicsPharm이 검토합니다.', ''],
-        '보고서 검토': ['등록한 보고서를 OmicsPharm이 확인하고 있습니다', '수정이 필요하면 알림으로 알려드립니다.', ''],
-        '보고서 승인': ['등록한 보고서를 클라이언트가 확인하고 있습니다', '승인되면 프로젝트가 완료됩니다.', ''],
-        '완료': ['프로젝트가 완료되었습니다', x.review ? '클라이언트가 남긴 리뷰를 확인해보세요.' : '수고하셨습니다.', x.review ? '리뷰 보기' : '']
+        '계약 진행 중': x.flow ? ['계약서를 준비하고 있습니다', 'OmicsPharm 컨설턴트가 계약서를 등록하면 분석 단계로 넘어갑니다.', ''] : ['계약서를 확인해주세요', '계약 내용 확인 후 시료 수령 일정을 클라이언트와 협의합니다.', '계약서 확인'],
+        '분석 진행 중': ['분석이 진행 중입니다', '분석이 끝나면 아래 결과보고서에서 분석 결과를 올려 주세요. 등록하면 OmicsPharm이 검토합니다.', ''],
+        '보고서 등록': ['등록한 결과를 OmicsPharm이 검토하고 있습니다', '수정이 필요하면 알림으로 알려드립니다.', ''],
+        '보고서 검토': ['클라이언트가 보고서를 확인하고 있습니다', '클라이언트가 최종 승인하면 프로젝트가 완료됩니다.', ''],
+        '프로젝트 완료': ['프로젝트가 완료되었습니다', x.review ? '클라이언트가 남긴 리뷰를 확인해보세요.' : '수고하셨습니다.', x.review ? '리뷰 보기' : '']
       }[x.stage];
       $('#project').outerHTML =
         '<div class="phead">' +
           '<div class="prow"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stBadge(x) + (x.qa ? '<span class="badge qa">Q&amp;A ' + x.qa + '</span>' : '') + '</div>' +
             '<span class="reg">계약일 ' + dotd(x.contract) + ' · 프로젝트 번호 ' + esc(x.id) + '</span></div>' +
           '<div class="prow"><h2 class="ptitle"><a class="back" href="' + (OP.session().role === 'admin' ? 'mypage-request.html' : 'mypage-project.html') + '" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(x.title) + '</h2>' +
-            '<div class="pright"><div class="period"><b>납기일</b><span>' + dotd(x.due) + '</span>' + (x.stage === '완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div>' + OP.askBtn({ key: x.id, cat: OP.my.svcKo(x.svc), no: x.id, title: x.title }) + '</div></div>' +
+            '<div class="pright"><div class="period"><b>납기일</b><span>' + dotd(x.due) + '</span>' + (x.stage === '프로젝트 완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div>' + OP.askBtn({ key: x.id, cat: OP.my.svcKo(x.svc), no: x.id, title: x.title }) + '</div></div>' +
         '</div>' +
         '<ol class="stages" aria-label="진행 단계" style="grid-template-columns:repeat(' + STAGES.length + ', minmax(0,1fr))">' + STAGES.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
         '<div class="todo"><div><b>' + TODO[0] + '</b><p>' + TODO[1] + '</p></div>' + (TODO[2] ? (TODO[2] === '계약서 확인' && CS ? '<button type="button" class="btn primary" data-ct="partner">계약서 확인</button>' : '<a class="btn primary" href="#" data-soon="' + TODO[2] + '">' + TODO[2] + '</a>') : '') + '</div>' +
         // 결과보고서: 분석파트너는 결과 등록, 컨설턴트는 보고서 에이전트 (계약 후 = 분석 단계부터)
-        ((x.flow ? FS && FS.ct : (['분석', '보고서 등록'].indexOf(x.stage) > -1 || (OP.flow.state(x.id).raw || []).length)) ? OP.flow.repSec(x.id, ADM ? 'admin' : 'partner') : '') +
+        ((x.flow ? FS && FS.ct : (x.stage === '분석 진행 중' || (OP.flow.state(x.id).raw || []).length)) ? OP.flow.repSec(x.id, ADM ? 'admin' : 'partner') : '') +
         // 견적 중개로 매칭된 프로젝트: 컨설턴트가 올린 계약서
         (CS ? '<section class="sec"><h3>계약서</h3>' + OP.flow.contractListHTML(CS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) + '</section>' : '') +
         (x.flow ? '<section class="sec"><h3>계약서</h3>' + (FS.ct ? OP.flow.contractListHTML(FS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) : '<p class="note" style="font-size:14px">OmicsPharm 컨설턴트가 계약서를 준비하고 있습니다. 등록되면 알림으로 알려드립니다.</p>') + '</section>' : '') +
@@ -470,13 +469,13 @@
         return '<button type="button" role="tab" data-st="' + t + '"' + (st.stage === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b></button>';
       }).join('');
       var L = base.filter(function (p) { return st.stage === '전체' || SG(p) === st.stage; })
-        .sort(st.sort === 'due' ? function (a, b) { return (a.stage === '완료') - (b.stage === '완료') || new Date(a.due) - new Date(b.due); } : function (a, b) { return b.at - a.at; });
+        .sort(st.sort === 'due' ? function (a, b) { return (a.stage === '프로젝트 완료') - (b.stage === '프로젝트 완료') || new Date(a.due) - new Date(b.due); } : function (a, b) { return b.at - a.at; });
       $('#pTotal').innerHTML = '총 <b>' + L.length + '</b>건';
       $('#pList').innerHTML = L.map(function (x) {
         return '<a class="lcard" href="mypage-project.html?id=' + x.id + '"><div class="head">' +
           '<div class="row1"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stBadge(x) +
             (x.qa ? '<span class="badge qa">Q&amp;A ' + x.qa + '</span>' : '') + (x.review ? '<span class="badge qa">리뷰 ' + x.review + '</span>' : '') + '</div>' +
-            '<span class="dday">' + (x.stage === '완료' ? '완료' : dday(x.due)) + '</span></div>' +
+            '<span class="dday">' + (x.stage === '프로젝트 완료' ? '완료' : dday(x.due)) + '</span></div>' +
           '<h3>' + esc(x.title) + '</h3></div>' +
           '<div class="info"><div class="meta"><span>' + esc(x.client) + '</span><span><em>샘플</em>' + x.samples + '개</span><span><em>계약금액</em>' + esc(x.amount) + '</span><span><em>납기일</em>' + dotd(x.due) + '</span></div>' +
           '<p class="reg">계약일 ' + dotd(x.contract) + '</p></div></a>';
@@ -498,9 +497,9 @@
   var dot = function (v) { return v ? v.replace(/-/g, '.') : '-'; };
   var ymd = function (t) { var x = new Date(t); return x.getFullYear() + '.' + ('0' + (x.getMonth() + 1)).slice(-2) + '.' + ('0' + x.getDate()).slice(-2); };
 
-  // 견적 중개 단계 (flow.js): 의뢰접수 → 견적 확인 → 계약
+  // 클라이언트 단계 (flow.js CLIENT_STEPS): 의뢰접수 → 의뢰승인 → 견적 확인 → 계약 진행 중 → 분석 진행 중 → 보고서 검토 → 프로젝트 완료
   var F = OP.flow;
-  var stB = function (pid) { var t = F.clientStage(pid); return '<span class="badge ' + (t === '계약' || t === '분석 진행' ? 'ok' : 'state') + '">' + t + '</span>'; };
+  var stB = function (pid) { var t = F.clientStage(pid); return '<span class="badge ' + (t === '계약 진행 중' || t === '분석 진행 중' ? 'ok' : t === '프로젝트 완료' ? 'done' : 'state') + '">' + t + '</span>'; };
   var newQ = function (pid) { var s = F.state(pid); return s.st === 'sent' ? '<span class="badge wait">견적 도착</span>' : ''; };
   var fwdKeys = function (s) { return Object.keys(s.P).filter(function (k) { return s.P[k].fwd && s.P[k].status === 'sub'; }); };
 
@@ -709,7 +708,7 @@
       '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-project.html" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(d.title) + '</h2>' +
         '<div class="pright">' + ((d.from || d.to) && sk === 0 ? '<div class="period"><b>모집기한</b><span>' + dot(d.from) + ' ~ ' + dot(d.to) + '</span><em>' + (closed ? '모집마감' : '모집중') + '</em></div>' : '') + OP.askBtn({ key: d.id, cat: d.svc, no: d.id, title: d.title }) + '</div></div>' +
     '</div>' +
-    '<ol class="fsteps" style="--n:5" aria-label="진행 단계">' + F.CLIENT_STEPS.map(function (t, i) { return '<li class="' + (i < sk ? 'done' : i === sk ? 'cur' : '') + '"' + (i === sk ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
+    '<ol class="fsteps" style="--n:' + F.CLIENT_STEPS.length + '" aria-label="진행 단계">' + F.CLIENT_STEPS.map(function (t, i) { return '<li class="' + (i < sk ? 'done' : i === sk ? 'cur' : '') + '"' + (i === sk ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
     todoHTML() +
     // 한 페이지: 지금 단계 섹션부터 (결과보고서 → 계약정보 → 견적서), 의뢰 내용은 맨 아래 (앞 단계 섹션이 있으면 접어둠)
     (REP.length ? '<section class="tpanel" id="tp-report">' + reportHTML() + '</section>' : '') +

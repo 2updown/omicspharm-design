@@ -228,13 +228,16 @@
     requests: requests, req: req, state: state, total: total, money: money, man: man, num: num, esc: esc, ymd: ymd, iso: iso,
     // 단계 이름
     ADMIN_ST: { review: '검토 대기', quoting: '견적 수집 중', sent: '클라이언트 검토', matched: '매칭 완료' },
-    // 컨설턴트 프로젝트 관리 단계 (요구사항정의서 '프로젝트상태' 시트 이름, 이름은 추후 맞출 예정)
-    ADMIN_STAGES: ['의뢰접수', '견적 대기', '견적 협의', '계약 진행 중', '분석 진행 중', '보고서 등록', '보고서 검토', '보고서 승인', '프로젝트 완료', '삭제'],
-    P2A: { '계약': '계약 진행 중', '분석': '분석 진행 중', '보고서 등록': '보고서 등록', '보고서 검토': '보고서 검토', '보고서 승인': '보고서 승인', '완료': '프로젝트 완료' },
-    adminStage: function (id) { var s = state(id); return s.cancel ? '삭제' : s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 승인' : s.raw && s.raw.length ? '보고서 검토' : s.ct ? '분석 진행 중' : s.st === 'matched' ? '계약 진행 중' : s.st === 'review' ? (s.ok ? '견적 대기' : '의뢰접수') : '견적 협의'; },
+    // 프로젝트 단계 (2026-10-26, 요구사항정의서 '20260210_내부프로세스_프로젝트상태' 시트 이름으로 통일)
+    // 보고서 승인 단계는 없음: 클라이언트가 최종 보고서를 승인하면 바로 프로젝트 완료 (리뷰는 선택)
+    ADMIN_STAGES: ['의뢰접수', '의뢰확인', '견적 협의', '계약 진행 중', '분석 진행 중', '보고서 등록', '보고서 검토', '프로젝트 완료', '삭제'],
+    P2A: {}, // (예전 분석파트너 단계 이름 → 컨설턴트 단계 이름. 이름을 통일해서 이제 같음)
+    // 의뢰확인 = 승인 후 견적서가 아직 한 건도 없음, 견적 협의 = 견적서 1건 이상 받음 (시트 기준). 보고서 등록 = 분석파트너가 결과 등록(AI 초안 검토 중), 보고서 검토 = 클라이언트에게 전달
+    adminStage: function (id) { var s = state(id); return s.cancel ? '삭제' : s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 검토' : s.raw && s.raw.length ? '보고서 등록' : s.ct ? '분석 진행 중' : s.st === 'matched' ? '계약 진행 중' : !s.ok ? '의뢰접수' : (s.st === 'sent' || Object.keys(s.P).some(function (k) { return s.P[k].status === 'sub'; })) ? '견적 협의' : '의뢰확인'; },
     quoteCount: function (id) { var s = state(id); return Object.keys(s.P).filter(function (k) { return s.P[k].status === 'sub'; }).length; },
-    CLIENT_ST: { review: '의뢰접수', quoting: '의뢰접수', sent: '견적 확인', matched: '계약' }, // 계약서 등록 후에는 '분석 진행'
-    CLIENT_STEPS: ['의뢰접수', '견적 확인', '계약', '분석 진행', '결과 수령'],
+    // 클라이언트 단계 (2026-10-26): 의뢰접수 → 의뢰승인 → 견적 확인(견적확인요청 받음) → 계약 진행 중 → 분석 진행 중 → 보고서 검토 → 프로젝트 완료
+    CLIENT_ST: { review: '의뢰접수', quoting: '의뢰접수', sent: '견적 확인', matched: '계약 진행 중' },
+    CLIENT_STEPS: ['의뢰접수', '의뢰승인', '견적 확인', '계약 진행 중', '분석 진행 중', '보고서 검토', '프로젝트 완료'],
     // 파트너 쪽에서 본 견적 상태
     pst: function (s, k) {
       var x = s.P[k]; if (!x) return null;
@@ -357,7 +360,7 @@
       var A = OP.accounts(); Object.keys(A).forEach(function (k) { if (A[k].bizOk) OP.saveAccount(k, { bizOk: 0, bizOkName: '' }); }); // 사업자등록증 확인 완료도 처음 상태로 (올린 파일은 유지)
     },
     // 클라이언트 단계
-    clientStage: function (id) { var s = state(id); return s.cancel ? '삭제' : s.rep && s.rep.length ? '결과 수령' : s.ct ? '분석 진행' : F.CLIENT_ST[s.st]; },
+    clientStage: function (id) { var s = state(id); return s.cancel ? '삭제' : s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 검토' : s.ct ? '분석 진행 중' : s.st === 'matched' ? '계약 진행 중' : s.st === 'sent' ? '견적 확인' : s.ok ? '의뢰승인' : '의뢰접수'; },
     // 프로젝트 삭제 (2026-10-21, '취소' → '삭제'): 클라이언트는 승인 후 ~ 견적 협의까지 직접(계약 진행 중은 컨설턴트 문의), 컨설턴트는 계약서 등록 전까지
     // 기록은 남김(s.cancel): 클라이언트 목록에서는 사라지고, 컨설턴트는 '삭제' 상태로 봄. 승인 전(의뢰접수) 클라이언트 삭제는 완전 삭제
     canCancel: function (id, admin) { var s = state(id); return !!s.ok && !s.cancel && (admin ? !s.ct : ['review', 'quoting', 'sent'].indexOf(s.st) > -1); },
@@ -376,7 +379,7 @@
       var d = db().S;
       return requests().filter(function (r) { var s = d[r.id]; return s && s.st === 'matched' && (!k || s.pick === k); }).map(function (r) {
         var s = d[r.id], q = s.P[s.pick].quote;
-        return { id: r.id, flow: true, ct: s.ct, svc: r.svc, stage: s.fin ? '완료' : s.rep && s.rep.length ? '보고서 승인' : s.raw && s.raw.length ? '보고서 검토' : s.ct ? '분석' : '계약', title: r.title, client: r.org || '-', partner: partner(s.pick).org, samples: r.samples || '-', amount: man(total(q).net), contract: iso(s.ct ? s.ct.at : s.pickAt), due: r.due || iso(s.pickAt + DAY * 7 * (+q.weeks || 6)), at: s.pickAt, qa: 0 };
+        return { id: r.id, flow: true, ct: s.ct, svc: r.svc, stage: s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 검토' : s.raw && s.raw.length ? '보고서 등록' : s.ct ? '분석 진행 중' : '계약 진행 중', title: r.title, client: r.org || '-', partner: partner(s.pick).org, samples: r.samples || '-', amount: man(total(q).net), contract: iso(s.ct ? s.ct.at : s.pickAt), due: r.due || iso(s.pickAt + DAY * 7 * (+q.weeks || 6)), at: s.pickAt, qa: 0 };
       });
     }
   };
