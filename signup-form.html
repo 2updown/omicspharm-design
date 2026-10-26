@@ -8,11 +8,11 @@
 <!-- Figma 회원가입/로그인 섹션 (254:18355)
      클라이언트: Signup-Filled 281:23123 → 기본정보 1/2 806:5078 → 추가정보 2/2 806:5117 → 완료 1120:43157
      분석파트너: Signup-Filled 1109:37231 → 1/3 1109:37368 → 2/3 1109:37427 → 3/3 1117:42815 → 완료 1120:42976 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261026za">
-<link rel="stylesheet" href="assets/auth/auth.css?v=20261026za">
-<script src="assets/common/site.js?v=20261026za"></script>
-<script src="assets/auth/auth.js?v=20261026za"></script>
-<script src="assets/common/consult.js?v=20261026za"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261026zb">
+<link rel="stylesheet" href="assets/auth/auth.css?v=20261026zb">
+<script src="assets/common/site.js?v=20261026zb"></script>
+<script src="assets/auth/auth.js?v=20261026zb"></script>
+<script src="assets/common/consult.js?v=20261026zb"></script>
 </head>
 <body>
 <div class="auth">
@@ -191,7 +191,7 @@
   var FLOW = type === 'partner' ? ['info', 'service', 'business'] : ['info', 'business'];
   var PENDING = 'op.pendingSignup';
   // 상담 메일 링크에서 온 가입 (?consult=토큰, 2026-10-22): 이메일·이름 자동 입력, 이메일은 고칠 수 없음, 메일 링크로 확인된 이메일이라 메일 인증 생략
-  var CONS = (function () { var c = OP.consult.byToken(AUTH.param('consult')); return c && !OP.consult.expired(c) && (!OP.account(c.email) || (OP.session() || {}).email === c.email) ? c : null; // 가입 중 새로고침해도 유지 })();
+  var CONS = (function () { var c = OP.consult.byToken(AUTH.param('consult')); return c && !OP.consult.expired(c) && (!OP.account(c.email) || (OP.session() || {}).email === c.email) ? c : null; })(); // 가입 중 새로고침해도 유지
 
   $$('.type-label').forEach(function (p) { p.textContent = type === 'partner' ? 'Analysis Partner' : 'Client'; });
   $$(type === 'partner' ? '.client-only' : '.partner-only').forEach(function (el) { el.hidden = true; });
