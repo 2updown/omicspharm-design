@@ -475,7 +475,7 @@ span.tbtn { cursor:default; }
 .ui-headc .side-ai { --ai-grad:linear-gradient(90deg, #6ee7b7, #22c57e 45%, #3d7bff); --ai-text:linear-gradient(90deg, #00a070, #2f6bff); position:relative; display:flex; align-items:center; gap:0; width:calc(100% + 12px); margin-left:-12px; height:56px; padding:0 13.5px 0 10px; border:2px solid transparent; border-radius:12px; background:linear-gradient(#fff, #fff) padding-box, var(--ai-grad) border-box; text-align:left; cursor:pointer; transition:box-shadow .25s, transform .2s; }
 .ui-headc .side-ai img { flex:none; width:20px; height:20px; transition:transform .5s cubic-bezier(.3,1.6,.5,1); }
 .ui-headc .side-ai span { display:flex; align-items:center; gap:5px; flex:none; margin-left:8px; }
-.ui-headc .side-ai b { display:block; font-size:18px; font-weight:500; line-height:22px; color:#000; white-space:nowrap; } /* 메뉴 이름과 같은 18px·600, 아이콘도 메뉴와 같은 20px (2026-10-23) */
+.ui-headc .side-ai b { display:block; font-size:18px; font-weight:600; line-height:22px; color:#000; white-space:nowrap; } /* 18px·SemiBold (AI Agent는 특별 기능이라 일반 메뉴(Medium)보다 굵게, 2026-10-26), 아이콘은 메뉴와 같은 20px */
 .ui-headc .side-ai em { font-style:normal; padding:2px 8px; border-radius:8px; background:#edfefa; color:#009788; font-size:12px; font-weight:500; line-height:18px; } /* badge_basic tertiary teal */
 .ui-headc .side-ai::after { content:""; margin-left:auto; flex:none; width:16px; height:16px; background:url(../detail/ic-caret-right-20.svg) center/16px no-repeat; opacity:.6; transition:transform .2s; }
 /* hover: 빛번짐 없이 테두리 그라데이션(민트→초록→파랑→초록) 색이 둘레를 따라 같은 속도로 흐름 (2026-10-23). 조각 SVG는 mypage.js가 만듦 */
