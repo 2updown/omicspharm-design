@@ -206,10 +206,11 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     if (document.querySelector('.op-ai')) return;
     var side0 = document.querySelector('.side'), aiBtn = document.querySelector('.side-ai'), onA = null;
     var FULL = /[?&]aifit=full\b/.test(location.search) || !!(opts && opts.full); // 넓게 보기(작업 모드): 본문 칸 대신 왼쪽 메뉴 오른쪽 ~ 화면 끝
+    var AV = ((document.querySelector('script[src*="mypage.js"]') || {}).src || '').split('v=')[1] || ''; // 아이콘 파일도 화면 버전으로 (예전 파일 캐시 방지)
     var w = document.createElement('div');
     w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-label', 'AI Agent');
     w.innerHTML = '<div class="op-ai-dim" data-ai-close></div><div class="op-ai-win">' +
-      (WANT === 'inline' ? '<button type="button" class="op-ai-fit" aria-label="넓게 보기" title="넓게 보기"><img class="o" src="assets/common/menu/expand_content.svg" alt=""><img class="i" src="assets/common/menu/collapse_content.svg" alt=""></button>' : '') +
+      (WANT === 'inline' ? '<button type="button" class="op-ai-fit" aria-label="넓게 보기" title="넓게 보기"><img class="o" src="assets/common/menu/expand_content.svg?v=' + AV + '" alt=""><img class="i" src="assets/common/menu/collapse_content.svg?v=' + AV + '" alt=""></button>' : '') +
       '<button type="button" class="op-ai-x" data-ai-close aria-label="닫기"></button><iframe src="mypage-ai.html?embed=' + WANT + '&v=' + Date.now() + '" title="AI Agent"></iframe></div>';
     var KEEP = 'op.aiOpen', keep = function (on) { try { if (on) sessionStorage.setItem(KEEP, JSON.stringify({ p: location.pathname, m: WANT, full: FULL })); else sessionStorage.removeItem(KEEP); } catch (e) {} }; // 새로고침해도 열린 채로 (같은 화면일 때만)
     var close = function () { keep(false); w.remove(); document.body.style.overflow = ''; document.body.classList.remove('op-ai-open', 'op-ai-inline'); document.removeEventListener('keydown', key); window.removeEventListener('message', msg); window.removeEventListener('resize', place);
@@ -367,7 +368,8 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       }
     }
     // AI Agent를 연 채로 새로고침하면 다시 열어 둠 (같은 화면에서만, 2026-10-27)
-    try { var ao = JSON.parse(sessionStorage.getItem('op.aiOpen') || 'null'); if (ao && ao.p === location.pathname && key !== 'ai') setTimeout(function () { OP.openAI(ao.m, { full: ao.full }); }, 0); else if (ao) sessionStorage.removeItem('op.aiOpen'); } catch (e) {}
+    // AI 화면(iframe) 안에서도 이 함수가 불리므로 바깥 화면에서만 처리 (안에서 지우면 새로고침 때 안 열리던 문제, 2026-10-27)
+    if (key !== 'ai' && window === window.top) try { var ao = JSON.parse(sessionStorage.getItem('op.aiOpen') || 'null'); if (ao && ao.p === location.pathname) setTimeout(function () { OP.openAI(ao.m, { full: ao.full }); }, 0); else if (ao) sessionStorage.removeItem('op.aiOpen'); } catch (e) {}
     return { s: s, acc: acc, name: name, org: org };
   };
   // 상세 화면 제목 옆 [‹] (2026-10-23): 원래 왔던 화면으로 (대시보드 알림 → 상세 → ‹ = 대시보드). 링크로 바로 들어왔으면 원래 주소(목록)로
