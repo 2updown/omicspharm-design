@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027w">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027w">
-<script src="assets/common/site.js?v=20261027w"></script>
-<script src="assets/common/consult.js?v=20261027w"></script>
-<script src="assets/common/mypage.js?v=20261027w"></script>
-<script src="assets/common/flow.js?v=20261027w"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027x">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027x">
+<script src="assets/common/site.js?v=20261027x"></script>
+<script src="assets/common/consult.js?v=20261027x"></script>
+<script src="assets/common/mypage.js?v=20261027x"></script>
+<script src="assets/common/flow.js?v=20261027x"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -232,6 +232,11 @@
   .lcard .head { display:flex; flex-direction:column; gap:16px; padding-bottom:12px; border-bottom:1px solid var(--gray-200); }
   .lcard .row1 { display:flex; align-items:center; justify-content:space-between; }
   .lcard .dday { font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
+  .lcard .row1 .dday { margin-left:auto; }
+  /* 임시저장 견적 삭제 (예전 견적관리 버튼과 같은 모양) */
+  .lcard .qdel { flex:none; position:relative; z-index:1; width:32px; height:32px; margin-left:8px; display:grid; place-items:center; border:1px solid #f00011; border-radius:8px; background:#fff; cursor:pointer; }
+  .lcard .qdel::before { content:""; width:18px; height:18px; background:#f00011; -webkit-mask:url(assets/common/ic-trash.svg) center/contain no-repeat; mask:url(assets/common/ic-trash.svg) center/contain no-repeat; }
+  .lcard .qdel:hover { background:#fafafa; }
   .lcard h3 { font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
   .lcard .info { display:flex; flex-direction:column; gap:10px; }
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -485,7 +490,8 @@
           var open = x.stage === '견적 요청', dl = Math.ceil((new Date(x.due + 'T23:59:59') - Date.now()) / 864e5);
           return '<a class="lcard" href="' + x.href + '"><div class="head">' +
             '<div class="row1"><div class="badges"><span class="badge tag">' + esc(x.svc) + '</span><span class="badge ' + Q_B[x.pst] + '">' + x.pst + '</span></div>' +
-              '<span class="dday">' + (open && x.due ? (dl < 0 ? '견적 마감' : '견적 마감 D-' + String(dl).padStart(2, '0')) : '') + '</span></div>' +
+              '<span class="dday">' + (open && x.due ? (dl < 0 ? '견적 마감' : '견적 마감 D-' + String(dl).padStart(2, '0')) : '') + '</span>' +
+              (x.pst === '임시저장' ? '<span role="button" tabindex="0" class="qdel" data-del-rid="' + esc(x.id) + '" data-title="' + esc(x.title) + '" aria-label="임시저장 삭제" title="임시저장 삭제"></span>' : '') + '</div>' +
             '<h3>' + esc(x.title) + '</h3></div>' +
             '<div class="info"><div class="meta"><span class="route">' + (x.self ? '직접 신청' : 'OmicsPharm 매칭 요청') + '</span><span>' + esc(x.client) + '</span><span><em>샘플</em>' + esc(x.samples) + '개</span>' + (x.due ? '<span><em>견적 마감일</em>' + dotd(x.due) + '</span>' : '') + '</div>' +
             '<p class="reg">견적 요청일 ' + (x.at ? OP.my.ymd(x.at) : '-') + '</p></div></a>';
@@ -503,6 +509,15 @@
     $('#pqIn').addEventListener('input', function () { if (!this.value && st.q) { st.q = ''; draw(); } });
     $('#pSort').addEventListener('change', function () { st.sort = this.value; draw(); });
     if ($('#pRoute')) $('#pRoute').addEventListener('change', function () { st.route = this.value; draw(); });
+    // 임시저장 견적 삭제 (예전 견적관리와 같음): 요청받은 견적은 '작성 대기'로 돌아가고, 직접 신청한 견적은 목록에서 빠짐
+    $('#pList').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-del-rid]'); if (!b) return;
+      e.preventDefault(); e.stopPropagation();
+      var mine = OP.flow.state(b.dataset.delRid).P[OP.session().email] || {};
+      OP.flow.ask({ title: '임시저장한 견적서를 삭제하시겠습니까?', desc: '\'' + b.dataset.title + '\'\n작성한 내용은 복구할 수 없습니다.' + (mine.self ? ' 직접 신청한 견적이라 목록에서도 빠집니다.' : ' 견적 요청은 남아 있어 마감일 전까지 다시 작성할 수 있습니다.'), label: false, yes: '삭제' }, function () {
+        OP.flow.discard(b.dataset.delRid, OP.session().email); OP.flash('임시저장한 견적서를 삭제했습니다.'); location.reload();
+      });
+    });
     $('#pOnly').addEventListener('change', function () { st.unread = this.checked; draw(); });
     $('#pChips').addEventListener('click', function (e) { var b = e.target.closest('[data-st]'); if (b) { st.stage = b.dataset.st; draw(); } });
     draw();
