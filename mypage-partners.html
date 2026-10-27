@@ -9,14 +9,14 @@
      파트너 인증 검토: 목록(상태별) → 상세(기관 정보 · 사업자등록증 [보기] [인증 완료] [재제출 요청]).
      재제출 요청은 클라이언트 사업자등록증 재제출 요청(mypage-request.html)과 같은 방식. 규칙: docs/partner-verification.md
      데모: 로그인 가능한 분석파트너(partner@omicspharm.test)는 계정 값(op.accounts)을, 가상 파트너는 op.partnerReview를 바꾼다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027o">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027o">
-<script src="assets/common/site.js?v=20261027o"></script>
-<script src="assets/common/projects-data.js?v=20261027o"></script>
-<script src="assets/common/consult.js?v=20261027o"></script>
-<script src="assets/common/mypage.js?v=20261027o"></script>
-<script src="assets/common/flow.js?v=20261027o"></script>
-<script src="assets/common/manage.js?v=20261027o"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027p">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027p">
+<script src="assets/common/site.js?v=20261027p"></script>
+<script src="assets/common/projects-data.js?v=20261027p"></script>
+<script src="assets/common/consult.js?v=20261027p"></script>
+<script src="assets/common/mypage.js?v=20261027p"></script>
+<script src="assets/common/flow.js?v=20261027p"></script>
+<script src="assets/common/manage.js?v=20261027p"></script>
 <style>
   .chips { display:flex; flex-wrap:wrap; gap:8px; }
   .chips button { height:36px; padding:0 14px; border-radius:99px; border:1px solid var(--gray-300); background:#fff; font-size:14px; font-weight:500; color:var(--gray-600); }
@@ -32,10 +32,10 @@
   .prow2 .m { flex:none; width:120px; font-size:13px; color:var(--gray-500); text-align:right; }
   /* 인증 상태 = DS badge_basic (docs/status-badges.md): 검토 중 tertiary blue / 재제출 요청 tertiary red / 인증 완료 fill teal / 미제출·대기 tertiary gray */
   .st { flex:none; white-space:nowrap; display:inline-flex; align-items:center; padding:2px 8px; border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; }
-  .st.review { color:#0065f4; background:#edf6ff; }
-  .st.ask { color:#f00011; background:#fff1f2; }
+  .st.review { color:#0065f4; background:#d7ebff; }
+  .st.ask { color:#f00011; background:#ffe1e1; }
   .st.ok { color:#fff; background:#009788; }
-  .st.wait { color:#525252; background:#fafafa; }
+  .st.wait { color:#525252; background:#f5f5f5; }
   .empty2 { padding:48px 16px; text-align:center; font-size:14px; color:var(--gray-500); }
   /* 상세 */
   .dhead { display:flex; align-items:center; gap:8px; }
