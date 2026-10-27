@@ -13,8 +13,26 @@
 .cs-thread .bub .att { display:inline-block; margin-top:8px; font-size:12px; color:#737373; }
 .cs-thread time { flex:none; font-size:12px; line-height:16px; color:#a3a3a3; white-space:nowrap; }
 
+/* 의뢰 전 상담 (2026-10-27): 프로젝트 문의 맨 위 · 컨설턴트 의뢰 상세. 상담마다 접어 둠 */
+.cs-pre { display:flex; flex-direction:column; gap:8px; }
+.cs-pre-h { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; font-size:16px; font-weight:600; line-height:22px; }
+.cs-pre-h b { color:#00786e; }
+.cs-pre-h span { font-size:13px; font-weight:400; color:#737373; }
+.cs-pre details { border:1px solid #e5e5e5; border-radius:12px; background:#fff; }
+.cs-pre summary { display:flex; align-items:center; gap:12px; padding:14px 16px; cursor:pointer; list-style:none; }
+.cs-pre summary::-webkit-details-marker { display:none; }
+.cs-pre summary::after { content:''; flex:none; width:20px; height:20px; margin-left:auto; background:url(../find/ic-chevron-down.svg) center / 20px no-repeat; transition:transform .2s; }
+.cs-pre details[open] summary::after { transform:rotate(180deg); }
+.cs-pre summary .t { min-width:0; font-size:15px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.cs-pre summary .d { flex:none; font-size:13px; color:#737373; }
+.cs-pre details .cs-thread { margin:0 12px 12px; padding:16px; }
+.cs-linked { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:16px 20px; border-radius:12px; background:#f5f5f5; font-size:14px; line-height:20px; color:#525252; }
+.cs-linked b { color:#000; }
+@media (max-width:640px) { .cs-pre summary { flex-wrap:wrap; gap:4px 8px; } .cs-pre summary .t { flex-basis:calc(100% - 32px); white-space:normal; } .cs-pre summary::after { order:-1; position:absolute; right:16px; } .cs-pre details { position:relative; } }
+
 /* 입력창 */
 .cs-compose { display:flex; flex-direction:column; gap:8px; }
+.cs-compose[hidden] { display:none; }
 .cs-compose textarea { width:100%; min-height:96px; padding:12px 16px; border:1px solid #d4d4d4; border-radius:12px; font:inherit; font-size:15px; line-height:1.6; resize:vertical; }
 .cs-compose textarea:focus { outline:0; border-color:#00786e; box-shadow:0 0 0 3px #00786e33; }
 .cs-compose .row { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:13px; color:#737373; }

@@ -581,8 +581,9 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261027zh">
-<script src="assets/common/site.js?v=20261027zh"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027zi">
+<script src="assets/common/site.js?v=20261027zi"></script>
+<script src="assets/common/consult.js?v=20261027zi"></script>
 <script>if (!((OP.session() || {}).role === 'admin' && /[?&]edit=/.test(location.search))) OP.requireClient(); /* 클라이언트만 접근 (컨설턴트는 의뢰 수정(?edit=)만): 비로그인 → 로그인, 파트너 → 메인 */</script>
 </head>
 <body>
@@ -863,6 +864,13 @@
       <div class="sec">
         <h2>추가 요청사항 및 후속 연구계획</h2>
         <textarea placeholder="추후 대사체 결과를 추가하여 Multi-omics data 분석을 진행하거나, 확인된 후보 물질에 대한 타겟 분석을 진행하고 싶습니다."></textarea>
+      </div>
+
+      <!-- 의뢰 전 상담 연결 (2026-10-27, 방향만 합의): Contact Us로 나눈 상담이 있으면 이 의뢰에 붙임. 고르지 않아도 되고, 제출 후 컨설턴트가 의뢰 상세에서 고칠 수 있음 -->
+      <div class="sec" id="preSec" hidden>
+        <h2>OmicsPharm 상담 연결</h2>
+        <p class="fhelp" style="margin:-4px 0 12px">이 의뢰와 관련해 OmicsPharm 컨설턴트와 나눈 상담이 있으면 선택해 주세요. 상담 내용이 의뢰와 함께 전달되어, 처음부터 다시 설명하지 않아도 됩니다.</p>
+        <div class="tbl"><div class="field"><div class="flabel">관련 상담</div><div class="fbody"><div class="opts" id="preOpts" style="flex-direction:column;align-items:flex-start;gap:10px"></div></div></div></div>
       </div>
 
       <div class="sec rev">
@@ -1316,6 +1324,7 @@
     if(k>-1){ d.id=EDIT.id; d.at=EDIT.at; d.updatedAt=Date.now(); list[k]=d; }
     else list.unshift(d);
     try{ localStorage.setItem('op.submitted', JSON.stringify(list.slice(0,20))); }catch(e){}
+    if(k<0&&PRE.length) $$('#preOpts input:checked').forEach(function(el){ OP.consult.link(el.value,d.id); }); // 고른 상담을 이 의뢰에 연결
     dirty=false;
     OP.flash(k>-1?'의뢰 내용이 수정되었습니다.':'분석 의뢰가 제출되었습니다.');
     var go=function(){ location.href=(ADM?'mypage-request.html?id=':'mypage-project.html?id=')+encodeURIComponent(d.id); };
@@ -1448,6 +1457,13 @@
     if(!d || d.ver!==FORM_VER || !d.form){ OP.flash('의뢰를 찾을 수 없습니다.'); location.replace('mypage-project.html'); return null; }
     return d;
   })();
+  /* ── 의뢰 전 상담 연결 (2026-10-27): 내 상담(Contact Us) 중 아직 의뢰에 안 붙은 것. 가장 최근 상담은 미리 체크. 수정하기·컨설턴트 화면에서는 안 보임 (컨설턴트는 의뢰 상세에서 연결) ── */
+  var PRE=(function(){
+    var ss=OP.session(); if(EDIT||!ss||ss.role==='admin'||!OP.consult) return [];
+    OP.consult.claim(ss.email); var L=OP.consult.linkable(ss.email); if(!L.length) return [];
+    $('#preOpts').innerHTML=L.map(function(c,i){ return '<label><input type="checkbox" value="'+OP.consult.esc(c.id)+'"'+(i?'':' checked')+'>'+OP.consult.esc(c.title)+' <span style="color:var(--gray-500);font-size:13px">('+OP.consult.ymd(c.at)+' 문의 · 대화 '+c.msgs.length+'개)</span></label>'; }).join('');
+    $('#preSec').hidden=false; return L;
+  })();
   var cModal=$('#confirmModal'), cCb=null;
   function confirmBox(title,desc,yes,cb){
     $('#cTitle').textContent=title; $('#cDesc').textContent=desc; $('#cYes').textContent=yes;
@@ -1471,7 +1487,7 @@
     set:async function(v){ if(window.storage&&window.storage.set){try{await window.storage.set(KEY,JSON.stringify(v));return}catch(e){}} MEM[KEY]=v; try{ localStorage.setItem(KEY,JSON.stringify(v)) }catch(e){} } // 프로토타입: 새로고침해도 남도록 localStorage에 보관
   };
   // 저장·복원은 순서(인덱스)로 맞추므로 '기타' 입력칸은 비활성 상태여도 포함 (빼면 체크 상태에 따라 순서가 어긋남)
-  function fields(){ return $$('.card input, .card select, .card textarea').filter(function(el){return el.type!=='file'&&!el.closest('#grpBody')&&(!el.disabled||el.classList.contains('etcin')||el.id==='ctyEtc')}) } // 파일 입력(사업자등록증)은 값 복원 대상 아님
+  function fields(){ return $$('.card input, .card select, .card textarea').filter(function(el){return el.type!=='file'&&!el.closest('#grpBody')&&!el.closest('#preSec')&&(!el.disabled||el.classList.contains('etcin')||el.id==='ctyEtc')}) } // 파일 입력(사업자등록증)은 값 복원 대상 아님
   function collect(){
     var T=0,D=0; for(var n=1;n<=MAX;n++){var st=stepStat(n); T+=st.total; D+=st.done}
     return { id:curId, title:($('#reqName').value.trim()||(svcName()||'새')+' 의뢰서'), svc:svcName()||'서비스 미선택',

@@ -34,7 +34,13 @@
                { at: now - DAY * 2 + H * 4, by: 'admin', text: '안녕하세요, OmicsPharm 컨설턴트입니다.\nTMT 정량과 depletion 모두 가능합니다. 20개 시료면 TMTpro 16plex 두 세트로 진행하는 경우가 많고, 보통 시료 수령 후 5~6주가 걸립니다.\n시료량이나 예산이 정해지면 더 구체적으로 안내드리겠습니다.' }], note: '' }
     ];
   }
-  function all() { var L = read(); if (!L) { L = seed(); write(L); } return L; }
+  function all() {
+    var L = read(); if (!L) { L = seed(); write(L); }
+    // 데모: 홍길동의 상담(C-DEMO2)은 그 뒤에 올린 의뢰 PRJ-2026-0046에 연결된 상태로 (2026-10-27, 한 번만)
+    var d2 = L.filter(function (c) { return c.id === 'C-DEMO2'; })[0];
+    if (d2 && !d2.linkSet) { d2.linkSet = 1; d2.link = 'PRJ-2026-0046'; d2.linkedAt = d2.msgs[d2.msgs.length - 1].at + 36e5; write(L); }
+    return L;
+  }
   function save(c) { var L = all(), i = L.map(function (x) { return x.id; }).indexOf(c.id); if (i < 0) L.unshift(c); else L[i] = c; write(L); return c; }
   function get(id) { return all().filter(function (c) { return c.id === id; })[0] || null; }
   function last(c) { return c.msgs[c.msgs.length - 1] || {}; }
@@ -46,11 +52,11 @@
     expired: function (c) { return Date.now() - c.linkAt > LINK_DAYS * DAY; },
     linkUntil: function (c) { return c.linkAt + LINK_DAYS * DAY; },
     // 답변대기 = 마지막 메시지가 문의자, 답변완료 = 마지막 메시지가 컨설턴트 (실서비스의 '처리상태 대기/처리완료' 대신 자동)
-    waiting: function (c) { return last(c).by !== 'admin'; },
+    waiting: function (c) { return !c.link && last(c).by !== 'admin'; }, // 의뢰로 이어진 상담은 끝난 대화 (이후는 프로젝트 문의에서)
     lastAt: function (c) { return last(c).at || c.at; },
     // Contact Us 제출 (비회원이면 메일 링크 발급, 회원이면 내 상담내역에 바로)
     create: function (o) {
-      var s = OP.session && OP.session(), c = { id: 'C-' + Date.now().toString(36).toUpperCase(), at: Date.now(), type: o.type, svc: o.svc || '', ref: o.ref || '', rid: o.rid || '', name: o.name, email: o.email.toLowerCase(), title: o.title,
+      var s = OP.session && OP.session(), c = { id: 'C-' + Date.now().toString(36).toUpperCase(), at: Date.now(), type: o.type, svc: o.svc || '', ref: o.ref || '', rid: o.rid || '', pj: !!o.pj, name: o.name, email: o.email.toLowerCase(), title: o.title,
         file: o.file || '', owner: s && s.email === o.email.toLowerCase() ? s.email : '', token: tok(), linkAt: Date.now(), msgs: [{ at: Date.now(), by: 'user', text: o.body, file: o.file || '' }], note: '' };
       return save(c);
     },
@@ -62,8 +68,16 @@
       var s = F.state(rid), x = s.P && s.P[email];
       return !!x && !(s.st === 'matched' && s.pick !== email) && !s.cancel;
     },
+    // 상담 두 갈래 (2026-10-27): 상담내역 = 프로젝트와 무관한 상담(Contact Us), 프로젝트 문의내역 = 프로젝트별 대화(참여자의 [문의하기]).
+    // 예전 데이터(pj 없음)는 관련 프로젝트의 참여자가 남긴 대화면 프로젝트 문의로 봄
+    isProj: function (c) { return c.pj != null ? !!c.pj : !!(c.rid && OP.flow && OP.consult.participant(c.rid, c.owner || c.email)); },
     // 내 그 프로젝트 대화 (한 사람당 프로젝트 하나에 대화 하나)
-    byProject: function (rid, email) { return all().filter(function (c) { return c.rid === rid && (c.owner === email || c.email === email); })[0] || null; },
+    byProject: function (rid, email) { return all().filter(function (c) { return c.rid === rid && OP.consult.isProj(c) && (c.owner === email || c.email === email); })[0] || null; },
+    // 의뢰 전 상담 연결: Contact Us 상담을 의뢰(rid)에 붙임. 붙은 상담은 그대로 남고, 그 의뢰의 프로젝트 문의 맨 위에 '의뢰 전 상담'으로 보임
+    pre: function (rid, email) { return all().filter(function (c) { return c.link === rid && (!email || c.owner === email || c.email === email); }).sort(function (a, b) { return a.at - b.at; }); },
+    linkable: function (email) { email = String(email || '').toLowerCase(); return all().filter(function (c) { return !c.link && !OP.consult.isProj(c) && (c.owner === email || c.email === email); }).sort(function (a, b) { return OP.consult.lastAt(b) - OP.consult.lastAt(a); }); },
+    link: function (id, rid) { var c = get(id); if (!c) return null; c.link = rid; c.linkedAt = Date.now(); return save(c); },
+    unlink: function (id) { var c = get(id); if (!c) return null; delete c.link; delete c.linkedAt; return save(c); },
     add: function (id, by, text, file) { var c = get(id); if (!c) return null; c.msgs.push({ at: Date.now(), by: by, text: text, file: file || '' }); return save(c); }, // file: 첨부 파일 이름 (이어 쓰는 글에도 첨부, 2026-10-26)
     setNote: function (id, text) { var c = get(id); if (!c) return null; c.note = text; c.noteAt = Date.now(); return save(c); },
     // 만료된 링크 다시 받기: 같은 이메일의 상담마다 새 링크 (데모: 첫 번째 것을 돌려줌)
@@ -75,6 +89,13 @@
     // 가입·로그인하면 같은 이메일로 남긴 상담을 이 계정에 붙인다
     claim: function (email) { email = String(email || '').toLowerCase(); all().forEach(function (c) { if (c.email === email && !c.owner) { c.owner = email; save(c); } }); },
     mine: function () { var s = OP.session && OP.session(); if (!s) return []; return all().filter(function (c) { return c.owner === s.email || c.email === s.email; }); },
+    // 의뢰 전 상담 묶음 (접힘). 프로젝트 문의 대화 맨 위 · 컨설턴트 의뢰 상세에서 같이 씀
+    preHTML: function (L, viewer) {
+      if (!L.length) return '';
+      return '<div class="cs-pre"><p class="cs-pre-h">의뢰 전 상담 <b>' + L.length + '</b><span>Contact Us로 나눈 상담이 이 의뢰에 연결되어 있습니다.</span></p>' + L.map(function (c) {
+        return '<details><summary><span class="t">' + esc(c.title) + '</span><span class="d">' + ymd(c.at) + ' ~ ' + ymd(OP.consult.lastAt(c)) + ' · 대화 ' + c.msgs.length + '개</span></summary>' + OP.consult.thread(c, viewer) + '</details>';
+      }).join('') + '</div>';
+    },
     // 대화창. viewer = 'user' | 'admin'. 상담 기록(note)은 컨설턴트에게만
     thread: function (c, viewer) {
       return '<ol class="cs-thread">' + c.msgs.map(function (m) {

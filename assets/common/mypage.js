@@ -1,5 +1,5 @@
 /* 마이페이지 공통 — 로그인 확인, 왼쪽 프로필·메뉴, 데모 데이터(이 브라우저 localStorage 기준)
-   메뉴: 대시보드 / 프로젝트(견적관리·프로젝트 관리) / 문의내역 / 알림 / 회원정보(내 정보 관리, 분석파트너 +파트너 인증·분석 서비스 정보) / 관리(컨설턴트)
+   메뉴: 대시보드 / 프로젝트(견적관리·프로젝트 관리) / 상담내역 / 프로젝트 문의내역 / 알림 / 회원정보(내 정보 관리, 분석파트너 +파트너 인증·분석 서비스 정보) / 관리(컨설턴트)
    컨설턴트의 프로젝트 관리는 mypage-request.html
    (기존 '분석결과 관리'는 프로젝트 상세의 '결과보고서' 탭으로 통합)
    사용: <aside class="side" data-op-side></aside> + var me = OP.mypage('dash'); */
@@ -22,8 +22,8 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
   var MENU = [
     ['dash', '대시보드', 'mypage.html'],
     ['project', '프로젝트 관리', 'mypage-project.html', null, 'prj'], // 세 역할 모두 이 메뉴 하나 (2026-10-27: 분석파트너 견적관리를 합침, 견적 단계는 목록 안 단계로). 컨설턴트는 mypage-request.html
-    ['consult', '상담내역', 'mypage-consult.html'], // Contact Us(contact.html)로 들어온 상담. 첫 문의부터 한 대화로 (consult.js, 2026-10-22). 실서비스 메뉴명과 같음
-    ['inquiry', '문의내역', 'mypage-inquiry.html'],
+    ['consult', '상담내역', 'mypage-consult.html'], // 프로젝트와 무관한 상담: Contact Us(첫 문의부터 한 대화, consult.js) + 챗봇 문의. 실서비스 메뉴명과 같음
+    ['inquiry', '프로젝트 문의내역', 'mypage-inquiry.html'], // 2026-10-27: 프로젝트별 대화([문의하기]) + 의뢰할 때 연결한 '의뢰 전 상담'. 예전 문의내역(챗봇)은 상담내역으로
     ['alarm', '알림', 'mypage-alarm.html'], // 알림은 묶지 않고 최상위에 (안 읽은 수가 항상 보이게)
     ['account', '내 정보 관리', 'mypage-account.html', null, 'me'],
     ['verify', '파트너 인증', 'mypage-verify.html', ['partner'], 'me'],
@@ -46,7 +46,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     id: 'Q-DEMO01', demo: true, at: new Date(2026, 8, 18, 14, 20).getTime(), type: '분석 견적', svc: 'Proteomics', ref: '',
     title: '혈장 시료 20개 단백체 분석 견적 문의',
     body: '혈장 시료 20개(대조군 10, 실험군 10)로 정량 단백체 분석을 진행하려고 합니다. 대략적인 견적과 소요 기간이 궁금합니다.',
-    answer: { at: new Date(2026, 8, 19, 10, 5).getTime(), body: '안녕하세요, OmicsPharm입니다.\n문의하신 조건(혈장 20개, 정량 단백체 분석)은 프로젝트로 등록하시면 분석파트너들의 견적을 비교해 받아보실 수 있습니다.\n일반적으로 시료 수령 후 4~6주 정도 소요되며, 고농도 단백질 제거(depletion) 여부에 따라 비용이 달라집니다.' }
+    answer: { at: new Date(2026, 8, 19, 10, 5).getTime(), body: '안녕하세요, OmicsPharm입니다.\n문의하신 조건(혈장 20개, 정량 단백체 분석)은 프로젝트로 등록하시면 OmicsPharm이 분석파트너 견적을 받아 정리해 드립니다.\n일반적으로 시료 수령 후 4~6주 정도 소요되며, 고농도 단백질 제거(depletion) 여부에 따라 비용이 달라집니다.' }
   };
 
   // 분석파트너 프로젝트 관리 예시: 셀키 매칭 후 계약된 프로젝트만 (계약 진행 중 → 분석 진행 중 → 보고서 등록 → 보고서 검토 → 프로젝트 완료)
@@ -115,8 +115,8 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       // 프로젝트 알림은 요구사항정의서 '20260210_내부프로세스_알림' 기준 (의뢰~견적 단계는 flow.js, 계약 이후는 아래 예시 프로젝트)
       // 의뢰접수 알림은 컨설턴트에게만 간다 (의뢰사는 '의뢰승인' 알림부터 받음)
       D.inquiries().forEach(function (q) {
-        if (q.answer) L.push({ id: 'a-' + q.id, k: '문의 답변', pj: q.title, cat: 'inquiry', at: q.answer.at, t: "'" + q.title + "' 문의에 답변이 등록되었습니다.", href: 'mypage-inquiry.html?id=' + q.id });
-        L.push({ id: 'q-' + q.id, k: '문의 접수', pj: q.title, cat: 'inquiry', at: q.at, t: "'" + q.title + "' 문의가 접수되었습니다.", href: 'mypage-inquiry.html?id=' + q.id });
+        if (q.answer) L.push({ id: 'a-' + q.id, k: '문의 답변', pj: q.title, cat: 'inquiry', at: q.answer.at, t: "'" + q.title + "' 문의에 답변이 등록되었습니다.", href: 'mypage-consult.html?q=' + q.id });
+        L.push({ id: 'q-' + q.id, k: '문의 접수', pj: q.title, cat: 'inquiry', at: q.at, t: "'" + q.title + "' 문의가 접수되었습니다.", href: 'mypage-consult.html?q=' + q.id });
       });
       // 계약 이후 단계 (예시 프로젝트, 공급사 = 세움분석센터)
       var ses = OP.session() || {}, adm = ses.role === 'admin', PS = P_STAGES;
@@ -124,8 +124,9 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       if (OP.consult) (adm ? OP.consult.all() : OP.consult.mine()).forEach(function (c) {
         var h = 'mypage-consult.html?id=' + encodeURIComponent(c.id);
         c.msgs.forEach(function (m, i) {
-          if (adm && m.by === 'user') L.push({ id: 'cs-' + c.id + '-' + i, k: i ? '상담 추가 문의' : '상담 접수', pj: c.title, cat: 'inquiry', at: m.at, t: c.name + '님의 ' + (i ? "'" + c.title + "' 상담에 추가 문의가 등록되었습니다." : "상담 '" + c.title + "'이(가) 접수되었습니다."), href: h });
-          if (!adm && m.by === 'admin') L.push({ id: 'cs-' + c.id + '-' + i, k: '상담 답변', pj: c.title, cat: 'inquiry', at: m.at, t: "'" + c.title + "' 상담에 OmicsPharm 컨설턴트의 답변이 등록되었습니다.", href: h });
+          var pjc = OP.consult.isProj(c), w = pjc ? '프로젝트 문의' : '상담', mk = pjc ? 'inquiry' : 'consult'; // 프로젝트 문의는 '프로젝트 문의' 알림으로
+          if (adm && m.by === 'user') L.push({ id: 'cs-' + c.id + '-' + i, k: i ? w + ' 추가 문의' : w + ' 접수', pj: c.title, cat: 'inquiry', at: m.at, t: c.name + '님의 ' + (i ? "'" + c.title + "' " + w + "에 추가 문의가 등록되었습니다." : w + " '" + c.title + "'이(가) 접수되었습니다."), href: h, mk: mk });
+          if (!adm && m.by === 'admin') L.push({ id: 'cs-' + c.id + '-' + i, k: w + ' 답변', pj: c.title, cat: 'inquiry', at: m.at, t: "'" + c.title + "' " + w + "에 OmicsPharm 컨설턴트의 답변이 등록되었습니다.", href: h, mk: mk });
         });
       });
       var J = function (w, a, b) { return OP.flow ? OP.flow.josa(w, a, b) : w + a; };
@@ -269,7 +270,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       var menuOf = function (h) { return /mypage-(project|request|quote)/.test(h) ? 'project' : /mypage-inquiry/.test(h) ? 'inquiry' : /mypage-consult/.test(h) ? 'consult' : /mypage-service/.test(h) ? 'service' : /mypage-partners/.test(h) ? 'partners' : ''; }; // service: 컨설턴트의 분석 서비스 정보 입력 요청
       D.alarms().forEach(function (a) {
         if (a.read || !a.href || seen.indexOf(a.id) > -1) return;
-        var mk = menuOf(a.href); if (!mk) return;
+        var mk = a.mk || menuOf(a.href); if (!mk) return;
         if (mk === key) seenAdd.push(a.id); else NEW[mk] = 1;
       });
       if (seenAdd.length) write('op.menuSeen', seen.concat(seenAdd));

@@ -8,14 +8,15 @@
 <!-- 마이페이지 > 상담내역 (2026-10-22, Figma 시안 없음). Contact Us(contact.html)로 들어온 상담이 첫 문의부터 한 대화로 쌓임 (assets/common/consult.js)
      컨설턴트: 실서비스 상담내역(목록: 처리상태·기간·키워드 / 번호·제목·성함·소속·처리상태·등록일, 상세: 문의 정보 + 처리내용) 기준.
        처리상태는 마지막 메시지로 자동(답변대기/답변완료), 처리내용 → '상담 기록'(컨설턴트만 보임), 답변은 대화로 문의자에게 보이고 메일로도 알림
-     회원(클라이언트·분석파트너): 내 상담 목록 → 대화 + 이어서 작성. 프로젝트 문의 챗봇(문의내역)과는 별개 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027zh">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zh">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261027zh">
-<script src="assets/common/site.js?v=20261027zh"></script>
-<script src="assets/common/consult.js?v=20261027zh"></script>
-<script src="assets/common/mypage.js?v=20261027zh"></script>
-<script src="assets/common/flow.js?v=20261027zh"></script>
+     회원(클라이언트·분석파트너): 내 상담 목록(+ 챗봇 문의) → 대화 + 이어서 작성.
+     2026-10-27: 프로젝트별 대화(?project=, pj)는 메뉴 '프로젝트 문의내역'(mypage-inquiry.html)에서 열리고 대화 화면만 여기를 씀. 의뢰에 연결된 상담(link)은 끝난 대화로 -->
+<link rel="stylesheet" href="assets/common/site.css?v=20261027zi">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zi">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261027zi">
+<script src="assets/common/site.js?v=20261027zi"></script>
+<script src="assets/common/consult.js?v=20261027zi"></script>
+<script src="assets/common/mypage.js?v=20261027zi"></script>
+<script src="assets/common/flow.js?v=20261027zi"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
   .cs-list { border-top:2px solid #000; }
@@ -61,11 +62,17 @@
 
 <script>
 (function () {
-  var me = OP.mypage('consult'); if (!me) return;
   var C = OP.consult, esc = C.esc, $ = function (s) { return document.querySelector(s); };
-  var Q = new URLSearchParams(location.search), adm = me.s.role === 'admin', id = Q.get('id'), pid = Q.get('project');
-  var badge = function (c) { return C.waiting(c) ? '<span class="badge wait">답변대기</span>' : '<span class="badge done">답변완료</span>'; };
+  var Q = new URLSearchParams(location.search), id = Q.get('id'), pid = Q.get('project'), qid = Q.get('q');
+  // 메뉴 (2026-10-27): 프로젝트별 대화는 '프로젝트 문의내역', 그 외(Contact Us · 챗봇 문의)는 '상담내역'
+  var c0 = id && C.get(id), PJ = !!pid || !!(c0 && C.isProj(c0));
+  var me = OP.mypage(PJ ? 'inquiry' : 'consult'); if (!me) return;
+  var adm = me.s.role === 'admin';
+  if (PJ) document.title = '프로젝트 문의내역 · 마이페이지 · OmicsPharm';
+  if (pid && adm) { location.replace('mypage-inquiry.html?project=' + encodeURIComponent(pid)); return; } // 컨설턴트 [문의하기] = 그 프로젝트의 문의 목록
+  var badge = function (c) { return c.link ? '<span class="badge done">의뢰 연결</span>' : C.waiting(c) ?'<span class="badge wait">답변대기</span>' : '<span class="badge done">답변완료</span>'; };
   var src = function () { return adm ? C.all() : C.mine(); };
+  var gen = function () { return src().filter(function (c) { return !C.isProj(c); }); }; // 상담내역에 보이는 것 (프로젝트 문의 제외)
   if (!adm) C.claim(me.s.email); // 같은 이메일로 남긴 상담은 이 계정에 붙임
   // 프로젝트 문의 (?project=): 마이페이지 프로젝트 상세 / 프로젝트 찾기 상세의 [문의하기]에서 옴
   var projOf = function (rid) {
@@ -80,43 +87,55 @@
     if (mine0) { history.replaceState(null, '', 'mypage-consult.html?id=' + encodeURIComponent(mine0.id)); detail(mine0.id); }
     else if (P0 && (!P0.flow || C.participant(pid, me.s.email))) compose(P0);
     else location.replace('contact.html?type=project&rid=' + encodeURIComponent(pid) + (P0 ? '&ref=' + encodeURIComponent(P0.title) : ''));
-  } else if (id) detail(id); else (adm ? adminList : memberList)();
+  } else if (id) detail(id); else if (qid && !adm) botDetail(qid); else (adm ? adminList : memberList)();
+  function linkedHTML(c) { // 의뢰로 이어진 상담: 끝난 대화, 이후는 프로젝트 문의에서
+    var P = projOf(c.link), t = P ? P.title : c.link;
+    return '<div class="cs-linked"><span><b>' + esc(t) + '</b> 의뢰로 이어진 상담입니다 (' + C.ymd(c.linkedAt) + ' 연결). 이후 대화는 프로젝트 문의내역에서 이어집니다.</span>' +
+      '<a class="btn" href="' + (adm ? 'mypage-request.html?id=' + encodeURIComponent(c.link) : 'mypage-consult.html?project=' + encodeURIComponent(c.link)) + '">' + (adm ? '의뢰 상세 보기' : '프로젝트 문의로 이동') + '</a></div>';
+  }
 
   // 프로젝트 문의 첫 작성: 문의 유형 '의뢰 프로젝트' 고정, 제목 기본값 '[프로젝트명] 관련 문의드립니다'
   function compose(P) {
     var acc = OP.account(me.s.email) || {};
     $('#card').innerHTML =
-      '<div class="mg-head"><a href="javascript:history.back()" aria-label="뒤로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>프로젝트 문의</h3></div>' +
+      '<div class="mg-head"><a href="mypage-inquiry.html" aria-label="프로젝트 문의내역으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>프로젝트 문의</h3></div>' +
       '<div class="det"><dl class="cs-info"><div class="wide"><dt>관련 프로젝트</dt><dd><a href="' + projHref(P.id) + '" style="text-decoration:underline">' + esc(P.title) + '</a> <span style="color:var(--gray-500)">(' + esc(P.svc) + ' · ' + esc(P.id) + ')</span></dd></div>' +
         '<div class="wide"><dt>문의 유형</dt><dd>의뢰 프로젝트</dd></div></dl>' +
+        C.preHTML(C.pre(P.id, me.s.email), 'user') +
         '<form class="cs-compose" id="first" novalidate><label class="sr-only" for="ttl">제목</label><input id="ttl" class="cs-ttl" value="' + esc('[' + P.title + '] 관련 문의드립니다') + '">' +
           '<label class="sr-only" for="msg">내용</label><textarea id="msg" placeholder="이 프로젝트에 대해 문의할 내용을 입력하세요. OmicsPharm 컨설턴트가 확인 후 답변드립니다."></textarea>' +
-          '<div class="row"><span>답변은 마이페이지 &gt; 상담내역과 알림으로 알려드립니다.</span><button class="btn primary" type="submit" id="go" disabled>문의 보내기</button></div></form></div>';
+          '<div class="row"><span>답변은 마이페이지 &gt; 프로젝트 문의내역과 알림으로 알려드립니다.</span><button class="btn primary" type="submit" id="go" disabled>문의 보내기</button></div></form></div>';
     var msg = $('#msg'), go = $('#go'), ttl = $('#ttl');
     var sync = function () { go.disabled = !msg.value.trim() || !ttl.value.trim(); };
     msg.addEventListener('input', sync); ttl.addEventListener('input', sync);
     $('#first').addEventListener('submit', function (e) {
       e.preventDefault(); if (go.disabled) return;
-      var c = C.create({ type: '의뢰 프로젝트', svc: P.svc, ref: P.title, rid: P.id, name: acc.name || me.s.email.split('@')[0], email: me.s.email, title: ttl.value.trim(), body: msg.value.trim() });
+      var c = C.create({ type: '의뢰 프로젝트', svc: P.svc, ref: P.title, rid: P.id, pj: true, name: acc.name || me.s.email.split('@')[0], email: me.s.email, title: ttl.value.trim(), body: msg.value.trim() });
       OP.toast('문의를 보냈습니다.'); location.replace('mypage-consult.html?id=' + encodeURIComponent(c.id));
     });
   }
 
   // 회원: 내 상담 목록
   function memberList() {
-    var f = 'all', L0 = src().sort(function (a, b) { return C.lastAt(b) - C.lastAt(a); });
+    // Contact Us 상담 + 챗봇 문의(op.inquiries, 2026-10-27 문의내역에서 옮김)를 한 목록으로
+    var bot = OP.my.inquiries().map(function (q) { return { bot: q, at: q.answer ? q.answer.at : q.at, wait: !q.answer }; });
+    var f = 'all', L0 = gen().map(function (c) { return { c: c, at: C.lastAt(c), wait: C.waiting(c) }; }).concat(bot).sort(function (a, b) { return b.at - a.at; });
     var T = [['all', '전체'], ['wait', '답변대기'], ['done', '답변완료']];
-    var ok = function (c) { return f === 'all' || (f === 'wait') === C.waiting(c); };
+    var ok = function (o, k) { return k === 'all' || (k === 'wait') === o.wait; };
     $('#card').innerHTML = '<div class="card-head"><h3>상담내역</h3></div>' +
       '<div class="bar"><div class="chips" id="chips" role="tablist"></div><a class="btn primary" href="contact.html">새 문의하기</a></div><div id="list"></div>';
     var draw = function () {
-      $('#chips').innerHTML = T.map(function (t) { return '<button type="button" role="tab" data-f="' + t[0] + '"' + (f === t[0] ? ' class="on" aria-selected="true"' : '') + '>' + t[1] + '<span>' + L0.filter(function (c) { return t[0] === 'all' || (t[0] === 'wait') === C.waiting(c); }).length + '</span></button>'; }).join('');
-      var L = L0.filter(ok);
-      $('#list').innerHTML = L.length ? '<div class="cs-list">' + L.map(function (c) {
-        var m = c.msgs[c.msgs.length - 1];
+      $('#chips').innerHTML = T.map(function (t) { return '<button type="button" role="tab" data-f="' + t[0] + '"' + (f === t[0] ? ' class="on" aria-selected="true"' : '') + '>' + t[1] + '<span>' + L0.filter(function (o) { return ok(o, t[0]); }).length + '</span></button>'; }).join('');
+      var L = L0.filter(function (o) { return ok(o, f); });
+      $('#list').innerHTML = L.length ? '<div class="cs-list">' + L.map(function (o) {
+        if (o.bot) { var q = o.bot;
+          return '<a class="cs-row" href="mypage-consult.html?q=' + encodeURIComponent(q.id) + '"><span class="st">' + (q.answer ? '<span class="badge done">답변완료</span>' : '<span class="badge wait">답변대기</span>') + '</span>' +
+            '<span class="mid"><span class="t">' + esc(q.title) + '</span><span class="sub">챗봇 문의 · ' + esc(q.type) + ' · ' + esc((q.answer ? 'OmicsPharm: ' + q.answer.body : '나: ' + q.body).replace(/\s+/g, ' ')) + '</span></span>' +
+            '<span class="dt">' + C.ymd(o.at) + '</span></a>'; }
+        var c = o.c, m = c.msgs[c.msgs.length - 1];
         return '<a class="cs-row" href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '"><span class="st">' + badge(c) + '</span>' +
-          '<span class="mid"><span class="t">' + esc(c.title) + '</span><span class="sub">' + esc(c.type) + (c.rid ? ' · ' + esc(c.ref) : '') + ' · ' + (m.by === 'admin' ? 'OmicsPharm 컨설턴트: ' : '나: ') + esc(m.text.replace(/\s+/g, ' ')) + '</span></span>' +
-          '<span class="dt">' + C.ymd(C.lastAt(c)) + '</span></a>';
+          '<span class="mid"><span class="t">' + esc(c.title) + '</span><span class="sub">' + (c.link ? '의뢰로 이어짐 · ' + esc((projOf(c.link) || {}).title || c.link) : esc(c.type) + (c.rid ? ' · ' + esc(c.ref) : '') + ' · ' + (m.by === 'admin' ? 'OmicsPharm 컨설턴트: ' : '나: ') + esc(m.text.replace(/\s+/g, ' '))) + '</span></span>' +
+          '<span class="dt">' + C.ymd(o.at) + '</span></a>';
       }).join('') + '</div>' : '<div class="empty"><b>' + (f === 'all' ? '상담 내역이 없습니다' : '해당하는 상담이 없습니다') + '</b><p>분석 의뢰·견적 등 궁금한 점은 Contact Us로 남겨주세요.</p></div>';
     };
     $('#chips').addEventListener('click', function (e) { var b = e.target.closest('[data-f]'); if (b) { f = b.dataset.f; draw(); } });
@@ -129,17 +148,16 @@
       '<div class="mg-filter"><select class="mg-sel" id="fSt"><option value="">처리상태</option><option value="wait">답변대기</option><option value="done">답변완료</option></select>' +
         '<select class="mg-sel" id="fMem"><option value="">회원 여부</option><option value="y">회원</option><option value="n">비회원</option></select>' +
         '<div class="mg-q"><input type="search" id="fQ" placeholder="제목, 성함, 이메일 검색"><button type="button" class="btn" id="go">검색</button></div></div>' +
-      (pid ? '<p class="lead">관련 프로젝트 <b>' + esc((projOf(pid) || {}).title || pid) + '</b>의 상담만 보는 중 · <a href="mypage-consult.html" style="text-decoration:underline">전체 보기</a></p>' : '') +
       '<p class="mg-total">(<b style="color:var(--red-600)" id="nw">0</b>건 답변대기 / 총 <b id="n">0</b>건)</p>' +
       '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">번호</th><th>제목</th><th>문의 유형</th><th>성함</th><th>이메일</th><th class="c">회원</th><th class="c">처리상태</th><th class="c">최근 대화</th><th class="c">등록일</th></tr></thead><tbody id="tb"></tbody></table></div>';
     var draw = function () {
       var st = $('#fSt').value, mem = $('#fMem').value, q = $('#fQ').value.trim().toLowerCase();
-      var A = src().sort(function (a, b) { return b.at - a.at; });
-      var L = A.filter(function (c) { var m = !!OP.account(c.email); return (!pid || c.rid === pid) && (!st || (st === 'wait') === C.waiting(c)) && (!mem || (mem === 'y') === m) && (!q || [c.title, c.name, c.email].join(' ').toLowerCase().indexOf(q) > -1); });
+      var A = gen().sort(function (a, b) { return b.at - a.at; });
+      var L = A.filter(function (c) { var m = !!OP.account(c.email); return(!st || (st === 'wait') === C.waiting(c)) && (!mem || (mem === 'y') === m) && (!q || [c.title, c.name, c.email].join(' ').toLowerCase().indexOf(q) > -1); });
       $('#n').textContent = A.length; $('#nw').textContent = A.filter(C.waiting).length;
       $('#tb').innerHTML = L.length ? L.map(function (c, i) {
         var m = !!OP.account(c.email);
-        return '<tr><td class="c">' + (L.length - i) + '</td><td class="t"><a href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">' + esc(c.title) + '</a>' + (c.rid ? '<br><small>관련 프로젝트 · ' + esc(c.ref) + '</small>' : '') + '</td><td>' + esc(c.type) + '</td><td>' + esc(c.name) + '</td><td class="mail">' + esc(c.email) + '</td>' +
+        return '<tr><td class="c">' + (L.length - i) + '</td><td class="t"><a href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">' + esc(c.title) + '</a>' + (c.link ? '<br><small>의뢰로 이어짐 · ' + esc((projOf(c.link) || {}).title || c.link) + '</small>' : c.rid ? '<br><small>관련 프로젝트 · ' + esc(c.ref) + '</small>' : '') + '</td><td>' + esc(c.type) + '</td><td>' + esc(c.name) + '</td><td class="mail">' + esc(c.email) + '</td>' +
           '<td class="c">' + (m ? '<span class="mem">회원</span>' : '비회원') + '</td><td class="c">' + badge(c) + '</td><td class="c">' + C.ymd(C.lastAt(c)) + '</td><td class="c">' + C.ymd(c.at) + '</td></tr>';
       }).join('') : '<tr><td colspan="9" class="mg-empty">검색 결과가 없습니다.</td></tr>';
     };
@@ -148,19 +166,35 @@
     draw();
   }
 
+  // 챗봇 문의 한 건 (오른쪽 아래 챗봇으로 남긴 문의, op.inquiries). 질문 + 답변
+  function botDetail(qid) {
+    var q = OP.my.inquiries().filter(function (x) { return x.id === qid; })[0];
+    if (!q) { location.replace('mypage-consult.html'); return; }
+    var c = { name: '나', msgs: [{ at: q.at, by: 'user', text: q.body, file: q.file || '' }].concat(q.answer ? [{ at: q.answer.at, by: 'admin', text: q.answer.body }] : []) };
+    $('#card').innerHTML =
+      '<div class="mg-head"><a href="mypage-consult.html" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>' + esc(q.title) + '</h3>' + (q.answer ? '<span class="badge done">답변완료</span>' : '<span class="badge wait">답변대기</span>') + '</div>' +
+      '<div class="det"><p class="lead">챗봇 문의 · ' + esc(q.type + (q.svc ? ' · ' + q.svc : '')) + ' · 접수번호 ' + esc(q.id) + ' · ' + C.ymd(q.at) + ' 접수' + (q.ref ? ' · 관련 프로젝트 ' + esc(q.ref) : '') + '</p>' +
+        '<div><h4 style="margin-bottom:12px">상담 내용</h4>' + C.thread(c, 'user') + '</div>' +
+        (q.answer ? '' : '<p class="lead">담당자가 내용을 확인하고 있습니다. 영업일 기준 1~2일 안에 답변드리겠습니다.</p>') +
+        (q.demo ? '<p class="lead" style="font-size:12px">※ 화면 확인용 예시 문의입니다.</p>' : '') + '</div>';
+  }
+
   function detail(cid) {
     var c = C.get(cid);
     if (!c || (!adm && !src().some(function (x) { return x.id === cid; }))) { location.replace('mypage-consult.html'); return; }
     var acc = OP.account(c.email), kv = function (k, v, w) { return '<div' + (w ? ' class="wide"' : '') + '><dt>' + k + '</dt><dd>' + v + '</dd></div>'; };
+    var pj = C.isProj(c), done = !!c.link; // done: 의뢰로 이어진 상담은 더 쓰지 않음
     $('#card').innerHTML =
-      '<div class="mg-head"><a href="mypage-consult.html" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>' + esc(c.title) + '</h3>' + badge(c) + '</div>' +
+      '<div class="mg-head"><a href="' + (pj ? 'mypage-inquiry.html' : 'mypage-consult.html') + '" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>' + esc(c.title) + '</h3>' + badge(c) + '</div>' +
       '<div class="det">' +
         (adm ? '<dl class="cs-info">' + kv('문의 유형', esc(c.type + (c.svc ? ' · ' + c.svc : ''))) + kv('접수번호', esc(c.id)) + kv('성함', esc(c.name)) + kv('이메일', esc(c.email)) +
             kv('회원 여부', acc ? '회원 (' + (OP.ROLE_LABEL[acc.role] || '') + (acc.org ? ' · ' + esc(acc.org) : '') + ')' : '비회원 · 메일 링크로 답변 확인') + kv('접수일', C.ymdhm(c.at)) +
             (c.ref ? kv('관련 프로젝트', c.rid && projHref(c.rid) ? '<a href="' + projHref(c.rid) + '" style="text-decoration:underline">' + esc(c.ref) + '</a>' : esc(c.ref), 1) : '') + (acc ? '' : kv('링크 유효기간', C.ymd(C.linkUntil(c)) + '까지' + (C.expired(c) ? ' (만료 · 문의자가 링크 화면에서 새로 받을 수 있음)' : ''), 1)) + '</dl>'
            : '<p class="lead">' + esc(c.type + (c.svc ? ' · ' + c.svc : '')) + ' · 접수번호 ' + esc(c.id) + ' · ' + C.ymd(c.at) + ' 접수' + (c.rid && projHref(c.rid) ? ' · 관련 프로젝트 <a href="' + projHref(c.rid) + '" style="text-decoration:underline">' + esc(c.ref) + '</a>' : '') + '</p>') +
-        '<div><h4 style="margin-bottom:12px">상담 내용</h4>' + C.thread(c, adm ? 'admin' : 'user') + '</div>' +
-        '<form class="cs-compose" id="send" novalidate><label class="sr-only" for="msg">' + (adm ? '답변' : '메시지') + '</label>' +
+        (pj ? C.preHTML(C.pre(c.rid, c.owner || c.email), adm ? 'admin' : 'user') : '') +
+        '<div><h4 style="margin-bottom:12px">' + (pj ? '프로젝트 문의' : '상담 내용') + '</h4>' + C.thread(c, adm ? 'admin' : 'user') + '</div>' +
+        (done ? linkedHTML(c) : '') +
+        '<form class="cs-compose"' + (done ? ' hidden' : '') + ' id="send" novalidate><label class="sr-only" for="msg">' + (adm ? '답변' : '메시지') + '</label>' +
           '<textarea id="msg" placeholder="' + (adm ? '답변을 입력하세요. 문의자에게 보이고 메일로도 알림이 갑니다.' : '이어서 상담할 내용을 입력하세요.') + '"></textarea>' +
           '<div class="att-row"><label class="cs-file" id="fbox" for="fin"><img src="assets/auth/ic-paperclip.svg" alt=""><span id="fname">파일 첨부</span><button type="button" id="fclr" hidden>삭제</button><input type="file" id="fin" accept=".jpg,.jpeg,.png,.pdf,.zip"></label><span>JPG, PNG, PDF, ZIP · 1개 · 30MB 이하</span></div>' +
           '<div class="row"><span>' + (adm ? (acc ? '회원에게는 알림과 메일로 알려드립니다.' : '비회원에게는 메일(상담 보기 링크)로 알려드립니다.' + (C.waiting(c) ? '' : ' <a href="mail-consult.html?t=' + encodeURIComponent(c.token) + '&k=reply" target="_blank" style="text-decoration:underline">보낸 메일 보기 (데모)</a>')) : '답변이 등록되면 알림과 메일로 알려드립니다.') + '</span><button class="btn primary" type="submit" id="go" disabled>' + (adm ? '답변 보내기' : '보내기') + '</button></div></form>' +
