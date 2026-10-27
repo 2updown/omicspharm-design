@@ -7,12 +7,12 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027s">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027s">
-<script src="assets/common/site.js?v=20261027s"></script>
-<script src="assets/common/consult.js?v=20261027s"></script>
-<script src="assets/common/mypage.js?v=20261027s"></script>
-<script src="assets/common/flow.js?v=20261027s"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027t">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027t">
+<script src="assets/common/site.js?v=20261027t"></script>
+<script src="assets/common/consult.js?v=20261027t"></script>
+<script src="assets/common/mypage.js?v=20261027t"></script>
+<script src="assets/common/flow.js?v=20261027t"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -179,7 +179,7 @@
       }));
   }
 
-  // 분석파트너: 셀키 매칭 후 계약된 프로젝트의 단계 (견적 요청·제출은 견적관리에서)
+  // 분석파트너: 견적 요청부터 완료까지 프로젝트 관리 한 메뉴 (2026-10-27)
   var PP = D.partnerProjects();
   // 칸: [이름, 개수, 주소, 아래 작은 글, 주황 강조]
   var cells;
@@ -187,20 +187,20 @@
     // 클라이언트: flow.js CLIENT_STEPS (시트 기준, 2026-10-26)
     cells = F.CLIENT_STEPS.map(function (t) { return [t, P.filter(function (p) { return F.clientStage(p.id) === t; }).length, 'mypage-project.html?stage=' + encodeURIComponent(t)]; });
   } else {
-    // 분석파트너: 견적(견적관리) → 프로젝트(프로젝트 관리). 보고서는 실제 단계(등록·검토·승인) 그대로
+    // 분석파트너: 견적(요청·제출) → 프로젝트 진행 → 보고서(등록·검토·승인) → 완료. 모두 프로젝트 관리 목록의 단계
     var IN = OP.canQuote() ? F.inbox(me.s.email).map(function (o) { return F.pst(o.s, me.s.email); }) : [];
     var cnt = function (re) { return IN.filter(function (t) { return re.test(t); }).length; };
-    cells = [['견적 작성', cnt(/작성 대기|임시저장|수정 요청|변경 확인 요청/), 'mypage-quote.html?t=' + encodeURIComponent('작성 필요'), '', true],
-             ['견적 제출', cnt(/제출 완료|클라이언트 검토 중/), 'mypage-quote.html?t=' + encodeURIComponent('제출 완료')]]
+    cells = [['견적 요청', cnt(/작성 대기|임시저장|수정 요청|변경 확인 요청/), 'mypage-project.html?stage=' + encodeURIComponent('견적 요청'), '', true],
+             ['견적 제출', cnt(/제출 완료|클라이언트 검토 중/), 'mypage-project.html?stage=' + encodeURIComponent('견적 제출')]]
       .concat(D.P4.map(function (t, i) { return [t, PP.filter(function (p) { return D.pStage(p) === t; }).length, 'mypage-project.html?stage=' + encodeURIComponent(t)]; }));
     var ended = cnt(/미선정|거절/);
-    if (ended) $('#flow').insertAdjacentHTML('afterend', '<a class="flow-end" href="mypage-quote.html?t=' + encodeURIComponent('종료') + '">미선정·거절 ' + ended + '건 ›</a>');
+    if (ended) $('#flow').insertAdjacentHTML('afterend', '<a class="flow-end" href="mypage-project.html?stage=' + encodeURIComponent('미선정·거절') + '">미선정·거절 ' + ended + '건 ›</a>');
   }
   // 묶음: 클라이언트 = 견적(의뢰접수·의뢰승인·견적 확인) / 진행(계약 진행 중·분석 진행 중) / 보고서(보고서 검토) / 완료(프로젝트 완료)
   //       분석파트너 = 견적(작성·제출) / 프로젝트 진행(계약 진행 중·분석 진행 중) / 보고서(보고서 등록·검토) / 완료(프로젝트 완료)
   groupFlow($('#flow'), client
     ? [['견적', 'red', pick(cells, ['의뢰접수', '의뢰승인', '견적 확인'])], ['진행', 'teal', pick(cells, ['계약 진행 중', '분석 진행 중'])], ['보고서', 'gray', pick(cells, ['보고서 검토', '보고서 승인'])], ['완료', 'blue', pick(cells, ['프로젝트 완료'])]]
-    : [['견적', 'red', pick(cells, ['견적 작성', '견적 제출'])], ['프로젝트 진행', 'teal', pick(cells, ['계약 진행 중', '분석 진행 중'])], ['보고서', 'gray', pick(cells, ['보고서 등록', '보고서 검토', '보고서 승인'])], ['완료', 'blue', pick(cells, ['프로젝트 완료'])]]);
+    : [['견적', 'red', pick(cells, ['견적 요청', '견적 제출'])], ['프로젝트 진행', 'teal', pick(cells, ['계약 진행 중', '분석 진행 중'])], ['보고서', 'gray', pick(cells, ['보고서 등록', '보고서 검토', '보고서 승인'])], ['완료', 'blue', pick(cells, ['프로젝트 완료'])]]);
 
   // 최근 프로젝트 (2026-10-22): 내가 처리할 게 있는 프로젝트를 위로 + 오른쪽에 다음 할 일. 할 게 없으면 최근 순. 제목은 그대로
   // 항목: { href, svc, st, stCls, title, sub, next, urgent, at }

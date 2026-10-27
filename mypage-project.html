@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027s">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027s">
-<script src="assets/common/site.js?v=20261027s"></script>
-<script src="assets/common/consult.js?v=20261027s"></script>
-<script src="assets/common/mypage.js?v=20261027s"></script>
-<script src="assets/common/flow.js?v=20261027s"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027t">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027t">
+<script src="assets/common/site.js?v=20261027t"></script>
+<script src="assets/common/consult.js?v=20261027t"></script>
+<script src="assets/common/mypage.js?v=20261027t"></script>
+<script src="assets/common/flow.js?v=20261027t"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -379,7 +379,15 @@
   function partnerView() {
     // 5단계(계약 진행 중 → 분석 진행 중 → 보고서 등록 → 보고서 검토 → 프로젝트 완료). 분석파트너·컨설턴트 같은 이름 (시트 기준)
     var D = OP.my, ADM = OP.session().role === 'admin', STAGES = ADM ? D.P_STAGES : D.P4, ALL = D.partnerProjects();
-    var SG = function (x) { return ADM ? x.stage : D.pStage(x); };
+    var SG = function (x) { return x.kind === 'q' || ADM ? x.stage : D.pStage(x); };
+    // 분석파트너 목록 = 견적 단계 + 프로젝트 단계 (2026-10-27: 견적관리 메뉴를 합침). 견적 건은 견적서 화면(mypage-quote.html)으로 이어짐
+    var Q_ST = { '작성 대기': '견적 요청', '임시저장': '견적 요청', '수정 요청': '견적 요청', '변경 확인 요청': '견적 요청', '제출 완료': '견적 제출', '클라이언트 검토 중': '견적 제출', '미선정': '미선정·거절', '거절': '미선정·거절' }; // 선정 = 프로젝트(계약 진행 중)로 넘어감
+    var Q_B = { '작성 대기': 'wait', '임시저장': 'wait', '수정 요청': 'wait', '변경 확인 요청': 'wait', '제출 완료': 'state', '클라이언트 검토 중': 'state', '미선정': 'done', '거절': 'done' };
+    var QL = !ADM && OP.canQuote() ? OP.flow.inbox(OP.session().email).map(function (o) {
+      var t = OP.flow.pst(o.s, OP.session().email); if (!Q_ST[t]) return null;
+      return { kind: 'q', id: o.r.id, href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, title: o.r.title, client: o.r.org || '-', samples: o.r.samples || '-', stage: Q_ST[t], pst: t, due: o.s.due, at: o.x.at || o.r.at, self: o.x.self };
+    }).filter(Boolean) : [];
+    var LIST_ST = ADM ? STAGES : ['견적 요청', '견적 제출'].concat(STAGES).concat(['미선정·거절']);
     if (OP.isPartner() && !OP.partnerVerified()) { // 미인증: 매칭·계약된 프로젝트 없음
       $('.toprow').hidden = true;
       $('#project').outerHTML = '<div class="empty"><b>진행 중인 프로젝트가 없습니다</b><p>인증된 분석파트너만 프로젝트 매칭·계약이 가능합니다.<br>' + OP.verifyHint() + '</p>' + (OP.hasBizDoc() ? '<a class="btn lg" href="mypage-verify.html">파트너 인증에서 확인</a>' : '<a class="btn lg primary" href="mypage-verify.html">사업자등록증 올리기</a>') + '</div>';
@@ -450,7 +458,8 @@
     }
 
     var qstg = new URLSearchParams(location.search).get('stage');
-    var st = { q: '', stage: STAGES.indexOf(qstg) > -1 ? qstg : '전체', sort: 'new', unread: false }; // 대시보드에서 단계 눌러 들어오면 그 단계만
+    var st = { q: '', stage: LIST_ST.indexOf(qstg) > -1 ? qstg : '전체', sort: 'new', unread: false }; // 대시보드에서 단계 눌러 들어오면 그 단계만
+    ALL = ALL.concat(QL);
     $('#project').outerHTML =
       '<form class="psearch" id="pq" role="search"><input type="search" id="pqIn" placeholder="프로젝트명을 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
       '<div class="b-tabw" id="pTabW"><button type="button" class="b-arr l" data-arr="-1" aria-label="이전 단계 보기" hidden><img src="assets/find/ic-caret-left.svg" alt=""></button><div class="b-tabs" id="pChips" role="tablist"></div><button type="button" class="b-arr r" data-arr="1" aria-label="다음 단계 보기" hidden><img src="assets/find/ic-caret-right.svg" alt=""></button></div>' +
@@ -463,7 +472,7 @@
     function draw() {
       var q = st.q.trim().toLowerCase();
       var base = ALL.filter(function (p) { return (!q || p.title.toLowerCase().indexOf(q) > -1) && (!st.unread || p.qa || p.review); });
-      $('#pChips').innerHTML = ['전체'].concat(STAGES).map(function (t) {
+      $('#pChips').innerHTML = ['전체'].concat(LIST_ST).map(function (t) {
         var n = t === '전체' ? base.length : base.filter(function (p) { return SG(p) === t; }).length;
         return '<button type="button" role="tab" data-st="' + t + '"' + (st.stage === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b></button>';
       }).join('');
@@ -471,6 +480,15 @@
         .sort(st.sort === 'due' ? function (a, b) { return (a.stage === '프로젝트 완료') - (b.stage === '프로젝트 완료') || new Date(a.due) - new Date(b.due); } : function (a, b) { return b.at - a.at; });
       $('#pTotal').innerHTML = '총 <b>' + L.length + '</b>건';
       $('#pList').innerHTML = L.map(function (x) {
+        if (x.kind === 'q') { // 견적 단계 카드: 견적 상태 + 제출 전이면 견적 마감일
+          var open = x.stage === '견적 요청', dl = Math.ceil((new Date(x.due + 'T23:59:59') - Date.now()) / 864e5);
+          return '<a class="lcard" href="' + x.href + '"><div class="head">' +
+            '<div class="row1"><div class="badges"><span class="badge tag">' + esc(x.svc) + '</span><span class="badge ' + Q_B[x.pst] + '">' + x.pst + '</span>' + (x.self ? '<span class="badge done">직접 신청</span>' : '') + '</div>' +
+              '<span class="dday">' + (open && x.due ? (dl < 0 ? '견적 마감' : '견적 마감 D-' + String(dl).padStart(2, '0')) : '') + '</span></div>' +
+            '<h3>' + esc(x.title) + '</h3></div>' +
+            '<div class="info"><div class="meta"><span>' + esc(x.client) + '</span><span><em>샘플</em>' + esc(x.samples) + '개</span>' + (x.due ? '<span><em>견적 마감일</em>' + dotd(x.due) + '</span>' : '') + '</div>' +
+            '<p class="reg">견적 요청일 ' + (x.at ? OP.my.ymd(x.at) : '-') + '</p></div></a>';
+        }
         return '<a class="lcard" href="mypage-project.html?id=' + x.id + '"><div class="head">' +
           '<div class="row1"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stBadge(x) +
             (x.qa ? '<span class="badge qa">Q&amp;A ' + x.qa + '</span>' : '') + (x.review ? '<span class="badge qa">리뷰 ' + x.review + '</span>' : '') + '</div>' +
