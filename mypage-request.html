@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028e">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028e">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261028e">
-<script src="assets/common/site.js?v=20261028e"></script>
-<script src="assets/common/consult.js?v=20261028e"></script>
-<script src="assets/common/mypage.js?v=20261028e"></script>
-<script src="assets/common/svc-spec.js?v=20261028e"></script>
-<script src="assets/common/flow.js?v=20261028e"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028g">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028g">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261028g">
+<script src="assets/common/site.js?v=20261028g"></script>
+<script src="assets/common/consult.js?v=20261028g"></script>
+<script src="assets/common/mypage.js?v=20261028g"></script>
+<script src="assets/common/svc-spec.js?v=20261028g"></script>
+<script src="assets/common/flow.js?v=20261028g"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -75,7 +75,7 @@
 
   /* 받은 견적 */
   .qt { display:flex; flex-direction:column; border-top:2px solid #000; }
-  /* 버튼이 4개(견적서 보기·수정 요청·파트너 견적 수정·클라이언트 견적서 만들기)라 한 칸에 안 들어감 → 버튼은 정보 아래 줄 오른쪽으로 (2026-10-27) */
+  /* 버튼(견적서 보기·수정 요청·클라이언트 견적서 만들기)이 많아 한 칸에 안 들어감 → 버튼은 정보 아래 줄 오른쪽으로 (2026-10-27) */
   .qt .h, .qt .r { display:grid; grid-template-columns:28px minmax(0,1.5fr) 120px minmax(0,1.1fr) 70px 90px; align-items:center; gap:12px; padding:0 12px; }
   .qt .h span:nth-child(7) { display:none; }
   .qt .h { height:44px; background:var(--gray-100); border-bottom:1px solid var(--gray-200); font-size:13px; font-weight:500; color:var(--gray-600); }
@@ -1051,7 +1051,7 @@
     var edit = s.st === 'quoting' || s.st === 'sent'; // 클라이언트가 확정하기 전까지 견적 확인·추가 전달 가능
     var badge = function (k) {
       var t = F.pst(s, k);
-      var cls = { '작성 대기': 'done', '임시저장': 'done', '제출 완료': 'state', '수정 요청': 'wait', '변경 확인 요청': 'wait', '거절': 'red', '클라이언트 검토 중': 'state', '선정': 'ok', '미선정': 'done' }[t]; if (t === '변경 확인 요청') t = '변경 확인 대기';
+      var cls = { '작성 대기': 'done', '임시저장': 'done', '제출 완료': 'state', '수정 요청': 'wait', '거절': 'red', '클라이언트 검토 중': 'state', '선정': 'ok', '미선정': 'done' }[t];
       if (s.st === 'matched' && s.P[k].status === 'sub' && !s.P[k].fwd) { t = '전달 안 함'; cls = 'done'; }
       var cqb = F.cqLast(s); if (s.st === 'sent' && cqb && cqb.base === k) { t = '선정'; cls = 'ok'; } // 이 견적으로 클라이언트 견적을 보냄 (클라이언트 확정 전)
       return '<span class="badge ' + cls + '">' + t + '</span>';
@@ -1065,11 +1065,9 @@
         '<div class="amt">' + (sub ? F.money(F.total(q).final) + (k === low ? '<span class="hl">최저가</span>' : '') + '<small>VAT 포함</small>' : '-') + (sub ? '<span class="mob">· ' + esc(q.weeks || '-') + '주</span>' : '') + '</div>' +
         '<div class="wk">' + (sub ? esc(q.weeks || '-') + '주' + (k === fast ? '<span class="hl">최단</span>' : '') : '-') + '</div>' +
         '<div class="dt">' + (x.subAt && sub ? md(x.subAt) + ' 제출' : x.status === 'dec' ? md(x.dec.at) + ' 거절' : '마감 ' + dot(s.due).slice(5)) + '</div>' +
-        '<div class="act">' + (sub ? '<button type="button" class="btn" data-doc="' + k + '">견적서 보기</button>' + (edit && !x.fwd && !x.chg ? '<button type="button" class="btn" data-rev="' + k + '">수정 요청</button>' : '') + (edit && !x.chg ? '<button type="button" class="btn" data-pe="' + k + '">파트너 견적 수정</button>' : '') + (edit && x.chg ? '<button type="button" class="btn" data-pok="' + k + '">확인 완료로 변경</button>' : '') + (edit && !x.chg && !F.cqList(s).length ? '<button type="button" class="btn primary" data-mk="' + k + '">클라이언트 견적서 만들기</button>' : '') : x.status === 'rev' && edit ? '' : '') + '</div>' +
+        '<div class="act">' + (sub ? '<button type="button" class="btn" data-doc="' + k + '">견적서 보기</button>' + (edit ? '<button type="button" class="btn" data-rev="' + k + '">수정 요청</button>' : '') + (edit && !F.cqList(s).length ? '<button type="button" class="btn primary" data-mk="' + k + '">클라이언트 견적서 만들기</button>' : '') : x.status === 'rev' && edit ? '' : '') + '</div>' +
         (x.status === 'rev' ? '<p class="note rev">수정 요청 · ' + md(x.rev.at) + ' — ' + esc(x.rev.note) + '</p>' : '') +
         (x.status === 'dec' ? '<p class="note">거절 사유 — ' + esc(x.dec.why) + '</p>' : '') +
-        (x.chg ? '<p class="note rev">변경 확인 대기 · ' + md(x.chg.at) + ' — ' + esc(x.chg.note || '') + ' <button type="button" class="tbtn xs" data-pdoc="' + k + '">변경한 견적서</button></p>' : '') +
-        ((x.chgLog || []).length ? '<p class="note">' + x.chgLog.map(function (c) { return '견적 변경 ' + (c.by === 'partner' ? '파트너 확인' : '확인 완료(컨설턴트)') + ' · ' + md(c.okAt); }).join(' / ') + '</p>' : '') +
       '</div>';
     }).join('');
     var c = cnt(s);
@@ -1097,53 +1095,7 @@
           (v.why ? '<p class="note">수정 사유 — ' + esc(v.why) + '</p>' : '') + '</div>';
       }).join('') + '</div>';
   }
-  // 파트너 견적 수정 (2026-10-26): 공급가·분석 범위·일정을 컨설턴트가 고치고 파트너에게 확인 요청 (확인하면 파트너 견적이 다음 차수)
-  function peEditor(s, k) {
-    var x = s.P[k], q0 = x.quote, cur = q0.cur || 'KRW', num = F.num;
-    var R0 = []; q0.groups.forEach(function (g) { g.lines.forEach(function (l) { R0.push({ g: g.name, d: l.d, q: num(l.q), u: l.u || 'EA', p: num(l.p), p0: num(l.p), q0: num(l.q), del: false }); }); });
-    var m = document.createElement('div');
-    m.className = 'op-confirm qmail cqm'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', '파트너 견적 수정');
-    var draw = function () {
-      return '<div class="qm-tbl"><table><thead><tr><th>구분</th><th>항목</th><th>수량</th><th>지금 단가</th><th>바꿀 단가</th><th>금액</th><th></th></tr></thead><tbody>' +
-        R0.map(function (o, i) { return '<tr' + (o.del ? ' class="del"' : '') + '><td>' + esc(o.g) + '</td><td class="l">' + (o.add ? '<input type="text" data-d="' + i + '" value="' + esc(o.d) + '" placeholder="항목 이름" style="width:100%;text-align:left">' : esc(o.d)) + '</td><td><input type="number" min="0" data-q="' + i + '" value="' + o.q + '" style="width:70px"' + (o.del ? ' disabled' : '') + '></td><td class="r">' + (o.add ? '-' : F.money(o.p0, cur)) + '</td><td><input type="number" min="0" step="1000" data-p="' + i + '" value="' + o.p + '"' + (o.del ? ' disabled' : '') + '></td><td class="r">' + (o.del ? '삭제' : F.money(o.q * o.p, cur)) + '</td><td><button type="button" class="tbtn xs" data-x="' + i + '">' + (o.del ? '되돌리기' : '삭제') + '</button></td></tr>'; }).join('') +
-        '</tbody></table></div><button type="button" class="tbtn xs" data-add style="margin-top:8px">+ 항목 추가</button>';
-    };
-    m.innerHTML = '<div class="box"><button type="button" class="qm-x" aria-label="닫기">×</button>' +
-      '<h3>파트너 견적 수정 <small>' + esc(F.partner(k).org) + ' · ' + ((x.revN || 0) + 1) + '차 견적 기준</small></h3>' +
-      '<p class="cqm-lead">공급가·분석 범위·일정이 바뀌면 분석파트너의 확인이 필요합니다. 보내면 파트너에게 확인 요청 알림이 가고, 파트너가 확인하면 다음 차수 견적이 됩니다. (OmicsPharm 수수료·클라이언트 할인은 클라이언트 견적서에서 정합니다)</p>' +
-      '<div id="peT">' + draw() + '</div>' +
-      '<div class="cqm-sum"><div><span>지금 파트너 견적 (VAT 포함)</span><b>' + F.money(F.total(q0).final, cur) + '</b></div><div><span>바꾼 견적 (VAT 포함)</span><b id="peTot"></b></div><div><span>소요 기간</span><b><input type="number" min="1" id="peWk" value="' + esc(q0.weeks || '') + '" style="width:70px;height:32px;padding:0 8px;border:1px solid var(--gray-300);border-radius:6px;font:inherit"> 주</b></div></div>' +
-      '<label class="cqm-f">변경 사유 <small>파트너에게 보입니다 (필수)</small><textarea id="peWhy" rows="2" placeholder="예) 클라이언트 요청으로 시료 수가 24개에서 30개로 늘었습니다."></textarea></label>' +
-      '<div class="cqm-acts"><button type="button" class="btn lg no">취소</button><button type="button" class="btn primary lg" id="peSend">파트너에게 확인 요청</button></div></div>';
-    document.body.appendChild(m); document.body.style.overflow = 'hidden';
-    var build = function () {
-      var G = []; R0.forEach(function (o) { if (o.del || !o.d) return; var g = G.filter(function (y) { return y.name === o.g; })[0]; if (!g) { g = { name: o.g, lines: [] }; G.push(g); } g.lines.push({ d: o.d, q: o.q, u: o.u, p: String(Math.max(0, Math.round(o.p))) }); });
-      var q = JSON.parse(JSON.stringify(q0)); q.groups = G; q.weeks = String(m.querySelector('#peWk').value || q0.weeks || ''); q.at = Date.now(); q.final = F.total(q).final; return q;
-    };
-    var calc = function () { m.querySelector('#peTot').textContent = F.money(F.total(build()).final, cur); };
-    var close = function () { m.remove(); document.body.style.overflow = ''; };
-    m.addEventListener('input', function (e) {
-      var t = e.target, i;
-      if (t.dataset.q) { i = +t.dataset.q; R0[i].q = num(t.value); } else if (t.dataset.p) { i = +t.dataset.p; R0[i].p = num(t.value); } else if (t.dataset.d) { R0[+t.dataset.d].d = t.value; }
-      if (i != null) t.closest('tr').lastElementChild.previousElementSibling.textContent = F.money(R0[i].q * R0[i].p, cur);
-      calc();
-    });
-    m.addEventListener('click', function (e) {
-      var t = e.target;
-      if (t === m || t.closest('.no') || t.closest('.qm-x')) { close(); return; }
-      if (t.closest('[data-x]')) { var i = +t.closest('[data-x]').dataset.x; if (R0[i].add) R0.splice(i, 1); else R0[i].del = !R0[i].del; m.querySelector('#peT').innerHTML = draw(); calc(); return; }
-      if (t.closest('[data-add]')) { R0.push({ g: (q0.groups[q0.groups.length - 1] || {}).name || '추가 항목', d: '', q: 1, u: 'EA', p: 0, add: true }); m.querySelector('#peT').innerHTML = draw(); calc(); var ins = m.querySelectorAll('input[data-d]'); ins[ins.length - 1].focus(); return; }
-      if (t.closest('#peSend')) {
-        var why = m.querySelector('#peWhy').value.trim(), q = build(), D = F.qdiff(q0, q);
-        if (!D.length) { OP.toast('바뀐 내용이 없습니다.'); return; }
-        if (!why) { OP.toast('변경 사유를 입력해주세요.'); m.querySelector('#peWhy').focus(); return; }
-        F.ask({ title: F.partner(k).org + '에 견적 변경 확인을 요청할까요?', desc: '바뀐 내용: ' + D.join(', ') + '. 파트너가 확인하면 ' + ((x.revN || 0) + 2) + '차 견적이 됩니다.', label: false, yes: '확인 요청' }, function () {
-          F.chgReq(id, k, q, why); close(); OP.toast('파트너에게 견적 변경 확인을 요청했습니다.'); render();
-        });
-      }
-    });
-    calc();
-  }
+  // 파트너 견적이 바뀌어야 하면(공급가·분석 범위·일정) [수정 요청]으로 파트너가 고쳐 다시 제출 (2026-10-28: 컨설턴트 직접 수정·변경 확인 요청은 없앰. 다시 제출 = 파트너 확인)
   // 클라이언트 견적 편집: 항목·수량·소요 기간은 파트너 견적 그대로, 단가·OmicsPharm 수수료·할인만 수정 (범위·일정이 바뀌면 파트너 확인 필요)
   var FEE = 'OmicsPharm 서비스', FEE_D = '분석 의뢰 관리 수수료';
   function cqEditor(s, base) {
@@ -1251,17 +1203,8 @@
         var k = t.closest('[data-doc]').dataset.doc; F.showDoc(r, s.P[k].quote, k, F.partner(k).org + ' 견적서');
       } else if (t.closest('[data-rev]')) {
         var k2 = t.closest('[data-rev]').dataset.rev;
-        F.ask({ title: F.partner(k2).org + '에 수정 요청', desc: '수정 요청한 견적은 파트너가 다시 제출할 때까지 클라이언트에게 전달할 수 없습니다.', label: '수정 요청 내용', ph: '예) 데이터 분석 항목에 Pathway 분석을 포함해 다시 견적 부탁드립니다.', yes: '수정 요청', required: true }, function (v) {
+        F.ask({ title: F.partner(k2).org + '에 수정 요청', desc: '수정 요청한 견적은 파트너가 다시 제출할 때까지 클라이언트에게 전달할 수 없습니다.', label: '수정 요청 내용', ph: '예) 전화로 협의한 대로 단가를 30만 원에서 28만 원으로 반영해 다시 제출해 주세요.', yes: '수정 요청', required: true }, function (v) {
           F.revise(id, k2, v); OP.toast('수정 요청을 보냈습니다.'); render();
-        });
-      } else if (t.closest('[data-pe]')) {
-        peEditor(s, t.closest('[data-pe]').dataset.pe);
-      } else if (t.closest('[data-pdoc]')) {
-        var pk = t.closest('[data-pdoc]').dataset.pdoc; F.showDoc(r, s.P[pk].chg.quote, pk, F.partner(pk).org + ' 변경한 견적서');
-      } else if (t.closest('[data-pok]')) {
-        var ok = t.closest('[data-pok]').dataset.pok;
-        F.ask({ title: '견적 변경을 확인 완료로 바꿀까요?', desc: F.partner(ok).org + '에서 전화·메일 등으로 확인을 받았을 때 사용합니다. 변경한 견적이 ' + ((s.P[ok].revN || 0) + 2) + '차 견적이 됩니다.', label: false, yes: '확인 완료' }, function () {
-          F.chgOk(id, ok, 'admin'); OP.toast('견적 변경을 확인 완료로 바꿨습니다.'); render();
         });
       } else if (t.closest('[data-mk]')) {
         cqEditor(s, t.closest('[data-mk]').dataset.mk);

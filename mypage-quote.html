@@ -9,13 +9,13 @@
      ?rid=프로젝트 번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028e">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028e">
-<script src="assets/common/site.js?v=20261028e"></script>
-<script src="assets/common/consult.js?v=20261028e"></script>
-<script src="assets/common/mypage.js?v=20261028e"></script>
-<script src="assets/common/flow.js?v=20261028e"></script>
-<script src="assets/common/projects-data.js?v=20261028e"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028g">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028g">
+<script src="assets/common/site.js?v=20261028g"></script>
+<script src="assets/common/consult.js?v=20261028g"></script>
+<script src="assets/common/mypage.js?v=20261028g"></script>
+<script src="assets/common/flow.js?v=20261028g"></script>
+<script src="assets/common/projects-data.js?v=20261028g"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -175,7 +175,7 @@
   var x = id !== null ? P[+id] : null;
   var dot = function (v) { return v ? String(v).replace(/-/g, '.') : '-'; };
   var dleft = function (v) { var n = Math.ceil((new Date(v + 'T23:59:59') - Date.now()) / 864e5); return n < 0 ? '마감' : 'D-' + n; };
-  var BADGE = { '작성 대기': 'wait', '임시저장': 'wait', '수정 요청': 'wait', '변경 확인 요청': 'wait', '제출 완료': 'state', '클라이언트 검토 중': 'state', '선정': 'ok', '미선정': 'done', '거절': 'done' };
+  var BADGE = { '작성 대기': 'wait', '임시저장': 'wait', '수정 요청': 'wait', '제출 완료': 'state', '클라이언트 검토 중': 'state', '선정': 'ok', '미선정': 'done', '거절': 'done' };
 
   // 미인증 분석파트너: 견적관리 이용 불가 (목록·작성 모두)
   if (!OP.canQuote()) {
@@ -191,14 +191,14 @@
     var rows = IN.map(function (o) {
       var t = F.pst(o.s, ME);
       return { t: t, at: o.x.at, html: '<div class="qrow"><a class="cover" href="mypage-quote.html?rid=' + encodeURIComponent(o.r.id) + '" aria-label="' + esc(o.r.title) + '"></a>' + SRC(o.x.self) +
-        '<span class="t">' + esc(o.r.title) + '<small>' + esc(o.r.svc) + ' · ' + esc(o.r.org || '-') + (/작성 대기|임시저장|수정 요청|변경 확인 요청/.test(t) ? ' · <em class="due">마감 ' + dot(o.s.due).slice(5) + ' (' + dleft(o.s.due) + ')</em>' : '') + '</small></span>' +
+        '<span class="t">' + esc(o.r.title) + '<small>' + esc(o.r.svc) + ' · ' + esc(o.r.org || '-') + (/작성 대기|임시저장|수정 요청/.test(t) ? ' · <em class="due">마감 ' + dot(o.s.due).slice(5) + ' (' + dleft(o.s.due) + ')</em>' : '') + '</small></span>' +
         '<span class="m st">' + t.replace('클라이언트 검토 중', '검토중').replace(/ /g, '') + '</span>' +
         '<span class="x">' + (t === '임시저장' ? '<button type="button" data-del-rid="' + esc(o.r.id) + '" data-title="' + esc(o.r.title) + '" aria-label="임시저장 삭제" title="임시저장 삭제"><i></i></button>' : '') + '</span></div>' };
     }).concat(Object.keys(Q).map(function (k) {
       var q = Q[k], p = P[+k] || {}, t = q.submitted ? '제출 완료' : '임시저장';
       return { t: t, at: q.at, self: 1, html: '<div class="qrow"><a class="cover" href="mypage-quote.html?id=' + k + '" aria-label="' + esc(p.title || '프로젝트') + '"></a>' + SRC(true) + '<span class="t">' + esc(p.title || '프로젝트') + '<small>' + esc(p.cat || '-') + ' · ' + esc(p.owner || '-') + '</small></span><span class="m st">' + t.replace('제출 완료', '제출완료') + '</span><span class="x">' + (t === '임시저장' ? '<button type="button" data-del-id="' + k + '" data-title="' + esc(p.title || '프로젝트') + '" aria-label="임시저장 삭제" title="임시저장 삭제"><i></i></button>' : '') + '</span></div>' };
     }));
-    var TABS = [['전체'], ['작성 필요', /작성 대기|임시저장|수정 요청|변경 확인 요청/], ['제출 완료', /제출 완료|클라이언트 검토 중/], ['선정', /^선정/], ['종료', /미선정|거절/]];
+    var TABS = [['전체'], ['작성 필요', /작성 대기|임시저장|수정 요청/], ['제출 완료', /제출 완료|클라이언트 검토 중/], ['선정', /^선정/], ['종료', /미선정|거절/]];
     var todoN = rows.filter(function (o) { return !o.self && TABS[1][1].test(o.t); }).length;
     card.innerHTML = '<div class="card-head"><h3>견적관리</h3></div>' +
       (todoN ? '<div class="ftodo warn"><div><b>작성이 필요한 견적 요청 ' + todoN + '건</b><p>견적 마감일 전에 견적서를 제출해주세요. 참여가 어려우면 [견적 거절]로 알려주세요.</p></div></div>' : '') +
@@ -230,7 +230,7 @@
   // ── 견적서 작성 ── (rid: 컨설턴트가 보낸 견적 요청 / id: 프로젝트 찾기에서 직접 작성)
   var R, S, X, saved, locked = false, banner = '';
   // 견적서 상태 → 프로젝트 단계 (배지·진행 단계는 단계 이름, 견적서 상태는 아래 안내 박스에서)
-  var QST = { '작성 대기': '견적 요청', '임시저장': '견적 요청', '수정 요청': '견적 요청', '변경 확인 요청': '견적 요청', '제출 완료': '견적 제출', '클라이언트 검토 중': '견적 제출', '선정': '계약 진행 중', '미선정': '미선정·거절', '거절': '미선정·거절' };
+  var QST = { '작성 대기': '견적 요청', '임시저장': '견적 요청', '수정 요청': '견적 요청', '제출 완료': '견적 제출', '클라이언트 검토 중': '견적 제출', '선정': '계약 진행 중', '미선정': '미선정·거절', '거절': '미선정·거절' };
   var QSB = { '견적 요청': 'wait', '견적 제출': 'state', '계약 진행 중': 'state', '미선정·거절': 'done' };
   if (rid) {
     R = F.req(rid); S = R && F.state(rid); X = S && S.P[ME];
@@ -244,7 +244,6 @@
       '작성 대기': ['', DUE, (X.msg || S.memo) ? '컨설턴트 메시지: ' + (X.msg || S.memo) : '', 1],
       '임시저장': ['', DUE, (X.msg || S.memo) ? '컨설턴트 메시지: ' + (X.msg || S.memo) : '', 1],
       '수정 요청': ['warn', '컨설턴트가 견적 수정을 요청했습니다.', (X.rev ? X.rev.note : '') + '\n내용을 수정해 다시 제출해주세요.', 0],
-      '변경 확인 요청': ['warn', 'OmicsPharm 컨설턴트가 견적 변경을 요청했습니다.', (X.chg ? '변경 사유: ' + X.chg.note + '\n' + F.qdiff(X.quote, X.chg.quote).map(function (d) { return '· ' + d; }).join('\n') : '') + '\n변경된 견적서를 확인하고 [변경 내용 확인]을 눌러주세요. 다른 의견이 있으면 문의하기로 알려 주세요.', 0],
       '제출 완료': ['gray', '견적서를 제출했습니다.', 'OmicsPharm 컨설턴트가 검토한 뒤 클라이언트에게 전달합니다. 수정이 필요하면 알림으로 알려드립니다.', 0],
       '클라이언트 검토 중': ['gray', '클라이언트가 견적을 검토하고 있습니다.', '컨설턴트가 견적을 클라이언트에게 전달했습니다. 선정 결과는 알림으로 알려드립니다.', 0],
       '선정': ['', '프로젝트에 선정되었습니다.', '클라이언트가 이 견적을 선택해 매칭이 완료되었습니다. 프로젝트 관리에서 계약 단계를 확인해주세요.', 0],
@@ -253,7 +252,7 @@
     }[t];
     var ROUTE = X.self ? '프로젝트 찾기에서 직접 신청한 견적입니다.' : 'OmicsPharm이 요청한 견적입니다.'; // 견적 경로 (2026-10-27)
     banner = '<div class="ftodo ' + B[0] + '"><div><b>' + esc(B[1]) + '</b>' + '<p>' + esc((B[2] ? B[2] + '\n' : '') + ROUTE) + '</p>' + '</div>' +
-      (t === '변경 확인 요청' ? '<div class="acts"><button type="button" class="btn" id="chgDoc">변경된 견적서 보기</button><button type="button" class="btn primary" id="chgOk">변경 내용 확인</button></div>' : t === '선정' ? '<div class="acts"><a class="btn primary" href="mypage-project.html?id=' + encodeURIComponent(rid) + '">프로젝트 관리로 이동</a></div>' : B[3] && !X.self ? '<div class="acts"><button type="button" class="btn" id="decline">견적 거절</button></div>' : '') + '</div>';
+      (t === '선정' ? '<div class="acts"><a class="btn primary" href="mypage-project.html?id=' + encodeURIComponent(rid) + '">프로젝트 관리로 이동</a></div>' : B[3] && !X.self ? '<div class="acts"><button type="button" class="btn" id="decline">견적 거절</button></div>' : '') + '</div>';
   } else {
     // 예전 방식: 프로젝트 찾기 목록 데이터를 의뢰처럼 보여줌
     saved = read()[id] || null; locked = !!(saved && saved.submitted);
@@ -403,13 +402,6 @@
   }
 
   // 견적서 미리보기: 지금 입력한 내용으로 A4 견적서 (컨설턴트·클라이언트가 보는 것과 같은 문서)
-  // 견적 변경 확인 (2026-10-26): 컨설턴트가 바꾼 견적을 확인하면 다음 차수 견적이 됨
-  var cdoc = document.getElementById('chgDoc'); if (cdoc) cdoc.addEventListener('click', function () { F.showDoc(R, X.chg.quote, ME, '변경된 견적서'); });
-  var cok = document.getElementById('chgOk'); if (cok) cok.addEventListener('click', function () {
-    F.ask({ title: '변경된 견적을 확인하시겠습니까?', desc: '컨설턴트가 바꾼 견적이 ' + ((X.revN || 0) + 2) + '차 견적서로 확정됩니다.', label: false, yes: '변경 내용 확인' }, function () {
-      F.chgOk(rid, ME, 'partner'); OP.flash('견적 변경 내용을 확인했습니다.'); location.reload();
-    });
-  });
   $('#preview').addEventListener('click', function () { F.showDoc(R, collect(locked), rid ? ME : '', '견적서 미리보기'); });
 
   // 탭: 한 번에 하나만 보임. 작성 대기면 의뢰내용부터, 그 외(임시저장·수정 요청·제출 후)는 견적서부터
