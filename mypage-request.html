@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028d">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028d">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261028d">
-<script src="assets/common/site.js?v=20261028d"></script>
-<script src="assets/common/consult.js?v=20261028d"></script>
-<script src="assets/common/mypage.js?v=20261028d"></script>
-<script src="assets/common/svc-spec.js?v=20261028d"></script>
-<script src="assets/common/flow.js?v=20261028d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028e">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028e">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261028e">
+<script src="assets/common/site.js?v=20261028e"></script>
+<script src="assets/common/consult.js?v=20261028e"></script>
+<script src="assets/common/mypage.js?v=20261028e"></script>
+<script src="assets/common/svc-spec.js?v=20261028e"></script>
+<script src="assets/common/flow.js?v=20261028e"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -75,7 +75,9 @@
 
   /* 받은 견적 */
   .qt { display:flex; flex-direction:column; border-top:2px solid #000; }
-  .qt .h, .qt .r { display:grid; grid-template-columns:28px minmax(0,1.5fr) 120px minmax(0,1.1fr) 70px 90px 196px; align-items:center; gap:12px; padding:0 12px; }
+  /* 버튼이 4개(견적서 보기·수정 요청·파트너 견적 수정·클라이언트 견적서 만들기)라 한 칸에 안 들어감 → 버튼은 정보 아래 줄 오른쪽으로 (2026-10-27) */
+  .qt .h, .qt .r { display:grid; grid-template-columns:28px minmax(0,1.5fr) 120px minmax(0,1.1fr) 70px 90px; align-items:center; gap:12px; padding:0 12px; }
+  .qt .h span:nth-child(7) { display:none; }
   .qt .h { height:44px; background:var(--gray-100); border-bottom:1px solid var(--gray-200); font-size:13px; font-weight:500; color:var(--gray-600); }
   .qt .h span:nth-child(4), .qt .h span:nth-child(5) { text-align:right; }
   .qt .r { min-height:64px; padding-top:12px; padding-bottom:12px; border-bottom:1px solid var(--gray-200); font-size:14px; line-height:20px; }
@@ -91,7 +93,8 @@
   .qt .amt small { display:block; font-size:12px; font-weight:400; color:var(--gray-500); }
   .qt .wk { text-align:right; white-space:nowrap; }
   .qt .dt { font-size:13px; color:var(--gray-500); white-space:nowrap; }
-  .qt .act { display:flex; justify-content:flex-end; gap:6px; }
+  .qt .act { grid-column:2 / -1; display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; }
+  .qt .act:empty { display:none; }
   .qt .act .btn { height:32px; padding:0 10px; font-size:13px; }
   .qt .note { grid-column:2 / -1; margin-top:-2px; padding:8px 12px; border-radius:6px; background:var(--gray-100); font-size:13px; line-height:20px; color:var(--gray-600); }
   .qt .note.rev { background:#fff4ed; color:#a33a00; }
