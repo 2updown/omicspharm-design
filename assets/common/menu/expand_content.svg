@@ -1,2 +1,6 @@
-<!-- Google Material Symbols · Outlined · expand_content · weight 400 (https://fonts.google.com/icons) -->
-<svg fill="#000" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M200-200v-240h80v160h160v80H200Zm480-320v-160H520v-80h240v240h-80Z"/></svg>
+<!-- Figma 2017:22156 (expand_content, Material Symbols weight 500 기반, 사용자 지정 2026-10-27) -->
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="expand_content_24dp_1F1F1F_FILL0_wght500_GRAD0_opsz24 1">
+<path id="Vector" d="M4.8625 19.1375V12.8625H7.1375V16.8625H11.1375V19.1375H4.8625ZM16.8625 11.1375V7.1375H12.8625V4.8625H19.1375V11.1375H16.8625Z" fill="black"/>
+</g>
+</svg>
