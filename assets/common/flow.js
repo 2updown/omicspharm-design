@@ -39,6 +39,8 @@
 
   // 예시 의뢰 (클라이언트 데모 계정 client@omicspharm.test 소유) — 단계별로 하나씩
   var T0 = new Date(2026, 9, 6, 10, 0).getTime();
+  // 견적 마감일 기본값 = 의뢰의 모집기한 끝. 이미 지난 날짜면(예시 의뢰는 10/6 기준) 오늘부터 2주로 (2026-10-27)
+  var futureTo = function (r) { return r.to && new Date(r.to + 'T23:59:59') >= new Date() ? r.to : ''; };
   var DEMO_REQS = [
     { id: 'PRJ-2026-0043', demo: true, at: T0 - DAY * 1, svc: '단백체 분석', title: '혈장 시료 TMT 정량 단백체 분석', org: '한결연구소', manager: '홍길동', bizDoc: '사업자등록증_한결연구소.pdf', owner: 'client@omicspharm.test', samples: '20', due: '2026-12-18', from: '2026-10-05', to: '2026-10-19', budget: '1,000만원 이상', open: '공개',
       purpose: '대조군 10명, 환자군 10명 혈장에서 차등 발현 단백질을 찾고, 후보 바이오마커를 선별하고자 합니다.',
@@ -255,7 +257,7 @@
       var r = req(id);
       return put(id, function (s) {
         if (!s.P[k]) s.P[k] = { at: Date.now(), status: 'req', self: true };
-        if (s.st === 'review') { s.st = 'quoting'; s.reqAt = Date.now(); s.due = s.due || r.to || iso(Date.now() + DAY * 14); }
+        if (s.st === 'review') { s.st = 'quoting'; s.reqAt = Date.now(); s.due = s.due || futureTo(r) || iso(Date.now() + DAY * 14); }
       });
     },
     // 견적을 받을 수 있는 단계 (승인 후 ~ 클라이언트에게 전달 전)
@@ -305,7 +307,7 @@
     send: function (id, keys, due, msg) {
       var r = req(id);
       return put(id, function (s) {
-        if (s.st === 'review') { s.st = 'quoting'; s.reqAt = Date.now(); s.due = s.due || due || r.to || iso(Date.now() + DAY * 14); }
+        if (s.st === 'review') { s.st = 'quoting'; s.reqAt = Date.now(); s.due = s.due || due || futureTo(r) || iso(Date.now() + DAY * 14); }
         keys.forEach(function (k) {
           if (s.P[k]) return;
           var p = partner(k), x = { at: Date.now(), status: 'req', msg: msg || '' };

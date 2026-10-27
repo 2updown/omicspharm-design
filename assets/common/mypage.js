@@ -79,7 +79,8 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     partnerProjects: function () {
       var s = OP.session(); if (!s || !(s.role === 'admin' || OP.partnerVerified())) return [];
       var M = OP.flow ? OP.flow.matched(s.role === 'admin' ? null : s.email) : [];
-      return M.concat(PARTNER_DEMO);
+      // 예시 프로젝트도 분석파트너가 결과를 올리면 '보고서 등록'으로 (2026-10-27, 새로고침하면 예시 초기화)
+      return M.concat(PARTNER_DEMO.map(function (p) { var raw = OP.flow && (OP.flow.state(p.id).raw || []).length; return raw && p.stage === '분석 진행 중' ? Object.assign({}, p, { stage: '보고서 등록' }) : p; }));
     },
     esc: esc, ymd: ymd, ymdhm: ymdhm,
     // 이전 양식(V4 입력 기준 이전)으로 제출된 의뢰는 정리하고 V4 양식 의뢰만 보여줌
