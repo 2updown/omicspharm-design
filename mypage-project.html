@@ -235,6 +235,7 @@
   .lcard .row1 .dday { margin-left:auto; }
   /* 할 일 (2026-10-27): 배지는 분석 서비스 + 프로젝트 단계만, 세부 상태는 오른쪽에 버튼(할 일) 또는 회색 글자 — 대시보드 최근 프로젝트와 같음 */
   .lcard .row1 .nxb { flex:none; height:32px; margin-left:12px; padding:0 12px; font-size:13px; line-height:18px; }
+  .lcard .row1 .badges + .nxb, .lcard .row1 .badges + .nx { margin-left:auto; }
   .lcard .row1 .nx { flex:none; margin-left:12px; font-size:13px; font-weight:500; line-height:18px; color:var(--gray-500); }
   .lcard h3 { font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
   .lcard .info { display:flex; flex-direction:column; gap:10px; }
@@ -515,7 +516,7 @@
         return '<a class="lcard" href="mypage-project.html?id=' + x.id + '"><div class="head">' +
           '<div class="row1"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stBadge(x) +
             '</div>' + // Q&A·리뷰 배지는 뺌 (배지 = 분석 서비스 + 단계만, Q&A 게시판도 없앰)
-            '<span class="dday">' + (x.stage === '프로젝트 완료' ? '완료' : dday(x.due)) + '</span>' + (ADM ? '' : nextHTML(pNext(x))) + '</div>' +
+            (ADM ? '' : nextHTML(pNext(x))) + '</div>' + // 계약 후 카드는 납기 D-n 안 보임 (납기일은 정보 줄에)
           '<h3>' + esc(x.title) + '</h3></div>' +
           '<div class="info"><div class="meta">' + (ADM ? '' : '<span class="route">' + (routeOf(x) ? '직접 신청' : 'OmicsPharm 매칭 요청') + '</span>') + '<span>' + esc(x.client) + '</span><span><em>샘플</em>' + x.samples + '개</span><span><em>계약금액</em>' + esc(x.amount) + '</span><span><em>납기일</em>' + dotd(x.due) + '</span></div>' +
           '<p class="reg">계약일 ' + dotd(x.contract) + '</p></div></a>';
