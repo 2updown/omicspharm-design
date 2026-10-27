@@ -689,7 +689,7 @@
         (RP_STAGE[id] && RP_STAGE[id].length ? '<ul class="rp-stage">' + RP_STAGE[id].map(function (n, j) { return '<li><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(n) + '</span><button type="button" data-rp="rm" data-j="' + j + '" aria-label="' + esc(n) + ' 빼기">✕</button></li>'; }).join('') + '</ul>' : '') +
         '<div class="rp-up-go"><button type="button" class="btn primary" data-rp="raw"' + (RP_STAGE[id] && RP_STAGE[id].length ? '' : ' disabled') + '>결과 등록</button></div></div>');
       h += raw.length ? raw.map(function (x, i) {
-        return '<div class="rp-item"><div class="rp-ih"><b>' + (i + 1) + '차 결과</b><em>' + ymd(x.at) + ' 등록</em><span class="badge ' + (x.sent ? 'done">클라이언트 전달 완료' : 'wait">OmicsPharm 검토 중') + '</span></div>' + files(x.files) + '</div>';
+        return '<div class="rp-item"><div class="rp-ih"><b>' + (i + 1) + '차 결과</b><em>' + ymd(x.at) + ' 등록</em><span class="badge ' + (x.sent ? 'done">클라이언트 전달 완료' : 'state">OmicsPharm 검토 중') + '</span></div>' + files(x.files) + '</div>';
       }).reverse().join('') + (fin ? '' : '<p class="rp-more">결과를 다시 보내야 하면 [문의하기]로 OmicsPharm에 알려 주세요.</p>') : '';
       return h + '</section>';
     }

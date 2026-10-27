@@ -7,12 +7,12 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027m">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027m">
-<script src="assets/common/site.js?v=20261027m"></script>
-<script src="assets/common/consult.js?v=20261027m"></script>
-<script src="assets/common/mypage.js?v=20261027m"></script>
-<script src="assets/common/flow.js?v=20261027m"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027o">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027o">
+<script src="assets/common/site.js?v=20261027o"></script>
+<script src="assets/common/consult.js?v=20261027o"></script>
+<script src="assets/common/mypage.js?v=20261027o"></script>
+<script src="assets/common/flow.js?v=20261027o"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -209,7 +209,7 @@
     IT = P.map(function (p) {
       var x = F.state(p.id), t = F.clientStage(p.id), rep = (x.rep || []).length;
       var nx = t === '견적 확인' ? '최종 견적 확인 필요' : rep && !x.fin ? '결과보고서 확인 필요' : x.fin && !x.rate ? '만족도 평가 남기기' : '';
-      return { href: 'mypage-project.html?id=' + encodeURIComponent(p.id) + (t === '견적 확인' ? '&tab=quote' : rep ? '&tab=report' : ''), svc: p.svc, st: t, stCls: t === '계약 진행 중' ? 'ok' : t === '견적 확인' ? 'wait' : t === '프로젝트 완료' ? 'done' : 'state', title: p.title, sub: D.ymd(p.at), next: nx, urgent: !!nx, at: p.at };
+      return { href: 'mypage-project.html?id=' + encodeURIComponent(p.id) + (t === '견적 확인' ? '&tab=quote' : rep ? '&tab=report' : ''), svc: p.svc, st: t, stCls: t === '견적 확인' || t === '보고서 검토' ? 'wait' : t === '프로젝트 완료' ? 'done' : 'state', title: p.title, sub: D.ymd(p.at), next: nx, urgent: !!nx, at: p.at };
     });
   } else if (admin) {
     // 컨설턴트: 프로젝트 관리 목록과 같은 다음 할 일 (mypage-request.html)
@@ -218,7 +218,7 @@
       if (x.cancel) return null;
       var nx = x.st === 'review' ? (x.ok ? '견적 요청 가능' : '의뢰 승인 필요') : x.st === 'quoting' ? (sub ? '견적 ' + sub + '건 도착 · 전달 가능' : '') : x.st === 'matched' && !x.ct ? '계약서 등록 필요' : rw ? 'AI 보고서 초안 검토 필요' : '';
       var urgent = (x.st === 'review' && !x.ok) || (x.st === 'matched' && !x.ct) || rw || (x.st === 'quoting' && sub > 0);
-      return { href: 'mypage-request.html?id=' + encodeURIComponent(r.id), svc: r.svc, st: F.adminStage(r.id), stCls: 'state', title: r.title, sub: r.org || '-', next: nx, urgent: urgent, at: r.at };
+      return { href: 'mypage-request.html?id=' + encodeURIComponent(r.id), svc: r.svc, st: F.adminStage(r.id), stCls: F.adminStage(r.id) === '의뢰접수' ? 'wait' : F.adminStage(r.id) === '프로젝트 완료' ? 'done' : 'state', title: r.title, sub: r.org || '-', next: nx, urgent: urgent, at: r.at };
     }).filter(Boolean);
   } else {
     // 분석파트너: 견적 작성이 필요한 요청 + 계약된 프로젝트 (분석 중이면 결과 등록)

@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027m">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027m">
-<script src="assets/common/site.js?v=20261027m"></script>
-<script src="assets/common/consult.js?v=20261027m"></script>
-<script src="assets/common/mypage.js?v=20261027m"></script>
-<script src="assets/common/flow.js?v=20261027m"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027o">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027o">
+<script src="assets/common/site.js?v=20261027o"></script>
+<script src="assets/common/consult.js?v=20261027o"></script>
+<script src="assets/common/mypage.js?v=20261027o"></script>
+<script src="assets/common/flow.js?v=20261027o"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -50,10 +50,6 @@
   .prow { display:flex; align-items:center; justify-content:space-between; gap:16px; }
   .prow:has(.pright) { flex-wrap:wrap; row-gap:12px; } .prow:has(.pright) .ptitle { flex:1 1 360px; min-width:0; } /* 제목이 길면 납기일·문의하기는 아래 줄로 */
   .badges { display:flex; gap:8px; }
-  .badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; }
-  .badge.tag { border:1px solid var(--teal-600); color:var(--teal-600); }
-  .badge.state { border:1px solid var(--blue-600); color:var(--blue-600); background:var(--blue-50); }
-  .badge.draft { border:1px solid var(--gray-400); color:var(--gray-600); background:var(--gray-50); } /* 임시저장 (제출 전) */
   .reg { font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
   .ptitle { display:flex; align-items:center; gap:8px; font-size:24px; font-weight:600; line-height:32px; letter-spacing:-.24px; }
   /* 뒤로 가기: 누르는 영역 36px + hover 배경 */
@@ -97,8 +93,7 @@
   .unread b { color:var(--orange-600); font-weight:600; }
   .unread label { display:inline-flex; align-items:center; gap:6px; flex:none; font-weight:500; color:var(--gray-700); cursor:pointer; }
   .unread input { width:16px; height:16px; accent-color:var(--teal-600); }
-  .badge.qa { background:var(--orange-600); color:#fff; border:1px solid var(--orange-600); }
-  .badge.fin { border:1px solid var(--gray-300); color:var(--gray-600); background:var(--gray-100); }
+  .badge.qa { background:#fd4900; color:#fff; } /* DS fill orange */
   /* 단계 진행 표시 */
   .stages { display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:4px; }
   .stages li { list-style:none; display:flex; flex-direction:column; gap:8px; font-size:13px; font-weight:500; line-height:18px; color:var(--gray-400); text-align:center; }
@@ -501,7 +496,7 @@
 
   // 클라이언트 단계 (flow.js CLIENT_STEPS): 의뢰접수 → 의뢰승인 → 견적 확인 → 계약 진행 중 → 분석 진행 중 → 보고서 검토 → 프로젝트 완료
   var F = OP.flow;
-  var stB = function (pid) { var t = F.clientStage(pid); return '<span class="badge ' + (t === '계약 진행 중' || t === '분석 진행 중' ? 'ok' : t === '프로젝트 완료' ? 'done' : 'state') + '">' + t + '</span>'; };
+  var stB = function (pid) { var t = F.clientStage(pid); return '<span class="badge ' + (t === '프로젝트 완료' ? 'done' : t === '견적 확인' || t === '보고서 검토' ? 'wait' : 'state') + '">' + t + '</span>'; };
   var newQ = function (pid) { var s = F.state(pid); return s.st === 'sent' ? '<span class="badge wait">견적 도착</span>' : ''; };
   var fwdKeys = function (s) { return Object.keys(s.P).filter(function (k) { return s.P[k].fwd && s.P[k].status === 'sub'; }); };
 
