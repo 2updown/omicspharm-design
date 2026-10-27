@@ -50,7 +50,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
   };
 
   // 분석파트너 프로젝트 관리 예시: 셀키 매칭 후 계약된 프로젝트만 (계약 진행 중 → 분석 진행 중 → 보고서 등록 → 보고서 검토 → 프로젝트 완료)
-  var P_STAGES = ['계약 진행 중', '분석 진행 중', '보고서 등록', '보고서 검토', '보고서 승인', '프로젝트 완료']; // 2026-10-26 시트 이름 (보고서 등록 = 결과를 올려 OmicsPharm 검토 중, 보고서 검토 = 클라이언트 확인 중)
+  var P_STAGES = ['계약 진행 중', '분석 진행 중', '보고서 등록', '보고서 검토', '프로젝트 완료']; // 2026-10-26 시트 이름 (보고서 등록 = 결과를 올려 OmicsPharm 검토 중, 보고서 검토 = 클라이언트 확인 중)
   var PARTNER_DEMO = [
     { id: 'PRJ-2026-0037', svc: 'Glycoproteomics', stage: '계약 진행 중', title: '항체 의약품 N-glycan 당쇄 프로파일링', client: '그린셀바이오', samples: 6, amount: '920만원', contract: '2026-09-26', due: '2026-12-05', at: new Date(2026, 8, 26).getTime(), qa: 0 },
     { id: 'PRJ-2026-0038', svc: 'Metabolomics', stage: '분석 진행 중', title: '대장암 환자 혈청 대사체 프로파일링', client: '해솔대학교 의과대학', samples: 48, amount: '1,850만원', contract: '2026-09-12', due: '2026-11-20', at: new Date(2026, 8, 12).getTime(), qa: 1 },
