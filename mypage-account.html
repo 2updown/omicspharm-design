@@ -8,12 +8,12 @@
 <!-- 마이페이지 > 내 정보 관리 (Figma 시안 없음). 기본 정보 / 기관 정보(클라이언트) / 비밀번호 변경 / 회원 탈퇴. 알림 설정은 없음 (기존 사이트에 없고 가입 때도 받지 않음).
      분석파트너의 사업자등록증·분석 서비스는 아래 카드 메뉴(파트너 인증 mypage-verify.html, 분석 서비스 정보 mypage-service.html)로 옮김.
      데모: 저장은 이 브라우저 localStorage(op.accounts)에만 된다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027zs">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zs">
-<script src="assets/common/site.js?v=20261027zs"></script>
-<script src="assets/common/consult.js?v=20261027zs"></script>
-<script src="assets/common/mypage.js?v=20261027zs"></script>
-<script src="assets/common/flow.js?v=20261027zs"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027zt">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zt">
+<script src="assets/common/site.js?v=20261027zt"></script>
+<script src="assets/common/consult.js?v=20261027zt"></script>
+<script src="assets/common/mypage.js?v=20261027zt"></script>
+<script src="assets/common/flow.js?v=20261027zt"></script>
 <style>
   .card form { display:flex; flex-direction:column; gap:20px; }
   /* 표 형식 입력 (문의하기·프로젝트 의뢰와 동일) */
@@ -32,6 +32,7 @@
   .phwrap { max-width:420px; }
   .help { font-size:12px; line-height:18px; color:var(--gray-500); }
   .msg { font-size:12px; line-height:18px; color:var(--red-600); }
+  .help.bad { color:var(--red-600); } /* 규칙 안내 문구를 그대로 빨갛게 (같은 문장을 오류로 한 번 더 띄우지 않음) */
   .actions { display:flex; justify-content:flex-end; }
 
   .svcs { display:flex; flex-wrap:wrap; gap:8px; padding:4px 0; }
@@ -363,10 +364,11 @@
     });
   }
 
-  // 기관 정보 (분석파트너, 2026-10-26): 보기 전용. 수정·인증 심사는 [파트너 인증] 한 곳에서만 → 제목 옆 [파트너 인증에서 수정]
+  // 기관 정보 (분석파트너): 보기 전용. 수정·인증 심사는 [파트너 인증] 메뉴에서 → 클라이언트처럼 아래 안내 박스 (2026-10-27, 제목 옆 버튼은 뺌)
   if (partner) {
     $('#secOrg').hidden = false; $('#rowDoc').hidden = false; $('#orgActions').hidden = true;
-    $('#secOrg .card-head').insertAdjacentHTML('beforeend', '<a class="btn line" href="mypage-verify.html" style="height:36px;padding:0 14px">파트너 인증에서 수정</a>');
+    $('#docLock').hidden = false;
+    $('#docLock .t span').innerHTML = '기관 정보와 사업자등록증은 <a href="mypage-verify.html">파트너 인증</a> 메뉴에서 관리합니다. 변경이 필요하면 파트너 인증 메뉴를 확인하거나 <a href="contact.html?type=service">문의하기</a>로 알려 주세요.';
     $('#ceo').value = acc.ceo || ''; $('#bizno').value = acc.bizno || ''; $('#addr').value = acc.addr || ''; $('#addr2').value = acc.addr2 || '';
     ['#ceo', '#bizno', '#addr', '#addr2'].forEach(function (k) { $(k).disabled = true; $(k).placeholder = '-'; }); document.querySelector('#secOrg .addr .btn').disabled = true;
     $('#docName').classList.toggle('none', !acc.bizDoc); $('#docName').innerHTML = '<span>' + OP.my.esc(acc.bizDoc || '등록된 파일 없음') + '</span>';
@@ -420,12 +422,15 @@
     var cur = (OP.account(email) || {}).pw;
     if (!p0.value) { err(p0, '현재 비밀번호를 입력해주세요.'); ok = false; }
     else if (cur && p0.value !== cur) { err(p0, '현재 비밀번호가 일치하지 않습니다.'); ok = false; } else err(p0, '');
-    if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,20}$/.test(p1.value)) { err(p1, '8~20자, 영문·숫자·특수문자를 각각 1자 이상 포함해주세요.'); ok = false; } // 회원가입과 같은 규칙: 8~20자 + 영문·숫자·특수문자 각 1자 이상
+    // 회원가입과 같은 규칙: 8~20자 + 영문·숫자·특수문자 각 1자 이상. 어기면 아래 안내 문구만 빨갛게 (2026-10-27)
+    var rOk = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,20}$/.test(p1.value), hp = p1.parentNode.querySelector('.help');
+    hp.classList.toggle('bad', !rOk);
+    if (!rOk) { err(p1, ''); p1.classList.add('bad'); ok = false; }
     else if (p1.value === p0.value) { err(p1, '현재 비밀번호와 다른 비밀번호를 입력해주세요.'); ok = false; } else err(p1, '');
     if (p2.value !== p1.value || !p2.value) { err(p2, '새 비밀번호가 일치하지 않습니다.'); ok = false; } else err(p2, '');
     if (!ok) return;
     OP.saveAccount(email, { pw: p1.value });
-    this.reset();
+    this.reset(); $('#pw1').parentNode.querySelector('.help').classList.remove('bad');
     OP.toast('비밀번호가 변경되었습니다.');
   });
 
