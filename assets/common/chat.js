@@ -2,7 +2,7 @@
    - 오른쪽 아래 챗봇 버튼 / 프로젝트 상세 제목 줄 [문의하기]를 누르면 site.js가 이 파일을 불러와 OP.chat.open(ctx)
    - ctx = { key, cat, no, title } 이면 그 프로젝트 문의, 없으면 일반 상담
    - 주제 버튼 → 내용 입력 → 접수. 대화는 계정·프로젝트별로 이 브라우저(op.pchat)에 저장되고
-     마이페이지 상담내역(op.inquiries, 챗봇 문의)에도 남는다 (2026-10-27 문의내역 → 상담내역)
+     마이페이지 문의내역(op.inquiries)에도 '프로젝트 문의' / '상담 문의'로 남는다
    - 공개 프로젝트 상세(omicspharm-project-detail-prot.html)는 같은 모양의 창을 페이지 안에 따로 가지고 있음 */
 (function () {
   var OP = window.OP = window.OP || {};
@@ -67,7 +67,7 @@
     var el = document.createElement('div');
     el.className = 'pq-m' + (m.me ? ' me' : '');
     var file = m.file ? '<div class="file">' + CLIP.replace(/20/g, '14') + esc(m.file) + '</div>' : '';
-    var done = m.done ? '<dl class="pq-done"><div><dt>접수번호</dt><dd>' + esc(m.done) + '</dd></div><div><dt>주제</dt><dd>' + esc(th.topic) + '</dd></div><a href="mypage-consult.html?q=' + encodeURIComponent(m.done) + '">상담내역에서 보기 ›</a></dl>' : '';
+    var done = m.done ? '<dl class="pq-done"><div><dt>접수번호</dt><dd>' + esc(m.done) + '</dd></div><div><dt>주제</dt><dd>' + esc(th.topic) + '</dd></div><a href="mypage-inquiry.html?id=' + encodeURIComponent(m.done) + '">문의내역에서 보기 ›</a></dl>' : '';
     el.innerHTML = (m.me ? '' : '<span class="av" aria-hidden="true"></span>') +
       '<div>' + (m.me ? '' : '<span class="who">' + (m.who || 'OmicsPharm') + '</span>') + (m.t ? '<div class="bb">' + esc(m.t) + file + '</div>' : '') + done + '</div>' +
       '<time>' + hm(m.at) + '</time>';
@@ -155,7 +155,7 @@
       L.forEach(function (q) { if (q.id === th.qid) { q.body += '\n\n' + t; if (f && !q.file) q.file = f; } });
     }
     try { localStorage.setItem('op.inquiries', JSON.stringify(L.slice(0, 50))); } catch (e) {}
-    if (first) bot({ t: '문의가 접수되었습니다.\n컨설턴트가 확인 후 이 대화창과 마이페이지 상담내역으로 답변드립니다. 추가로 전할 내용이 있으면 이어서 보내주세요.', done: th.qid });
+    if (first) bot({ t: '문의가 접수되었습니다.\n컨설턴트가 확인 후 이 대화창과 마이페이지 문의내역으로 답변드립니다. 추가로 전할 내용이 있으면 이어서 보내주세요.', done: th.qid });
   }
   OP.chat = { open: open, close: close, isOpen: isOpen };
 })();

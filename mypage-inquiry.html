@@ -4,17 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
-<title>프로젝트 문의내역 · 마이페이지 · OmicsPharm</title>
-<!-- 마이페이지 > 프로젝트 문의내역 (2026-10-27, Figma 시안 없음). 예전 '문의내역'(챗봇 문의)은 상담내역으로 옮기고, 이 메뉴는 프로젝트별 대화만.
+<title>문의내역 · 마이페이지 · OmicsPharm</title>
+<!-- 마이페이지 > 문의내역(회원) · 프로젝트 문의내역(컨설턴트) (2026-10-27, Figma 시안 없음, 방향만 합의 · 이어서 정리 예정).
+     회원: Contact Us 상담 + 프로젝트별 대화를 한 목록으로. 컨설턴트: 프로젝트별 대화만 (Contact Us는 상담내역). 챗봇(FAB)은 CS봇 그대로, 목록에 넣지 않음
      - 프로젝트 상세 [문의하기]로 시작한 대화 (한 사람당 프로젝트 하나에 대화 하나, 대화 화면은 mypage-consult.html?id=)
      - 의뢰할 때 연결한 Contact Us 상담은 그 대화 맨 위에 '의뢰 전 상담'으로 붙음. 아직 대화가 없으면 '의뢰 전 상담'만 있는 줄로 보임
      - 컨설턴트: 전체 프로젝트 문의 목록 (?project= 이면 그 프로젝트만) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027zi">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zi">
-<script src="assets/common/site.js?v=20261027zi"></script>
-<script src="assets/common/consult.js?v=20261027zi"></script>
-<script src="assets/common/mypage.js?v=20261027zi"></script>
-<script src="assets/common/flow.js?v=20261027zi"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027zj">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zj">
+<script src="assets/common/site.js?v=20261027zj"></script>
+<script src="assets/common/consult.js?v=20261027zj"></script>
+<script src="assets/common/mypage.js?v=20261027zj"></script>
+<script src="assets/common/flow.js?v=20261027zj"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
   .cs-list { border-top:2px solid #000; }
@@ -62,7 +63,7 @@
     var p = OP.my.partnerProjects().filter(function (x) { return x.id === rid; })[0];
     return p ? { title: p.title, svc: OP.my.svcKo(p.svc) } : { title: rid, svc: '' };
   };
-  var badge = function (c) { return C.waiting(c) ? '<span class="badge wait">답변대기</span>' : '<span class="badge done">답변완료</span>'; };
+  var badge = function (c) { return c.link ? '<span class="badge done">의뢰 연결</span>' : C.waiting(c) ? '<span class="badge wait">답변대기</span>' : '<span class="badge done">답변완료</span>'; };
   var who = function (m, c) { return m.by === 'admin' ? 'OmicsPharm 컨설턴트: ' : adm ? c.name + ': ' : '나: '; };
   var threads = (adm ? C.all() : C.mine()).filter(C.isProj);
 
@@ -91,8 +92,10 @@
     return;
   }
 
-  // 회원: 내 프로젝트 문의 + 대화는 아직 없지만 의뢰 전 상담이 연결된 프로젝트
-  var rows = threads.map(function (c) { return { c: c, rid: c.rid, at: C.lastAt(c), wait: C.waiting(c) }; });
+  // 회원 '문의내역' = Contact Us 상담(의뢰에 연결된 것은 프로젝트 쪽으로) + 프로젝트 문의 + 대화는 아직 없지만 의뢰 전 상담이 연결된 프로젝트
+  document.title = '문의내역 · 마이페이지 · OmicsPharm';
+  var rows = threads.map(function (c) { return { c: c, rid: c.rid, at: C.lastAt(c), wait: C.waiting(c) }; })
+    .concat(C.mine().filter(function (c) { return !C.isProj(c) && !c.link; }).map(function (c) { return { g: c, at: C.lastAt(c), wait: C.waiting(c) }; }));
   var has = rows.map(function (o) { return o.rid; });
   C.mine().filter(function (c) { return c.link && has.indexOf(c.link) < 0; }).forEach(function (c) {
     var o = rows.filter(function (x) { return !x.c && x.rid === c.link; })[0];
@@ -101,21 +104,24 @@
   rows.sort(function (a, b) { return b.at - a.at; });
   var f = 'all', T = [['all', '전체'], ['wait', '답변대기'], ['done', '답변완료']];
   var ok = function (o, k) { return k === 'all' || (k === 'wait') === o.wait; };
-  $('#card').innerHTML = '<div class="card-head"><h3>프로젝트 문의내역</h3></div>' +
-    '<div class="bar"><div class="chips" id="chips" role="tablist"></div><a class="btn" href="mypage-project.html">프로젝트 관리</a></div>' +
-    '<p class="lead">프로젝트 상세의 [문의하기]로 남긴 대화가 프로젝트별로 쌓입니다. 의뢰할 때 연결한 상담도 함께 볼 수 있습니다.</p><div id="list"></div>';
+  $('#card').innerHTML = '<div class="card-head"><h3>문의내역</h3></div>' +
+    '<div class="bar"><div class="chips" id="chips" role="tablist"></div><a class="btn primary" href="contact.html">새 문의하기</a></div>' +
+    '<p class="lead">Contact Us로 남긴 상담과 프로젝트 상세의 [문의하기]로 남긴 대화가 여기에 쌓입니다. 상담을 의뢰에 연결하면 그 프로젝트의 문의로 이어집니다.</p><div id="list"></div>';
   var draw2 = function () {
     $('#chips').innerHTML = T.map(function (t) { return '<button type="button" role="tab" data-f="' + t[0] + '"' + (f === t[0] ? ' class="on" aria-selected="true"' : '') + '>' + t[1] + '<span>' + rows.filter(function (o) { return ok(o, t[0]); }).length + '</span></button>'; }).join('');
     var L = rows.filter(function (o) { return ok(o, f); });
     $('#list').innerHTML = L.length ? '<div class="cs-list">' + L.map(function (o) {
+      if (o.g) { var g = o.g, gm = g.msgs[g.msgs.length - 1];
+        return '<a class="cs-row" href="mypage-consult.html?id=' + encodeURIComponent(g.id) + '"><span class="st">' + badge(g) + '</span>' +
+          '<span class="mid"><span class="t">' + esc(g.title) + '</span><span class="sub">상담 · ' + esc(g.type) + ' · ' + who(gm, g) + esc(gm.text.replace(/\s+/g, ' ')) + '</span></span><span class="dt">' + C.ymd(o.at) + '</span></a>'; }
       var P = projOf(o.rid);
       if (!o.c) return '<a class="cs-row" href="mypage-consult.html?project=' + encodeURIComponent(o.rid) + '"><span class="st"><span class="badge done">상담 연결</span></span>' +
-        '<span class="mid"><span class="t">' + esc(P.title) + '</span><span class="sub">' + esc(P.svc) + ' · 의뢰 전 상담 ' + o.n + '건 연결 · 아직 프로젝트 문의는 없습니다</span></span><span class="dt">' + C.ymd(o.at) + '</span></a>';
+        '<span class="mid"><span class="t">' + esc(P.title) + '</span><span class="sub">프로젝트 문의 · ' + esc(P.svc) + ' · 의뢰 전 상담 ' + o.n + '건 연결 · 아직 프로젝트 문의는 없습니다</span></span><span class="dt">' + C.ymd(o.at) + '</span></a>';
       var c = o.c, m = c.msgs[c.msgs.length - 1], pre = C.pre(c.rid, me.s.email).length;
       return '<a class="cs-row" href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '"><span class="st">' + badge(c) + '</span>' +
-        '<span class="mid"><span class="t">' + esc(P.title) + '</span><span class="sub">' + esc(c.title) + (pre ? ' · 의뢰 전 상담 ' + pre + '건' : '') + ' · ' + who(m, c) + esc(m.text.replace(/\s+/g, ' ')) + '</span></span>' +
+        '<span class="mid"><span class="t">' + esc(P.title) + '</span><span class="sub">프로젝트 문의 · ' + esc(c.title) + (pre ? ' · 의뢰 전 상담 ' + pre + '건' : '') + ' · ' + who(m, c) + esc(m.text.replace(/\s+/g, ' ')) + '</span></span>' +
         '<span class="dt">' + C.ymd(o.at) + '</span></a>';
-    }).join('') + '</div>' : '<div class="empty"><b>' + (f === 'all' ? '프로젝트 문의가 없습니다' : '해당하는 문의가 없습니다') + '</b><p>프로젝트 상세에서 [문의하기]를 누르면 OmicsPharm 컨설턴트에게 문의할 수 있습니다.</p></div>';
+    }).join('') + '</div>' : '<div class="empty"><b>' + (f === 'all' ? '문의 내역이 없습니다' : '해당하는 문의가 없습니다') + '</b><p>궁금한 점은 Contact Us나 프로젝트 상세의 [문의하기]로 남겨주세요.</p></div>';
   };
   $('#chips').addEventListener('click', function (e) { var b = e.target.closest('[data-f]'); if (b) { f = b.dataset.f; draw2(); } });
   draw2();

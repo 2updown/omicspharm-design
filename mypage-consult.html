@@ -10,13 +10,13 @@
        처리상태는 마지막 메시지로 자동(답변대기/답변완료), 처리내용 → '상담 기록'(컨설턴트만 보임), 답변은 대화로 문의자에게 보이고 메일로도 알림
      회원(클라이언트·분석파트너): 내 상담 목록(+ 챗봇 문의) → 대화 + 이어서 작성.
      2026-10-27: 프로젝트별 대화(?project=, pj)는 메뉴 '프로젝트 문의내역'(mypage-inquiry.html)에서 열리고 대화 화면만 여기를 씀. 의뢰에 연결된 상담(link)은 끝난 대화로 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027zi">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zi">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261027zi">
-<script src="assets/common/site.js?v=20261027zi"></script>
-<script src="assets/common/consult.js?v=20261027zi"></script>
-<script src="assets/common/mypage.js?v=20261027zi"></script>
-<script src="assets/common/flow.js?v=20261027zi"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027zj">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zj">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261027zj">
+<script src="assets/common/site.js?v=20261027zj"></script>
+<script src="assets/common/consult.js?v=20261027zj"></script>
+<script src="assets/common/mypage.js?v=20261027zj"></script>
+<script src="assets/common/flow.js?v=20261027zj"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
   .cs-list { border-top:2px solid #000; }
@@ -66,9 +66,10 @@
   var Q = new URLSearchParams(location.search), id = Q.get('id'), pid = Q.get('project'), qid = Q.get('q');
   // 메뉴 (2026-10-27): 프로젝트별 대화는 '프로젝트 문의내역', 그 외(Contact Us · 챗봇 문의)는 '상담내역'
   var c0 = id && C.get(id), PJ = !!pid || !!(c0 && C.isProj(c0));
-  var me = OP.mypage(PJ ? 'inquiry' : 'consult'); if (!me) return;
+  var ses0 = OP.session && OP.session(); // 회원은 메뉴 '문의내역' 하나 (상담 + 프로젝트 문의), 컨설턴트만 상담내역 / 프로젝트 문의내역으로 나눔
+  var me = OP.mypage(PJ || (ses0 && ses0.role !== 'admin') ? 'inquiry' : 'consult'); if (!me) return;
   var adm = me.s.role === 'admin';
-  if (PJ) document.title = '프로젝트 문의내역 · 마이페이지 · OmicsPharm';
+  if (!adm) document.title = '문의내역 · 마이페이지 · OmicsPharm'; else if (PJ) document.title = '프로젝트 문의내역 · 마이페이지 · OmicsPharm';
   if (pid && adm) { location.replace('mypage-inquiry.html?project=' + encodeURIComponent(pid)); return; } // 컨설턴트 [문의하기] = 그 프로젝트의 문의 목록
   var badge = function (c) { return c.link ? '<span class="badge done">의뢰 연결</span>' : C.waiting(c) ?'<span class="badge wait">답변대기</span>' : '<span class="badge done">답변완료</span>'; };
   var src = function () { return adm ? C.all() : C.mine(); };
@@ -87,10 +88,10 @@
     if (mine0) { history.replaceState(null, '', 'mypage-consult.html?id=' + encodeURIComponent(mine0.id)); detail(mine0.id); }
     else if (P0 && (!P0.flow || C.participant(pid, me.s.email))) compose(P0);
     else location.replace('contact.html?type=project&rid=' + encodeURIComponent(pid) + (P0 ? '&ref=' + encodeURIComponent(P0.title) : ''));
-  } else if (id) detail(id); else if (qid && !adm) botDetail(qid); else (adm ? adminList : memberList)();
+  } else if (id) detail(id); else if (qid && !adm) botDetail(qid); else if (adm) adminList(); else location.replace('mypage-inquiry.html'); // 회원 목록은 문의내역 한 곳
   function linkedHTML(c) { // 의뢰로 이어진 상담: 끝난 대화, 이후는 프로젝트 문의에서
     var P = projOf(c.link), t = P ? P.title : c.link;
-    return '<div class="cs-linked"><span><b>' + esc(t) + '</b> 의뢰로 이어진 상담입니다 (' + C.ymd(c.linkedAt) + ' 연결). 이후 대화는 프로젝트 문의내역에서 이어집니다.</span>' +
+    return '<div class="cs-linked"><span><b>' + esc(t) + '</b> 의뢰로 이어진 상담입니다 (' + C.ymd(c.linkedAt) + ' 연결). 이후 대화는 ' + (adm ? '프로젝트 문의내역' : '이 프로젝트의 문의') + '에서 이어집니다.</span>' +
       '<a class="btn" href="' + (adm ? 'mypage-request.html?id=' + encodeURIComponent(c.link) : 'mypage-consult.html?project=' + encodeURIComponent(c.link)) + '">' + (adm ? '의뢰 상세 보기' : '프로젝트 문의로 이동') + '</a></div>';
   }
 
@@ -104,7 +105,7 @@
         C.preHTML(C.pre(P.id, me.s.email), 'user') +
         '<form class="cs-compose" id="first" novalidate><label class="sr-only" for="ttl">제목</label><input id="ttl" class="cs-ttl" value="' + esc('[' + P.title + '] 관련 문의드립니다') + '">' +
           '<label class="sr-only" for="msg">내용</label><textarea id="msg" placeholder="이 프로젝트에 대해 문의할 내용을 입력하세요. OmicsPharm 컨설턴트가 확인 후 답변드립니다."></textarea>' +
-          '<div class="row"><span>답변은 마이페이지 &gt; 프로젝트 문의내역과 알림으로 알려드립니다.</span><button class="btn primary" type="submit" id="go" disabled>문의 보내기</button></div></form></div>';
+          '<div class="row"><span>답변은 마이페이지 &gt; 문의내역과 알림으로 알려드립니다.</span><button class="btn primary" type="submit" id="go" disabled>문의 보내기</button></div></form></div>';
     var msg = $('#msg'), go = $('#go'), ttl = $('#ttl');
     var sync = function () { go.disabled = !msg.value.trim() || !ttl.value.trim(); };
     msg.addEventListener('input', sync); ttl.addEventListener('input', sync);
@@ -117,9 +118,7 @@
 
   // 회원: 내 상담 목록
   function memberList() {
-    // Contact Us 상담 + 챗봇 문의(op.inquiries, 2026-10-27 문의내역에서 옮김)를 한 목록으로
-    var bot = OP.my.inquiries().map(function (q) { return { bot: q, at: q.answer ? q.answer.at : q.at, wait: !q.answer }; });
-    var f = 'all', L0 = gen().map(function (c) { return { c: c, at: C.lastAt(c), wait: C.waiting(c) }; }).concat(bot).sort(function (a, b) { return b.at - a.at; });
+    var f = 'all', L0 = gen().map(function (c) { return { c: c, at: C.lastAt(c), wait: C.waiting(c) }; }).sort(function (a, b) { return b.at - a.at; });
     var T = [['all', '전체'], ['wait', '답변대기'], ['done', '답변완료']];
     var ok = function (o, k) { return k === 'all' || (k === 'wait') === o.wait; };
     $('#card').innerHTML = '<div class="card-head"><h3>상담내역</h3></div>' +
@@ -172,7 +171,7 @@
     if (!q) { location.replace('mypage-consult.html'); return; }
     var c = { name: '나', msgs: [{ at: q.at, by: 'user', text: q.body, file: q.file || '' }].concat(q.answer ? [{ at: q.answer.at, by: 'admin', text: q.answer.body }] : []) };
     $('#card').innerHTML =
-      '<div class="mg-head"><a href="mypage-consult.html" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>' + esc(q.title) + '</h3>' + (q.answer ? '<span class="badge done">답변완료</span>' : '<span class="badge wait">답변대기</span>') + '</div>' +
+      '<div class="mg-head"><a href="mypage-inquiry.html" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>' + esc(q.title) + '</h3>' + (q.answer ? '<span class="badge done">답변완료</span>' : '<span class="badge wait">답변대기</span>') + '</div>' +
       '<div class="det"><p class="lead">챗봇 문의 · ' + esc(q.type + (q.svc ? ' · ' + q.svc : '')) + ' · 접수번호 ' + esc(q.id) + ' · ' + C.ymd(q.at) + ' 접수' + (q.ref ? ' · 관련 프로젝트 ' + esc(q.ref) : '') + '</p>' +
         '<div><h4 style="margin-bottom:12px">상담 내용</h4>' + C.thread(c, 'user') + '</div>' +
         (q.answer ? '' : '<p class="lead">담당자가 내용을 확인하고 있습니다. 영업일 기준 1~2일 안에 답변드리겠습니다.</p>') +
@@ -185,7 +184,7 @@
     var acc = OP.account(c.email), kv = function (k, v, w) { return '<div' + (w ? ' class="wide"' : '') + '><dt>' + k + '</dt><dd>' + v + '</dd></div>'; };
     var pj = C.isProj(c), done = !!c.link; // done: 의뢰로 이어진 상담은 더 쓰지 않음
     $('#card').innerHTML =
-      '<div class="mg-head"><a href="' + (pj ? 'mypage-inquiry.html' : 'mypage-consult.html') + '" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>' + esc(c.title) + '</h3>' + badge(c) + '</div>' +
+      '<div class="mg-head"><a href="' + (pj || !adm ? 'mypage-inquiry.html' : 'mypage-consult.html') + '" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>' + esc(c.title) + '</h3>' + badge(c) + '</div>' +
       '<div class="det">' +
         (adm ? '<dl class="cs-info">' + kv('문의 유형', esc(c.type + (c.svc ? ' · ' + c.svc : ''))) + kv('접수번호', esc(c.id)) + kv('성함', esc(c.name)) + kv('이메일', esc(c.email)) +
             kv('회원 여부', acc ? '회원 (' + (OP.ROLE_LABEL[acc.role] || '') + (acc.org ? ' · ' + esc(acc.org) : '') + ')' : '비회원 · 메일 링크로 답변 확인') + kv('접수일', C.ymdhm(c.at)) +

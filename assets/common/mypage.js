@@ -22,8 +22,10 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
   var MENU = [
     ['dash', '대시보드', 'mypage.html'],
     ['project', '프로젝트 관리', 'mypage-project.html', null, 'prj'], // 세 역할 모두 이 메뉴 하나 (2026-10-27: 분석파트너 견적관리를 합침, 견적 단계는 목록 안 단계로). 컨설턴트는 mypage-request.html
-    ['consult', '상담내역', 'mypage-consult.html'], // 프로젝트와 무관한 상담: Contact Us(첫 문의부터 한 대화, consult.js) + 챗봇 문의. 실서비스 메뉴명과 같음
-    ['inquiry', '프로젝트 문의내역', 'mypage-inquiry.html'], // 2026-10-27: 프로젝트별 대화([문의하기]) + 의뢰할 때 연결한 '의뢰 전 상담'. 예전 문의내역(챗봇)은 상담내역으로
+    // 문의 메뉴 (2026-10-27): 회원은 '문의내역' 하나(Contact Us 상담 + 프로젝트 문의), 컨설턴트는 실서비스처럼 둘로 나눠 처리
+    ['inquiry', '문의내역', 'mypage-inquiry.html', ['client', 'partner']],
+    ['consult', '상담내역', 'mypage-consult.html', ['admin']], // Contact Us 상담 (첫 문의부터 한 대화, consult.js). 실서비스 메뉴명과 같음
+    ['inquiry', '프로젝트 문의내역', 'mypage-inquiry.html', ['admin']], // 프로젝트별 대화([문의하기]) + 의뢰할 때 연결한 '의뢰 전 상담'
     ['alarm', '알림', 'mypage-alarm.html'], // 알림은 묶지 않고 최상위에 (안 읽은 수가 항상 보이게)
     ['account', '내 정보 관리', 'mypage-account.html', null, 'me'],
     ['verify', '파트너 인증', 'mypage-verify.html', ['partner'], 'me'],
@@ -124,7 +126,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       if (OP.consult) (adm ? OP.consult.all() : OP.consult.mine()).forEach(function (c) {
         var h = 'mypage-consult.html?id=' + encodeURIComponent(c.id);
         c.msgs.forEach(function (m, i) {
-          var pjc = OP.consult.isProj(c), w = pjc ? '프로젝트 문의' : '상담', mk = pjc ? 'inquiry' : 'consult'; // 프로젝트 문의는 '프로젝트 문의' 알림으로
+          var pjc = OP.consult.isProj(c), w = pjc ? '프로젝트 문의' : '상담', mk = pjc || !adm ? 'inquiry' : 'consult'; // 프로젝트 문의는 '프로젝트 문의' 알림으로
           if (adm && m.by === 'user') L.push({ id: 'cs-' + c.id + '-' + i, k: i ? w + ' 추가 문의' : w + ' 접수', pj: c.title, cat: 'inquiry', at: m.at, t: c.name + '님의 ' + (i ? "'" + c.title + "' " + w + "에 추가 문의가 등록되었습니다." : w + " '" + c.title + "'이(가) 접수되었습니다."), href: h, mk: mk });
           if (!adm && m.by === 'admin') L.push({ id: 'cs-' + c.id + '-' + i, k: w + ' 답변', pj: c.title, cat: 'inquiry', at: m.at, t: "'" + c.title + "' " + w + "에 OmicsPharm 컨설턴트의 답변이 등록되었습니다.", href: h, mk: mk });
         });
@@ -267,7 +269,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       // 견적관리·프로젝트 관리·문의내역은 그 메뉴에 들어가면 배지가 사라짐 (알림 목록의 읽음 상태와는 따로 op.menuSeen에 기록)
       var NEW = { alarm: n > 0 }, NB = '<span class="nb" aria-label="새 소식">N</span>';
       var seen = read('op.menuSeen', []), seenAdd = [];
-      var menuOf = function (h) { return /mypage-(project|request|quote)/.test(h) ? 'project' : /mypage-inquiry/.test(h) ? 'inquiry' : /mypage-consult/.test(h) ? 'consult' : /mypage-service/.test(h) ? 'service' : /mypage-partners/.test(h) ? 'partners' : ''; }; // service: 컨설턴트의 분석 서비스 정보 입력 요청
+      var menuOf = function (h) { return /mypage-(project|request|quote)/.test(h) ? 'project' : /mypage-inquiry/.test(h) ? 'inquiry' : /mypage-consult/.test(h) ? (s.role === 'admin' ? 'consult' : 'inquiry') : /mypage-service/.test(h) ? 'service' : /mypage-partners/.test(h) ? 'partners' : ''; }; // service: 컨설턴트의 분석 서비스 정보 입력 요청
       D.alarms().forEach(function (a) {
         if (a.read || !a.href || seen.indexOf(a.id) > -1) return;
         var mk = a.mk || menuOf(a.href); if (!mk) return;
@@ -302,7 +304,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
         (HC ? '<button type="button" class="side-ai" data-ph-ai><img src="assets/common/ic-sparkle-fill.svg" alt=""><span><b>AI Agent</b><em>beta</em></span></button>' : '') + '<nav class="menu" aria-label="마이페이지 메뉴">' + html + '</nav>'; // AI Agent 버튼은 메뉴 위 (2026-10-23, 정식 진입점) · // 이름은 'AI Agent' (사이드 폭에 맞춰 2026-10-24 줄임) · 메뉴 → AI Agent (역할별 바로가기 버튼은 2026-10-23 뺌 — 클라이언트만 필요해서)
       if (HC) {
         // 본문 맨 위에 지금 메뉴 이름을 큰 제목으로 (간격은 조정 예정)
-        var lab = document.body.dataset.mtitle || (MENU.filter(function (m) { return m[0] === key; })[0] || [])[1] || '마이페이지', mn = document.querySelector('.main'); // data-mtitle: 메뉴 이름과 다른 화면 제목 (예: 회원 탈퇴)
+        var lab = document.body.dataset.mtitle || (MENU.filter(function (m) { return m[0] === key && (!m[3] || m[3].indexOf(s.role) > -1); })[0] || [])[1] || '마이페이지', mn = document.querySelector('.main'); // data-mtitle: 메뉴 이름과 다른 화면 제목 (예: 회원 탈퇴)
         if (mn && !mn.querySelector('.mtitle') && (key !== 'dash' || /[?&]dtitle=1\b/.test(location.search))) { // 대시보드는 제목 없이 (2026-10-23). ?dtitle=1 이면 비교용으로 제목 표시
           mn.insertAdjacentHTML('afterbegin', '<h1 class="mtitle">' + esc(lab) + '</h1>');
           // 첫 제목 글자만 겹치면 그 글자만 지우고 옆의 칩·버튼은 남김 (예: 상담내역)
