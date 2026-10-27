@@ -9,13 +9,13 @@
      ?rid=프로젝트 번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027u">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027u">
-<script src="assets/common/site.js?v=20261027u"></script>
-<script src="assets/common/consult.js?v=20261027u"></script>
-<script src="assets/common/mypage.js?v=20261027u"></script>
-<script src="assets/common/flow.js?v=20261027u"></script>
-<script src="assets/common/projects-data.js?v=20261027u"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027w">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027w">
+<script src="assets/common/site.js?v=20261027w"></script>
+<script src="assets/common/consult.js?v=20261027w"></script>
+<script src="assets/common/mypage.js?v=20261027w"></script>
+<script src="assets/common/flow.js?v=20261027w"></script>
+<script src="assets/common/projects-data.js?v=20261027w"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -246,7 +246,8 @@
       '미선정': ['gray', '이번 견적은 선정되지 않았습니다.', '참여해주셔서 감사합니다.', 0],
       '거절': ['gray', '견적 요청을 거절했습니다.', '거절 사유: ' + (X.dec ? X.dec.why : '-'), 0]
     }[t];
-    banner = '<div class="ftodo ' + B[0] + '"><div><b>' + esc(B[1]) + '</b>' + (B[2] ? '<p>' + esc(B[2]) + '</p>' : '') + '</div>' +
+    var ROUTE = X.self ? '프로젝트 찾기에서 직접 신청한 견적입니다.' : 'OmicsPharm이 요청한 견적입니다.'; // 견적 경로 (2026-10-27)
+    banner = '<div class="ftodo ' + B[0] + '"><div><b>' + esc(B[1]) + '</b>' + '<p>' + esc((B[2] ? B[2] + '\n' : '') + ROUTE) + '</p>' + '</div>' +
       (t === '변경 확인 요청' ? '<div class="acts"><button type="button" class="btn" id="chgDoc">변경된 견적서 보기</button><button type="button" class="btn primary" id="chgOk">변경 내용 확인</button></div>' : t === '선정' ? '<div class="acts"><a class="btn primary" href="mypage-project.html?id=' + encodeURIComponent(rid) + '">프로젝트 관리로 이동</a></div>' : B[3] && !X.self ? '<div class="acts"><button type="button" class="btn" id="decline">견적 거절</button></div>' : '') + '</div>';
   } else {
     // 예전 방식: 프로젝트 찾기 목록 데이터를 의뢰처럼 보여줌

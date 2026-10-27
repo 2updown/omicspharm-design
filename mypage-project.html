@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027u">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027u">
-<script src="assets/common/site.js?v=20261027u"></script>
-<script src="assets/common/consult.js?v=20261027u"></script>
-<script src="assets/common/mypage.js?v=20261027u"></script>
-<script src="assets/common/flow.js?v=20261027u"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027w">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027w">
+<script src="assets/common/site.js?v=20261027w"></script>
+<script src="assets/common/consult.js?v=20261027w"></script>
+<script src="assets/common/mypage.js?v=20261027w"></script>
+<script src="assets/common/flow.js?v=20261027w"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -272,6 +272,7 @@
   .lcard h3 { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .lcard .meta { gap:4px 12px; font-size:16px; font-weight:500; line-height:22px; }
   .lcard .meta > span { gap:0; }
+  .lcard .meta .route { color:var(--teal-700); } /* 견적 경로: OmicsPharm 매칭 요청 / 직접 신청 */
   .lcard .meta > span + span::before { align-self:stretch; height:auto; margin-right:12px; }
   .lcard .meta em { margin-right:4px; font-weight:400; color:inherit; }
   .lcard .meta em::after { content:" :"; }
@@ -387,6 +388,7 @@
       var t = OP.flow.pst(o.s, OP.session().email); if (!Q_ST[t]) return null;
       return { kind: 'q', id: o.r.id, href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, title: o.r.title, client: o.r.org || '-', samples: o.r.samples || '-', stage: Q_ST[t], pst: t, due: o.s.due, at: o.x.at || o.r.at, self: o.x.self };
     }).filter(Boolean) : [];
+    var routeOf = function (x) { var p = x.flow && OP.flow.state(x.id).P[OP.session().email]; return !!(p && p.self); }; // 직접 신청 = 프로젝트 찾기에서 직접 견적을 보낸 건
     var LIST_ST = ADM ? STAGES : ['견적 요청', '견적 제출'].concat(STAGES).concat(['미선정·거절']);
     if (OP.isPartner() && !OP.partnerVerified()) { // 미인증: 매칭·계약된 프로젝트 없음
       $('.toprow').hidden = true;
@@ -463,14 +465,14 @@
       '<form class="psearch" id="pq" role="search"><input type="search" id="pqIn" placeholder="프로젝트명을 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
       '<div class="b-tabw" id="pTabW"><button type="button" class="b-arr l" data-arr="-1" aria-label="이전 단계 보기" hidden><img src="assets/find/ic-caret-left.svg" alt=""></button><div class="b-tabs" id="pChips" role="tablist"></div><button type="button" class="b-arr r" data-arr="1" aria-label="다음 단계 보기" hidden><img src="assets/find/ic-caret-right.svg" alt=""></button></div>' +
       '<div class="unread" id="pUnread"></div>' +
-      '<div class="pbar"><span class="total" id="pTotal"></span><label class="sort"><select id="pSort" aria-label="정렬"><option value="new">최신등록순</option><option value="due">납기임박순</option></select></label></div>' +
+      '<div class="pbar"><span class="total" id="pTotal"></span>' + (ADM ? '' : '<label class="sort" style="margin-left:auto;margin-right:8px"><select id="pRoute" aria-label="경로"><option value="">전체 경로</option><option value="match">OmicsPharm 매칭 요청</option><option value="self">직접 신청</option></select></label>') + '<label class="sort"><select id="pSort" aria-label="정렬"><option value="new">최신등록순</option><option value="due">납기임박순</option></select></label></div>' +
       '<div class="list" id="pList"></div>' +
       '<p class="demo-note">※ 화면 확인용 예시 프로젝트입니다.</p>';
     var qaN = ALL.reduce(function (n, p) { return n + (p.qa || 0); }, 0), rvN = ALL.reduce(function (n, p) { return n + (p.review || 0); }, 0);
     $('#pUnread').innerHTML = '<span>확인하지 않은 Q&amp;A <b>' + qaN + '건</b>과 리뷰 <b>' + rvN + '건</b>이 있습니다.</span><label><input type="checkbox" id="pOnly">미열람글만 보기</label>';
     function draw() {
       var q = st.q.trim().toLowerCase();
-      var base = ALL.filter(function (p) { return (!q || p.title.toLowerCase().indexOf(q) > -1) && (!st.unread || p.qa || p.review); });
+      var base = ALL.filter(function (p) { return (!q || p.title.toLowerCase().indexOf(q) > -1) && (!st.unread || p.qa || p.review) && (!st.route || (st.route === 'self') === (p.kind === 'q' ? !!p.self : routeOf(p))); }); // 경로 필터: 매칭 요청 / 직접 신청
       $('#pChips').innerHTML = ['전체'].concat(LIST_ST).map(function (t) {
         var n = t === '전체' ? base.length : base.filter(function (p) { return SG(p) === t; }).length;
         return '<button type="button" role="tab" data-st="' + t + '"' + (st.stage === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b></button>';
@@ -482,10 +484,10 @@
         if (x.kind === 'q') { // 견적 단계 카드: 견적 상태 + 제출 전이면 견적 마감일
           var open = x.stage === '견적 요청', dl = Math.ceil((new Date(x.due + 'T23:59:59') - Date.now()) / 864e5);
           return '<a class="lcard" href="' + x.href + '"><div class="head">' +
-            '<div class="row1"><div class="badges"><span class="badge tag">' + esc(x.svc) + '</span><span class="badge ' + Q_B[x.pst] + '">' + x.pst + '</span>' + (x.self ? '<span class="badge done">직접 신청</span>' : '') + '</div>' +
+            '<div class="row1"><div class="badges"><span class="badge tag">' + esc(x.svc) + '</span><span class="badge ' + Q_B[x.pst] + '">' + x.pst + '</span></div>' +
               '<span class="dday">' + (open && x.due ? (dl < 0 ? '견적 마감' : '견적 마감 D-' + String(dl).padStart(2, '0')) : '') + '</span></div>' +
             '<h3>' + esc(x.title) + '</h3></div>' +
-            '<div class="info"><div class="meta"><span>' + esc(x.client) + '</span><span><em>샘플</em>' + esc(x.samples) + '개</span>' + (x.due ? '<span><em>견적 마감일</em>' + dotd(x.due) + '</span>' : '') + '</div>' +
+            '<div class="info"><div class="meta"><span class="route">' + (x.self ? '직접 신청' : 'OmicsPharm 매칭 요청') + '</span><span>' + esc(x.client) + '</span><span><em>샘플</em>' + esc(x.samples) + '개</span>' + (x.due ? '<span><em>견적 마감일</em>' + dotd(x.due) + '</span>' : '') + '</div>' +
             '<p class="reg">견적 요청일 ' + (x.at ? OP.my.ymd(x.at) : '-') + '</p></div></a>';
         }
         return '<a class="lcard" href="mypage-project.html?id=' + x.id + '"><div class="head">' +
@@ -493,13 +495,14 @@
             (x.qa ? '<span class="badge qa">Q&amp;A ' + x.qa + '</span>' : '') + (x.review ? '<span class="badge qa">리뷰 ' + x.review + '</span>' : '') + '</div>' +
             '<span class="dday">' + (x.stage === '프로젝트 완료' ? '완료' : dday(x.due)) + '</span></div>' +
           '<h3>' + esc(x.title) + '</h3></div>' +
-          '<div class="info"><div class="meta"><span>' + esc(x.client) + '</span><span><em>샘플</em>' + x.samples + '개</span><span><em>계약금액</em>' + esc(x.amount) + '</span><span><em>납기일</em>' + dotd(x.due) + '</span></div>' +
+          '<div class="info"><div class="meta">' + (ADM ? '' : '<span class="route">' + (routeOf(x) ? '직접 신청' : 'OmicsPharm 매칭 요청') + '</span>') + '<span>' + esc(x.client) + '</span><span><em>샘플</em>' + x.samples + '개</span><span><em>계약금액</em>' + esc(x.amount) + '</span><span><em>납기일</em>' + dotd(x.due) + '</span></div>' +
           '<p class="reg">계약일 ' + dotd(x.contract) + '</p></div></a>';
       }).join('') || '<div class="empty"><b>' + (st.q || st.unread ? '조건에 맞는 프로젝트가 없습니다' : '진행 중인 프로젝트가 없습니다') + '</b><p>OmicsPharm의 매칭을 거쳐 계약된 프로젝트가 여기에 표시됩니다.</p></div>';
     }
     $('#pq').addEventListener('submit', function (e) { e.preventDefault(); st.q = $('#pqIn').value; draw(); });
     $('#pqIn').addEventListener('input', function () { if (!this.value && st.q) { st.q = ''; draw(); } });
     $('#pSort').addEventListener('change', function () { st.sort = this.value; draw(); });
+    if ($('#pRoute')) $('#pRoute').addEventListener('change', function () { st.route = this.value; draw(); });
     $('#pOnly').addEventListener('change', function () { st.unread = this.checked; draw(); });
     $('#pChips').addEventListener('click', function (e) { var b = e.target.closest('[data-st]'); if (b) { st.stage = b.dataset.st; draw(); } });
     draw();
@@ -717,7 +720,7 @@
   function rateHTML() {
     if (FS.rateSkip && !FS.rate) return '<section class="rrate done"><h4>서비스 만족도 평가</h4><p>평가를 건너뛰었습니다. (' + ymd(FS.rateSkip) + ')</p></section>';
     var R = FS.rate, st = function (on) { return '<img src="assets/project/ic-star' + (on ? '-fill' : '') + '.svg" alt="">'; };
-    if (R) return '<section class="rrate done"><h4>서비스 만족도 평가</h4><div class="stars" aria-label="별점 ' + R.star + '점">' + [1, 2, 3, 4, 5].map(function (i) { return st(i <= R.star); }).join('') + '</div>' + (R.text ? '<p>' + esc(R.text) + '</p>' : '') + '<em>' + ymd(R.at) + ' 제출 · OmicsPharm이 확인합니다.</em></section>';
+    if (R) return '<section class="rrate done"><h4>서비스 만족도 평가</h4><div class="stars" aria-label="별점 ' + R.star + '점">' + [1, 2, 3, 4, 5].map(function (i) { return st(i <= R.star); }).join('') + '</div>' + (R.text ? '<p>' + esc(R.text) + '</p>' : '') + '<em>' + ymd(R.at) + '</em>';
     return '<section class="rrate" id="rate"><h4>서비스 만족도 평가</h4><p class="lead">이용하신 분석 서비스는 만족스러우셨나요? 별점과 함께 의견을 남겨주시면 더 나은 서비스를 위해 반영하겠습니다.</p>' +
       '<div class="stars" role="radiogroup" aria-label="별점">' + [1, 2, 3, 4, 5].map(function (i) { return '<button type="button" role="radio" aria-checked="false" data-star="' + i + '" aria-label="' + i + '점">' + st(false) + '</button>'; }).join('') + '</div>' +
       '<textarea id="rateText" placeholder="의견을 작성해주세요 (선택)"></textarea><div class="rv-acts"><button type="button" class="btn" id="rateSkip">건너뛰기</button><button type="button" class="btn primary" id="rateGo" disabled>제출</button></div></section>';
