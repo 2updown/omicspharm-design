@@ -104,4 +104,4 @@ Figma 1665:7158 (Stand_alone_home)에서 내보낸 그대로 사용. Phosphor �
 | `ai/ic-close.svg` | Icons / medium / close (2016:22105) | AI Agent 창 닫기 (#000) |
 | `ai/ic-sidebar.svg` · `ai/ic-sidebar-on.svg` | Icons / large / menu bar (2011:22085) | 메뉴 접기·펼치기, 모바일 메뉴 열기 |
 
-AI Agent 창의 **넓게 보기 / 기본 크기로** 버튼만 예외로 Google Material Symbols (Outlined, weight 400 · 24px에서 선 2px로 선명, #000)를 씁니다 — `common/menu/expand_content.svg` · `common/menu/collapse_content.svg` (사용자 지정, 2026-10-27).
+AI Agent 창의 **넓게 보기 / 기본 크기로** 버튼만 예외로 Figma 2017:22156 · 2017:22145에 붙여 둔 Material Symbols (weight 500, #000) 파일를 씁니다 — `common/menu/expand_content.svg` · `common/menu/collapse_content.svg` (사용자 지정, 2026-10-27).
