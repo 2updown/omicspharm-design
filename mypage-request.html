@@ -293,7 +293,7 @@
     .qt .r .who { grid-area:who; } .qt .r .st { grid-area:st; }
     .qt .r .amt { grid-area:amt; display:flex; align-items:baseline; gap:8px; text-align:left; }
     .qt .r .wk, .qt .r .dt { display:none; }
-    .qt .r .act { grid-area:act; justify-content:flex-start; }
+    .qt .r .act { grid-area:act; justify-content:flex-start; flex-wrap:wrap; min-width:0; } /* 버튼 4개는 좁으면 줄바꿈 */
     .qt .note { grid-column:2 / -1; }
     .qt .amt .mob { display:inline; font-weight:400; font-size:13px; color:var(--gray-500); }
   }
