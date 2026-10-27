@@ -9,13 +9,13 @@
      ?rid=프로젝트 번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027x">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027x">
-<script src="assets/common/site.js?v=20261027x"></script>
-<script src="assets/common/consult.js?v=20261027x"></script>
-<script src="assets/common/mypage.js?v=20261027x"></script>
-<script src="assets/common/flow.js?v=20261027x"></script>
-<script src="assets/common/projects-data.js?v=20261027x"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027y">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027y">
+<script src="assets/common/site.js?v=20261027y"></script>
+<script src="assets/common/consult.js?v=20261027y"></script>
+<script src="assets/common/mypage.js?v=20261027y"></script>
+<script src="assets/common/flow.js?v=20261027y"></script>
+<script src="assets/common/projects-data.js?v=20261027y"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -94,7 +94,9 @@
   textarea.inp.grow { display:block; height:36px; min-height:36px; padding:7px 12px; line-height:20px; resize:none; overflow:hidden; }
   /* 하단 버튼: 왼쪽 임시저장(button_outline tertiary) / 오른쪽 미리보기·최종 제출 묶음 (gap 8) */
   .acts { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:8px; }
-  .acts .right { display:flex; gap:8px; }
+  .acts .right, .acts .left { display:flex; align-items:center; gap:8px; }
+  .acts .lnk-clear { min-width:0; padding:0 4px; font-size:14px; font-weight:500; color:var(--gray-500); text-decoration:underline; text-underline-offset:3px; }
+  .acts .lnk-clear:hover { color:var(--red-600); }
   .acts .btn { min-width:160px; }
   .acts .btn.tertiary { border-color:var(--gray-300); background:#fff; color:var(--gray-500); }
   .acts .btn.tertiary:hover { background:var(--gray-50); color:var(--gray-600); }
@@ -296,7 +298,7 @@
       '</tbody></table>' +
       '<h4>분석 소요 기간 <span class="req">*</span></h4><label class="weeks">시료 수령 후 <input class="inp num" id="weeks" inputmode="numeric" placeholder="0"> 주 이내 결과 전달</label>' +
       '<h4>Notice</h4><textarea class="inp" id="memo" placeholder="분석 방법, 시료 발송 조건 등 클라이언트에게 전달할 내용을 입력해주세요."></textarea>' +
-      '<div class="acts"><button type="button" class="btn lg tertiary" id="saveTmp">임시저장</button>' +
+      '<div class="acts"><div class="left"><button type="button" class="btn lg tertiary" id="saveTmp">임시저장</button>' + (rid && t === '임시저장' ? '<button type="button" class="lnk-clear" id="dropTmp">임시저장 내용 지우기</button>' : '') + '</div>' + // 목록 대신 여기서 지움 (2026-10-27: 목록 휴지통은 프로젝트 삭제처럼 보여서 뺌)
         '<div class="right"><button type="button" class="btn lg" id="preview">견적서 미리보기</button><button type="button" class="btn primary lg" id="submit"' + (rid || x.open ? '' : ' disabled') + '>' + (rid && X.status === 'rev' ? '수정 견적 제출' : '견적서 최종 제출') + '</button></div></div>' +
     '</section>';
 
@@ -367,6 +369,11 @@
     else { var a = read(); a[id] = collect(submitted); write(a); }
   }
   $('#saveTmp').addEventListener('click', function () { save(false); OP.toast('임시저장되었습니다.'); });
+  if ($('#dropTmp')) $('#dropTmp').addEventListener('click', function () {
+    F.ask({ title: '임시저장한 내용을 지우시겠습니까?', desc: '작성한 견적서 내용은 복구할 수 없습니다.' + (X.self ? ' 직접 신청한 견적이라 프로젝트 관리 목록에서도 빠집니다.' : ' 견적 요청은 남아 있어 마감일 전까지 다시 작성할 수 있습니다.'), label: false, yes: '지우기' }, function () {
+      F.discard(rid, ME); OP.flash('임시저장한 내용을 지웠습니다.'); location.replace(X.self ? 'mypage-project.html' : 'mypage-quote.html?rid=' + encodeURIComponent(rid));
+    });
+  });
   $('#submit').addEventListener('click', function () {
     var filled = G.some(function (g) { return g.name.trim() && g.lines.some(function (l) { return num(l.p) > 0; }); });
     if (!filled) { OP.toast('시험명과 단가를 1개 이상 입력해주세요.'); return; }

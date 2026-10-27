@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027x">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027x">
-<script src="assets/common/site.js?v=20261027x"></script>
-<script src="assets/common/consult.js?v=20261027x"></script>
-<script src="assets/common/mypage.js?v=20261027x"></script>
-<script src="assets/common/flow.js?v=20261027x"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027y">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027y">
+<script src="assets/common/site.js?v=20261027y"></script>
+<script src="assets/common/consult.js?v=20261027y"></script>
+<script src="assets/common/mypage.js?v=20261027y"></script>
+<script src="assets/common/flow.js?v=20261027y"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -233,10 +233,6 @@
   .lcard .row1 { display:flex; align-items:center; justify-content:space-between; }
   .lcard .dday { font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
   .lcard .row1 .dday { margin-left:auto; }
-  /* 임시저장 견적 삭제 (예전 견적관리 버튼과 같은 모양) */
-  .lcard .qdel { flex:none; position:relative; z-index:1; width:32px; height:32px; margin-left:8px; display:grid; place-items:center; border:1px solid #f00011; border-radius:8px; background:#fff; cursor:pointer; }
-  .lcard .qdel::before { content:""; width:18px; height:18px; background:#f00011; -webkit-mask:url(assets/common/ic-trash.svg) center/contain no-repeat; mask:url(assets/common/ic-trash.svg) center/contain no-repeat; }
-  .lcard .qdel:hover { background:#fafafa; }
   .lcard h3 { font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
   .lcard .info { display:flex; flex-direction:column; gap:10px; }
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -304,6 +300,7 @@
   .b-tabs button b { min-width:20px; padding:0 6px; border-radius:99px; background:var(--gray-100); font-size:12px; font-weight:600; line-height:20px; color:var(--gray-600); text-align:center; }
   .b-tabs button[data-zero] { color:var(--gray-400); } .b-tabs button[data-zero] b { color:var(--gray-400); }
   .b-tabs button:hover { color:#000; }
+  .b-tabs .nb { flex:none; display:grid; place-items:center; width:16px; height:16px; border-radius:50%; background:#f00011; color:#fff; font-size:10px; font-weight:600; line-height:16px; } /* 새 견적 요청 (2026-10-27) */
   .b-tabs button.on { border-color:var(--teal-600); color:var(--teal-700); font-weight:700; } .b-tabs button.on b { background:var(--teal-600); color:#fff; }
   @media (max-width:640px) { .b-tabw { margin:0 -16px; } .b-tabs { padding:0 16px; } .b-arr { width:28px; height:28px; margin-top:-14px; } .b-arr.l { left:6px; } .b-arr.r { right:6px; } }
   @media (max-width:960px) { .prow:has(.pright) { flex-direction:column; align-items:flex-start; } .prow:has(.pright) .ptitle { flex:none; width:100%; } } /* 세로 배치일 때 제목 너비 기준(360px)이 높이로 잡히지 않게 */
@@ -478,9 +475,13 @@
     function draw() {
       var q = st.q.trim().toLowerCase();
       var base = ALL.filter(function (p) { return (!q || p.title.toLowerCase().indexOf(q) > -1) && (!st.unread || p.qa || p.review) && (!st.route || (st.route === 'self') === (p.kind === 'q' ? !!p.self : routeOf(p))); }); // 경로 필터: 매칭 요청 / 직접 신청
+      // 새 견적 요청 N: '견적 요청' 칩에만. 그 칩을 열어 보면 확인한 것으로 기록 (op.qSeen)
+      var qSeen = []; try { qSeen = JSON.parse(localStorage.getItem('op.qSeen') || '[]'); } catch (e) {}
+      var qNew = QL.filter(function (p) { return p.stage === '견적 요청' && qSeen.indexOf(p.id) < 0; });
+      if (st.stage === '견적 요청' && qNew.length) { try { localStorage.setItem('op.qSeen', JSON.stringify(qSeen.concat(qNew.map(function (p) { return p.id; })))); } catch (e) {} qNew = []; }
       $('#pChips').innerHTML = ['전체'].concat(LIST_ST).map(function (t) {
         var n = t === '전체' ? base.length : base.filter(function (p) { return SG(p) === t; }).length;
-        return '<button type="button" role="tab" data-st="' + t + '"' + (st.stage === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b></button>';
+        return '<button type="button" role="tab" data-st="' + t + '"' + (st.stage === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b>' + (t === '견적 요청' && qNew.length ? '<span class="nb" aria-label="새 견적 요청">N</span>' : '') + '</button>';
       }).join('');
       var L = base.filter(function (p) { return st.stage === '전체' || SG(p) === st.stage; })
         .sort(st.sort === 'due' ? function (a, b) { return (a.stage === '프로젝트 완료') - (b.stage === '프로젝트 완료') || new Date(a.due) - new Date(b.due); } : function (a, b) { return b.at - a.at; });
@@ -491,7 +492,7 @@
           return '<a class="lcard" href="' + x.href + '"><div class="head">' +
             '<div class="row1"><div class="badges"><span class="badge tag">' + esc(x.svc) + '</span><span class="badge ' + Q_B[x.pst] + '">' + x.pst + '</span></div>' +
               '<span class="dday">' + (open && x.due ? (dl < 0 ? '견적 마감' : '견적 마감 D-' + String(dl).padStart(2, '0')) : '') + '</span>' +
-              (x.pst === '임시저장' ? '<span role="button" tabindex="0" class="qdel" data-del-rid="' + esc(x.id) + '" data-title="' + esc(x.title) + '" aria-label="임시저장 삭제" title="임시저장 삭제"></span>' : '') + '</div>' +
+              '</div>' +
             '<h3>' + esc(x.title) + '</h3></div>' +
             '<div class="info"><div class="meta"><span class="route">' + (x.self ? '직접 신청' : 'OmicsPharm 매칭 요청') + '</span><span>' + esc(x.client) + '</span><span><em>샘플</em>' + esc(x.samples) + '개</span>' + (x.due ? '<span><em>견적 마감일</em>' + dotd(x.due) + '</span>' : '') + '</div>' +
             '<p class="reg">견적 요청일 ' + (x.at ? OP.my.ymd(x.at) : '-') + '</p></div></a>';
@@ -509,15 +510,6 @@
     $('#pqIn').addEventListener('input', function () { if (!this.value && st.q) { st.q = ''; draw(); } });
     $('#pSort').addEventListener('change', function () { st.sort = this.value; draw(); });
     if ($('#pRoute')) $('#pRoute').addEventListener('change', function () { st.route = this.value; draw(); });
-    // 임시저장 견적 삭제 (예전 견적관리와 같음): 요청받은 견적은 '작성 대기'로 돌아가고, 직접 신청한 견적은 목록에서 빠짐
-    $('#pList').addEventListener('click', function (e) {
-      var b = e.target.closest('[data-del-rid]'); if (!b) return;
-      e.preventDefault(); e.stopPropagation();
-      var mine = OP.flow.state(b.dataset.delRid).P[OP.session().email] || {};
-      OP.flow.ask({ title: '임시저장한 견적서를 삭제하시겠습니까?', desc: '\'' + b.dataset.title + '\'\n작성한 내용은 복구할 수 없습니다.' + (mine.self ? ' 직접 신청한 견적이라 목록에서도 빠집니다.' : ' 견적 요청은 남아 있어 마감일 전까지 다시 작성할 수 있습니다.'), label: false, yes: '삭제' }, function () {
-        OP.flow.discard(b.dataset.delRid, OP.session().email); OP.flash('임시저장한 견적서를 삭제했습니다.'); location.reload();
-      });
-    });
     $('#pOnly').addEventListener('change', function () { st.unread = this.checked; draw(); });
     $('#pChips').addEventListener('click', function (e) { var b = e.target.closest('[data-st]'); if (b) { st.stage = b.dataset.st; draw(); } });
     draw();
