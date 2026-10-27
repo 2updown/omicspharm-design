@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027zk">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zk">
-<script src="assets/common/site.js?v=20261027zk"></script>
-<script src="assets/common/consult.js?v=20261027zk"></script>
-<script src="assets/common/mypage.js?v=20261027zk"></script>
-<script src="assets/common/flow.js?v=20261027zk"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027zl">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zl">
+<script src="assets/common/site.js?v=20261027zl"></script>
+<script src="assets/common/consult.js?v=20261027zl"></script>
+<script src="assets/common/mypage.js?v=20261027zl"></script>
+<script src="assets/common/flow.js?v=20261027zl"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -421,7 +421,8 @@
     if (pid) {
       var x = ALL.filter(function (p) { return p.id === pid; })[0];
       if (!x) { location.replace('mypage-project.html'); return; }
-      var k = STAGES.indexOf(SG(x)), FS = x.flow ? OP.flow.state(x.id) : null;
+      // 진행 단계 (2026-10-27 공통 레이아웃): 분석파트너는 견적 단계부터 보여줌 (견적 요청 · 견적 제출은 지난 단계). 컨설턴트는 상태값 그대로
+      var PS = ADM ? STAGES : ['견적 요청', '견적 제출'].concat(STAGES), k = PS.indexOf(SG(x)), FS = x.flow ? OP.flow.state(x.id) : null;
       // 예시 프로젝트(견적 중개 이전 데이터): 계약 금액으로 견적서를 만들고 셀키 기본 양식(의뢰서 + 별첨 견적서)으로 계약서를 보여줌
       var CR = null, CS = null;
       if (!x.flow) {
@@ -442,11 +443,11 @@
         CS.P[me] = { quote: { cur: 'KRW', weeks: '', memo: '', subAt: new Date(x.contract).getTime(), supplier: { s_org: OP.flow.partner(me).org }, groups: [{ name: CR.svc, lines: [{ d: '시료 분석 및 결과 보고서', q: String(n), u: 'EA', p: String(Math.round(won / n)) }] }] } };
       }
       var TODO = {
-        '계약 진행 중': x.flow ? ['계약서를 준비하고 있습니다', 'OmicsPharm 컨설턴트가 계약서를 등록하면 분석 단계로 넘어갑니다.', ''] : ['계약서를 확인해주세요', '계약 내용 확인 후 시료 수령 일정을 클라이언트와 협의합니다.', '계약서 확인'],
-        '분석 진행 중': ['분석이 진행 중입니다', '분석이 끝나면 아래 결과보고서에서 분석 결과를 올려 주세요. 등록하면 OmicsPharm이 검토합니다.', ''],
-        '보고서 등록': ['등록한 결과를 OmicsPharm이 검토하고 있습니다', '수정이 필요하면 알림으로 알려드립니다.', ''],
-        '보고서 검토': ['클라이언트가 보고서를 확인하고 있습니다', '클라이언트가 최종 승인하면 프로젝트가 완료됩니다.', ''],
-        '프로젝트 완료': ['프로젝트가 완료되었습니다', x.review ? '클라이언트가 남긴 리뷰를 확인해보세요.' : '수고하셨습니다.', x.review ? '리뷰 보기' : '']
+        '계약 진행 중': x.flow ? ['계약서를 준비하고 있습니다', 'OmicsPharm 컨설턴트가 계약서를 등록하면 분석 단계로 넘어갑니다.', '', 'gray'] : ['계약서를 확인해주세요', '계약 내용 확인 후 시료 수령 일정을 클라이언트와 협의합니다.', '계약서 확인', 'warn'],
+        '분석 진행 중': ['분석이 진행 중입니다', '분석이 끝나면 아래 결과보고서에서 분석 결과를 올려 주세요. 등록하면 OmicsPharm이 검토합니다.', '', 'warn'],
+        '보고서 등록': ['등록한 결과를 OmicsPharm이 검토하고 있습니다', '수정이 필요하면 알림으로 알려드립니다.', '', 'gray'],
+        '보고서 검토': ['클라이언트가 보고서를 확인하고 있습니다', '클라이언트가 최종 승인하면 프로젝트가 완료됩니다.', '', 'gray'],
+        '프로젝트 완료': ['프로젝트가 완료되었습니다', '수고하셨습니다.', '', '']
       }[x.stage];
       $('#project').outerHTML =
         '<div class="phead">' +
@@ -455,8 +456,8 @@
           '<div class="prow"><h2 class="ptitle"><a class="back" href="' + (OP.session().role === 'admin' ? 'mypage-request.html' : 'mypage-project.html') + '" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(x.title) + '</h2>' +
             '<div class="pright"><div class="period"><b>납기일</b><span>' + dotd(x.due) + '</span>' + (x.stage === '프로젝트 완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div>' + OP.askBtn({ key: x.id, cat: OP.my.svcKo(x.svc), no: x.id, title: x.title }) + '</div></div>' +
         '</div>' +
-        '<ol class="stages" aria-label="진행 단계" style="grid-template-columns:repeat(' + STAGES.length + ', minmax(0,1fr))">' + STAGES.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
-        '<div class="todo"><div><b>' + TODO[0] + '</b><p>' + TODO[1] + '</p></div>' + (TODO[2] ? (TODO[2] === '계약서 확인' && CS ? '<button type="button" class="btn primary" data-ct="partner">계약서 확인</button>' : '<a class="btn primary" href="#" data-soon="' + TODO[2] + '">' + TODO[2] + '</a>') : '') + '</div>' +
+        '<ol class="fsteps" aria-label="진행 단계" style="--n:' + PS.length + '">' + PS.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
+        '<div class="ftodo ' + TODO[3] + '"><div><b>' + TODO[0] + '</b><p>' + TODO[1] + '</p></div>' + (TODO[2] ? '<div class="acts">' + (TODO[2] === '계약서 확인' && CS ? '<button type="button" class="btn primary" data-ct="partner">계약서 확인</button>' : '<a class="btn primary" href="#" data-soon="' + TODO[2] + '">' + TODO[2] + '</a>') + '</div>' : '') + '</div>' +
         // 결과보고서: 분석파트너는 결과 등록, 컨설턴트는 보고서 에이전트 (계약 후 = 분석 단계부터)
         ((x.flow ? FS && FS.ct : (x.stage === '분석 진행 중' || (OP.flow.state(x.id).raw || []).length)) ? OP.flow.repSec(x.id, ADM ? 'admin' : 'partner') : '') +
         // 견적 중개로 매칭된 프로젝트: 컨설턴트가 올린 계약서
