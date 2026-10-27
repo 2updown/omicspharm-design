@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027zt">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zt">
-<script src="assets/common/site.js?v=20261027zt"></script>
-<script src="assets/common/consult.js?v=20261027zt"></script>
-<script src="assets/common/mypage.js?v=20261027zt"></script>
-<script src="assets/common/flow.js?v=20261027zt"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027zu">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zu">
+<script src="assets/common/site.js?v=20261027zu"></script>
+<script src="assets/common/consult.js?v=20261027zu"></script>
+<script src="assets/common/mypage.js?v=20261027zu"></script>
+<script src="assets/common/flow.js?v=20261027zu"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -297,6 +297,8 @@
   .b-arr:hover { border-color:var(--gray-300); background:var(--gray-50); }
   .b-arr img { width:16px; height:16px; }
   .b-tabs { display:flex; gap:4px; padding:0 24px; overflow-x:auto; scrollbar-width:none; cursor:grab; user-select:none; -webkit-user-select:none; scroll-behavior:auto; }
+  /* 흰 화면(카드 여백 없음): 탭 밑줄을 내용 폭에 맞춤 (2026-10-27, 예전 회색 카드의 -24px 확장 제거) */
+  .ui-white .card > .b-tabw, .ui-white .b-tabw { margin:0; } .ui-white .b-tabs { padding:0; }
   .b-tabs.drag { cursor:grabbing; } .b-tabs.drag button { pointer-events:none; }
   .b-tabs::-webkit-scrollbar { display:none; }
   .b-tabs button { flex:none; display:flex; align-items:center; gap:6px; height:44px; padding:0 10px; border-bottom:2px solid transparent; margin-bottom:-1px; font-size:14px; font-weight:500; color:var(--gray-500); white-space:nowrap; }
