@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027zu">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zu">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261027zu">
-<script src="assets/common/site.js?v=20261027zu"></script>
-<script src="assets/common/consult.js?v=20261027zu"></script>
-<script src="assets/common/mypage.js?v=20261027zu"></script>
-<script src="assets/common/svc-spec.js?v=20261027zu"></script>
-<script src="assets/common/flow.js?v=20261027zu"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027zv">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zv">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261027zv">
+<script src="assets/common/site.js?v=20261027zv"></script>
+<script src="assets/common/consult.js?v=20261027zv"></script>
+<script src="assets/common/mypage.js?v=20261027zv"></script>
+<script src="assets/common/svc-spec.js?v=20261027zv"></script>
+<script src="assets/common/flow.js?v=20261027zv"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -323,7 +323,10 @@
   .fdocs .chip { flex:none; padding:2px 8px; border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; background:#ffecd2; color:#fd4900; }
   .fdocs .chip.ok { background:#009788; color:#fff; }
   .fdocs .chip.none { background:#ffe1e1; color:#f00011; }
-  .fdocs .fbtns { display:flex; gap:8px; margin-left:auto; }
+  .fdocs .fbtns { display:flex; align-items:center; gap:8px; margin-left:auto; }
+  /* 버튼 위계 (2026-10-27): 보기 = 텍스트 버튼(DS button_text) · 재제출 요청 = outline · 확인 완료 = primary */
+  .btn-tx { height:32px; padding:0 8px; border:0; border-radius:8px; background:none; font-size:14px; font-weight:500; color:var(--gray-700); text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
+  .btn-tx:hover { background:var(--gray-100); }
   .fdocs .btn { height:32px; padding:0 12px; }
   .fdocs p { flex-basis:100%; margin-left:108px; font-size:12px; line-height:18px; color:var(--gray-500); white-space:pre-line; }
   .pv .bizfile { display:block; width:900px; max-width:100%; margin:0 auto; background:#fff; box-shadow:0 8px 24px rgba(0,0,0,.3); }
@@ -789,7 +792,7 @@
     // 승인 뒤(견적 협의~)는 이미 확인을 마친 의뢰사: 확인 전/재제출 상태와 데모 되돌리기를 보이지 않음
     if (!pre) return '<div class="fdocs"><em>사업자등록증</em><span class="chip ok">확인 완료</span>' +
       '<span class="fname"><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(nm) + '</span></span>' +
-      '<span class="fbtns"><button type="button" class="btn" id="bizView">보기</button></span>' +
+      '<span class="fbtns"><button type="button" class="btn-tx" id="bizView">보기</button></span>' +
       (ok ? '<p>' + F.ymd(ok) + '에 확인된 사업자등록증입니다.</p>' : '') + '</div>';
     var chip = ask ? '<span class="chip none">재제출 요청</span>' : ok ? '<span class="chip ok">확인 완료</span>' : '<span class="chip">' + (b.st === 're' ? '재제출' : '확인 전') + '</span>';
     var note = ask ? '재제출 요청 ' + F.ymd(b.askAt) + ' · 사유: ' + b.note + '\n의뢰사가 다시 올리면 알림으로 알려드립니다.'
@@ -797,7 +800,7 @@
       : (pre && b.st === 're' ? '의뢰사가 ' + F.ymd(b.reAt) + '에 다시 올린 파일입니다. (이전 요청 사유: ' + b.note + ')\n' : '') + '[보기]로 열어 확인한 뒤 [확인 완료]를 누르면 의뢰를 승인할 수 있습니다.';
     return '<div class="fdocs"><em>사업자등록증</em>' + chip +
       '<span class="fname"><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(nm) + '</span></span>' +
-      '<span class="fbtns"><button type="button" class="btn" id="bizView">보기</button>' + (pre && !ask && !ok ? '<button type="button" class="btn" id="bizOk">확인 완료</button><button type="button" class="btn" id="bizAsk">재제출 요청</button>' : '') + '</span>' +
+      '<span class="fbtns"><button type="button" class="btn-tx" id="bizView">보기</button>' + (pre && !ask && !ok ? '<button type="button" class="btn" id="bizAsk">재제출 요청</button><button type="button" class="btn primary" id="bizOk">확인 완료</button>' : '') + '</span>' +
       (note ? '<p>' + esc(note) + '</p>' : '') +
       (ok || b.st || s.bizSeen ? '<p><button type="button" class="demo-reset" id="bizReset">데모: 사업자등록증 확인 전으로 되돌리기</button></p>' : '') + '</div>';
   }
