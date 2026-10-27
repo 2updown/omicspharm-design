@@ -1,2 +1,2 @@
-<!-- Google Material Symbols · Outlined · expand_content · weight 600 (https://fonts.google.com/icons) -->
-<svg fill="#000" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M187-187v-266h106v160h160v106H187Zm480-320v-160H507v-106h266v266H667Z"/></svg>
+<!-- Google Material Symbols · Outlined · expand_content · weight 600 기준, 24px에서 번지지 않게 좌표를 정수 픽셀(선 3px)에 맞춤 (https://fonts.google.com/icons) -->
+<svg fill="#000" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M200-200V-440H320V-320H440V-200H200ZM640-520V-640H520V-760H760V-520H640Z"/></svg>
