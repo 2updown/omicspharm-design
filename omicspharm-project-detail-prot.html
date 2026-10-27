@@ -6,12 +6,12 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027ze">
-<script src="assets/common/site.js?v=20261027ze"></script>
-<script src="assets/common/consult.js?v=20261027ze"></script>
-<script src="assets/common/mypage.js?v=20261027ze"></script>
-<script src="assets/common/flow.js?v=20261027ze"></script>
-<script src="assets/common/projects-data.js?v=20261027ze"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027zf">
+<script src="assets/common/site.js?v=20261027zf"></script>
+<script src="assets/common/consult.js?v=20261027zf"></script>
+<script src="assets/common/mypage.js?v=20261027zf"></script>
+<script src="assets/common/flow.js?v=20261027zf"></script>
+<script src="assets/common/projects-data.js?v=20261027zf"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -445,12 +445,11 @@
       ? ph('이 프로젝트에 견적을 제안해보세요', '의뢰 내용을 확인하고 견적서를 작성해 주세요.') + '<a class="btn-filled" href="mypage-quote.html?id=' + x.id + '#quote">견적서 작성</a>'
       : ph('모집이 마감된 프로젝트입니다', '다른 모집중 프로젝트를 확인해 보세요.') + '<span class="btn-filled off" aria-disabled="true">모집 마감</span>';
   }
-  // 컨설턴트: 견적서(제출 수) · Q&A
+  // 컨설턴트: 견적서(제출 수). Q&A 게시판은 없앰 — 프로젝트 질문은 [문의하기] → 상담내역
   if ((OP.session() || {}).role === 'admin') {
     var an = $('.aside .panel'), qn = x.rid ? OP.flow.quoteCount(x.rid) : 0;
-    an.innerHTML = ph('컨설턴트 관리', '이 프로젝트의 견적서와 Q&amp;A를 확인할 수 있습니다.') + '<div style="display:flex;flex-direction:column;gap:8px">' +
-      (x.rid ? '<a class="btn-filled" href="mypage-request.html?id=' + encodeURIComponent(x.rid) + '#quotes">견적서 (' + qn + ')</a>' : '<span class="btn-filled off" aria-disabled="true">견적서 (0)</span>') +
-      '<span class="btn-filled off" aria-disabled="true">Q&amp;A (0 / 0)</span></div>';
+    an.innerHTML = ph('컨설턴트 관리', '이 프로젝트에 제출된 견적서를 확인할 수 있습니다.') +
+      (x.rid ? '<a class="btn-filled" href="mypage-request.html?id=' + encodeURIComponent(x.rid) + '#quotes">견적서 (' + qn + ')</a>' : '<span class="btn-filled off" aria-disabled="true">견적서 (0)</span>');
   }
   var ap = document.getElementById('applyQ');
   if (ap) ap.addEventListener('click', function (e) { e.preventDefault(); OP.flow.apply(x.rid, OP.session().email); location.href = 'mypage-quote.html?rid=' + encodeURIComponent(x.rid) + '#quote'; });

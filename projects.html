@@ -8,12 +8,12 @@
 <!-- Figma: Find Projects1-list (993:12559) · Find Projects1-grid (996:13677)
      카드: Project-list (974:7938) · Project-card Type=card (147:1266)
      B안: Find Projects2-list (831:3469) · Find Projects2-grid (977:9070) — 오른쪽을 흰 박스 하나로 묶고 행을 구분선으로 나열. 기존 목록형(A안)은 ?list=a 로 비교. 그리드형은 구분선 격자가 기본, 박스 안 카드형은 ?grid=a 로 비교 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027ze">
-<script src="assets/common/site.js?v=20261027ze"></script>
-<script src="assets/common/consult.js?v=20261027ze"></script>
-<script src="assets/common/mypage.js?v=20261027ze"></script>
-<script src="assets/common/flow.js?v=20261027ze"></script>
-<script src="assets/common/projects-data.js?v=20261027ze"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027zf">
+<script src="assets/common/site.js?v=20261027zf"></script>
+<script src="assets/common/consult.js?v=20261027zf"></script>
+<script src="assets/common/mypage.js?v=20261027zf"></script>
+<script src="assets/common/flow.js?v=20261027zf"></script>
+<script src="assets/common/projects-data.js?v=20261027zf"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -196,7 +196,7 @@
   .qbtn.off img { width:16px; height:16px; opacity:.45; }
   .qbtn:focus-visible { outline:2px solid var(--teal-600); outline-offset:2px; }
   .cbtns { flex:none; display:inline-flex; gap:6px; }
-  .qbtn.ghost { background:#fff; color:var(--gray-500); border:1px solid var(--gray-300); } /* button_outline tertiary M(40) (컨설턴트 견적서·Q&A) */
+  .qbtn.ghost { background:#fff; color:var(--gray-500); border:1px solid var(--gray-300); } /* button_outline tertiary M(40) (컨설턴트 견적서) */
   .qbtn.ghost:hover { background:var(--gray-50); color:var(--gray-600); }
   /* 제출 완료: button_filled tertiary */
   .qbtn.done { background:var(--gray-500); }
@@ -336,11 +336,11 @@
   // 분석파트너: 모집 중인 프로젝트에 견적서 작성 버튼 (마감이면 없음)
   // 미인증 분석파트너: 버튼은 잠긴 상태로 보이고, 누르면 인증 안내
   var PARTNER = OP.isPartner();
-  // 컨설턴트: 견적서(제출 수) · Q&A 버튼 — 견적서는 프로젝트 관리 상세의 견적서 확인 목록으로
+  // 컨설턴트: 견적서(제출 수) 버튼 (Q&A 게시판은 없앰) — 견적서는 프로젝트 관리 상세의 견적서 확인 목록으로
   var ADMIN = (OP.session() || {}).role === 'admin';
   var LOCKED = '<span class="qbtn off" role="button" tabindex="0" data-quote-locked title="인증된 분석파트너만 견적서를 작성할 수 있습니다"><img src="assets/main/ic-lock-key.svg" alt="">견적서 작성</span>';
   function quoteBtn(x) {
-    if (ADMIN) return '<span class="cbtns"><span class="qbtn ghost" role="button" tabindex="0" data-cq="' + x.id + '">견적서 (' + (x.rid ? OP.flow.quoteCount(x.rid) : 0) + ')</span><span class="qbtn ghost" role="button" tabindex="0" data-cqa="' + x.id + '">Q&amp;A (0 / 0)</span></span>';
+    if (ADMIN) return '<span class="cbtns"><span class="qbtn ghost" role="button" tabindex="0" data-cq="' + x.id + '">견적서 (' + (x.rid ? OP.flow.quoteCount(x.rid) : 0) + ')</span></span>';
     // 견적 요청을 받았거나 작성을 시작한 프로젝트: 제출 전(작성 대기·임시저장·수정 요청)은 '견적서 작성', 제출 후는 '견적서 제출 완료'(tertiary), 거절한 견적은 버튼 없음
     var px = x.rid && OP.flow.state(x.rid).P[(OP.session() || {}).email];
     if (px) {
@@ -439,10 +439,9 @@
 
   // 견적서 작성 버튼: 행(링크) 이동 대신 견적서 작성 화면으로
   function goQuote(e) {
-    var cq = e.target.closest('[data-cq]'), cqa = e.target.closest('[data-cqa]');
-    if (cq || cqa) {
+    var cq = e.target.closest('[data-cq]');
+    if (cq) {
       e.preventDefault(); e.stopPropagation();
-      if (cqa) { OP.toast('프로젝트 Q&A는 준비 중입니다.'); return; }
       var cx = DATA[+cq.dataset.cq];
       if (cx.rid) location.href = 'mypage-request.html?id=' + encodeURIComponent(cx.rid) + '#quotes';
       else OP.toast('등록된 견적서가 없습니다.');
