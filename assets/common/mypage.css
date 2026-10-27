@@ -534,3 +534,6 @@ span.tbtn { cursor:default; }
   .ui-white .card.box > :not(.card-head) { padding:4px 16px; }
   .ui-white .fgrid .fg + .fg { border-left:0 !important; border-top:1px solid var(--gray-200) !important; } /* 묶음이 세로로 쌓이면 구분선도 가로 */
 }
+
+/* 정보 구분선 (2026-10-27): 가운뎃점(·) 대신 세로선. 예) 한결연구소 | 홍길동 · 접수일 | 프로젝트 번호 */
+.dv { display:inline-block; width:1px; height:12px; margin:0 8px; background:var(--gray-300); vertical-align:-1px; }
