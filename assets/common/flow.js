@@ -180,8 +180,8 @@
     if (!nav || nav.type !== 'reload') return false;
     DEMO_REQS.forEach(function (r) { if (S[r.id]) delete S[r.id].cancel; }); // 예시 의뢰 취소도 처음 상태로
     var a = S['PRJ-2026-0036'], b = S['PRJ-2026-0035'];
-    if (a) { delete a.raw; delete a.rep; delete a.fin; delete a.rate; }
-    if (b && b.rep) { b.rep = b.rep.slice(0, 1); delete b.raw; delete b.fin; delete b.rate; }
+    if (a) { delete a.raw; delete a.rep; delete a.fin; delete a.rate; delete a.rateSkip; }
+    if (b && b.rep) { b.rep = b.rep.slice(0, 1); delete b.raw; delete b.fin; delete b.rate; delete b.rateSkip; } // 보고서 승인·완료(평가/건너뛰기)도 처음 상태로
     ['PRJ-2026-0037', 'PRJ-2026-0038', 'PRJ-2026-0039', 'PRJ-2026-0040', 'PRJ-2026-0041', 'PRJ-2026-0042'].forEach(function (k) { if (S[k]) { delete S[k].raw; delete S[k].rep; } });
     repDemo(S);
     return true;
