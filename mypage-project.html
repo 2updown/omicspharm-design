@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027zd">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zd">
-<script src="assets/common/site.js?v=20261027zd"></script>
-<script src="assets/common/consult.js?v=20261027zd"></script>
-<script src="assets/common/mypage.js?v=20261027zd"></script>
-<script src="assets/common/flow.js?v=20261027zd"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027ze">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027ze">
+<script src="assets/common/site.js?v=20261027ze"></script>
+<script src="assets/common/consult.js?v=20261027ze"></script>
+<script src="assets/common/mypage.js?v=20261027ze"></script>
+<script src="assets/common/flow.js?v=20261027ze"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -93,7 +93,6 @@
   .unread b { color:var(--orange-600); font-weight:600; }
   .unread label { display:inline-flex; align-items:center; gap:6px; flex:none; font-weight:500; color:var(--gray-700); cursor:pointer; }
   .unread input { width:16px; height:16px; accent-color:var(--teal-600); }
-  .badge.qa { background:#fd4900; color:#fff; } /* DS fill orange */
   /* 단계 진행 표시 */
   .stages { display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:4px; }
   .stages li { list-style:none; display:flex; flex-direction:column; gap:8px; font-size:13px; font-weight:500; line-height:18px; color:var(--gray-400); text-align:center; }
@@ -451,7 +450,7 @@
       }[x.stage];
       $('#project').outerHTML =
         '<div class="phead">' +
-          '<div class="prow"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stBadge(x) + (x.qa ? '<span class="badge qa">Q&amp;A ' + x.qa + '</span>' : '') + '</div>' +
+          '<div class="prow"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stBadge(x) + '</div>' +
             '<span class="reg">계약일 ' + dotd(x.contract) + ' · 프로젝트 번호 ' + esc(x.id) + '</span></div>' +
           '<div class="prow"><h2 class="ptitle"><a class="back" href="' + (OP.session().role === 'admin' ? 'mypage-request.html' : 'mypage-project.html') + '" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(x.title) + '</h2>' +
             '<div class="pright"><div class="period"><b>납기일</b><span>' + dotd(x.due) + '</span>' + (x.stage === '프로젝트 완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div>' + OP.askBtn({ key: x.id, cat: OP.my.svcKo(x.svc), no: x.id, title: x.title }) + '</div></div>' +
@@ -482,15 +481,13 @@
     $('#project').outerHTML =
       '<form class="psearch" id="pq" role="search"><input type="search" id="pqIn" placeholder="프로젝트명을 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
       '<div class="b-tabw" id="pTabW"><button type="button" class="b-arr l" data-arr="-1" aria-label="이전 단계 보기" hidden><img src="assets/find/ic-caret-left.svg" alt=""></button><div class="b-tabs" id="pChips" role="tablist"></div><button type="button" class="b-arr r" data-arr="1" aria-label="다음 단계 보기" hidden><img src="assets/find/ic-caret-right.svg" alt=""></button></div>' +
-      '<div class="unread" id="pUnread"></div>' +
       '<div class="pbar"><span class="total" id="pTotal"></span>' + (ADM ? '' : '<label class="sort" style="margin-left:auto;margin-right:8px"><select id="pRoute" aria-label="경로"><option value="">전체 경로</option><option value="match">OmicsPharm 매칭 요청</option><option value="self">직접 신청</option></select></label>') + '<label class="sort"><select id="pSort" aria-label="정렬"><option value="new">최신등록순</option><option value="due">납기임박순</option></select></label></div>' +
       '<div class="list" id="pList"></div>' +
       '<p class="demo-note">※ 화면 확인용 예시 프로젝트입니다.</p>';
-    var qaN = ALL.reduce(function (n, p) { return n + (p.qa || 0); }, 0), rvN = ALL.reduce(function (n, p) { return n + (p.review || 0); }, 0);
-    $('#pUnread').innerHTML = '<span>확인하지 않은 Q&amp;A <b>' + qaN + '건</b>과 리뷰 <b>' + rvN + '건</b>이 있습니다.</span><label><input type="checkbox" id="pOnly">미열람글만 보기</label>';
+    // '확인하지 않은 Q&A·리뷰' 줄은 뺌 (Q&A 게시판 없음, 분석파트너 리뷰 공개는 미정). 새 견적 요청은 칩의 N으로
     function draw() {
       var q = st.q.trim().toLowerCase();
-      var base = ALL.filter(function (p) { return (!q || p.title.toLowerCase().indexOf(q) > -1) && (!st.unread || p.qa || p.review) && (!st.route || (st.route === 'self') === (p.kind === 'q' ? !!p.self : routeOf(p))); }); // 경로 필터: 매칭 요청 / 직접 신청
+      var base = ALL.filter(function (p) { return (!q || p.title.toLowerCase().indexOf(q) > -1) &&(!st.route || (st.route === 'self') === (p.kind === 'q' ? !!p.self : routeOf(p))); }); // 경로 필터: 매칭 요청 / 직접 신청
       // 새 견적 요청 N: '견적 요청' 칩에만. 그 칩을 열어 보면 확인한 것으로 기록 (op.qSeen)
       var qSeen = []; try { qSeen = JSON.parse(localStorage.getItem('op.qSeen') || '[]'); } catch (e) {}
       var qNew = QL.filter(function (p) { return p.stage === '견적 요청' && qSeen.indexOf(p.id) < 0; });
@@ -520,13 +517,12 @@
           '<h3>' + esc(x.title) + '</h3></div>' +
           '<div class="info"><div class="meta">' + (ADM ? '' : '<span class="route">' + (routeOf(x) ? '직접 신청' : 'OmicsPharm 매칭 요청') + '</span>') + '<span>' + esc(x.client) + '</span><span><em>샘플</em>' + x.samples + '개</span><span><em>계약금액</em>' + esc(x.amount) + '</span><span><em>납기일</em>' + dotd(x.due) + '</span></div>' +
           '<p class="reg">계약일 ' + dotd(x.contract) + '</p></div></a>';
-      }).join('') || '<div class="empty"><b>' + (st.q || st.unread ? '조건에 맞는 프로젝트가 없습니다' : '진행 중인 프로젝트가 없습니다') + '</b><p>OmicsPharm의 매칭을 거쳐 계약된 프로젝트가 여기에 표시됩니다.</p></div>';
+      }).join('') || '<div class="empty"><b>' + (st.q || st.route ? '조건에 맞는 프로젝트가 없습니다' : '진행 중인 프로젝트가 없습니다') + '</b><p>OmicsPharm의 매칭을 거쳐 계약된 프로젝트가 여기에 표시됩니다.</p></div>';
     }
     $('#pq').addEventListener('submit', function (e) { e.preventDefault(); st.q = $('#pqIn').value; draw(); });
     $('#pqIn').addEventListener('input', function () { if (!this.value && st.q) { st.q = ''; draw(); } });
     $('#pSort').addEventListener('change', function () { st.sort = this.value; draw(); });
     if ($('#pRoute')) $('#pRoute').addEventListener('change', function () { st.route = this.value; draw(); });
-    $('#pOnly').addEventListener('change', function () { st.unread = this.checked; draw(); });
     $('#pChips').addEventListener('click', function (e) { var b = e.target.closest('[data-st]'); if (b) { st.stage = b.dataset.st; draw(); } });
     draw();
     slideTabs($('#pTabW'));
@@ -583,10 +579,10 @@
       '<form class="psearch" id="cq" role="search"><input type="search" id="cqIn" placeholder="프로젝트명을 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
       '<div class="b-tabw" id="cTabW"><button type="button" class="b-arr l" data-arr="-1" aria-label="이전 단계 보기" hidden><img src="assets/find/ic-caret-left.svg" alt=""></button><div class="b-tabs" id="cChips" role="tablist"></div><button type="button" class="b-arr r" data-arr="1" aria-label="다음 단계 보기" hidden><img src="assets/find/ic-caret-right.svg" alt=""></button></div>' +
       '<div class="unread" id="cUnread"></div><div class="pbar"><span class="total" id="cTotal"></span></div><div class="list" id="cList"></div>';
-    // 확인하지 않은 견적서 = 컨설턴트가 전달했고 아직 고르지 않은 견적 (Q&A는 아직 데이터 없음)
+    // 확인하지 않은 견적서 = 컨설턴트가 전달했고 아직 고르지 않은 견적
     var newQN = function (x) { var s = F.state(x.id); return s.st === 'sent' ? fwdKeys(s).length : 0; };
     var qN = list.reduce(function (n, x) { return n + newQN(x); }, 0), cOnly = false;
-    $('#cUnread').innerHTML = '<span>확인하지 않은 견적서 <b>' + qN + '건</b>과 Q&amp;A <b>0건</b>이 있습니다.</span><label><input type="checkbox" id="cOnly">미열람글만 보기</label>';
+    $('#cUnread').innerHTML = '<span>확인하지 않은 견적서 <b>' + qN + '건</b>이 있습니다.</span><label><input type="checkbox" id="cOnly">미열람글만 보기</label>';
     $('#cOnly').addEventListener('change', function () { cOnly = this.checked; cdraw(); });
     var cdraw = function () {
       var q = cq.trim().toLowerCase(), hit = function (x) { return !q || String(x.title || '').toLowerCase().indexOf(q) > -1; };
