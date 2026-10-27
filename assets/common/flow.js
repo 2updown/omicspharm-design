@@ -229,15 +229,15 @@
     // 단계 이름
     ADMIN_ST: { review: '검토 대기', quoting: '견적 수집 중', sent: '클라이언트 검토', matched: '매칭 완료' },
     // 프로젝트 단계 (2026-10-26, 요구사항정의서 '20260210_내부프로세스_프로젝트상태' 시트 이름으로 통일)
-    // 보고서 승인 단계는 없음: 클라이언트가 최종 보고서를 승인하면 바로 프로젝트 완료 (리뷰는 선택)
-    ADMIN_STAGES: ['의뢰접수', '의뢰확인', '견적 협의', '계약 진행 중', '분석 진행 중', '보고서 등록', '보고서 검토', '프로젝트 완료', '삭제'],
+    // 보고서 승인 = 클라이언트가 최종 보고서를 승인(s.fin). 프로젝트 완료 = 만족도 평가를 남기거나 [건너뛰기](s.rate / s.rateSkip) (2026-10-27, 시트대로)
+    ADMIN_STAGES: ['의뢰접수', '의뢰확인', '견적 협의', '계약 진행 중', '분석 진행 중', '보고서 등록', '보고서 검토', '보고서 승인', '프로젝트 완료', '삭제'],
     P2A: {}, // (예전 분석파트너 단계 이름 → 컨설턴트 단계 이름. 이름을 통일해서 이제 같음)
     // 의뢰확인 = 승인 후 견적서가 아직 한 건도 없음, 견적 협의 = 견적서 1건 이상 받음 (시트 기준). 보고서 등록 = 분석파트너가 결과 등록(AI 초안 검토 중), 보고서 검토 = 클라이언트에게 전달
-    adminStage: function (id) { var s = state(id); return s.cancel ? '삭제' : s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 검토' : s.raw && s.raw.length ? '보고서 등록' : s.ct ? '분석 진행 중' : s.st === 'matched' ? '계약 진행 중' : !s.ok ? '의뢰접수' : (s.st === 'sent' || Object.keys(s.P).some(function (k) { return s.P[k].status === 'sub'; })) ? '견적 협의' : '의뢰확인'; },
+    adminStage: function (id) { var s = state(id); return s.cancel ? '삭제' : (s.rate || s.rateSkip) ? '프로젝트 완료' : s.fin ? '보고서 승인' : s.rep && s.rep.length ? '보고서 검토' : s.raw && s.raw.length ? '보고서 등록' : s.ct ? '분석 진행 중' : s.st === 'matched' ? '계약 진행 중' : !s.ok ? '의뢰접수' : (s.st === 'sent' || Object.keys(s.P).some(function (k) { return s.P[k].status === 'sub'; })) ? '견적 협의' : '의뢰확인'; },
     quoteCount: function (id) { var s = state(id); return Object.keys(s.P).filter(function (k) { return s.P[k].status === 'sub'; }).length; },
     // 클라이언트 단계 (2026-10-26): 의뢰접수 → 의뢰승인 → 견적 확인(견적확인요청 받음) → 계약 진행 중 → 분석 진행 중 → 보고서 검토 → 프로젝트 완료
     CLIENT_ST: { review: '의뢰접수', quoting: '의뢰접수', sent: '견적 확인', matched: '계약 진행 중' },
-    CLIENT_STEPS: ['의뢰접수', '의뢰승인', '견적 확인', '계약 진행 중', '분석 진행 중', '보고서 검토', '프로젝트 완료'],
+    CLIENT_STEPS: ['의뢰접수', '의뢰승인', '견적 확인', '계약 진행 중', '분석 진행 중', '보고서 검토', '보고서 승인', '프로젝트 완료'],
     // 파트너 쪽에서 본 견적 상태
     pst: function (s, k) {
       var x = s.P[k]; if (!x) return null;
@@ -386,7 +386,7 @@
       var A = OP.accounts(); Object.keys(A).forEach(function (k) { if (A[k].bizOk) OP.saveAccount(k, { bizOk: 0, bizOkName: '' }); }); // 사업자등록증 확인 완료도 처음 상태로 (올린 파일은 유지)
     },
     // 클라이언트 단계
-    clientStage: function (id) { var s = state(id); return s.cancel ? '삭제' : s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 검토' : s.ct ? '분석 진행 중' : s.st === 'matched' ? '계약 진행 중' : s.st === 'sent' ? '견적 확인' : s.ok ? '의뢰승인' : '의뢰접수'; },
+    clientStage: function (id) { var s = state(id); return s.cancel ? '삭제' : (s.rate || s.rateSkip) ? '프로젝트 완료' : s.fin ? '보고서 승인' : s.rep && s.rep.length ? '보고서 검토' : s.ct ? '분석 진행 중' : s.st === 'matched' ? '계약 진행 중' : s.st === 'sent' ? '견적 확인' : s.ok ? '의뢰승인' : '의뢰접수'; },
     // 프로젝트 삭제 (2026-10-21, '취소' → '삭제'): 클라이언트는 승인 후 ~ 견적 협의까지 직접(계약 진행 중은 컨설턴트 문의), 컨설턴트는 계약서 등록 전까지
     // 기록은 남김(s.cancel): 클라이언트 목록에서는 사라지고, 컨설턴트는 '삭제' 상태로 봄. 승인 전(의뢰접수) 클라이언트 삭제는 완전 삭제
     canCancel: function (id, admin) { var s = state(id); return !!s.ok && !s.cancel && (admin ? !s.ct : ['review', 'quoting', 'sent'].indexOf(s.st) > -1); },
@@ -394,6 +394,8 @@
     // 결과보고서 최종 확인(프로젝트 완료) · 만족도 평가
     finish: function (id) { return put(id, function (s) { s.fin = Date.now(); }); },
     rate: function (id, star, text) { return put(id, function (s) { s.rate = { star: star, text: text, at: Date.now() }; }); },
+    rateSkip: function (id) { return put(id, function (s) { s.rateSkip = Date.now(); }); }, // 평가 건너뛰기 = 프로젝트 완료
+    done: function (s) { return !!(s && (s.rate || s.rateSkip)); },
     // 분석파트너가 받은 견적 요청
     inbox: function (k) {
       var d = db().S;
@@ -405,7 +407,7 @@
       var d = db().S;
       return requests().filter(function (r) { var s = d[r.id]; return s && s.st === 'matched' && (!k || s.pick === k); }).map(function (r) {
         var s = d[r.id], q = s.P[s.pick].quote;
-        return { id: r.id, flow: true, ct: s.ct, svc: r.svc, stage: s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 검토' : s.raw && s.raw.length ? '보고서 등록' : s.ct ? '분석 진행 중' : '계약 진행 중', title: r.title, client: r.org || '-', partner: partner(s.pick).org, samples: r.samples || '-', amount: man(total(q).net), contract: (s.ct && s.ct.date) || iso(s.ct ? s.ct.at : s.pickAt), due: (s.ct && s.ct.due) || r.due || iso(s.pickAt + DAY * 7 * (+q.weeks || 6)), at: s.pickAt, qa: 0 };
+        return { id: r.id, flow: true, ct: s.ct, svc: r.svc, stage: (s.rate || s.rateSkip) ? '프로젝트 완료' : s.fin ? '보고서 승인' : s.rep && s.rep.length ? '보고서 검토' : s.raw && s.raw.length ? '보고서 등록' : s.ct ? '분석 진행 중' : '계약 진행 중', title: r.title, client: r.org || '-', partner: partner(s.pick).org, samples: r.samples || '-', amount: man(total(q).net), contract: (s.ct && s.ct.date) || iso(s.ct ? s.ct.at : s.pickAt), due: (s.ct && s.ct.due) || r.due || iso(s.pickAt + DAY * 7 * (+q.weeks || 6)), at: s.pickAt, qa: 0 };
       });
     }
   };
@@ -437,13 +439,15 @@
         (s.raw || []).forEach(function (x, i) { L.push({ id: 'f-raw-' + r.id + i, k: '결과등록', cat: 'project', at: x.at, t: josa(partner(s.pick).org, '이', '가') + ' ' + nm + ' 프로젝트의 ' + (i + 1) + '차 분석 결과를 등록했습니다. AI 보고서 초안을 검토해주세요.', href: href }); });
         if (s.cancel) L.push({ id: 'f-cancel-' + r.id, k: '의뢰취소', cat: 'project', at: s.cancel.at, t: s.cancel.by === 'admin' ? nm + ' 프로젝트를 삭제했습니다.' : cl + '의 ' + nm + ' 프로젝트가 삭제되었습니다.', sub: s.cancel.reason ? '사유: ' + s.cancel.reason : '', href: href });
         if (s.rate) L.push({ id: 'f-rate-' + r.id, k: '리뷰등록', cat: 'project', at: s.rate.at, t: cl + '의 ' + nm + ' 프로젝트에 만족도 평가(별점 ' + s.rate.star + '점)가 등록되었습니다.', href: href });
-        if (s.fin) L.push({ id: 'f-fin-' + r.id, k: '프로젝트완료', cat: 'project', at: s.fin, t: josa(cl, '이', '가') + ' ' + nm + ' 결과보고서를 최종 확인해 프로젝트가 완료되었습니다.', href: href });
+        if (s.fin) L.push({ id: 'f-fin-' + r.id, k: '보고서 최종 확인', cat: 'project', at: s.fin, t: josa(cl, '이', '가') + ' ' + nm + ' 결과보고서를 최종 승인했습니다.', href: href });
+        if (s.rate || s.rateSkip) L.push({ id: 'f-done-' + r.id, k: '프로젝트완료', cat: 'project', at: s.rate ? s.rate.at : s.rateSkip, t: nm + ' 프로젝트가 완료되었습니다.', href: href }); // 완료 = 평가 제출 또는 건너뛰기
       } else if (role === 'partner') {
         var x = s.P[ses.email]; if (!x) return;
         var qh = 'mypage-quote.html?rid=' + encodeURIComponent(r.id);
         if (r.updatedAt && r.updatedAt > x.at) L.push({ id: 'f-ed-' + r.id + r.updatedAt, k: '의뢰수정', cat: 'project', at: r.updatedAt, t: nm + ' 프로젝트의 의뢰 내용이 수정되었습니다. 견적서 작성 전 변경 내용을 확인해주세요.', href: qh });
         if (s.ct && s.pick === ses.email) L.push({ id: 'f-ct-' + r.id, k: '계약', cat: 'project', at: s.ct.at, t: nm + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
-        if (s.fin && s.pick === ses.email) L.push({ id: 'f-fin-' + r.id, k: '프로젝트완료', cat: 'project', at: s.fin, t: nm + ' 프로젝트가 완료되었습니다. 클라이언트가 결과보고서를 최종 확인했습니다.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
+        if (s.fin && s.pick === ses.email) L.push({ id: 'f-fin-' + r.id, k: '보고서 최종 확인', cat: 'project', at: s.fin, t: nm + ' 프로젝트의 결과보고서를 클라이언트가 최종 승인했습니다.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
+        if ((s.rate || s.rateSkip) && s.pick === ses.email) L.push({ id: 'f-done-' + r.id, k: '프로젝트완료', cat: 'project', at: s.rate ? s.rate.at : s.rateSkip, t: nm + ' 프로젝트가 완료되었습니다.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
         if (s.cancel) L.push({ id: 'f-cancel-' + r.id, k: '의뢰취소', cat: 'project', at: s.cancel.at, t: nm + ' 프로젝트가 삭제되어 견적 요청이 종료되었습니다.', href: 'mypage-quote.html' });
         if (!x.self) L.push({ id: 'f-req-' + r.id, k: '견적제안', cat: 'project', at: x.at, t: nm + ' 프로젝트 검토 후 견적서를 작성해주세요.', sub: '견적 마감일: ' + (s.due ? s.due.replace(/-/g, '.') : '-'), href: qh });
         if (x.chg) L.push({ id: 'f-chg-' + r.id + x.chg.at, k: '견적변경확인요청', cat: 'project', at: x.chg.at, t: nm + ' 프로젝트 견적서의 변경 내용을 확인해주세요.', sub: x.chg.note ? '변경 사유: ' + x.chg.note : '', href: qh });
@@ -704,10 +708,10 @@
           '<li class="' + (step > 2 ? 'done' : '') + '"><div><b>클라이언트에 전달</b><p>전달하면 클라이언트 결과보고서에 ' + (rep.length + (x.sent ? 0 : 1)) + '차로 등록되고 알림이 갑니다.</p></div><div class="rp-act">' + (x.sent ? '<span class="rp-fn">' + ymd(x.sent) + ' 전달</span>' : '<button type="button" class="btn primary" data-rp="send"' + (x.pdf ? '' : ' disabled') + '>클라이언트에 전달</button>') + '</div></li>' +
         '</ol></div></div>';
     }).reverse().join('');
-    if (rep.length) h += '<div class="rp-sent"><b>클라이언트 결과보고서</b><span>' + rep.length + '차까지 전달 · ' + (fin ? '클라이언트 최종 확인 완료 (' + ymd(s.fin) + ')' : '클라이언트 검수 대기') + '</span></div>';
+    if (rep.length) h += '<div class="rp-sent"><b>클라이언트 결과보고서</b><span>' + rep.length + '차까지 전달 · ' + (fin ? '클라이언트 최종 승인 (' + ymd(s.fin) + ')' : '클라이언트 검수 대기') + '</span></div>';
     // 클라이언트 만족도 평가: 지금은 컨설턴트만 봄 (분석파트너 공개는 미정). 별점·후기는 프로젝트별로 모아 두고 나중에 매칭·AI에 활용
     if (fin) h += s.rate ? '<div class="rp-rate"><div class="rp-rh"><b>클라이언트 만족도 평가</b><span class="rp-stars" aria-label="별점 ' + s.rate.star + '점">' + [1, 2, 3, 4, 5].map(function (i) { return '<img src="assets/project/ic-star' + (i <= s.rate.star ? '-fill' : '') + '.svg" alt="">'; }).join('') + '</span><em>' + ymd(s.rate.at) + ' 제출</em></div>' + (s.rate.text ? '<p>' + esc(s.rate.text) + '</p>' : '<p class="none">남긴 의견이 없습니다.</p>') + '<span class="rp-note">컨설턴트만 볼 수 있습니다.</span></div>'
-      : '<div class="rp-rate"><div class="rp-rh"><b>클라이언트 만족도 평가</b></div><p class="none">아직 평가가 등록되지 않았습니다.</p></div>';
+      : '<div class="rp-rate"><div class="rp-rh"><b>클라이언트 만족도 평가</b></div><p class="none">' + (s.rateSkip ? '클라이언트가 평가를 건너뛰었습니다. (' + ymd(s.rateSkip) + ')' : '아직 평가가 등록되지 않았습니다. 평가를 남기거나 건너뛰면 프로젝트가 완료됩니다.') + '</p></div>';
     return h + '</section>';
   };
   // 결과보고서 영역 동작 (화면마다 다시 그리는 함수를 F.repRedraw에 넣어 둠)

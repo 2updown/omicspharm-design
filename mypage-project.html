@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027p">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027p">
-<script src="assets/common/site.js?v=20261027p"></script>
-<script src="assets/common/consult.js?v=20261027p"></script>
-<script src="assets/common/mypage.js?v=20261027p"></script>
-<script src="assets/common/flow.js?v=20261027p"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027r">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027r">
+<script src="assets/common/site.js?v=20261027r"></script>
+<script src="assets/common/consult.js?v=20261027r"></script>
+<script src="assets/common/mypage.js?v=20261027r"></script>
+<script src="assets/common/flow.js?v=20261027r"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -214,6 +214,7 @@
   .rrate h4 { font-size:16px; font-weight:700; line-height:24px; }
   .rrate .lead, .rrate p { font-size:14px; line-height:22px; color:var(--gray-600); white-space:pre-line; }
   .rrate em { font-style:normal; font-size:12px; color:var(--gray-500); }
+  .rrate .rate-help { margin-top:-4px; font-size:12px; line-height:18px; color:var(--gray-500); text-align:right; }
   .stars { display:flex; gap:4px; }
   .stars button { display:flex; padding:2px; border-radius:6px; } .stars button:hover { background:var(--gray-100); }
   .stars img { width:32px; height:32px; } .rrate.done .stars img { width:20px; height:20px; }
@@ -417,7 +418,8 @@
         '계약 진행 중': x.flow ? ['계약서를 준비하고 있습니다', 'OmicsPharm 컨설턴트가 계약서를 등록하면 분석 단계로 넘어갑니다.', ''] : ['계약서를 확인해주세요', '계약 내용 확인 후 시료 수령 일정을 클라이언트와 협의합니다.', '계약서 확인'],
         '분석 진행 중': ['분석이 진행 중입니다', '분석이 끝나면 아래 결과보고서에서 분석 결과를 올려 주세요. 등록하면 OmicsPharm이 검토합니다.', ''],
         '보고서 등록': ['등록한 결과를 OmicsPharm이 검토하고 있습니다', '수정이 필요하면 알림으로 알려드립니다.', ''],
-        '보고서 검토': ['클라이언트가 보고서를 확인하고 있습니다', '클라이언트가 최종 승인하면 프로젝트가 완료됩니다.', ''],
+        '보고서 검토': ['클라이언트가 보고서를 확인하고 있습니다', '클라이언트가 최종 승인하면 보고서 승인 단계로 넘어갑니다.', ''],
+        '보고서 승인': ['클라이언트가 결과보고서를 승인했습니다', '클라이언트가 만족도 평가를 남기거나 건너뛰면 프로젝트가 완료됩니다.', ''],
         '프로젝트 완료': ['프로젝트가 완료되었습니다', x.review ? '클라이언트가 남긴 리뷰를 확인해보세요.' : '수고하셨습니다.', x.review ? '리뷰 보기' : '']
       }[x.stage];
       $('#project').outerHTML =
@@ -576,7 +578,7 @@
     return;
   }
   var FS = F.state(d.id), sk = F.CLIENT_STEPS.indexOf(F.clientStage(d.id)), FK = fwdKeys(FS), REP = FS.rep || [];
-  if (FS.fin) sk = F.CLIENT_STEPS.length; // 최종 확인 = 모든 단계 완료
+  if (F.done(FS)) sk = F.CLIENT_STEPS.length; // 평가 제출·건너뛰기 = 모든 단계 완료 (보고서 승인 = 그 전 단계)
   var DUE = (FS.ct && FS.ct.due) || d.due || '';
   var dd = function (v) { var n = Math.ceil((new Date(v) - new Date(new Date().toDateString())) / 864e5); return isNaN(n) ? '-' : n > 0 ? 'D-' + n : n === 0 ? 'D-Day' : 'D+' + -n; };
   if (FK.length && FS.st === 'sent') { $('#qCnt').hidden = false; $('#qCnt').textContent = FK.length; }
@@ -588,7 +590,8 @@
                     : ['gray', 'OmicsPharm 컨설턴트가 의뢰서를 확인하고 있습니다.', '승인되면 프로젝트로 등록되고 알림으로 알려드립니다.', ''],
       quoting: ['gray', '분석파트너에게 견적을 받고 있습니다.', '현재 분석파트너 ' + n + '곳이 견적을 준비하고 있습니다. 견적이 모이면 컨설턴트가 확인해 전달해드립니다.', ''],
       sent: ['warn', F.cqList(FS).length + '차 견적서가 도착했습니다.', '견적서를 확인하고 [최종 견적 확인]을 눌러주세요. 궁금한 점은 문의하기로 남겨 주세요.', ''],
-      matched: FS.fin ? ['', '프로젝트가 완료되었습니다.', FS.rate ? '만족도 평가를 남겨주셔서 감사합니다.' : '서비스 만족도 평가를 남겨주시면 더 나은 서비스를 위해 반영하겠습니다.', FS.rate ? '' : '<button type="button" class="btn primary" data-open-tab="report">만족도 평가하기</button>']
+      matched: FS.fin ? (F.done(FS) ? ['', '프로젝트가 완료되었습니다.', FS.rate ? '만족도 평가를 남겨주셔서 감사합니다.' : '이용해 주셔서 감사합니다.', '']
+                        : ['warn', '결과보고서를 승인했습니다.', '서비스 만족도 평가를 남기거나 건너뛰면 프로젝트가 완료됩니다.', '<button type="button" class="btn primary" data-open-tab="report">만족도 평가하기</button>'])
              : REP.length ? ['warn', REP.length + '차 결과보고서가 등록되었습니다.', '내용을 검수하신 뒤 수정 요청 또는 최종 확인을 진행해주세요.', '<button type="button" class="btn primary" data-open-tab="report">결과보고서 확인</button>']
              : FS.ct ? ['', '분석이 진행 중입니다.', '납기일 ' + dot(DUE) + ' (' + dd(DUE) + ')까지 결과보고서를 등록해드립니다. 등록되면 알림으로 알려드립니다.', '']
                      : ['', FS.pick ? F.qname(FS, FS.pick) + ' 견적을 확정했습니다.' : '', 'OmicsPharm 컨설턴트가 계약서를 준비하고 있습니다. 등록되면 알림으로 알려드립니다.', '']
@@ -684,10 +687,10 @@
     if (!REP.length) return '<div class="empty"><b>등록된 결과보고서가 없습니다</b><p>' + (FS.ct ? '분석이 끝나면 OmicsPharm 컨설턴트가 결과보고서를 검토해 등록합니다. 납기일 ' + dot(DUE) + ' (' + dd(DUE) + ')' : '계약 후 분석이 끝나면 결과보고서가 여기에 등록됩니다.') + '</p></div>';
     var last = REP[REP.length - 1], n = REP.length;
     return '<div class="qhead"><h3>결과보고서</h3><span>의뢰서 작성 시 선택하신 산출물이 등록됩니다. 이전 차수는 아래에서 열어볼 수 있습니다.</span></div>' +
-      '<section class="rver cur"><div class="rv-head"><b>' + n + '차 결과보고서</b><span class="badge ' + (FS.fin ? 'done">최종 확인 완료' : 'wait">검수 대기') + '</span><em>' + ymd(last.at) + ' 등록</em></div>' +
+      '<section class="rver cur"><div class="rv-head"><b>' + n + '차 결과보고서</b><span class="badge ' + (FS.fin ? 'done">최종 승인 완료' : 'wait">검수 대기') + '</span><em>' + ymd(last.at) + ' 등록</em></div>' +
         (last.note ? '<p class="rv-note"><b>OmicsPharm 컨설턴트</b>' + esc(F.mask(FS, last.note)) + '</p>' : '') + filesHTML(last) +
-        (FS.fin ? '<p class="rv-fin">' + ymd(FS.fin) + ' 최종 확인했습니다. 이후 수정이 필요하면 문의하기로 요청해주세요.</p>'
-          : '<div class="rv-acts"><button type="button" class="btn" data-chat>수정 요청</button><button type="button" class="btn primary" id="repFin">최종 확인</button></div>') +
+        (FS.fin ? '<p class="rv-fin">' + ymd(FS.fin) + ' 최종 승인했습니다. 이후 수정이 필요하면 문의하기로 요청해주세요.</p>'
+          : '<div class="rv-acts"><button type="button" class="btn" data-chat>수정 요청</button><button type="button" class="btn primary" id="repFin">최종 승인</button></div>') +
       '</section>' +
       (n > 1 ? '<div class="rold">' + REP.slice(0, -1).map(function (v, i) { return { v: v, i: i }; }).reverse().map(function (o) {
         return '<details class="rver"><summary><b>' + (o.i + 1) + '차 결과보고서</b><em>' + ymd(o.v.at) + ' 등록</em><img src="assets/find/ic-chevron-down.svg" alt=""></summary>' + (o.v.note ? '<p class="rv-note">' + esc(F.mask(FS, o.v.note)) + '</p>' : '') + filesHTML(o.v) + '</details>';
@@ -695,11 +698,12 @@
       (FS.fin ? rateHTML() : '');
   }
   function rateHTML() {
+    if (FS.rateSkip && !FS.rate) return '<section class="rrate done"><h4>서비스 만족도 평가</h4><p>평가를 건너뛰었습니다. (' + ymd(FS.rateSkip) + ')</p></section>';
     var R = FS.rate, st = function (on) { return '<img src="assets/project/ic-star' + (on ? '-fill' : '') + '.svg" alt="">'; };
     if (R) return '<section class="rrate done"><h4>서비스 만족도 평가</h4><div class="stars" aria-label="별점 ' + R.star + '점">' + [1, 2, 3, 4, 5].map(function (i) { return st(i <= R.star); }).join('') + '</div>' + (R.text ? '<p>' + esc(R.text) + '</p>' : '') + '<em>' + ymd(R.at) + ' 제출 · OmicsPharm이 확인합니다.</em></section>';
     return '<section class="rrate" id="rate"><h4>서비스 만족도 평가</h4><p class="lead">이용하신 분석 서비스는 만족스러우셨나요? 별점과 함께 의견을 남겨주시면 더 나은 서비스를 위해 반영하겠습니다.</p>' +
       '<div class="stars" role="radiogroup" aria-label="별점">' + [1, 2, 3, 4, 5].map(function (i) { return '<button type="button" role="radio" aria-checked="false" data-star="' + i + '" aria-label="' + i + '점">' + st(false) + '</button>'; }).join('') + '</div>' +
-      '<textarea id="rateText" placeholder="의견을 작성해주세요 (선택)"></textarea><div class="rv-acts"><button type="button" class="btn primary" id="rateGo" disabled>제출</button></div></section>';
+      '<textarea id="rateText" placeholder="의견을 작성해주세요 (선택)"></textarea><div class="rv-acts"><button type="button" class="btn" id="rateSkip">건너뛰기</button><button type="button" class="btn primary" id="rateGo" disabled>제출</button></div><p class="rate-help">평가를 남기거나 건너뛰면 프로젝트가 완료됩니다.</p></section>';
   }
   var closed = d.to && new Date(d.to) < new Date(new Date().toDateString());
 
@@ -754,15 +758,16 @@
     if (v) F.showContract(d, FS, v.dataset.ct);
     if (e.target.closest('[data-doc-pick]')) { var X = FS.P[FS.pick]; F.showDoc(d, X.quote, FS.pick, F.qname(FS, FS.pick) + ' 견적서', { client: true, no: F.qno(FS, FS.pick) }); }
     var dl = e.target.closest('[data-dl]'); if (dl) OP.toast('데모: ' + dl.dataset.dl + ' 파일을 내려받습니다.');
-    if (e.target.closest('#repFin')) F.ask({ title: '최종 확인하시겠습니까?', desc: '프로젝트가 최종 완료 처리되며 이후 결과보고서 수정이 불가능합니다.', label: false, yes: '최종 확인' }, function () {
-      F.finish(d.id); OP.flash('프로젝트가 완료되었습니다.'); location.replace('mypage-project.html?id=' + encodeURIComponent(d.id) + '&tab=report');
+    if (e.target.closest('#repFin')) F.ask({ title: '결과보고서를 최종 승인하시겠습니까?', desc: '승인하면 결과보고서를 더 수정할 수 없습니다. 이어서 서비스 만족도 평가를 남기거나 건너뛰면 프로젝트가 완료됩니다.', label: false, yes: '최종 승인' }, function () {
+      F.finish(d.id); OP.flash('결과보고서를 승인했습니다. 만족도 평가를 남겨 주세요.'); location.replace('mypage-project.html?id=' + encodeURIComponent(d.id) + '&tab=report&go=rate'); // 해시만 바꾸면 다시 그려지지 않아서 쿼리로
     });
     var sb = e.target.closest('[data-star]');
     if (sb) { var nn = +sb.dataset.star; [].forEach.call(document.querySelectorAll('#rate [data-star]'), function (x) { var on = +x.dataset.star <= nn; x.setAttribute('aria-checked', +x.dataset.star === nn); x.querySelector('img').src = 'assets/project/ic-star' + (on ? '-fill' : '') + '.svg'; }); $('#rate').dataset.v = nn; $('#rateGo').disabled = false; }
+    if (e.target.closest('#rateSkip')) { F.rateSkip(d.id); OP.flash('프로젝트가 완료되었습니다.'); location.replace('mypage-project.html?id=' + encodeURIComponent(d.id) + '&tab=report'); }
     if (e.target.closest('#rateGo')) { F.rate(d.id, +$('#rate').dataset.v, $('#rateText').value.trim()); OP.flash('만족도 평가를 제출했습니다. 감사합니다.'); location.replace('mypage-project.html?id=' + encodeURIComponent(d.id) + '&tab=report'); }
   });
   // 처음 보이는 탭은 단계에 맞춤: 의뢰접수 = 의뢰내용 / 견적 확인·견적 확정 = 견적서 / 계약서 등록 후 = 계약정보 (?tab= 이 있으면 그 탭)
-  var qtab = new URLSearchParams(location.search).get('tab'); if (qtab) setTimeout(function () { showTab(qtab); }, 50);
+  var qtab = new URLSearchParams(location.search).get('tab'); if (qtab) setTimeout(function () { showTab(qtab); var rt = /[?&]go=rate\b/.test(location.search) && document.getElementById('rate'); if (rt) rt.scrollIntoView({ block: 'center' }); }, 50); // 승인 직후 = 평가 칸으로
   // 사업자등록증 다시 올리기: 이 의뢰의 파일로 저장하고 내 정보 관리에도 반영
   if ($('#bizRe')) $('#bizRe').addEventListener('change', function () {
     var f = this.files[0]; this.value = ''; if (!f) return;
