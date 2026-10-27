@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261027z">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261027z">
-<script src="assets/common/site.js?v=20261027z"></script>
-<script src="assets/common/consult.js?v=20261027z"></script>
-<script src="assets/common/mypage.js?v=20261027z"></script>
-<script src="assets/common/flow.js?v=20261027z"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261027zb">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261027zb">
+<script src="assets/common/site.js?v=20261027zb"></script>
+<script src="assets/common/consult.js?v=20261027zb"></script>
+<script src="assets/common/mypage.js?v=20261027zb"></script>
+<script src="assets/common/flow.js?v=20261027zb"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -233,6 +233,9 @@
   .lcard .row1 { display:flex; align-items:center; justify-content:space-between; }
   .lcard .dday { font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
   .lcard .row1 .dday { margin-left:auto; }
+  /* 할 일 (2026-10-27): 배지는 분석 서비스 + 프로젝트 단계만, 세부 상태는 오른쪽에 버튼(할 일) 또는 회색 글자 — 대시보드 최근 프로젝트와 같음 */
+  .lcard .row1 .nxb { flex:none; height:32px; margin-left:12px; padding:0 12px; font-size:13px; line-height:18px; }
+  .lcard .row1 .nx { flex:none; margin-left:12px; font-size:13px; font-weight:500; line-height:18px; color:var(--gray-500); }
   .lcard h3 { font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
   .lcard .info { display:flex; flex-direction:column; gap:10px; }
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -385,6 +388,18 @@
     var SG = function (x) { return x.kind === 'q' || ADM ? x.stage : D.pStage(x); };
     // 분석파트너 목록 = 견적 단계 + 프로젝트 단계 (2026-10-27: 견적관리 메뉴를 합침). 견적 건은 견적서 화면(mypage-quote.html)으로 이어짐
     var Q_ST = { '작성 대기': '견적 요청', '임시저장': '견적 요청', '수정 요청': '견적 요청', '변경 확인 요청': '견적 요청', '제출 완료': '견적 제출', '클라이언트 검토 중': '견적 제출', '미선정': '미선정·거절', '거절': '미선정·거절' }; // 선정 = 프로젝트(계약 진행 중)로 넘어감
+    var Q_SB = { '견적 요청': 'wait', '견적 제출': 'state', '미선정·거절': 'done' }; // 견적 단계 배지 (프로젝트 단계 이름)
+    // 세부 상태 → 오른쪽 할 일: ['btn', 이름] = 버튼, ['txt', 이름] = 회색 글자
+    var Q_NX = { '작성 대기': ['btn', '견적 작성'], '임시저장': ['btn', '이어서 작성'], '수정 요청': ['btn', '견적 수정'], '변경 확인 요청': ['btn', '변경 확인'], '제출 완료': ['txt', 'OmicsPharm 검토 중'], '클라이언트 검토 중': ['txt', '클라이언트 검토 중'], '미선정': ['txt', '미선정'], '거절': ['txt', '거절'] };
+    var nextHTML = function (n) { return !n ? '' : n[0] === 'btn' ? '<span class="btn line nxb">' + n[1] + '</span>' : '<span class="nx">' + n[1] + '</span>'; };
+    var pNext = function (x) { // 계약 이후 프로젝트 (분석파트너)
+      var ps = D.pStage(x), fs = x.flow ? OP.flow.state(x.id) : null;
+      if (ps === '계약 진행 중') return ['txt', x.flow && !fs.ct ? '계약서 준비 중' : '계약서 확인'];
+      if (ps === '분석 진행 중') return x.flow && (fs.raw || []).length ? ['txt', 'OmicsPharm 검토 중'] : ['btn', '결과 등록'];
+      if (ps === '보고서 등록') return ['txt', 'OmicsPharm 검토 중'];
+      if (ps === '보고서 검토') return ['txt', '클라이언트 확인 중'];
+      return null;
+    };
     var Q_B = { '작성 대기': 'wait', '임시저장': 'wait', '수정 요청': 'wait', '변경 확인 요청': 'wait', '제출 완료': 'state', '클라이언트 검토 중': 'state', '미선정': 'done', '거절': 'done' };
     var QL = !ADM && OP.canQuote() ? OP.flow.inbox(OP.session().email).map(function (o) {
       var t = OP.flow.pst(o.s, OP.session().email); if (!Q_ST[t]) return null;
@@ -490,8 +505,8 @@
         if (x.kind === 'q') { // 견적 단계 카드: 견적 상태 + 제출 전이면 견적 마감일
           var open = x.stage === '견적 요청', dl = Math.ceil((new Date(x.due + 'T23:59:59') - Date.now()) / 864e5);
           return '<a class="lcard" href="' + x.href + '"><div class="head">' +
-            '<div class="row1"><div class="badges"><span class="badge tag">' + esc(x.svc) + '</span><span class="badge ' + Q_B[x.pst] + '">' + x.pst + '</span></div>' +
-              '<span class="dday">' + (open && x.due ? (dl < 0 ? '견적 마감' : '견적 마감 D-' + String(dl).padStart(2, '0')) : '') + '</span>' +
+            '<div class="row1"><div class="badges"><span class="badge tag">' + esc(x.svc) + '</span><span class="badge ' + Q_SB[x.stage] + '">' + x.stage + '</span></div>' +
+              '<span class="dday">' + (open && x.due ? (dl < 0 ? '견적 마감' : '견적 마감 D-' + String(dl).padStart(2, '0')) : '') + '</span>' + nextHTML(Q_NX[x.pst]) +
               '</div>' +
             '<h3>' + esc(x.title) + '</h3></div>' +
             '<div class="info"><div class="meta"><span class="route">' + (x.self ? '직접 신청' : 'OmicsPharm 매칭 요청') + '</span><span>' + esc(x.client) + '</span><span><em>샘플</em>' + esc(x.samples) + '개</span>' + (x.due ? '<span><em>견적 마감일</em>' + dotd(x.due) + '</span>' : '') + '</div>' +
@@ -499,8 +514,8 @@
         }
         return '<a class="lcard" href="mypage-project.html?id=' + x.id + '"><div class="head">' +
           '<div class="row1"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stBadge(x) +
-            (x.qa ? '<span class="badge qa">Q&amp;A ' + x.qa + '</span>' : '') + (x.review ? '<span class="badge qa">리뷰 ' + x.review + '</span>' : '') + '</div>' +
-            '<span class="dday">' + (x.stage === '프로젝트 완료' ? '완료' : dday(x.due)) + '</span></div>' +
+            '</div>' + // Q&A·리뷰 배지는 뺌 (배지 = 분석 서비스 + 단계만, Q&A 게시판도 없앰)
+            '<span class="dday">' + (x.stage === '프로젝트 완료' ? '완료' : dday(x.due)) + '</span>' + (ADM ? '' : nextHTML(pNext(x))) + '</div>' +
           '<h3>' + esc(x.title) + '</h3></div>' +
           '<div class="info"><div class="meta">' + (ADM ? '' : '<span class="route">' + (routeOf(x) ? '직접 신청' : 'OmicsPharm 매칭 요청') + '</span>') + '<span>' + esc(x.client) + '</span><span><em>샘플</em>' + x.samples + '개</span><span><em>계약금액</em>' + esc(x.amount) + '</span><span><em>납기일</em>' + dotd(x.due) + '</span></div>' +
           '<p class="reg">계약일 ' + dotd(x.contract) + '</p></div></a>';
@@ -526,7 +541,8 @@
   // 클라이언트 단계 (flow.js CLIENT_STEPS): 의뢰접수 → 의뢰승인 → 견적 확인 → 계약 진행 중 → 분석 진행 중 → 보고서 검토 → 프로젝트 완료
   var F = OP.flow;
   var stB = function (pid) { var t = F.clientStage(pid); return '<span class="badge ' + (t === '프로젝트 완료' ? 'done' : t === '견적 확인' || t === '보고서 검토' ? 'wait' : 'state') + '">' + t + '</span>'; };
-  var newQ = function (pid) { var s = F.state(pid); return s.st === 'sent' ? '<span class="badge wait">견적 도착</span>' : ''; };
+  // 클라이언트 할 일 (오른쪽 버튼): 견적 확인 / 결과보고서 확인 / 만족도 평가 — 대시보드 최근 프로젝트와 같은 이름
+  var cNext = function (pid) { var s = F.state(pid), t = F.clientStage(pid), n = t === '견적 확인' ? '견적 확인' : t === '보고서 검토' ? '결과보고서 확인' : s.fin && !F.done(s) ? '만족도 평가' : ''; return n ? '<span class="btn line nxb">' + n + '</span>' : ''; };
   var fwdKeys = function (s) { return Object.keys(s.P).filter(function (k) { return s.P[k].fwd && s.P[k].status === 'sub'; }); };
 
   // 임시저장한 의뢰서 (의뢰 등록 화면의 [임시저장], localStorage omicspharm:drafts). 클릭하면 의뢰 등록 화면에서 이어서 작성
@@ -548,8 +564,8 @@
     var card = function (x) {
       var days = x.to ? Math.round((new Date(x.to) - new Date(new Date().toDateString())) / 864e5) : null;
       return '<a class="lcard" href="mypage-project.html?id=' + encodeURIComponent(x.id) + '"><div class="head">' +
-        '<div class="row1"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stB(x.id) + newQ(x.id) + '</div>' +
-          (days === null || days < 0 ? '' : '<span class="dday">종료 D-' + String(days).padStart(2, '0') + '</span>') + '</div>' +
+        '<div class="row1"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stB(x.id) + '</div>' +
+          (days === null || days < 0 ? '' : '<span class="dday">종료 D-' + String(days).padStart(2, '0') + '</span>') + cNext(x.id) + '</div>' +
         '<h3>' + esc(x.title) + '</h3></div>' +
         '<div class="info"><div class="meta">' +
           '<span>' + esc((x.org || '-') + (x.manager ? '(' + x.manager + ')' : '')) + '</span>' +
