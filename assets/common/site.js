@@ -439,7 +439,9 @@
     document.querySelectorAll('[data-op-footer]').forEach(function (el) { el.outerHTML = footer(); });
     // 헤더·푸터가 있는 일반 페이지에만 맨 위로 + 챗봇 버튼 (로그인·회원가입 풀페이지 제외)
     if (hasFooter && !document.querySelector('.op-float')) document.body.insertAdjacentHTML('beforeend', FLOAT);
-    if (hasFooter && !document.body.hasAttribute('data-op-no-enter')) enterAnim();
+    // AI Agent를 연 채로 새로고침한 경우: 화면이 아래에서 올라오는 효과 없이 바로 (2026-10-27)
+    var aiBack = false; try { var ao = JSON.parse(sessionStorage.getItem('op.aiOpen') || 'null'); aiBack = !!ao && ao.p === location.pathname && window === window.top; } catch (e) {}
+    if (hasFooter && !document.body.hasAttribute('data-op-no-enter') && !aiBack) enterAnim();
   }
   // 페이지 진입 효과: 헤더·푸터·고정 요소(모달, 플로팅 버튼 등)를 뺀 본문 블록에 차례로 적용 (상단 영역은 글자만) (메인은 자체 스크롤 효과 사용)
   function enterAnim() {
