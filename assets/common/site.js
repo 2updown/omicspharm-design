@@ -4,6 +4,15 @@
    - 관리자(셀키)는 가입할 수 없고 아래 데모 계정으로만 로그인한다.
    - <div data-op-gnb="메뉴키"></div>, <div data-op-footer></div> 자리에 공통 헤더/푸터를 그린다. */
 (function () {
+  // 새로고침하면 어느 화면이든 맨 위에서 시작 (브라우저가 이전 스크롤 위치로 되돌리지 않게, 2026-10-27). 뒤로가기는 그대로
+  try {
+    var nv = performance.getEntriesByType('navigation')[0];
+    if (nv && nv.type === 'reload' && !location.hash) {
+      history.scrollRestoration = 'manual'; window.scrollTo(0, 0);
+      var top0 = function () { window.scrollTo(0, 0); };
+      document.addEventListener('DOMContentLoaded', top0); window.addEventListener('load', function () { top0(); setTimeout(top0, 0); }); // 브라우저가 이전 위치로 되돌린 뒤에도 맨 위로
+    }
+  } catch (e0) {}
   var SEED_SVC = [{ svc: '단백체', st: '즉시 수행 가능', from: '20', to: '30' }, { svc: '대사체', st: '즉시 수행 가능', from: '15', to: '25' }, { svc: '바이오의약품·ADC', st: '사전협의 필요', from: '30', to: '45' }]; // 데모 분석파트너의 분석 서비스 정보
   var ACC_KEY = 'op.accounts', SES_KEY = 'op.session';
   var DEMO_PW = 'Demo@1234';

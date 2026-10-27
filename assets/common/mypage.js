@@ -200,24 +200,25 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
   OP.askBtn = function (ctx) { OP.chatCtx = ctx; return '<button type="button" class="btn op-ask" data-chat><img src="assets/project/ic-chat-circle-dots.svg" alt="">문의하기</button>'; };
   OP.my = D;
   // AI Agent 띄우기 (2026-10-21: 전체 화면 페이지보다 지금 화면 위에 띄우는 쪽으로). 내용은 mypage-ai.html을 그대로 iframe으로
-  OP.openAI = function (mode) {
+  OP.openAI = function (mode, opts) {
     // 2026-10-26 D안(inline = 마이페이지 본문 칸) 확정. overlay·under·panel은 ?ai= 비교용
     var WANT = mode || ((location.search.match(/[?&]ai=(overlay|panel|under|inline)\b/) || [])[1] || 'inline');
     if (document.querySelector('.op-ai')) return;
     var side0 = document.querySelector('.side'), aiBtn = document.querySelector('.side-ai'), onA = null;
-    var FULL = /[?&]aifit=full\b/.test(location.search); // 넓게 보기(작업 모드): 본문 칸 대신 왼쪽 메뉴 오른쪽 ~ 화면 끝
+    var FULL = /[?&]aifit=full\b/.test(location.search) || !!(opts && opts.full); // 넓게 보기(작업 모드): 본문 칸 대신 왼쪽 메뉴 오른쪽 ~ 화면 끝
     var w = document.createElement('div');
     w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-label', 'AI Agent');
     w.innerHTML = '<div class="op-ai-dim" data-ai-close></div><div class="op-ai-win">' +
       (WANT === 'inline' ? '<button type="button" class="op-ai-fit" aria-label="넓게 보기" title="넓게 보기"><img class="o" src="assets/common/menu/expand_content.svg" alt=""><img class="i" src="assets/common/menu/collapse_content.svg" alt=""></button>' : '') +
       '<button type="button" class="op-ai-x" data-ai-close aria-label="닫기"></button><iframe src="mypage-ai.html?embed=' + WANT + '&v=' + Date.now() + '" title="AI Agent"></iframe></div>';
-    var close = function () { w.remove(); document.body.style.overflow = ''; document.body.classList.remove('op-ai-open', 'op-ai-inline'); document.removeEventListener('keydown', key); window.removeEventListener('message', msg); window.removeEventListener('resize', place);
+    var KEEP = 'op.aiOpen', keep = function (on) { try { if (on) sessionStorage.setItem(KEEP, JSON.stringify({ p: location.pathname, m: WANT, full: FULL })); else sessionStorage.removeItem(KEEP); } catch (e) {} }; // 새로고침해도 열린 채로 (같은 화면일 때만)
+    var close = function () { keep(false); w.remove(); document.body.style.overflow = ''; document.body.classList.remove('op-ai-open', 'op-ai-inline'); document.removeEventListener('keydown', key); window.removeEventListener('message', msg); window.removeEventListener('resize', place);
       if (aiBtn) aiBtn.classList.remove('on'); if (onA) onA.classList.add('on'); };
     var key = function (e) { if (e.key === 'Escape') close(); };
     var msg = function (e) { if (e.data === 'op-ai-close') close(); else if (e.data === 'op-ai-drawer-on' || e.data === 'op-ai-drawer-off') w.classList.toggle('drawer', e.data === 'op-ai-drawer-on'); };
     w.addEventListener('click', function (e) {
       if (e.target.closest('[data-ai-close]')) { close(); return; }
-      var fb = e.target.closest('.op-ai-fit'); if (fb) { FULL = !FULL; place(); }
+      var fb = e.target.closest('.op-ai-fit'); if (fb) { FULL = !FULL; place(); keep(true); }
     });
     document.addEventListener('keydown', key); window.addEventListener('message', msg);
     // 자리 잡기 (창 크기가 바뀔 때마다 다시):
@@ -238,7 +239,8 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       else if (mode === 'inline') { var m = document.querySelector('.main').getBoundingClientRect(); w.style.left = Math.round(m.left) + 'px'; w.style.right = Math.round(document.documentElement.clientWidth - m.right) + 'px'; w.style.top = Math.round(sr.top) + 'px'; }
     };
     if (WANT === 'inline') { window.scrollTo(0, 0); onA = document.querySelector('.side .menu a.on'); if (onA) onA.classList.remove('on'); }
-    place(); if (WANT === 'inline' || WANT === 'under') window.addEventListener('resize', place);
+    place(); if (WANT === 'inline' || WANT === 'under') { window.addEventListener('resize', place); setTimeout(place, 700); } // 700: 화면 등장 효과가 끝난 뒤 자리 다시 맞춤
+    keep(true);
     document.body.appendChild(w); if (WANT !== 'panel') document.body.style.overflow = 'hidden'; document.body.classList.add('op-ai-open'); // 열려 있는 동안 오른쪽 아래 챗봇 버튼 숨김
     w.querySelector('.op-ai-x').focus();
   };
@@ -364,6 +366,8 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
         if (on) mt.scrollLeft = on.offsetLeft - (mt.clientWidth - on.offsetWidth) / 2; // 지금 메뉴를 가운데로
       }
     }
+    // AI Agent를 연 채로 새로고침하면 다시 열어 둠 (같은 화면에서만, 2026-10-27)
+    try { var ao = JSON.parse(sessionStorage.getItem('op.aiOpen') || 'null'); if (ao && ao.p === location.pathname && key !== 'ai') setTimeout(function () { OP.openAI(ao.m, { full: ao.full }); }, 0); else if (ao) sessionStorage.removeItem('op.aiOpen'); } catch (e) {}
     return { s: s, acc: acc, name: name, org: org };
   };
   // 상세 화면 제목 옆 [‹] (2026-10-23): 원래 왔던 화면으로 (대시보드 알림 → 상세 → ‹ = 대시보드). 링크로 바로 들어왔으면 원래 주소(목록)로
