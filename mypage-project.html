@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zn">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zn">
-<script src="assets/common/site.js?v=20261028zn"></script>
-<script src="assets/common/consult.js?v=20261028zn"></script>
-<script src="assets/common/mypage.js?v=20261028zn"></script>
-<script src="assets/common/flow.js?v=20261028zn"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zo">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zo">
+<script src="assets/common/site.js?v=20261028zo"></script>
+<script src="assets/common/consult.js?v=20261028zo"></script>
+<script src="assets/common/mypage.js?v=20261028zo"></script>
+<script src="assets/common/flow.js?v=20261028zo"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -652,6 +652,9 @@
              : FS.ct ? ['', '분석이 진행 중입니다.', '납기일 ' + dot(DUE) + ' (' + dd(DUE) + ')까지 결과보고서를 등록해드립니다. 등록되면 알림으로 알려드립니다.', '']
                      : ['', FS.pick ? lastCQ().n + '차 견적을 확정했습니다.' : '', 'OmicsPharm 컨설턴트가 계약서를 준비하고 있습니다. 등록되면 알림으로 알려드립니다.', '']
     }[FS.st];
+    // 보고서 수정 요청을 처리하는 중 (2026-10-28): 결과 재등록 요청 중이거나, 다시 올라온 결과·직접 수정을 아직 전달 전. 다시 보낼지는 계약에 따라 다를 수 있어 '처리 중'으로만 안내
+    var RL = (FS.raw || [])[(FS.raw || []).length - 1];
+    if (FS.st === 'matched' && !FS.fin && REP.length && (FS.reReq || (RL && !RL.sent))) T = ['', '요청하신 내용을 처리하고 있습니다.', 'OmicsPharm 컨설턴트가 확인한 뒤 진행 상황을 알려드립니다. 지금까지 받은 결과보고서는 아래에서 볼 수 있습니다.', ''];
     // 사업자등록증 재제출 요청을 받았으면 (승인 전) 다시 올리기
     var B = FS.biz || {};
     if (FS.st === 'review' && !FS.ok && B.st === 'ask') T = ['warn', '사업자등록증을 다시 제출해주세요.', '사유: ' + B.note + '\n수정된 사업자등록증을 올리면 OmicsPharm 컨설턴트가 다시 확인한 뒤 승인해드립니다.', '<label class="btn primary" for="bizRe">사업자등록증 다시 올리기</label><input type="file" id="bizRe" accept=".pdf,.jpg,.jpeg,.png" hidden>'];
