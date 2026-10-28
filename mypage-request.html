@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zd">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zd">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261028zd">
-<script src="assets/common/site.js?v=20261028zd"></script>
-<script src="assets/common/consult.js?v=20261028zd"></script>
-<script src="assets/common/mypage.js?v=20261028zd"></script>
-<script src="assets/common/svc-spec.js?v=20261028zd"></script>
-<script src="assets/common/flow.js?v=20261028zd"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028ze">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028ze">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261028ze">
+<script src="assets/common/site.js?v=20261028ze"></script>
+<script src="assets/common/consult.js?v=20261028ze"></script>
+<script src="assets/common/mypage.js?v=20261028ze"></script>
+<script src="assets/common/svc-spec.js?v=20261028ze"></script>
+<script src="assets/common/flow.js?v=20261028ze"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -373,8 +373,6 @@
   @media (max-width:640px) { .fdocs { padding:12px 14px; } .fdocs p { margin-left:0; } .fdocs .fbtns { margin-left:0; } }
   /* ── AI 분석파트너 매칭 (팝업 = 견적제안메일) ── */
   .blk-h .aim { display:flex; align-items:center; gap:12px; }
-  .aisum { font-size:13px; color:var(--gray-500); white-space:nowrap; }
-  .aisum b { color:var(--teal-700); font-weight:600; }
   #more img { width:16px; height:16px; }
   .qmail .box { max-width:920px; }
   .qm-sub { margin-top:6px; font-size:13px; line-height:20px; color:var(--gray-500); }
@@ -738,13 +736,8 @@
       return { key: p.key, p: p, cat: cat, why: why, adm: best.adm, stage: stage, st: best.st, from: best.from, to: best.to, cond: best.n > 1 ? '수행 조건 ' + (best.ci + 1) + ' 기준' : '' };
     }).sort(function (a, b) { var o = ['ok', 'chk', 'miss', 'none', 'other']; return o.indexOf(a.cat) - o.indexOf(b.cat) || (b.why.filter(function (w) { return w[1] === 1; }).length - a.why.filter(function (w) { return w[1] === 1; }).length); });
   }
-  // 견적서 확인 제목 옆 한 줄 요약: 실행 전에는 없음, 실행 뒤 '시각 매칭 · 추천 n곳' (추천 = 정보가 있어 비교된 곳 중 아직 참여하지 않은 곳)
+  // 추천 = 정보가 있어 비교된 곳 중 아직 참여하지 않은 곳 (견적서 확인 제목 옆 '매칭 · 추천 n곳' 요약은 2026-10-28 삭제)
   var REC = { ok: 1, chk: 1, miss: 1 };
-  function aiSum(s) {
-    var t = aiRun(); if (!t) return '';
-    var n = agent().filter(function (x) { return REC[x.cat] && !s.P[x.key]; }).length;
-    return '<span class="aisum">' + hm(t) + ' 매칭 · 추천 <b>' + n + '</b>곳</span>';
-  }
 
   F.repRedraw = function () { render(); };
   // 의뢰 전 상담: 의뢰한 클라이언트가 Contact Us로 나눈 상담 중 이 의뢰에 연결된 것 (대화는 접어 둠) + 다른 상담 연결
@@ -1091,7 +1084,7 @@
       var t = F.pst(s, k);
       var cls = { '작성 대기': 'done', '임시저장': 'done', '제출 완료': 'state', '수정 요청': 'wait', '거절': 'red', '클라이언트 검토 중': 'state', '선정': 'ok', '미선정': 'done' }[t];
       if (s.st === 'matched' && s.P[k].status === 'sub' && !s.P[k].fwd) { t = '전달 안 함'; cls = 'done'; }
-      var cqb = F.cqLast(s); if (s.st === 'sent' && cqb && cqb.base === k && s.P[k].status !== 'rev') { t = '선정'; cls = 'ok'; } // 이 견적으로 클라이언트 견적을 보냄 (클라이언트 확정 전). 수정 요청 중이면 '수정 요청'
+      var cqb = F.cqLast(s); if (s.st === 'sent' && cqb && cqb.base === k) { t = '선정'; cls = 'ok'; } // 이 견적으로 클라이언트 견적을 보냄 (클라이언트 확정 전). 수정 요청 중에도 선정 (안내 박스로 알림)
       return '<span class="badge ' + cls + '">' + t + '</span>';
     };
     var rows = keys.map(function (k) {
@@ -1110,7 +1103,7 @@
     }).join('');
     var c = cnt(s);
     return '<div class="blk" id="quotes">' +
-      '<div class="blk-h"><h3>견적서 확인 <span style="color:var(--teal-600)">' + c.sub + '</span> / ' + c.all + '</h3>' + (edit || s.st === 'review' ? '<span class="aim">' + aiSum(s) + '<button type="button" class="btn primary" id="more"><img src="assets/common/ic-sparkle-fill-w.svg" alt="">AI 분석파트너 매칭</button></span>' : '') + '</div>' +
+      '<div class="blk-h"><h3>견적서 확인 <span style="color:var(--teal-600)">' + c.sub + '</span> / ' + c.all + '</h3>' + (edit || s.st === 'review' ? '<span class="aim"><button type="button" class="btn primary" id="more"><img src="assets/common/ic-sparkle-fill-w.svg" alt="">AI 분석파트너 매칭</button></span>' : '') + '</div>' +
       // 게시·마감 정보 + 안내 = DS infobox (Figma 1153:52097). 안내가 있으면 default(제목 + 목록), 없으면 simple(한 줄) (2026-10-28)
       (function () { var hint = edit && subs.length && !F.cqList(s).length;
         return '<div class="op-ibox reqinfo' + (hint ? '' : ' simple') + '"><p class="t"><span class="rq"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>견적 마감</b> ' + dot(s.due || r.to) + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self; }).length + '<i class="dv" aria-hidden="true"></i>견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></span></p>' +
