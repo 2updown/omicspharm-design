@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zzg">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zzg">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261028zzg">
-<script src="assets/common/site.js?v=20261028zzg"></script>
-<script src="assets/common/consult.js?v=20261028zzg"></script>
-<script src="assets/common/mypage.js?v=20261028zzg"></script>
-<script src="assets/common/svc-spec.js?v=20261028zzg"></script>
-<script src="assets/common/flow.js?v=20261028zzg"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zzh">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zzh">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261028zzh">
+<script src="assets/common/site.js?v=20261028zzh"></script>
+<script src="assets/common/consult.js?v=20261028zzh"></script>
+<script src="assets/common/mypage.js?v=20261028zzh"></script>
+<script src="assets/common/svc-spec.js?v=20261028zzh"></script>
+<script src="assets/common/flow.js?v=20261028zzh"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -504,8 +504,8 @@
   var md = function (t) { var d = new Date(t); return ('0' + (d.getMonth() + 1)).slice(-2) + '.' + ('0' + d.getDate()).slice(-2); };
   // 상세 단계 배지 = 프로젝트 상태값 (2026-10-27, docs/status-badges.md 3-1 컨설턴트 열: 의뢰접수 주황 · 완료 회색 · 삭제 빨강 · 나머지 파랑)
   var stBadge = function (s) { var t = F.adminStage(s.id || id); return '<span class="badge ' + (t === '의뢰접수' ? 'wait' : t === '프로젝트 완료' ? 'done' : t === '삭제' ? 'red' : 'state') + '">' + t + '</span>'; };
-  // 컨설턴트는 분석파트너의 임시저장을 보지 않음 (2026-10-28): 요청받은 곳의 임시저장은 '작성 대기'로, 직접 신청하고 아직 제출 안 한 곳은 아예 안 보임
-  var hid = function (s, k) { var x = s.P[k]; return !!x && !!x.self && /^(req|draft)$/.test(x.status); };
+  // 컨설턴트는 아직 제출 전인 견적(작성 대기·임시저장)을 보지 않음 (2026-10-28): 견적 표·건수에서 빠지고, 제출하면 나타남
+  var hid = function (s, k) { var x = s.P[k]; return !!x && /^(req|draft)$/.test(x.status); };
   var pstA = function (s, k) { var t = F.pst(s, k); return t === '임시저장' ? '작성 대기' : t; };
   var cnt = function (s) {
     var P = Object.keys(s.P).filter(function (k) { return !hid(s, k); }).map(function (k) { return s.P[k]; });
@@ -1115,7 +1115,7 @@
       '<div class="blk-h"><h3>견적서 확인 <span style="color:var(--teal-600)">' + c.sub + '</span> / ' + c.all + '</h3>' + (edit || s.st === 'review' ? '<span class="aim"><button type="button" class="btn primary" id="more"><img src="assets/common/ic-sparkle-fill-w.svg" alt="">AI 분석파트너 매칭</button></span>' : '') + '</div>' +
       // 게시·마감 정보 + 안내 = DS infobox (Figma 1153:52097). 안내가 있으면 default(제목 + 목록), 없으면 simple(한 줄) (2026-10-28)
       (function () { var hint = edit && subs.length && !F.cqList(s).length;
-        return '<div class="op-ibox reqinfo' + (hint ? '' : ' simple') + '"><p class="t"><span class="rq"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>모집기한</b> ~' + dot(s.due || r.to) + (F.open(id) && s.due ? ' <button type="button" class="lnk" id="dueChg">변경</button>' : '') + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self; }).length + '<i class="dv" aria-hidden="true"></i>견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></span></p>' +
+        return '<div class="op-ibox reqinfo' + (hint ? '' : ' simple') + '"><p class="t"><span class="rq"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>모집기한</b> ~' + dot(s.due || r.to) + (F.open(id) && s.due ? ' <button type="button" class="lnk" id="dueChg">변경</button>' : '') + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self && !hid(s, k); }).length + '<i class="dv" aria-hidden="true"></i>견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></span></p>' +
           (hint ? '<ul><li>클라이언트에게 보낼 견적 1건을 선정하고 [1차 견적서 작성]을 누르세요.</li><li>단가, 수수료, 할인을 정해 ㈜셀키에이아이 명의로 보냅니다. 클라이언트에게는 분석파트너 이름이 보이지 않습니다.</li><li>견적 수정이 필요하면 견적을 선택하고 [수정 요청]을 누르세요.</li></ul>' : '') + '</div>'; })() +
       (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적 (VAT 포함)</span><span>소요</span><span>일자</span><span>견적서 보기</span></div>' + rows + '</div>' +
         (edit && subs.length && !F.cqList(s).length ? '<div class="qbar"><span class="sel" id="qSel"></span><button type="button" class="btn" id="qRev" disabled>수정 요청</button>' + (!F.cqList(s).length ? '<button type="button" class="btn primary" id="qMk" disabled>1차 견적서 작성</button>' : '') + '</div>' : '')
