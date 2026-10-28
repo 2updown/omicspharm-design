@@ -73,7 +73,8 @@ button { background:none; border:0; cursor:pointer; }
 .badge.wait { background:#ffecd2; color:#fd4900; }                                   /* tertiary orange: 확인·처리 필요 */
 .badge.done, .badge.fin, .badge.draft, .badge.lock { background:#f5f5f5; color:#525252; } /* tertiary gray : 완료·종료·임시 */
 .badge.red { background:#ffe1e1; color:#f00011; }                                    /* tertiary red   : 거절·삭제 */
-.badge.ok { background:#009788; color:#fff; }                                        /* fill teal      : 선정·확정 */
+.badge.ok { background:#009788; color:#fff; }
+.badge.teal { background:#edfefa; color:#009788; }                                   /* tertiary teal (50단계): 최저가·최단 등 좋은 점 표시 */                                        /* fill teal      : 선정·확정 */
 .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; height:40px; padding:0 16px; border-radius:8px; border:1px solid var(--gray-300); background:#fff; font-size:14px; font-weight:500; line-height:20px; color:var(--gray-700); white-space:nowrap; }
 .btn:hover { background:var(--gray-50); }
 .btn.primary { border-color:var(--teal-600); background:var(--teal-600); color:#fff; }
