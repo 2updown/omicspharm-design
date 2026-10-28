@@ -175,12 +175,11 @@ button { background:none; border:0; cursor:pointer; }
 .fsteps li.done { color:var(--gray-600); } .fsteps li.done::before { background:#8fd9cf; }
 .fsteps li.cur { color:var(--teal-700); font-weight:700; } .fsteps li.cur::before { background:var(--teal-600); }
 /* 다음 할 일 안내 */
-.ftodo { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 24px; border-radius:8px; background:var(--bg-green); }
-.ftodo b { display:block; font-size:16px; font-weight:600; line-height:22px; }
+/* 진행 단계 아래 안내 박스: 단계·상태와 상관없이 모두 주황 박스 하나로 (2026-10-28) */
+.ftodo { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 24px; border-radius:8px; background:#fff4ed; }
+.ftodo b { display:block; font-size:16px; font-weight:600; line-height:22px; color:var(--orange-600); }
 .ftodo p { margin-top:4px; font-size:14px; line-height:20px; color:var(--gray-600); white-space:pre-line; }
 .ftodo .acts { display:flex; gap:8px; flex:none; }
-.ftodo.warn { background:#fff4ed; } .ftodo.warn b { color:var(--orange-600); }
-.ftodo.gray { background:var(--gray-100); }
 /* 상태 배지 추가 */
 /* 입력 모달 */
 .fask .yes.go { background:var(--teal-600); }
