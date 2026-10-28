@@ -490,8 +490,8 @@
         if (s.pick === ses.email) (s.raw || []).concat(s.reReq ? [{ req: s.reReq }] : []).forEach(function (v) { if (v.req) L.push({ id: 'f-rereq-' + r.id + v.req.at, k: '결과재등록요청', cat: 'project', at: v.req.at, t: nm + ' 프로젝트의 분석 결과를 다시 등록해주세요.', sub: v.req.note, href: 'mypage-project.html?id=' + encodeURIComponent(r.id) }); });
         if (s.fin && s.pick === ses.email) L.push({ id: 'f-fin-' + r.id, k: '프로젝트완료', cat: 'project', at: s.fin, t: nm + ' 프로젝트가 완료되었습니다. 클라이언트가 결과보고서를 최종 승인했습니다.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
         if (s.cancel) L.push({ id: 'f-cancel-' + r.id, k: '의뢰취소', cat: 'project', at: s.cancel.at, t: nm + ' 프로젝트가 삭제되어 견적 요청이 종료되었습니다.', href: 'mypage-quote.html' });
-        if (!x.self) L.push({ id: 'f-req-' + r.id, k: '견적제안', cat: 'project', at: x.at, t: nm + ' 프로젝트 검토 후 견적서를 작성해주세요.', sub: '견적 마감일: ' + (s.due ? s.due.replace(/-/g, '.') : '-'), href: qh });
-        if (s.dueChg && /^(req|draft)$/.test(x.status) && !s.cancel) L.push({ id: 'f-due-' + r.id + s.dueChg, k: '견적마감일변경', cat: 'project', at: s.dueChg, t: nm + ' 프로젝트의 견적 마감일이 ' + s.due.replace(/-/g, '.') + '로 변경되었습니다.', href: qh });
+        if (!x.self) L.push({ id: 'f-req-' + r.id, k: '견적제안', cat: 'project', at: x.at, t: nm + ' 프로젝트 검토 후 견적서를 작성해주세요.', sub: '모집기한: ~' + (s.due ? s.due.replace(/-/g, '.') : '-'), href: qh });
+        if (s.dueChg && /^(req|draft)$/.test(x.status) && !s.cancel) L.push({ id: 'f-due-' + r.id + s.dueChg, k: '모집기한변경', cat: 'project', at: s.dueChg, t: nm + ' 프로젝트의 모집기한이 ' + s.due.replace(/-/g, '.') + '까지로 변경되었습니다.', href: qh });
         if (x.rev) L.push({ id: 'f-rev-' + r.id + x.revN, k: '견적수정요청', cat: 'project', at: x.rev.at, t: nm + ' 프로젝트 견적서의 수정을 요청드립니다.', sub: x.rev.note, href: qh });
         // 선정 알림만 (2026-10-21: 미선정 알림은 보내지 않음)
         if (s.st === 'matched' && x.status === 'sub' && s.pick === ses.email) L.push({ id: 'f-win-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: nm + '의 견적이 최종 선정되었습니다.', sub: '견적서명: ' + qname(x) + ' · 견적금액: ' + won(total(x.quote).final), href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
