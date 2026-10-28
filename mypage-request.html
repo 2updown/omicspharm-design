@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zz8">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zz8">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261028zz8">
-<script src="assets/common/site.js?v=20261028zz8"></script>
-<script src="assets/common/consult.js?v=20261028zz8"></script>
-<script src="assets/common/mypage.js?v=20261028zz8"></script>
-<script src="assets/common/svc-spec.js?v=20261028zz8"></script>
-<script src="assets/common/flow.js?v=20261028zz8"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zza">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zza">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261028zza">
+<script src="assets/common/site.js?v=20261028zza"></script>
+<script src="assets/common/consult.js?v=20261028zza"></script>
+<script src="assets/common/mypage.js?v=20261028zza"></script>
+<script src="assets/common/svc-spec.js?v=20261028zza"></script>
+<script src="assets/common/flow.js?v=20261028zza"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -439,6 +439,39 @@
   .jbtns [data-jcancel], .jbtns [data-jsave] { height:32px; padding:0 14px; border:1px solid var(--gray-300); border-radius:6px; background:#fff; font-size:13px; font-weight:500; color:var(--gray-700, #404040); }
   .jbtns [data-jsave] { border-color:var(--teal-600); background:var(--teal-600); color:#fff; }
   @media (max-width:640px) { .qr.join { grid-template-columns:minmax(0,1fr); } .qr.join .qs { grid-column:1; } .qr .qs .cat { display:inline-block; margin:0 0 0 6px; } }
+  /* AI 매칭 팝업 개편 (2026-10-28) */
+  .qmail .box.qm2 { display:flex; flex-direction:column; max-width:880px; max-height:calc(100vh - 48px); overflow:hidden; padding:0; }
+  .qm2 .qm-top { flex:none; display:flex; flex-direction:column; gap:12px; padding:24px 28px 0; }
+  .qm2 .qm-t { display:flex; align-items:center; gap:8px; } .qm2 .qm-t h3 { flex:1; margin:0; }
+  .qm2 .qm-x { position:static; flex:none; }
+  .qm2 .qm-sub { margin:-6px 0 0; }
+  .qm-f2 { display:flex; gap:8px; }
+  .qm-f2 select { flex:none; min-width:180px; height:40px; padding:0 36px 0 14px; border:1px solid var(--gray-300); border-radius:8px; appearance:none; -webkit-appearance:none; background:#fff url(assets/find/ic-chevron-down.svg) right 12px center/16px no-repeat; font:inherit; font-size:14px; }
+  .qm-s { flex:1; display:flex; align-items:center; min-width:0; height:40px; padding:0 6px 0 14px; border:1px solid var(--gray-300); border-radius:8px; }
+  .qm-s:focus-within { border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+  .qm-s input { flex:1; min-width:0; border:0; outline:0; background:none; font:inherit; font-size:14px; }
+  .qm-s button { display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:6px; } .qm-s button:hover { background:var(--gray-100); } .qm-s img { width:18px; height:18px; }
+  .qm-tbar { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; border-bottom:1px solid var(--gray-200); }
+  .qm2 .qm-tabs { margin:0; border:0; overflow:visible; }
+  .qm2 .qm-legend { padding-bottom:12px; gap:4px 12px; }
+  .qm2 .qm-legend i { width:8px; height:8px; margin-right:-6px; border-radius:50%; }
+  .qm2 .qm-body { flex:1; min-height:0; overflow:auto; padding:16px 28px; }
+  .qm2 .qm-desc { margin-bottom:12px; }
+  .qm2 .qm-list { margin:0; padding:0; border:0; gap:20px; }
+  .qm2 .qr { gap:12px; padding:14px 16px; }
+  .qm2 .qr:has(input:checked) { background:#fff; box-shadow:inset 0 0 0 1px var(--teal-600); }
+  .qm2 .qr .nm { align-items:center; gap:2px 12px; } .qm2 .qr .nm b { font-size:16px; }
+  .qm2 .qr .rec { margin:0; font-size:13px; font-weight:400; color:var(--gray-500); }
+  .qm2 .qr .why { margin-top:8px; }
+  .qm-ct { display:inline-block; margin-top:8px; padding:0; font-size:12px; color:var(--gray-500); text-decoration:underline; }
+  .qm-cti { display:block; margin-top:4px; font-size:12px; line-height:18px; color:var(--gray-600); word-break:break-all; }
+  .qm2 .qm-unv { margin:16px 0 0; }
+  .qm2 .qm-foot { flex:none; display:flex; align-items:flex-end; gap:16px; padding:16px 28px 20px; border-top:1px solid var(--gray-200); background:#fff; }
+  .qm-ml { flex:1; display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; } .qm-ml em { font-style:normal; font-weight:400; color:var(--gray-500); }
+  .qmail .qm2 textarea { height:44px; min-height:44px; padding:11px 14px; border-color:var(--gray-300); line-height:20px; }
+  .qmail .qm2 textarea:focus { border-color:var(--teal-700); }
+  .qmail .qm2 .btns { flex:none; margin:0; }
+  @media (max-width:640px) { .qm2 .qm-top { padding:20px 16px 0; } .qm2 .qm-body { padding:12px 16px; } .qm2 .qm-foot { flex-direction:column; align-items:stretch; padding:12px 16px 16px; } .qm-f2 { flex-direction:column; } .qm-f2 select { width:100%; } .qm-tbar { flex-direction:column; align-items:stretch; } .qm2 .qm-legend { padding-bottom:8px; } .qmail .qm2 .btns button { flex:1; min-width:0; white-space:nowrap; } .qmail .qm2 .btns .no { flex:none; min-width:80px; } }
   @media (max-width:640px) { .qm-f .row > select, .qm-f .row.grow { flex-basis:100%; } .qr { grid-template-columns:20px minmax(0,1fr); } .qr .qs { grid-column:2; } .blk-h { flex-wrap:wrap; } .blk-h .aim { width:100%; justify-content:space-between; } }
   /* 프로젝트 찾기 목록 카드(projects.html .lrow)와 같은 본문: 제목 아래 구분선 없음, 정보는 16px·'항목 :' 형식 */
   .lc { padding:16px 24px; }
@@ -975,35 +1008,37 @@
     var run = function () { AG = agent(); picked = {}; AG.forEach(function (x) { if ((x.cat === 'ok' || x.cat === 'chk') && !s.P[x.key]) picked[x.key] = 1; }); };
     var m = document.createElement('div');
     m.className = 'op-confirm qmail'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', 'AI 분석파트너 매칭');
-    m.innerHTML = '<div class="box"><button type="button" class="qm-x" aria-label="닫기">×</button>' +
-      '<h3><img src="assets/common/ic-sparkle-fill.svg" alt="">AI 분석파트너 매칭</h3>' +
-      '<p class="qm-sub">의뢰 내용과 인증 분석파트너의 분석 서비스 정보를 비교했습니다. 견적을 요청할 기관을 골라 견적제안메일을 보내세요. <button type="button" class="tbtn xs primary" id="qmRe">다시 비교</button></p>' +
-      '<div class="qm-f"><div class="row"><select id="qmSvc"><option value="">분석 서비스 전체</option>' + KEY.map(function (k) { return '<option value="' + k + '">' + svcName(k) + '</option>'; }).join('') + '</select>' +
-        '<form class="row grow" id="qmForm"><input type="search" id="qmQ" placeholder="키워드 입력 (기관명, 담당자, 이메일)"><button type="submit">검색</button></form></div></div>' +
-      '<div class="qm-tabs" role="tablist" id="qmTabs"></div>' +
-      '<div class="qm-head"><p class="qm-desc" id="qmDesc"></p><p class="qm-legend"><i class="hit"></i>맞는 값 <i class="miss"></i>지원 안 함 <i></i>정보 없음·확인 필요</p></div>' +
-      '<div class="qm-list" id="qmList"></div>' +
-      (unv ? '<p class="qm-unv">미인증 분석파트너 ' + unv + '곳은 견적을 낼 수 없어 제외했습니다.</p>' : '') +
-      '<textarea id="qmMsg" placeholder="해당 프로젝트의 링크와 함께 메시지가 전달됩니다. 발송할 메시지를 입력하세요."></textarea>' +
-      '<div class="btns"><button type="button" class="no">닫기</button><button type="button" class="yes go" id="qmSend" disabled>견적제안발송</button></div></div>';
+    // 2026-10-28 개편: 위(제목·검색·탭)와 아래(메시지·발송)는 고정, 가운데 목록만 스크롤. 카드는 기관명·실적 한 줄 + 칩(미지원·확인 필요 먼저, 맞는 값은 일부만) + 연락처 접기
+    m.innerHTML = '<div class="box qm2"><div class="qm-top">' +
+      '<div class="qm-t"><h3><img src="assets/common/ic-sparkle-fill.svg" alt="">AI 분석파트너 매칭</h3><button type="button" class="tbtn xs" id="qmRe">다시 비교</button><button type="button" class="qm-x" aria-label="닫기">×</button></div>' +
+      '<p class="qm-sub">의뢰 조건과 인증 분석파트너의 분석 서비스 정보를 비교한 결과입니다.</p>' +
+      '<div class="qm-f2"><select id="qmSvc" aria-label="분석 서비스"><option value="">분석 서비스 전체</option>' + KEY.map(function (k) { return '<option value="' + k + '">' + svcName(k) + '</option>'; }).join('') + '</select>' +
+        '<form id="qmForm" class="qm-s"><input type="search" id="qmQ" placeholder="기관명, 담당자, 이메일 검색" aria-label="분석파트너 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form></div>' +
+      '<div class="qm-tbar"><div class="qm-tabs" role="tablist" id="qmTabs"></div><p class="qm-legend"><i class="hit"></i>맞음<i class="miss"></i>미지원<i></i>확인 필요</p></div></div>' +
+      '<div class="qm-body"><p class="qm-desc" id="qmDesc"></p><div class="qm-list" id="qmList"></div>' +
+        (unv ? '<p class="qm-unv">미인증 분석파트너 ' + unv + '곳은 견적을 낼 수 없어 제외했습니다.</p>' : '') + '</div>' +
+      '<div class="qm-foot"><label class="qm-ml"><span class="qm-mlt">메시지 <em>(선택)</em></span><textarea id="qmMsg" placeholder="프로젝트 링크와 함께 전달됩니다."></textarea></label>' +
+        '<div class="btns"><button type="button" class="no">닫기</button><button type="button" class="yes go" id="qmSend" disabled>견적제안 발송</button></div></div></div>';
     document.body.appendChild(m); document.body.style.overflow = 'hidden';
-    var DESC = { rec: '분석 서비스 정보로 의뢰 조건과 비교한 분석파트너입니다. 조건 충족·확인 필요는 미리 선택해 두었습니다.',
-      info: '분석 서비스 정보가 없어 비교하지 못한 분석파트너입니다. 입력을 요청하거나, 잘 아는 곳이면 직접 골라 보낼 수 있습니다.',
-      join: '이미 견적제안을 받았거나 직접 신청한 분석파트너입니다.' };
+    var DESC = { rec: '', info: '분석 서비스 정보가 없어 비교하지 못한 곳입니다. 입력을 요청하거나 직접 골라 보낼 수 있습니다.', join: '' };
+    var cOpen = {}; // 연락처 펼침
     var stOf = function (k) { var x = s.P[k]; return (x.self ? '직접 신청' : '견적제안') + '<i class="dv" aria-hidden="true"></i>' + F.pst(s, k); };
     var JC = { '수행 가능': 'ok', '수행 불가': 'no', '정보 부족으로 판단 불가': 'unk', '판단 보류': 'hold' };
     var row = function (x, c) {
-      var p = x.p, join = tab === 'join', chips = join ? [] : x.why || [], more = false; // 칩은 접지 않고 모두 노출
+      var p = x.p, join = tab === 'join', all = join ? [] : x.why || [];
+      // 칩: 미지원(2)·확인 필요(0)는 모두, 맞는 값(1)은 5개까지 보이고 나머지는 +n
+      var bad = all.filter(function (w) { return w[1] !== 1; }), hit = all.filter(function (w) { return w[1] === 1; }), cut = open[p.key] ? hit.length : 5;
+      var chips = bad.concat(hit.slice(0, cut)), more = hit.length > cut;
       var ask = c === 'none' || c === 'other' ? (F.svcAsked(p.key) ? '<em class="asked">입력 요청함</em>' : '<button type="button" class="tbtn xs primary" data-svcask="' + p.key + '">입력 요청</button>') : '';
       var sk = KEY.filter(function (k) { return String(r.svc).indexOf(k) > -1; })[0], n = (CASES[p.key] || {})[sk] || 0;
       var rec = [sk + ' 수행 ' + n + '건', '과거 견적서 ' + Math.round(p.done / 3) + '건', x.st || '', x.from && x.to ? x.from + '~' + x.to + ' 영업일' : p.lead].filter(Boolean);
-      var j = J[p.key], jb = j ? '<button type="button" class="jbadge ' + JC[j.feas] + '" data-judge="' + p.key + '">' + j.feas + '</button>' : '<button type="button" class="tbtn xs" data-judge="' + p.key + '">수행 판단</button>';
+      var j = J[p.key], jb = j ? '<button type="button" class="jbadge ' + JC[j.feas] + '" data-judge="' + p.key + '">' + j.feas + '</button>' : '<button type="button" class="tbtn xs" data-judge="' + p.key + '">수행 판단 입력</button>';
       return '<div class="qw"><label class="qr' + (join ? ' off join' : '') + '">' + (join ? '' : '<input type="checkbox" value="' + p.key + '"' + (picked[p.key] ? ' checked' : '') + ' aria-label="' + esc(p.org) + ' 선택">') +
-        '<span class="qb"><span class="nm"><b>' + esc(p.org) + '</b><small>' + esc(p.name) + '<i class="dv" aria-hidden="true"></i>' + esc(p.tel) + '<i class="dv" aria-hidden="true"></i>' + esc(p.mail) + '</small>' + (x.cond && !join ? '<small>' + x.cond + '</small>' : '') + '</span>' +
-          '<span class="rec">' + rec.map(esc).join('<i class="dv" aria-hidden="true"></i>') + '</span>' +
-          (chips.length || ask ? '<span class="why">' + (more ? chips.slice(0, 6) : chips).map(function (w) { return '<span class="' + ['', 'hit', 'miss'][w[1]] + '">' + esc(w[0]) + '</span>'; }).join('') + (more ? '<button type="button" class="tbtn xs" data-more="' + p.key + '">+' + (chips.length - 6) + '</button>' : '') + ask + '</span>' : '') +
+        '<span class="qb"><span class="nm"><b>' + esc(p.org) + '</b><span class="rec">' + rec.map(esc).join('<i class="dv" aria-hidden="true"></i>') + '</span>' + (x.cond && !join ? '<small>' + x.cond + '</small>' : '') + '</span>' +
+          (chips.length || ask ? '<span class="why">' + chips.map(function (w) { return '<span class="' + ['', 'hit', 'miss'][w[1]] + '">' + esc(w[0]) + '</span>'; }).join('') + (more ? '<button type="button" class="tbtn xs" data-more="' + p.key + '">+' + (hit.length - cut) + '</button>' : '') + ask + '</span>' : '') +
           (!join && x.stage ? '<span class="stg' + (/정보 없음$/.test(x.stage) ? ' unk' : '') + '">' + esc(x.stage) + '</span>' : '') +
           (!join && (x.adm || []).length ? '<span class="adm"><em>확인 필요 사항</em>' + x.adm.map(esc).join('<i class="dv" aria-hidden="true"></i>') + '</span>' : '') +
+          '<button type="button" class="qm-ct" data-contact="' + p.key + '">연락처 ' + (cOpen[p.key] ? '접기' : '보기') + '</button>' + (cOpen[p.key] ? '<span class="qm-cti">' + esc(p.name) + '<i class="dv" aria-hidden="true"></i>' + esc(p.tel) + '<i class="dv" aria-hidden="true"></i>' + esc(p.mail) + '</span>' : '') +
           (j ? '<span class="jsum">' + esc(j.basis) + (j.scope ? '<i class="dv" aria-hidden="true"></i>불가 범위: ' + esc(j.scope) : '') + (j.unknown ? '<i class="dv" aria-hidden="true"></i>부족한 정보: ' + esc(j.unknown) : '') + (j.q ? '<i class="dv" aria-hidden="true"></i>확인 질문: ' + esc(j.q) : '') + '</span>' : '') + '</span>' +
         '<span class="qs' + (join ? ' sent' : '') + '">' + (join ? stOf(p.key) + '<em class="cat ' + c + '">' + CAT[c] + '</em>' : '미발송') + jb + '</span></label>' +
         (jOpen === p.key ? judgeForm(p.key) : '') + '</div>';
@@ -1026,7 +1061,7 @@
       var L = AG.filter(function (x) { var p = x.p; return (!q.svc || p.svc.indexOf(q.svc) > -1) && (!kw || [p.name, p.org, p.mail].join(' ').toLowerCase().indexOf(kw) > -1); });
       var N = { rec: 0, info: 0, join: 0 }; L.forEach(function (x) { N[tabOf(x)]++; });
       m.querySelector('#qmTabs').innerHTML = TABS.map(function (b) { return '<button type="button" role="tab" data-tab="' + b[0] + '" aria-selected="' + (tab === b[0]) + '"' + (tab === b[0] ? ' class="on"' : '') + '>' + b[1] + ' <b>' + (busy ? '-' : N[b[0]]) + '</b></button>'; }).join('');
-      m.querySelector('#qmDesc').textContent = DESC[tab]; m.querySelector('.qm-legend').hidden = tab === 'join';
+      m.querySelector('#qmDesc').textContent = DESC[tab]; m.querySelector('#qmDesc').hidden = !DESC[tab]; m.querySelector('.qm-legend').hidden = tab === 'join';
       if (busy) { m.querySelector('#qmList').innerHTML = '<p class="qm-none">의뢰 내용과 분석 서비스 정보를 비교하고 있습니다…</p>'; sync(); return; }
       var T = L.filter(function (x) { return tabOf(x) === tab; });
       var html = tab === 'join' ? (T.length ? '<div class="qg">' + T.map(function (x) { return row(x, x.cat); }).join('') + '</div>' : '')
@@ -1040,7 +1075,7 @@
     };
     var pullJ = function () { m.querySelectorAll('[data-jf]').forEach(function (t) { jDraft[t.dataset.jf] = t.value; }); };
     var keys = function () { return Object.keys(picked).filter(function (k) { return picked[k] && !s.P[k]; }); };
-    var sync = function () { var n = keys().length, b = m.querySelector('#qmSend'); b.disabled = !n; b.textContent = n ? '선택한 ' + n + '곳에 견적제안발송' : '견적제안발송'; };
+    var sync = function () { var n = keys().length, b = m.querySelector('#qmSend'); b.disabled = !n; b.textContent = n ? '선택한 ' + n + '곳에 견적제안 발송' : '견적제안 발송'; };
     var compare = function (first) {
       busy = true; var b = m.querySelector('#qmRe'); b.disabled = true; b.textContent = '비교 중…'; draw();
       setTimeout(function () { aiRunSet(); run(); busy = false; b.disabled = false; b.textContent = '다시 비교'; draw(); render(); if (!first) OP.toast('분석 서비스 정보를 다시 비교했습니다.'); }, 900);
@@ -1066,6 +1101,7 @@
         J = judges(); jOpen = ''; draw(); OP.toast('수행 판단을 저장했습니다.'); return;
       }
       var mo = e.target.closest('[data-more]'); if (mo) { e.preventDefault(); open[mo.dataset.more] = 1; draw(); return; }
+      var ct = e.target.closest('[data-contact]'); if (ct) { e.preventDefault(); cOpen[ct.dataset.contact] = !cOpen[ct.dataset.contact]; draw(); return; }
       var sa = e.target.closest('[data-svcask]');
       if (sa) {
         e.preventDefault(); var k = sa.dataset.svcask;
