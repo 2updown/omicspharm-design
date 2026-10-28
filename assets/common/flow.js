@@ -136,7 +136,8 @@
   var OLDMSG = ['세 기관 모두 FFPE 시료 경험이 있습니다. 일정이 급하시면 라온바이오랩보다 다온유전체센터를 추천드립니다.', '두 곳 모두 FFPE 시료 경험이 있습니다. 일정이 급하시면 소요 기간이 짧은 A사를 추천드립니다.'];
   function seed() {
     var r2 = DEMO_REQS[1], r3 = DEMO_REQS[2], S = {};
-    S[r2.id] = { st: 'quoting', ok: T0 - DAY * 3.5, reqAt: T0 - DAY * 3, due: '2026-10-10', memo: '시료 수가 많아 일정 제안을 함께 부탁드립니다.', P: {} };
+    S[r2.id] = { st: 'quoting', ok: T0 - DAY * 3.5, reqAt: T0 - DAY * 3, due: iso(Date.now() + DAY * 10), // 견적 작성 예시라 마감일은 항상 앞으로 (2026-10-28: 마감 후 제출 불가)
+      memo: '시료 수가 많아 일정 제안을 함께 부탁드립니다.', P: {} };
     S[r2.id].P[ME_PARTNER] = { at: T0 - DAY * 3, status: 'req' };
     ['p-bio', 'p-met'].forEach(function (k, i) { var p = partner(k); S[r2.id].P[k] = { at: T0 - DAY * 3, status: 'sub', quote: genQuote(p, r2), subAt: T0 - DAY * (2 - i) }; });
     S[r3.id] = { st: 'sent', ok: T0 - DAY * 8.5, reqAt: T0 - DAY * 8, due: '2026-10-01', memo: '', P: {}, sentAt: T0 - DAY * 2, msg: OLDMSG[1] };
@@ -148,7 +149,7 @@
     S[r3.id].P['p-omx'].revN = 1;
     // 분석파트너 데모: 0046은 임시저장, 0047은 제출 완료(컨설턴트 확인 전)
     var r4 = DEMO_REQS[3], r5 = DEMO_REQS[4], me = partner(ME_PARTNER);
-    S[r4.id] = { st: 'quoting', ok: T0 - DAY * 2.5, reqAt: T0 - DAY * 2, due: '2026-10-16', memo: '', P: {} };
+    S[r4.id] = { st: 'quoting', ok: T0 - DAY * 2.5, reqAt: T0 - DAY * 2, due: iso(Date.now() + DAY * 12), memo: '', P: {} };
     S[r4.id].P[ME_PARTNER] = { at: T0 - DAY * 2, status: 'draft', quote: genQuote(me, r4) };
     S[r4.id].P['p-adc'] = { at: T0 - DAY * 2, status: 'sub', quote: genQuote(partner('p-adc'), r4), subAt: T0 - DAY };
     S[r5.id] = { st: 'quoting', ok: T0 - DAY * 5.5, reqAt: T0 - DAY * 5, due: '2026-10-12', memo: '절대정량이 가능한 기관 위주로 요청드립니다.', P: {} };
@@ -271,6 +272,9 @@
       if (x.status === 'sub') return x.fwd && s.st === 'sent' ? '클라이언트 검토 중' : '제출 완료';
       return { req: '작성 대기', draft: '임시저장', rev: '수정 요청', dec: '거절' }[x.status];
     },
+    // 견적 마감일 변경 (2026-10-28, 컨설턴트). 마감일이 지나면 분석파트너는 새 견적을 제출할 수 없음 (수정 요청받은 견적은 제출 가능)
+    setDue: function (id, v) { return put(id, function (s) { s.due = v; s.dueChg = Date.now(); }); },
+    dueOver: function (s) { return !!s.due && new Date(s.due + 'T23:59:59') < new Date(); },
     // 분석파트너 화면용: 삭제된 프로젝트는 견적 상태와 상관없이 '프로젝트 삭제' (2026-10-28, 견적은 기록으로 남고 더 진행할 수 없음)
     pstMe: function (s, k) { return s.cancel && s.P[k] ? '프로젝트 삭제' : F.pst(s, k); },
     // 삭제된 프로젝트 카드를 분석파트너 목록에서 뺌 (견적 기록은 남음, 새로고침하면 예시는 다시 보임)
@@ -428,7 +432,7 @@
       var d = db().S;
       return requests().filter(function (r) { var s = d[r.id]; return s && s.st === 'matched' && (!k || s.pick === k); }).map(function (r) {
         var s = d[r.id], q = s.P[s.pick].quote;
-        return { id: r.id, flow: true, ct: s.ct, svc: r.svc, stage: s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 검토' : s.raw && s.raw.length ? '보고서 등록' : s.ct ? '분석 진행 중' : '계약 진행 중', title: r.title, client: r.org || '-', partner: partner(s.pick).org, samples: r.samples || '-', amount: man(total(q).net), contract: (s.ct && s.ct.date) || iso(s.ct ? s.ct.at : s.pickAt), due: (s.ct && s.ct.due) || r.due || iso(s.pickAt + DAY * 7 * (+q.weeks || 6)), at: s.pickAt, qa: 0 };
+        return { id: r.id, flow: true, ct: s.ct, svc: r.svc, stage: s.fin ? '프로젝트 완료' : s.rep && s.rep.length ? '보고서 검토' : s.raw && s.raw.length ? '보고서 등록' : s.ct ? '분석 진행 중' : '계약 진행 중', title: r.title, client: r.org || '-', partner: partner(s.pick).org, samples: r.samples || '-', amount: man(s.ct && s.ct.pAmt != null ? s.ct.pAmt : total(q).net), contract: (s.ct && s.ct.date) || iso(s.ct ? s.ct.at : s.pickAt), due: (s.ct && s.ct.due) || r.due || iso(s.pickAt + DAY * 7 * (+q.weeks || 6)), at: s.pickAt, qa: 0 };
       });
     }
   };
@@ -469,6 +473,7 @@
         if (s.fin && s.pick === ses.email) L.push({ id: 'f-fin-' + r.id, k: '프로젝트완료', cat: 'project', at: s.fin, t: nm + ' 프로젝트가 완료되었습니다. 클라이언트가 결과보고서를 최종 승인했습니다.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
         if (s.cancel) L.push({ id: 'f-cancel-' + r.id, k: '의뢰취소', cat: 'project', at: s.cancel.at, t: nm + ' 프로젝트가 삭제되어 견적 요청이 종료되었습니다.', href: 'mypage-quote.html' });
         if (!x.self) L.push({ id: 'f-req-' + r.id, k: '견적제안', cat: 'project', at: x.at, t: nm + ' 프로젝트 검토 후 견적서를 작성해주세요.', sub: '견적 마감일: ' + (s.due ? s.due.replace(/-/g, '.') : '-'), href: qh });
+        if (s.dueChg && /^(req|draft)$/.test(x.status) && !s.cancel) L.push({ id: 'f-due-' + r.id + s.dueChg, k: '견적마감일변경', cat: 'project', at: s.dueChg, t: nm + ' 프로젝트의 견적 마감일이 ' + s.due.replace(/-/g, '.') + '로 변경되었습니다.', href: qh });
         if (x.rev) L.push({ id: 'f-rev-' + r.id + x.revN, k: '견적수정요청', cat: 'project', at: x.rev.at, t: nm + ' 프로젝트 견적서의 수정을 요청드립니다.', sub: x.rev.note, href: qh });
         // 선정 알림만 (2026-10-21: 미선정 알림은 보내지 않음)
         if (s.st === 'matched' && x.status === 'sub' && s.pick === ses.email) L.push({ id: 'f-win-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: nm + '의 견적이 최종 선정되었습니다.', sub: '견적서명: ' + qname(x) + ' · 견적금액: ' + won(total(x.quote).final), href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
@@ -536,8 +541,8 @@
   F.qdiff = function (a, b) {
     var cur = b.cur || 'KRW', M = function (q) { var m = {}; (q.groups || []).forEach(function (g) { g.lines.forEach(function (l) { m[(g.name || '') + '|' + (l.d || '')] = l; }); }); return m; };
     var A = M(a), B = M(b), out = [], nm = function (k) { return k.split('|')[1] || k.split('|')[0]; };
-    Object.keys(B).forEach(function (k) { var x = A[k], y = B[k]; if (!x) { out.push('추가 · ' + nm(k) + ' ' + money(num(y.q) * num(y.p), cur)); return; } if (num(x.p) !== num(y.p)) out.push(nm(k) + ' 단가 ' + money(num(x.p), cur) + ' → ' + money(num(y.p), cur)); if (num(x.q) !== num(y.q)) out.push(nm(k) + ' 수량 ' + num(x.q) + ' → ' + num(y.q)); });
-    Object.keys(A).forEach(function (k) { if (!B[k]) out.push('삭제 · ' + nm(k)); });
+    Object.keys(B).forEach(function (k) { var x = A[k], y = B[k]; if (!x) { out.push('추가: ' + nm(k) + ' ' + money(num(y.q) * num(y.p), cur)); return; } if (num(x.p) !== num(y.p)) out.push(nm(k) + ' 단가 ' + money(num(x.p), cur) + ' → ' + money(num(y.p), cur)); if (num(x.q) !== num(y.q)) out.push(nm(k) + ' 수량 ' + num(x.q) + ' → ' + num(y.q)); });
+    Object.keys(A).forEach(function (k) { if (!B[k]) out.push('삭제: ' + nm(k)); });
     var sa = num(a.sale) + num(a.addSale), sb = num(b.sale) + num(b.addSale); if (sa !== sb) out.push('할인 ' + (sa ? money(sa, cur) : '없음') + ' → ' + (sb ? money(sb, cur) : '없음'));
     if (String(a.weeks || '') !== String(b.weeks || '')) out.push('소요 기간 ' + (a.weeks || '-') + '주 → ' + (b.weeks || '-') + '주');
     return out;
@@ -560,7 +565,7 @@
     return '<article class="doc">' +
       '<div class="doc-head"><img src="assets/main/logo.svg" alt="OmicsPharm"><h1>견 적 서</h1></div>' +
       '<div class="doc-meta"><span>견적번호 Q-' + esc(String(r.id).replace(/^(PRJ|REQ)-/, '')) + '-' + esc(String(k || '').replace(/@.*/, '').toUpperCase()) + '</span><span>견적일자 ' + d + '</span></div>' +
-      '<table><tr><th style="width:18%">프로젝트명</th><td>' + esc(r.title) + '</td></tr><tr><th>분석 분야</th><td>' + esc(r.svc) + ' · 시료 ' + esc(r.samples || '-') + '개' + (q.weeks ? ' · 소요 기간 ' + esc(q.weeks) + '주' : '') + '</td></tr></table>' +
+      '<table><tr><th style="width:18%">프로젝트명</th><td>' + esc(r.title) + '</td></tr><tr><th>분석 분야</th><td>' + esc(r.svc) + ', 시료 ' + esc(r.samples || '-') + '개' + (q.weeks ? ', 소요 기간 ' + esc(q.weeks) + '주' : '') + '</td></tr></table>' +
       '<div class="parties" style="margin-top:16px">' +
         party('고객사', [r.org, '-', '-', '-', r.manager, '-', '-']) +
         party('공급자', [sup.s_org, sup.s_ceo, sup.s_tel, sup.s_biz, sup.s_mgr, sup.s_mail, sup.s_addr]) +
@@ -598,8 +603,8 @@
       return (V && cur ? '<p class="pv-old">이전 견적입니다. 지금 확정할 수 있는 견적은 ' + esc(V[0].t) + '입니다.</p>' : '') + F.docHTML(r, vq, k, o);
     };
     pv.innerHTML = '<div class="pv-bar"><b>' + esc(title || '견적서') + '</b>' +
-      (V ? '<div class="pv-ver" role="tablist" aria-label="견적 차수">' + V.map(function (v, i) { return '<button type="button" role="tab" data-ver="' + i + '" aria-selected="' + (i === cur) + '">' + esc(v.t) + (i ? '' : ' · 최신') + '</button>'; }).join('') + '</div>' : '') +
-      '<div><button type="button" data-print>인쇄 · PDF 저장</button><button type="button" class="x" data-close>닫기</button></div></div><div class="pv-scroll">' + body() + '</div>';
+      (V ? '<div class="pv-ver" role="tablist" aria-label="견적 차수">' + V.map(function (v, i) { return '<button type="button" role="tab" data-ver="' + i + '" aria-selected="' + (i === cur) + '">' + esc(v.t) + (i ? '' : ' (최신)') + '</button>'; }).join('') + '</div>' : '') +
+      '<div><button type="button" data-print>인쇄 / PDF 저장</button><button type="button" class="x" data-close>닫기</button></div></div><div class="pv-scroll">' + body() + '</div>';
     var close = function () { pv.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', key); };
     var key = function (e) { if (e.key === 'Escape') close(); };
     pv.addEventListener('click', function (e) {
@@ -617,13 +622,13 @@
     m.className = 'op-confirm fask'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
     if (o.html) m.classList.add('wide'); // o.html: 설명 아래 참고 내용 (예: 수정 요청할 견적의 시험 항목 표)
     m.innerHTML = '<div class="box"><h3>' + esc(o.title) + '</h3>' + (o.desc ? '<p>' + esc(o.desc) + '</p>' : '') + (o.html || '') +
-      (o.label !== false ? '<label class="fask-l">' + esc(o.label || '') + '<textarea placeholder="' + esc(o.ph || '') + '">' + esc(o.value || '') + '</textarea></label>' : '') +
+      (o.label !== false ? '<label class="fask-l">' + esc(o.label || '') + (o.input ? '<input type="' + o.input + '" value="' + esc(o.value || '') + '"' + (o.min ? ' min="' + o.min + '"' : '') + '>' : '<textarea placeholder="' + esc(o.ph || '') + '">' + esc(o.value || '') + '</textarea>') + '</label>' : '') + // o.input: 글 대신 한 줄 입력 (예: 'date')
       '<div class="btns"><button type="button" class="no">' + esc(o.no || '취소') + '</button><button type="button" class="yes go">' + esc(o.yes || '확인') + '</button></div></div>';
-    var ta = m.querySelector('textarea'), yes = m.querySelector('.yes');
+    var ta = m.querySelector('textarea, .fask-l input'), yes = m.querySelector('.yes');
     var sync = function () { if (o.required && ta) yes.disabled = !ta.value.trim(); };
     var close = function () { m.remove(); document.removeEventListener('keydown', key); };
     var key = function (e) { if (e.key === 'Escape') close(); };
-    if (ta) ta.addEventListener('input', sync);
+    if (ta) { ta.addEventListener('input', sync); ta.addEventListener('change', sync); }
     m.addEventListener('click', function (e) {
       if (e.target === m || e.target.classList.contains('no')) { close(); if (o.onNo && e.target !== m) o.onNo(); } // o.no·onNo: 왼쪽 버튼을 다른 동작으로 (예: 견적서 보기)
       else if (e.target === yes && !yes.disabled) { var v = ta ? ta.value.trim() : ''; close(); cb(v); }
@@ -677,7 +682,7 @@
       : '<article class="doc cdoc file"><div class="c-brand">C E L L K E Y</div><div class="fileph"><b>' + esc(c.name) + '</b><p>기관 자체 양식으로 업로드한 계약서입니다.<br>프로토타입에서는 파일 내용을 표시하지 않습니다.</p></div></article>';
     var pv = document.createElement('div');
     pv.className = 'pv'; pv.setAttribute('role', 'dialog'); pv.setAttribute('aria-modal', 'true'); pv.setAttribute('aria-label', label);
-    pv.innerHTML = '<div class="pv-bar"><b>' + label + ' · ' + esc(r.title) + '</b><div><button type="button" data-print>인쇄 · PDF 저장</button><button type="button" class="x" data-close>닫기</button></div></div><div class="pv-scroll">' + body + '</div>';
+    pv.innerHTML = '<div class="pv-bar"><b>' + label + '<i class="dv" aria-hidden="true"></i>' + esc(r.title) + '</b><div><button type="button" data-print>인쇄 / PDF 저장</button><button type="button" class="x" data-close>닫기</button></div></div><div class="pv-scroll">' + body + '</div>';
     var close = function () { pv.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', key); };
     var key = function (e) { if (e.key === 'Escape') close(); };
     pv.addEventListener('click', function (e) { if (e.target.closest('[data-close]') || e.target === pv) close(); else if (e.target.closest('[data-print]')) window.print(); });
@@ -688,7 +693,7 @@
   F.contractListHTML = function (s, sides) {
     return '<div class="ctlist">' + sides.map(function (side) {
       var c = s.ct[side];
-      return '<div class="ctrow2"><div><b>' + (side === 'client' ? '클라이언트 계약서' : '분석파트너 계약서') + '</b><span>' + (c.type === 'form' ? '셀키 분석서비스 의뢰서 (기본 양식) + 별첨 견적서' : esc(c.name)) + ' · 등록 ' + ymd(s.ct.at) + '</span></div><button type="button" class="btn" data-ct="' + side + '">계약서 보기</button></div>';
+      return '<div class="ctrow2"><div><b>' + (side === 'client' ? '클라이언트 계약서' : '분석파트너 계약서') + '</b><span>' + (c.type === 'form' ? '셀키 분석서비스 의뢰서 (기본 양식) + 별첨 견적서' : esc(c.name)) + '<i class="dv" aria-hidden="true"></i>등록 ' + ymd(s.ct.at) + '</span></div><button type="button" class="btn" data-ct="' + side + '">계약서 보기</button></div>';
     }).join('') + '</div>';
   };
 

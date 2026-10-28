@@ -581,9 +581,9 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zp">
-<script src="assets/common/site.js?v=20261028zp"></script>
-<script src="assets/common/consult.js?v=20261028zp"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zs">
+<script src="assets/common/site.js?v=20261028zs"></script>
+<script src="assets/common/consult.js?v=20261028zs"></script>
 <script>if (!((OP.session() || {}).role === 'admin' && /[?&]edit=/.test(location.search))) OP.requireClient(); /* 클라이언트만 접근 (컨설턴트는 의뢰 수정(?edit=)만): 비로그인 → 로그인, 파트너 → 메인 */</script>
 </head>
 <body>
@@ -1321,7 +1321,9 @@
     var fp=null; if(ss&&!ADM&&DOC&&DOC!==DOC_SAVED){ OP.saveAccount(ss.email,{bizDoc:DOC}); if(DOC_FILE) fp=OP.files.put('biz:acc:'+ss.email,DOC_FILE); } // 새로 올린 파일은 내 정보 관리에도 저장 (원본은 컨설턴트 확인용)
     try{ list=JSON.parse(localStorage.getItem('op.submitted')||'[]'); }catch(e){}
     var k=EDIT?list.findIndex(function(x){return x.id===EDIT.id}):-1;
-    if(k>-1){ d.id=EDIT.id; d.at=EDIT.at; d.updatedAt=Date.now(); list[k]=d; }
+    if(k>-1){ d.id=EDIT.id; d.at=EDIT.at; d.updatedAt=Date.now(); list[k]=d;
+      // 모집기한 끝을 바꾸면 견적 마감일도 같이 (매칭 전, 2026-10-28)
+      if(d.to && d.to!==EDIT.to){ try{ var fw=JSON.parse(localStorage.getItem('op.flow')||'null'), fs=fw&&fw.S&&fw.S[d.id]; if(fs&&fs.due&&fs.st!=='matched'){ fs.due=d.to; fs.dueChg=Date.now(); localStorage.setItem('op.flow',JSON.stringify(fw)); } }catch(e){} } }
     else list.unshift(d);
     try{ localStorage.setItem('op.submitted', JSON.stringify(list.slice(0,20))); }catch(e){}
     if(k<0&&PRE.length) $$('#preOpts input:checked').forEach(function(el){ OP.consult.link(el.value,d.id); }); // 고른 상담을 이 의뢰에 연결

@@ -9,13 +9,13 @@
      ?rid=프로젝트 번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zp">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zp">
-<script src="assets/common/site.js?v=20261028zp"></script>
-<script src="assets/common/consult.js?v=20261028zp"></script>
-<script src="assets/common/mypage.js?v=20261028zp"></script>
-<script src="assets/common/flow.js?v=20261028zp"></script>
-<script src="assets/common/projects-data.js?v=20261028zp"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zs">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zs">
+<script src="assets/common/site.js?v=20261028zs"></script>
+<script src="assets/common/consult.js?v=20261028zs"></script>
+<script src="assets/common/mypage.js?v=20261028zs"></script>
+<script src="assets/common/flow.js?v=20261028zs"></script>
+<script src="assets/common/projects-data.js?v=20261028zs"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -238,6 +238,8 @@
     saved = X.quote || null;
     var t = F.pstMe(S, ME);
     locked = !/작성 대기|임시저장|수정 요청/.test(t);
+    var OVER = /작성 대기|임시저장/.test(t) && F.dueOver(S); // 견적 마감일이 지나면 새 견적은 제출할 수 없음 (수정 요청받은 견적은 가능, 2026-10-28)
+    if (OVER) locked = true;
     var DUE = dleft(S.due) === '마감' ? '견적 마감일(' + dot(S.due) + ')이 지났습니다.' : '견적 마감일 ' + dot(S.due) + ' (' + dleft(S.due) + ') 전에 최종 제출해주세요.';
     var B = {
       // 작성 대기·임시저장: 마감일 안내가 제목 (한 프로젝트에 견적서는 하나라 '임시저장된 견적서' 안내는 따로 두지 않음)
@@ -251,8 +253,9 @@
       '프로젝트 삭제': ['', '프로젝트가 삭제되어 견적 요청이 종료되었습니다.', (S.cancel ? F.ymd(S.cancel.at) + ' 삭제\n' : '') + (X.subAt ? '제출한 견적서는 기록으로 남아 있으며, 더 이상 수정할 수 없습니다.' : '작성 중이던 견적서는 더 이상 제출할 수 없습니다.'), 0],
       '거절': ['gray', '견적 요청을 거절했습니다.', '거절 사유: ' + (X.dec ? X.dec.why : '-'), 0]
     }[t];
+    if (OVER) B = ['', '견적 마감일이 지나 제출할 수 없습니다.', '견적 마감일: ' + dot(S.due) + '\n마감일 연장이 필요하면 [문의하기]로 OmicsPharm에 알려 주세요.', 0];
     var ROUTE = X.self ? '프로젝트 찾기에서 직접 신청한 견적입니다.' : 'OmicsPharm이 요청한 견적입니다.'; // 견적 경로 (2026-10-27)
-    banner = '<div class="ftodo ' + B[0] + '"><div><b>' + esc(B[1]) + '</b>' + '<p>' + esc(t === '수정 요청' || t === '프로젝트 삭제' ? B[2] : (B[2] ? B[2] + '\n' : '') + ROUTE) + '</p>' + '</div>' +
+    banner = '<div class="ftodo ' + B[0] + '"><div><b>' + esc(B[1]) + '</b>' + '<p>' + esc(t === '수정 요청' || t === '프로젝트 삭제' || OVER ? B[2] : (B[2] ? B[2] + '\n' : '') + ROUTE) + '</p>' + '</div>' +
       (t === '선정' ? '<div class="acts"><a class="btn primary" href="mypage-project.html?id=' + encodeURIComponent(rid) + '">프로젝트 관리로 이동</a></div>' : B[3] && !X.self ? '<div class="acts"><button type="button" class="btn" id="decline">견적 거절</button></div>' : '') + '</div>';
   } else {
     // 예전 방식: 프로젝트 찾기 목록 데이터를 의뢰처럼 보여줌

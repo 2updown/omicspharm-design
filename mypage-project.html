@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zp">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zp">
-<script src="assets/common/site.js?v=20261028zp"></script>
-<script src="assets/common/consult.js?v=20261028zp"></script>
-<script src="assets/common/mypage.js?v=20261028zp"></script>
-<script src="assets/common/flow.js?v=20261028zp"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zs">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zs">
+<script src="assets/common/site.js?v=20261028zs"></script>
+<script src="assets/common/consult.js?v=20261028zs"></script>
+<script src="assets/common/mypage.js?v=20261028zs"></script>
+<script src="assets/common/flow.js?v=20261028zs"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -393,7 +393,7 @@
     var Q_ST = { '작성 대기': '견적 요청', '임시저장': '견적 요청', '수정 요청': '견적 요청', '제출 완료': '견적 제출', '클라이언트 검토 중': '견적 제출', '미선정': '미선정·거절', '거절': '미선정·거절', '프로젝트 삭제': '미선정·거절' }; // 선정 = 프로젝트(계약 진행 중)로 넘어감
     var Q_SB = { '견적 요청': 'wait', '견적 제출': 'state', '미선정·거절': 'done' }; // 견적 단계 배지 (프로젝트 단계 이름)
     // 세부 상태 → 오른쪽 할 일: ['btn', 이름] = 버튼, ['txt', 이름] = 회색 글자
-    var Q_NX = { '작성 대기': ['btn', '견적 작성'], '임시저장': ['btn', '이어서 작성'], '수정 요청': ['btn', '견적 수정'], '제출 완료': ['txt', 'OmicsPharm 검토 중'], '클라이언트 검토 중': ['txt', '클라이언트 검토 중'], '미선정': ['txt', '미선정'], '거절': ['txt', '거절'], '프로젝트 삭제': ['txt', '프로젝트 삭제'] };
+    var Q_NX = { '작성 대기': ['btn', '견적 작성'], '임시저장': ['btn', '이어서 작성'], '수정 요청': ['btn', '견적 수정'], '제출 완료': ['txt', 'OmicsPharm 검토 중'], '클라이언트 검토 중': ['txt', '클라이언트 검토 중'], '미선정': ['txt', '미선정'], '거절': ['txt', '거절'], '프로젝트 삭제': ['txt', '프로젝트 삭제'], '견적 마감': ['txt', '견적 마감'] };
     var nextHTML = function (n) { return !n ? '' : n[0] === 'btn' ? '<span class="btn line nxb">' + n[1] + '</span>' : '<span class="nx">' + n[1] + '</span>'; };
     var pNext = function (x) { // 계약 이후 프로젝트 (분석파트너)
       var ps = D.pStage(x), fs = x.flow ? OP.flow.state(x.id) : null;
@@ -407,7 +407,7 @@
     var QL = !ADM && OP.canQuote() ? OP.flow.inbox(OP.session().email).map(function (o) {
       // 삭제된 프로젝트 (2026-10-28): 원래 탭(견적 요청·견적 제출)에 그대로 두고 '프로젝트 삭제' 표시 → 누르면 목록에서 제거할지 묻는 모달
       var t = OP.flow.pstMe(o.s, OP.session().email), t0 = OP.flow.pst(o.s, OP.session().email); if (!Q_ST[t0] || o.x.hidden) return null;
-      return { kind: 'q', id: o.r.id, href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, title: o.r.title, client: o.r.org || '-', samples: o.r.samples || '-', stage: Q_ST[t0], pst: t, del: !!o.s.cancel, sub: !!o.x.subAt, due: o.s.due, at: o.x.at || o.r.at, self: o.x.self };
+      return { kind: 'q', id: o.r.id, href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, title: o.r.title, client: o.r.org || '-', samples: o.r.samples || '-', stage: Q_ST[t0], pst: !o.s.cancel && /작성 대기|임시저장/.test(t) && OP.flow.dueOver(o.s) ? '견적 마감' : t, del: !!o.s.cancel, sub: !!o.x.subAt, due: o.s.due, at: o.x.at || o.r.at, self: o.x.self };
     }).filter(Boolean) : [];
     var routeOf = function (x) { var p = x.flow && OP.flow.state(x.id).P[OP.session().email]; return !!(p && p.self); }; // 직접 신청 = 프로젝트 찾기에서 직접 견적을 보낸 건
     var LIST_ST = ADM ? STAGES : ['견적 요청', '견적 제출'].concat(STAGES).concat(['미선정·거절']);
@@ -668,11 +668,11 @@
     var A = M(a), B = M(b), out = [], nm = function (k) { return k.split('|')[1] || k.split('|')[0]; };
     Object.keys(B).forEach(function (k) {
       var x = A[k], y = B[k];
-      if (!x) { out.push('추가 · ' + nm(k) + ' ' + F.money(F.num(y.q) * F.num(y.p), cur)); return; }
+      if (!x) { out.push('추가: ' + nm(k) + ' ' + F.money(F.num(y.q) * F.num(y.p), cur)); return; }
       if (F.num(x.p) !== F.num(y.p)) out.push(nm(k) + ' 단가 ' + F.money(F.num(x.p), cur) + ' → ' + F.money(F.num(y.p), cur));
       if (F.num(x.q) !== F.num(y.q)) out.push(nm(k) + ' 수량 ' + F.num(x.q) + ' → ' + F.num(y.q));
     });
-    Object.keys(A).forEach(function (k) { if (!B[k]) out.push('삭제 · ' + nm(k)); });
+    Object.keys(A).forEach(function (k) { if (!B[k]) out.push('삭제: ' + nm(k)); });
     var sa = F.num(a.sale) + F.num(a.addSale), sb = F.num(b.sale) + F.num(b.addSale);
     if (sa !== sb) out.push('할인 ' + (sa ? F.money(sa, cur) : '없음') + ' → ' + (sb ? F.money(sb, cur) : '없음'));
     if (String(a.weeks || '') !== String(b.weeks || '')) out.push('소요 기간 ' + (a.weeks || '-') + '주 → ' + (b.weeks || '-') + '주');
@@ -854,7 +854,7 @@
       if (e.target === m || e.target.classList.contains('no')) close();
       else if (e.target.classList.contains('yes')) {
         var r = m.querySelector('input[name=cxr]:checked'), t = m.querySelector('textarea').value.trim();
-        F.cancel(d.id, [r ? r.value : '', t].filter(Boolean).join(' · ')); close();
+        F.cancel(d.id, [r ? r.value : '', t].filter(Boolean).join(', ')); close();
         OP.flash('프로젝트를 삭제했습니다.'); location.replace('mypage-project.html');
       }
     });
