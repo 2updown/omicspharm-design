@@ -264,6 +264,18 @@ button { background:none; border:0; cursor:pointer; }
 .cdoc .need { margin-top:16px; font-size:13px; line-height:24px; } .cdoc .need b { display:block; margin-bottom:4px; }
 .cdoc .c-sign-t { margin-top:36px; font-size:14px; }
 .cdoc .c-date { margin-top:20px; text-align:right; }
+/* 위탁 분석 서비스 계약서 (2026-10-28) */
+.cdoc.ca { font-size:14px; line-height:24px; color:#111; }
+.ca .ca-cover { padding-bottom:28px; margin-bottom:24px; border-bottom:1px solid #ddd; }
+.ca .ca-h { margin:32px 0 !important; text-align:center; font-size:24px !important; font-weight:700 !important; }
+.ca .ca-parties { display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+.ca .ca-t { margin:20px 0 4px; font-size:14px; font-weight:700; }
+.ca .ca-p { margin:4px 0; }
+.ca .ca-ol { margin:4px 0; padding-left:24px; list-style:decimal; } .ca .ca-ol li { margin:2px 0; }
+.ca .ca-acc { margin-top:8px; }
+.ca .ca-end { margin-top:28px; }
+.ca .blank { letter-spacing:0; color:#555; }
+.ca .ca-sign { width:100%; margin-top:28px; } .ca .ca-sign td { width:50%; border:0 !important; vertical-align:top; padding:0 8px 0 0; } .ca .ca-sign p { margin:4px 0; }
 .cdoc .c-sign { margin-top:20px; text-align:right; font-size:14px; } .cdoc .c-sign b { margin:0 12px; font-weight:400; }
 .cdoc.file .fileph { padding:80px 24px; text-align:center; } .cdoc.file .fileph b { font-size:16px; } .cdoc.file .fileph p { margin-top:8px; color:#666; }
 .ctlist { display:flex; flex-direction:column; border-top:2px solid #000; }

@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zy">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zy">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261028zy">
-<script src="assets/common/site.js?v=20261028zy"></script>
-<script src="assets/common/consult.js?v=20261028zy"></script>
-<script src="assets/common/mypage.js?v=20261028zy"></script>
-<script src="assets/common/svc-spec.js?v=20261028zy"></script>
-<script src="assets/common/flow.js?v=20261028zy"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zz3">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zz3">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261028zz3">
+<script src="assets/common/site.js?v=20261028zz3"></script>
+<script src="assets/common/consult.js?v=20261028zz3"></script>
+<script src="assets/common/mypage.js?v=20261028zz3"></script>
+<script src="assets/common/svc-spec.js?v=20261028zz3"></script>
+<script src="assets/common/flow.js?v=20261028zz3"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -1255,12 +1255,12 @@
     if ($('#ctBlk')) ctSync();
     card.onclick = function (e) {
       var t = e.target;
-      if (t.closest('[data-dl]')) { // 기본 양식 다운로드: 이 프로젝트 정보로 채운 셀키 분석서비스 의뢰서 + 별첨1 견적서 (워드에서 열리는 .doc)
+      if (t.closest('[data-dl]')) { // 기본 양식 다운로드: 위탁 분석 서비스 계약서(바뀌는 칸은 빈칸) + 별첨1 견적서 (워드에서 열리는 .doc)
         var sd = t.closest('[data-dl]').dataset.dl, tmp = JSON.parse(JSON.stringify(s)); tmp.ct = null;
         var q0 = sd === 'client' ? ((F.cqLast(s) || {}).quote || s.P[s.pick].quote) : s.P[s.pick].quote;
-        var html = '<html><head><meta charset="utf-8"><style>body{font-family:"Malgun Gothic",sans-serif;font-size:10pt}table{border-collapse:collapse;width:100%;margin:6pt 0}th,td{border:1px solid #999;padding:4pt 6pt;text-align:left;vertical-align:top}h2{font-size:12pt;margin:14pt 0 4pt}</style></head><body>' +
+        var html = '<html><head><meta charset="utf-8"><style>body{font-family:"Malgun Gothic",sans-serif;font-size:10pt}table{border-collapse:collapse;width:100%;margin:6pt 0}th,td{border:1px solid #999;padding:4pt 6pt;text-align:left;vertical-align:top}h2{font-size:16pt;text-align:center;margin:24pt 0}h3{font-size:10.5pt;margin:12pt 0 4pt}.ca-sign td{border:0;width:50%}.c-brand{font-weight:bold;letter-spacing:4pt;color:#00857a}</style></head><body>' +
           F.contractHTML(r, tmp, sd) + '<p><b># 별첨1. 분석 견적서</b></p>' + F.docHTML(r, q0, s.pick, sd === 'client' ? { client: true, no: F.qno(s, s.pick) } : null) + '</body></html>';
-        var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'application/msword' })); a.download = '셀키_분석서비스_의뢰서_' + id + '_' + (sd === 'client' ? '클라이언트' : '분석파트너') + '.doc'; a.click();
+        var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'application/msword' })); a.download = '위탁분석서비스계약서_' + id + '_' + (sd === 'client' ? '클라이언트' : '분석파트너') + '.doc'; a.click();
         setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
       } else if (t.closest('[data-ct]')) {
         F.showContract(r, s, t.closest('[data-ct]').dataset.ct);

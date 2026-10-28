@@ -655,42 +655,40 @@
     document.body.appendChild(m); sync(); (ta || m.querySelector('.no')).focus();
   };
 
-  // ── 계약서 (셀키 분석서비스 의뢰서 기본 양식) ──
-  // 회사 시험의뢰서 구성: 1. 의뢰자 정보 / 2. 시료 정보 / 3. 분석 서비스(프로젝트 의뢰 때 입력한 분석 상세만) / 분석 유형별 샘플 요구량 / 서명 / 별첨1. 분석 견적서
-  // 기관 자체 시험의뢰서를 쓰는 경우에는 파일 업로드로 대신한다
-  var NEED = {
-    '단백체·대사체': ['정제 단백질: 100 μg 이상', '혈액: 30 μL 이상', 'Cell: 1×10⁷ cells 이상', 'CM: 2 mL 이상', 'EV: 5×10⁹ particles 이상', '조직: protein 100 μg 이상'],
-    '유전체': ['gDNA: 500 ng+ (≥20 ng/µL) 이상', '혈액(EDTA): 1–3 mL 이상', 'Cell: 1×10⁶ cells 이상', '조직: 10–20 mg 이상', 'FFPE: 3–5 sections', 'RNA: 100 ng+ (RIN≥7) 이상', 'Long-read DNA: 5–10 µg 이상'],
-    '바이오의약품 특성분석': ['단백질의약품 시료: 1 mg 이상 (분석 항목에 따라 변동)']
-  };
-  var rowVal = function (r, re) { var v = ''; (r.sections || []).forEach(function (sec) { (sec.rows || []).forEach(function (x) { if (re.test(x[0])) v = v || x[1]; }); }); return v; };
+  // ── 계약서 기본 양식 (2026-10-28): 셀키 '위탁 분석 서비스 계약서' 형식 ──
+  // 실제 계약서(PDF)의 노란 칸(갑 정보, 과제명, 시료, 연구비, 지급 방법, 날짜)은 빈칸으로 두고 내려받아 채움. 조항 문구는 그대로
+  // 클라이언트 계약 = 갑 의뢰 기관 / 을 ㈜셀키에이아이, 분석파트너 계약 = 갑 ㈜셀키에이아이 / 을 분석파트너. 셀키·기관 주소 등은 예시 값
   F.contractHTML = function (r, s, side) {
-    // 3. 분석 서비스: 프로젝트 의뢰 때 입력한 '분석 상세' 단계 값(조건부 Targeted·PTM 등 포함) + 요청 기술만, 원본 의뢰서처럼 [구분 | 항목 | 입력값]
-    var TITLE = { '단백체': '단백체 분석 (Proteomics)', '대사체': '대사체 분석 (Metabolomics)', '유전체': '유전체 분석 (Genomics)', '전사체': '전사체 분석 (Transcriptomics)', 'Olink': 'Olink 분석', '바이오의약품': '바이오의약품·ADC 분석' };
-    var tk = Object.keys(TITLE).filter(function (t) { return String(r.svc).indexOf(t) > -1; })[0];
-    // SUB의 Targeted·Untargeted는 예전에 저장된 의뢰용
-    var SUB = ['Targeted', 'Untargeted', '표적 단백체', '비표적 대사체', '표적 대사체', 'PTM', 'ADC 상세 정보'], TECH = /^(시료 전처리 기술|분석 기술|희망 장비|요청 기술)/;
-    var groups = (r.sections || []).filter(function (sec) { return sec.rows && (/^분석 서비스/.test(sec.title) || SUB.indexOf(sec.title) > -1); })
-      .map(function (sec) { return [/^분석 서비스/.test(sec.title) ? String(r.svc).replace(/·ADC$/, '') : sec.title, sec.rows.filter(function (x) { return !TECH.test(x[0]); })]; });
-    var tech = []; (r.sections || []).forEach(function (sec) { (sec.rows || []).forEach(function (x) { if (TECH.test(x[0])) tech.push(x); }); });
-    if (tech.length) groups.push(['요청 기술', tech]);
-    groups = groups.filter(function (g) { return g[1].length; });
-    var svcHTML = groups.length ? groups.map(function (g) {
-      return '<table class="it2">' + g[1].map(function (x, i) { return '<tr>' + (i === 0 ? '<td class="grp" rowspan="' + g[1].length + '">' + esc(g[0]) + '</td>' : '') + '<td class="nm">' + esc(x[0]) + '</td><td>' + esc(x[1]) + '</td></tr>'; }).join('') + '</table>';
-    }).join('') : '<table class="it2"><tr><td class="grp">' + esc(r.svc) + '</td><td>-</td></tr></table>';
-    var p = partner(s.pick), dt = new Date(s.ct ? s.ct.at : Date.now()), cl = side === 'client';
-    var who = cl ? [r.manager || '-', r.org || '-', '-'] : ['셀키 컨설턴트', '셀키에이아이', '02-0000-0000'];
-    return '<article class="doc cdoc">' +
-      '<div class="c-brand">CELLKEY</div>' +
-      '<p class="c-lead">최첨단 분석 플랫폼과 전문성을 바탕으로,<br>한 차원 높은 정밀성과 효율성을 갖춘 프리미엄 바이오 분석 서비스를 제공합니다.</p>' +
-      '<p class="c-lead">분석 항목과 세부 정보를 입력해 주시면, 셀키에이아이 분석 담당자가 신속하게 상담·답변 드립니다.</p>' +
-      '<h2>1. 의뢰자 정보</h2><p class="c-sub">의뢰자 정보를 작성해 주세요.</p><table class="kv2 ctr"><tr><th>담당자</th><td>' + esc(who[0]) + '</td></tr><tr><th>소속</th><td>' + esc(who[1]) + '</td></tr><tr><th>연락처</th><td>' + esc(who[2]) + '</td></tr></table>' +
-      '<h2>2. 시료 정보</h2><p class="c-sub">시료 정보를 작성해 주세요.</p><table class="kv2"><tr><th>Taxonomy (Source):</th><td>' + esc(rowVal(r, /Taxonomy|생물종/) || '-') + '</td></tr><tr><th>종류:</th><td>' + esc(rowVal(r, /종류/) || '-') + '</td></tr><tr><th>시료 수:</th><td>' + esc(r.samples || '-') + '</td></tr><tr><th>분석목적:</th><td>' + esc(r.purpose || '-') + '</td></tr></table>' +
-      '<h2>3. 분석 서비스</h2><p class="svc-t">' + esc(tk ? TITLE[tk] : r.svc) + '</p>' + svcHTML +
-      '<h2 class="need-t">분석 유형별 샘플 요구량</h2>' + Object.keys(NEED).map(function (g) { return '<div class="need"><b>' + esc(g) + '</b>' + NEED[g].map(function (x) { return '<p>' + esc(x) + '</p>'; }).join('') + '</div>'; }).join('') +
-      '<p class="c-sign-t">위와 같은 내용의 시험을 의뢰합니다.</p>' +
-      '<p class="c-date">' + dt.getFullYear() + ' 년 &nbsp; ' + (dt.getMonth() + 1) + ' 월 &nbsp; ' + dt.getDate() + ' 일</p>' +
-      '<p class="c-sign">의뢰 담당자: <b>' + esc(who[0]) + '</b> (서명)</p>' +
+    // 바뀌는 칸은 모두 빈칸(______)으로 둔 양식 (2026-10-28). 셀키 쪽 정보만 채움(예시 값)
+    var cl = side === 'client', bl = function (w) { return '<span class="blank">' + new Array((w || 16) + 1).join('_') + '</span>'; }, BL = bl();
+    var ck = { org: esc(F.SELLER.s_org), addr: esc(F.SELLER.s_addr), ceo: esc(F.SELLER.s_ceo) }, other = { org: BL, addr: BL, ceo: bl(10) };
+    var A = cl ? other : ck, Bp = cl ? ck : other; // 갑 / 을: 클라이언트 계약은 갑 = 의뢰 기관, 분석파트너 계약은 을 = 분석파트너
+    var art = function (n, t, body) { return '<h3 class="ca-t">제 ' + n + ' 조(' + t + ')</h3>' + body; };
+    var ol = function (L) { return '<ol class="ca-ol">' + L.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol>'; };
+    return '<article class="doc cdoc ca">' +
+      '<div class="ca-cover"><div class="c-brand">C E L L K E Y</div><h2 class="ca-h">위탁 분석 서비스 계약서</h2>' +
+        '<p class="ca-parties"><span>분석 의뢰자 : <b>' + A.org + '</b></span><span>분 석 기 관 : <b>' + Bp.org + '</b></span></p></div>' +
+      '<p class="ca-p">' + A.org + ' (이하 \'갑\'이라 한다)과 ' + Bp.org + ' (이하 \'을\'이라 한다)는 다음과 같이 위탁연구 계약(이하 \'본 계약\'이라 한다)을 체결한다.</p>' +
+      art(1, '목적', '<p class="ca-p">본 계약은 \'갑\'이 연구비 및 물품을 지원하고, \'을\'이 \'갑\'의 요청에 따라 분석 서비스를 제공함에 있어 필요한 제반 사항을 규정함을 목적으로 한다.</p>') +
+      art(2, '용어의 정의', ol(['계약이라 함은 \'갑\'과 \'을\'이 분석 용역의 위탁과 수탁에 관한 전반적인 권리와 의무사항을 정한 것을 말한다.', '"결과물"이라 함은 \'을\'이 본 계약에 따라 수행한 분석 서비스의 결과로서, 분석 보고서, 분석 데이터, 기타 계약에 따라 \'갑\'에게 제공되는 문서 또는 전자적 기록물을 의미한다.'])) +
+      art(3, '과제', '<p class="ca-p">본 연구분석 용역 계약의 내용은 아래와 같다.</p>' + ol(['과제명: ' + BL, '시료: ' + BL, '시료 수: ' + bl(6) + '개', '분석항목: ' + BL])) +
+      art(4, '결과물 제출', '<p class="ca-p">\'을\'은 본 연구 수행에 대한 결과물을 \'갑\'과 \'을\'이 사전 협의한 기간까지 \'갑\'에게 제출한다. \'갑\'이 제출된 결과물을 검수한 후 \'을\'에게 보완을 요구한 경우, \'을\'은 \'갑\'의 요청에 따라 수정 및 보완하여야 한다.</p>') +
+      art(5, '계약기간', ol(['본 계약기간은 계약 체결일로부터 6개월로 한다. 단, \'갑\'과 \'을\' 쌍방의 서면 합의에 의하여 계약기간을 연장할 수 있다.', '제5조 1항의 계약기간에도 불구하고 본 과제가 분석계약서 기준에 의거해 조속히 성공적으로 완료될 시에는 \'갑\'과 \'을\' 상호 협의 하에 당해 완료일로서 용역업무를 종료한다.', '제5조 1항의 기간이 경과하여도 본 용역업무가 분석계약서 기준에 의거해 완료되지 못했을 시에는 \'갑\'과 \'을\' 상호 협의 하에 기간을 연장할 수 있다.'])) +
+      art(6, '연구비 및 지급방법 등', '<p class="ca-p">본 계약에 의하여 \'갑\'은 \'을\'에게 아래와 같이 연구비를 지급한다.</p>' + ol(['과제명: ' + BL, '연구비: 일금 ' + BL + '원 (₩ ' + bl(12) + ', 부가세 별도)', '연구비는 ' + BL + ' 지급한다.', '연구비 지급은 월 1~2회 진행하는 것을 원칙으로 하며, \'갑\'은 세금계산서 발행일 기준 영업일 30일 이내에 현금으로 연구비를 지급한다.', '본 계약에 명시된 연구 분석항목 이외의 추가 연구가 필요한 경우, \'갑\'과 \'을\'은 별도 서면 합의 하에 연구 분석항목 및 비용 등을 정한다.']) +
+        '<p class="ca-p ca-acc">[입금계좌 : 예시은행 000-000-000000, 예금주 : ' + Bp.org + ']</p>') +
+      art(7, '연구용 물품', ol(['제출된 시료는 \'갑\'의 요청에 따라 반환하거나 또는 폐기한다.', '\'갑\'은 \'을\'이 연구를 수행하는 데 필요한 의약품 및 관련 물품을 쌍방이 합의한 기일까지 무상으로 공급하며, \'을\'은 수령한 연구용 물품을 적절하게 취급하고, 본 연구 수행의 목적으로만 사용한다.'])) +
+      art(8, '결과의 귀속', ol(['본 계약에 따라 \'을\'이 수행한 분석 서비스의 결과물(분석 보고서, 분석 데이터 및 이에 준하는 결과물)의 소유권은 \'갑\'에게 귀속된다.', '연구용역 완료 이후 기 제공한 결과물에 대한 상세자료의 제출이나 설명을 \'갑\'이 요구하는 경우, \'을\'은 이에 성실히 응하여야 한다.', '\'갑\'은 본 계약에 따라 제공받은 결과물을 연구, 논문 작성, 학술 발표, 특허 출원 및 기타 학술, 연구 목적으로 자유롭게 활용할 수 있다.', '본 계약에 따라 결과물이 \'갑\'에게 귀속되더라도, 이는 \'을\'이 보유한 분석 기술, 분석 방법, 노하우, 데이터 처리 파이프라인 및 영업비밀에 대한 권리 이전 또는 사용권 허여를 의미하지 않는다.'])) +
+      art(9, '비밀유지', '<p class="ca-p">\'갑\'과 \'을\'은 본 계약을 통해 취득한 모든 정보에 대해 상대방의 서면 동의 없이 제3자에게 공개하거나 제공하여서는 아니 된다. 단, 비밀유지 의무는 본 계약의 위반 없이 공개된 정보, 수령자가 본 계약의 위반 없이 제3자로부터 수령한 정보 또는 본 계약 발효일 이전에 이미 소유하고 있었음을 증명할 수 있는 정보에는 적용되지 않는다.</p>') +
+      art(10, '계약 해지', '<p class="ca-p">\'갑\'과 \'을\'은 다음 각 호에 해당하는 사유가 발생하였을 때에는 서면으로 통보한 후 계약을 즉시 해지할 수 있다.</p>' + ol(['정당한 사유 없이 본 계약 또는 연구계획서상의 의무를 위반하여 시정을 요구하였으나, 상대방이 시정요구 수령일로부터 15일 이내에 시정하지 아니할 경우', '그 밖에 합리적인 근거에 기반하여 쌍방의 합의하에 본 연구가 중단되어야 한다고 판단하는 경우']) +
+        '<p class="ca-p">계약 해지에 따른 정산은 \'을\'이 진행한 연구의 진행 정도에 따라 쌍방 합의로 결정하되 \'을\'은 본 계약에 따라 \'갑\'이 제공한 물품 가운데 잔여 물품 및 계약해지일까지의 연구관련 자료를 계약해지일 14일 이내에 \'갑\'에게 반환한다.</p>') +
+      art(11, '손해배상', ol(['\'갑\' 또는 \'을\'이 본 계약이나 관련 법령을 위반하여 상대방에게 손해가 발생할 경우, 계약을 위반한 일방은 상대방이 입은 손해를 배상하여야 한다.', '\'갑\' 또는 \'을\'은 천재지변, 폭동, 전쟁 등과 같은 불가항력으로 인한 계약상 의무의 불이행이나 이행 지연으로 인한 손해에 대하여는 책임지지 아니한다.'])) +
+      art(12, '계약 변경', '<p class="ca-p">\'갑\'과 \'을\'은 서면 동의에 의하지 아니하고는 본 계약의 내용을 변경할 수 없다.</p>') +
+      art(13, '계약의 효력', '<p class="ca-p">본 계약은 \'갑\'과 \'을\'이 서명한 날로부터 효력을 가진다.</p>') +
+      art(14, '계약의 해석', '<p class="ca-p">본 계약의 내용 또는 본 계약에 기재되지 않은 사항에 관하여 해석에 이견이 있을 경우에는 \'갑\'과 \'을\'이 상호 협의하여 정한다.</p>') +
+      art(15, '분쟁해결', ol(['본 계약에 명시되지 않은 사항에 대하여는 일반 상관례에 따르며, 필요한 경우 당사자간의 협의를 통하여 조정하는 것을 원칙으로 한다.', '본 계약과 관련하여 분쟁이 발생한 경우에 \'갑\'과 \'을\'은 신의성실의 원칙하에 상호 협의하여 이를 해결하되, 협의로 분쟁이 해결되지 아니하여 소송이 제기되는 경우에는 서울중앙지방법원을 전속관할로 한다.'])) +
+      '<p class="ca-p ca-end">\'갑\'과 \'을\'은 위와 같이 계약을 체결하고 이를 증명하기 위해 계약서 2부를 작성하여 쌍방이 기명 날인한 후 각각 1부씩 보관한다.</p>' +
+      '<p class="c-date">' + bl(6) + ' 년 &nbsp; ' + bl(4) + ' 월 &nbsp; ' + bl(4) + ' 일</p>' +
+      '<table class="ca-sign"><tr>' + [['갑', A], ['을', Bp]].map(function (x) { return '<td><b>\'' + x[0] + '\'</b><p>주 소: ' + x[1].addr + '</p><p>회사명: ' + x[1].org + '</p><p>대표자: ' + x[1].ceo + ' (인)</p></td>'; }).join('') + '</tr></table>' +
     '</article>';
   };
   // 계약서 보기: 기본 양식이면 의뢰서 + 별첨1 견적서, 업로드 파일이면 파일 안내
