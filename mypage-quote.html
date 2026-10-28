@@ -9,16 +9,17 @@
      ?rid=프로젝트 번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zz7">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zz7">
-<script src="assets/common/site.js?v=20261028zz7"></script>
-<script src="assets/common/consult.js?v=20261028zz7"></script>
-<script src="assets/common/mypage.js?v=20261028zz7"></script>
-<script src="assets/common/flow.js?v=20261028zz7"></script>
-<script src="assets/common/projects-data.js?v=20261028zz7"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zz8">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zz8">
+<script src="assets/common/site.js?v=20261028zz8"></script>
+<script src="assets/common/consult.js?v=20261028zz8"></script>
+<script src="assets/common/mypage.js?v=20261028zz8"></script>
+<script src="assets/common/flow.js?v=20261028zz8"></script>
+<script src="assets/common/projects-data.js?v=20261028zz8"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
+  .ui-white .qtabs { margin:0; padding:16px 0; border-radius:0; } /* 흰 화면(카드 여백 없음)에서는 구분선이 본문 폭을 넘지 않게 (2026-10-28) */
   .qtabs button { height:36px; padding:0 16px; border-radius:99px; background:var(--gray-100); font-size:14px; font-weight:500; color:var(--gray-500); }
   .qtabs button.on { background:#000; color:#fff; }
   .qhead-card { gap:16px; }
@@ -237,6 +238,7 @@
     if (!X) { location.replace('mypage-quote.html'); return; } // 요청받지 않은 의뢰는 볼 수 없음
     saved = X.quote || null;
     var t = F.pstMe(S, ME);
+    if (t === '선정') { location.replace('mypage-project.html?id=' + encodeURIComponent(rid)); return; } // 선정된 뒤에는 프로젝트 상세 한 곳에서 (제출한 견적서도 거기서, 2026-10-28)
     locked = !/작성 대기|임시저장|수정 요청/.test(t);
     var OVER = /작성 대기|임시저장/.test(t) && F.dueOver(S); // 견적 마감일이 지나면 새 견적은 제출할 수 없음 (수정 요청받은 견적은 가능, 2026-10-28)
     if (OVER) locked = true;
