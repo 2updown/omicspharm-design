@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028j">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028j">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261028j">
-<script src="assets/common/site.js?v=20261028j"></script>
-<script src="assets/common/consult.js?v=20261028j"></script>
-<script src="assets/common/mypage.js?v=20261028j"></script>
-<script src="assets/common/svc-spec.js?v=20261028j"></script>
-<script src="assets/common/flow.js?v=20261028j"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028k">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028k">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261028k">
+<script src="assets/common/site.js?v=20261028k"></script>
+<script src="assets/common/consult.js?v=20261028k"></script>
+<script src="assets/common/mypage.js?v=20261028k"></script>
+<script src="assets/common/svc-spec.js?v=20261028k"></script>
+<script src="assets/common/flow.js?v=20261028k"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -172,8 +172,10 @@
   .cq-it th { height:40px; padding:0 8px; background:var(--gray-100); font-weight:600; text-align:center; border-bottom:1px solid var(--gray-200); }
   .cq-it td.gn { vertical-align:top; padding-top:14px; font-weight:600; border-right:1px solid var(--gray-200); background:#fff !important; }
   .cq-it td.c { text-align:center; }
+  .cq-it .namebox { display:flex; flex-direction:column; align-items:flex-start; gap:6px; } .cq-it .linkbtn { font-size:12px; font-weight:500; color:var(--teal-700); }
+  .cq-it .del { width:28px; height:28px; border-radius:6px; color:var(--gray-400); font-size:18px; line-height:28px; } .cq-it .del:hover { background:var(--gray-100); color:var(--red-600); }
   .cq-it tr.add td { background:var(--gray-50); }
-  .cq-it tr.sub td { height:40px; background:#fafafa; font-weight:600; }
+  .cq-it tr.sub td { height:40px; background:#fafafa; font-weight:600; padding:0 8px; }
   .cqm .qm-tbl.cq-it input { width:100%; min-width:0; height:32px; } .cqm .qm-tbl.cq-it input.unit { text-align:center; }
   .cqm-disc { display:flex; align-items:center; gap:12px; margin-top:16px; padding:12px 14px; border-radius:8px; background:var(--gray-50); font-size:14px; }
   .cqm-disc > span:first-child { font-weight:600; } .cqm-disc .pd { margin-right:auto; font-size:13px; color:var(--gray-500); }
@@ -1133,8 +1135,8 @@
       '<h3>' + n + '차 클라이언트 견적서 <small>㈜셀키에이아이 명의</small></h3>' +
       '<p class="cqm-lead">기준 견적: ' + esc(F.partner(base).org) + ' · 파트너 견적의 항목·수량·소요 기간(' + esc(pq.weeks || '-') + '주)은 그대로이고, 바꿔야 하면 파트너에게 [수정 요청]을 보내주세요. 수수료 등은 시험명마다 [+ 세부내용 추가], 맨 아래 [+ 시험항목 추가]로 넣을 수 있습니다.</p>' +
       '<h4 class="cqm-h">제안가 <span>(' + ({ KRW: '원화, 공급가 VAT 별도', USD: '달러', JPY: '엔화' })[cur] + ')</span></h4>' +
-      '<div class="qm-tbl cq-it"><table><colgroup><col style="width:17%"><col><col style="width:9%"><col style="width:7%"><col style="width:13%"><col style="width:15%"><col style="width:14%"></colgroup>' +
-        '<thead><tr><th>시험명</th><th>세부내용</th><th>수량</th><th>Unit</th><th>파트너 단가</th><th>단가</th><th>금액</th></tr></thead><tbody id="cqBody"></tbody></table></div>' +
+      '<div class="qm-tbl cq-it"><table><colgroup><col style="width:17%"><col><col style="width:9%"><col style="width:7%"><col style="width:13%"><col style="width:15%"><col style="width:13%"><col style="width:36px"></colgroup>' +
+        '<thead><tr><th>시험명</th><th>세부내용</th><th>수량</th><th>Unit</th><th>파트너 단가</th><th>단가</th><th>금액</th><th><span class="sr-only">삭제</span></th></tr></thead><tbody id="cqBody"></tbody></table></div>' +
       '<button type="button" class="tbtn xs" id="cqAddG" style="margin-top:8px">+ 시험항목 추가</button>' +
       '<div class="cqm-disc"><span>클라이언트 할인</span><span class="pd">파트너 할인 ' + (num(pq.sale) + num(pq.addSale) ? '-' + F.money(num(pq.sale) + num(pq.addSale), cur) : '없음') + '</span><input type="number" min="0" step="10000" id="cqDisc" value="' + disc0 + '" aria-label="클라이언트 할인 금액"><b id="cqDiscS"></b></div>' +
       '<div class="cqm-sum"><div><span>파트너 견적 (VAT 포함)</span><b>' + F.money(F.total(pq).final, cur) + '</b></div><div><span>클라이언트 견적 (VAT 포함)</span><b id="cqTot"></b></div><div><span>차액 (공급가)</span><b id="cqGap"></b></div></div>' +
@@ -1147,14 +1149,15 @@
         var rs = g.lines.length + 1;
         return g.lines.map(function (l, li) {
           var id = gi + '-' + li;
-          return '<tr' + (l.fixed ? '' : ' class="add"') + '>' + (li === 0 ? '<td rowspan="' + rs + '" class="gn">' + (g.partner ? esc(g.name) : '<input type="text" class="txt" data-gn="' + gi + '" value="' + esc(g.name) + '" placeholder="시험명" aria-label="시험명">') + '</td>' : '') +
+          return '<tr' + (l.fixed ? '' : ' class="add"') + '>' + (li === 0 ? '<td rowspan="' + rs + '" class="gn"><div class="namebox">' + (g.partner ? '<span>' + esc(g.name) + '</span>' : '<input type="text" class="txt" data-gn="' + gi + '" value="' + esc(g.name) + '" placeholder="시험명" aria-label="시험명">') + '<button type="button" class="linkbtn" data-addl="' + gi + '">+ 세부내용 추가</button></div></td>' : '') +
             '<td class="l">' + (l.fixed ? esc(l.d) : '<input type="text" class="txt wide" data-f="d" data-k="' + id + '" value="' + esc(l.d) + '" placeholder="세부내용" aria-label="세부내용">') + '</td>' +
             '<td class="c">' + (l.fixed ? num(l.q) : '<input type="number" min="1" class="qty" data-f="q" data-k="' + id + '" value="' + (l.q || 1) + '" aria-label="수량">') + '</td>' +
             '<td class="c">' + (l.fixed ? esc(l.u) : '<input type="text" class="unit" data-f="u" data-k="' + id + '" value="' + esc(l.u || '식') + '" aria-label="Unit">') + '</td>' +
             '<td class="r">' + (l.fixed ? F.money(l.pp, cur) : '-') + '</td>' +
             '<td><input type="number" min="0" step="1000" data-f="p" data-k="' + id + '" value="' + l.p + '" aria-label="' + esc(l.d || '추가 항목') + ' 단가"></td>' +
-            '<td class="r"><span data-amt="' + id + '"></span>' + (l.fixed ? '' : ' <button type="button" class="tbtn xs" data-rm="' + id + '" aria-label="이 줄 삭제">삭제</button>') + '</td></tr>';
-        }).join('') + '<tr class="sub"><td colspan="4" class="l"><button type="button" class="tbtn xs" data-addl="' + gi + '">+ 세부내용 추가</button></td><td class="r">소계</td><td class="r" data-sub="' + gi + '"></td></tr>';
+            '<td class="r"><span data-amt="' + id + '"></span></td>' +
+            '<td class="c">' + (l.fixed ? '' : '<button type="button" class="del" data-rm="' + id + '" aria-label="이 줄 삭제" title="삭제">×</button>') + '</td></tr>'; // 분석파트너 견적서 작성 화면과 같은 × 버튼
+        }).join('') + '<tr class="sub"><td colspan="5" class="r">소계</td><td class="r" data-sub="' + gi + '"></td><td></td></tr>';
       }).join('');
     };
     // 화면 입력값 → G (단가·수량은 0 이상)
