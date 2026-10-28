@@ -115,6 +115,7 @@
   .tpanel { scroll-margin-top:88px; }
   .pright { display:flex; align-items:center; gap:8px; flex:none; flex-wrap:wrap; }
   .qnote a { color:var(--teal-700); text-decoration:underline; }
+  .reqin { display:flex; flex-direction:column; gap:24px; margin-top:16px; } /* 펼친 의뢰 내용: 요약·기본 정보·분석 서비스 표 사이 간격 */
   .myq { display:flex; align-items:center; flex-wrap:wrap; gap:8px 24px; padding:16px 20px; border:1px solid var(--gray-200); border-radius:8px; font-size:15px; } .myq em { font-style:normal; color:var(--gray-500); margin-right:8px; } .myq small { color:var(--gray-500); font-size:13px; } .myq .btn { margin-left:auto; }
   .reqbox > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; list-style:none; cursor:pointer; }
   .reqbox > summary::-webkit-details-marker { display:none; }
@@ -474,13 +475,13 @@
           // 분석파트너 쪽 대금 지급 방법·기타 (컨설턴트 입력, 2026-10-26)
           (FS.ct.partner && (FS.ct.partner.pay || FS.ct.partner.etc) && OP.session().role !== 'admin' ? '<dl class="kv" style="margin-top:12px">' + (FS.ct.partner.pay ? '<div><dt>대금 지급 방법</dt><dd>' + esc(FS.ct.partner.pay) + '</dd></div>' : '') + (FS.ct.partner.etc ? '<div><dt>기타</dt><dd style="white-space:pre-line">' + esc(FS.ct.partner.etc) + '</dd></div>' : '') + '</dl>' : '')) + '</section>' : '') + // 계약서 등록 전에는 섹션 없음 (위 안내 박스로 알림, 2026-10-28)
         '<div class="sections"><section class="sec"><h3>프로젝트 정보</h3><dl class="kv">' +
-          [['클라이언트', x.client]].concat(x.partner && OP.session().role === 'admin' ? [['분석파트너', x.partner]] : []).concat(x.flow && !x.ct ? [['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['선정일', dotd(x.contract)]] : [['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['계약 금액', x.amount + ' (VAT 별도)'], ['계약일', dotd(x.contract)], ['납기일', dotd(x.due)]]) // 계약서 등록 전: 금액·계약일·납기일은 아직 없음
+          [['클라이언트', x.client]].concat(x.partner && OP.session().role === 'admin' ? [['분석파트너', x.partner]] : []).concat(x.flow && !ADM && FS.P[OP.session().email] ? [['경로', FS.P[OP.session().email].self ? '직접 신청' : 'OmicsPharm 매칭 요청']] : []) /* 견적 경로 (2026-10-28) */.concat(x.flow && !x.ct ? [['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['선정일', dotd(x.contract)]] : [['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['계약 금액', x.amount + ' (VAT 별도)'], ['계약일', dotd(x.contract)], ['납기일', dotd(x.due)]]) // 계약서 등록 전: 금액·계약일·납기일은 아직 없음
             .map(function (r) { return '<div><dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') +
         '</dl></section></div>' +
         // 분석파트너: 제출한 견적서·의뢰 내용을 이 화면 안에서 (예전: 견적서 화면으로 이동하는 링크, 2026-10-28)
         (x.flow && !ADM && FS.P[OP.session().email] && FS.P[OP.session().email].quote ? (function () { var mq = FS.P[OP.session().email], tq = OP.flow.total(mq.quote);
           return '<section class="sec"><h3>제출한 견적서</h3><div class="myq"><span><em>최종 견적</em>' + OP.flow.money(tq.final, mq.quote.cur) + ' <small>(VAT 포함)</small></span><span><em>소요</em>' + esc(mq.quote.weeks || '-') + '주</span><span><em>제출일</em>' + OP.flow.ymd(mq.subAt || mq.at) + '</span><button type="button" class="btn line" data-myq>견적서 보기</button></div></section>' +
-            '<details class="tpanel reqbox"><summary><h3>의뢰 내용</h3><img src="assets/find/ic-chevron-down.svg" alt=""></summary>' + OP.flow.reqHTML(OP.flow.req(x.id)) + '</details>'; })() : '') +
+            '<details class="tpanel reqbox"><summary><h3>의뢰 내용</h3><img src="assets/find/ic-chevron-down.svg" alt=""></summary><div class="reqin">' + OP.flow.reqHTML(OP.flow.req(x.id)) + '</div></details>'; })() : '') +
         (x.flow && ADM ? '<p class="demo-note">※ 견적 중개로 매칭된 프로젝트입니다. <a href="mypage-request.html?id=' + encodeURIComponent(x.id) + '" style="text-decoration:underline">견적 내역 보기</a></p>' : '') +
         (x.flow ? '' : '<p class="demo-note">※ 화면 확인용 예시 프로젝트입니다.</p>');
       document.title = x.title + ' · 마이페이지 · OmicsPharm';
