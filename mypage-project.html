@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zl">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zl">
-<script src="assets/common/site.js?v=20261028zl"></script>
-<script src="assets/common/consult.js?v=20261028zl"></script>
-<script src="assets/common/mypage.js?v=20261028zl"></script>
-<script src="assets/common/flow.js?v=20261028zl"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zn">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zn">
+<script src="assets/common/site.js?v=20261028zn"></script>
+<script src="assets/common/consult.js?v=20261028zn"></script>
+<script src="assets/common/mypage.js?v=20261028zn"></script>
+<script src="assets/common/flow.js?v=20261028zn"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -272,6 +272,7 @@
   }
   /* 프로젝트 찾기 목록 카드(projects.html .lrow)와 같은 본문: 제목 아래 구분선 없음, 정보는 16px·'항목 :' 형식 */
   .lcard { padding:16px 24px; }
+  .lcard.gone h3, .lcard.gone .meta { color:var(--gray-400); } /* 삭제된 프로젝트 카드 */
   .lcard .head { padding-bottom:0; border-bottom:0; }
   .lcard h3 { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .lcard .meta { gap:4px 12px; font-size:16px; font-weight:500; line-height:22px; }
@@ -399,14 +400,14 @@
       if (fs && fs.reReq && !fs.fin) return ['btn', '결과 재등록'];
       if (ps === '계약 진행 중') return ['txt', x.flow && !fs.ct ? '계약서 준비 중' : '계약서 확인'];
       if (ps === '분석 진행 중') return x.flow && (fs.raw || []).length ? ['txt', 'OmicsPharm 검토 중'] : ['btn', '결과 등록'];
-      if (ps === '보고서 등록') return ['txt', 'OmicsPharm 검토 중'];
-      if (ps === '보고서 검토') return ['txt', '클라이언트 확인 중'];
+      if (ps === '보고서 검토') return ['txt', x.stage === '보고서 등록' ? 'OmicsPharm 검토 중' : '클라이언트 확인 중']; // 분석파트너는 보고서 등록·검토를 한 단계로 (2026-10-28)
       return null;
     };
     var Q_B = { '작성 대기': 'wait', '임시저장': 'wait', '수정 요청': 'wait', '제출 완료': 'state', '클라이언트 검토 중': 'state', '미선정': 'done', '거절': 'done', '프로젝트 삭제': 'done' };
     var QL = !ADM && OP.canQuote() ? OP.flow.inbox(OP.session().email).map(function (o) {
-      var t = OP.flow.pstMe(o.s, OP.session().email); if (!Q_ST[t]) return null;
-      return { kind: 'q', id: o.r.id, href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, title: o.r.title, client: o.r.org || '-', samples: o.r.samples || '-', stage: Q_ST[t], pst: t, due: o.s.due, at: o.x.at || o.r.at, self: o.x.self };
+      // 삭제된 프로젝트 (2026-10-28): 원래 탭(견적 요청·견적 제출)에 그대로 두고 '프로젝트 삭제' 표시 → 누르면 목록에서 제거할지 묻는 모달
+      var t = OP.flow.pstMe(o.s, OP.session().email), t0 = OP.flow.pst(o.s, OP.session().email); if (!Q_ST[t0] || o.x.hidden) return null;
+      return { kind: 'q', id: o.r.id, href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, title: o.r.title, client: o.r.org || '-', samples: o.r.samples || '-', stage: Q_ST[t0], pst: t, del: !!o.s.cancel, sub: !!o.x.subAt, due: o.s.due, at: o.x.at || o.r.at, self: o.x.self };
     }).filter(Boolean) : [];
     var routeOf = function (x) { var p = x.flow && OP.flow.state(x.id).P[OP.session().email]; return !!(p && p.self); }; // 직접 신청 = 프로젝트 찾기에서 직접 견적을 보낸 건
     var LIST_ST = ADM ? STAGES : ['견적 요청', '견적 제출'].concat(STAGES).concat(['미선정·거절']);
@@ -487,7 +488,7 @@
     var st = { q: '', stage: LIST_ST.indexOf(qstg) > -1 ? qstg : '전체', sort: 'new', unread: false }; // 대시보드에서 단계 눌러 들어오면 그 단계만
     ALL = ALL.concat(QL);
     $('#project').outerHTML =
-      '<form class="psearch" id="pq" role="search"><input type="search" id="pqIn" placeholder="프로젝트명을 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
+      '<form class="psearch" id="pq" role="search"><input type="search" id="pqIn" placeholder="프로젝트명 또는 번호로 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
       '<div class="b-tabw" id="pTabW"><button type="button" class="b-arr l" data-arr="-1" aria-label="이전 단계 보기" hidden><img src="assets/find/ic-caret-left.svg" alt=""></button><div class="b-tabs" id="pChips" role="tablist"></div><button type="button" class="b-arr r" data-arr="1" aria-label="다음 단계 보기" hidden><img src="assets/find/ic-caret-right.svg" alt=""></button></div>' +
       '<div class="pbar"><span class="total" id="pTotal"></span>' + (ADM ? '' : '<label class="sort" style="margin-left:auto;margin-right:8px"><select id="pRoute" aria-label="경로"><option value="">전체 경로</option><option value="match">OmicsPharm 매칭 요청</option><option value="self">직접 신청</option></select></label>') + '<label class="sort"><select id="pSort" aria-label="정렬"><option value="new">최신등록순</option><option value="due">납기임박순</option></select></label></div>' +
       '<div class="list" id="pList"></div>' +
@@ -495,7 +496,7 @@
     // '확인하지 않은 Q&A·리뷰' 줄은 뺌 (Q&A 게시판 없음, 분석파트너 리뷰 공개는 미정). 새 견적 요청은 칩의 N으로
     function draw() {
       var q = st.q.trim().toLowerCase();
-      var base = ALL.filter(function (p) { return (!q || p.title.toLowerCase().indexOf(q) > -1) &&(!st.route || (st.route === 'self') === (p.kind === 'q' ? !!p.self : routeOf(p))); }); // 경로 필터: 매칭 요청 / 직접 신청
+      var base = ALL.filter(function (p) { return (!q || (p.title + ' ' + p.id).toLowerCase().indexOf(q) > -1) && (!st.route || (st.route === 'self') === (p.kind === 'q' ? !!p.self : routeOf(p))); }); // 경로 필터: 매칭 요청 / 직접 신청
       // 새 견적 요청 N: '견적 요청' 칩에만. 그 칩을 열어 보면 확인한 것으로 기록 (op.qSeen)
       var qSeen = []; try { qSeen = JSON.parse(localStorage.getItem('op.qSeen') || '[]'); } catch (e) {}
       var qNew = QL.filter(function (p) { return p.stage === '견적 요청' && qSeen.indexOf(p.id) < 0; });
@@ -509,8 +510,8 @@
       $('#pTotal').innerHTML = '총 <b>' + L.length + '</b>건';
       $('#pList').innerHTML = L.map(function (x) {
         if (x.kind === 'q') { // 견적 단계 카드: 견적 상태 + 제출 전이면 견적 마감일
-          var open = x.stage === '견적 요청', dl = Math.ceil((new Date(x.due + 'T23:59:59') - Date.now()) / 864e5);
-          return '<a class="lcard" href="' + x.href + '"><div class="head">' +
+          var open = x.stage === '견적 요청' && !x.del, dl = Math.ceil((new Date(x.due + 'T23:59:59') - Date.now()) / 864e5);
+          return '<a class="lcard' + (x.del ? ' gone' : '') + '" href="' + x.href + '"' + (x.del ? ' data-gone="' + esc(x.id) + '" data-title="' + esc(x.title) + '"' + (x.sub ? ' data-sub' : '') : '') + '><div class="head">' +
             '<div class="row1"><div class="badges"><span class="badge tag">' + esc(x.svc) + '</span><span class="badge ' + Q_SB[x.stage] + '">' + x.stage + '</span></div>' +
               '<span class="dday">' + (open && x.due ? (dl < 0 ? '견적 마감' : '견적 마감 D-' + String(dl).padStart(2, '0')) : '') + '</span>' + nextHTML(Q_NX[x.pst]) +
               '</div>' +
@@ -532,6 +533,12 @@
     $('#pSort').addEventListener('change', function () { st.sort = this.value; draw(); });
     if ($('#pRoute')) $('#pRoute').addEventListener('change', function () { st.route = this.value; draw(); });
     $('#pChips').addEventListener('click', function (e) { var b = e.target.closest('[data-st]'); if (b) { st.stage = b.dataset.st; draw(); } });
+    $('#pList').addEventListener('click', function (e) {
+      var a = e.target.closest('[data-gone]'); if (!a) return; e.preventDefault();
+      OP.flow.ask({ title: '삭제된 프로젝트입니다.', desc: '\'' + a.dataset.title + '\' 프로젝트가 삭제되어 견적 요청이 종료되었습니다. 목록에서 제거할까요?\n' + (a.hasAttribute('data-sub') ? '제출한' : '작성하던') + ' 견적서는 [견적서 보기]에서 확인할 수 있습니다.', label: false, no: '견적서 보기', onNo: function () { location.href = a.getAttribute('href'); }, yes: '목록에서 제거' }, function () {
+        OP.flow.pHide(a.dataset.gone, OP.session().email); ALL = ALL.filter(function (p) { return !(p.kind === 'q' && p.id === a.dataset.gone); }); OP.toast('목록에서 제거했습니다.'); draw();
+      });
+    });
     draw();
     slideTabs($('#pTabW'));
   }
@@ -584,7 +591,7 @@
     var cst = new URLSearchParams(location.search).get('stage'); if (F.CLIENT_STEPS.indexOf(cst) < 0 && cst !== '임시저장') cst = '전체';
     var cq = '', DR = '임시저장';
     $('#project').outerHTML =
-      '<form class="psearch" id="cq" role="search"><input type="search" id="cqIn" placeholder="프로젝트명을 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
+      '<form class="psearch" id="cq" role="search"><input type="search" id="cqIn" placeholder="프로젝트명 또는 번호로 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
       '<div class="b-tabw" id="cTabW"><button type="button" class="b-arr l" data-arr="-1" aria-label="이전 단계 보기" hidden><img src="assets/find/ic-caret-left.svg" alt=""></button><div class="b-tabs" id="cChips" role="tablist"></div><button type="button" class="b-arr r" data-arr="1" aria-label="다음 단계 보기" hidden><img src="assets/find/ic-caret-right.svg" alt=""></button></div>' +
       '<div class="unread" id="cUnread"></div><div class="pbar"><span class="total" id="cTotal"></span></div><div class="list" id="cList"></div>';
     // 확인하지 않은 견적서 = 컨설턴트가 전달했고 아직 고르지 않은 견적
@@ -593,7 +600,7 @@
     $('#cUnread').innerHTML = '<span>확인하지 않은 견적서 <b>' + qN + '건</b>이 있습니다.</span><label><input type="checkbox" id="cOnly">미열람글만 보기</label>';
     $('#cOnly').addEventListener('change', function () { cOnly = this.checked; cdraw(); });
     var cdraw = function () {
-      var q = cq.trim().toLowerCase(), hit = function (x) { return !q || String(x.title || '').toLowerCase().indexOf(q) > -1; };
+      var q = cq.trim().toLowerCase(), hit = function (x) { return !q || String((x.title || '') + ' ' + (x.id || '')).toLowerCase().indexOf(q) > -1; };
       var B = (cOnly ? list.filter(function (x) { return newQN(x); }) : list).filter(hit); // 미열람글만 보기
       var DB = cOnly ? [] : drafts.filter(hit).sort(function (a, b) { return b.at - a.at; }); // 임시저장은 '전체'에도 포함 (맨 위)
       $('#cChips').innerHTML = ['전체'].concat(F.CLIENT_STEPS, [DR]).map(function (t) {

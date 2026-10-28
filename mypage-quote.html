@@ -9,13 +9,13 @@
      ?rid=프로젝트 번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zl">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zl">
-<script src="assets/common/site.js?v=20261028zl"></script>
-<script src="assets/common/consult.js?v=20261028zl"></script>
-<script src="assets/common/mypage.js?v=20261028zl"></script>
-<script src="assets/common/flow.js?v=20261028zl"></script>
-<script src="assets/common/projects-data.js?v=20261028zl"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zn">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zn">
+<script src="assets/common/site.js?v=20261028zn"></script>
+<script src="assets/common/consult.js?v=20261028zn"></script>
+<script src="assets/common/mypage.js?v=20261028zn"></script>
+<script src="assets/common/flow.js?v=20261028zn"></script>
+<script src="assets/common/projects-data.js?v=20261028zn"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -266,11 +266,11 @@
   // 위: 의뢰 제목·상태·안내 (항상 보임) / 아래: [의뢰내용] [견적서 작성] 탭 중 하나만 보임
   var head = $('#head'); head.hidden = false;
   head.innerHTML = '<div class="phead">' +
-      '<div class="prow"><div class="badges"><span class="badge tag">' + esc(R.svc) + '</span>' + (rid ? '<span class="badge ' + QSB[QST[F.pstMe(S, ME)]] + '">' + QST[F.pstMe(S, ME)] + '</span>' : '') + (R.open === '비공개' ? '<span class="badge done">비공개</span>' : '') + '</div><span class="reg">' + (rid ? (X.self ? '견적 신청일 : ' : '견적 요청일 : ') + F.ymd(X.at) : '등록일 : ' + dot(x.reg)) + '</span></div>' +
+      '<div class="prow"><div class="badges"><span class="badge tag">' + esc(R.svc) + '</span>' + (rid ? '<span class="badge ' + QSB[QST[F.pst(S, ME)]] + '">' + QST[F.pst(S, ME)] + '</span>' : '') + (R.open === '비공개' ? '<span class="badge done">비공개</span>' : '') + '</div><span class="reg">' + (rid ? (X.self ? '견적 신청일 : ' : '견적 요청일 : ') + F.ymd(X.at) : '등록일 : ' + dot(x.reg)) + '</span></div>' +
       '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-project.html" aria-label="프로젝트 목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(R.title) + '</h2>' +
         '<div class="pright">' + (rid ? '<span class="period"><b>견적 마감</b>' + dot(S.due) + (locked ? '' : '<em>' + dleft(S.due) + '</em>') + '</span>' : '<span class="period"><b>모집기한</b>' + dot(x.from) + ' ~ ' + dot(x.to) + '<em>' + (x.open ? '모집중' : '모집마감') + '</em></span>') + OP.askBtn({ key: rid || 'P' + x.id, cat: R.svc, no: rid || '', title: R.title }) + '</div></div></div>' +
       // 진행 단계 (2026-10-27 공통 레이아웃): 분석파트너 상세와 같은 단계. 미선정·거절은 현재 단계 표시 없음
-      (rid ? (function () { var PS = ['견적 요청', '견적 제출'].concat(OP.my.P4), k = PS.indexOf(QST[F.pstMe(S, ME)]);
+      (rid ? (function () { var PS = ['견적 요청', '견적 제출'].concat(OP.my.P4), k = PS.indexOf(QST[F.pst(S, ME)]);
         return '<ol class="fsteps" aria-label="진행 단계" style="--n:' + PS.length + '">' + PS.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>'; })() : '') +
       banner;
   card.innerHTML =

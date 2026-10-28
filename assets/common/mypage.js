@@ -72,8 +72,9 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     svcKo: function (v) { return { Proteomics: '단백체 분석', Glycoproteomics: '단백체 분석', Metabolomics: '대사체 분석', Genomics: '유전체 분석', Transcriptomics: '전사체 분석', Olink: 'Olink 분석' }[v] || v; },
     P_STAGES: P_STAGES,
     // 분석파트너도 컨설턴트와 같은 실제 단계 이름으로 표시 (예전: 보고서 검토·승인을 '보고서 등록'에 묶고 '확인 대기' 배지)
-    P4: P_STAGES,
-    pStage: function (p) { return p.stage; },
+    // 2026-10-28: 분석파트너는 보고서 등록(OmicsPharm 검토)·보고서 검토(클라이언트 확인)를 '보고서 검토' 한 단계로. 컨설턴트는 그대로 두 단계
+    P4: ['계약 진행 중', '분석 진행 중', '보고서 검토', '프로젝트 완료'],
+    pStage: function (p) { return p.stage === '보고서 등록' ? '보고서 검토' : p.stage; },
     pWaiting: function () { return false; },
     // 인증 분석파트너·컨설턴트만 (미인증은 매칭·계약된 프로젝트가 없음). 견적 중개로 매칭된 프로젝트(계약 단계)가 앞에 붙는다
     partnerProjects: function () {
