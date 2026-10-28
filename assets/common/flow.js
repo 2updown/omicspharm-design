@@ -709,8 +709,11 @@
   // 계약서 목록 (클라이언트·파트너·컨설턴트 화면 공통)
   F.contractListHTML = function (s, sides) {
     return '<div class="ctlist">' + sides.map(function (side) {
-      var c = s.ct[side];
-      return '<div class="ctrow2"><div><b>' + (side === 'client' ? '클라이언트 계약서' : '분석파트너 계약서') + '</b><span>' + (c.type === 'form' ? '셀키 분석서비스 의뢰서 (기본 양식) + 별첨 견적서' : esc(c.name)) + '<i class="dv" aria-hidden="true"></i>등록 ' + ymd(s.ct.at) + '</span></div><button type="button" class="btn" data-ct="' + side + '">계약서 보기</button></div>';
+      // 계약서 줄 (2026-10-28): 파일 이름(업로드한 경우) + 이 계약의 최종 계약 금액 + 등록일
+      var c = s.ct[side] || {}, cl = side === 'client', q = cl ? ((F.cqLast(s) || {}).quote || s.P[s.pick].quote) : s.P[s.pick].quote;
+      var amt = cl ? s.ct.amt : s.ct.pAmt, cur = (cl ? s.ct.cur : s.ct.pCur) || q.cur; if (amt == null) amt = total(q).net;
+      var dv = '<i class="dv" aria-hidden="true"></i>';
+      return '<div class="ctrow2"><div><b>' + (cl ? '클라이언트 계약서' : '분석파트너 계약서') + '</b><span>' + (c.type === 'file' && c.name ? esc(c.name) + dv : '') + '계약 금액 ' + money(amt, cur) + (cur === 'KRW' || !cur ? ' (VAT 별도)' : '') + dv + '등록 ' + ymd(s.ct.at) + '</span></div><button type="button" class="btn" data-ct="' + side + '">계약서 보기</button></div>';
     }).join('') + '</div>';
   };
 
