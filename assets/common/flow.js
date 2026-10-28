@@ -553,6 +553,14 @@
       '<div class="sign"><span>위와 같이 견적합니다.</span><b>' + val(sup.s_org) + '</b></div>' +
     '</article>';
   };
+  // 견적 항목 요약 표 (시험명 · 세부내용 · 수량 · 단가 · 금액 + 합계). 수정 요청 창에서 지금 견적을 바로 보이게 (2026-10-28)
+  F.itemsHTML = function (q) {
+    var cur = q.cur || 'KRW', tt = total(q);
+    var rows = (q.groups || []).map(function (g) { return g.lines.map(function (l, i) { return '<tr>' + (i === 0 ? '<td rowspan="' + g.lines.length + '" class="gn">' + esc(g.name || '-') + '</td>' : '') + '<td>' + esc(l.d || '-') + '</td><td class="c">' + esc(String(l.q || '')) + ' ' + esc(l.u || '') + '</td><td class="r">' + money(num(l.p), cur) + '</td><td class="r">' + money(num(l.q) * num(l.p), cur) + '</td></tr>'; }).join(''); }).join('');
+    var disc = num(q.sale) + num(q.addSale);
+    return '<div class="fask-q"><table><thead><tr><th>시험명</th><th>세부내용</th><th>수량</th><th>단가</th><th>금액</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+      '<p class="fask-qt"><span>분석료 합계 ' + money(tt.sum, cur) + '</span>' + (disc ? '<span>할인 -' + money(disc, cur) + '</span>' : '') + (q.weeks ? '<span>소요 기간 ' + esc(q.weeks) + '주</span>' : '') + '<b>최종 ' + money(tt.final, cur) + ' (VAT 포함)</b></p></div>';
+  };
   // 견적서 보기 창
   // o.vers = [{ q, t }] 최신 차수부터 (1·2·3차 견적): 창 위쪽에서 차수를 바꿔 볼 수 있음
   F.showDoc = function (r, q, k, title, o) {
@@ -582,7 +590,8 @@
   F.ask = function (o, cb) {
     var m = document.createElement('div');
     m.className = 'op-confirm fask'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
-    m.innerHTML = '<div class="box"><h3>' + esc(o.title) + '</h3>' + (o.desc ? '<p>' + esc(o.desc) + '</p>' : '') +
+    if (o.html) m.classList.add('wide'); // o.html: 설명 아래 참고 내용 (예: 수정 요청할 견적의 시험 항목 표)
+    m.innerHTML = '<div class="box"><h3>' + esc(o.title) + '</h3>' + (o.desc ? '<p>' + esc(o.desc) + '</p>' : '') + (o.html || '') +
       (o.label !== false ? '<label class="fask-l">' + esc(o.label || '') + '<textarea placeholder="' + esc(o.ph || '') + '">' + esc(o.value || '') + '</textarea></label>' : '') +
       '<div class="btns"><button type="button" class="no">취소</button><button type="button" class="yes go">' + esc(o.yes || '확인') + '</button></div></div>';
     var ta = m.querySelector('textarea'), yes = m.querySelector('.yes');

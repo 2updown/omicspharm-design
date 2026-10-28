@@ -537,3 +537,14 @@ span.tbtn { cursor:default; }
 
 /* 정보 구분선 (2026-10-27): 가운뎃점(·) 대신 세로선. 예) 한결연구소 | 홍길동 · 접수일 | 프로젝트 번호 */
 .dv { display:inline-block; width:1px; height:12px; margin:0 8px; background:var(--gray-300); vertical-align:-1px; }
+
+/* 수정 요청 창의 지금 견적 표 (2026-10-28) */
+.op-confirm.fask.wide .box { max-width:640px; }
+.fask-q { margin-top:16px; max-height:280px; overflow:auto; border-top:2px solid #000; }
+.fask-q table { width:100%; border-collapse:collapse; font-size:13px; line-height:18px; }
+.fask-q th { height:36px; padding:0 8px; background:var(--gray-100); font-weight:600; color:var(--gray-700); text-align:center; position:sticky; top:0; }
+.fask-q td { padding:8px; border-bottom:1px solid var(--gray-200); text-align:left; }
+.fask-q td.gn { font-weight:600; vertical-align:top; border-right:1px solid var(--gray-200); }
+.fask-q td.c { text-align:center; white-space:nowrap; } .fask-q td.r { text-align:right; white-space:nowrap; }
+.fask-qt { display:flex; flex-wrap:wrap; gap:4px 12px; align-items:baseline; padding:10px 8px; font-size:13px; color:var(--gray-600); }
+.fask-qt b { margin-left:auto; font-size:14px; color:#000; }

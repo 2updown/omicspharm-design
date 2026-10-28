@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028h">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028h">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261028h">
-<script src="assets/common/site.js?v=20261028h"></script>
-<script src="assets/common/consult.js?v=20261028h"></script>
-<script src="assets/common/mypage.js?v=20261028h"></script>
-<script src="assets/common/svc-spec.js?v=20261028h"></script>
-<script src="assets/common/flow.js?v=20261028h"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028j">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028j">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261028j">
+<script src="assets/common/site.js?v=20261028j"></script>
+<script src="assets/common/consult.js?v=20261028j"></script>
+<script src="assets/common/mypage.js?v=20261028j"></script>
+<script src="assets/common/svc-spec.js?v=20261028j"></script>
+<script src="assets/common/flow.js?v=20261028j"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -166,6 +166,19 @@
   .cqm .qm-tbl input { width:130px; height:36px; padding:0 10px; border:1px solid var(--gray-300); border-radius:6px; font:inherit; text-align:right; }
   .cqm .qm-tbl input.txt { width:120px; text-align:left; } .cqm .qm-tbl input.txt.wide { width:100%; min-width:160px; } .cqm .qm-tbl input.qty { width:64px; } /* 추가 항목 줄 (2026-10-28) */
   .cqm .qm-tbl input:focus { outline:0; border-color:var(--teal-600); box-shadow:0 0 0 3px #00978833; }
+  /* 클라이언트 견적서 표 = 견적서 '제안가' 표 모양 (2026-10-28) */
+  .cqm-h { margin-top:20px; font-size:15px; font-weight:700; } .cqm-h span { font-weight:400; font-size:13px; color:var(--gray-500); }
+  .cq-it { margin-top:8px; } .cq-it table { width:100%; border-collapse:collapse; border-top:2px solid #000; font-size:13px; }
+  .cq-it th { height:40px; padding:0 8px; background:var(--gray-100); font-weight:600; text-align:center; border-bottom:1px solid var(--gray-200); }
+  .cq-it td.gn { vertical-align:top; padding-top:14px; font-weight:600; border-right:1px solid var(--gray-200); background:#fff !important; }
+  .cq-it td.c { text-align:center; }
+  .cq-it tr.add td { background:var(--gray-50); }
+  .cq-it tr.sub td { height:40px; background:#fafafa; font-weight:600; }
+  .cqm .qm-tbl.cq-it input { width:100%; min-width:0; height:32px; } .cqm .qm-tbl.cq-it input.unit { text-align:center; }
+  .cqm-disc { display:flex; align-items:center; gap:12px; margin-top:16px; padding:12px 14px; border-radius:8px; background:var(--gray-50); font-size:14px; }
+  .cqm-disc > span:first-child { font-weight:600; } .cqm-disc .pd { margin-right:auto; font-size:13px; color:var(--gray-500); }
+  .cqm-disc input { width:140px; height:36px; padding:0 10px; border:1px solid var(--gray-300); border-radius:6px; font:inherit; text-align:right; } .cqm-disc b { min-width:110px; text-align:right; color:#f00011; }
+  @media (max-width:640px) { .cq-it { overflow-x:auto; } .cq-it table { min-width:640px; } .cqm-disc { flex-wrap:wrap; } .cqm-disc .pd { width:100%; } }
   .cqm-sum { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:16px; }
   .cqm-sum div { display:flex; flex-direction:column; gap:4px; padding:12px 14px; border-radius:8px; background:var(--gray-50); }
   .cqm-sum span { font-size:13px; color:var(--gray-500); } .cqm-sum b { font-size:18px; font-weight:700; } .cqm-sum b.neg { color:#f00011; }
@@ -1102,62 +1115,86 @@
   function cqEditor(s, base) {
     var L = F.cqList(s), prev = L.length ? L[L.length - 1] : null, n = L.length + 1;
     var pq = s.P[base].quote, cur = pq.cur || 'KRW', num = F.num;
-    var priceOf = function (g, l) { if (!prev) return num(l.p); var pg = prev.quote.groups.filter(function (x) { return x.name === g.name; })[0], pl = pg && pg.lines.filter(function (x) { return x.d === l.d; })[0]; return pl ? num(pl.p) : num(l.p); };
-    // 추가 항목 (2026-10-28): 수수료·할인 등은 정해진 값이 아니라서 시험명·세부내용·수량·단가를 직접 넣는 줄로. 파트너 견적에 없는 시험명 = 추가 항목
-    var PG = pq.groups.map(function (g) { return g.name; }), EX = [];
-    if (prev) prev.quote.groups.forEach(function (g) { if (PG.indexOf(g.name) < 0) g.lines.forEach(function (l) { EX.push({ g: g.name, d: l.d, q: num(l.q) || 1, u: l.u || '식', p: num(l.p) }); }); });
-    else EX.push({ g: FEE, d: FEE_D, q: 1, u: '식', p: 0 });
+    // 표 = 견적서 보기 '제안가' 표와 같은 모양 (2026-10-28): 시험명마다 세부내용 줄. 파트너 견적 줄은 항목·수량 고정, 단가만 수정.
+    // 시험명마다 [+ 세부내용 추가], 맨 아래 [+ 시험항목 추가]로 수수료 등 필요한 항목을 직접 넣음 (단가는 0 이상, 할인은 아래 할인 칸으로)
+    var pl = function (g, l) { if (!prev) return null; var pg = prev.quote.groups.filter(function (x) { return x.name === g; })[0]; return pg ? pg.lines.filter(function (x) { return x.d === l; })[0] || null : null; };
+    var G = pq.groups.map(function (g) {
+      var lines = g.lines.map(function (l) { var o = pl(g.name, l.d); return { d: l.d, q: num(l.q), u: l.u || 'EA', p: o ? num(o.p) : num(l.p), pp: num(l.p), fixed: true }; });
+      if (prev) { var pg = prev.quote.groups.filter(function (x) { return x.name === g.name; })[0]; if (pg) pg.lines.forEach(function (l) { if (!g.lines.some(function (x) { return x.d === l.d; })) lines.push({ d: l.d, q: num(l.q) || 1, u: l.u || '식', p: num(l.p) }); }); }
+      return { name: g.name, partner: true, lines: lines };
+    });
+    var PG = pq.groups.map(function (g) { return g.name; });
+    if (prev) prev.quote.groups.forEach(function (g) { if (PG.indexOf(g.name) < 0) G.push({ name: g.name, lines: g.lines.map(function (l) { return { d: l.d, q: num(l.q) || 1, u: l.u || '식', p: num(l.p) }; }) }); });
+    else G.push({ name: FEE, lines: [{ d: FEE_D, q: 1, u: '식', p: 0 }] });
     var disc0 = prev ? num(prev.quote.sale) + num(prev.quote.addSale) : num(pq.sale) + num(pq.addSale);
-    var rows = [];
-    pq.groups.forEach(function (g, gi) { g.lines.forEach(function (l, li) { rows.push({ g: g, l: l, gi: gi, li: li }); }); });
     var m = document.createElement('div');
     m.className = 'op-confirm qmail cqm'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', n + '차 클라이언트 견적서');
     m.innerHTML = '<div class="box"><button type="button" class="qm-x" aria-label="닫기">×</button>' +
       '<h3>' + n + '차 클라이언트 견적서 <small>㈜셀키에이아이 명의</small></h3>' +
-      '<p class="cqm-lead">기준 견적: ' + esc(F.partner(base).org) + ' · 파트너 견적의 항목·수량·소요 기간(' + esc(pq.weeks || '-') + '주)은 그대로이고, 바꿔야 하면 파트너에게 [수정 요청]을 보내주세요. 수수료 등 필요한 항목은 [+ 항목 추가]로 넣을 수 있습니다.</p>' +
-      '<div class="qm-tbl"><table><thead><tr><th>구분</th><th>항목</th><th>수량</th><th>파트너 단가</th><th>클라이언트 단가</th><th>클라이언트 금액</th></tr></thead><tbody>' +
-        rows.map(function (o, i) { return '<tr><td>' + esc(o.g.name) + '</td><td class="l">' + esc(o.l.d) + '</td><td>' + num(o.l.q) + ' ' + esc(o.l.u || '') + '</td><td class="r">' + F.money(num(o.l.p), cur) + '</td><td><input type="number" min="0" step="1000" data-i="' + i + '" value="' + priceOf(o.g, o.l) + '" aria-label="' + esc(o.l.d) + ' 클라이언트 단가"></td><td class="r" data-sum="' + i + '"></td></tr>'; }).join('') +
-        '<tbody id="cqEx"></tbody><tbody>' +
-        '<tr class="ex"><td>할인</td><td class="l">클라이언트 할인</td><td>-</td><td class="r">' + (num(pq.sale) + num(pq.addSale) ? '-' + F.money(num(pq.sale) + num(pq.addSale), cur) : '-') + '</td><td><input type="number" min="0" step="10000" id="cqDisc" value="' + disc0 + '" aria-label="클라이언트 할인 금액"></td><td class="r" id="cqDiscS"></td></tr>' +
-      '</tbody></table></div><button type="button" class="tbtn xs" id="cqAdd" style="margin-top:8px">+ 항목 추가</button>' +
+      '<p class="cqm-lead">기준 견적: ' + esc(F.partner(base).org) + ' · 파트너 견적의 항목·수량·소요 기간(' + esc(pq.weeks || '-') + '주)은 그대로이고, 바꿔야 하면 파트너에게 [수정 요청]을 보내주세요. 수수료 등은 시험명마다 [+ 세부내용 추가], 맨 아래 [+ 시험항목 추가]로 넣을 수 있습니다.</p>' +
+      '<h4 class="cqm-h">제안가 <span>(' + ({ KRW: '원화, 공급가 VAT 별도', USD: '달러', JPY: '엔화' })[cur] + ')</span></h4>' +
+      '<div class="qm-tbl cq-it"><table><colgroup><col style="width:17%"><col><col style="width:9%"><col style="width:7%"><col style="width:13%"><col style="width:15%"><col style="width:14%"></colgroup>' +
+        '<thead><tr><th>시험명</th><th>세부내용</th><th>수량</th><th>Unit</th><th>파트너 단가</th><th>단가</th><th>금액</th></tr></thead><tbody id="cqBody"></tbody></table></div>' +
+      '<button type="button" class="tbtn xs" id="cqAddG" style="margin-top:8px">+ 시험항목 추가</button>' +
+      '<div class="cqm-disc"><span>클라이언트 할인</span><span class="pd">파트너 할인 ' + (num(pq.sale) + num(pq.addSale) ? '-' + F.money(num(pq.sale) + num(pq.addSale), cur) : '없음') + '</span><input type="number" min="0" step="10000" id="cqDisc" value="' + disc0 + '" aria-label="클라이언트 할인 금액"><b id="cqDiscS"></b></div>' +
       '<div class="cqm-sum"><div><span>파트너 견적 (VAT 포함)</span><b>' + F.money(F.total(pq).final, cur) + '</b></div><div><span>클라이언트 견적 (VAT 포함)</span><b id="cqTot"></b></div><div><span>차액 (공급가)</span><b id="cqGap"></b></div></div>' +
       '<label class="cqm-f">견적서 안내 문구 <small>클라이언트 견적서에 보입니다</small><textarea id="cqMemo" rows="3">' + esc(prev ? prev.quote.memo || '' : pq.memo || '') + '</textarea></label>' +
       (prev ? '<label class="cqm-f">수정 사유 <small>클라이언트에게 ' + n + '차 변경 내용과 함께 보입니다</small><textarea id="cqWhy" rows="2" placeholder="예) 시료 수 확정에 따라 단가를 조정했습니다."></textarea></label>' : '') +
       '<div class="cqm-acts"><button type="button" class="btn lg no">취소</button><button type="button" class="btn primary lg" id="cqSend">' + n + '차 견적서 보내기</button></div></div>';
     document.body.appendChild(m); document.body.style.overflow = 'hidden';
-    var exRow = function (o, i) { return '<tr class="ex"><td><input type="text" data-eg="' + i + '" value="' + esc(o.g) + '" placeholder="시험명" aria-label="시험명" class="txt"></td><td class="l"><input type="text" data-ed="' + i + '" value="' + esc(o.d) + '" placeholder="세부내용" aria-label="세부내용" class="txt wide"></td><td><input type="number" min="1" data-eq="' + i + '" value="' + (o.q || 1) + '" aria-label="수량" class="qty"> ' + esc(o.u || '식') + '</td><td class="r">-</td><td><input type="number" step="10000" data-ep="' + i + '" value="' + o.p + '" aria-label="클라이언트 단가"></td><td class="r"><span data-es="' + i + '"></span> <button type="button" class="tbtn xs" data-exx="' + i + '" aria-label="이 항목 삭제">삭제</button></td></tr>'; };
-    var readEx = function () { EX.forEach(function (o, i) { var g = m.querySelector('[data-eg="' + i + '"]'); if (!g) return; o.g = g.value; o.d = m.querySelector('[data-ed="' + i + '"]').value; o.q = num(m.querySelector('[data-eq="' + i + '"]').value) || 1; o.p = num(m.querySelector('[data-ep="' + i + '"]').value); }); };
-    var drawEx = function () { m.querySelector('#cqEx').innerHTML = EX.map(exRow).join(''); };
-    drawEx();
+    var draw = function () {
+      m.querySelector('#cqBody').innerHTML = G.map(function (g, gi) {
+        var rs = g.lines.length + 1;
+        return g.lines.map(function (l, li) {
+          var id = gi + '-' + li;
+          return '<tr' + (l.fixed ? '' : ' class="add"') + '>' + (li === 0 ? '<td rowspan="' + rs + '" class="gn">' + (g.partner ? esc(g.name) : '<input type="text" class="txt" data-gn="' + gi + '" value="' + esc(g.name) + '" placeholder="시험명" aria-label="시험명">') + '</td>' : '') +
+            '<td class="l">' + (l.fixed ? esc(l.d) : '<input type="text" class="txt wide" data-f="d" data-k="' + id + '" value="' + esc(l.d) + '" placeholder="세부내용" aria-label="세부내용">') + '</td>' +
+            '<td class="c">' + (l.fixed ? num(l.q) : '<input type="number" min="1" class="qty" data-f="q" data-k="' + id + '" value="' + (l.q || 1) + '" aria-label="수량">') + '</td>' +
+            '<td class="c">' + (l.fixed ? esc(l.u) : '<input type="text" class="unit" data-f="u" data-k="' + id + '" value="' + esc(l.u || '식') + '" aria-label="Unit">') + '</td>' +
+            '<td class="r">' + (l.fixed ? F.money(l.pp, cur) : '-') + '</td>' +
+            '<td><input type="number" min="0" step="1000" data-f="p" data-k="' + id + '" value="' + l.p + '" aria-label="' + esc(l.d || '추가 항목') + ' 단가"></td>' +
+            '<td class="r"><span data-amt="' + id + '"></span>' + (l.fixed ? '' : ' <button type="button" class="tbtn xs" data-rm="' + id + '" aria-label="이 줄 삭제">삭제</button>') + '</td></tr>';
+        }).join('') + '<tr class="sub"><td colspan="4" class="l"><button type="button" class="tbtn xs" data-addl="' + gi + '">+ 세부내용 추가</button></td><td class="r">소계</td><td class="r" data-sub="' + gi + '"></td></tr>';
+      }).join('');
+    };
+    // 화면 입력값 → G (단가·수량은 0 이상)
+    var read = function () {
+      m.querySelectorAll('[data-gn]').forEach(function (i) { G[+i.dataset.gn].name = i.value; });
+      m.querySelectorAll('[data-k]').forEach(function (i) { var a = i.dataset.k.split('-'), l = G[+a[0]].lines[+a[1]], f = i.dataset.f; if ((f === 'p' || f === 'q') && parseFloat(i.value) < 0) i.value = 0; l[f] = f === 'd' || f === 'u' ? i.value : num(i.value); }); // 마이너스 입력은 0으로 (할인은 할인 칸)
+    };
     var build = function () {
-      var ins = m.querySelectorAll('input[data-i]'), G = pq.groups.map(function (g) { return { name: g.name, lines: [] }; });
-      rows.forEach(function (o, i) { G[o.gi].lines.push({ d: o.l.d, q: o.l.q, u: o.l.u, p: String(Math.max(0, Math.round(num(ins[i].value)))) }); });
-      readEx(); EX.forEach(function (o) { if (!o.g.trim() && !o.d.trim()) return; if (!num(o.p)) return; var nm = o.g.trim() || '추가 항목', g = G.filter(function (y) { return y.name === nm; })[0]; if (!g) { g = { name: nm, lines: [] }; G.push(g); } g.lines.push({ d: o.d.trim(), q: num(o.q) || 1, u: o.u || '식', p: String(Math.round(num(o.p))) }); });
-      return { at: Date.now(), cur: cur, groups: G, sale: '', addSale: String(Math.max(0, Math.round(num(m.querySelector('#cqDisc').value))) || ''), weeks: pq.weeks, supplier: F.SELLER, memo: m.querySelector('#cqMemo').value.trim() };
+      read(); var di = m.querySelector('#cqDisc'); if (parseFloat(di.value) < 0) di.value = 0;
+      var out = []; G.forEach(function (g) {
+        var lines = g.lines.filter(function (l) { return l.fixed || l.d.trim() || num(l.p); }).map(function (l) { return { d: (l.d || '').trim(), q: l.fixed ? l.q : (num(l.q) || 1), u: l.u || '식', p: String(Math.max(0, Math.round(num(l.p)))) }; });
+        if (lines.length) out.push({ name: (g.name || '').trim() || '추가 항목', lines: lines });
+      });
+      return { at: Date.now(), cur: cur, groups: out, sale: '', addSale: String(Math.max(0, Math.round(num(m.querySelector('#cqDisc').value))) || ''), weeks: pq.weeks, supplier: F.SELLER, memo: m.querySelector('#cqMemo').value.trim() };
     };
     var calc = function () {
       var q = build(), t = F.total(q), pt = F.total(pq);
-      m.querySelectorAll('input[data-i]').forEach(function (inp, i) { m.querySelector('[data-sum="' + i + '"]').textContent = F.money(num(rows[i].l.q) * num(inp.value), cur); });
-      EX.forEach(function (o, i) { var c = m.querySelector('[data-es="' + i + '"]'); if (c) c.textContent = (num(o.p) < 0 ? '-' : '') + F.money(Math.abs((num(o.q) || 1) * num(o.p)), cur); });
-      m.querySelector('#cqDiscS').textContent = num(m.querySelector('#cqDisc').value) ? '-' + F.money(num(m.querySelector('#cqDisc').value), cur) : '-';
+      G.forEach(function (g, gi) { var sub = 0; g.lines.forEach(function (l, li) { var a = (l.fixed ? l.q : (num(l.q) || 1)) * Math.max(0, num(l.p)); sub += a; var c = m.querySelector('[data-amt="' + gi + '-' + li + '"]'); if (c) c.textContent = F.money(a, cur); }); var sc = m.querySelector('[data-sub="' + gi + '"]'); if (sc) sc.textContent = F.money(sub, cur); });
+      var dv = Math.max(0, num(m.querySelector('#cqDisc').value)); m.querySelector('#cqDiscS').textContent = dv ? '-' + F.money(dv, cur) : '-';
       m.querySelector('#cqTot').textContent = F.money(t.final, cur);
-      var gap = t.net - pt.net, g = m.querySelector('#cqGap'); g.textContent = (gap >= 0 ? '+' : '-') + F.money(Math.abs(gap), cur); g.className = gap < 0 ? 'neg' : '';
+      var gap = t.net - pt.net, gg = m.querySelector('#cqGap'); gg.textContent = (gap >= 0 ? '+' : '-') + F.money(Math.abs(gap), cur); gg.className = gap < 0 ? 'neg' : '';
     };
     var close = function () { m.remove(); document.body.style.overflow = ''; };
     m.addEventListener('input', calc);
     m.addEventListener('click', function (e) {
-      if (e.target === m || e.target.closest('.no') || e.target.closest('.qm-x')) { close(); return; }
-      if (e.target.closest('#cqAdd')) { readEx(); EX.push({ g: '', d: '', q: 1, u: '식', p: 0 }); drawEx(); calc(); var gs = m.querySelectorAll('[data-eg]'); gs[gs.length - 1].focus(); return; }
-      if (e.target.closest('[data-exx]')) { readEx(); EX.splice(+e.target.closest('[data-exx]').dataset.exx, 1); drawEx(); calc(); return; }
-      if (e.target.closest('#cqSend')) {
+      var t = e.target;
+      if (t === m || t.closest('.no') || t.closest('.qm-x')) { close(); return; }
+      if (t.closest('[data-addl]')) { read(); var gi = +t.closest('[data-addl]').dataset.addl; G[gi].lines.push({ d: '', q: 1, u: '식', p: 0 }); draw(); calc(); var f = m.querySelector('[data-k="' + gi + '-' + (G[gi].lines.length - 1) + '"]'); if (f) f.focus(); return; }
+      if (t.closest('#cqAddG')) { read(); G.push({ name: '', lines: [{ d: '', q: 1, u: '식', p: 0 }] }); draw(); calc(); var gn = m.querySelector('[data-gn="' + (G.length - 1) + '"]'); if (gn) gn.focus(); return; }
+      if (t.closest('[data-rm]')) { read(); var a = t.closest('[data-rm]').dataset.rm.split('-'), g = G[+a[0]]; g.lines.splice(+a[1], 1); if (!g.lines.length && !g.partner) G.splice(+a[0], 1); else if (!g.lines.length) g.lines.push({ d: '', q: 1, u: '식', p: 0 }); draw(); calc(); return; }
+      if (t.closest('#cqSend')) {
         var q = build(), why = prev ? m.querySelector('#cqWhy').value.trim() : '';
         F.ask({ title: n + '차 견적서를 클라이언트에게 보낼까요?', desc: '㈜셀키에이아이 명의 ' + F.money(F.total(q).final, cur) + '(VAT 포함) 견적이 클라이언트에게 전달되고 견적확인요청 알림이 갑니다.' + (n === 1 ? ' ' + F.partner(base).org + ' 견적이 선정 상태가 됩니다.' : ''), label: false, yes: '보내기' }, function () {
           F.sendCQ(id, base, q, why); close(); OP.toast(n + '차 견적서를 클라이언트에게 보냈습니다.'); render();
         });
       }
     });
-    calc(); var fi = m.querySelector('input[data-i]'); if (fi) fi.focus();
+    draw(); calc(); var fi = m.querySelector('[data-f="p"]'); if (fi) fi.focus();
   }
+
   // 분석 서비스 정보가 부족한 파트너: 견적 확인 중에 입력 요청 (안내만, 견적 전달은 그대로 가능). 기준은 svcGap (AI 매칭과 같음)
   function svcMiss(k) {
     var gap = svcGap(k); if (!gap) return '';
@@ -1213,7 +1250,7 @@
         var k = t.closest('[data-doc]').dataset.doc; F.showDoc(r, s.P[k].quote, k, F.partner(k).org + ' 견적서');
       } else if (t.closest('[data-rev]')) {
         var k2 = t.closest('[data-rev]').dataset.rev;
-        F.ask({ title: F.partner(k2).org + '에 수정 요청', desc: '수정 요청한 견적은 파트너가 다시 제출할 때까지 클라이언트에게 전달할 수 없습니다.', label: '수정 요청 내용', ph: '예) 전화로 협의한 대로 단가를 30만 원에서 28만 원으로 반영해 다시 제출해 주세요.', yes: '수정 요청', required: true }, function (v) {
+        F.ask({ title: F.partner(k2).org + '에 수정 요청', desc: '수정 요청한 견적은 파트너가 다시 제출할 때까지 클라이언트에게 전달할 수 없습니다.', html: F.itemsHTML(s.P[k2].quote), label: '수정 요청 내용', ph: '예) 전화로 협의한 대로 단가를 30만 원에서 28만 원으로 반영해 다시 제출해 주세요.', yes: '수정 요청', required: true }, function (v) {
           F.revise(id, k2, v); OP.toast('수정 요청을 보냈습니다.'); render();
         });
       } else if (t.closest('[data-mk]')) {
