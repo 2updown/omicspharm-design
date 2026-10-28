@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028ze">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028ze">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261028ze">
-<script src="assets/common/site.js?v=20261028ze"></script>
-<script src="assets/common/consult.js?v=20261028ze"></script>
-<script src="assets/common/mypage.js?v=20261028ze"></script>
-<script src="assets/common/svc-spec.js?v=20261028ze"></script>
-<script src="assets/common/flow.js?v=20261028ze"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zi">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zi">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261028zi">
+<script src="assets/common/site.js?v=20261028zi"></script>
+<script src="assets/common/consult.js?v=20261028zi"></script>
+<script src="assets/common/mypage.js?v=20261028zi"></script>
+<script src="assets/common/svc-spec.js?v=20261028zi"></script>
+<script src="assets/common/flow.js?v=20261028zi"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -680,7 +680,6 @@
   // 매칭은 [AI 분석파트너 매칭] 버튼을 눌러야 실행. 마지막 실행 시각을 의뢰별로 기록 (op.aiRun)
   var aiRun = function () { try { return (JSON.parse(localStorage.getItem('op.aiRun') || '{}'))[id] || 0; } catch (e) { return 0; } };
   var aiRunSet = function () { try { var o = JSON.parse(localStorage.getItem('op.aiRun') || '{}'); o[id] = Date.now(); localStorage.setItem('op.aiRun', JSON.stringify(o)); } catch (e) {} };
-  var hm = function (t) { return F.ymd(t) + ' ' + new Date(t).toTimeString().slice(0, 5); };
   // 누리멀티오믹스(p-mlt): 단백체·대사체·전사체·유전체의 v5 선택지를 모두 지원하는 예시 (모든 예시 의뢰에 '조건 충족' 후보가 있도록)
   DEMO_SVC['p-mlt'] = ['단백체', '대사체', '전사체', '유전체'].map(function (k) {
     var f = {}; ((SPEC[k] || {}).fields || []).forEach(function (x) { if (x.options && (x.type === 'multi' || x.type === 'single')) f[x.id] = x.type === 'multi' ? x.options.slice() : x.options[0]; });
@@ -962,7 +961,7 @@
     m.className = 'op-confirm qmail'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', 'AI 분석파트너 매칭');
     m.innerHTML = '<div class="box"><button type="button" class="qm-x" aria-label="닫기">×</button>' +
       '<h3><img src="assets/common/ic-sparkle-fill.svg" alt="">AI 분석파트너 매칭</h3>' +
-      '<p class="qm-sub">의뢰 내용과 인증 분석파트너의 분석 서비스 정보를 비교했습니다. 견적을 요청할 기관을 골라 견적제안메일을 보내세요. <span id="qmAt"></span> <button type="button" class="tbtn xs primary" id="qmRe">다시 비교</button></p>' +
+      '<p class="qm-sub">의뢰 내용과 인증 분석파트너의 분석 서비스 정보를 비교했습니다. 견적을 요청할 기관을 골라 견적제안메일을 보내세요. <button type="button" class="tbtn xs primary" id="qmRe">다시 비교</button></p>' +
       '<div class="qm-f"><div class="row"><select id="qmSvc"><option value="">분석 서비스 전체</option>' + KEY.map(function (k) { return '<option value="' + k + '">' + svcName(k) + '</option>'; }).join('') + '</select>' +
         '<form class="row grow" id="qmForm"><input type="search" id="qmQ" placeholder="키워드 입력 (기관명, 담당자, 이메일)"><button type="submit">검색</button></form></div></div>' +
       '<div class="qm-tabs" role="tablist" id="qmTabs"></div>' +
@@ -1007,7 +1006,6 @@
         '<div class="jbtns">' + (J[k] ? '<button type="button" class="tbtn xs" data-jdel="' + k + '">판단 지우기</button>' : '') + '<button type="button" class="tbtn" data-jcancel>취소</button><button type="button" class="tbtn primary" data-jsave="' + k + '">저장</button></div></div>';
     };
     var draw = function () {
-      var t = aiRun(); m.querySelector('#qmAt').textContent = t ? '· ' + hm(t) : '';
       var kw = q.kw.toLowerCase();
       var L = AG.filter(function (x) { var p = x.p; return (!q.svc || p.svc.indexOf(q.svc) > -1) && (!kw || [p.name, p.org, p.mail].join(' ').toLowerCase().indexOf(kw) > -1); });
       var N = { rec: 0, info: 0, join: 0 }; L.forEach(function (x) { N[tabOf(x)]++; });
@@ -1090,7 +1088,7 @@
     var rows = keys.map(function (k) {
       var x = s.P[k], p = F.partner(k), q = x.quote, sub = x.status === 'sub';
       return '<div class="r' + (s.pick === k ? ' win' : '') + '">' +
-        (edit && sub && !F.cqList(s).length ? '<span><input type="radio" name="qpick" value="' + esc(k) + '" aria-label="' + esc(p.org) + ' 견적 선택"></span>' : '<span title="' + (x.fwd ? '클라이언트 견적의 기준 견적' : '') + '">' + (x.fwd ? '✓' : '') + '</span>') + // 고른 견적에 아래 [수정 요청]·[클라이언트 견적서 만들기] (2026-10-28)
+        (edit && sub && !F.cqList(s).length ? '<span><input type="radio" name="qpick" value="' + esc(k) + '" aria-label="' + esc(p.org) + ' 견적 선택"></span>' : '<span title="' + (x.fwd ? '클라이언트 견적의 기준 견적' : '') + '">' + (x.fwd ? '✓' : '') + '</span>') + // 고른 견적에 아래 [수정 요청]·[1차 견적서 작성] (2026-10-28)
         '<div class="who"><b>' + esc(p.org) + (x.fwd ? ' <small class="qn">클라이언트 견적 기준</small>' : '') + '</b>' + (x.self || x.revN ? '<span>' + (x.self ? '<i class="src self">직접 신청</i>' : '') + (x.revN ? '수정 ' + x.revN + '회' : '') + '</span>' : '') + svcMiss(k) + '</div>' +
         '<div class="st">' + badge(k) + '</div>' +
         '<div class="amt">' + (sub ? F.money(F.total(q).final) + (k === low ? '<span class="badge teal">최저가</span>' : '') + '<small class="mobv">VAT 포함</small>' : '--') + (sub ? '<span class="mob">· ' + esc(q.weeks || '-') + '주</span>' : '') + '</div>' +
@@ -1107,9 +1105,9 @@
       // 게시·마감 정보 + 안내 = DS infobox (Figma 1153:52097). 안내가 있으면 default(제목 + 목록), 없으면 simple(한 줄) (2026-10-28)
       (function () { var hint = edit && subs.length && !F.cqList(s).length;
         return '<div class="op-ibox reqinfo' + (hint ? '' : ' simple') + '"><p class="t"><span class="rq"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>견적 마감</b> ' + dot(s.due || r.to) + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self; }).length + '<i class="dv" aria-hidden="true"></i>견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></span></p>' +
-          (hint ? '<ul><li>클라이언트에게 보낼 견적 1건을 골라 [클라이언트 견적서 만들기]를 누르세요.</li><li>단가·수수료·할인을 정해 ㈜셀키에이아이 명의로 보냅니다. 클라이언트에게는 분석파트너 이름이 보이지 않습니다.</li></ul>' : '') + '</div>'; })() +
+          (hint ? '<ul><li>클라이언트에게 보낼 견적 1건을 선정하고 [1차 견적서 작성]을 누르세요.</li><li>단가, 수수료, 할인을 정해 ㈜셀키에이아이 명의로 보냅니다. 클라이언트에게는 분석파트너 이름이 보이지 않습니다.</li><li>견적 수정이 필요하면 견적을 선택하고 [수정 요청]을 누르세요.</li></ul>' : '') + '</div>'; })() +
       (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적 (VAT 포함)</span><span>소요</span><span>일자</span><span>견적서 보기</span></div>' + rows + '</div>' +
-        (edit && subs.length && !F.cqList(s).length ? '<div class="qbar"><span class="sel" id="qSel">견적을 선택하면 수정 요청하거나 클라이언트 견적서를 만들 수 있습니다.</span><button type="button" class="btn" id="qRev" disabled>수정 요청</button>' + (!F.cqList(s).length ? '<button type="button" class="btn primary" id="qMk" disabled>클라이언트 견적서 만들기</button>' : '') + '</div>' : '')
+        (edit && subs.length && !F.cqList(s).length ? '<div class="qbar"><span class="sel" id="qSel"></span><button type="button" class="btn" id="qRev" disabled>수정 요청</button>' + (!F.cqList(s).length ? '<button type="button" class="btn primary" id="qMk" disabled>1차 견적서 작성</button>' : '') + '</div>' : '')
         : '<div class="qempty">아직 견적을 작성 중인 분석파트너가 없습니다.<br>인증 분석파트너는 프로젝트 찾기에서 직접 견적을 작성할 수 있고, [AI 분석파트너 매칭]에서 적합한 기관에 요청할 수도 있습니다.</div>') +
       cqHTML(s, edit, subs) +
       (s.msg && s.st !== 'quoting' ? '<div class="msg"><b>클라이언트에게 전달한 메시지 · ' + F.ymd(s.sentAt) + '</b>' + esc(s.msg) + '</div>' : '') +
