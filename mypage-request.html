@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029c">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029c">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261029c">
-<script src="assets/common/site.js?v=20261029c"></script>
-<script src="assets/common/consult.js?v=20261029c"></script>
-<script src="assets/common/mypage.js?v=20261029c"></script>
-<script src="assets/common/svc-spec.js?v=20261029c"></script>
-<script src="assets/common/flow.js?v=20261029c"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029d">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029d">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261029d">
+<script src="assets/common/site.js?v=20261029d"></script>
+<script src="assets/common/consult.js?v=20261029d"></script>
+<script src="assets/common/mypage.js?v=20261029d"></script>
+<script src="assets/common/svc-spec.js?v=20261029d"></script>
+<script src="assets/common/flow.js?v=20261029d"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -986,7 +986,6 @@
     var svcName = function (x) { return x === '바이오의약품' ? '바이오의약품 특성 분석' : x === 'Olink' ? 'Olink 분석' : x + ' 분석'; };
     var TABS = [['rec', '추천'], ['info', '정보 부족'], ['join', '참여 중']];
     var GROUP = { rec: ['ok', 'chk', 'miss'], info: ['none', 'other'] };
-    var unv = F.PARTNERS.filter(function (p) { return !p.verified; }).length;
     var AG = [], picked = {}, tab = 'rec', q = { svc: '', kw: '' }, open = {}, busy = !aiRun();
     // 참여 중 = 견적을 제출했거나(수정 요청 포함) 거절한 곳. 아직 제출 전(작성 대기·임시저장)이면 원래 분류(추천·정보 부족)에 그대로 (2026-10-28)
     var sentOnly = function (k) { var x = s.P[k]; return !!x && /^(req|draft)$/.test(x.status); };
@@ -1001,11 +1000,11 @@
         '<form id="qmForm" class="qm-s"><input type="search" id="qmQ" placeholder="기관명, 담당자, 이메일 검색" aria-label="분석파트너 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form></div>' +
       '<div class="qm-tbar"><div class="qm-tabs" role="tablist" id="qmTabs"></div></div></div>' +
       '<div class="qm-body"><p class="qm-desc" id="qmDesc"></p><div class="qm-list" id="qmList"></div>' +
-        '<p class="qm-unv" id="qmSum"></p></div>' +
+        '</div>' +
       '<div class="qm-foot"><label class="qm-ml"><span class="qm-mlt">메시지 <em>(선택)</em></span><textarea id="qmMsg" placeholder="프로젝트 링크와 함께 전달됩니다."></textarea></label>' +
         '<div class="btns"><button type="button" class="no">닫기</button><button type="button" class="yes go" id="qmSend" disabled>견적제안 발송</button></div></div></div>';
     document.body.appendChild(m); document.body.style.overflow = 'hidden';
-    var DESC = { rec: '', info: '분석 서비스 정보가 없어 비교하지 못한 곳입니다. 입력을 요청하거나 직접 골라 보낼 수 있습니다.', join: '' };
+    var DESC = { rec: '', info: '', join: '' }; // 탭 설명 문구는 모두 뺌 (2026-10-29)
     var row = function (x, c) {
       var p = x.p, join = tab === 'join', R = x.rows || [];
       // 요약 한 줄 + [조건 비교] 펼치면 표 (칩 대신, 2026-10-28)
@@ -1033,8 +1032,6 @@
       var N = { rec: 0, info: 0, join: 0 }; L.forEach(function (x) { N[tabOf(x)]++; });
       m.querySelector('#qmTabs').innerHTML = TABS.map(function (b) { return '<button type="button" role="tab" data-tab="' + b[0] + '" aria-selected="' + (tab === b[0]) + '"' + (tab === b[0] ? ' class="on"' : '') + '>' + b[1] + ' <b>' + (busy ? '-' : N[b[0]]) + '</b></button>'; }).join('');
       m.querySelector('#qmDesc').textContent = DESC[tab]; m.querySelector('#qmDesc').hidden = !DESC[tab];
-      // 비교 요약 (엔지니어 결과 화면 하단처럼): 인증 n곳 비교 | 같은 서비스 정보 n곳 | 추천 n곳 | 미인증 n곳 제외
-      m.querySelector('#qmSum').innerHTML = busy ? '' : (unv ? '미인증 분석파트너 ' + unv + '곳은 견적을 낼 수 없어 제외했습니다. ' : '') + '표시 순서는 수행 품질의 우열을 뜻하지 않습니다.';
       if (busy) { m.querySelector('#qmList').innerHTML = '<p class="qm-none">의뢰 내용과 분석 서비스 정보를 비교하고 있습니다…</p>'; sync(); return; }
       var T = L.filter(function (x) { return tabOf(x) === tab; });
       var html = tab === 'join' ? (T.length ? '<div class="qg">' + T.map(function (x) { return row(x, x.cat); }).join('') + '</div>' : '')
