@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028x">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028x">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261028x">
-<script src="assets/common/site.js?v=20261028x"></script>
-<script src="assets/common/consult.js?v=20261028x"></script>
-<script src="assets/common/mypage.js?v=20261028x"></script>
-<script src="assets/common/svc-spec.js?v=20261028x"></script>
-<script src="assets/common/flow.js?v=20261028x"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028y">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028y">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261028y">
+<script src="assets/common/site.js?v=20261028y"></script>
+<script src="assets/common/consult.js?v=20261028y"></script>
+<script src="assets/common/mypage.js?v=20261028y"></script>
+<script src="assets/common/svc-spec.js?v=20261028y"></script>
+<script src="assets/common/flow.js?v=20261028y"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -46,7 +46,8 @@
   .blk-h { display:flex; align-items:center; justify-content:space-between; gap:12px; }
   .blk-h h3 { font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
   .blk-h .sub { font-size:13px; line-height:18px; color:var(--gray-500); }
-  .reqinfo { display:flex; flex-wrap:wrap; gap:6px 16px; padding:12px 16px; border-radius:8px; background:var(--gray-100); font-size:13px; line-height:20px; color:var(--gray-600); }
+  .reqinfo { display:flex; flex-wrap:wrap; gap:6px 16px; padding:12px 16px; border-radius:8px; background:var(--gray-100); font-size:14px; line-height:20px; color:var(--gray-600); }
+  .reqinfo .rq-hint { flex-basis:100%; margin-top:10px; color:var(--gray-600); } .reqinfo .rq-hint b { font-weight:600; color:var(--gray-600); }
   .reqinfo b { font-weight:600; color:#000; }
 
   /* 분석파트너 선택 */
@@ -76,14 +77,14 @@
   /* 받은 견적 */
   /* 견적서 확인 표 = Figma 2063-9232 (2026-10-28 사용자 수정본): 칸 = 선택 48 · 분석파트너(남는 폭) · 상태 100 · 최종 견적 175 · 소요 170 · 일자 140 · 견적서 보기 108, 칸 안 여백 좌우 18 */
   .qt { display:flex; flex-direction:column; border-top:2px solid #000; }
-  .qt .h, .qt .r { display:grid; grid-template-columns:48px minmax(0,1fr) 152px 175px 170px 140px 108px; /* 상태 152: 가장 긴 배지 '클라이언트 검토 중'(116px) + 좌우 여백 18 (Figma는 100) */ align-items:center; }
+  .qt .h, .qt .r { display:grid; grid-template-columns:48px minmax(0,1fr) 152px 175px 120px 140px 108px; /* Figma 2063-9232: 상태 152(가장 긴 배지 '클라이언트 검토 중') · 소요 120 */ align-items:center; }
   .qt .h { min-height:44px; background:var(--gray-100); border-bottom:1px solid var(--gray-200); font-size:14px; font-weight:500; line-height:20px; color:#000; }
   .qt .h > *, .qt .r > * { padding:0 18px; min-width:0; }
   .qt .h > :first-child, .qt .r > :first-child { padding:0 12px; }
   .qt .r { min-height:48px; padding:8px 0; border-bottom:1px solid var(--gray-200); font-size:14px; line-height:20px; }
   .qt .r.win { background:var(--teal-50); }
   .qt .r input[type=radio] { display:block; width:20px; height:20px; margin:0 auto 0 2px; accent-color:var(--teal-600); cursor:pointer; }
-  .qt .who b { display:block; font-size:16px; font-weight:700; line-height:22px; word-break:keep-all; overflow-wrap:anywhere; }
+  .qt .who b { display:block; font-size:16px; font-weight:500; line-height:22px; word-break:keep-all; overflow-wrap:anywhere; }
   .qt .who .qn { margin-left:6px; padding:1px 6px; border-radius:6px; background:var(--gray-100); font-size:12px; font-weight:500; color:var(--gray-600); }
   .qt .who span { font-size:12px; line-height:18px; color:var(--gray-500); }
   .qt .who .svcm { display:flex; align-items:center; gap:6px; margin-top:2px; font-size:12px; font-weight:500; line-height:18px; color:#fd4900; }
@@ -1105,7 +1106,8 @@
     var c = cnt(s);
     return '<div class="blk" id="quotes">' +
       '<div class="blk-h"><h3>견적서 확인 <span style="color:var(--teal-600)">' + c.sub + '</span> / ' + c.all + '</h3>' + (edit || s.st === 'review' ? '<span class="aim">' + aiSum(s) + '<button type="button" class="btn primary" id="more"><img src="assets/common/ic-sparkle-fill-w.svg" alt="">AI 분석파트너 매칭</button></span>' : '') + '</div>' +
-      '<div class="reqinfo"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>견적 마감</b> ' + dot(s.due || r.to) + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self; }).length + ' · 견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></div>' +
+      '<div class="reqinfo"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>견적 마감</b> ' + dot(s.due || r.to) + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self; }).length + ' · 견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span>' +
+        (edit && subs.length && !F.cqList(s).length ? '<p class="rq-hint">클라이언트에게 보낼 견적 1건을 골라 <b>[클라이언트 견적서 만들기]</b>를 누르세요.<br>단가·수수료·할인을 정해 ㈜셀키에이아이 명의로 보냅니다. 클라이언트에게는 분석파트너 이름이 보이지 않습니다.</p>' : '') + '</div>' + // 안내는 위 정보 상자 안 (Figma 2063-9232)
       (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적 (VAT 포함)</span><span>소요</span><span>일자</span><span>견적서 보기</span></div>' + rows + '</div>' +
         (edit && subs.length ? '<div class="qbar"><span class="sel" id="qSel">견적을 선택하면 수정 요청하거나 클라이언트 견적서를 만들 수 있습니다.</span><button type="button" class="btn" id="qRev" disabled>수정 요청</button>' + (!F.cqList(s).length ? '<button type="button" class="btn primary" id="qMk" disabled>클라이언트 견적서 만들기</button>' : '') + '</div>' : '')
         : '<div class="qempty">아직 견적을 작성 중인 분석파트너가 없습니다.<br>인증 분석파트너는 프로젝트 찾기에서 직접 견적을 작성할 수 있고, [AI 분석파트너 매칭]에서 적합한 기관에 요청할 수도 있습니다.</div>') +
@@ -1116,7 +1118,7 @@
   // 클라이언트에게 보낸 ㈜셀키에이아이 견적 (2026-10-26): 파트너 견적 1건을 바탕으로 단가·수수료·할인만 바꿔 차수로 보냄
   function cqHTML(s, edit, subs) {
     var L = F.cqList(s);
-    if (!L.length) return edit && subs.length ? '<div class="cq-hint">클라이언트에게 보낼 견적 1건을 골라 <b>[클라이언트 견적서 만들기]</b>를 누르세요.<br>단가·수수료·할인을 정해 ㈜셀키에이아이 명의로 보냅니다. 클라이언트에게는 분석파트너 이름이 보이지 않습니다.</div>' : '';
+    if (!L.length) return ''; // 안내 문구는 위 정보 상자(reqinfo) 안으로 옮김 (2026-10-28)
     var pq = function (v) { var x = s.P[v.base]; return x && x.quote ? F.total(x.quote).final : 0; };
     return '<div class="cq"><div class="cq-h"><h4>클라이언트에게 보낸 견적</h4>' + (edit && s.st !== 'matched' ? '<button type="button" class="btn" id="cqRe">수정 견적 보내기</button>' : '') + '</div>' +
       L.slice().reverse().map(function (v, ri) {
