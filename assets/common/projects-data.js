@@ -57,7 +57,7 @@
   var BUD = { '협의 필요': 500, '500만원 미만': 300, '500만~1,000만원': 750, '1,000만원 이상': 1200, '미정': 500 };
   POSTED.forEach(function (o) {
     var r = o.r, okd = OP.flow.ymd(o.s.ok), cat = CATS.indexOf(r.svc) > -1 ? r.svc : CATS[CATS.length - 1];
-    var x = { id: DATA.length, rid: r.id, cat: cat, title: r.title, samples: parseInt(r.samples, 10) || 0, price: BUD[r.budget] || 500, due: dot(r.due) || okd, from: dot(r.from) || okd, to: dot(r.to) || OP.flow.ymd(o.s.ok + 864e5 * 14), reg: okd, priv: r.open === '비공개', owner: '*****(' + (r.demo ? 'cli05' : 'client') + ')' };
+    var x = { id: DATA.length, rid: r.id, cat: cat, title: r.title, samples: parseInt(r.samples, 10) || 0, price: BUD[r.budget] || 500, due: dot(r.due) || okd, from: dot(r.from) || okd, to: dot(o.s.due || r.to) || OP.flow.ymd(o.s.ok + 864e5 * 14), // 모집기한 끝 = 견적 마감일 (컨설턴트가 바꾸면 같이, 2026-10-28) reg: okd, priv: r.open === '비공개', owner: '*****(' + (r.demo ? 'cli05' : 'client') + ')' };
     x.days = Math.round((d(x.to) - TODAY) / 864e5);
     x.open = x.days >= 0 && OP.flow.open(r.id); // 모집기한 안 + 클라이언트가 견적을 확정하기 전까지 모집중
     DATA.push(x);

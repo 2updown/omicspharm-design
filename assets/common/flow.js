@@ -96,6 +96,13 @@
         { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', 'FFPE 조직'], ['총 시료 수', '30개']] },
         { title: '요구사항', rows: [['희망완료일', '2027-01-15'], ['일정 협의 가능 여부', '가능'], ['예상금액', '500~1,000만원']] },
         { title: '희망 산출물', rows: [['희망 산출물', 'Raw data, 결과표, 국문 보고서'], ['산출물 용도', '논문 학술용']] }] },
+    // 계약서 등록 예시 (state는 ctDemo): 클라이언트가 최종 견적을 확정했고 컨설턴트가 계약서를 등록하기 전
+    { id: 'PRJ-2026-0050', demo: true, at: T0 - DAY * 14, svc: '단백체 분석', title: '마우스 혈청 엑소좀 단백체 정량 분석', org: '한결연구소', manager: '홍길동', bizDoc: '사업자등록증_한결연구소.pdf', owner: 'client@omicspharm.test', samples: '16', due: '2026-12-31', from: '2026-09-20', to: '2026-10-04', budget: '500만~1,000만원', open: '공개',
+      purpose: '질환 모델 마우스와 정상 마우스 혈청 엑소좀의 단백질 발현 차이를 비교하고자 합니다.',
+      sections: [{ title: '분석 서비스 : 단백체 분석', rows: [['분석 유형', '비표적 단백체'], ['분석 목적', '단백질 발현 비교'], ['원하는 분석 결과', '상대정량, 군 간 비교, 차등단백질']] },
+        { title: '시료 정보', rows: [['생물종', 'Mouse'], ['시료 종류', '혈청 엑소좀'], ['총 시료 수', '16개'], ['보관상태', '초저온 (-80℃)']] },
+        { title: '분석 그룹', rows: [['비교군 구성', '그룹 있음'], ['대조군', '정상 · 8개'], ['실험군', '질환 모델 · 8개']] },
+        { title: '희망 산출물', rows: [['희망 산출물', 'Raw data, 결과표, 국문 보고서'], ['산출물 용도', '논문 학술용']] }] },
     // 클라이언트 견적 전달 후 수정 요청 예시 (state는 revDemo)
     { id: 'PRJ-2026-0049', demo: true, at: T0 - DAY * 10, svc: '대사체 분석', title: '비알코올성 지방간 마우스 간 조직 지질 대사체 분석', org: '한결연구소', manager: '홍길동', bizDoc: '사업자등록증_한결연구소.pdf', owner: 'client@omicspharm.test', samples: '30', due: '2026-12-20', from: '2026-09-25', to: '2026-10-02', budget: '500만~1,000만원', open: '공개',
       purpose: '고지방식이 마우스와 정상식이 마우스의 간 조직에서 지질 대사체 변화를 비교하고자 합니다.',
@@ -193,10 +200,20 @@
     DEMO_REQS.forEach(function (r) { delete S[r.id]; if (n[r.id]) S[r.id] = n[r.id]; });
     ['PRJ-2026-0037', 'PRJ-2026-0038', 'PRJ-2026-0039', 'PRJ-2026-0040', 'PRJ-2026-0041', 'PRJ-2026-0042'].forEach(function (k) { if (S[k]) { delete S[k].raw; delete S[k].rep; } });
     var o = 'user01@example.test'; if (OP.account && OP.account(o)) OP.saveAccount(o, { bizOk: 0, bizOkName: '' }); // 0048 사업자등록증도 확인 전으로
-    histDemo(S); repDemo(S); waitDemo(S); selfDemo(S); revDemo(S);
+    histDemo(S); repDemo(S); waitDemo(S); selfDemo(S); revDemo(S); ctDemo(S);
     return true;
   }
   // 클라이언트 견적 전달 후 수정 요청 예시 (2026-10-28): 0049 = 세움분석센터 견적을 기준으로 1차 견적서를 보냈고, 세움분석센터에 수정 요청 중
+  // 계약서 등록 예시 (2026-10-28): 0050 = 세움분석센터 견적(파트너 공급가)에 셀키 수수료를 붙인 1차 견적서를 클라이언트가 확정, 계약서 등록 전
+  function ctDemo(S) {
+    var r = req2('PRJ-2026-0050'); if (S[r.id]) return false;
+    var me = partner(ME_PARTNER), q = genQuote(me, r), cq = genQuote(me, r, 1.15);
+    q.subAt = T0 - DAY * 10; cq.supplier = F.SELLER; cq.sale = ''; cq.final = total(cq).final;
+    var s = S[r.id] = { st: 'matched', ok: T0 - DAY * 13.5, reqAt: T0 - DAY * 13, due: '2026-10-04', memo: '', P: {}, sentAt: T0 - DAY * 8, pick: ME_PARTNER, pickAt: T0 - DAY * 2,
+      CQ: [{ n: 1, at: T0 - DAY * 8, base: ME_PARTNER, quote: cq, why: '' }], sends: [{ at: T0 - DAY * 8, keys: [ME_PARTNER], cq: 1 }] };
+    s.P[ME_PARTNER] = { at: T0 - DAY * 13, status: 'sub', quote: q, subAt: T0 - DAY * 10, fwd: true };
+    return true;
+  }
   function revDemo(S) {
     var r = req2('PRJ-2026-0049'); if (S[r.id]) return false;
     var me = partner(ME_PARTNER), q = genQuote(me, r), cq = genQuote(me, r, 1.1);
@@ -238,6 +255,7 @@
     if (d && waitDemo(d.S)) write(KEY, d);
     if (d && selfDemo(d.S)) write(KEY, d);
     if (d && revDemo(d.S)) write(KEY, d);
+    if (d && ctDemo(d.S)) write(KEY, d);
     if (d && !repReset.done) { repReset.done = 1; if (repReset(d.S)) write(KEY, d); }
     d.X = d.X || []; return d;
   }
