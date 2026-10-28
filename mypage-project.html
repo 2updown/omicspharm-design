@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zz6">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zz6">
-<script src="assets/common/site.js?v=20261028zz6"></script>
-<script src="assets/common/consult.js?v=20261028zz6"></script>
-<script src="assets/common/mypage.js?v=20261028zz6"></script>
-<script src="assets/common/flow.js?v=20261028zz6"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zz7">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zz7">
+<script src="assets/common/site.js?v=20261028zz7"></script>
+<script src="assets/common/consult.js?v=20261028zz7"></script>
+<script src="assets/common/mypage.js?v=20261028zz7"></script>
+<script src="assets/common/flow.js?v=20261028zz7"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -459,9 +459,9 @@
       $('#project').outerHTML =
         '<div class="phead">' +
           '<div class="prow"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stBadge(x) + '</div>' +
-            '<span class="reg">계약일 ' + dotd(x.contract) + '<i class="dv" aria-hidden="true"></i>프로젝트 번호 ' + esc(x.id) + '</span></div>' +
+            '<span class="reg">' + (x.flow && !x.ct ? '선정일 ' : '계약일 ') + dotd(x.contract) + '<i class="dv" aria-hidden="true"></i>프로젝트 번호 ' + esc(x.id) + '</span></div>' +
           '<div class="prow"><h2 class="ptitle"><a class="back" href="' + (OP.session().role === 'admin' ? 'mypage-request.html' : 'mypage-project.html') + '" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(x.title) + '</h2>' +
-            '<div class="pright"><div class="period"><b>납기일</b><span>' + dotd(x.due) + '</span>' + (x.stage === '프로젝트 완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div>' + OP.askBtn({ key: x.id, cat: OP.my.svcKo(x.svc), no: x.id, title: x.title }) + '</div></div>' +
+            '<div class="pright"><div class="period"><b>' + (x.flow && !x.ct ? '희망완료일' : '납기일') + '</b><span>' + dotd(x.due) + '</span>' + (x.stage === '프로젝트 완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div>' + OP.askBtn({ key: x.id, cat: OP.my.svcKo(x.svc), no: x.id, title: x.title }) + '</div></div>' +
         '</div>' +
         '<ol class="fsteps" aria-label="진행 단계" style="--n:' + PS.length + '">' + PS.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
         '<div class="ftodo ' + TODO[3] + '"><div><b>' + TODO[0] + '</b><p>' + TODO[1] + '</p></div>' + (TODO[2] ? '<div class="acts">' + (TODO[2] === '계약서 확인' && CS ? '<button type="button" class="btn primary" data-ct="partner">계약서 확인</button>' : '<a class="btn primary" href="#" data-soon="' + TODO[2] + '">' + TODO[2] + '</a>') + '</div>' : '') + '</div>' +
@@ -469,11 +469,11 @@
         ((x.flow ? FS && FS.ct : (x.stage === '분석 진행 중' || (OP.flow.state(x.id).raw || []).length)) ? OP.flow.repSec(x.id, ADM ? 'admin' : 'partner') : '') +
         // 견적 중개로 매칭된 프로젝트: 컨설턴트가 올린 계약서
         (CS ? '<section class="sec"><h3>계약서</h3>' + OP.flow.contractListHTML(CS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) + '</section>' : '') +
-        (x.flow ? '<section class="sec"><h3>계약서</h3>' + (FS.ct ? OP.flow.contractListHTML(FS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) +
+        (x.flow && FS.ct ? '<section class="sec"><h3>계약서</h3>' + (OP.flow.contractListHTML(FS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) +
           // 분석파트너 쪽 대금 지급 방법·기타 (컨설턴트 입력, 2026-10-26)
-          (FS.ct.partner && (FS.ct.partner.pay || FS.ct.partner.etc) && OP.session().role !== 'admin' ? '<dl class="kv" style="margin-top:12px">' + (FS.ct.partner.pay ? '<div><dt>대금 지급 방법</dt><dd>' + esc(FS.ct.partner.pay) + '</dd></div>' : '') + (FS.ct.partner.etc ? '<div><dt>기타</dt><dd style="white-space:pre-line">' + esc(FS.ct.partner.etc) + '</dd></div>' : '') + '</dl>' : '') : '<p class="note" style="font-size:14px">OmicsPharm 컨설턴트가 계약서를 준비하고 있습니다. 등록되면 알림으로 알려드립니다.</p>') + '</section>' : '') +
+          (FS.ct.partner && (FS.ct.partner.pay || FS.ct.partner.etc) && OP.session().role !== 'admin' ? '<dl class="kv" style="margin-top:12px">' + (FS.ct.partner.pay ? '<div><dt>대금 지급 방법</dt><dd>' + esc(FS.ct.partner.pay) + '</dd></div>' : '') + (FS.ct.partner.etc ? '<div><dt>기타</dt><dd style="white-space:pre-line">' + esc(FS.ct.partner.etc) + '</dd></div>' : '') + '</dl>' : '')) + '</section>' : '') + // 계약서 등록 전에는 섹션 없음 (위 안내 박스로 알림, 2026-10-28)
         '<div class="sections"><section class="sec"><h3>프로젝트 정보</h3><dl class="kv">' +
-          [['클라이언트', x.client]].concat(x.partner && OP.session().role === 'admin' ? [['분석파트너', x.partner]] : []).concat([['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['계약 금액', x.amount + ' (VAT 별도)'], ['계약일', dotd(x.contract)], ['납기일', dotd(x.due)]])
+          [['클라이언트', x.client]].concat(x.partner && OP.session().role === 'admin' ? [['분석파트너', x.partner]] : []).concat(x.flow && !x.ct ? [['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['선정일', dotd(x.contract)]] : [['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['계약 금액', x.amount + ' (VAT 별도)'], ['계약일', dotd(x.contract)], ['납기일', dotd(x.due)]]) // 계약서 등록 전: 금액·계약일·납기일은 아직 없음
             .map(function (r) { return '<div><dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') +
         '</dl></section></div>' +
         (x.flow ? '<p class="demo-note">※ 견적 중개로 매칭된 프로젝트입니다. ' + (OP.session().role === 'admin' ? '<a href="mypage-request.html?id=' + encodeURIComponent(x.id) + '" style="text-decoration:underline">견적 내역 보기</a>' : '<a href="mypage-quote.html?rid=' + encodeURIComponent(x.id) + '" style="text-decoration:underline">제출한 견적서 보기</a>') + '</p>' : '<p class="demo-note">※ 화면 확인용 예시 프로젝트입니다.</p>');
