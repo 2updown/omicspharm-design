@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028n">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028n">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261028n">
-<script src="assets/common/site.js?v=20261028n"></script>
-<script src="assets/common/consult.js?v=20261028n"></script>
-<script src="assets/common/mypage.js?v=20261028n"></script>
-<script src="assets/common/svc-spec.js?v=20261028n"></script>
-<script src="assets/common/flow.js?v=20261028n"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028o">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028o">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261028o">
+<script src="assets/common/site.js?v=20261028o"></script>
+<script src="assets/common/consult.js?v=20261028o"></script>
+<script src="assets/common/mypage.js?v=20261028o"></script>
+<script src="assets/common/svc-spec.js?v=20261028o"></script>
+<script src="assets/common/flow.js?v=20261028o"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -76,14 +76,14 @@
   /* 받은 견적 */
   .qt { display:flex; flex-direction:column; border-top:2px solid #000; }
   /* 버튼(견적서 보기·수정 요청·클라이언트 견적서 만들기)이 많아 한 칸에 안 들어감 → 버튼은 정보 아래 줄 오른쪽으로 (2026-10-27) */
-  .qt .h, .qt .r { display:grid; grid-template-columns:28px minmax(0,1fr) 96px 200px 80px 110px; /* 상태 칸은 배지만, 금액·소요·일자 쪽을 넓게 (2026-10-28) */ align-items:center; gap:12px; padding:0 12px; }
+  .qt .h, .qt .r { display:grid; grid-template-columns:28px 200px 96px minmax(0,1fr) 80px 110px; /* 분석파트너 200(긴 이름은 두 줄)·상태 96, 남는 폭은 금액 쪽으로 (2026-10-28) */ align-items:center; gap:12px; padding:0 12px; }
   .qt .h span:nth-child(7) { display:none; }
   .qt .h { height:44px; background:var(--gray-100); border-bottom:1px solid var(--gray-200); font-size:13px; font-weight:500; color:var(--gray-600); }
   .qt .h span:nth-child(4), .qt .h span:nth-child(5) { text-align:right; }
   .qt .r { min-height:64px; padding-top:12px; padding-bottom:12px; border-bottom:1px solid var(--gray-200); font-size:14px; line-height:20px; }
   .qt .r.win { background:var(--teal-50); }
   .qt .r input { width:18px; height:18px; accent-color:var(--teal-600); }
-  .qt .who b { display:block; font-size:15px; font-weight:600; line-height:22px; }
+  .qt .who b { display:block; font-size:15px; font-weight:600; line-height:22px; word-break:keep-all; overflow-wrap:anywhere; }
   .qt .who .qn { margin-left:6px; padding:1px 6px; border-radius:6px; background:var(--gray-100); font-size:12px; font-weight:500; color:var(--gray-600); }
   .qt .who span { font-size:12px; line-height:18px; color:var(--gray-500); }
   .qt .who .svcm { display:flex; align-items:center; gap:6px; margin-top:2px; font-size:12px; line-height:18px; color:var(--orange-600); }
