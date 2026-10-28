@@ -171,7 +171,7 @@ button { background:none; border:0; cursor:pointer; }
 /* 단계 표시 */
 .fsteps { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); gap:4px; }
 .fsteps li { list-style:none; display:flex; flex-direction:column; gap:8px; font-size:13px; font-weight:500; line-height:18px; color:var(--gray-400); text-align:center; }
-.fsteps li::before { content:""; height:6px; border-radius:99px; background:var(--gray-200); }
+.fsteps li::before { content:""; order:1; height:6px; border-radius:99px; background:var(--gray-200); } /* 단계 이름 위, 막대 아래 (2026-10-28) */
 .fsteps li.done { color:var(--gray-600); } .fsteps li.done::before { background:#8fd9cf; }
 .fsteps li.cur { color:var(--teal-700); font-weight:700; } .fsteps li.cur::before { background:var(--teal-600); }
 /* 다음 할 일 안내 */
