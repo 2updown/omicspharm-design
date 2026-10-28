@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028r">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028r">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261028r">
-<script src="assets/common/site.js?v=20261028r"></script>
-<script src="assets/common/consult.js?v=20261028r"></script>
-<script src="assets/common/mypage.js?v=20261028r"></script>
-<script src="assets/common/svc-spec.js?v=20261028r"></script>
-<script src="assets/common/flow.js?v=20261028r"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028t">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028t">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261028t">
+<script src="assets/common/site.js?v=20261028t"></script>
+<script src="assets/common/consult.js?v=20261028t"></script>
+<script src="assets/common/mypage.js?v=20261028t"></script>
+<script src="assets/common/svc-spec.js?v=20261028t"></script>
+<script src="assets/common/flow.js?v=20261028t"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -76,8 +76,7 @@
   /* 받은 견적 */
   .qt { display:flex; flex-direction:column; border-top:2px solid #000; }
   /* 버튼(견적서 보기·수정 요청·클라이언트 견적서 만들기)이 많아 한 칸에 안 들어감 → 버튼은 정보 아래 줄 오른쪽으로 (2026-10-27) */
-  .qt .h, .qt .r { display:grid; grid-template-columns:28px 200px 96px minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr); /* 분석파트너 200(긴 이름은 두 줄)·상태 96, 최종 견적·소요·일자가 남는 폭을 나눠 가짐 (2026-10-28) */ align-items:center; gap:12px; padding:0 12px; }
-  .qt .h span:nth-child(7) { display:none; }
+  .qt .h, .qt .r { display:grid; grid-template-columns:28px 200px 96px minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr) 88px; /* 선택 · 분석파트너 200 · 상태 96 · 최종 견적·소요·일자(남는 폭) · 견적서 보기 (2026-10-28) */ align-items:center; gap:12px; padding:0 12px; }
   .qt .h { height:44px; background:var(--gray-100); border-bottom:1px solid var(--gray-200); font-size:13px; font-weight:500; color:var(--gray-600); }
   .qt .h span:nth-child(4), .qt .h span:nth-child(5) { text-align:right; }
   .qt .r { min-height:64px; padding-top:12px; padding-bottom:12px; border-bottom:1px solid var(--gray-200); font-size:14px; line-height:20px; }
@@ -94,7 +93,9 @@
   .qt .amt small.mobv { display:none; } /* PC는 표 머리에 'VAT 포함', 카드형(모바일)에서만 줄마다 */
   .qt .wk { text-align:right; white-space:nowrap; }
   .qt .dt { font-size:13px; color:var(--gray-500); white-space:nowrap; }
-  .qt .act { grid-column:2 / -1; display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; }
+  .qt .act { display:flex; justify-content:flex-end; }
+  .qbar { display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-top:12px; } .qbar .sel { margin-right:auto; font-size:14px; color:var(--gray-500); } .qbar .sel b { color:#000; }
+  @media (max-width:640px) { .qbar { flex-wrap:wrap; } .qbar .sel { width:100%; } .qbar .btn { flex:1; } }
   .qt .act:empty { display:none; }
   .qt .act .btn { height:32px; padding:0 10px; font-size:13px; }
   .qt .note { grid-column:2 / -1; margin-top:-2px; padding:8px 12px; border-radius:6px; background:var(--gray-100); font-size:13px; line-height:20px; color:var(--gray-600); }
@@ -795,6 +796,8 @@
       (s.cancel ? '' : '<div class="adm-acts"><p>' + (s.ct ? '계약서 등록 후에는 수정·삭제할 수 없습니다.' : '의뢰 내용을 수정하거나 프로젝트를 삭제할 수 있습니다. 삭제하면 클라이언트와 견적을 요청받은 분석파트너에게 알림이 갑니다.') + '</p>' +
         (s.ct ? '' : '<div><button type="button" class="btn del" id="aDel">삭제</button>' + (r.form && !r.demo ? '<a class="btn primary" href="omicspharm-register.html?edit=' + encodeURIComponent(r.id) + '&t=' + Date.now() + '">수정하기</a>' : '<button type="button" class="btn" disabled title="예시 의뢰는 수정할 수 없습니다 (직접 제출한 의뢰만)">수정하기</button>') + '</div>') + '</div>');
     bind(s);
+    // 견적 선택(라디오) → 표 아래 버튼이 그 견적에 적용됨
+    card.querySelectorAll('input[name="qpick"]').forEach(function (rd) { rd.addEventListener('change', function () { var k = rd.value, rv = card.querySelector('#qRev'), mk = card.querySelector('#qMk'); if (rv) { rv.disabled = false; rv.dataset.rev = k; } if (mk) { mk.disabled = false; mk.dataset.mk = k; } card.querySelector('#qSel').innerHTML = '<b>' + esc(F.partner(k).org) + '</b> 견적을 선택했습니다.'; }); });
     // 의뢰 전 상담 연결·해제 (클라이언트가 의뢰할 때 고르지 않았거나 잘못 고른 경우 컨설턴트가 고침)
     card.querySelectorAll('[data-unlink]').forEach(function (b) { b.addEventListener('click', function () { OP.consult.unlink(b.dataset.unlink); OP.toast('상담 연결을 해제했습니다.'); render(); }); });
     var pl = card.querySelector('#preLink');
@@ -1083,13 +1086,13 @@
     var rows = keys.map(function (k) {
       var x = s.P[k], p = F.partner(k), q = x.quote, sub = x.status === 'sub';
       return '<div class="r' + (s.pick === k ? ' win' : '') + '">' +
-        '<span title="' + (x.fwd ? '클라이언트 견적의 기준 견적' : '') + '">' + (x.fwd ? '✓' : '') + '</span>' +
+        (edit && sub ? '<span><input type="radio" name="qpick" value="' + esc(k) + '" aria-label="' + esc(p.org) + ' 견적 선택"></span>' : '<span title="' + (x.fwd ? '클라이언트 견적의 기준 견적' : '') + '">' + (x.fwd ? '✓' : '') + '</span>') + // 고른 견적에 아래 [수정 요청]·[클라이언트 견적서 만들기] (2026-10-28)
         '<div class="who"><b>' + esc(p.org) + (x.fwd ? ' <small class="qn">클라이언트 견적 기준</small>' : '') + '</b>' + (x.self || x.revN ? '<span>' + (x.self ? '<i class="src self">직접 신청</i>' : '') + (x.revN ? '수정 ' + x.revN + '회' : '') + '</span>' : '') + svcMiss(k) + '</div>' +
         '<div class="st">' + badge(k) + '</div>' +
         '<div class="amt">' + (sub ? F.money(F.total(q).final) + (k === low ? '<span class="hl">최저가</span>' : '') + '<small class="mobv">VAT 포함</small>' : '-') + (sub ? '<span class="mob">· ' + esc(q.weeks || '-') + '주</span>' : '') + '</div>' +
         '<div class="wk">' + (sub ? esc(q.weeks || '-') + '주' + (k === fast ? '<span class="hl">최단</span>' : '') : '-') + '</div>' +
         '<div class="dt">' + (x.subAt && sub ? md(x.subAt) : x.status === 'dec' ? md(x.dec.at) : '-') + '</div>' +
-        '<div class="act">' + (sub ? '<button type="button" class="btn" data-doc="' + k + '">견적서 보기</button>' + (edit ? '<button type="button" class="btn" data-rev="' + k + '">수정 요청</button>' : '') + (edit && !F.cqList(s).length ? '<button type="button" class="btn primary" data-mk="' + k + '">클라이언트 견적서 만들기</button>' : '') : x.status === 'rev' && edit ? '' : '') + '</div>' +
+        '<div class="act">' + (sub ? '<button type="button" class="btn-tx" data-doc="' + k + '">견적서 보기</button>' : '') + '</div>' +
         (x.status === 'rev' ? '<p class="note rev">수정 요청 · ' + md(x.rev.at) + ' — ' + esc(x.rev.note) + '</p>' : '') +
         (x.status === 'dec' ? '<p class="note">거절 사유 — ' + esc(x.dec.why) + '</p>' : '') +
       '</div>';
@@ -1098,7 +1101,8 @@
     return '<div class="blk" id="quotes">' +
       '<div class="blk-h"><h3>견적서 확인 <span style="color:var(--teal-600)">' + c.sub + '</span> / ' + c.all + '</h3>' + (edit || s.st === 'review' ? '<span class="aim">' + aiSum(s) + '<button type="button" class="btn primary" id="more"><img src="assets/common/ic-sparkle-fill-w.svg" alt="">AI 분석파트너 매칭</button></span>' : '') + '</div>' +
       '<div class="reqinfo"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>견적 마감</b> ' + dot(s.due || r.to) + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self; }).length + ' · 견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></div>' +
-      (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적 (VAT 포함)</span><span>소요</span><span>일자</span><span></span></div>' + rows + '</div>'
+      (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적 (VAT 포함)</span><span>소요</span><span>일자</span><span></span></div>' + rows + '</div>' +
+        (edit && subs.length ? '<div class="qbar"><span class="sel" id="qSel">견적을 선택하면 수정 요청하거나 클라이언트 견적서를 만들 수 있습니다.</span><button type="button" class="btn" id="qRev" disabled>수정 요청</button>' + (!F.cqList(s).length ? '<button type="button" class="btn primary" id="qMk" disabled>클라이언트 견적서 만들기</button>' : '') + '</div>' : '')
         : '<div class="qempty">아직 견적을 작성 중인 분석파트너가 없습니다.<br>인증 분석파트너는 프로젝트 찾기에서 직접 견적을 작성할 수 있고, [AI 분석파트너 매칭]에서 적합한 기관에 요청할 수도 있습니다.</div>') +
       cqHTML(s, edit, subs) +
       (s.msg && s.st !== 'quoting' ? '<div class="msg"><b>클라이언트에게 전달한 메시지 · ' + F.ymd(s.sentAt) + '</b>' + esc(s.msg) + '</div>' : '') +
