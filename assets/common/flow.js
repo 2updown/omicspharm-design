@@ -166,11 +166,11 @@
       S[a.id].P['p-mlt'] = { at: T0 - DAY * 28, status: 'sub', quote: genQuote(partner('p-mlt'), a), subAt: T0 - DAY * 22, fwd: true };
     }
     if (!S[b.id]) {
-      S[b.id] = { st: 'matched', ok: T0 - DAY * 59, reqAt: T0 - DAY * 58, due: '2026-08-14', memo: '', P: {}, sentAt: T0 - DAY * 50, pick: 'p-met', pickAt: T0 - DAY * 47,
+      S[b.id] = { st: 'matched', ok: T0 - DAY * 59, reqAt: T0 - DAY * 58, due: '2026-08-14', memo: '', P: {}, sentAt: T0 - DAY * 50, pick: ME_PARTNER, pickAt: T0 - DAY * 47,
         ct: { at: T0 - DAY * 44, due: '2026-10-10', client: { type: 'form' }, partner: { type: 'form' } },
         rep: [{ at: T0 - DAY * 6, files: ['분석결과보고서_국문_v1.pdf', '분석결과보고서_영문_v1.pdf', '결과이미지_v1.pdf', 'RawData.xlsx'] },
               { at: T0 - DAY * 1, files: ['분석결과보고서_국문_v2.pdf', '분석결과보고서_영문_v2.pdf', '결과이미지_v2.pdf', 'RawData.xlsx'], note: '요청하신 대로 그룹별 Boxplot을 추가하고, 통계 검정 방법을 Wilcoxon으로 바꿨습니다.' }] };
-      S[b.id].P['p-met'] = { at: T0 - DAY * 58, status: 'sub', quote: genQuote(partner('p-met'), b), subAt: T0 - DAY * 52, fwd: true };
+      S[b.id].P[ME_PARTNER] = { at: T0 - DAY * 58, status: 'sub', quote: genQuote(partner(ME_PARTNER), b), subAt: T0 - DAY * 52, fwd: true }; // 2026-10-28: 결과 재등록 요청을 분석파트너 데모 계정으로 볼 수 있게 세움분석센터로
     }
     var x = S['PRJ-2026-0045'] && S['PRJ-2026-0045'].P['p-omx'];
     if (x && x.quote && !x.hist) { var hq = genQuote(partner('p-omx'), req2('PRJ-2026-0045'), 1.06); hq.subAt = T0 - DAY * 4; x.hist = [{ quote: hq, at: T0 - DAY * 4 }]; x.ver2At = T0 - DAY; }
@@ -271,6 +271,8 @@
       if (x.status === 'sub') return x.fwd && s.st === 'sent' ? '클라이언트 검토 중' : '제출 완료';
       return { req: '작성 대기', draft: '임시저장', rev: '수정 요청', dec: '거절' }[x.status];
     },
+    // 분석파트너 화면용: 삭제된 프로젝트는 견적 상태와 상관없이 '프로젝트 삭제' (2026-10-28, 견적은 기록으로 남고 더 진행할 수 없음)
+    pstMe: function (s, k) { return s.cancel && s.P[k] ? '프로젝트 삭제' : F.pst(s, k); },
     // 분석파트너가 프로젝트 찾기에서 직접 견적 작성 시작 (컨설턴트 요청 없이)
     apply: function (id, k) {
       var r = req(id);
@@ -452,7 +454,7 @@
         if (r.updatedAt) L.push({ id: 'f-ed-' + r.id + r.updatedAt, k: '의뢰수정', cat: 'project', at: r.updatedAt, t: cl + '의 ' + nm + ' 의뢰서가 수정되었습니다. 변경 내용을 확인해주세요.', href: href });
         if (s.biz && s.biz.reAt) L.push({ id: 'f-biz-re-' + r.id + s.biz.reAt, k: '사업자등록증재제출', cat: 'project', at: s.biz.reAt, t: cl + '의 ' + nm + ' 의뢰 사업자등록증이 다시 제출되었습니다. 확인 후 승인처리 해주세요.', href: href });
         if (s.pick) L.push({ id: 'f-pick-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: josa(cl, '이', '가') + ' ' + nm + ' 프로젝트의 최종 견적을 확정 했습니다.', sub: '공급사: ' + partner(s.pick).org + ' · 클라이언트 견적금액: ' + won(total((F.cqLast(s) || {}).quote || s.P[s.pick].quote).final), href: href });
-        (s.raw || []).forEach(function (x, i) { L.push({ id: 'f-raw-' + r.id + i, k: '결과등록', cat: 'project', at: x.at, t: josa(partner(s.pick).org, '이', '가') + ' ' + nm + ' 프로젝트의 ' + (i + 1) + '차 분석 결과를 등록했습니다. AI 보고서 초안을 검토해주세요.', href: href }); });
+        (s.raw || []).filter(function (x) { return x.by !== 'admin'; }).forEach(function (x, i) { L.push({ id: 'f-raw-' + r.id + i, k: '결과등록', cat: 'project', at: x.at, t: josa(partner(s.pick).org, '이', '가') + ' ' + nm + ' 프로젝트의 ' + (i + 1) + '차 분석 결과를 등록했습니다. AI 보고서 초안을 검토해주세요.', href: href }); });
         if (s.cancel) L.push({ id: 'f-cancel-' + r.id, k: '의뢰취소', cat: 'project', at: s.cancel.at, t: s.cancel.by === 'admin' ? nm + ' 프로젝트를 삭제했습니다.' : cl + '의 ' + nm + ' 프로젝트가 삭제되었습니다.', sub: s.cancel.reason ? '사유: ' + s.cancel.reason : '', href: href });
         if (s.rate) L.push({ id: 'f-rate-' + r.id, k: '리뷰등록', cat: 'project', at: s.rate.at, t: cl + '의 ' + nm + ' 프로젝트에 만족도 평가(별점 ' + s.rate.star + '점)가 등록되었습니다.', href: href });
         if (s.fin) L.push({ id: 'f-fin-' + r.id, k: '프로젝트완료', cat: 'project', at: s.fin, t: josa(cl, '이', '가') + ' ' + nm + ' 결과보고서를 최종 승인해 프로젝트가 완료되었습니다.', href: href });
@@ -461,6 +463,7 @@
         var qh = 'mypage-quote.html?rid=' + encodeURIComponent(r.id);
         if (r.updatedAt && r.updatedAt > x.at) L.push({ id: 'f-ed-' + r.id + r.updatedAt, k: '의뢰수정', cat: 'project', at: r.updatedAt, t: nm + ' 프로젝트의 의뢰 내용이 수정되었습니다. 견적서 작성 전 변경 내용을 확인해주세요.', href: qh });
         if (s.ct && s.pick === ses.email) L.push({ id: 'f-ct-' + r.id, k: '계약', cat: 'project', at: s.ct.at, t: nm + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
+        if (s.pick === ses.email) (s.raw || []).concat(s.reReq ? [{ req: s.reReq }] : []).forEach(function (v) { if (v.req) L.push({ id: 'f-rereq-' + r.id + v.req.at, k: '결과재등록요청', cat: 'project', at: v.req.at, t: nm + ' 프로젝트의 분석 결과를 다시 등록해주세요.', sub: v.req.note, href: 'mypage-project.html?id=' + encodeURIComponent(r.id) }); });
         if (s.fin && s.pick === ses.email) L.push({ id: 'f-fin-' + r.id, k: '프로젝트완료', cat: 'project', at: s.fin, t: nm + ' 프로젝트가 완료되었습니다. 클라이언트가 결과보고서를 최종 승인했습니다.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
         if (s.cancel) L.push({ id: 'f-cancel-' + r.id, k: '의뢰취소', cat: 'project', at: s.cancel.at, t: nm + ' 프로젝트가 삭제되어 견적 요청이 종료되었습니다.', href: 'mypage-quote.html' });
         if (!x.self) L.push({ id: 'f-req-' + r.id, k: '견적제안', cat: 'project', at: x.at, t: nm + ' 프로젝트 검토 후 견적서를 작성해주세요.', sub: '견적 마감일: ' + (s.due ? s.due.replace(/-/g, '.') : '-'), href: qh });
@@ -691,7 +694,12 @@
   // 분석파트너: 분석 결과를 올림 (raw 파일·워드 등 형식 무관). AI는 보이지 않음
   // 컨설턴트: 올라온 결과마다 AI 보고서 초안(워드)이 자동 생성 → 초안 내려받아 검토·수정 → 수정본 업로드(선택) → PDF 등록 → 클라이언트에 전달 (= s.rep, 클라이언트 결과보고서 차수)
   // 클라이언트: 전달된 PDF만 봄 (mypage-project.html 결과보고서). 최종 확인 = 프로젝트 완료
-  F.repRaw = function (id, files) { return put(id, function (s) { s.raw = (s.raw || []).concat([{ at: Date.now(), files: files, ai: '결과보고서_AI초안_' + String(id).replace(/^PRJ-/, '') + '_v' + ((s.raw || []).length + 1) + '.docx' }]); }); };
+  F.repRaw = function (id, files) { return put(id, function (s) { var x = { at: Date.now(), files: files, ai: '결과보고서_AI초안_' + String(id).replace(/^PRJ-/, '') + '_v' + ((s.raw || []).length + 1) + '.docx' }; if (s.reReq) { x.req = s.reReq; delete s.reReq; } s.raw = (s.raw || []).concat([x]); }); };
+  // 2차 이후 결과보고서 (2026-10-28): 클라이언트 [최종 승인] 전까지 횟수 제한 없음. 클라이언트 수정 요청은 [문의하기]로 컨설턴트에게
+  // ① 컨설턴트가 직접 수정 → by:'admin' 항목(파트너 파일 없음)을 만들어 같은 순서(수정본 → PDF → 전달)로 보냄. 분석파트너에게는 보이지 않음
+  // ② 분석을 다시 해야 하면 분석파트너에게 결과 재등록 요청(s.reReq) → 파트너 결과 등록 칸이 다시 열림 → 올리면 새 AI 초안
+  F.repSelf = function (id) { return put(id, function (s) { var L = s.raw || [], p = L[L.length - 1] || {}; s.raw = L.concat([{ at: Date.now(), files: [], by: 'admin', ai: p.edit || p.ai || '' }]); }); };
+  F.repAsk = function (id, note) { return put(id, function (s) { s.reReq = { at: Date.now(), note: note }; }); };
   F.repSet = function (id, i, k, v) { return put(id, function (s) { s.raw[i][k] = v; }); };
   F.repSend = function (id, i, note) { return put(id, function (s) { var x = s.raw[i]; s.rep = (s.rep || []).concat([{ at: Date.now(), files: [x.pdf], note: note || '' }]); x.sent = Date.now(); x.repN = s.rep.length; }); };
   // 분석파트너별 만족도 (컨설턴트만 봄): 완료 프로젝트의 클라이언트 별점 평균. 예시 파트너는 이전 실적(DEMO_RATE)을 함께 반영
@@ -704,33 +712,38 @@
   };
   var RP_STAGE = {}; // 분석파트너가 고른(아직 등록 전) 파일 이름, 프로젝트별
   F.repSec = function (id, role) {
-    var s = state(id), raw = s.raw || [], rep = s.rep || [], adm = role === 'admin', fin = !!s.fin;
+    var s = state(id), raw = s.raw || [], rep = s.rep || [], adm = role === 'admin', fin = !!s.fin, ask = !fin && s.reReq;
+    var pn = function (i) { return raw.slice(0, i + 1).filter(function (v) { return v.by !== 'admin'; }).length; }; // 분석파트너 결과 차수 (컨설턴트 직접 수정은 세지 않음)
     var files = function (L) { return '<ul class="rp-files">' + L.map(function (n) { return '<li><img src="assets/auth/ic-paperclip.svg" alt="">' + esc(n) + '</li>'; }).join('') + '</ul>'; };
     var h = '<section class="rp" data-rp-id="' + esc(id) + '"><div class="rp-h"><h3>결과보고서</h3>' + (adm ? '<span class="rp-ai"><img src="assets/common/ic-sparkle-fill.svg" alt="">보고서 에이전트</span>' : '') + '</div>';
     if (!adm) {
-      // 지금은 1차 결과만 (2·3차 흐름은 미정): 한 번 등록하면 등록 칸을 닫음
-      h += (fin || raw.length ? '' : '<div class="rp-up"><div><b>분석 결과 등록</b><p>raw 파일, 워드 결과 등 형식에 상관없이 올려 주세요. OmicsPharm이 검토해 결과보고서로 클라이언트에게 전달합니다.</p></div>' +
+      // 한 번 등록하면 등록 칸을 닫고, 컨설턴트가 결과 재등록을 요청하면 다시 엶 (2026-10-28)
+      var mine = raw.filter(function (v) { return v.by !== 'admin'; });
+      h += (fin || (mine.length && !ask) ? '' : '<div class="rp-up"><div><b>' + (ask ? (mine.length + 1) + '차 결과 등록' : '분석 결과 등록') + '</b><p>' + (ask ? '요청 내용을 반영해 분석 결과를 다시 올려 주세요. 형식은 상관없습니다.' : 'raw 파일, 워드 결과 등 형식에 상관없이 올려 주세요. OmicsPharm이 검토해 결과보고서로 클라이언트에게 전달합니다.') + '</p></div>' +
         '<div class="rp-up-act"><label class="btn">파일 선택<input type="file" multiple hidden data-rp-pick></label></div>' +
         // 고른 파일은 목록에 쌓이고(✕로 빼기), [결과 등록]이 최종 버튼
         (RP_STAGE[id] && RP_STAGE[id].length ? '<ul class="rp-stage">' + RP_STAGE[id].map(function (n, j) { return '<li><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(n) + '</span><button type="button" data-rp="rm" data-j="' + j + '" aria-label="' + esc(n) + ' 빼기">✕</button></li>'; }).join('') + '</ul>' : '') +
         '<div class="rp-up-go"><button type="button" class="btn primary" data-rp="raw"' + (RP_STAGE[id] && RP_STAGE[id].length ? '' : ' disabled') + '>결과 등록</button></div></div>');
-      h += raw.length ? raw.map(function (x, i) {
-        return '<div class="rp-item"><div class="rp-ih"><b>' + (i + 1) + '차 결과</b><em>' + ymd(x.at) + ' 등록</em><span class="badge ' + (x.sent ? 'done">클라이언트 전달 완료' : 'state">OmicsPharm 검토 중') + '</span></div>' + files(x.files) + '</div>';
-      }).reverse().join('') + (fin ? '' : '<p class="rp-more">결과를 다시 보내야 하면 [문의하기]로 OmicsPharm에 알려 주세요.</p>') : '';
+      h += mine.length ? mine.map(function (x, i) {
+        return '<div class="rp-item"><div class="rp-ih"><b>' + (i + 1) + '차 결과</b><em>' + ymd(x.at) + ' 등록</em><span class="badge ' + (x.sent ? 'done">클라이언트 전달 완료' : 'state">OmicsPharm 검토 중') + '</span></div>' + files(x.files) + (x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '') + '</div>';
+      }).reverse().join('') + (fin || ask ? '' : '<p class="rp-more">결과를 다시 보내야 하면 [문의하기]로 OmicsPharm에 알려 주세요.</p>') : '';
       return h + '</section>';
     }
     if (!raw.length) h += '<div class="rp-empty">분석파트너가 결과를 등록하면 AI가 결과보고서 초안(워드)을 만들어 여기에 보여 드립니다.' + (fin ? '' : '<button type="button" class="tbtn primary" data-rp="demo">데모: 분석파트너 결과 등록</button>') + '</div>';
     h += raw.map(function (x, i) {
       var step = x.sent ? 3 : x.pdf ? 2 : 1;
-      return '<div class="rp-item" data-rp-i="' + i + '"><div class="rp-ih"><b>' + (i + 1) + '차 결과</b><em>' + esc(partner(s.pick).org) + ' · ' + ymd(x.at) + ' 등록</em>' + (x.sent ? '<span class="badge done">' + x.repN + '차 보고서로 전달 완료</span>' : '<span class="badge wait">검토 대기</span>') + '</div>' + files(x.files) +
-        '<div class="rp-agent"><div class="rp-ah"><img src="assets/common/ic-sparkle-fill.svg" alt=""><b>AI 보고서 초안</b><span class="badge state">생성 완료</span></div>' +
+      return '<div class="rp-item" data-rp-i="' + i + '"><div class="rp-ih"><b>' + (x.by === 'admin' ? '컨설턴트 직접 수정' : pn(i) + '차 결과') + '</b><em>' + (x.by === 'admin' ? '' : esc(partner(s.pick).org) + '<i class="dv" aria-hidden="true"></i>') + ymd(x.at) + (x.by === 'admin' ? ' 시작' : ' 등록') + '</em>' + (x.sent ? '<span class="badge done">' + x.repN + '차 보고서로 전달 완료</span>' : '<span class="badge wait">' + (x.by === 'admin' ? '전달 전' : '검토 대기') + '</span>') + '</div>' + (x.files.length ? files(x.files) : '') + (x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '') +
+        (x.by === 'admin' ? '<div class="rp-agent"><div class="rp-ah"><b>보고서 수정</b></div>' : '<div class="rp-agent"><div class="rp-ah"><img src="assets/common/ic-sparkle-fill.svg" alt=""><b>AI 보고서 초안</b><span class="badge state">생성 완료</span></div>') +
         '<ol class="rp-steps">' +
-          '<li class="' + (step > 1 ? 'done' : 'cur') + '"><div><b>초안 검토·수정</b><p>초안을 내려받아 검토하고, 고친 워드를 올려 두세요(선택).</p></div><div class="rp-act"><button type="button" class="btn" data-rp="dl">' + esc(x.ai) + '</button>' + (x.sent ? '' : '<label class="btn">수정본 업로드<input type="file" accept=".doc,.docx" hidden data-rp-file="edit"></label>') + (x.edit ? '<span class="rp-fn">' + esc(x.edit) + '</span>' : '') + '</div></li>' +
+          '<li class="' + (step > 1 ? 'done' : 'cur') + '"><div><b>' + (x.by === 'admin' ? '워드 수정' : '초안 검토, 수정') + '</b><p>' + (x.by === 'admin' ? '지난 보고서 원본을 내려받아 고치고, 고친 워드를 올려 두세요(선택).' : '초안을 내려받아 검토하고, 고친 워드를 올려 두세요(선택).') + '</p></div><div class="rp-act"><button type="button" class="btn" data-rp="dl">' + esc(x.ai) + '</button>' + (x.sent ? '' : '<label class="btn">수정본 업로드<input type="file" accept=".doc,.docx" hidden data-rp-file="edit"></label>') + (x.edit ? '<span class="rp-fn">' + esc(x.edit) + '</span>' : '') + '</div></li>' +
           '<li class="' + (step > 2 ? 'done' : step === 2 ? 'cur' : '') + '"><div><b>PDF 등록</b><p>클라이언트에게 전달할 최종본은 PDF로 올려 주세요.</p></div><div class="rp-act">' + (x.sent ? '' : '<label class="btn">PDF 선택<input type="file" accept=".pdf" hidden data-rp-file="pdf"></label>') + (x.pdf ? '<span class="rp-fn">' + esc(x.pdf) + '</span>' : '') + '</div></li>' +
           '<li class="' + (step > 2 ? 'done' : '') + '"><div><b>클라이언트에 전달</b><p>전달하면 클라이언트 결과보고서에 ' + (rep.length + (x.sent ? 0 : 1)) + '차로 등록되고 알림이 갑니다.</p></div><div class="rp-act">' + (x.sent ? '<span class="rp-fn">' + ymd(x.sent) + ' 전달</span>' : '<button type="button" class="btn primary" data-rp="send"' + (x.pdf ? '' : ' disabled') + '>클라이언트에 전달</button>') + '</div></li>' +
         '</ol></div></div>';
     }).reverse().join('');
-    if (rep.length) h += '<div class="rp-sent"><b>클라이언트 결과보고서</b><span>' + rep.length + '차까지 전달 · ' + (fin ? '클라이언트 최종 승인 (' + ymd(s.fin) + ')' : '클라이언트 검수 대기') + '</span></div>';
+    if (rep.length) h += '<div class="rp-sent"><b>클라이언트 결과보고서</b><span>' + rep.length + '차까지 전달<i class="dv" aria-hidden="true"></i>' + (fin ? '클라이언트 최종 승인 (' + ymd(s.fin) + ')' : '클라이언트 검수 대기') + '</span></div>';
+    var last = raw[raw.length - 1];
+    if (!fin && ask) h += '<div class="rp-next"><div><b>분석파트너에게 결과 재등록을 요청했습니다.</b><p>' + ymd(s.reReq.at) + ' 요청<i class="dv" aria-hidden="true"></i>' + esc(s.reReq.note) + '</p></div></div>';
+    else if (!fin && last && last.sent) h += '<div class="rp-next"><div><b>보고서를 다시 보내야 하나요?</b><p>클라이언트의 수정 요청은 프로젝트 문의로 들어옵니다. 직접 고칠 수 있으면 [직접 수정해서 보내기], 분석을 다시 해야 하면 [결과 재등록 요청]을 눌러주세요.</p></div><div class="rp-act"><button type="button" class="btn" data-rp="self">직접 수정해서 보내기</button><button type="button" class="btn" data-rp="ask">결과 재등록 요청</button></div></div>';
     // 클라이언트 만족도 평가: 지금은 컨설턴트만 봄 (분석파트너 공개는 미정). 별점·후기는 프로젝트별로 모아 두고 나중에 매칭·AI에 활용
     if (fin) h += s.rate ? '<div class="rp-rate"><div class="rp-rh"><b>클라이언트 만족도 평가</b><span class="rp-stars" aria-label="별점 ' + s.rate.star + '점">' + [1, 2, 3, 4, 5].map(function (i) { return '<img src="assets/project/ic-star' + (i <= s.rate.star ? '-fill' : '') + '.svg" alt="">'; }).join('') + '</span><em>' + ymd(s.rate.at) + ' 제출</em></div>' + (s.rate.text ? '<p>' + esc(s.rate.text) + '</p>' : '<p class="none">남긴 의견이 없습니다.</p>') + '<span class="rp-note">컨설턴트만 볼 수 있습니다.</span></div>'
       : '<div class="rp-rate"><div class="rp-rh"><b>클라이언트 만족도 평가</b></div><p class="none">' + (s.rateSkip ? '클라이언트가 평가를 건너뛰었습니다. (' + ymd(s.rateSkip) + ')' : '아직 평가가 등록되지 않았습니다.') + '</p></div>';
@@ -754,13 +767,15 @@
     if (a === 'rm') { RP_STAGE[id].splice(+b.dataset.j, 1); if (F.repRedraw) F.repRedraw(); return; }
     if (a === 'raw') {
       var L = RP_STAGE[id] || []; if (!L.length) return;
-      F.ask({ title: '분석 결과를 등록할까요?', desc: '선택한 파일 ' + L.length + '개를 1차 결과로 제출합니다. 제출한 뒤에는 파일을 바꾸거나 추가할 수 없으며, OmicsPharm이 검토해 클라이언트에게 전달합니다.', label: false, yes: '등록하기' }, function () {
+      F.ask({ title: '분석 결과를 등록할까요?', desc: '선택한 파일 ' + L.length + '개를 ' + ((state(id).raw || []).filter(function (v) { return v.by !== 'admin'; }).length + 1) + '차 결과로 제출합니다. 제출한 뒤에는 파일을 바꾸거나 추가할 수 없으며, OmicsPharm이 검토해 클라이언트에게 전달합니다.', label: false, yes: '등록하기' }, function () {
         F.repRaw(id, L.slice()); RP_STAGE[id] = []; OP.toast('분석 결과를 등록했습니다. OmicsPharm이 검토 후 클라이언트에게 전달합니다.'); if (F.repRedraw) F.repRedraw();
       });
       return;
     }
     if (a === 'demo') { F.repRaw(id, ['RawData_' + String(id).replace(/^PRJ-/, '') + '.zip', '분석결과_정리.docx']); OP.toast('데모: 분석파트너가 결과를 등록했습니다. AI 보고서 초안이 생성되었습니다.'); if (F.repRedraw) F.repRedraw(); }
-    if (a === 'dl') OP.toast('데모: AI 보고서 초안(워드)이 내려받아집니다.');
+    if (a === 'dl') OP.toast('데모: 보고서 워드 파일이 내려받아집니다.');
+    if (a === 'self') { F.repSelf(id); OP.toast('보고서 수정 항목을 만들었습니다. 고친 PDF를 등록해 전달해주세요.'); if (F.repRedraw) F.repRedraw(); }
+    if (a === 'ask') F.ask({ title: '분석파트너에게 결과 재등록을 요청할까요?', desc: partner(state(id).pick).org + '에 알림이 가고, 분석파트너 화면에 결과 등록 칸이 다시 열립니다.', label: '요청 내용', ph: '예) 클라이언트가 그룹별 Boxplot 추가와 통계 검정 방법 변경(Wilcoxon)을 요청했습니다. 반영해 결과를 다시 올려 주세요.', required: true, yes: '요청하기' }, function (v) { F.repAsk(id, v); OP.toast('분석파트너에게 결과 재등록을 요청했습니다.'); if (F.repRedraw) F.repRedraw(); });
     if (a === 'send') F.ask({ title: '클라이언트에게 결과보고서를 전달할까요?', desc: '등록한 PDF가 클라이언트 결과보고서에 등록되고 알림이 갑니다.', label: '클라이언트에게 남길 메모 (선택)', ph: '예) 요청하신 그룹별 Boxplot을 추가했습니다.', yes: '전달하기' }, function (v) { F.repSend(id, i, v); OP.toast('클라이언트에게 결과보고서를 전달했습니다.'); if (F.repRedraw) F.repRedraw(); });
   });
 

@@ -7,12 +7,12 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zi">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zi">
-<script src="assets/common/site.js?v=20261028zi"></script>
-<script src="assets/common/consult.js?v=20261028zi"></script>
-<script src="assets/common/mypage.js?v=20261028zi"></script>
-<script src="assets/common/flow.js?v=20261028zi"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zl">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zl">
+<script src="assets/common/site.js?v=20261028zl"></script>
+<script src="assets/common/consult.js?v=20261028zl"></script>
+<script src="assets/common/mypage.js?v=20261028zl"></script>
+<script src="assets/common/flow.js?v=20261028zl"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -188,12 +188,12 @@
     cells = F.CLIENT_STEPS.map(function (t) { return [t, P.filter(function (p) { return F.clientStage(p.id) === t; }).length, 'mypage-project.html?stage=' + encodeURIComponent(t)]; });
   } else {
     // 분석파트너: 견적(요청·제출) → 프로젝트 진행 → 보고서(등록·검토·승인) → 완료. 모두 프로젝트 관리 목록의 단계
-    var IN = OP.canQuote() ? F.inbox(me.s.email).map(function (o) { return F.pst(o.s, me.s.email); }) : [];
+    var IN = OP.canQuote() ? F.inbox(me.s.email).map(function (o) { return F.pstMe(o.s, me.s.email); }) : [];
     var cnt = function (re) { return IN.filter(function (t) { return re.test(t); }).length; };
     cells = [['견적 요청', cnt(/작성 대기|임시저장|수정 요청/), 'mypage-project.html?stage=' + encodeURIComponent('견적 요청'), '', true],
              ['견적 제출', cnt(/제출 완료|클라이언트 검토 중/), 'mypage-project.html?stage=' + encodeURIComponent('견적 제출')]]
       .concat(D.P4.map(function (t, i) { return [t, PP.filter(function (p) { return D.pStage(p) === t; }).length, 'mypage-project.html?stage=' + encodeURIComponent(t)]; }));
-    var ended = cnt(/미선정|거절/);
+    var ended = cnt(/미선정|거절|프로젝트 삭제/);
     if (ended) $('#flow').insertAdjacentHTML('afterend', '<a class="flow-end" href="mypage-project.html?stage=' + encodeURIComponent('미선정·거절') + '">미선정·거절 ' + ended + '건 ›</a>');
   }
   // 묶음: 클라이언트 = 견적(의뢰접수·의뢰승인·견적 확인) / 진행(계약 진행 중·분석 진행 중) / 보고서(보고서 검토) / 완료(프로젝트 완료)
@@ -224,7 +224,7 @@
     // 분석파트너: 견적 작성이 필요한 요청 + 계약된 프로젝트 (분석 중이면 결과 등록)
     var MY = me.s.email;
     IT = (OP.canQuote() ? F.inbox(MY) : []).map(function (o) {
-      var t = F.pst(o.s, MY); if (!/작성 대기|임시저장|수정 요청/.test(t)) return null;
+      var t = F.pstMe(o.s, MY); if (!/작성 대기|임시저장|수정 요청/.test(t)) return null;
       return { href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, st: '견적 요청', stCls: 'wait', title: o.r.title, sub: o.r.org || '-', next: t === '수정 요청' ? '견적 수정 필요' : t === '임시저장' ? '이어서 작성 필요' : '견적 작성 필요', urgent: true, at: o.x.at };
     }).filter(Boolean).concat(PP.map(function (p) {
       // 오른쪽 할 일·기다림 = 프로젝트 관리 목록(pNext)과 같은 이름

@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zi">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zi">
-<script src="assets/common/site.js?v=20261028zi"></script>
-<script src="assets/common/consult.js?v=20261028zi"></script>
-<script src="assets/common/mypage.js?v=20261028zi"></script>
-<script src="assets/common/flow.js?v=20261028zi"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zl">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zl">
+<script src="assets/common/site.js?v=20261028zl"></script>
+<script src="assets/common/consult.js?v=20261028zl"></script>
+<script src="assets/common/mypage.js?v=20261028zl"></script>
+<script src="assets/common/flow.js?v=20261028zl"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -389,22 +389,23 @@
     var D = OP.my, ADM = OP.session().role === 'admin', STAGES = ADM ? D.P_STAGES : D.P4, ALL = D.partnerProjects();
     var SG = function (x) { return x.kind === 'q' || ADM ? x.stage : D.pStage(x); };
     // 분석파트너 목록 = 견적 단계 + 프로젝트 단계 (2026-10-27: 견적관리 메뉴를 합침). 견적 건은 견적서 화면(mypage-quote.html)으로 이어짐
-    var Q_ST = { '작성 대기': '견적 요청', '임시저장': '견적 요청', '수정 요청': '견적 요청', '제출 완료': '견적 제출', '클라이언트 검토 중': '견적 제출', '미선정': '미선정·거절', '거절': '미선정·거절' }; // 선정 = 프로젝트(계약 진행 중)로 넘어감
+    var Q_ST = { '작성 대기': '견적 요청', '임시저장': '견적 요청', '수정 요청': '견적 요청', '제출 완료': '견적 제출', '클라이언트 검토 중': '견적 제출', '미선정': '미선정·거절', '거절': '미선정·거절', '프로젝트 삭제': '미선정·거절' }; // 선정 = 프로젝트(계약 진행 중)로 넘어감
     var Q_SB = { '견적 요청': 'wait', '견적 제출': 'state', '미선정·거절': 'done' }; // 견적 단계 배지 (프로젝트 단계 이름)
     // 세부 상태 → 오른쪽 할 일: ['btn', 이름] = 버튼, ['txt', 이름] = 회색 글자
-    var Q_NX = { '작성 대기': ['btn', '견적 작성'], '임시저장': ['btn', '이어서 작성'], '수정 요청': ['btn', '견적 수정'], '제출 완료': ['txt', 'OmicsPharm 검토 중'], '클라이언트 검토 중': ['txt', '클라이언트 검토 중'], '미선정': ['txt', '미선정'], '거절': ['txt', '거절'] };
+    var Q_NX = { '작성 대기': ['btn', '견적 작성'], '임시저장': ['btn', '이어서 작성'], '수정 요청': ['btn', '견적 수정'], '제출 완료': ['txt', 'OmicsPharm 검토 중'], '클라이언트 검토 중': ['txt', '클라이언트 검토 중'], '미선정': ['txt', '미선정'], '거절': ['txt', '거절'], '프로젝트 삭제': ['txt', '프로젝트 삭제'] };
     var nextHTML = function (n) { return !n ? '' : n[0] === 'btn' ? '<span class="btn line nxb">' + n[1] + '</span>' : '<span class="nx">' + n[1] + '</span>'; };
     var pNext = function (x) { // 계약 이후 프로젝트 (분석파트너)
       var ps = D.pStage(x), fs = x.flow ? OP.flow.state(x.id) : null;
+      if (fs && fs.reReq && !fs.fin) return ['btn', '결과 재등록'];
       if (ps === '계약 진행 중') return ['txt', x.flow && !fs.ct ? '계약서 준비 중' : '계약서 확인'];
       if (ps === '분석 진행 중') return x.flow && (fs.raw || []).length ? ['txt', 'OmicsPharm 검토 중'] : ['btn', '결과 등록'];
       if (ps === '보고서 등록') return ['txt', 'OmicsPharm 검토 중'];
       if (ps === '보고서 검토') return ['txt', '클라이언트 확인 중'];
       return null;
     };
-    var Q_B = { '작성 대기': 'wait', '임시저장': 'wait', '수정 요청': 'wait', '제출 완료': 'state', '클라이언트 검토 중': 'state', '미선정': 'done', '거절': 'done' };
+    var Q_B = { '작성 대기': 'wait', '임시저장': 'wait', '수정 요청': 'wait', '제출 완료': 'state', '클라이언트 검토 중': 'state', '미선정': 'done', '거절': 'done', '프로젝트 삭제': 'done' };
     var QL = !ADM && OP.canQuote() ? OP.flow.inbox(OP.session().email).map(function (o) {
-      var t = OP.flow.pst(o.s, OP.session().email); if (!Q_ST[t]) return null;
+      var t = OP.flow.pstMe(o.s, OP.session().email); if (!Q_ST[t]) return null;
       return { kind: 'q', id: o.r.id, href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, title: o.r.title, client: o.r.org || '-', samples: o.r.samples || '-', stage: Q_ST[t], pst: t, due: o.s.due, at: o.x.at || o.r.at, self: o.x.self };
     }).filter(Boolean) : [];
     var routeOf = function (x) { var p = x.flow && OP.flow.state(x.id).P[OP.session().email]; return !!(p && p.self); }; // 직접 신청 = 프로젝트 찾기에서 직접 견적을 보낸 건
@@ -451,6 +452,9 @@
         '보고서 검토': ['클라이언트가 보고서를 확인하고 있습니다', '클라이언트가 최종 승인하면 프로젝트가 완료됩니다.', '', 'gray'],
         '프로젝트 완료': ['프로젝트가 완료되었습니다', '수고하셨습니다.', '', '']
       }[x.stage];
+      // 컨설턴트가 결과 재등록을 요청함 (2026-10-28): 결과 등록 칸이 다시 열림
+      var RQ = x.flow && FS && !FS.fin && FS.reReq;
+      if (RQ && !ADM) TODO = ['OmicsPharm이 결과 재등록을 요청했습니다', esc(RQ.note) + '\n아래 결과보고서에서 분석 결과를 다시 올려 주세요.', '', 'warn'];
       $('#project').outerHTML =
         '<div class="phead">' +
           '<div class="prow"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stBadge(x) + '</div>' +
@@ -628,7 +632,7 @@
   var dd = function (v) { var n = Math.ceil((new Date(v) - new Date(new Date().toDateString())) / 864e5); return isNaN(n) ? '-' : n > 0 ? 'D-' + n : n === 0 ? 'D-Day' : 'D+' + -n; };
   if (FK.length && FS.st === 'sent') { $('#qCnt').hidden = false; $('#qCnt').textContent = FK.length; }
   function todoHTML() {
-    if (FS.cancel) return '<div class="ftodo gray"><div><b>삭제된 프로젝트입니다.</b><p>' + esc(ymd(FS.cancel.at) + ' 삭제' + (FS.cancel.reason ? ' · 사유: ' + FS.cancel.reason : '') + '\n견적을 요청받은 분석파트너에게 알림이 전달되었고, 프로젝트 찾기에서 내려갔습니다.') + '</p></div></div>';
+    if (FS.cancel) return '<div class="ftodo gray"><div><b>삭제된 프로젝트입니다.</b><p>' + esc(ymd(FS.cancel.at) + ' 삭제' + (FS.cancel.reason ? '\n사유: ' + FS.cancel.reason : '') + '\n견적을 요청받은 분석파트너에게 알림이 전달되었고, 프로젝트 찾기에서 내려갔습니다.') + '</p></div></div>';
     var n = Object.keys(FS.P).length;
     var T = {
       review: FS.ok ? ['', '의뢰가 승인되어 등록되었습니다.', 'OmicsPharm 컨설턴트가 의뢰에 맞는 분석파트너를 선정해 견적을 요청해드립니다.', '']
