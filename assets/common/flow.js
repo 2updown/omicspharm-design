@@ -668,7 +668,8 @@
     // 3. 분석 서비스: 프로젝트 의뢰 때 입력한 '분석 상세' 단계 값(조건부 Targeted·PTM 등 포함) + 요청 기술만, 원본 의뢰서처럼 [구분 | 항목 | 입력값]
     var TITLE = { '단백체': '단백체 분석 (Proteomics)', '대사체': '대사체 분석 (Metabolomics)', '유전체': '유전체 분석 (Genomics)', '전사체': '전사체 분석 (Transcriptomics)', 'Olink': 'Olink 분석', '바이오의약품': '바이오의약품·ADC 분석' };
     var tk = Object.keys(TITLE).filter(function (t) { return String(r.svc).indexOf(t) > -1; })[0];
-    var SUB = ['Targeted', 'Untargeted', '표적 단백체', '비표적 대사체', '표적 대사체', 'PTM', 'ADC 상세 정보'] // Targeted·Untargeted는 예전에 저장된 의뢰용, TECH = /^(시료 전처리 기술|분석 기술|희망 장비|요청 기술)/;
+    // SUB의 Targeted·Untargeted는 예전에 저장된 의뢰용
+    var SUB = ['Targeted', 'Untargeted', '표적 단백체', '비표적 대사체', '표적 대사체', 'PTM', 'ADC 상세 정보'], TECH = /^(시료 전처리 기술|분석 기술|희망 장비|요청 기술)/;
     var groups = (r.sections || []).filter(function (sec) { return sec.rows && (/^분석 서비스/.test(sec.title) || SUB.indexOf(sec.title) > -1); })
       .map(function (sec) { return [/^분석 서비스/.test(sec.title) ? String(r.svc).replace(/·ADC$/, '') : sec.title, sec.rows.filter(function (x) { return !TECH.test(x[0]); })]; });
     var tech = []; (r.sections || []).forEach(function (sec) { (sec.rows || []).forEach(function (x) { if (TECH.test(x[0])) tech.push(x); }); });

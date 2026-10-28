@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zw">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zw">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261028zw">
-<script src="assets/common/site.js?v=20261028zw"></script>
-<script src="assets/common/consult.js?v=20261028zw"></script>
-<script src="assets/common/mypage.js?v=20261028zw"></script>
-<script src="assets/common/svc-spec.js?v=20261028zw"></script>
-<script src="assets/common/flow.js?v=20261028zw"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zy">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zy">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261028zy">
+<script src="assets/common/site.js?v=20261028zy"></script>
+<script src="assets/common/consult.js?v=20261028zy"></script>
+<script src="assets/common/mypage.js?v=20261028zy"></script>
+<script src="assets/common/svc-spec.js?v=20261028zy"></script>
+<script src="assets/common/flow.js?v=20261028zy"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -917,12 +917,12 @@
     }
     var b = ctBase(s), d = s.ctDraft || {}, v = function (k) { return d[k] != null ? d[k] : b[k]; };
     var sideHTML = function (side, t, who, other) {
-      var c = d[side] || {}, file = c.type === 'file';
+      var c = d[side] || {};
       return '<div class="ctside" data-side="' + side + '"><h4>■ ' + t + ' <span style="font-weight:400;font-size:13px;color:var(--gray-500)">' + esc(who) + '</span></h4>' +
         '<p class="note">※ <b>' + t + ' 계약서 파일</b>을 등록하는 항목입니다. ' + other + ' 계약서와 혼동되지 않도록 확인 후 저장해 주세요.</p>' +
         '<div class="ctf">' +
-          '<div class="r"><b>' + t + ' 계약서<i>*</i></b><div><div class="row"><span class="opt"><label><input type="radio" name="ct-' + side + '" value="form"' + (file ? '' : ' checked') + '>기본 양식</label><label><input type="radio" name="ct-' + side + '" value="file"' + (file ? ' checked' : '') + '>기관 양식 업로드</label></span>' +
-            '<span class="act"><button type="button" class="btn" data-pv="' + side + '">미리보기</button><label class="btn up" hidden>파일 선택<input type="file" accept=".pdf,.doc,.docx,.hwp,.hwpx" hidden></label><span class="fn" hidden data-saved="' + esc(c.name || '') + '">선택된 파일 없음</span></span></div>' +
+          // 계약서 (2026-10-28): 파일 업로드 하나로. 기본 양식(셀키 분석서비스 의뢰서 + 별첨 견적서)은 이 프로젝트 정보로 채워 내려받은 뒤 서명본을 올림
+          '<div class="r"><b>' + t + ' 계약서<i>*</i></b><div><div class="row"><label class="btn up">파일 선택<input type="file" accept=".pdf,.doc,.docx,.hwp,.hwpx" hidden></label><span class="fn" data-saved="' + esc(c.name || '') + '">선택된 파일 없음</span><button type="button" class="btn-tx" data-dl="' + side + '">기본 양식 다운로드</button></div>' +
             '</div></div>' +
           '<div class="r"><b>대금 지급 방법</b><div><input type="text" data-k="pay" value="' + esc(c.pay || '') + '" placeholder="예) 계약 후 30일 이내 계좌이체"></div></div>' +
           '<div class="r"><b>기타</b><div><textarea data-k="etc" placeholder="계약 관련 특이사항을 입력해 주세요.">' + esc(c.etc || '') + '</textarea></div></div>' +
@@ -939,24 +939,22 @@
       sideHTML('partner', '분석파트너', F.partner(s.pick).org, '클라이언트') +
       '<div class="ctacts">' + (s.ctDraft ? '<span class="ctsaved">임시저장 ' + F.ymd(s.ctDraft.savedAt) + '</span>' : '') + '<button type="button" class="btn lg" id="ctDraft">임시저장</button><button type="button" class="btn primary lg" id="ctSave">계약서 최종 저장</button></div></div>';
   }
-  // 입력값 모으기. strict = 최종 저장 검사 (금액·계약일·납기일 필수, 납기일 ≥ 계약일, 기관 양식이면 파일 필수)
+  // 입력값 모으기. strict = 최종 저장 검사 (금액·계약일·납기일·계약서 파일 필수, 납기일 ≥ 계약일)
   function ctPick(strict) {
     var out = {}, ok = true, bad = function (el, b) { if (strict && el) el.classList.toggle('bad', !!b); if (b) ok = false; };
     var amt = +String(($('#ctAmt') || {}).value || '').replace(/[^\d]/g, ''), pAmt = +String(($('#ctPAmt') || {}).value || '').replace(/[^\d]/g, ''), date = ($('#ctDate') || {}).value, due = ($('#ctDue') || {}).value;
     bad($('#ctAmt'), !amt); bad($('#ctPAmt'), !pAmt); bad($('#ctDate'), !date); bad($('#ctDue'), !due || (date && due < date));
     out.amt = amt || null; out.cur = ($('#ctCur') || {}).value || 'KRW'; out.pAmt = pAmt || null; out.pCur = ($('#ctPCur') || {}).value || 'KRW'; out.date = date || ''; out.due = due || '';
     [].forEach.call(card.querySelectorAll('.ctside'), function (row) {
-      var side = row.dataset.side, type = row.querySelector('input[type=radio]:checked').value, f = row.querySelector('input[type=file]'), fn = row.querySelector('.fn');
-      var name = type === 'file' ? (f.files[0] ? f.files[0].name : fn.dataset.saved || '') : '';
-      if (type === 'file' && !name) { ok = false; if (strict) fn.style.color = 'var(--red-600)'; }
-      out[side] = { type: type, name: name, pay: row.querySelector('[data-k=pay]').value.trim(), etc: row.querySelector('[data-k=etc]').value.trim() };
+      var side = row.dataset.side, f = row.querySelector('input[type=file]'), fn = row.querySelector('.fn');
+      var name = f.files[0] ? f.files[0].name : fn.dataset.saved || '';
+      if (!name) { ok = false; if (strict) fn.style.color = 'var(--red-600)'; }
+      out[side] = { type: 'file', name: name, pay: row.querySelector('[data-k=pay]').value.trim(), etc: row.querySelector('[data-k=etc]').value.trim() };
     });
     return { ok: ok, c: out };
   }
   function ctSync() {
     [].forEach.call(card.querySelectorAll('.ctside'), function (row) {
-      var file = row.querySelector('input[type=radio]:checked').value === 'file';
-      row.querySelector('[data-pv]').hidden = file; row.querySelector('.up').hidden = !file; row.querySelector('.fn').hidden = !file;
       var f = row.querySelector('input[type=file]'), fn = row.querySelector('.fn'); fn.textContent = f.files[0] ? f.files[0].name : fn.dataset.saved || '선택된 파일 없음'; fn.style.color = '';
     });
   }
@@ -1257,8 +1255,13 @@
     if ($('#ctBlk')) ctSync();
     card.onclick = function (e) {
       var t = e.target;
-      if (t.closest('[data-pv]')) {
-        var tmp = JSON.parse(JSON.stringify(s)); tmp.ct = null; F.showContract(r, tmp, t.closest('[data-pv]').dataset.pv);
+      if (t.closest('[data-dl]')) { // 기본 양식 다운로드: 이 프로젝트 정보로 채운 셀키 분석서비스 의뢰서 + 별첨1 견적서 (워드에서 열리는 .doc)
+        var sd = t.closest('[data-dl]').dataset.dl, tmp = JSON.parse(JSON.stringify(s)); tmp.ct = null;
+        var q0 = sd === 'client' ? ((F.cqLast(s) || {}).quote || s.P[s.pick].quote) : s.P[s.pick].quote;
+        var html = '<html><head><meta charset="utf-8"><style>body{font-family:"Malgun Gothic",sans-serif;font-size:10pt}table{border-collapse:collapse;width:100%;margin:6pt 0}th,td{border:1px solid #999;padding:4pt 6pt;text-align:left;vertical-align:top}h2{font-size:12pt;margin:14pt 0 4pt}</style></head><body>' +
+          F.contractHTML(r, tmp, sd) + '<p><b># 별첨1. 분석 견적서</b></p>' + F.docHTML(r, q0, s.pick, sd === 'client' ? { client: true, no: F.qno(s, s.pick) } : null) + '</body></html>';
+        var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['\ufeff' + html], { type: 'application/msword' })); a.download = '셀키_분석서비스_의뢰서_' + id + '_' + (sd === 'client' ? '클라이언트' : '분석파트너') + '.doc'; a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
       } else if (t.closest('[data-ct]')) {
         F.showContract(r, s, t.closest('[data-ct]').dataset.ct);
       } else if (t.closest('#ctDraft')) {
