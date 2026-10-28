@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028u">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028u">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261028u">
-<script src="assets/common/site.js?v=20261028u"></script>
-<script src="assets/common/consult.js?v=20261028u"></script>
-<script src="assets/common/mypage.js?v=20261028u"></script>
-<script src="assets/common/svc-spec.js?v=20261028u"></script>
-<script src="assets/common/flow.js?v=20261028u"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028x">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028x">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261028x">
+<script src="assets/common/site.js?v=20261028x"></script>
+<script src="assets/common/consult.js?v=20261028x"></script>
+<script src="assets/common/mypage.js?v=20261028x"></script>
+<script src="assets/common/svc-spec.js?v=20261028x"></script>
+<script src="assets/common/flow.js?v=20261028x"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -74,34 +74,37 @@
   .btn:disabled { border-color:var(--gray-200); background:var(--gray-200); color:var(--gray-400); cursor:not-allowed; }
 
   /* 받은 견적 */
+  /* 견적서 확인 표 = Figma 2063-9232 (2026-10-28 사용자 수정본): 칸 = 선택 48 · 분석파트너(남는 폭) · 상태 100 · 최종 견적 175 · 소요 170 · 일자 140 · 견적서 보기 108, 칸 안 여백 좌우 18 */
   .qt { display:flex; flex-direction:column; border-top:2px solid #000; }
-  /* 버튼(견적서 보기·수정 요청·클라이언트 견적서 만들기)이 많아 한 칸에 안 들어감 → 버튼은 정보 아래 줄 오른쪽으로 (2026-10-27) */
-  .qt .h, .qt .r { display:grid; grid-template-columns:28px 200px 96px minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr) 88px; /* 선택 · 분석파트너 200 · 상태 96 · 최종 견적·소요·일자(남는 폭) · 견적서 보기 (2026-10-28) */ align-items:center; gap:12px; padding:0 12px; }
-  .qt .h { height:44px; background:var(--gray-100); border-bottom:1px solid var(--gray-200); font-size:13px; font-weight:500; color:var(--gray-600); }
-  .qt .h span:nth-child(4), .qt .h span:nth-child(5) { text-align:right; }
-  .qt .r { min-height:64px; padding-top:12px; padding-bottom:12px; border-bottom:1px solid var(--gray-200); font-size:14px; line-height:20px; }
+  .qt .h, .qt .r { display:grid; grid-template-columns:48px minmax(0,1fr) 152px 175px 170px 140px 108px; /* 상태 152: 가장 긴 배지 '클라이언트 검토 중'(116px) + 좌우 여백 18 (Figma는 100) */ align-items:center; }
+  .qt .h { min-height:44px; background:var(--gray-100); border-bottom:1px solid var(--gray-200); font-size:14px; font-weight:500; line-height:20px; color:#000; }
+  .qt .h > *, .qt .r > * { padding:0 18px; min-width:0; }
+  .qt .h > :first-child, .qt .r > :first-child { padding:0 12px; }
+  .qt .r { min-height:48px; padding:8px 0; border-bottom:1px solid var(--gray-200); font-size:14px; line-height:20px; }
   .qt .r.win { background:var(--teal-50); }
-  .qt .r input { width:18px; height:18px; accent-color:var(--teal-600); }
-  .qt .who b { display:block; font-size:15px; font-weight:600; line-height:22px; word-break:keep-all; overflow-wrap:anywhere; }
+  .qt .r input[type=radio] { display:block; width:20px; height:20px; margin:0 auto 0 2px; accent-color:var(--teal-600); cursor:pointer; }
+  .qt .who b { display:block; font-size:16px; font-weight:700; line-height:22px; word-break:keep-all; overflow-wrap:anywhere; }
   .qt .who .qn { margin-left:6px; padding:1px 6px; border-radius:6px; background:var(--gray-100); font-size:12px; font-weight:500; color:var(--gray-600); }
   .qt .who span { font-size:12px; line-height:18px; color:var(--gray-500); }
-  .qt .who .svcm { display:flex; align-items:center; gap:6px; margin-top:2px; font-size:12px; line-height:18px; color:var(--orange-600); }
+  .qt .who .svcm { display:flex; align-items:center; gap:6px; margin-top:2px; font-size:12px; font-weight:500; line-height:18px; color:#fd4900; }
   .qt .who .svcm .tbtn { height:18px; font-size:12px; line-height:18px; }
-  .qt .who .svcm em { font-style:normal; color:var(--gray-500); }
-  .qt .amt { text-align:right; font-weight:600; white-space:nowrap; }
-  .qt .amt .badge, .qt .wk .badge { margin-right:6px; vertical-align:1px; } /* 최저가·최단 = DS badge_basic tertiary teal, 금액 앞 (2026-10-28) */
+  .qt .who .svcm em::before, .qt .who .svcm .tbtn::before { content:""; display:inline-block; width:1px; height:12px; margin-right:6px; background:var(--gray-300); vertical-align:-1px; }
+  .qt .who .svcm em { font-style:normal; color:var(--gray-500); } .qt .who .svcm em::before { margin-right:6px; }
+  .qt .amt, .qt .wk { display:flex; align-items:center; gap:4px; white-space:nowrap; }
+  .qt .amt { font-weight:500; }
   .qt .amt small { display:block; font-size:12px; font-weight:400; color:var(--gray-500); }
   .qt .amt small.mobv { display:none; } /* PC는 표 머리에 'VAT 포함', 카드형(모바일)에서만 줄마다 */
-  .qt .wk { text-align:right; white-space:nowrap; }
-  .qt .dt { font-size:13px; color:var(--gray-500); white-space:nowrap; }
-  .qt .act { display:flex; justify-content:flex-end; }
-  .qbar { display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-top:12px; } .qbar .sel { margin-right:auto; font-size:14px; color:var(--gray-500); } .qbar .sel b { color:#000; }
-  @media (max-width:640px) { .qbar { flex-wrap:wrap; } .qbar .sel { width:100%; } .qbar .btn { flex:1; } }
-  .qt .act:empty { display:none; }
-  .qt .act .btn { height:32px; padding:0 10px; font-size:13px; }
-  .qt .note { grid-column:2 / -1; margin-top:-2px; padding:8px 12px; border-radius:6px; background:var(--gray-100); font-size:13px; line-height:20px; color:var(--gray-600); }
-  .qt .note.rev { background:#fff4ed; color:#a33a00; }
+  .qt .dt { white-space:nowrap; }
+  .qt .act { display:flex; }
+  .qt .act .btn { height:32px; padding:0 10px; gap:2px; font-size:13px; }
+  .qt .act .btn i { width:16px; height:16px; background:currentColor; -webkit-mask:url(assets/main/ic-file-text.svg) center/contain no-repeat; mask:url(assets/main/ic-file-text.svg) center/contain no-repeat; } /* Phosphor FileText */
+  /* 사유(거절·수정 요청): 분석파트너 칸부터 회색 상자 */
+  .qt .note { grid-column:2 / -1; margin:4px 16px 4px 18px; padding:12px 24px; border-radius:8px; background:var(--gray-100); font-size:14px; line-height:20px; color:#000; }
+  .qt .note em { font-style:normal; color:var(--gray-500); }
+  .qt .note.rev { background:#fff4ed; }
   .qt .amt .mob { display:none; }
+  .qbar { display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-top:14px; } .qbar .sel { margin-right:auto; font-size:14px; line-height:22px; color:var(--gray-500); } .qbar .sel b { font-size:16px; font-weight:700; color:#000; }
+  @media (max-width:640px) { .qbar { flex-wrap:wrap; } .qbar .sel { width:100%; } .qbar .btn { flex:1; } }
   .hl { display:inline-block; margin-left:4px; padding:0 6px; border-radius:4px; background:var(--teal-50); font-size:11px; font-weight:600; line-height:18px; color:var(--teal-700); vertical-align:1px; }
   .msg { padding:16px 20px; border-left:3px solid var(--teal-600); border-radius:0 8px 8px 0; background:var(--bg-green); font-size:14px; line-height:22px; white-space:pre-line; }
   .msg b { display:block; margin-bottom:4px; font-size:13px; color:var(--teal-700); }
@@ -319,6 +322,7 @@
 
   @media (max-width:1180px) {
     .qt .h { display:none; }
+    .qt .r { padding:12px 4px; } .qt .r > *, .qt .r > :first-child { padding:0; } .qt .note { margin:4px 0 0; padding:10px 14px; }
     .qt .r { grid-template-columns:28px minmax(0,1fr) auto; grid-template-areas:"ck who st" "ck amt amt" "ck act act"; gap:8px 12px; }
     .qt .r > :nth-child(1) { grid-area:ck; align-self:start; margin-top:2px; }
     .qt .r .who { grid-area:who; } .qt .r .st { grid-area:st; }
@@ -1090,19 +1094,19 @@
         (edit && sub ? '<span><input type="radio" name="qpick" value="' + esc(k) + '" aria-label="' + esc(p.org) + ' 견적 선택"></span>' : '<span title="' + (x.fwd ? '클라이언트 견적의 기준 견적' : '') + '">' + (x.fwd ? '✓' : '') + '</span>') + // 고른 견적에 아래 [수정 요청]·[클라이언트 견적서 만들기] (2026-10-28)
         '<div class="who"><b>' + esc(p.org) + (x.fwd ? ' <small class="qn">클라이언트 견적 기준</small>' : '') + '</b>' + (x.self || x.revN ? '<span>' + (x.self ? '<i class="src self">직접 신청</i>' : '') + (x.revN ? '수정 ' + x.revN + '회' : '') + '</span>' : '') + svcMiss(k) + '</div>' +
         '<div class="st">' + badge(k) + '</div>' +
-        '<div class="amt">' + (sub ? (k === low ? '<span class="badge teal">최저가</span>' : '') + F.money(F.total(q).final) + '<small class="mobv">VAT 포함</small>' : '-') + (sub ? '<span class="mob">· ' + esc(q.weeks || '-') + '주</span>' : '') + '</div>' +
-        '<div class="wk">' + (sub ? (k === fast ? '<span class="badge teal">최단</span>' : '') + esc(q.weeks || '-') + '주' : '-') + '</div>' +
-        '<div class="dt">' + (x.subAt && sub ? md(x.subAt) : x.status === 'dec' ? md(x.dec.at) : '-') + '</div>' +
-        '<div class="act">' + (sub ? '<button type="button" class="btn-tx" data-doc="' + k + '">견적서 보기</button>' : '') + '</div>' +
-        (x.status === 'rev' ? '<p class="note rev">수정 요청 · ' + md(x.rev.at) + ' — ' + esc(x.rev.note) + '</p>' : '') +
-        (x.status === 'dec' ? '<p class="note">거절 사유 — ' + esc(x.dec.why) + '</p>' : '') +
+        '<div class="amt">' + (sub ? F.money(F.total(q).final) + (k === low ? '<span class="badge teal">최저가</span>' : '') + '<small class="mobv">VAT 포함</small>' : '--') + (sub ? '<span class="mob">· ' + esc(q.weeks || '-') + '주</span>' : '') + '</div>' +
+        '<div class="wk">' + (sub ? esc(q.weeks || '-') + '주' + (k === fast ? '<span class="badge teal">최단</span>' : '') : '--') + '</div>' +
+        '<div class="dt">' + (x.subAt && sub ? F.ymd(x.subAt) : x.status === 'dec' ? F.ymd(x.dec.at) : '--') + '</div>' +
+        '<div class="act">' + (sub ? '<button type="button" class="btn line" data-doc="' + k + '"><i aria-hidden="true"></i>견적서</button>' : '') + '</div>' +
+        (x.status === 'rev' ? '<p class="note rev"><em>수정 요청 (' + md(x.rev.at) + '):</em> ' + esc(x.rev.note) + '</p>' : '') +
+        (x.status === 'dec' ? '<p class="note"><em>거절사유:</em> ' + esc(x.dec.why) + '</p>' : '') +
       '</div>';
     }).join('');
     var c = cnt(s);
     return '<div class="blk" id="quotes">' +
       '<div class="blk-h"><h3>견적서 확인 <span style="color:var(--teal-600)">' + c.sub + '</span> / ' + c.all + '</h3>' + (edit || s.st === 'review' ? '<span class="aim">' + aiSum(s) + '<button type="button" class="btn primary" id="more"><img src="assets/common/ic-sparkle-fill-w.svg" alt="">AI 분석파트너 매칭</button></span>' : '') + '</div>' +
       '<div class="reqinfo"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>견적 마감</b> ' + dot(s.due || r.to) + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self; }).length + ' · 견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></div>' +
-      (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적 (VAT 포함)</span><span>소요</span><span>일자</span><span></span></div>' + rows + '</div>' +
+      (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적 (VAT 포함)</span><span>소요</span><span>일자</span><span>견적서 보기</span></div>' + rows + '</div>' +
         (edit && subs.length ? '<div class="qbar"><span class="sel" id="qSel">견적을 선택하면 수정 요청하거나 클라이언트 견적서를 만들 수 있습니다.</span><button type="button" class="btn" id="qRev" disabled>수정 요청</button>' + (!F.cqList(s).length ? '<button type="button" class="btn primary" id="qMk" disabled>클라이언트 견적서 만들기</button>' : '') + '</div>' : '')
         : '<div class="qempty">아직 견적을 작성 중인 분석파트너가 없습니다.<br>인증 분석파트너는 프로젝트 찾기에서 직접 견적을 작성할 수 있고, [AI 분석파트너 매칭]에서 적합한 기관에 요청할 수도 있습니다.</div>') +
       cqHTML(s, edit, subs) +
@@ -1112,7 +1116,7 @@
   // 클라이언트에게 보낸 ㈜셀키에이아이 견적 (2026-10-26): 파트너 견적 1건을 바탕으로 단가·수수료·할인만 바꿔 차수로 보냄
   function cqHTML(s, edit, subs) {
     var L = F.cqList(s);
-    if (!L.length) return edit && subs.length ? '<div class="cq-hint">클라이언트에게 보낼 견적 1건을 골라 <b>[클라이언트 견적서 만들기]</b>를 누르세요. 단가·수수료·할인을 정해 ㈜셀키에이아이 명의로 보냅니다. 클라이언트에게는 분석파트너 이름이 보이지 않습니다.</div>' : '';
+    if (!L.length) return edit && subs.length ? '<div class="cq-hint">클라이언트에게 보낼 견적 1건을 골라 <b>[클라이언트 견적서 만들기]</b>를 누르세요.<br>단가·수수료·할인을 정해 ㈜셀키에이아이 명의로 보냅니다. 클라이언트에게는 분석파트너 이름이 보이지 않습니다.</div>' : '';
     var pq = function (v) { var x = s.P[v.base]; return x && x.quote ? F.total(x.quote).final : 0; };
     return '<div class="cq"><div class="cq-h"><h4>클라이언트에게 보낸 견적</h4>' + (edit && s.st !== 'matched' ? '<button type="button" class="btn" id="cqRe">수정 견적 보내기</button>' : '') + '</div>' +
       L.slice().reverse().map(function (v, ri) {
@@ -1222,7 +1226,7 @@
   function svcMiss(k) {
     var gap = svcGap(k); if (!gap) return '';
     var at = F.svcAsked(k);
-    return '<p class="svcm">' + gap + (at ? ' <em>· 입력 요청함</em>' : ' <button type="button" class="tbtn xs primary" data-svcask="' + k + '">입력 요청</button>') + '</p>';
+    return '<p class="svcm">' + gap + (at ? ' <em>입력 요청함</em>' : ' <button type="button" class="tbtn xs primary" data-svcask="' + k + '">입력 요청</button>') + '</p>';
   }
   function order(x) { return { sub: 0, rev: 1, draft: 2, req: 2, dec: 3 }[x.status]; }
 
