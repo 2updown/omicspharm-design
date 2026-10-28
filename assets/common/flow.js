@@ -95,6 +95,13 @@
       sections: [{ title: '분석 서비스 : 유전체 분석', rows: [['분석 유형', '변이·암 유전체'], ['연구 목적', '변이 발굴, 암 유전체'], ['원하는 분석 결과', 'SNV·Indel, CNV·SV'], ['참조정보', 'GRCh38']] },
         { title: '시료 정보', rows: [['생물종', 'Human'], ['시료 종류', 'FFPE 조직'], ['총 시료 수', '30개']] },
         { title: '요구사항', rows: [['희망완료일', '2027-01-15'], ['일정 협의 가능 여부', '가능'], ['예상금액', '500~1,000만원']] },
+        { title: '희망 산출물', rows: [['희망 산출물', 'Raw data, 결과표, 국문 보고서'], ['산출물 용도', '논문 학술용']] }] },
+    // 클라이언트 견적 전달 후 수정 요청 예시 (state는 revDemo)
+    { id: 'PRJ-2026-0049', demo: true, at: T0 - DAY * 10, svc: '대사체 분석', title: '비알코올성 지방간 마우스 간 조직 지질 대사체 분석', org: '한결연구소', manager: '홍길동', bizDoc: '사업자등록증_한결연구소.pdf', owner: 'client@omicspharm.test', samples: '30', due: '2026-12-20', from: '2026-09-25', to: '2026-10-02', budget: '500만~1,000만원', open: '공개',
+      purpose: '고지방식이 마우스와 정상식이 마우스의 간 조직에서 지질 대사체 변화를 비교하고자 합니다.',
+      sections: [{ title: '분석 서비스 : 대사체 분석', rows: [['분석 유형', '비표적 대사체'], ['플랫폼', 'LC-MS'], ['측정 모드', 'Positive+Negative'], ['요청 분석 목적', '질병 기전, 대사경로 변화']] },
+        { title: '시료 정보', rows: [['생물종', 'Mouse'], ['시료 종류', '조직'], ['총 시료 수', '30개'], ['보관상태', '초저온 (-80℃)']] },
+        { title: '분석 그룹', rows: [['비교군 구성', '그룹 있음'], ['대조군', '정상식이 · 15개'], ['실험군', '고지방식이 · 15개']] },
         { title: '희망 산출물', rows: [['희망 산출물', 'Raw data, 결과표, 국문 보고서'], ['산출물 용도', '논문 학술용']] }] }
   ];
 
@@ -177,15 +184,27 @@
   // 보고서 에이전트 예시: 0036 = 분석파트너가 결과를 올려 AI 초안이 생성된 상태(컨설턴트 검토 대기), 0035 = 1·2차 결과를 보고서로 전달한 이력
   // 보고서 에이전트 예시는 새로고침(F5)하면 처음 상태로: 0036 = AI 초안 검토 대기, 0035 = 1차 전달 완료(클라이언트 검수 대기), 분석파트너 예시(0037~0042) = 결과 등록 전
   // 다른 화면으로 이동하거나 계정을 바꿀 때는 그대로 둠 (전달 → 클라이언트 화면 확인처럼 이어서 볼 수 있게)
+  // 2026-10-28: 예시 의뢰(DEMO_REQS)는 견적 진행 상태까지 전부 처음 값으로 다시 만듦. 직접 제출한 의뢰는 그대로 둠
   function repReset(S) {
     var nav = window.performance && performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
     if (!nav || nav.type !== 'reload') return false;
-    DEMO_REQS.forEach(function (r) { if (S[r.id]) delete S[r.id].cancel; }); // 예시 의뢰 취소도 처음 상태로
-    var a = S['PRJ-2026-0036'], b = S['PRJ-2026-0035'];
-    if (a) { delete a.raw; delete a.rep; delete a.fin; delete a.rate; delete a.rateSkip; }
-    if (b && b.rep) { b.rep = b.rep.slice(0, 1); delete b.raw; delete b.fin; delete b.rate; delete b.rateSkip; } // 보고서 승인·완료(평가/건너뛰기)도 처음 상태로
+    var n = seed().S;
+    DEMO_REQS.forEach(function (r) { delete S[r.id]; if (n[r.id]) S[r.id] = n[r.id]; });
     ['PRJ-2026-0037', 'PRJ-2026-0038', 'PRJ-2026-0039', 'PRJ-2026-0040', 'PRJ-2026-0041', 'PRJ-2026-0042'].forEach(function (k) { if (S[k]) { delete S[k].raw; delete S[k].rep; } });
-    repDemo(S);
+    var o = 'user01@example.test'; if (OP.account && OP.account(o)) OP.saveAccount(o, { bizOk: 0, bizOkName: '' }); // 0048 사업자등록증도 확인 전으로
+    histDemo(S); repDemo(S); waitDemo(S); selfDemo(S); revDemo(S);
+    return true;
+  }
+  // 클라이언트 견적 전달 후 수정 요청 예시 (2026-10-28): 0049 = 세움분석센터 견적을 기준으로 1차 견적서를 보냈고, 세움분석센터에 수정 요청 중
+  function revDemo(S) {
+    var r = req2('PRJ-2026-0049'); if (S[r.id]) return false;
+    var me = partner(ME_PARTNER), q = genQuote(me, r), cq = genQuote(me, r, 1.1);
+    q.subAt = T0 - DAY * 6; cq.supplier = F.SELLER; cq.sale = ''; cq.final = total(cq).final;
+    var s = S[r.id] = { st: 'sent', ok: T0 - DAY * 9.5, reqAt: T0 - DAY * 9, due: '2026-10-02', memo: '', P: {}, sentAt: T0 - DAY * 4,
+      CQ: [{ n: 1, at: T0 - DAY * 4, base: ME_PARTNER, quote: cq, why: '' }], sends: [{ at: T0 - DAY * 4, keys: [ME_PARTNER], cq: 1 }] };
+    s.P[ME_PARTNER] = { at: T0 - DAY * 9, status: 'rev', quote: q, subAt: T0 - DAY * 6, revN: 1, fwd: false,
+      rev: { at: T0 - DAY * 1, note: '클라이언트가 시료를 30개에서 36개로 늘리고 싶어 합니다. 늘어난 시료 수 기준으로 단가와 소요 기간을 다시 확인해 주세요.' } };
+    s.P['p-bio'] = { at: T0 - DAY * 9, status: 'sub', quote: genQuote(partner('p-bio'), r), subAt: T0 - DAY * 7 };
     return true;
   }
   // 직접 신청 예시 (2026-10-27): 분석파트너 데모의 0047 견적은 프로젝트 찾기에서 직접 신청해 제출한 건으로
@@ -217,6 +236,7 @@
     if (d && repDemo(d.S)) write(KEY, d);
     if (d && waitDemo(d.S)) write(KEY, d);
     if (d && selfDemo(d.S)) write(KEY, d);
+    if (d && revDemo(d.S)) write(KEY, d);
     if (d && !repReset.done) { repReset.done = 1; if (repReset(d.S)) write(KEY, d); }
     d.X = d.X || []; return d;
   }
