@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261028zzd">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zzd">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261028zzd">
-<script src="assets/common/site.js?v=20261028zzd"></script>
-<script src="assets/common/consult.js?v=20261028zzd"></script>
-<script src="assets/common/mypage.js?v=20261028zzd"></script>
-<script src="assets/common/svc-spec.js?v=20261028zzd"></script>
-<script src="assets/common/flow.js?v=20261028zzd"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261028zzf">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261028zzf">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261028zzf">
+<script src="assets/common/site.js?v=20261028zzf"></script>
+<script src="assets/common/consult.js?v=20261028zzf"></script>
+<script src="assets/common/mypage.js?v=20261028zzf"></script>
+<script src="assets/common/svc-spec.js?v=20261028zzf"></script>
+<script src="assets/common/flow.js?v=20261028zzf"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -443,7 +443,8 @@
   .qm2 .qr .rec { margin:0; font-size:13px; font-weight:400; color:var(--gray-500); }
   .qm-sum { display:flex; flex-wrap:wrap; align-items:center; gap:4px 12px; margin-top:8px; font-size:13px; line-height:20px; }
   .qm-sl { color:var(--gray-600); } .qm-sl.ok { color:var(--teal-700); font-weight:500; } .qm-sl.miss { color:#ca0008; font-weight:500; } .qm-sl.unk { color:#b26a00; font-weight:500; }
-  .qm-tg { padding:0; font-size:13px; color:var(--gray-500); text-decoration:underline; }
+  .qm-chev { display:flex; align-items:center; justify-content:center; width:32px; height:32px; margin:-4px -6px 0 0; border-radius:8px; } .qm-chev:hover { background:var(--gray-100); }
+  .qm-chev img { width:20px; height:20px; transition:transform .15s; } .qm-chev.on img { transform:rotate(180deg); }
   .qm-cmp { width:100%; margin-top:10px; border-collapse:collapse; border-top:1px solid var(--gray-300); font-size:12px; line-height:18px; cursor:default; }
   .qm-cmp th { padding:8px; background:var(--gray-50); border-bottom:1px solid var(--gray-200); font-weight:500; color:var(--gray-600); text-align:left; white-space:nowrap; }
   .qm-cmp td { padding:8px; border-bottom:1px solid var(--gray-100); vertical-align:top; word-break:keep-all; overflow-wrap:anywhere; }
@@ -502,8 +503,11 @@
   var md = function (t) { var d = new Date(t); return ('0' + (d.getMonth() + 1)).slice(-2) + '.' + ('0' + d.getDate()).slice(-2); };
   // 상세 단계 배지 = 프로젝트 상태값 (2026-10-27, docs/status-badges.md 3-1 컨설턴트 열: 의뢰접수 주황 · 완료 회색 · 삭제 빨강 · 나머지 파랑)
   var stBadge = function (s) { var t = F.adminStage(s.id || id); return '<span class="badge ' + (t === '의뢰접수' ? 'wait' : t === '프로젝트 완료' ? 'done' : t === '삭제' ? 'red' : 'state') + '">' + t + '</span>'; };
+  // 컨설턴트는 분석파트너의 임시저장을 보지 않음 (2026-10-28): 요청받은 곳의 임시저장은 '작성 대기'로, 직접 신청하고 아직 제출 안 한 곳은 아예 안 보임
+  var hid = function (s, k) { var x = s.P[k]; return !!x && !!x.self && /^(req|draft)$/.test(x.status); };
+  var pstA = function (s, k) { var t = F.pst(s, k); return t === '임시저장' ? '작성 대기' : t; };
   var cnt = function (s) {
-    var P = Object.keys(s.P).map(function (k) { return s.P[k]; });
+    var P = Object.keys(s.P).filter(function (k) { return !hid(s, k); }).map(function (k) { return s.P[k]; });
     return { all: P.length, sub: P.filter(function (x) { return x.status === 'sub'; }).length, dec: P.filter(function (x) { return x.status === 'dec'; }).length, rev: P.filter(function (x) { return x.status === 'rev'; }).length };
   };
 
@@ -981,7 +985,7 @@
     var GROUP = { rec: ['ok', 'chk', 'miss'], info: ['none', 'other'] };
     var unv = F.PARTNERS.filter(function (p) { return !p.verified; }).length;
     var AG = [], picked = {}, tab = 'rec', q = { svc: '', kw: '' }, open = {}, busy = !aiRun();
-    var tabOf = function (x) { return s.P[x.key] ? 'join' : REC[x.cat] ? 'rec' : 'info'; };
+    var tabOf = function (x) { return s.P[x.key] && !hid(s, x.key) ? 'join' : REC[x.cat] ? 'rec' : 'info'; };
     var run = function () { AG = agent(); picked = {}; AG.forEach(function (x) { if ((x.cat === 'ok' || x.cat === 'chk') && !s.P[x.key]) picked[x.key] = 1; }); };
     var m = document.createElement('div');
     m.className = 'op-confirm qmail'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', 'AI 분석파트너 매칭');
@@ -997,7 +1001,7 @@
         '<div class="btns"><button type="button" class="no">닫기</button><button type="button" class="yes go" id="qmSend" disabled>견적제안 발송</button></div></div></div>';
     document.body.appendChild(m); document.body.style.overflow = 'hidden';
     var DESC = { rec: '', info: '분석 서비스 정보가 없어 비교하지 못한 곳입니다. 입력을 요청하거나 직접 골라 보낼 수 있습니다.', join: '' };
-    var stOf = function (k) { var x = s.P[k]; return (x.self ? '직접 신청' : '견적제안') + '<i class="dv" aria-hidden="true"></i>' + F.pst(s, k); };
+    var stOf = function (k) { var x = s.P[k]; return (x.self ? '직접 신청' : '견적제안') + '<i class="dv" aria-hidden="true"></i>' + pstA(s, k); };
     var row = function (x, c) {
       var p = x.p, join = tab === 'join', R = x.rows || [];
       // 요약 한 줄 + [조건 비교] 펼치면 표 (칩 대신, 2026-10-28)
@@ -1014,9 +1018,9 @@
       var dv = '<i class="dv" aria-hidden="true"></i>';
       return '<div class="qw"><label class="qr' + (join ? ' off join' : '') + '">' + (join ? '' : '<input type="checkbox" value="' + p.key + '"' + (picked[p.key] ? ' checked' : '') + ' aria-label="' + esc(p.org) + ' 선택">') +
         '<span class="qb"><span class="nm"><b>' + esc(p.org) + '</b><span class="rec">' + rec.map(esc).join(dv) + '</span></span>' +
-          (join ? '' : '<span class="qm-sum">' + sum + (R.length ? '<button type="button" class="qm-tg" data-more="' + p.key + '">조건 비교 ' + (open[p.key] ? '접기' : '보기') + '</button>' : '') + ask + '</span>' + cmp) +
+          (join ? '' : '<span class="qm-sum">' + sum + ask + '</span>' + cmp) +
           '</span>' +
-        (join ? '<span class="qs sent">' + stOf(p.key) + '<em class="cat ' + c + '">' + CAT[c] + '</em></span>' : '') + '</label></div>';
+        (join ? '<span class="qs sent">' + stOf(p.key) + '<em class="cat ' + c + '">' + CAT[c] + '</em></span>' : R.length ? '<button type="button" class="qm-chev' + (open[p.key] ? ' on' : '') + '" data-more="' + p.key + '" aria-expanded="' + !!open[p.key] + '" aria-label="조건 비교 ' + (open[p.key] ? '접기' : '펼치기') + '"><img src="assets/find/ic-chevron-down.svg" alt=""></button>' : '') + '</label></div>'; // 오른쪽 쉐브론으로 조건 비교 펼치기 (2026-10-28)
     };
     var draw = function () {
       var kw = q.kw.toLowerCase();
@@ -1075,14 +1079,14 @@
 
   // 받은 견적
   function quotesHTML(s) {
-    var keys = Object.keys(s.P).sort(function (a, b) { return order(s.P[a]) - order(s.P[b]) || s.P[a].at - s.P[b].at; });
+    var keys = Object.keys(s.P).filter(function (k) { return !hid(s, k); }).sort(function (a, b) { return order(s.P[a]) - order(s.P[b]) || s.P[a].at - s.P[b].at; });
     var subs = keys.filter(function (k) { return s.P[k].status === 'sub'; });
     var amt = function (k) { return F.total(s.P[k].quote).final; };
     var low = subs.length > 1 ? subs.reduce(function (a, b) { return amt(b) < amt(a) ? b : a; }) : null;
     var fast = subs.length > 1 ? subs.reduce(function (a, b) { return +s.P[b].quote.weeks < +s.P[a].quote.weeks ? b : a; }) : null;
     var edit = s.st === 'quoting' || s.st === 'sent'; // 클라이언트가 확정하기 전까지 견적 확인·추가 전달 가능
     var badge = function (k) {
-      var t = F.pst(s, k);
+      var t = pstA(s, k);
       var cls = { '작성 대기': 'done', '임시저장': 'done', '제출 완료': 'state', '수정 요청': 'wait', '거절': 'red', '클라이언트 검토 중': 'state', '선정': 'ok', '미선정': 'done' }[t];
       if (s.st === 'matched' && s.P[k].status === 'sub' && !s.P[k].fwd) { t = '전달 안 함'; cls = 'done'; }
       var cqb = F.cqLast(s); if (s.st === 'sent' && cqb && cqb.base === k) { t = '선정'; cls = 'ok'; } // 이 견적으로 클라이언트 견적을 보냄 (클라이언트 확정 전). 수정 요청 중에도 선정 (안내 박스로 알림)
