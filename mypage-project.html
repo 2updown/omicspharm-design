@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029f">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029f">
-<script src="assets/common/site.js?v=20261029f"></script>
-<script src="assets/common/consult.js?v=20261029f"></script>
-<script src="assets/common/mypage.js?v=20261029f"></script>
-<script src="assets/common/flow.js?v=20261029f"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029g">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029g">
+<script src="assets/common/site.js?v=20261029g"></script>
+<script src="assets/common/consult.js?v=20261029g"></script>
+<script src="assets/common/mypage.js?v=20261029g"></script>
+<script src="assets/common/flow.js?v=20261029g"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -479,14 +479,15 @@
             .map(function (r) { return '<div><dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') +
         '</dl></section></div>' +
         // 분석파트너: 제출한 견적서·의뢰 내용을 이 화면 안에서 (예전: 견적서 화면으로 이동하는 링크, 2026-10-28)
-        (x.flow && !ADM && FS.P[OP.session().email] && FS.P[OP.session().email].quote ? (function () { var mq = FS.P[OP.session().email], tq = OP.flow.total(mq.quote);
+        // 예시 프로젝트(0037~0042)도 의뢰 내용·제출한 견적서를 볼 수 있게 (CR·CS, 2026-10-29)
+        (!ADM && (x.flow ? FS.P[OP.session().email] && FS.P[OP.session().email].quote : CS) ? (function () { var mq = x.flow ? FS.P[OP.session().email] : CS.P[OP.flow.ME_PARTNER], tq = OP.flow.total(mq.quote);
           return '<section class="sec"><h3>제출한 견적서</h3><div class="myq"><span><em>최종 견적</em>' + OP.flow.money(tq.final, mq.quote.cur) + ' <small>(VAT 포함)</small></span><span><em>소요</em>' + esc(mq.quote.weeks || '-') + '주</span><span><em>제출일</em>' + OP.flow.ymd(mq.subAt || mq.at) + '</span><button type="button" class="btn line" data-myq>견적서 보기</button></div></section>' +
-            '<details class="tpanel reqbox"><summary><h3>의뢰 내용</h3><img src="assets/find/ic-chevron-down.svg" alt=""></summary><div class="reqin">' + OP.flow.reqHTML(OP.flow.req(x.id)) + '</div></details>'; })() : '') +
+            '<details class="tpanel reqbox"><summary><h3>의뢰 내용</h3><img src="assets/find/ic-chevron-down.svg" alt=""></summary><div class="reqin">' + OP.flow.reqHTML(x.flow ? OP.flow.req(x.id) : CR) + '</div></details>'; })() : '') +
         (x.flow && ADM ? '<p class="demo-note">※ 견적 중개로 매칭된 프로젝트입니다. <a href="mypage-request.html?id=' + encodeURIComponent(x.id) + '" style="text-decoration:underline">견적 내역 보기</a></p>' : '') +
         (x.flow ? '' : '<p class="demo-note">※ 화면 확인용 예시 프로젝트입니다.</p>');
       document.title = x.title + ' · 마이페이지 · OmicsPharm';
       // 결과 등록 등으로 단계가 바뀌면 화면 전체를 다시 열어 진행 단계·안내를 맞춤 (새로고침은 예시 초기화라 주소를 바꿔서 이동). 파일만 고를 때는 결과보고서만 다시 그림
-      document.addEventListener('click', function (e) { if (e.target.closest('[data-myq]')) OP.flow.showDoc(OP.flow.req(x.id), FS.P[OP.session().email].quote, OP.session().email, '제출한 견적서'); });
+      document.addEventListener('click', function (e) { if (e.target.closest('[data-myq]')) OP.flow.showDoc(x.flow ? OP.flow.req(x.id) : CR, x.flow ? FS.P[OP.session().email].quote : CS.P[OP.flow.ME_PARTNER].quote, OP.flow.ME_PARTNER, '제출한 견적서'); });
       var STG0 = SG(x); OP.flow.repRedraw = function () { var nx = D.partnerProjects().filter(function (p) { return p.id === x.id; })[0]; if (nx && SG(nx) !== STG0) { location.replace('mypage-project.html?id=' + encodeURIComponent(x.id) + '&r=' + Date.now()); return; } var el = document.querySelector('.rp'); if (el) el.outerHTML = OP.flow.repSec(x.id, ADM ? 'admin' : 'partner'); };
       document.addEventListener('click', function (e) { var b = e.target.closest('[data-ct]'); if (!b) return; e.preventDefault(); if (CS) OP.flow.showContract(CR, CS, b.dataset.ct); else OP.flow.showContract(OP.flow.req(x.id), FS, b.dataset.ct); });
       return;

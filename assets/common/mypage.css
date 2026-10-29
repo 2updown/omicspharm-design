@@ -357,7 +357,6 @@ span.tbtn { cursor:default; }
 .rp-form { border:1px solid var(--teal-600); border-radius:12px; overflow:hidden; }
 .rp-fh { display:flex; align-items:center; gap:12px; height:52px; padding:0 12px 0 20px; background:var(--teal-600); color:#fff; }
 .rp-fh b { flex:1; font-size:16px; font-weight:600; } .rp-fh span { font-size:13px; font-weight:500; }
-.rp-fx { width:32px; height:32px; border-radius:8px; background:#fff; -webkit-mask:url(../detail/ic-caret-left-20.svg) center/20px no-repeat; mask:url(../detail/ic-caret-left-20.svg) center/20px no-repeat; transform:rotate(90deg); }
 .rp-fb { display:flex; flex-direction:column; gap:16px; padding:20px; }
 .rp-guide { padding:18px 20px; border-radius:8px; background:var(--bg-green, #f6faf9); font-size:14px; line-height:22px; color:var(--gray-700); text-align:center; }
 .rp-guide b { font-weight:700; color:#000; }
