@@ -369,7 +369,11 @@ span.tbtn { cursor:default; }
 .ai-tx .ai-ic { flex:none; width:20px; height:20px; background:linear-gradient(135deg, #22c57e, #2f6bff); -webkit-mask:url(../../assets/common/ic-sparkle-fill.svg) center/contain no-repeat; mask:url(../../assets/common/ic-sparkle-fill.svg) center/contain no-repeat; }
 .ai-tx .ai-car { flex:none; width:16px; height:16px; background:#2f6bff; -webkit-mask:url(../../assets/detail/ic-caret-right-20.svg) center/contain no-repeat; mask:url(../../assets/detail/ic-caret-right-20.svg) center/contain no-repeat; }
 .rp-aientry { display:flex; flex-direction:column; align-items:flex-start; gap:8px; padding:16px 20px; border:1px dashed var(--teal-500); border-radius:12px; } /* 버튼 왼쪽, 점선 색 (2026-10-29) */
-.rp-aientry .ai-tx { margin-left:-10px; }
+.rp-aientry p { font-size:13px; line-height:20px; color:var(--gray-500); }
+.rp-aientry .ai-lb { font-size:16px; line-height:24px; }
+.rp-ai-up { display:flex; flex-direction:column; align-items:flex-start; gap:10px; width:100%; margin-top:4px; }
+.rp-ai-up .rp-stage { width:100%; }
+.rp-aientry .rp-up-go { align-self:stretch; }
 /* PDF 등록 표 (계약서 파일 행과 같은 형식, 2026-10-29) */
 .rp-tbl { display:flex; flex-direction:column; border-top:2px solid #000; }
 .rp-tbl .r { display:grid; grid-template-columns:160px minmax(0,1fr); border-bottom:1px solid var(--gray-200); }
