@@ -719,10 +719,11 @@
   };
 
   // ── 결과보고서 + 보고서 에이전트 (1단계: 컨설턴트 내부용) ──
-  // 분석파트너: 분석 결과를 올림 (raw 파일·워드 등 형식 무관). AI는 보이지 않음
-  // 컨설턴트: 올라온 결과마다 AI 보고서 초안(워드)이 자동 생성 → 초안 내려받아 검토·수정 → 수정본 업로드(선택) → PDF 등록 → 클라이언트에 전달 (= s.rep, 클라이언트 결과보고서 차수)
+  // 분석파트너: 완성 보고서 PDF를 올림 (기본, 기존 방식). 따로 [AI 보고서 생성]으로 raw, xlsx, txt를 올리면 AI 초안 (2026-10-29 미팅)
+  // 컨설턴트: PDF는 확인 후 전달. AI 보고서 생성으로 올라온 결과는 AI 보고서 초안(워드)이 자동 생성 → 초안 내려받아 검토·수정 → 수정본 업로드(선택) → PDF 등록 → 클라이언트에 전달 (= s.rep, 클라이언트 결과보고서 차수)
   // 클라이언트: 전달된 PDF만 봄 (mypage-project.html 결과보고서). 최종 확인 = 프로젝트 완료
-  F.repRaw = function (id, files) { return put(id, function (s) { var x = { at: Date.now(), files: files, ai: '결과보고서_AI초안_' + String(id).replace(/^PRJ-/, '') + '_v' + ((s.raw || []).length + 1) + '.docx' }; if (s.reReq) { x.req = s.reReq; delete s.reReq; } s.raw = (s.raw || []).concat([x]); }); };
+  // kind: 'pdf' = 완성 보고서 PDF (기존 방식, AI 없음) / 'ai' = AI 보고서 생성 (raw, xlsx, txt → AI 초안). 예전 데이터는 'ai'로 봄 (2026-10-29 미팅)
+  F.repRaw = function (id, files, kind) { return put(id, function (s) { var x = kind === 'pdf' ? { at: Date.now(), files: files, kind: 'pdf' } : { at: Date.now(), files: files, kind: 'ai', ai: '결과보고서_AI초안_' + String(id).replace(/^PRJ-/, '') + '_v' + ((s.raw || []).length + 1) + '.docx' }; if (s.reReq) { x.req = s.reReq; delete s.reReq; } s.raw = (s.raw || []).concat([x]); }); };
   // 2차 이후 결과보고서 (2026-10-28): 클라이언트 [최종 승인] 전까지 횟수 제한 없음. 클라이언트 수정 요청은 [문의하기]로 컨설턴트에게
   // ① 컨설턴트가 직접 수정 → by:'admin' 항목(파트너 파일 없음)을 만들어 같은 순서(수정본 → PDF → 전달)로 보냄. 분석파트너에게는 보이지 않음
   // ② 분석을 다시 해야 하면 분석파트너에게 결과 재등록 요청(s.reReq) → 파트너 결과 등록 칸이 다시 열림 → 올리면 새 AI 초안
@@ -733,7 +734,7 @@
   F.cReqOpen = function (s) { var q = (s.cReq || []).slice(-1)[0], r = (s.rep || []).slice(-1)[0]; return q && !s.fin && (!r || q.at > r.at) ? q : null; };
   F.repAsk = function (id, note) { return put(id, function (s) { s.reReq = { at: Date.now(), note: note }; }); };
   F.repSet = function (id, i, k, v) { return put(id, function (s) { s.raw[i][k] = v; }); };
-  F.repSend = function (id, i, note) { return put(id, function (s) { var x = s.raw[i]; s.rep = (s.rep || []).concat([{ at: Date.now(), files: [x.pdf], note: note || '' }]); x.sent = Date.now(); x.repN = s.rep.length; }); };
+  F.repSend = function (id, i, note) { return put(id, function (s) { var x = s.raw[i]; s.rep = (s.rep || []).concat([{ at: Date.now(), files: x.kind === 'pdf' ? x.files.slice() : [x.pdf], note: note || '' }]); x.sent = Date.now(); x.repN = s.rep.length; }); };
   // 분석파트너별 만족도 (컨설턴트만 봄): 완료 프로젝트의 클라이언트 별점 평균. 예시 파트너는 이전 실적(DEMO_RATE)을 함께 반영
   var DEMO_RATE = { 'p-bio': [4.6, 9], 'p-omx': [4.3, 6], 'p-gen': [4.8, 12], 'p-met': [4.1, 7], 'p-adc': [4.5, 4], 'p-mlt': [4.7, 10], 'partner@omicspharm.test': [4.4, 5] };
   F.partnerRating = function (k) {
@@ -743,6 +744,7 @@
     return { avg: n ? sum / n : 0, n: n, list: L };
   };
   // 분석파트너 결과 등록 (2026-10-29, 기존 사이트 방식): n차 결과보고서 칸에 국문·영문 리포트를 하나씩 올리고 [저장]
+  var RP_MODE = {}; // 분석파트너 등록 방식: 'pdf'(기본, 완성 보고서) / 'ai'(AI 보고서 생성), 프로젝트별 (2026-10-29 미팅)
   var RP_FILES = {}; // 고른 파일 이름 (등록 전), 프로젝트별. 형식 제한 없이 여러 개 (보고서 에이전트가 raw 데이터로도 초안을 만듦, 2026-10-29)
   F.repSec = function (id, role) {
     var s = state(id), raw = s.raw || [], rep = s.rep || [], adm = role === 'admin', fin = !!s.fin, ask = !fin && s.reReq;
@@ -756,26 +758,37 @@
       // 등록 칸은 버튼 없이 바로 보임 (2026-10-29)
       // 등록 칸이 있으면 '결과보고서' 제목 줄은 빼고 칸 머리가 제목 역할. 차수 대신 처음 = 결과보고서, 다시 올리면 = 수정본 (2026-10-29)
       if (canUp) h = h.replace('<div class="rp-h"><h3>결과보고서</h3></div>', '');
-      if (canUp) h += '<div class="rp-form"><div class="rp-fh"><b>' + (mine.length ? '결과보고서 수정본 ' + mine.length : '결과보고서') + '</b><span>보고서 등록</span></div><div class="rp-fb">' +
+      var aiM = RP_MODE[id] === 'ai';
+      if (canUp) h += '<div class="rp-form"><div class="rp-fh"><b>' + (mine.length ? '결과보고서 수정본 ' + mine.length : '결과보고서') + '</b><span>' + (aiM ? 'AI 보고서 생성' : '보고서 등록') + '</span></div><div class="rp-fb">' +
         (ask ? '<p class="rp-req"><em>재등록 요청 (' + ymd(s.reReq.at) + '):</em> ' + esc(s.reReq.note) + '</p>' : '') +
-        '<div class="rp-guide">분석 결과 파일을 올려 주세요.<br>Raw 데이터, 결과 정리(워드, 엑셀), 이미지 등 <b>형식에 상관없이 여러 개</b> 올릴 수 있습니다.<br>OmicsPharm이 검토해 결과보고서로 클라이언트에게 전달합니다.</div>' +
-        '<div class="rp-files-up"><label class="btn up">파일 선택<input type="file" multiple hidden data-rp-pick></label>' + (fl.length ? '<ul class="rp-stage">' + fl.map(function (n, j) { return '<li><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(n) + '</span><button type="button" data-rp="rm" data-j="' + j + '" aria-label="' + esc(n) + ' 빼기">✕</button></li>'; }).join('') + '</ul>' : '<span class="rp-none">선택된 파일 없음</span>') + '</div>' +
-        '<div class="rp-up-go"><button type="button" class="btn primary" data-rp="raw"' + (fl.length ? '' : ' disabled') + '>저장</button></div></div></div>';
+        (aiM ? '<div class="rp-guide"><b>Raw data, 엑셀(xlsx), 텍스트(txt)</b> 파일을 올리면 AI가 결과보고서로 변환합니다.<br>변환된 보고서는 OmicsPharm이 검토해 클라이언트에게 전달합니다.</div>'
+          : '<div class="rp-guide">완성된 결과보고서를 <b>PDF</b>로 올려 주세요. 국문, 영문 리포트 등 여러 개 올릴 수 있습니다.<br>OmicsPharm이 확인한 뒤 클라이언트에게 전달합니다.</div>') +
+        '<div class="rp-files-up"><label class="btn up">파일 선택<input type="file" multiple hidden data-rp-pick' + (aiM ? '' : ' accept=".pdf,application/pdf"') + '></label>' + (fl.length ? '<ul class="rp-stage">' + fl.map(function (n, j) { return '<li><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(n) + '</span><button type="button" data-rp="rm" data-j="' + j + '" aria-label="' + esc(n) + ' 빼기">✕</button></li>'; }).join('') + '</ul>' : '<span class="rp-none">선택된 파일 없음</span>') + '</div>' +
+        '<div class="rp-up-go"><button type="button" class="btn primary" data-rp="raw"' + (fl.length ? '' : ' disabled') + '>저장</button></div></div></div>' +
+        // AI 보고서 생성은 PDF 등록과 따로 들어가는 곳 (2026-10-29 미팅)
+        (aiM ? '<div class="rp-aientry"><div><b>완성된 보고서 PDF가 있나요?</b><p>PDF로 바로 등록할 수 있습니다.</p></div><button type="button" class="btn" data-rp="mode" data-m="pdf">PDF로 등록</button></div>'
+          : '<div class="rp-aientry"><div><b>완성된 보고서가 없나요?</b><p>Raw data, 엑셀(xlsx), 텍스트(txt) 파일만 올려도 AI가 결과보고서로 만들어 드립니다.</p></div><button type="button" class="ai-tx" data-rp="mode" data-m="ai"><i class="ai-ic" aria-hidden="true"></i><span>AI 보고서 생성</span></button></div>');
       h += mine.length ? mine.map(function (x, i) {
-        return '<div class="rp-item"><div class="rp-ih"><b>' + (i ? '수정본 ' + i : '결과보고서') + '</b><em>' + ymd(x.at) + ' 등록</em><span class="badge ' + (x.sent ? 'done">클라이언트 전달 완료' : 'state">OmicsPharm 검토 중') + '</span></div>' + files(x.files) + (x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '') + '</div>';
+        return '<div class="rp-item"><div class="rp-ih"><b>' + (i ? '수정본 ' + i : '결과보고서') + '</b><em>' + ymd(x.at) + ' 등록' + (x.kind === 'pdf' ? '' : '<i class="dv" aria-hidden="true"></i>AI 보고서 생성') + '</em><span class="badge ' + (x.sent ? 'done">클라이언트 전달 완료' : 'state">OmicsPharm 검토 중') + '</span></div>' + files(x.files) + (x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '') + '</div>';
       }).reverse().join('') + (fin || ask ? '' : '<p class="rp-more">결과를 다시 보내야 하면 [문의하기]로 OmicsPharm에 알려 주세요.</p>') : '';
       return h + '</section>';
     }
     // 전달 전 결과가 있으면 초록 머리 박스가 제목 역할 (분석파트너와 같게). 보고서 에이전트 라벨만 남김 (2026-10-29)
     if (raw.some(function (x) { return !x.sent; })) h = h.replace('<h3>결과보고서</h3>', '');
-    if (!raw.length) h += '<div class="rp-empty">분석파트너가 결과를 등록하면 AI가 결과보고서 초안(워드)을 만들어 여기에 보여 드립니다.' + (fin ? '' : '<button type="button" class="tbtn primary" data-rp="demo">데모: 분석파트너 결과 등록</button>') + '</div>';
+    if (!raw.length) h += '<div class="rp-empty">분석파트너가 결과를 등록하면 AI가 결과보고서 초안(워드)을 만들어 여기에 보여 드립니다.' + (fin ? '' : '<span><button type="button" class="tbtn primary" data-rp="demo">데모: AI 보고서 생성으로 등록</button><button type="button" class="tbtn primary" data-rp="demo" data-k="pdf">데모: 완성 PDF로 등록</button></span>') + '</div>';
     h += raw.map(function (x, i) {
       var step = x.sent ? 3 : x.pdf ? 2 : 1;
-      var nm = x.by === 'admin' ? '컨설턴트 직접 수정' : pn(i) + '차 결과', who = (x.by === 'admin' ? '' : esc(partner(s.pick).org) + '<i class="dv" aria-hidden="true"></i>') + ymd(x.at) + (x.by === 'admin' ? ' 시작' : ' 등록');
+      var pdfK = x.kind === 'pdf' && x.by !== 'admin', nm = x.by === 'admin' ? '컨설턴트 직접 수정' : pn(i) + '차 결과', who = (x.by === 'admin' ? '' : esc(partner(s.pick).org) + '<i class="dv" aria-hidden="true"></i>') + ymd(x.at) + (x.by === 'admin' ? ' 시작' : ' 등록') + (x.by === 'admin' ? '' : '<i class="dv" aria-hidden="true"></i>' + (pdfK ? '완성 PDF' : 'AI 보고서 생성'));
       // 아직 전달 전인 결과는 분석파트너 등록 칸과 같은 초록 머리 박스 (2026-10-29)
       var hd = x.sent ? '<div class="rp-item" data-rp-i="' + i + '"><div class="rp-ih"><b>' + nm + '</b><em>' + who + '</em><span class="badge done">' + x.repN + '차 보고서로 전달 완료</span></div>'
         : '<div class="rp-item rp-form" data-rp-i="' + i + '"><div class="rp-fh"><b>' + nm + '</b><span>' + who + '</span>' + (x.by === 'admin' ? '<button type="button" class="tbtn rp-undo" data-rp="undo">직접 수정 취소</button>' : '') + '</div><div class="rp-fb">';
-      return hd + (x.files.length ? files(x.files) : '') + (x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '') +
+      var rq = x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '';
+      // 완성 PDF로 올린 결과: AI 초안 없이 확인 → 전달 2단계 (2026-10-29 미팅)
+      if (pdfK) return hd + files(x.files) + rq + '<div class="rp-agent"><div class="rp-ah"><b>완성 보고서 (PDF)</b></div><ol class="rp-steps">' +
+          '<li class="' + (x.sent ? 'done' : 'cur') + '"><div><b>보고서 확인</b><p>위 파일을 눌러 내려받아 내용을 확인해 주세요.</p></div></li>' +
+          '<li class="' + (x.sent ? 'done' : '') + '"><div><b>클라이언트에 전달</b><p>전달하면 클라이언트 결과보고서에 ' + (rep.length + (x.sent ? 0 : 1)) + '차로 등록되고 알림이 갑니다.</p></div><div class="rp-act">' + (x.sent ? '<span class="rp-fn">' + ymd(x.sent) + ' 전달</span>' : '<button type="button" class="btn primary" data-rp="send">클라이언트에 전달</button>') + '</div></li>' +
+        '</ol></div>' + (x.sent ? '' : '</div>') + '</div>';
+      return hd + (x.files.length ? files(x.files) : '') + rq +
         (x.by === 'admin' ? '<div class="rp-agent"><div class="rp-ah"><b>보고서 수정</b></div>' : '<div class="rp-agent"><div class="rp-ah"><img src="assets/common/ic-sparkle-fill.svg" alt=""><b>AI 보고서 초안</b><span class="badge state">생성 완료</span></div>') +
         '<ol class="rp-steps">' +
           // 1단계: 초안(워드)을 내려받아 고친 뒤 PDF로 저장 → 2단계에서 PDF 등록. 고친 워드를 따로 올리는 [수정본 업로드]는 뺌 (2026-10-29)
@@ -801,6 +814,7 @@
     var id = sec.dataset.rpId, t = e.target;
     if (t.matches('[data-rp-pick]')) {
       var n = [].map.call(t.files, function (f) { return f.name; }); t.value = ''; if (!n.length) return;
+      if (RP_MODE[id] !== 'ai' && n.some(function (x) { return !/\.pdf$/i.test(x); })) { n = n.filter(function (x) { return /\.pdf$/i.test(x); }); OP.toast('PDF 파일만 올릴 수 있습니다. 다른 형식은 [AI 보고서 생성]으로 올려 주세요.'); if (!n.length) return; }
       RP_FILES[id] = (RP_FILES[id] || []).concat(n.filter(function (x) { return (RP_FILES[id] || []).indexOf(x) < 0; })); // 여러 번 골라 추가 (같은 이름은 한 번만)
       if (F.repRedraw) F.repRedraw();
       return;
@@ -812,14 +826,16 @@
     var b = e.target.closest('[data-rp]'); if (!b) return;
     var sec = b.closest('.rp'), id = sec.dataset.rpId, a = b.dataset.rp, it = b.closest('[data-rp-i]'), i = it ? +it.dataset.rpI : -1;
     if (a === 'rm') { RP_FILES[id].splice(+b.dataset.j, 1); if (F.repRedraw) F.repRedraw(); return; }
+    if (a === 'mode') { RP_MODE[id] = b.dataset.m; RP_FILES[id] = []; if (F.repRedraw) F.repRedraw(); return; }
     if (a === 'raw') {
       var L = RP_FILES[id] || []; if (!L.length) return;
-      F.ask({ title: '분석 결과를 등록할까요?', desc: '선택한 파일 ' + L.length + '개를 ' + ((state(id).raw || []).filter(function (v) { return v.by !== 'admin'; }).length ? '수정본으로' : '결과보고서로') + ' 제출합니다. 제출한 뒤에는 파일을 바꾸거나 추가할 수 없으며, OmicsPharm이 검토해 클라이언트에게 전달합니다.', label: false, yes: '등록하기' }, function () {
-        F.repRaw(id, L.slice()); RP_FILES[id] = []; OP.toast('분석 결과를 등록했습니다. OmicsPharm이 검토 후 클라이언트에게 전달합니다.'); if (F.repRedraw) F.repRedraw();
+      var aiK = RP_MODE[id] === 'ai', as = (state(id).raw || []).filter(function (v) { return v.by !== 'admin'; }).length ? '수정본으로' : '결과보고서로';
+      F.ask({ title: aiK ? 'AI 보고서를 생성할까요?' : '결과보고서를 등록할까요?', desc: aiK ? '선택한 파일 ' + L.length + '개로 AI가 결과보고서를 만들어 ' + as + ' 제출합니다. 제출한 뒤에는 파일을 바꾸거나 추가할 수 없으며, OmicsPharm이 검토해 클라이언트에게 전달합니다.' : '선택한 PDF ' + L.length + '개를 ' + as + ' 제출합니다. 제출한 뒤에는 파일을 바꾸거나 추가할 수 없으며, OmicsPharm이 확인해 클라이언트에게 전달합니다.', label: false, yes: '등록하기' }, function () {
+        F.repRaw(id, L.slice(), aiK ? 'ai' : 'pdf'); RP_FILES[id] = []; RP_MODE[id] = 'pdf'; OP.toast(aiK ? 'AI 보고서 생성을 요청했습니다. OmicsPharm이 검토 후 클라이언트에게 전달합니다.' : '결과보고서를 등록했습니다. OmicsPharm이 확인 후 클라이언트에게 전달합니다.'); if (F.repRedraw) F.repRedraw();
       });
       return;
     }
-    if (a === 'demo') { F.repRaw(id, ['RawData_' + String(id).replace(/^PRJ-/, '') + '.zip', '분석결과_정리.docx']); OP.toast('데모: 분석파트너가 결과를 등록했습니다. AI 보고서 초안이 생성되었습니다.'); if (F.repRedraw) F.repRedraw(); }
+    if (a === 'demo') { var pk = b.dataset.k === 'pdf'; F.repRaw(id, pk ? ['분석결과보고서_국문_v1.pdf', '분석결과보고서_영문_v1.pdf'] : ['RawData_' + String(id).replace(/^PRJ-/, '') + '.xlsx', '분석결과_정리.txt'], pk ? 'pdf' : 'ai'); OP.toast(pk ? '데모: 분석파트너가 완성 보고서(PDF)를 등록했습니다.' : '데모: 분석파트너가 AI 보고서 생성으로 등록했습니다. AI 보고서 초안이 생성되었습니다.'); if (F.repRedraw) F.repRedraw(); }
     if (a === 'file') { OP.toast('데모: ' + b.dataset.name + ' 파일이 내려받아집니다.'); return; } // 누르면 다운로드 (2026-10-29)
     if (a === 'dl') OP.toast('데모: 보고서 워드 파일이 내려받아집니다.');
     if (a === 'undo') { F.repUndo(id, i); OP.toast('직접 수정을 취소했습니다.'); if (F.repRedraw) F.repRedraw(); return; }

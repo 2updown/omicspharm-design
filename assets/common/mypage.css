@@ -362,6 +362,16 @@ span.tbtn { cursor:default; }
 .rp-item.rp-form { gap:0; padding:0; border-color:var(--teal-600); } /* 컨설턴트: 전달 전 결과 (2026-10-29) */
 .rp-fh .dv { background:rgba(255,255,255,.5); }
 .rp-fh .tbtn { color:#fff; }
+/* 그라데이션 AI 텍스트 버튼 (컨설턴트 매칭, 분석파트너 AI 보고서 생성 공통, 2026-10-29) */
+.ai-tx { display:inline-flex; align-items:center; gap:6px; height:40px; padding:0 10px; border-radius:8px; font-size:16px; font-weight:700; line-height:22px; white-space:nowrap; }
+.ai-tx:hover { background:#f2fbf9; }
+.ai-tx span { background:linear-gradient(90deg, #00a070, #2f6bff); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.ai-tx .ai-ic { flex:none; width:20px; height:20px; background:linear-gradient(135deg, #22c57e, #2f6bff); -webkit-mask:url(../../assets/common/ic-sparkle-fill.svg) center/contain no-repeat; mask:url(../../assets/common/ic-sparkle-fill.svg) center/contain no-repeat; }
+.ai-tx .ai-car { flex:none; width:16px; height:16px; background:#2f6bff; -webkit-mask:url(../../assets/detail/ic-caret-right-20.svg) center/contain no-repeat; mask:url(../../assets/detail/ic-caret-right-20.svg) center/contain no-repeat; }
+.rp-aientry { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 20px; border:1px dashed var(--gray-300); border-radius:12px; }
+.rp-aientry b { display:block; font-size:15px; font-weight:600; line-height:22px; }
+.rp-aientry p { font-size:13px; line-height:20px; color:var(--gray-500); }
+@media (max-width:640px) { .rp-aientry { flex-direction:column; align-items:flex-start; } }
 .rp-guide { padding:18px 20px; border-radius:8px; background:var(--bg-green, #f6faf9); font-size:14px; line-height:22px; color:var(--gray-700); text-align:center; }
 .rp-guide b { font-weight:700; color:#000; }
 .rp-upf { display:flex; align-items:center; justify-content:flex-end; gap:12px; min-width:0; } /* 파일 이름(왼쪽) + [파일 선택](오른쪽), 2026-10-29 */
