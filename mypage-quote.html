@@ -9,13 +9,13 @@
      ?rid=프로젝트 번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zp">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zp">
-<script src="assets/common/site.js?v=20261029zp"></script>
-<script src="assets/common/consult.js?v=20261029zp"></script>
-<script src="assets/common/mypage.js?v=20261029zp"></script>
-<script src="assets/common/flow.js?v=20261029zp"></script>
-<script src="assets/common/projects-data.js?v=20261029zp"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zq">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zq">
+<script src="assets/common/site.js?v=20261029zq"></script>
+<script src="assets/common/consult.js?v=20261029zq"></script>
+<script src="assets/common/mypage.js?v=20261029zq"></script>
+<script src="assets/common/flow.js?v=20261029zq"></script>
+<script src="assets/common/projects-data.js?v=20261029zq"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
@@ -266,7 +266,7 @@
     saved = read()[id] || null; locked = !!(saved && saved.submitted);
     var lo = Math.max(50, Math.round(x.price * 0.85 / 10) * 10);
     R = { id: 'P' + (x.id + 1), title: x.title, svc: x.cat, org: x.owner, samples: String(x.samples), due: x.due, budget: (lo * 10000).toLocaleString('ko-KR') + '원', open: x.priv ? '비공개' : '공개',
-      sections: [{ title: '시료정보', rows: [['Taxonomy (Source)', 'Human'], ['종류', '혈장'], ['시료 수', String(x.samples)]] }, { title: '요청서류 양식', rows: [['요청서류 양식', '국문 리포트, 결과 이미지, Raw 데이터']] }, { title: '기타 분석 요구사항', note: '시료는 계약 후 냉동 상태로 발송 예정입니다.\n분석 방법과 일정에 대한 제안을 함께 부탁드립니다.' }] };
+      sections: [{ title: '시료정보', rows: [['Taxonomy (Source)', 'Human'], ['종류', '혈장'], ['시료 수', String(x.samples)]] }, { title: '요청서류 양식', rows: [['요청서류 양식', '국문 리포트, 결과 이미지, Raw data']] }, { title: '기타 분석 요구사항', note: '시료는 계약 후 냉동 상태로 발송 예정입니다.\n분석 방법과 일정에 대한 제안을 함께 부탁드립니다.' }] };
   }
   var acc = me.acc;
 

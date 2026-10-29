@@ -9,14 +9,14 @@
      파트너 인증 검토: 목록(상태별) → 상세(기관 정보 · 사업자등록증 [보기] [인증 완료] [재제출 요청]).
      재제출 요청은 클라이언트 사업자등록증 재제출 요청(mypage-request.html)과 같은 방식. 규칙: docs/partner-verification.md
      데모: 로그인 가능한 분석파트너(partner@omicspharm.test)는 계정 값(op.accounts)을, 가상 파트너는 op.partnerReview를 바꾼다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zp">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zp">
-<script src="assets/common/site.js?v=20261029zp"></script>
-<script src="assets/common/projects-data.js?v=20261029zp"></script>
-<script src="assets/common/consult.js?v=20261029zp"></script>
-<script src="assets/common/mypage.js?v=20261029zp"></script>
-<script src="assets/common/flow.js?v=20261029zp"></script>
-<script src="assets/common/manage.js?v=20261029zp"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zq">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zq">
+<script src="assets/common/site.js?v=20261029zq"></script>
+<script src="assets/common/projects-data.js?v=20261029zq"></script>
+<script src="assets/common/consult.js?v=20261029zq"></script>
+<script src="assets/common/mypage.js?v=20261029zq"></script>
+<script src="assets/common/flow.js?v=20261029zq"></script>
+<script src="assets/common/manage.js?v=20261029zq"></script>
 <style>
   .plist2 { border-top:2px solid #000; }
   .prow2 { position:relative; display:flex; align-items:center; gap:16px; padding:16px 12px; border-bottom:1px solid var(--gray-200); }
@@ -123,7 +123,7 @@
     $('#card').innerHTML = '<div class="card-head"><h3>분석파트너 관리</h3></div><div class="mg-tabw"><div class="mg-tabs" id="chips" role="tablist"></div></div>' +
       '<div class="mg-filter"><select class="mg-sel" id="fSvc"><option value="">분석 서비스</option>' + OP.manage.SVCS.map(function (v) { return '<option>' + v + '</option>'; }).join('') + '</select>' +
         '<select class="mg-sel" id="fOrg"><option value="">소속</option>' + L.map(function (o) { return '<option>' + esc(o.org) + '</option>'; }).join('') + '</select>' +
-        '<form class="mg-q" id="fF" role="search"><input type="search" id="fQ" placeholder="부서, 성함, 닉네임, 연락처 검색" autocomplete="off" aria-label="분석파트너 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form></div>' +
+        '<form class="mg-q" id="fF" role="search"><input type="search" id="fQ" placeholder="부서, 성명, 닉네임, 연락처 검색" autocomplete="off" aria-label="분석파트너 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form></div>' +
       '<p class="mg-total">총 <b id="n">0</b>건</p>' +
       '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">No</th><th>분석 서비스</th><th>소속</th><th>부서</th><th>성명</th><th>이메일</th><th class="c">진행 프로젝트</th><th class="c">인증 상태</th><th class="c">프로젝트 관리</th></tr></thead><tbody id="tb"></tbody></table></div>';
     var draw = function () {

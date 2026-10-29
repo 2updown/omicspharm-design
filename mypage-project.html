@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zp">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zp">
-<script src="assets/common/site.js?v=20261029zp"></script>
-<script src="assets/common/consult.js?v=20261029zp"></script>
-<script src="assets/common/mypage.js?v=20261029zp"></script>
-<script src="assets/common/flow.js?v=20261029zp"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zq">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zq">
+<script src="assets/common/site.js?v=20261029zq"></script>
+<script src="assets/common/consult.js?v=20261029zq"></script>
+<script src="assets/common/mypage.js?v=20261029zq"></script>
+<script src="assets/common/flow.js?v=20261029zq"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -747,7 +747,7 @@
       '<section class="sec"><h3>계약서 파일</h3>' + F.contractListHTML(FS, ['client']) + '</section>';
   }
   // 결과보고서 탭 (기획 PPT 58p): 최신 차수 펼침 + 이전 차수 접힘, 수정 요청(문의하기) · 최종 확인, 완료 후 만족도 평가
-  var KIND = function (n) { return /국문/.test(n) ? ['국문 리포트', 'pdf'] : /영문/.test(n) ? ['영문 리포트', 'pdf'] : /이미지/.test(n) ? ['결과 이미지', 'image'] : /raw/i.test(n) ? ['Raw 데이터', 'xls'] : ['첨부 파일', 'pdf']; };
+  var KIND = function (n) { return /국문/.test(n) ? ['국문 리포트', 'pdf'] : /영문/.test(n) ? ['영문 리포트', 'pdf'] : /이미지/.test(n) ? ['결과 이미지', 'image'] : /raw/i.test(n) ? ['Raw data', 'xls'] : ['첨부 파일', 'pdf']; };
   function filesHTML(v) {
     return '<ul class="rfiles">' + v.files.map(function (n) { var k = KIND(n);
       return '<li><img src="assets/project/ic-' + (k[1] === 'pdf' ? 'file-pdf' : k[1] === 'xls' ? 'file-xls' : 'image') + '.svg" alt=""><div><b>' + k[0] + '</b><span>' + esc(n) + '</span></div>' +
