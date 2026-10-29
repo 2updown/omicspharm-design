@@ -9,14 +9,14 @@
      파트너 인증 검토: 목록(상태별) → 상세(기관 정보 · 사업자등록증 [보기] [인증 완료] [재제출 요청]).
      재제출 요청은 클라이언트 사업자등록증 재제출 요청(mypage-request.html)과 같은 방식. 규칙: docs/partner-verification.md
      데모: 로그인 가능한 분석파트너(partner@omicspharm.test)는 계정 값(op.accounts)을, 가상 파트너는 op.partnerReview를 바꾼다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zt">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zt">
-<script src="assets/common/site.js?v=20261029zt"></script>
-<script src="assets/common/projects-data.js?v=20261029zt"></script>
-<script src="assets/common/consult.js?v=20261029zt"></script>
-<script src="assets/common/mypage.js?v=20261029zt"></script>
-<script src="assets/common/flow.js?v=20261029zt"></script>
-<script src="assets/common/manage.js?v=20261029zt"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zu">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zu">
+<script src="assets/common/site.js?v=20261029zu"></script>
+<script src="assets/common/projects-data.js?v=20261029zu"></script>
+<script src="assets/common/consult.js?v=20261029zu"></script>
+<script src="assets/common/mypage.js?v=20261029zu"></script>
+<script src="assets/common/flow.js?v=20261029zu"></script>
+<script src="assets/common/manage.js?v=20261029zu"></script>
 <style>
   .plist2 { border-top:2px solid #000; }
   .prow2 { position:relative; display:flex; align-items:center; gap:16px; padding:16px 12px; border-bottom:1px solid var(--gray-200); }
@@ -160,7 +160,7 @@
     $('#card').innerHTML =
       '<div class="mg-head"><a href="mypage-partners.html" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3><em>' + esc(o.org) + '</em> 프로젝트 리스트</h3><span class="st ' + CLS[o.st] + '">' + LABEL[o.st] + '</span></div>' +
       '<p class="mg-sub">분석파트너 기본 정보</p>' +
-      '<div class="mg-info">' + kv('이메일', esc(o.mail || '-') + (o.mailOk ? '' : ' <span class="op-vchip">메일 미인증</span>')) + kv('소속', esc(o.org)) + kv('부서', esc(o.dept || '-')) + kv('연락처', esc(o.tel || '-')) + kv('담당업무', esc(o.job || '-')) + kv('국가', esc(o.country || '-')) + '</div>' +
+      '<div class="mg-info">' + kv('이메일', esc(o.mail || '-') + (o.mailOk ? '' : ' <span class="op-vchip">메일 미인증</span>')) + kv('소속', esc(o.org)) + kv('부서', esc(o.dept || '-')) + kv('연락처', esc(OP.manage.tel(o.tel))) + kv('담당업무', esc(o.job || '-')) + kv('국가', esc(o.country || '-')) + '</div>' +
       '<p class="mg-sub">파트너 인증</p>' +
       '<div class="tbl">' +
         row('대표자명', esc(o.ceo || '-')) + row('사업자등록번호', esc(o.bizno || '-')) + row('주소', esc(o.addr || '-')) +

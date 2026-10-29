@@ -53,5 +53,7 @@
     draw();
   }
 
-  OP.manage = { esc: esc, SVCS: SVCS, dot: dot, fromData: fromData, fromReq: fromReq, fromPartner: fromPartner, projTable: projTable };
+  // 연락처는 국가번호를 붙여 보여줌 (국가가 늘어날 것을 생각해 회원 관리 화면 공통, 2026-10-29). 저장값에 없으면 +82
+  var tel = function (v) { v = String(v || '').trim(); return !v ? '-' : /^\+/.test(v) ? v : '+82 ' + v; };
+  OP.manage = { tel: tel, esc: esc, SVCS: SVCS, dot: dot, fromData: fromData, fromReq: fromReq, fromPartner: fromPartner, projTable: projTable };
 })();
