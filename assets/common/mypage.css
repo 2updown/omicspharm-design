@@ -386,6 +386,12 @@ span.tbtn { cursor:default; }
 .rp-tbl .fn { font-size:14px; color:var(--gray-500); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .rp-tbl .fn.on { color:#000; }
 .rp-tbl .rp-x { flex:none; width:24px; height:24px; color:var(--gray-500); }
+/* 제출 후 박스 (2026-10-29) */
+.rp-fl { display:inline-flex; align-items:center; gap:6px; min-width:0; font-size:14px; color:#000; text-align:left; }
+.rp-fl img { flex:none; width:14px; height:14px; }
+.rp-fl:hover { text-decoration:underline; }
+.rp-ai-done { display:flex; flex-direction:column; gap:10px; }
+.rp-subat { display:flex; justify-content:flex-end; align-items:center; font-size:13px; color:var(--gray-500); }
 @media (max-width:640px) { .rp-tbl .r { grid-template-columns:1fr; } .rp-tbl .r > b { padding:10px 12px; } }
 .rp-aientry b { display:block; font-size:15px; font-weight:600; line-height:22px; }
 .rp-aientry p { font-size:13px; line-height:20px; color:var(--gray-500); }
