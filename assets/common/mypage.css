@@ -434,7 +434,7 @@ span.tbtn { cursor:default; }
 .rp-steps li > div:first-child { position:relative; padding-left:30px; }
 .rp-steps li > div:first-child::before { content:counter(rp); position:absolute; left:0; top:0; width:20px; height:20px; border-radius:50%; background:var(--gray-200); color:var(--gray-600); font-size:12px; font-weight:600; line-height:20px; text-align:center; }
 .rp-steps li.cur > div:first-child::before { background:var(--teal-600); color:#fff; }
-.rp-steps li.done > div:first-child::before { content:"✓"; background:var(--teal-50); color:var(--teal-700); }
+.rp-steps li.done > div:first-child::before { content:"✓"; background:var(--teal-600); color:#fff; } /* 완료: 초록 채움 + 흰 체크 (2026-10-29) */
 .rp-steps b { font-size:14px; font-weight:600; line-height:20px; }
 .rp-steps p { font-size:12px; line-height:18px; color:var(--gray-500); }
 .rp-more { font-size:13px; line-height:20px; color:var(--gray-500); }
