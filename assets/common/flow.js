@@ -738,20 +738,22 @@
     var base = DEMO_RATE[k] || [0, 0], n = base[1] + L.length, sum = base[0] * base[1] + L.reduce(function (a, x) { return a + x.star; }, 0);
     return { avg: n ? sum / n : 0, n: n, list: L };
   };
-  var RP_STAGE = {}; // 분석파트너가 고른(아직 등록 전) 파일 이름, 프로젝트별
+  // 분석파트너 결과 등록 (2026-10-29, 기존 사이트 방식): [결과 보고서 신규 업로드] → n차 결과보고서 칸에 국문·영문 리포트를 하나씩 올리고 [저장]
+  var RP_OPEN = {}, RP_SLOT = {}, SLOTS = [['kr', '국문 리포트'], ['en', '영문 리포트']];
   F.repSec = function (id, role) {
     var s = state(id), raw = s.raw || [], rep = s.rep || [], adm = role === 'admin', fin = !!s.fin, ask = !fin && s.reReq;
     var pn = function (i) { return raw.slice(0, i + 1).filter(function (v) { return v.by !== 'admin'; }).length; }; // 분석파트너 결과 차수 (컨설턴트 직접 수정은 세지 않음)
     var files = function (L) { return '<ul class="rp-files">' + L.map(function (n) { return '<li><img src="assets/auth/ic-paperclip.svg" alt="">' + esc(n) + '</li>'; }).join('') + '</ul>'; };
-    var h = '<section class="rp" data-rp-id="' + esc(id) + '"><div class="rp-h"><h3>결과보고서</h3>' + (adm ? '<span class="rp-ai"><img src="assets/common/ic-sparkle-fill.svg" alt="">보고서 에이전트</span>' : '') + '</div>';
+    var h = '<section class="rp" data-rp-id="' + esc(id) + '"><div class="rp-h"><h3>결과보고서</h3>' + (adm ? '<span class="ai-lb"><i class="ai-ic" aria-hidden="true"></i><span>보고서 에이전트</span></span>' : '') + '</div>';
     if (!adm) {
-      // 한 번 등록하면 등록 칸을 닫고, 컨설턴트가 결과 재등록을 요청하면 다시 엶 (2026-10-28)
-      var mine = raw.filter(function (v) { return v.by !== 'admin'; });
-      h += (fin || (mine.length && !ask) ? '' : '<div class="rp-up"><div><b>' + (ask ? (mine.length + 1) + '차 결과 등록' : '분석 결과 등록') + '</b><p>' + (ask ? '요청 내용을 반영해 분석 결과를 다시 올려 주세요. 형식은 상관없습니다.' : 'raw 파일, 워드 결과 등 형식에 상관없이 올려 주세요. OmicsPharm이 검토해 결과보고서로 클라이언트에게 전달합니다.') + '</p></div>' +
-        '<div class="rp-up-act"><label class="btn">파일 선택<input type="file" multiple hidden data-rp-pick></label></div>' +
-        // 고른 파일은 목록에 쌓이고(✕로 빼기), [결과 등록]이 최종 버튼
-        (RP_STAGE[id] && RP_STAGE[id].length ? '<ul class="rp-stage">' + RP_STAGE[id].map(function (n, j) { return '<li><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(n) + '</span><button type="button" data-rp="rm" data-j="' + j + '" aria-label="' + esc(n) + ' 빼기">✕</button></li>'; }).join('') + '</ul>' : '') +
-        '<div class="rp-up-go"><button type="button" class="btn primary" data-rp="raw"' + (RP_STAGE[id] && RP_STAGE[id].length ? '' : ' disabled') + '>결과 등록</button></div></div>');
+      // 한 번 등록하면 업로드 버튼을 숨기고, 컨설턴트가 결과 재등록을 요청하면 다시 보임 (2026-10-28)
+      var mine = raw.filter(function (v) { return v.by !== 'admin'; }), canUp = !fin && (!mine.length || ask), sl = RP_SLOT[id] || {};
+      if (canUp) h = h.replace('<h3>결과보고서</h3>', '<h3>결과보고서</h3><button type="button" class="btn primary" data-rp="open">결과 보고서 신규 업로드</button>');
+      if (canUp && RP_OPEN[id]) h += '<div class="rp-form"><div class="rp-fh"><b>' + (mine.length + 1) + '차 결과보고서</b><span>보고서 등록</span><button type="button" class="rp-fx" data-rp="open" aria-label="접기"></button></div><div class="rp-fb">' +
+        (ask ? '<p class="rp-req"><em>재등록 요청 (' + ymd(s.reReq.at) + '):</em> ' + esc(s.reReq.note) + '</p>' : '') +
+        '<div class="rp-guide">분석이 완료된 보고서를 업로드해주세요.<br>최종 보고서는 <b>PDF 파일</b>, 원본 데이터는 <b>엑셀 파일(XLSX)</b> 형식으로 등록 부탁드립니다.<br>정확한 검수를 위해 형식을 꼭 확인해 주세요.</div>' +
+        '<div class="rp-slots">' + SLOTS.map(function (o) { return '<div class="r"><b>' + o[1] + '</b><div><label class="btn up">파일 선택<input type="file" hidden data-rp-slot="' + o[0] + '"></label><span class="fn' + (sl[o[0]] ? ' on' : '') + '">' + esc(sl[o[0]] || '첨부된 파일 없음') + '</span></div></div>'; }).join('') + '</div>' +
+        '<div class="rp-up-go"><button type="button" class="btn primary" data-rp="raw"' + (sl.kr || sl.en ? '' : ' disabled') + '>저장</button></div></div></div>';
       h += mine.length ? mine.map(function (x, i) {
         return '<div class="rp-item"><div class="rp-ih"><b>' + (i + 1) + '차 결과</b><em>' + ymd(x.at) + ' 등록</em><span class="badge ' + (x.sent ? 'done">클라이언트 전달 완료' : 'state">OmicsPharm 검토 중') + '</span></div>' + files(x.files) + (x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '') + '</div>';
       }).reverse().join('') + (fin || ask ? '' : '<p class="rp-more">결과를 다시 보내야 하면 [문의하기]로 OmicsPharm에 알려 주세요.</p>') : '';
@@ -781,9 +783,8 @@
   document.addEventListener('change', function (e) {
     var sec = e.target.closest('.rp'); if (!sec) return;
     var id = sec.dataset.rpId, t = e.target;
-    if (t.matches('[data-rp-pick]')) {
-      var n = [].map.call(t.files, function (f) { return f.name; }); t.value = ''; if (!n.length) return;
-      RP_STAGE[id] = (RP_STAGE[id] || []).concat(n.filter(function (x) { return (RP_STAGE[id] || []).indexOf(x) < 0; })); // 여러 번 골라 추가 (같은 이름은 한 번만)
+    if (t.matches('[data-rp-slot]')) {
+      if (!t.files[0]) return; RP_SLOT[id] = RP_SLOT[id] || {}; RP_SLOT[id][t.dataset.rpSlot] = t.files[0].name; t.value = '';
       if (F.repRedraw) F.repRedraw();
       return;
     }
@@ -792,11 +793,11 @@
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-rp]'); if (!b) return;
     var sec = b.closest('.rp'), id = sec.dataset.rpId, a = b.dataset.rp, it = b.closest('[data-rp-i]'), i = it ? +it.dataset.rpI : -1;
-    if (a === 'rm') { RP_STAGE[id].splice(+b.dataset.j, 1); if (F.repRedraw) F.repRedraw(); return; }
+    if (a === 'open') { RP_OPEN[id] = !RP_OPEN[id]; if (F.repRedraw) F.repRedraw(); return; }
     if (a === 'raw') {
-      var L = RP_STAGE[id] || []; if (!L.length) return;
-      F.ask({ title: '분석 결과를 등록할까요?', desc: '선택한 파일 ' + L.length + '개를 ' + ((state(id).raw || []).filter(function (v) { return v.by !== 'admin'; }).length + 1) + '차 결과로 제출합니다. 제출한 뒤에는 파일을 바꾸거나 추가할 수 없으며, OmicsPharm이 검토해 클라이언트에게 전달합니다.', label: false, yes: '등록하기' }, function () {
-        F.repRaw(id, L.slice()); RP_STAGE[id] = []; OP.toast('분석 결과를 등록했습니다. OmicsPharm이 검토 후 클라이언트에게 전달합니다.'); if (F.repRedraw) F.repRedraw();
+      var S0 = RP_SLOT[id] || {}, L = SLOTS.filter(function (o) { return S0[o[0]]; }).map(function (o) { return S0[o[0]]; }); if (!L.length) return;
+      F.ask({ title: '결과보고서를 등록할까요?', desc: SLOTS.filter(function (o) { return S0[o[0]]; }).map(function (o) { return o[1]; }).join(', ') + '를 ' + ((state(id).raw || []).filter(function (v) { return v.by !== 'admin'; }).length + 1) + '차 결과로 제출합니다. 제출한 뒤에는 파일을 바꾸거나 추가할 수 없으며, OmicsPharm이 검토해 클라이언트에게 전달합니다.', label: false, yes: '등록하기' }, function () {
+        F.repRaw(id, L.slice()); RP_SLOT[id] = {}; RP_OPEN[id] = false; OP.toast('분석 결과를 등록했습니다. OmicsPharm이 검토 후 클라이언트에게 전달합니다.'); if (F.repRedraw) F.repRedraw();
       });
       return;
     }
