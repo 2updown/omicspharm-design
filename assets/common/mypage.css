@@ -373,6 +373,9 @@ span.tbtn { cursor:default; }
 .rp-aientry .ai-lb { font-size:16px; line-height:24px; }
 .rp-ai-up { display:flex; flex-direction:column; align-items:flex-start; gap:10px; width:100%; margin-top:4px; }
 .rp-ai-up .rp-stage { width:100%; }
+.rp-ai-up .row { display:flex; align-items:center; gap:10px; }
+.rp-ai-up .rp-cnt { font-size:13px; color:var(--gray-500); }
+.rp-ai-up .btn.up.off { opacity:.4; pointer-events:none; }
 .rp-aientry .rp-up-go { align-self:stretch; }
 /* PDF 등록 표 (계약서 파일 행과 같은 형식, 2026-10-29) */
 .rp-tbl { display:flex; flex-direction:column; border-top:2px solid #000; }
