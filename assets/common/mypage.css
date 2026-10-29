@@ -628,7 +628,10 @@ span.tbtn { cursor:default; }
 .b-tabs .nb { flex:none; display:grid; place-items:center; width:16px; height:16px; border-radius:50%; background:#f00011; color:#fff; font-size:10px; font-weight:600; line-height:16px; }
 /* 컨설턴트 결과: 직접 수정 취소(박스 안 아래), 추가 파일 목록 (2026-10-29) */
 .rp-undo-row { display:flex; justify-content:flex-end; }
-.rp-undo-row .tbtn { color:var(--gray-500); }
+/* DS 텍스트 버튼 (밑줄): 기본 양식 다운로드, 직접 수정 취소 등 공통 (2026-10-29) */
+.btn-tx { height:32px; padding:0 8px; border:0; border-radius:8px; background:none; font-size:14px; font-weight:500; color:var(--gray-700); text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
+.btn-tx:hover { background:var(--gray-100); }
+.btn-tx:disabled { color:var(--gray-400); text-decoration:none; background:none; cursor:default; }
 .rp-xl { display:flex; flex-direction:column; gap:4px; margin-top:6px; }
 .rp-steps .rp-xl li { counter-increment:none; display:flex; align-items:center; justify-content:flex-start; gap:6px; padding:0; border:0; font-size:13px; color:#000; list-style:none; }
 .rp-xl .rp-x { width:20px; height:20px; color:var(--gray-500); }

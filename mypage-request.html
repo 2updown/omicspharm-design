@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zl">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zl">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261029zl">
-<script src="assets/common/site.js?v=20261029zl"></script>
-<script src="assets/common/consult.js?v=20261029zl"></script>
-<script src="assets/common/mypage.js?v=20261029zl"></script>
-<script src="assets/common/svc-spec.js?v=20261029zl"></script>
-<script src="assets/common/flow.js?v=20261029zl"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zm">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zm">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261029zm">
+<script src="assets/common/site.js?v=20261029zm"></script>
+<script src="assets/common/consult.js?v=20261029zm"></script>
+<script src="assets/common/mypage.js?v=20261029zm"></script>
+<script src="assets/common/svc-spec.js?v=20261029zm"></script>
+<script src="assets/common/flow.js?v=20261029zm"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -355,9 +355,6 @@
   .fdocs .chip.none { background:#ffe1e1; color:#f00011; }
   .fdocs .fbtns { display:flex; align-items:center; gap:8px; margin-left:auto; }
   /* 버튼 위계 (2026-10-27): 보기 = 텍스트 버튼(DS button_text) · 재제출 요청 = outline · 확인 완료 = primary */
-  .btn-tx { height:32px; padding:0 8px; border:0; border-radius:8px; background:none; font-size:14px; font-weight:500; color:var(--gray-700); text-decoration:underline; text-underline-offset:3px; cursor:pointer; }
-  .btn-tx:hover { background:var(--gray-100); }
-  .btn-tx:disabled { color:var(--gray-400); text-decoration:none; background:none; cursor:default; }
   .qm-ask { align-self:center; white-space:nowrap; } /* 정보 부족 카드 오른쪽: [입력 요청] / 비활성 '입력 요청함' */
   .fdocs .btn { height:32px; padding:0 12px; }
   .fdocs p { flex-basis:100%; margin-left:108px; font-size:12px; line-height:18px; color:var(--gray-500); white-space:pre-line; }

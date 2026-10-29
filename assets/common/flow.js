@@ -811,7 +811,7 @@
       var hd = !gr ? '<div class="rp-item" data-rp-i="' + i + '"><div class="rp-ih"><b>' + nm + '</b><em>' + who + '</em>' + (x.sent ? '<span class="badge done">' + F.repName(x.repN - 1) + ' 전달 완료</span>' : '') + '</div>'
         : '<div class="rp-item rp-form" data-rp-i="' + i + '"><div class="rp-fh"><b>' + nm + '</b><span>' + who + '</span></div><div class="rp-fb">';
       // 직접 수정 취소: 머리 대신 박스 안 맨 아래 (2026-10-29)
-      var undo = x.by === 'admin' && !x.sent ? '<div class="rp-undo-row"><button type="button" class="tbtn" data-rp="undo">직접 수정 취소</button></div>' : '';
+      var undo = x.by === 'admin' && !x.sent ? '<div class="rp-undo-row"><button type="button" class="btn-tx" data-rp="undo">직접 수정 취소</button></div>' : '';
       var rq = x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '';
       // 완성 PDF로 올린 결과: AI 초안 없이 확인 → 전달 2단계 (2026-10-29 미팅)
       if (pdfK) return hd + files(x.files) + rq + '<div class="rp-agent"><div class="rp-ah"><b>완성 보고서 (PDF)</b></div><ol class="rp-steps">' +
