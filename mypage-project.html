@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zz3">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zz3">
-<script src="assets/common/site.js?v=20261029zz3"></script>
-<script src="assets/common/consult.js?v=20261029zz3"></script>
-<script src="assets/common/mypage.js?v=20261029zz3"></script>
-<script src="assets/common/flow.js?v=20261029zz3"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zz4">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zz4">
+<script src="assets/common/site.js?v=20261029zz4"></script>
+<script src="assets/common/consult.js?v=20261029zz4"></script>
+<script src="assets/common/mypage.js?v=20261029zz4"></script>
+<script src="assets/common/flow.js?v=20261029zz4"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -516,7 +516,7 @@
       '<form class="psearch" id="pq" role="search"><input type="search" id="pqIn" placeholder="프로젝트명 또는 번호로 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
       '<div class="b-tabw" id="pTabW"><button type="button" class="b-arr l" data-arr="-1" aria-label="이전 단계 보기" hidden><img src="assets/find/ic-caret-left.svg" alt=""></button><div class="b-tabs" id="pChips" role="tablist"></div><button type="button" class="b-arr r" data-arr="1" aria-label="다음 단계 보기" hidden><img src="assets/find/ic-caret-right.svg" alt=""></button></div>' +
       '<div class="pbar"><span class="total" id="pTotal"></span>' + (ADM ? '' : '<label class="sort" style="margin-left:auto;margin-right:8px"><select id="pRoute" aria-label="경로"><option value="">전체 경로</option><option value="match">OmicsPharm 매칭 요청</option><option value="self">직접 신청</option></select></label>') + '<label class="sort"><select id="pSort" aria-label="정렬"><option value="new">최신등록순</option><option value="due">납기임박순</option></select></label></div>' +
-      '<div class="list" id="pList"></div>' +
+      '<div class="list" id="pList"></div><nav class="pager" id="pPager" aria-label="페이지" hidden></nav>' +
       '<p class="demo-note">※ 화면 확인용 예시 프로젝트입니다.</p>';
     // '확인하지 않은 Q&A·리뷰' 줄은 뺌 (Q&A 게시판 없음, 분석파트너 리뷰 공개는 미정). 새 견적 요청은 칩의 N으로
     function draw() {
@@ -534,7 +534,7 @@
       var L = base.filter(function (p) { return st.stage === '전체' || SG(p) === st.stage; })
         .sort(st.sort === 'due' ? function (a, b) { return (a.stage === '프로젝트 완료') - (b.stage === '프로젝트 완료') || new Date(a.due) - new Date(b.due); } : function (a, b) { return b.at - a.at; });
       $('#pTotal').innerHTML = '총 <b>' + L.length + '</b>건';
-      $('#pList').innerHTML = L.map(function (x) {
+      $('#pList').innerHTML = OP.my.paged($('#pPager'), L.map(function (x) {
         if (x.kind === 'q') { // 견적 단계 카드: 견적 상태 + 제출 전이면 견적 마감일
           var open = x.stage === '견적 요청' && !x.del, dl = Math.ceil((new Date(x.due + 'T23:59:59') - Date.now()) / 864e5);
           return '<a class="lcard' + (x.del ? ' gone' : '') + '" href="' + x.href + '"' + (x.del ? ' data-gone="' + esc(x.id) + '" data-title="' + esc(x.title) + '"' + (x.sub ? ' data-sub' : '') : '') + '><div class="head">' +
@@ -552,7 +552,7 @@
           '<h3>' + esc(x.title) + '</h3></div>' +
           '<div class="info"><div class="meta">' + (ADM ? '' : '<span class="route">' + (routeOf(x) ? '직접 신청' : 'OmicsPharm 매칭 요청') + '</span>') + '<span>' + esc(x.client) + '</span><span><em>샘플</em>' + x.samples + '개</span><span><em>계약금액</em>' + esc(x.amount) + '</span><span><em>납기일</em>' + dotd(x.due) + '</span></div>' +
           '<p class="reg">' + (x.flow && !x.ct ? '선정일 ' : '계약일 ') + dotd(x.contract) + '</p></div></a>'; // 계약서 등록 전에는 선정일
-      }).join('') || '<div class="empty"><b>' + (st.q || st.route ? '조건에 맞는 프로젝트가 없습니다' : '진행 중인 프로젝트가 없습니다') + '</b><p>OmicsPharm의 매칭을 거쳐 계약된 프로젝트가 여기에 표시됩니다.</p></div>';
+      }), JSON.stringify(st), draw) || '<div class="empty"><b>' + (st.q || st.route ? '조건에 맞는 프로젝트가 없습니다' : '진행 중인 프로젝트가 없습니다') + '</b><p>OmicsPharm의 매칭을 거쳐 계약된 프로젝트가 여기에 표시됩니다.</p></div>';
     }
     $('#pq').addEventListener('submit', function (e) { e.preventDefault(); st.q = $('#pqIn').value; draw(); });
     $('#pqIn').addEventListener('input', function () { if (!this.value && st.q) { st.q = ''; draw(); } });
@@ -619,7 +619,7 @@
     $('#project').outerHTML =
       '<form class="psearch" id="cq" role="search"><input type="search" id="cqIn" placeholder="프로젝트명 또는 번호로 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
       '<div class="b-tabw" id="cTabW"><button type="button" class="b-arr l" data-arr="-1" aria-label="이전 단계 보기" hidden><img src="assets/find/ic-caret-left.svg" alt=""></button><div class="b-tabs" id="cChips" role="tablist"></div><button type="button" class="b-arr r" data-arr="1" aria-label="다음 단계 보기" hidden><img src="assets/find/ic-caret-right.svg" alt=""></button></div>' +
-      '<div class="unread" id="cUnread"></div><div class="pbar"><span class="total" id="cTotal"></span></div><div class="list" id="cList"></div>';
+      '<div class="unread" id="cUnread"></div><div class="pbar"><span class="total" id="cTotal"></span></div><div class="list" id="cList"></div><nav class="pager" id="cPager" aria-label="페이지" hidden></nav>';
     // 확인하지 않은 견적서 = 컨설턴트가 전달했고 아직 고르지 않은 견적
     var newQN = function (x) { var s = F.state(x.id); return s.st === 'sent' ? fwdKeys(s).length : 0; };
     var qN = list.reduce(function (n, x) { return n + newQN(x); }, 0), cOnly = false;
@@ -637,7 +637,7 @@
       var D2 = cst === '전체' || cst === DR ? DB : [];
       var L = cst === DR ? [] : B.filter(function (x) { return cst === '전체' || F.clientStage(x.id) === cst; });
       $('#cTotal').innerHTML = '총 <b>' + (D2.length + L.length) + '</b>건';
-      $('#cList').innerHTML = D2.map(draftCard).join('') + L.map(card).join('') ||
+      $('#cList').innerHTML = OP.my.paged($('#cPager'), D2.map(draftCard).concat(L.map(card)), [cst, q, cOnly].join('|'), cdraw) ||
         '<div class="empty"><b>' + (q ? '조건에 맞는 프로젝트가 없습니다' : cst === DR ? '임시저장한 의뢰서가 없습니다' : cst === '전체' ? '프로젝트가 없습니다' : cst + ' 단계의 프로젝트가 없습니다') + '</b></div>';
     };
     $('#cq').addEventListener('submit', function (e) { e.preventDefault(); cq = $('#cqIn').value; cdraw(); });

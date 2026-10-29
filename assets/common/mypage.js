@@ -188,6 +188,32 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     }
   };
 
+  // 목록 페이지네이션 (2026-10-29 공통, 프로젝트 찾기와 같은 모양): 10건씩, 10건 이하면 숨김.
+  // rows = 카드 HTML 배열, key = 필터·탭·검색 상태 (바뀌면 1페이지로), redraw = 페이지 바꿀 때 다시 그릴 함수
+  D.PER = 10;
+  D.paged = function (nav, rows, key, redraw) {
+    if (nav._key !== key) { nav._key = key; nav._p = 1; }
+    var pages = Math.max(1, Math.ceil(rows.length / D.PER)), p = nav._p = Math.min(nav._p || 1, pages);
+    if (!nav._on) {
+      nav._on = true;
+      nav.addEventListener('click', function (e) {
+        var b = e.target.closest('button'); if (!b || b.disabled) return;
+        nav._p = +b.dataset.p; redraw();
+        var top = nav.parentNode.getBoundingClientRect().top + window.scrollY - 100; if (window.scrollY > top) window.scrollTo({ top: top, behavior: 'smooth' });
+      });
+    }
+    var html = '';
+    if (pages > 1) {
+      var s = Math.max(1, Math.min(p - 2, pages - 4)), e = Math.min(pages, s + 4);
+      var btn = function (n, ic, label, dis) { return '<button type="button" data-p="' + n + '" aria-label="' + label + '"' + (dis ? ' disabled' : '') + '><img src="assets/find/ic-caret-' + ic + '.svg" alt=""></button>'; };
+      html = btn(1, 'double-left', '첫 페이지', p === 1) + btn(p - 1, 'left', '이전 페이지', p === 1);
+      for (var i = s; i <= e; i++) html += '<button type="button" data-p="' + i + '"' + (i === p ? ' class="on" aria-current="page"' : '') + '>' + i + '</button>';
+      html += btn(p + 1, 'right', '다음 페이지', p === pages) + btn(pages, 'double-right', '마지막 페이지', p === pages);
+    }
+    nav.innerHTML = html; nav.hidden = pages < 2;
+    return rows.slice((p - 1) * D.PER, p * D.PER).join('');
+  };
+
   // 확인 모달: OP.confirm('제목', '설명', '삭제', 확인 시 실행할 함수)
   D.confirm = function (title, desc, yes, cb) {
     var m = document.createElement('div');
