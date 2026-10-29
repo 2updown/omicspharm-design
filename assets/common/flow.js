@@ -818,7 +818,7 @@
     if (a === 'dl') OP.toast('데모: 보고서 워드 파일이 내려받아집니다.');
     if (a === 'undo') { F.repUndo(id, i); OP.toast('직접 수정을 취소했습니다.'); if (F.repRedraw) F.repRedraw(); return; }
     if (a === 'self') { F.repSelf(id); OP.toast('보고서 수정 항목을 만들었습니다. 고친 PDF를 등록해 전달해주세요.'); if (F.repRedraw) F.repRedraw(); }
-    if (a === 'ask') F.ask({ title: '분석파트너에게 결과 재등록을 요청할까요?', desc: partner(state(id).pick).org + '에 알림이 가고, 분석파트너 화면에 결과 등록 칸이 다시 열립니다.', label: '요청 내용', ph: '예) 클라이언트가 그룹별 Boxplot 추가와 통계 검정 방법 변경(Wilcoxon)을 요청했습니다. 반영해 결과를 다시 올려 주세요.', value: (F.cReqOpen(state(id)) || {}).note ? '클라이언트 요청: ' + F.cReqOpen(state(id)).note : '', required: true, yes: '요청하기' }, function (v) { F.repAsk(id, v); OP.toast('분석파트너에게 결과 재등록을 요청했습니다.'); if (F.repRedraw) F.repRedraw(); });
+    if (a === 'ask') F.ask({ title: '분석파트너에게 결과 재등록을 요청할까요?', desc: partner(state(id).pick).org + '에 알림이 가고, 분석파트너 화면에 결과 등록 칸이 다시 열립니다.', label: '요청 내용', ph: '예) 클라이언트가 원본 데이터(Raw data) 파일을 추가로 요청했습니다. 올려 주세요.', value: (F.cReqOpen(state(id)) || {}).note ? '클라이언트 요청: ' + F.cReqOpen(state(id)).note : '', required: true, yes: '요청하기' }, function (v) { F.repAsk(id, v); OP.toast('분석파트너에게 결과 재등록을 요청했습니다.'); if (F.repRedraw) F.repRedraw(); });
     if (a === 'send') F.ask({ title: '클라이언트에게 결과보고서를 전달할까요?', desc: '등록한 PDF가 클라이언트 결과보고서에 등록되고 알림이 갑니다.', label: '클라이언트에게 남길 메모 (선택)', ph: '예) 요청하신 그룹별 Boxplot을 추가했습니다.', yes: '전달하기' }, function (v) { F.repSend(id, i, v); OP.toast('클라이언트에게 결과보고서를 전달했습니다.'); if (F.repRedraw) F.repRedraw(); });
   });
 
