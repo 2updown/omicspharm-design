@@ -123,6 +123,7 @@
   .reqbox > summary img { width:20px; height:20px; transition:transform .15s; }
   .reqbox[open] > summary img { transform:rotate(180deg); }
   .reqbox:not([open]) { gap:0; }
+  .reqbox > :not(summary) + :not(summary) { margin-top:24px; } /* details 안 내용은 flex gap이 안 먹음: 요약 상자·기본 정보·삭제 줄 사이 24 (2026-10-29) */
   .ptabs .tcnt { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; margin-left:6px; padding:0 5px; border-radius:99px; background:var(--orange-600); color:#fff; font-size:11px; font-weight:700; }
   /* 견적 확인 */
   .qhead { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
@@ -224,6 +225,7 @@
   .rold .rver[open] summary img { transform:rotate(180deg); }
   .rold .rver[open] { display:flex; flex-direction:column; gap:12px; padding-bottom:16px; }
   .rold .rver[open] > :not(summary) { margin:0 20px; }
+  .rold .rver[open] > :not(summary) + :not(summary) { margin-top:12px; } /* 지난 차수: 변경 내용·파일 사이 (details라 gap 안 먹음) */
   .rrate { display:flex; flex-direction:column; gap:12px; padding:24px; border-radius:12px; background:var(--gray-50); }
   .rrate h4 { font-size:16px; font-weight:700; line-height:24px; }
   .rrate .lead, .rrate p { font-size:14px; line-height:22px; color:var(--gray-600); white-space:pre-line; }
