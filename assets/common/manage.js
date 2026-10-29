@@ -34,7 +34,7 @@
         '<select class="mg-sel" data-f="stage"><option value="">진행상태</option>' + STAGES.map(function (v) { return '<option>' + v + '</option>'; }).join('') + '</select>' +
         '<form class="mg-q" role="search" data-go><input type="search" placeholder="의뢰명 검색" data-f="q" autocomplete="off" aria-label="의뢰명 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form></div>' +
       '<p class="mg-total">총 <b data-n>0</b>건</p>' +
-      '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">No</th><th>분석 서비스</th><th>의뢰명</th><th>모집기간(상태)</th><th>희망완료일</th><th>희망가격</th><th>등록일</th><th>결과 보고서</th><th>진행상태</th><th class="c">상세보기</th></tr></thead><tbody data-b></tbody></table></div>';
+      '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">No</th><th>분석 서비스</th><th>의뢰명</th><th>모집기간(상태)</th><th>희망완료일</th><th>예상금액</th><th>등록일</th><th>결과 보고서</th><th>진행상태</th><th class="c">상세보기</th></tr></thead><tbody data-b></tbody></table></div>';
     var $ = function (s) { return host.querySelector(s); };
     var draw = function () {
       var f = { svc: $('[data-f=svc]').value, open: $('[data-f=open]').value, stage: $('[data-f=stage]').value, q: $('[data-f=q]').value.trim() };
