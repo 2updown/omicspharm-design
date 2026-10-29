@@ -284,6 +284,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
         if (mk === key) seenAdd.push(a.id); else NEW[mk] = 1;
       });
       if (seenAdd.length) write('op.menuSeen', seen.concat(seenAdd));
+      delete NEW.partners; delete NEW.clients; // 회원 관리 메뉴에는 N 없음 (나중에 관리자 페이지로 옮김, 2026-10-29)
       var link = function (m) {
         var on = m[0] === key, label = m[1];
         var href = m[0] === 'project' && s.role === 'admin' ? 'mypage-request.html' : m[2];
