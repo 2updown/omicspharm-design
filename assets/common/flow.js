@@ -746,6 +746,7 @@
   // 분석파트너 결과 등록 (2026-10-29, 기존 사이트 방식): n차 결과보고서 칸에 국문·영문 리포트를 하나씩 올리고 [저장]
   var RP_PDF = {}; // PDF 등록 표: { ko: 국문 리포트, en: 영문 리포트 } 파일 이름, 프로젝트별 (2026-10-29)
   var RP_MAX = 5, RP_ERR = {}; // AI 보고서 생성 파일 개수 제한, 넘으면 칸 아래 오류 문구 (2026-10-29)
+  var RP_EXT = /\.(raw|xlsx|txt)$/i, RP_ACC = '.raw,.xlsx,.txt'; // 안내 문구에 적힌 형식만 (Raw data, xlsx, txt)
   var RP_FILES = {}; // 고른 파일 이름 (등록 전), 프로젝트별. 형식 제한 없이 여러 개 (보고서 에이전트가 raw 데이터로도 초안을 만듦, 2026-10-29)
   var pdfL = function (id) { var o = RP_PDF[id] || {}; return [o.ko, o.en].filter(Boolean); };
   F.repSec = function (id, role) {
@@ -769,7 +770,7 @@
         '<div class="rp-up-go"><button type="button" class="btn primary" data-rp="raw"' + (pdfL(id).length ? '' : ' disabled') + '>제출하기</button></div></div></div>' +
         // AI 보고서 생성: PDF 등록과 따로, 이 카드에서 바로 올림 (라벨은 버튼 아님, 2026-10-29)
         '<div class="rp-aientry"><span class="ai-lb"><i class="ai-ic" aria-hidden="true"></i><span>AI 보고서 생성</span></span><p>완성된 보고서가 없다면 Raw data, 엑셀(xlsx), 텍스트(txt) 파일을 올려 주세요. AI가 결과보고서로 변환 후 전달합니다.</p>' +
-          '<div class="rp-ai-up"><div class="row"><label class="btn up">파일 선택<input type="file" multiple hidden data-rp-pick></label>' + (fl.length ? '' : '<span class="rp-none">선택된 파일 없음</span>') + '</div>' + (RP_ERR[id] ? '<p class="rp-err">파일은 최대 ' + RP_MAX + '개까지 올릴 수 있습니다.</p>' : '') + (fl.length ? '<ul class="rp-stage">' + fl.map(function (n, j) { return '<li><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(n) + '</span><button type="button" data-rp="rm" data-j="' + j + '" aria-label="' + esc(n) + ' 빼기">✕</button></li>'; }).join('') + '</ul>' : '') + '</div>' +
+          '<div class="rp-ai-up"><div class="row"><label class="btn up">파일 선택<input type="file" multiple hidden data-rp-pick accept="' + RP_ACC + '"></label>' + (fl.length ? '' : '<span class="rp-none">선택된 파일 없음</span>') + '</div>' + (RP_ERR[id] ? '<p class="rp-err">' + (RP_ERR[id] === 'ext' ? 'Raw data(.raw), 엑셀(.xlsx), 텍스트(.txt) 파일만 올릴 수 있습니다.' : '파일은 최대 ' + RP_MAX + '개까지 올릴 수 있습니다.') + '</p>' : '') + (fl.length ? '<ul class="rp-stage">' + fl.map(function (n, j) { return '<li><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(n) + '</span><button type="button" data-rp="rm" data-j="' + j + '" aria-label="' + esc(n) + ' 빼기">✕</button></li>'; }).join('') + '</ul>' : '') + '</div>' +
           (fl.length ? '<div class="rp-up-go"><button type="button" class="btn primary" data-rp="raw" data-k="ai">제출하기</button></div>' : '') + '</div>';
       h += mine.length ? mine.map(function (x, i) {
         return '<div class="rp-item"><div class="rp-ih"><b>' + (i ? '수정본 ' + i : '결과보고서') + '</b><em>' + ymd(x.at) + ' 등록' + (x.kind === 'pdf' ? '' : '<i class="dv" aria-hidden="true"></i>AI 보고서 생성') + '</em><span class="badge ' + (x.sent ? 'done">클라이언트 전달 완료' : 'state">OmicsPharm 검토 중') + '</span></div>' + files(x.files) + (x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '') + '</div>';
@@ -824,7 +825,8 @@
     if (t.matches('[data-rp-pick]')) {
       var n = [].map.call(t.files, function (f) { return f.name; }); t.value = ''; if (!n.length) return;
       var cur = RP_FILES[id] || [], add = n.filter(function (x) { return cur.indexOf(x) < 0; }); // 여러 번 골라 추가 (같은 이름은 한 번만)
-      RP_ERR[id] = cur.length + add.length > RP_MAX; if (RP_ERR[id]) add = add.slice(0, Math.max(0, RP_MAX - cur.length));
+      var ok = add.filter(function (x) { return RP_EXT.test(x); }); RP_ERR[id] = ok.length < add.length ? 'ext' : false; add = ok;
+      if (cur.length + add.length > RP_MAX) { RP_ERR[id] = 'max'; add = add.slice(0, Math.max(0, RP_MAX - cur.length)); }
       RP_FILES[id] = cur.concat(add);
       if (F.repRedraw) F.repRedraw();
       return;
