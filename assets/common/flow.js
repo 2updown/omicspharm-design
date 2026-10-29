@@ -769,7 +769,11 @@
     if (!raw.length) h += '<div class="rp-empty">분석파트너가 결과를 등록하면 AI가 결과보고서 초안(워드)을 만들어 여기에 보여 드립니다.' + (fin ? '' : '<button type="button" class="tbtn primary" data-rp="demo">데모: 분석파트너 결과 등록</button>') + '</div>';
     h += raw.map(function (x, i) {
       var step = x.sent ? 3 : x.pdf ? 2 : 1;
-      return '<div class="rp-item" data-rp-i="' + i + '"><div class="rp-ih"><b>' + (x.by === 'admin' ? '컨설턴트 직접 수정' : pn(i) + '차 결과') + '</b><em>' + (x.by === 'admin' ? '' : esc(partner(s.pick).org) + '<i class="dv" aria-hidden="true"></i>') + ymd(x.at) + (x.by === 'admin' ? ' 시작' : ' 등록') + '</em>' + (x.sent ? '<span class="badge done">' + x.repN + '차 보고서로 전달 완료</span>' : '<span class="badge wait">' + (x.by === 'admin' ? '전달 전' : '검토 대기') + '</span>') + (x.by === 'admin' && !x.sent ? '<button type="button" class="tbtn rp-undo" data-rp="undo">직접 수정 취소</button>' : '') + '</div>' + (x.files.length ? files(x.files) : '') + (x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '') +
+      var nm = x.by === 'admin' ? '컨설턴트 직접 수정' : pn(i) + '차 결과', who = (x.by === 'admin' ? '' : esc(partner(s.pick).org) + '<i class="dv" aria-hidden="true"></i>') + ymd(x.at) + (x.by === 'admin' ? ' 시작' : ' 등록');
+      // 아직 전달 전인 결과는 분석파트너 등록 칸과 같은 초록 머리 박스 (2026-10-29)
+      var hd = x.sent ? '<div class="rp-item" data-rp-i="' + i + '"><div class="rp-ih"><b>' + nm + '</b><em>' + who + '</em><span class="badge done">' + x.repN + '차 보고서로 전달 완료</span></div>'
+        : '<div class="rp-item rp-form" data-rp-i="' + i + '"><div class="rp-fh"><b>' + nm + '</b><span>' + who + '</span>' + (x.by === 'admin' ? '<button type="button" class="tbtn rp-undo" data-rp="undo">직접 수정 취소</button>' : '') + '</div><div class="rp-fb">';
+      return hd + (x.files.length ? files(x.files) : '') + (x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '') +
         (x.by === 'admin' ? '<div class="rp-agent"><div class="rp-ah"><b>보고서 수정</b></div>' : '<div class="rp-agent"><div class="rp-ah"><img src="assets/common/ic-sparkle-fill.svg" alt=""><b>AI 보고서 초안</b><span class="badge state">생성 완료</span></div>') +
         '<ol class="rp-steps">' +
           // 1단계: 초안(워드)을 내려받아 고친 뒤 PDF로 저장 → 2단계에서 PDF 등록. 고친 워드를 따로 올리는 [수정본 업로드]는 뺌 (2026-10-29)
@@ -777,7 +781,7 @@
           '<li class="' + (step > 2 ? 'done' : step === 2 ? 'cur' : '') + '"><div><b>PDF 등록</b><p>클라이언트에게 전달할 최종본은 PDF로 올려 주세요.</p></div><div class="rp-act">' + (x.sent ? (x.pdf ? '<span class="rp-fn">' + esc(x.pdf) + '</span>' : '') : '<div class="rp-upf"><span class="fn' + (x.pdf ? ' on' : '') + '">' + esc(x.pdf || '선택된 파일 없음') + '</span><label class="btn up">파일 선택<input type="file" accept=".pdf,application/pdf" hidden data-rp-file="pdf"></label></div>') + '</div></li>' + // PDF 등록: 파일 업로드 컴포넌트 (2026-10-29)
           ''+
           '<li class="' + (step > 2 ? 'done' : '') + '"><div><b>클라이언트에 전달</b><p>전달하면 클라이언트 결과보고서에 ' + (rep.length + (x.sent ? 0 : 1)) + '차로 등록되고 알림이 갑니다.</p></div><div class="rp-act">' + (x.sent ? '<span class="rp-fn">' + ymd(x.sent) + ' 전달</span>' : '<button type="button" class="btn primary" data-rp="send"' + (x.pdf ? '' : ' disabled') + '>클라이언트에 전달</button>') + '</div></li>' +
-        '</ol></div></div>';
+        '</ol></div>' + (x.sent ? '' : '</div>') + '</div>';
     }).reverse().join('');
     if (rep.length) h += '<div class="rp-sent"><b>클라이언트 결과보고서</b><span>' + rep.length + '차까지 전달<i class="dv" aria-hidden="true"></i>' + (fin ? '클라이언트 최종 승인 (' + ymd(s.fin) + ')' : '클라이언트 검수 대기') + '</span></div>';
     var last = raw[raw.length - 1], cq = F.cReqOpen(s);

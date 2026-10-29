@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029s">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029s">
-<script src="assets/common/site.js?v=20261029s"></script>
-<script src="assets/common/consult.js?v=20261029s"></script>
-<script src="assets/common/mypage.js?v=20261029s"></script>
-<script src="assets/common/flow.js?v=20261029s"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029t">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029t">
+<script src="assets/common/site.js?v=20261029t"></script>
+<script src="assets/common/consult.js?v=20261029t"></script>
+<script src="assets/common/mypage.js?v=20261029t"></script>
+<script src="assets/common/flow.js?v=20261029t"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -188,6 +188,7 @@
   .rnotice b { color:var(--teal-700); }
   .rver { border:1px solid var(--gray-200); border-radius:12px; background:#fff; }
   .rver.cur { display:flex; flex-direction:column; gap:16px; padding:20px; border-color:var(--gray-300); }
+  .rver.cur.rp-form { gap:0; padding:0; border-color:var(--teal-600); } /* 최신 차수 = 초록 머리 박스 (2026-10-29) */
   .rv-head { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .rv-head b, .rver summary b { font-size:16px; font-weight:700; line-height:24px; }
   .rv-head em, .rver summary em { margin-left:auto; font-style:normal; font-size:13px; color:var(--gray-500); }
@@ -755,11 +756,12 @@
     if (!REP.length) return '<div class="empty"><b>등록된 결과보고서가 없습니다</b><p>' + (FS.ct ? '분석이 끝나면 OmicsPharm 컨설턴트가 결과보고서를 검토해 등록합니다. 납기일 ' + dot(DUE) + ' (' + dd(DUE) + ')' : '계약 후 분석이 끝나면 결과보고서가 여기에 등록됩니다.') + '</p></div>';
     var last = REP[REP.length - 1], n = REP.length;
     return '<div class="qhead"><h3>결과보고서</h3><span>의뢰서 작성 시 선택하신 산출물이 등록됩니다. 이전 차수는 아래에서 열어볼 수 있습니다.</span></div>' +
-      '<section class="rver cur"><div class="rv-head"><b>' + n + '차 결과보고서</b><span class="badge ' + (FS.fin ? 'done">최종 승인 완료' : 'wait">검수 대기') + '</span><em>' + ymd(last.at) + ' 등록</em></div>' +
+      // 최신 차수는 분석파트너 등록 칸과 같은 초록 머리 박스 (2026-10-29)
+      '<section class="rver cur rp-form"><div class="rp-fh"><b>' + n + '차 결과보고서</b><span>' + (FS.fin ? '최종 승인 완료' : '검수 대기') + '<i class="dv" aria-hidden="true"></i>' + ymd(last.at) + ' 등록</span></div><div class="rp-fb">' +
         (last.note ? '<p class="rv-note"><b>OmicsPharm 컨설턴트</b>' + esc(F.mask(FS, last.note)) + '</p>' : '') + filesHTML(last) +
         (FS.fin ? '<p class="rv-fin">' + ymd(FS.fin) + ' 최종 승인했습니다. 이후 수정이 필요하면 문의하기로 요청해주세요.</p>'
           : (F.cReqOpen(FS) ? '<p class="rv-fin">' + ymd(F.cReqOpen(FS).at) + ' 수정을 요청했습니다. OmicsPharm 컨설턴트가 확인 후 안내드립니다.</p>' : '<div class="rv-acts"><button type="button" class="btn" id="repReq">수정 요청</button><button type="button" class="btn primary" id="repFin">최종 승인</button></div>')) +
-      '</section>' +
+      '</div></section>' +
       (n > 1 ? '<div class="rold">' + REP.slice(0, -1).map(function (v, i) { return { v: v, i: i }; }).reverse().map(function (o) {
         return '<details class="rver"><summary><b>' + (o.i + 1) + '차 결과보고서</b><em>' + ymd(o.v.at) + ' 등록</em><img src="assets/find/ic-chevron-down.svg" alt=""></summary>' + (o.v.note ? '<p class="rv-note">' + esc(F.mask(FS, o.v.note)) + '</p>' : '') + filesHTML(o.v) + '</details>';
       }).join('') + '</div>' : '') +
