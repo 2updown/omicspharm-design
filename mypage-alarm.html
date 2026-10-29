@@ -7,18 +7,21 @@
 <title>알림 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 알림 (Figma 시안 없음). GNB 종 아이콘이 이 화면으로 연결된다.
      알림은 이 브라우저의 의뢰·문의 기록 + 공지로 만든다(assets/common/mypage.js). 읽음 상태는 localStorage op.alarmRead -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zu">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zu">
-<script src="assets/common/site.js?v=20261029zu"></script>
-<script src="assets/common/consult.js?v=20261029zu"></script>
-<script src="assets/common/mypage.js?v=20261029zu"></script>
-<script src="assets/common/flow.js?v=20261029zu"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zw">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zw">
+<script src="assets/common/site.js?v=20261029zw"></script>
+<script src="assets/common/consult.js?v=20261029zw"></script>
+<script src="assets/common/mypage.js?v=20261029zw"></script>
+<script src="assets/common/flow.js?v=20261029zw"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; }
   .readall { font-size:14px; font-weight:500; line-height:20px; color:var(--gray-500); white-space:nowrap; }
   .readall:hover:not(:disabled) { color:var(--teal-600); }
   .readall:disabled { opacity:.4; cursor:default; }
 
+  .cnt { font-size:14px; line-height:20px; color:var(--gray-600); } .cnt b { color:var(--teal-700); }
+  .more { display:flex; justify-content:center; padding-top:16px; }
+  .more .btn { width:100%; gap:4px; } .more .btn img { width:16px; height:16px; }
   .alist { border-top:1px solid var(--gray-200); }
   .al { display:flex; align-items:flex-start; gap:14px; padding:18px 12px; border-bottom:1px solid var(--gray-200); }
   .al:hover { background:var(--gray-50); }
@@ -54,7 +57,7 @@
 
     <section class="card">
       <div class="bar">
-        <div class="chips" id="chips" role="tablist"></div>
+        <p class="cnt" id="cnt"></p>
         <button type="button" class="readall" id="readAll">모두 읽음</button>
       </div>
       <div id="list"></div>
@@ -69,28 +72,24 @@
   var me = OP.mypage('alarm'); if (!me) return;
   var D = OP.my, esc = D.esc, $ = function (s) { return document.querySelector(s); };
   var CAT = { project: ['프로젝트', 'assets/find/ic-flask.svg'], inquiry: ['문의', 'assets/find/ic-user.svg'], notice: ['공지', 'assets/detail/ic-info-circle.svg'] };
-  var F = [['all', '전체'], ['project', '프로젝트'], ['inquiry', '문의'], ['notice', '공지']];
-  var state = { f: 'all' };
+  // 필터는 뺌 (2026-10-29): 기존 사이트, 인프런처럼 한 목록. 많으면 20건씩 [더 많은 알림 보기]
+  var PAGE = 20, state = { n: PAGE };
 
   function render() {
     var ALL = D.alarms();
-    $('#chips').innerHTML = F.map(function (f) {
-      var n = ALL.filter(function (a) { return f[0] === 'all' || a.cat === f[0]; }).length;
-      return '<button type="button" role="tab" data-f="' + f[0] + '"' + (state.f === f[0] ? ' class="on" aria-selected="true"' : '') + '>' + f[1] + '<span>' + n + '</span></button>';
-    }).join('');
-    var L = ALL.filter(function (a) { return state.f === 'all' || a.cat === state.f; });
-    $('#readAll').disabled = !L.some(function (a) { return !a.read; });
+    var un = ALL.filter(function (a) { return !a.read; }).length, L = ALL.slice(0, state.n);
+    $('#cnt').innerHTML = '전체 ' + ALL.length + '건' + (un ? '<i class="dv" aria-hidden="true"></i>읽지 않은 알림 <b>' + un + '</b>건' : '');
+    $('#readAll').disabled = !un;
     $('#list').innerHTML = L.length ? '<div class="alist">' + L.map(function (a) {
       return '<a class="al' + (a.read ? '' : ' new') + '" href="' + a.href + '" data-id="' + a.id + '">' +
-        '<span class="tx"><span class="top"><span class="cat">' + CAT[a.cat][0] + (a.k ? ' · ' + esc(a.k) : '') + '</span><span>' + D.ymdhm(a.at) + '</span>' + (a.read ? '' : '<i class="dot" aria-label="읽지 않음"></i>') + '</span>' +
+        '<span class="tx"><span class="top"><span class="cat">' + CAT[a.cat][0] + (a.k ? '<i class="dv" aria-hidden="true"></i>' + esc(a.k) : '') + '</span><span>' + D.ymdhm(a.at) + '</span>' + (a.read ? '' : '<i class="dot" aria-label="읽지 않음"></i>') + '</span>' +
           '<p class="t">' + esc(a.t) + '</p>' + (a.sub ? '<p class="sub">' + esc(a.sub).split(' · ').join('<i class="dv" aria-hidden="true"></i>') + '</p>' : '') + '</span>' +
         '<img class="car" src="assets/find/ic-caret-right.svg" alt=""></a>';
-    }).join('') + '</div>' : '<div class="empty"><b>알림이 없습니다</b></div>';
+    }).join('') + '</div>' + (ALL.length > state.n ? '<div class="more"><button type="button" class="btn" id="more">더 많은 알림 보기<img src="assets/find/ic-chevron-down.svg" alt=""></button></div>' : '') : '<div class="empty"><b>알림이 없습니다</b></div>';
   }
-  $('#chips').addEventListener('click', function (e) { var b = e.target.closest('[data-f]'); if (b) { state.f = b.dataset.f; render(); } });
-  $('#list').addEventListener('click', function (e) { var a = e.target.closest('[data-id]'); if (a) D.markRead([a.dataset.id]); });
+  $('#list').addEventListener('click', function (e) { if (e.target.closest('#more')) { state.n += PAGE; render(); return; } var a = e.target.closest('[data-id]'); if (a) D.markRead([a.dataset.id]); });
   $('#readAll').addEventListener('click', function () {
-    D.markRead(D.alarms().filter(function (a) { return state.f === 'all' || a.cat === state.f; }).map(function (a) { return a.id; }));
+    D.markRead(D.alarms().map(function (a) { return a.id; }));
     OP.mypage('alarm'); render(); OP.toast('알림을 모두 읽음 처리했습니다.');
   });
   render();
