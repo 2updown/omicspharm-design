@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029u">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029u">
-<script src="assets/common/site.js?v=20261029u"></script>
-<script src="assets/common/consult.js?v=20261029u"></script>
-<script src="assets/common/mypage.js?v=20261029u"></script>
-<script src="assets/common/flow.js?v=20261029u"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029v">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029v">
+<script src="assets/common/site.js?v=20261029v"></script>
+<script src="assets/common/consult.js?v=20261029v"></script>
+<script src="assets/common/mypage.js?v=20261029v"></script>
+<script src="assets/common/flow.js?v=20261029v"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -755,7 +755,8 @@
   function reportHTML() {
     if (!REP.length) return '<div class="empty"><b>등록된 결과보고서가 없습니다</b><p>' + (FS.ct ? '분석이 끝나면 OmicsPharm 컨설턴트가 결과보고서를 검토해 등록합니다. 납기일 ' + dot(DUE) + ' (' + dd(DUE) + ')' : '계약 후 분석이 끝나면 결과보고서가 여기에 등록됩니다.') + '</p></div>';
     var last = REP[REP.length - 1], n = REP.length;
-    return '<div class="qhead"><h3>결과보고서</h3></div>' +
+    // 초록 머리 박스가 제목 역할 (분석파트너 등록 칸과 같게, 2026-10-29)
+    return '' +
       // 최신 차수는 분석파트너 등록 칸과 같은 초록 머리 박스 (2026-10-29)
       '<section class="rver cur rp-form"><div class="rp-fh"><b>' + n + '차 결과보고서</b><span>' + (FS.fin ? '최종 승인 완료' : '검수 대기') + '<i class="dv" aria-hidden="true"></i>' + ymd(last.at) + ' 등록</span></div><div class="rp-fb">' +
         (last.note ? '<p class="rv-note"><b>OmicsPharm 컨설턴트</b>' + esc(F.mask(FS, last.note)) + '</p>' : '') + filesHTML(last) +

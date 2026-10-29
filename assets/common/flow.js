@@ -766,6 +766,8 @@
       }).reverse().join('') + (fin || ask ? '' : '<p class="rp-more">결과를 다시 보내야 하면 [문의하기]로 OmicsPharm에 알려 주세요.</p>') : '';
       return h + '</section>';
     }
+    // 전달 전 결과가 있으면 초록 머리 박스가 제목 역할 (분석파트너와 같게). 보고서 에이전트 라벨만 남김 (2026-10-29)
+    if (raw.some(function (x) { return !x.sent; })) h = h.replace('<h3>결과보고서</h3>', '');
     if (!raw.length) h += '<div class="rp-empty">분석파트너가 결과를 등록하면 AI가 결과보고서 초안(워드)을 만들어 여기에 보여 드립니다.' + (fin ? '' : '<button type="button" class="tbtn primary" data-rp="demo">데모: 분석파트너 결과 등록</button>') + '</div>';
     h += raw.map(function (x, i) {
       var step = x.sent ? 3 : x.pdf ? 2 : 1;
