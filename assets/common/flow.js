@@ -480,6 +480,7 @@
         if (s.pick) L.push({ id: 'f-pick-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: josa(cl, '이', '가') + ' ' + nm + ' 프로젝트의 최종 견적을 확정 했습니다.', sub: '공급사: ' + partner(s.pick).org + ' · 클라이언트 견적금액: ' + won(total((F.cqLast(s) || {}).quote || s.P[s.pick].quote).final), href: href });
         (s.raw || []).filter(function (x) { return x.by !== 'admin'; }).forEach(function (x, i) { L.push({ id: 'f-raw-' + r.id + i, k: '결과등록', cat: 'project', at: x.at, t: josa(partner(s.pick).org, '이', '가') + ' ' + nm + ' 프로젝트의 ' + (i + 1) + '차 분석 결과를 등록했습니다. AI 보고서 초안을 검토해주세요.', href: href }); });
         if (s.cancel) L.push({ id: 'f-cancel-' + r.id, k: '의뢰취소', cat: 'project', at: s.cancel.at, t: s.cancel.by === 'admin' ? nm + ' 프로젝트를 삭제했습니다.' : cl + '의 ' + nm + ' 프로젝트가 삭제되었습니다.', sub: s.cancel.reason ? '사유: ' + s.cancel.reason : '', href: href });
+        (s.cReq || []).forEach(function (q, i) { L.push({ id: 'f-creq-' + r.id + i, k: '보고서수정요청', cat: 'project', at: q.at, t: cl + '의 ' + nm + ' 결과보고서 수정 요청이 등록되었습니다.', sub: q.note, href: href }); });
         if (s.rate) L.push({ id: 'f-rate-' + r.id, k: '리뷰등록', cat: 'project', at: s.rate.at, t: cl + '의 ' + nm + ' 프로젝트에 만족도 평가(별점 ' + s.rate.star + '점)가 등록되었습니다.', href: href });
         if (s.fin) L.push({ id: 'f-fin-' + r.id, k: '프로젝트완료', cat: 'project', at: s.fin, t: josa(cl, '이', '가') + ' ' + nm + ' 결과보고서를 최종 승인해 프로젝트가 완료되었습니다.', href: href });
       } else if (role === 'partner') {
@@ -727,6 +728,9 @@
   // ② 분석을 다시 해야 하면 분석파트너에게 결과 재등록 요청(s.reReq) → 파트너 결과 등록 칸이 다시 열림 → 올리면 새 AI 초안
   F.repSelf = function (id) { return put(id, function (s) { var L = s.raw || [], p = L[L.length - 1] || {}; s.raw = L.concat([{ at: Date.now(), files: [], by: 'admin', ai: p.edit || p.ai || '' }]); }); };
   F.repUndo = function (id, i) { return put(id, function (s) { if (s.raw[i] && s.raw[i].by === 'admin' && !s.raw[i].sent) s.raw.splice(i, 1); }); };
+  // 클라이언트 결과보고서 수정 요청 (2026-10-29): 모달로 받아 컨설턴트 결과보고서 영역에 표시. 새 보고서를 전달하면 처리된 것으로 봄
+  F.repClientAsk = function (id, note) { return put(id, function (s) { s.cReq = (s.cReq || []).concat([{ at: Date.now(), note: note, repN: (s.rep || []).length }]); }); };
+  F.cReqOpen = function (s) { var q = (s.cReq || []).slice(-1)[0], r = (s.rep || []).slice(-1)[0]; return q && !s.fin && (!r || q.at > r.at) ? q : null; };
   F.repAsk = function (id, note) { return put(id, function (s) { s.reReq = { at: Date.now(), note: note }; }); };
   F.repSet = function (id, i, k, v) { return put(id, function (s) { s.raw[i][k] = v; }); };
   F.repSend = function (id, i, note) { return put(id, function (s) { var x = s.raw[i]; s.rep = (s.rep || []).concat([{ at: Date.now(), files: [x.pdf], note: note || '' }]); x.sent = Date.now(); x.repN = s.rep.length; }); };
@@ -776,9 +780,10 @@
         '</ol></div></div>';
     }).reverse().join('');
     if (rep.length) h += '<div class="rp-sent"><b>클라이언트 결과보고서</b><span>' + rep.length + '차까지 전달<i class="dv" aria-hidden="true"></i>' + (fin ? '클라이언트 최종 승인 (' + ymd(s.fin) + ')' : '클라이언트 검수 대기') + '</span></div>';
-    var last = raw[raw.length - 1];
+    var last = raw[raw.length - 1], cq = F.cReqOpen(s);
+    if (cq) h += '<div class="rp-creq"><b>클라이언트 수정 요청</b><em>' + ymd(cq.at) + '</em><p>' + esc(cq.note) + '</p></div>';
     if (!fin && ask) h += '<div class="rp-next"><div><b>분석파트너에게 결과 재등록을 요청했습니다.</b><p>' + ymd(s.reReq.at) + ' 요청<i class="dv" aria-hidden="true"></i>' + esc(s.reReq.note) + '</p></div></div>';
-    else if (!fin && last && last.sent) h += '<div class="rp-next"><div><b>보고서를 다시 보내야 하나요?</b><p>클라이언트의 수정 요청은 프로젝트 문의로 들어옵니다. 직접 고칠 수 있으면 [직접 수정해서 보내기], 분석을 다시 해야 하면 [결과 재등록 요청]을 눌러주세요.</p></div><div class="rp-act"><button type="button" class="btn" data-rp="self">직접 수정해서 보내기</button><button type="button" class="btn" data-rp="ask">결과 재등록 요청</button></div></div>';
+    else if (!fin && last && last.sent) h += '<div class="rp-next"><div><b>보고서를 다시 보내야 하나요?</b><p>클라이언트가 수정을 요청하면 여기에 표시됩니다. 직접 고칠 수 있으면 [직접 수정해서 보내기], 분석을 다시 해야 하면 [결과 재등록 요청]을 눌러주세요.</p></div><div class="rp-act"><button type="button" class="btn" data-rp="self">직접 수정해서 보내기</button><button type="button" class="btn" data-rp="ask">결과 재등록 요청</button></div></div>';
     // 클라이언트 만족도 평가: 지금은 컨설턴트만 봄 (분석파트너 공개는 미정). 별점·후기는 프로젝트별로 모아 두고 나중에 매칭·AI에 활용
     if (fin) h += s.rate ? '<div class="rp-rate"><div class="rp-rh"><b>클라이언트 만족도 평가</b><span class="rp-stars" aria-label="별점 ' + s.rate.star + '점">' + [1, 2, 3, 4, 5].map(function (i) { return '<img src="assets/project/ic-star' + (i <= s.rate.star ? '-fill' : '') + '.svg" alt="">'; }).join('') + '</span><em>' + ymd(s.rate.at) + ' 제출</em></div>' + (s.rate.text ? '<p>' + esc(s.rate.text) + '</p>' : '<p class="none">남긴 의견이 없습니다.</p>') + '<span class="rp-note">컨설턴트만 볼 수 있습니다.</span></div>'
       : '<div class="rp-rate"><div class="rp-rh"><b>클라이언트 만족도 평가</b></div><p class="none">' + (s.rateSkip ? '클라이언트가 평가를 건너뛰었습니다. (' + ymd(s.rateSkip) + ')' : '아직 평가가 등록되지 않았습니다.') + '</p></div>';
@@ -813,7 +818,7 @@
     if (a === 'dl') OP.toast('데모: 보고서 워드 파일이 내려받아집니다.');
     if (a === 'undo') { F.repUndo(id, i); OP.toast('직접 수정을 취소했습니다.'); if (F.repRedraw) F.repRedraw(); return; }
     if (a === 'self') { F.repSelf(id); OP.toast('보고서 수정 항목을 만들었습니다. 고친 PDF를 등록해 전달해주세요.'); if (F.repRedraw) F.repRedraw(); }
-    if (a === 'ask') F.ask({ title: '분석파트너에게 결과 재등록을 요청할까요?', desc: partner(state(id).pick).org + '에 알림이 가고, 분석파트너 화면에 결과 등록 칸이 다시 열립니다.', label: '요청 내용', ph: '예) 클라이언트가 그룹별 Boxplot 추가와 통계 검정 방법 변경(Wilcoxon)을 요청했습니다. 반영해 결과를 다시 올려 주세요.', required: true, yes: '요청하기' }, function (v) { F.repAsk(id, v); OP.toast('분석파트너에게 결과 재등록을 요청했습니다.'); if (F.repRedraw) F.repRedraw(); });
+    if (a === 'ask') F.ask({ title: '분석파트너에게 결과 재등록을 요청할까요?', desc: partner(state(id).pick).org + '에 알림이 가고, 분석파트너 화면에 결과 등록 칸이 다시 열립니다.', label: '요청 내용', ph: '예) 클라이언트가 그룹별 Boxplot 추가와 통계 검정 방법 변경(Wilcoxon)을 요청했습니다. 반영해 결과를 다시 올려 주세요.', value: (F.cReqOpen(state(id)) || {}).note ? '클라이언트 요청: ' + F.cReqOpen(state(id)).note : '', required: true, yes: '요청하기' }, function (v) { F.repAsk(id, v); OP.toast('분석파트너에게 결과 재등록을 요청했습니다.'); if (F.repRedraw) F.repRedraw(); });
     if (a === 'send') F.ask({ title: '클라이언트에게 결과보고서를 전달할까요?', desc: '등록한 PDF가 클라이언트 결과보고서에 등록되고 알림이 갑니다.', label: '클라이언트에게 남길 메모 (선택)', ph: '예) 요청하신 그룹별 Boxplot을 추가했습니다.', yes: '전달하기' }, function (v) { F.repSend(id, i, v); OP.toast('클라이언트에게 결과보고서를 전달했습니다.'); if (F.repRedraw) F.repRedraw(); });
   });
 
