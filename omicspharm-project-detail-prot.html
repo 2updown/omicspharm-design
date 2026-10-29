@@ -6,12 +6,12 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zo">
-<script src="assets/common/site.js?v=20261029zo"></script>
-<script src="assets/common/consult.js?v=20261029zo"></script>
-<script src="assets/common/mypage.js?v=20261029zo"></script>
-<script src="assets/common/flow.js?v=20261029zo"></script>
-<script src="assets/common/projects-data.js?v=20261029zo"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zn">
+<script src="assets/common/site.js?v=20261029zn"></script>
+<script src="assets/common/consult.js?v=20261029zn"></script>
+<script src="assets/common/mypage.js?v=20261029zn"></script>
+<script src="assets/common/flow.js?v=20261029zn"></script>
+<script src="assets/common/projects-data.js?v=20261029zn"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -235,7 +235,7 @@
         <div><img src="assets/find/ic-calendar.svg" alt=""><em>모집 기한</em><span><span data-f="period">2026.12.31 ~ 2027.03.01</span><span class="dday" data-f="dday">・D-14</span></span></div>
         <div><img src="assets/find/ic-flask.svg" alt=""><em>샘플</em><span data-f="samples">24개</span></div>
         <div><img src="assets/find/ic-timer.svg" alt=""><em>희망완료일</em><span data-f="due">2026.11.20</span></div>
-        <div><img src="assets/detail/ic-currency-krw.svg" alt=""><em>예상금액</em><span data-f="price">500만~1,000만원</span></div>
+        <div><img src="assets/detail/ic-currency-krw.svg" alt=""><em>희망가격</em><span data-f="price">500만~1,000만원</span></div>
       </div>
 
       <nav class="tabs" id="tabs" aria-label="상세 항목">
@@ -383,7 +383,7 @@
     status: x.open ? '모집중' : '모집마감', period: x.from + ' ~ ' + x.to, dday: x.open ? '・D-' + x.days : '・마감',
     samples: x.samples + '개', due: x.due, dueDash: x.due.replace(/\./g, '-'), price: won(lo) + '~' + won(hi) + '원', priceSp: won(lo) + ' ~ ' + won(hi) + '원'
   };
-  // 가격 공개 범위 밖이면 예상금액을 가림 (OP_PROJECTS.canSeePrice). 희망가격 → 예상금액으로 통일 (2026-10-29)
+  // 가격 공개 범위 밖이면 희망가격·예상금액을 가림 (OP_PROJECTS.canSeePrice)
   if (!OP_PROJECTS.canSeePrice(x)) F.price = F.priceSp = '비공개';
   document.querySelectorAll('[data-f]').forEach(function (el) { el.textContent = F[el.dataset.f]; });
   // 가격을 못 보는 경우: 클라이언트(본인 의뢰 제외)·비로그인·미인증 분석파트너 → '비공개' + 툴팁(Figma 1424:14012)으로 이유 표시
