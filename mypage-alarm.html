@@ -7,18 +7,19 @@
 <title>알림 · 마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 알림 (Figma 시안 없음). GNB 종 아이콘이 이 화면으로 연결된다.
      알림은 이 브라우저의 의뢰·문의 기록 + 공지로 만든다(assets/common/mypage.js). 읽음 상태는 localStorage op.alarmRead -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zw">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zw">
-<script src="assets/common/site.js?v=20261029zw"></script>
-<script src="assets/common/consult.js?v=20261029zw"></script>
-<script src="assets/common/mypage.js?v=20261029zw"></script>
-<script src="assets/common/flow.js?v=20261029zw"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zx">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zx">
+<script src="assets/common/site.js?v=20261029zx"></script>
+<script src="assets/common/consult.js?v=20261029zx"></script>
+<script src="assets/common/mypage.js?v=20261029zx"></script>
+<script src="assets/common/flow.js?v=20261029zx"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; }
   .readall { font-size:14px; font-weight:500; line-height:20px; color:var(--gray-500); white-space:nowrap; }
   .readall:hover:not(:disabled) { color:var(--teal-600); }
   .readall:disabled { opacity:.4; cursor:default; }
 
+  .bar + #list { margin-top:-12px; } /* 건수 줄과 목록 사이 12 (카드 간격 24 - 12, 2026-10-29) */
   .cnt { font-size:14px; line-height:20px; color:var(--gray-600); } .cnt b { color:var(--teal-700); }
   .more { display:flex; justify-content:center; padding-top:16px; }
   .more .btn { width:100%; gap:4px; } .more .btn img { width:16px; height:16px; }
