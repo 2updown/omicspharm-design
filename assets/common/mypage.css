@@ -297,10 +297,13 @@ span.tbtn { cursor:default; }
 .mg-proj { display:flex; flex-direction:column; gap:12px; }
 .mg-filter { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
 .mg-sel { height:40px; padding:0 32px 0 12px; border:1px solid var(--gray-300); border-radius:8px; background:#fff url(../main/ic-caret-down.svg) right 10px center/14px no-repeat; font-size:14px; appearance:none; -webkit-appearance:none; cursor:pointer; }
-.mg-q { flex:1; min-width:220px; display:flex; gap:8px; }
-.mg-q input { flex:1; min-width:0; height:40px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; font-size:14px; }
-.mg-q input:focus, .mg-sel:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
-.mg-q .btn { background:#404040; border-color:#404040; color:#fff; }
+.mg-q { flex:1; min-width:220px; display:flex; align-items:center; gap:4px; height:40px; padding:0 8px 0 12px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; } /* 입력칸 안 돋보기 (프로젝트 관리 검색과 같게, 2026-10-29) */
+.mg-q input { flex:1; min-width:0; height:38px; border:0; outline:0; background:none; font-size:14px; }
+.mg-q input::-webkit-search-cancel-button { display:none; }
+.mg-q button { display:flex; align-items:center; justify-content:center; flex:none; width:28px; height:28px; border-radius:6px; }
+.mg-q button:hover { background:var(--gray-100); }
+.mg-q img { width:20px; height:20px; }
+.mg-q:focus-within, .mg-sel:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
 .mg-total { font-size:14px; color:var(--gray-600); } .mg-total b { color:#000; }
 .mg-wrap { overflow-x:auto; }
 .mg-tbl { width:100%; min-width:760px; border-collapse:collapse; border-top:2px solid #000; font-size:13px; line-height:18px; }
@@ -310,8 +313,8 @@ span.tbtn { cursor:default; }
 .mg-tbl .c { text-align:center; }
 .mg-tbl td.t { font-weight:500; color:#000; }
 .mg-tbl td.mail { word-break:break-all; }
-.mg-view { display:inline-flex; align-items:center; height:28px; padding:0 10px; border-radius:6px; background:#404040; color:#fff; font-size:12px; font-weight:500; white-space:nowrap; }
-.mg-view:hover { background:#000; }
+.mg-view { display:inline-flex; align-items:center; height:32px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; color:var(--gray-700); font-size:13px; font-weight:500; white-space:nowrap; } /* 테두리 버튼 (2026-10-29) */
+.mg-view:hover { background:var(--gray-50); }
 .mg-empty { padding:40px 8px !important; text-align:center; color:var(--gray-500); }
 .mg-head { display:flex; align-items:center; gap:8px; }
 .mg-head a { display:grid; place-items:center; width:28px; height:28px; }
@@ -635,3 +638,13 @@ span.tbtn { cursor:default; }
 .rp-xl { display:flex; flex-direction:column; gap:4px; margin-top:6px; }
 .rp-steps .rp-xl li { counter-increment:none; display:flex; align-items:center; justify-content:flex-start; gap:6px; padding:0; border:0; font-size:13px; color:#000; list-style:none; }
 .rp-xl .rp-x { width:20px; height:20px; color:var(--gray-500); }
+/* 관리 화면 탭 = 프로젝트 관리 밑줄 탭과 같은 모양 (2026-10-29) */
+.mg-tabw { border-bottom:1px solid var(--gray-200); }
+.mg-tabs { display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; }
+.mg-tabs::-webkit-scrollbar { display:none; }
+.mg-tabs button { flex:none; display:flex; align-items:center; gap:6px; height:44px; padding:0 10px; border-bottom:2px solid transparent; margin-bottom:-1px; font-size:14px; font-weight:500; color:var(--gray-600); }
+.mg-tabs button b { min-width:20px; padding:0 6px; border-radius:99px; background:var(--gray-100); font-size:12px; font-weight:600; line-height:20px; color:var(--gray-600); text-align:center; }
+.mg-tabs button[data-zero] { color:var(--gray-400); } .mg-tabs button[data-zero] b { color:var(--gray-400); }
+.mg-tabs button:hover { color:#000; }
+.mg-tabs button.on { border-color:var(--teal-600); color:var(--teal-700); font-weight:700; } .mg-tabs button.on b { background:var(--teal-600); color:#fff; }
+.mg-tabs .nb { flex:none; display:grid; place-items:center; width:16px; height:16px; border-radius:50%; background:#f00011; color:#fff; font-size:10px; font-weight:600; line-height:16px; }

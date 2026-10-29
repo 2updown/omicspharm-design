@@ -181,7 +181,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     // 탭 N (2026-10-29 공통): 안 읽은 알림이 가리키는 프로젝트가 있는 탭에 N. 그 탭을 열면 확인한 것으로 기록 (op.tabSeen). '전체' 탭은 표시 안 함
     tabNB: function (ids, open) {
       var seen = read('op.tabSeen', []), hit = [];
-      D.alarms().forEach(function (a) { if (a.read || !a.href || seen.indexOf(a.id) > -1) return; var m = /[?&](?:id|rid)=([^&#]+)/.exec(a.href); if (m && ids.indexOf(decodeURIComponent(m[1])) > -1) hit.push(a.id); });
+      D.alarms().forEach(function (a) { if (a.read || !a.href || seen.indexOf(a.id) > -1) return; var m = /[?&](?:id|rid|key)=([^&#]+)/.exec(a.href); if (m && ids.indexOf(decodeURIComponent(m[1])) > -1) hit.push(a.id); });
       if (!hit.length) return '';
       if (open) { write('op.tabSeen', seen.concat(hit)); return ''; }
       return '<span class="nb" aria-label="새 소식">N</span>';

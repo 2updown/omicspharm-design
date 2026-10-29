@@ -9,20 +9,15 @@
      파트너 인증 검토: 목록(상태별) → 상세(기관 정보 · 사업자등록증 [보기] [인증 완료] [재제출 요청]).
      재제출 요청은 클라이언트 사업자등록증 재제출 요청(mypage-request.html)과 같은 방식. 규칙: docs/partner-verification.md
      데모: 로그인 가능한 분석파트너(partner@omicspharm.test)는 계정 값(op.accounts)을, 가상 파트너는 op.partnerReview를 바꾼다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zm">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zm">
-<script src="assets/common/site.js?v=20261029zm"></script>
-<script src="assets/common/projects-data.js?v=20261029zm"></script>
-<script src="assets/common/consult.js?v=20261029zm"></script>
-<script src="assets/common/mypage.js?v=20261029zm"></script>
-<script src="assets/common/flow.js?v=20261029zm"></script>
-<script src="assets/common/manage.js?v=20261029zm"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zn">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zn">
+<script src="assets/common/site.js?v=20261029zn"></script>
+<script src="assets/common/projects-data.js?v=20261029zn"></script>
+<script src="assets/common/consult.js?v=20261029zn"></script>
+<script src="assets/common/mypage.js?v=20261029zn"></script>
+<script src="assets/common/flow.js?v=20261029zn"></script>
+<script src="assets/common/manage.js?v=20261029zn"></script>
 <style>
-  .chips { display:flex; flex-wrap:wrap; gap:8px; }
-  .chips button { height:36px; padding:0 14px; border-radius:99px; border:1px solid var(--gray-300); background:#fff; font-size:14px; font-weight:500; color:var(--gray-600); }
-  .chips button span { margin-left:6px; color:var(--gray-400); }
-  .chips button.on { border-color:var(--teal-600); background:var(--teal-600); color:#fff; }
-  .chips button.on span { color:#fff; opacity:.8; }
   .plist2 { border-top:2px solid #000; }
   .prow2 { position:relative; display:flex; align-items:center; gap:16px; padding:16px 12px; border-bottom:1px solid var(--gray-200); }
   .prow2:hover { background:var(--gray-50); }
@@ -125,39 +120,38 @@
   function drawList() {
     var L = list(), cur = qs.get('st') || 'all';
     var TABS = [['all', '전체', null], ['review', '인증 검토', ['review']], ['ask', '재제출 요청', ['ask']], ['ok', '인증 완료', ['ok']], ['etc', '미제출·검토 대기', ['none', 'mail']]];
-    $('#card').innerHTML = '<div class="card-head"><h3>분석파트너 관리</h3></div><div class="chips" id="chips"></div>' +
+    $('#card').innerHTML = '<div class="card-head"><h3>분석파트너 관리</h3></div><div class="mg-tabw"><div class="mg-tabs" id="chips" role="tablist"></div></div>' +
       '<div class="mg-filter"><select class="mg-sel" id="fSvc"><option value="">분석 서비스</option>' + OP.manage.SVCS.map(function (v) { return '<option>' + v + '</option>'; }).join('') + '</select>' +
         '<select class="mg-sel" id="fOrg"><option value="">소속</option>' + L.map(function (o) { return '<option>' + esc(o.org) + '</option>'; }).join('') + '</select>' +
-        '<div class="mg-q"><input type="search" id="fQ" placeholder="부서, 성함, 닉네임, 연락처 검색"><button type="button" class="btn" id="go">검색</button></div></div>' +
+        '<form class="mg-q" id="fF" role="search"><input type="search" id="fQ" placeholder="부서, 성함, 닉네임, 연락처 검색" autocomplete="off" aria-label="분석파트너 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form></div>' +
       '<p class="mg-total">총 <b id="n">0</b>건</p>' +
-      '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">No</th><th>분석 서비스</th><th>소속</th><th>부서</th><th>성명</th><th>이메일</th><th class="c">평균 별점</th><th class="c">진행 프로젝트</th><th class="c">인증 상태</th><th class="c">프로젝트 관리</th></tr></thead><tbody id="tb"></tbody></table></div>';
+      '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">No</th><th>분석 서비스</th><th>소속</th><th>부서</th><th>성명</th><th>이메일</th><th class="c">진행 프로젝트</th><th class="c">인증 상태</th><th class="c">프로젝트 관리</th></tr></thead><tbody id="tb"></tbody></table></div>';
     var draw = function () {
       $('#chips').innerHTML = TABS.map(function (t) {
-        var n = L.filter(function (o) { return !t[2] || t[2].indexOf(o.st) > -1; }).length;
-        return '<button type="button" data-t="' + t[0] + '"' + (cur === t[0] ? ' class="on"' : '') + '>' + t[1] + '<span>' + n + '</span></button>';
+        var TT = L.filter(function (o) { return !t[2] || t[2].indexOf(o.st) > -1; }), n = TT.length;
+        var nb = t[0] === 'all' ? '' : OP.my.tabNB(TT.map(function (o) { return o.key; }), cur === t[0]); // 탭 N (공통)
+        return '<button type="button" role="tab" data-t="' + t[0] + '"' + (cur === t[0] ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t[1] + '<b>' + n + '</b>' + nb + '</button>';
       }).join('');
       var tab = TABS.filter(function (t) { return t[0] === cur; })[0], sv = $('#fSvc').value, og = $('#fOrg').value, q = $('#fQ').value.trim();
       var R = L.filter(function (o) { return (!tab[2] || tab[2].indexOf(o.st) > -1) && (!sv || svcTxt(o).indexOf(sv) > -1) && (!og || o.org === og) && (!q || [o.dept, o.name, o.tel].join(' ').indexOf(q) > -1); });
       $('#n').textContent = R.length;
       $('#tb').innerHTML = R.length ? R.map(function (o, i) {
-        return '<tr><td class="c">' + (R.length - i) + '</td><td>' + esc(svcTxt(o)) + '</td><td class="t">' + esc(o.org) + '</td><td>' + esc(o.dept || '-') + '</td><td>' + esc(o.name || '-') + '</td><td class="mail">' + esc(o.mail || '-') + '</td><td class="c">' + rateTxt(o.key) + '</td>' +
+        return '<tr><td class="c">' + (R.length - i) + '</td><td>' + esc(svcTxt(o)) + '</td><td class="t">' + esc(o.org) + '</td><td>' + esc(o.dept || '-') + '</td><td>' + esc(o.name || '-') + '</td><td class="mail">' + esc(o.mail || '-') + '</td>' +
           '<td class="c">' + projectsOf(o).length + '</td><td class="c"><span class="st ' + CLS[o.st] + '">' + LABEL[o.st] + '</span></td><td class="c"><a class="mg-view" href="mypage-partners.html?key=' + encodeURIComponent(o.key) + '">상세보기</a></td></tr>';
-      }).join('') : '<tr><td colspan="10" class="mg-empty">해당하는 분석파트너가 없습니다.</td></tr>';
+      }).join('') : '<tr><td colspan="9" class="mg-empty">해당하는 분석파트너가 없습니다.</td></tr>';
     };
     $('#chips').addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (!b) return; cur = b.dataset.t; history.replaceState(null, '', '?st=' + cur); draw(); });
-    ['#fSvc', '#fOrg'].forEach(function (k) { $(k).addEventListener('change', draw); }); $('#go').addEventListener('click', draw);
-    $('#fQ').addEventListener('keydown', function (e) { if (e.key === 'Enter') draw(); });
+    ['#fSvc', '#fOrg'].forEach(function (k) { $(k).addEventListener('change', draw); }); $('#fF').addEventListener('submit', function (e) { e.preventDefault(); draw(); });
     draw();
   }
 
-  // 평균 별점 (클라이언트 만족도 평가, 컨설턴트만 봄). 목록에서는 연락처 대신 이 칸 (연락처는 상세에서)
-  function rateTxt(k) { var R = OP.flow.partnerRating(k); return R.n ? '<span class="rate">★ ' + R.avg.toFixed(1) + '</span> <span class="rate-n">(' + R.n + ')</span>' : '-'; }
+  // 평균 별점은 뺌 (2026-10-29, 외주 전달 전 정리). 만족도는 프로젝트 상세(컨설턴트)에서만
   // ── 상세 ──
   function detail(k) {
     var o = list().filter(function (x) { return x.key === k; })[0];
     if (!o) { location.replace('mypage-partners.html'); return; }
     var act = o.st === 'review'; // 검토 중일 때만 [인증 완료] [재제출 요청]
-    var note = o.st === 'ask' ? '재제출 요청 ' + ymd(o.ask.at) + ' · 사유: ' + o.ask.note + '\n분석파트너가 다시 올리면 알림으로 알려드립니다.'
+    var note = o.st === 'ask' ? '재제출 요청 ' + ymd(o.ask.at) + '\n사유: ' + o.ask.note + '\n분석파트너가 다시 올리면 알림으로 알려드립니다.'
       : o.st === 'ok' ? ymd(o.okAt) + '에 인증된 분석파트너입니다.'
       : o.st === 'mail' ? '사업자등록증은 올렸지만 이메일 인증 전입니다. 이메일 인증을 마치면 인증 검토 목록에 올라옵니다.'
       : o.st === 'none' ? '사업자등록증을 아직 올리지 않았습니다.' : '';
@@ -166,7 +160,7 @@
     $('#card').innerHTML =
       '<div class="mg-head"><a href="mypage-partners.html" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3><em>' + esc(o.org) + '</em> 프로젝트 리스트</h3><span class="st ' + CLS[o.st] + '">' + LABEL[o.st] + '</span></div>' +
       '<p class="mg-sub">분석파트너 기본 정보</p>' +
-      '<div class="mg-info">' + kv('이메일', esc(o.mail || '-') + (o.mailOk ? '' : ' <span class="op-vchip">메일 미인증</span>')) + kv('소속', esc(o.org)) + kv('부서', esc(o.dept || '-')) + kv('연락처', esc(o.tel || '-')) + kv('평균 별점', rateTxt(o.key) + (OP.flow.partnerRating(o.key).list.length ? ' · ' + OP.flow.partnerRating(o.key).list.map(function (x) { return esc(x.title) + ' ★' + x.star; }).join(', ') : '')) + kv('담당업무', esc(o.job || '-')) + kv('국가', esc(o.country || '-')) + '</div>' +
+      '<div class="mg-info">' + kv('이메일', esc(o.mail || '-') + (o.mailOk ? '' : ' <span class="op-vchip">메일 미인증</span>')) + kv('소속', esc(o.org)) + kv('부서', esc(o.dept || '-')) + kv('연락처', esc(o.tel || '-')) + kv('담당업무', esc(o.job || '-')) + kv('국가', esc(o.country || '-')) + '</div>' +
       '<p class="mg-sub">파트너 인증</p>' +
       '<div class="tbl">' +
         row('대표자명', esc(o.ceo || '-')) + row('사업자등록번호', esc(o.bizno || '-')) + row('주소', esc(o.addr || '-')) +
@@ -208,7 +202,7 @@
   function preview(o, act) {
     var pv = document.createElement('div'), url = '';
     pv.className = 'pv'; pv.setAttribute('role', 'dialog'); pv.setAttribute('aria-modal', 'true'); pv.setAttribute('aria-label', '사업자등록증');
-    pv.innerHTML = '<div class="pv-bar"><b>사업자등록증 · ' + esc(o.doc) + '</b><div>' + (act ? '<button type="button" class="ok" data-ok>인증 완료</button><button type="button" data-ask>재제출 요청</button>' : '') + '<button type="button" class="x" data-close>닫기</button></div></div><div class="pv-scroll"><p class="demo-file">불러오는 중…</p></div>';
+    pv.innerHTML = '<div class="pv-bar"><b>사업자등록증<i class="dv" aria-hidden="true"></i>' + esc(o.doc) + '</b><div>' + (act ? '<button type="button" class="ok" data-ok>인증 완료</button><button type="button" data-ask>재제출 요청</button>' : '') + '<button type="button" class="x" data-close>닫기</button></div></div><div class="pv-scroll"><p class="demo-file">불러오는 중…</p></div>';
     var close = function () { pv.remove(); if (url) URL.revokeObjectURL(url); document.body.style.overflow = ''; document.removeEventListener('keydown', key); };
     var key = function (e) { if (e.key === 'Escape') close(); };
     pv.addEventListener('click', function (e) {

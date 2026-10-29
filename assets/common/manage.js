@@ -32,7 +32,7 @@
       '<div class="mg-filter"><select class="mg-sel" data-f="svc"><option value="">분석 서비스</option>' + SVCS.map(function (v) { return '<option>' + v + '</option>'; }).join('') + '</select>' +
         '<select class="mg-sel" data-f="open"><option value="">모집상태</option><option value="1">모집중</option><option value="0">모집완료</option></select>' +
         '<select class="mg-sel" data-f="stage"><option value="">진행상태</option>' + STAGES.map(function (v) { return '<option>' + v + '</option>'; }).join('') + '</select>' +
-        '<div class="mg-q"><input type="search" placeholder="의뢰명 검색" data-f="q"><button type="button" class="btn" data-go>검색</button></div></div>' +
+        '<form class="mg-q" role="search" data-go><input type="search" placeholder="의뢰명 검색" data-f="q" autocomplete="off" aria-label="의뢰명 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form></div>' +
       '<p class="mg-total">총 <b data-n>0</b>건</p>' +
       '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">No</th><th>분석 서비스</th><th>의뢰명</th><th>모집기간(상태)</th><th>희망완료일</th><th>희망가격</th><th>등록일</th><th>결과 보고서</th><th>진행상태</th><th class="c">상세보기</th></tr></thead><tbody data-b></tbody></table></div>';
     var $ = function (s) { return host.querySelector(s); };
@@ -49,8 +49,7 @@
       }).join('') : '<tr><td colspan="10" class="mg-empty">등록된 프로젝트가 없습니다.</td></tr>';
     };
     host.addEventListener('change', function (e) { if (e.target.matches('select')) draw(); });
-    $('[data-go]').addEventListener('click', draw);
-    $('[data-f=q]').addEventListener('keydown', function (e) { if (e.key === 'Enter') draw(); });
+    $('[data-go]').addEventListener('submit', function (e) { e.preventDefault(); draw(); });
     draw();
   }
 

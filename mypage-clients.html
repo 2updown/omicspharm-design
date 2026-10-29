@@ -8,14 +8,14 @@
 <!-- 마이페이지 > (컨설턴트) 관리 > 클라이언트 관리 (Figma 시안 없음, 기존 사이트 컨설턴트 마이페이지 구성 기준).
      목록(소속 · 검색 / No · 소속 · 부서 · 성함 · 닉네임 · 이메일 · 연락처 · 의뢰 프로젝트 · 상세보기) → 상세('(이름) 프로젝트 리스트': 기본 정보 + 프로젝트 표).
      예시 클라이언트는 모두 가상 값. 데모 클라이언트(client@omicspharm.test)는 이 브라우저의 의뢰도 함께 보임 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zm">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zm">
-<script src="assets/common/site.js?v=20261029zm"></script>
-<script src="assets/common/projects-data.js?v=20261029zm"></script>
-<script src="assets/common/consult.js?v=20261029zm"></script>
-<script src="assets/common/mypage.js?v=20261029zm"></script>
-<script src="assets/common/flow.js?v=20261029zm"></script>
-<script src="assets/common/manage.js?v=20261029zm"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zn">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zn">
+<script src="assets/common/site.js?v=20261029zn"></script>
+<script src="assets/common/projects-data.js?v=20261029zn"></script>
+<script src="assets/common/consult.js?v=20261029zn"></script>
+<script src="assets/common/mypage.js?v=20261029zn"></script>
+<script src="assets/common/flow.js?v=20261029zn"></script>
+<script src="assets/common/manage.js?v=20261029zn"></script>
 </head>
 <body>
 <div data-op-gnb></div>
@@ -40,11 +40,11 @@
   // 예시 클라이언트 (가상). 닉네임은 프로젝트 찾기 예시 데이터의 의뢰자 ID와 연결
   var DEMO = OP.account('client@omicspharm.test') || {};
   var CL = [
-    { nick: 'cli05', email: 'client@omicspharm.test', org: DEMO.org || '한결연구소', dept: DEMO.dept || '연구실', name: DEMO.name || '홍길동', tel: DEMO.phone || '010-0000-0000', job: '연구원', country: 'SOUTH KOREA', field: '단백체 · 대사체', demo: true },
+    { nick: 'cli05', email: 'client@omicspharm.test', org: DEMO.org || '한결연구소', dept: DEMO.dept || '연구실', name: DEMO.name || '홍길동', tel: DEMO.phone || '010-0000-0000', job: '연구원', country: 'SOUTH KOREA', field: '단백체, 대사체', demo: true },
     { nick: 'user01', email: 'user01@example.test', org: '해솔대학교 의과대학', dept: '의생명연구실', name: '김민준', tel: '010-0000-0001', job: '교수', country: 'SOUTH KOREA', field: '임상 바이오마커' },
     { nick: 'lab01', email: 'lab01@example.test', org: '미래온바이오', dept: 'R&D센터', name: '이서연', tel: '010-0000-0002', job: '책임연구원', country: 'SOUTH KOREA', field: '바이오의약품' },
     { nick: 'bio02', email: 'bio02@example.test', org: '한울제약', dept: '신약연구소', name: '박지훈', tel: '010-0000-0003', job: '선임연구원', country: 'SOUTH KOREA', field: '단백체' },
-    { nick: 'res03', email: 'res03@example.test', org: '바른생명연구원', dept: '오믹스팀', name: '최수아', tel: '010-0000-0004', job: '연구원', country: 'SOUTH KOREA', field: '유전체 · 전사체' },
+    { nick: 'res03', email: 'res03@example.test', org: '바른생명연구원', dept: '오믹스팀', name: '최수아', tel: '010-0000-0004', job: '연구원', country: 'SOUTH KOREA', field: '유전체, 전사체' },
     { nick: 'omx04', email: 'omx04@example.test', org: '새빛병원', dept: '임상연구센터', name: '정하윤', tel: '010-0000-0005', job: '연구간호사', country: 'SOUTH KOREA', field: '대사체' }
   ];
   function projectsOf(c) {
@@ -59,7 +59,7 @@
     var orgs = CL.map(function (c) { return c.org; });
     $('#card').innerHTML = '<div class="card-head"><h3>클라이언트 관리</h3></div>' +
       '<div class="mg-filter"><select class="mg-sel" id="fOrg"><option value="">소속</option>' + orgs.map(function (o) { return '<option>' + esc(o) + '</option>'; }).join('') + '</select>' +
-        '<div class="mg-q"><input type="search" id="fQ" placeholder="부서, 성함, 닉네임, 연락처 검색"><button type="button" class="btn" id="go">검색</button></div></div>' +
+        '<form class="mg-q" id="fF" role="search"><input type="search" id="fQ" placeholder="부서, 성함, 닉네임, 연락처 검색" autocomplete="off" aria-label="클라이언트 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form></div>' +
       '<p class="mg-total">총 <b id="n">0</b>건</p>' +
       '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">No</th><th>소속</th><th>부서</th><th>성함</th><th>닉네임</th><th>이메일</th><th>연락처</th><th class="c">의뢰 프로젝트</th><th class="c">프로젝트 관리</th></tr></thead><tbody id="tb"></tbody></table></div>';
     var draw = function () {
@@ -71,8 +71,7 @@
           '<td class="c">' + projectsOf(c).length + '</td><td class="c"><a class="mg-view" href="mypage-clients.html?nick=' + encodeURIComponent(c.nick) + '">상세보기</a></td></tr>';
       }).join('') : '<tr><td colspan="9" class="mg-empty">검색 결과가 없습니다.</td></tr>';
     };
-    $('#fOrg').addEventListener('change', draw); $('#go').addEventListener('click', draw);
-    $('#fQ').addEventListener('keydown', function (e) { if (e.key === 'Enter') draw(); });
+    $('#fOrg').addEventListener('change', draw); $('#fF').addEventListener('submit', function (e) { e.preventDefault(); draw(); });
     draw();
   }
 
