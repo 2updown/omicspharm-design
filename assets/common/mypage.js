@@ -139,8 +139,8 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
         if (!adm && i === 0) L.push({ id: 'ct-' + p.id, k: '견적확정', cat: 'project', at: p.at, t: p.title + '의 견적이 최종 선정되었습니다.', sub: '견적금액: ' + p.amount, href: h });
         if (!adm && i >= 1) L.push({ id: 'cf-' + p.id, k: '계약', cat: 'project', at: c0 + 864e5 * 3, t: p.title + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: h });
         if (adm && i >= 2) L.push({ id: 'rr-' + p.id, k: '보고서 등록', cat: 'project', at: c0 + 864e5 * 40, t: J('세움분석센터', '이', '가') + ' ' + p.title + ' 프로젝트의 분석 결과 보고서를 등록 했습니다.', href: h });
-        if (adm && i === 4) L.push({ id: 'ra-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.client + '의 ' + p.title + ' 프로젝트 1차 결과보고서가 최종 승인 처리 되었습니다.', href: h });
-        if (!adm && i === 4) L.push({ id: 'rf-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.title + ' 프로젝트의 1차 결과보고서가 최종 확인 처리 되었습니다.', sub: p.title + ' 프로젝트가 최종 완료 처리 되었습니다.', href: h });
+        if (adm && i === 4) L.push({ id: 'ra-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.client + '의 ' + p.title + ' 프로젝트 결과보고서가 최종 승인 처리 되었습니다.', href: h });
+        if (!adm && i === 4) L.push({ id: 'rf-' + p.id, k: '보고서 최종 확인', cat: 'project', at: c0 + 864e5 * 55, t: p.title + ' 프로젝트의 결과보고서가 최종 확인 처리 되었습니다.', sub: p.title + ' 프로젝트가 최종 완료 처리 되었습니다.', href: h });
         for (var i0 = n0; i0 < L.length; i0++) L[i0].pj = p.title;
       });
       // 파트너 인증 결과 (분석파트너): 재제출 요청 / 인증 완료

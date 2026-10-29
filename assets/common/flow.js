@@ -500,7 +500,7 @@
         var ph = 'mypage-project.html?id=' + encodeURIComponent(r.id);
         if (s.ct) L.push({ id: 'f-ct-' + r.id, k: '계약', cat: 'project', at: s.ct.at, t: nm + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: ph + '&tab=contract' });
         if (s.cancel && s.cancel.by === 'admin') L.push({ id: 'f-cancel-' + r.id, k: '의뢰삭제', cat: 'project', at: s.cancel.at, t: '의뢰하신 ' + nm + ' 프로젝트가 OmicsPharm에 의해 삭제되었습니다.', sub: s.cancel.reason ? '사유: ' + s.cancel.reason : '', href: 'mypage-project.html' });
-        (s.rep || []).forEach(function (v, i) { L.push({ id: 'f-rep-' + r.id + i, k: '보고서등록', cat: 'project', at: v.at, t: nm + ' 프로젝트의 ' + (i + 1) + '차 결과보고서가 등록되었습니다. 확인 후 최종 확인 또는 수정 요청을 해주세요.', href: ph + '&tab=report' }); });
+        (s.rep || []).forEach(function (v, i) { L.push({ id: 'f-rep-' + r.id + i, k: '보고서등록', cat: 'project', at: v.at, t: nm + ' 프로젝트에 결과보고서가 등록되었습니다' + (i ? ' (수정본 ' + i + ')' : '') + '. 확인 후 최종 확인 또는 수정 요청을 해주세요.', href: ph + '&tab=report' }); });
         if (s.ok) L.push({ id: 'f-ok-' + r.id, k: '의뢰승인', cat: 'project', at: s.ok, t: '의뢰하신 ' + nm + ' 프로젝트가 승인되어 등록되었습니다.', href: ph });
         if (s.biz && s.biz.askAt) L.push({ id: 'f-biz-ask-' + r.id + s.biz.askAt, k: '사업자등록증재제출요청', cat: 'project', at: s.biz.askAt, t: '의뢰하신 ' + nm + ' 의뢰의 사업자등록증을 다시 제출해주세요.', sub: '사유: ' + s.biz.note, href: ph });
         F.cqList(s).forEach(function (v) { // 컨설턴트가 보낸 ㈜셀키에이아이 견적 차수마다
@@ -723,6 +723,8 @@
   // 컨설턴트: PDF는 확인 후 전달. AI 보고서 생성으로 올라온 결과는 AI 보고서 초안(워드)이 자동 생성 → 초안 내려받아 검토·수정 → 수정본 업로드(선택) → PDF 등록 → 클라이언트에 전달 (= s.rep, 클라이언트 결과보고서 차수)
   // 클라이언트: 전달된 PDF만 봄 (mypage-project.html 결과보고서). 최종 확인 = 프로젝트 완료
   // kind: 'pdf' = 완성 보고서 PDF (기존 방식, AI 없음) / 'ai' = AI 보고서 생성 (raw, xlsx, txt → AI 초안). 예전 데이터는 'ai'로 봄 (2026-10-29 미팅)
+  // 결과보고서 이름 (2026-10-29): 차수 대신 처음 = 결과보고서, 그다음 = 결과보고서 수정본 n. 세 화면 공통 (n차/수정본은 팀 의견 받는 중)
+  F.repName = function (i) { return i ? '결과보고서 수정본 ' + i : '결과보고서'; };
   F.repRaw = function (id, files, kind, labs) { return put(id, function (s) { var x = kind === 'pdf' ? { at: Date.now(), files: files, kind: 'pdf', labs: labs || null } : { at: Date.now(), files: files, kind: 'ai', ai: '결과보고서_AI초안_' + String(id).replace(/^PRJ-/, '') + '_v' + ((s.raw || []).length + 1) + '.docx' }; if (s.reReq) { x.req = s.reReq; delete s.reReq; } s.raw = (s.raw || []).concat([x]); }); };
   // 2차 이후 결과보고서 (2026-10-28): 클라이언트 [최종 승인] 전까지 횟수 제한 없음. 클라이언트 수정 요청은 [문의하기]로 컨설턴트에게
   // ① 컨설턴트가 직접 수정 → by:'admin' 항목(파트너 파일 없음)을 만들어 같은 순서(수정본 → PDF → 전달)로 보냄. 분석파트너에게는 보이지 않음
@@ -797,15 +799,15 @@
     if (!raw.length) h += '<div class="rp-empty">분석파트너가 결과를 등록하면 AI가 결과보고서 초안(워드)을 만들어 여기에 보여 드립니다.' + (fin ? '' : '<span><button type="button" class="tbtn primary" data-rp="demo">데모: AI 보고서 생성으로 등록</button><button type="button" class="tbtn primary" data-rp="demo" data-k="pdf">데모: 완성 PDF로 등록</button></span>') + '</div>';
     h += raw.map(function (x, i) {
       var step = x.sent ? 3 : x.pdf ? 2 : 1;
-      var pdfK = x.kind === 'pdf' && x.by !== 'admin', nm = x.by === 'admin' ? '컨설턴트 직접 수정' : pn(i) + '차 결과', who = (x.by === 'admin' ? '' : esc(partner(s.pick).org) + '<i class="dv" aria-hidden="true"></i>') + ymd(x.at) + (x.by === 'admin' ? ' 시작' : ' 등록') + (x.by === 'admin' ? '' : '<i class="dv" aria-hidden="true"></i>' + (pdfK ? '완성 PDF' : 'AI 보고서 생성'));
+      var pdfK = x.kind === 'pdf' && x.by !== 'admin', nm = x.by === 'admin' ? '컨설턴트 직접 수정' : F.repName(pn(i) - 1), who = (x.by === 'admin' ? '' : esc(partner(s.pick).org) + '<i class="dv" aria-hidden="true"></i>') + ymd(x.at) + (x.by === 'admin' ? ' 시작' : ' 등록') + (x.by === 'admin' ? '' : '<i class="dv" aria-hidden="true"></i>' + (pdfK ? '완성 PDF' : 'AI 보고서 생성'));
       // 아직 전달 전인 결과는 분석파트너 등록 칸과 같은 초록 머리 박스 (2026-10-29)
-      var hd = x.sent ? '<div class="rp-item" data-rp-i="' + i + '"><div class="rp-ih"><b>' + nm + '</b><em>' + who + '</em><span class="badge done">' + x.repN + '차 보고서로 전달 완료</span></div>'
+      var hd = x.sent ? '<div class="rp-item" data-rp-i="' + i + '"><div class="rp-ih"><b>' + nm + '</b><em>' + who + '</em><span class="badge done">' + F.repName(x.repN - 1) + ' 전달 완료</span></div>'
         : '<div class="rp-item rp-form" data-rp-i="' + i + '"><div class="rp-fh"><b>' + nm + '</b><span>' + who + '</span>' + (x.by === 'admin' ? '<button type="button" class="tbtn rp-undo" data-rp="undo">직접 수정 취소</button>' : '') + '</div><div class="rp-fb">';
       var rq = x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '';
       // 완성 PDF로 올린 결과: AI 초안 없이 확인 → 전달 2단계 (2026-10-29 미팅)
       if (pdfK) return hd + files(x.files) + rq + '<div class="rp-agent"><div class="rp-ah"><b>완성 보고서 (PDF)</b></div><ol class="rp-steps">' +
           '<li class="' + (x.sent ? 'done' : 'cur') + '"><div><b>보고서 확인</b><p>위 파일을 눌러 내려받아 내용을 확인해 주세요.</p></div></li>' +
-          '<li class="' + (x.sent ? 'done' : '') + '"><div><b>클라이언트에 전달</b><p>전달하면 클라이언트 결과보고서에 ' + (rep.length + (x.sent ? 0 : 1)) + '차로 등록되고 알림이 갑니다.</p></div><div class="rp-act">' + (x.sent ? '<span class="rp-fn">' + ymd(x.sent) + ' 전달</span>' : '<button type="button" class="btn primary" data-rp="send">클라이언트에 전달</button>') + '</div></li>' +
+          '<li class="' + (x.sent ? 'done' : '') + '"><div><b>클라이언트에 전달</b><p>전달하면 클라이언트 결과보고서에 등록되고 알림이 갑니다. (' + F.repName(x.sent ? x.repN - 1 : rep.length) + ')</p></div><div class="rp-act">' + (x.sent ? '<span class="rp-fn">' + ymd(x.sent) + ' 전달</span>' : '<button type="button" class="btn primary" data-rp="send">클라이언트에 전달</button>') + '</div></li>' +
         '</ol></div>' + (x.sent ? '' : '</div>') + '</div>';
       return hd + (x.files.length ? files(x.files) : '') + rq +
         (x.by === 'admin' ? '<div class="rp-agent"><div class="rp-ah"><b>보고서 수정</b></div>' : '<div class="rp-agent"><div class="rp-ah"><img src="assets/common/ic-sparkle-fill.svg" alt=""><b>AI 보고서 초안</b><span class="badge state">생성 완료</span></div>') +
@@ -814,10 +816,10 @@
           '<li class="' + (step > 1 ? 'done' : 'cur') + '"><div><b>' + (x.by === 'admin' ? '보고서 수정' : '초안 검토, 수정') + '</b><p>' + (x.by === 'admin' ? '지난 보고서 원본을 내려받아 고친 뒤 PDF로 저장해 주세요.' : '초안을 내려받아 검토하고 고친 뒤 PDF로 저장해 주세요.') + '</p></div><div class="rp-act"><button type="button" class="btn" data-rp="dl">' + esc(x.ai) + '</button></div></li>' +
           '<li class="' + (step > 2 ? 'done' : step === 2 ? 'cur' : '') + '"><div><b>PDF 등록</b><p>클라이언트에게 전달할 최종본은 PDF로 올려 주세요.</p></div><div class="rp-act">' + (x.sent ? (x.pdf ? '<span class="rp-fn">' + esc(x.pdf) + '</span>' : '') : '<div class="rp-upf"><span class="fn' + (x.pdf ? ' on' : '') + '">' + esc(x.pdf || '선택된 파일 없음') + '</span><label class="btn up">파일 선택<input type="file" accept=".pdf,application/pdf" hidden data-rp-file="pdf"></label></div>') + '</div></li>' + // PDF 등록: 파일 업로드 컴포넌트 (2026-10-29)
           ''+
-          '<li class="' + (step > 2 ? 'done' : '') + '"><div><b>클라이언트에 전달</b><p>전달하면 클라이언트 결과보고서에 ' + (rep.length + (x.sent ? 0 : 1)) + '차로 등록되고 알림이 갑니다.</p></div><div class="rp-act">' + (x.sent ? '<span class="rp-fn">' + ymd(x.sent) + ' 전달</span>' : '<button type="button" class="btn primary" data-rp="send"' + (x.pdf ? '' : ' disabled') + '>클라이언트에 전달</button>') + '</div></li>' +
+          '<li class="' + (step > 2 ? 'done' : '') + '"><div><b>클라이언트에 전달</b><p>전달하면 클라이언트 결과보고서에 등록되고 알림이 갑니다. (' + F.repName(x.sent ? x.repN - 1 : rep.length) + ')</p></div><div class="rp-act">' + (x.sent ? '<span class="rp-fn">' + ymd(x.sent) + ' 전달</span>' : '<button type="button" class="btn primary" data-rp="send"' + (x.pdf ? '' : ' disabled') + '>클라이언트에 전달</button>') + '</div></li>' +
         '</ol></div>' + (x.sent ? '' : '</div>') + '</div>';
     }).reverse().join('');
-    if (rep.length) h += '<div class="rp-sent"><b>클라이언트 결과보고서</b><span>' + rep.length + '차까지 전달<i class="dv" aria-hidden="true"></i>' + (fin ? '클라이언트 최종 승인 (' + ymd(s.fin) + ')' : '클라이언트 검수 대기') + '</span></div>';
+    if (rep.length) h += '<div class="rp-sent"><b>클라이언트 결과보고서</b><span>' + rep.length + '건 전달<i class="dv" aria-hidden="true"></i>' + (fin ? '클라이언트 최종 승인 (' + ymd(s.fin) + ')' : '클라이언트 검수 대기') + '</span></div>';
     var last = raw[raw.length - 1], cq = F.cReqOpen(s);
     if (cq) h += '<div class="rp-creq"><b>클라이언트 수정 요청</b><em>' + ymd(cq.at) + '</em><p>' + esc(cq.note) + '</p></div>';
     if (!fin && ask) h += '<div class="rp-next"><div><b>분석파트너에게 결과 재등록을 요청했습니다.</b><p>' + ymd(s.reReq.at) + ' 요청<i class="dv" aria-hidden="true"></i>' + esc(s.reReq.note) + '</p></div></div>';
