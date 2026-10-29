@@ -9,14 +9,14 @@
      파트너 인증 검토: 목록(상태별) → 상세(기관 정보 · 사업자등록증 [보기] [인증 완료] [재제출 요청]).
      재제출 요청은 클라이언트 사업자등록증 재제출 요청(mypage-request.html)과 같은 방식. 규칙: docs/partner-verification.md
      데모: 로그인 가능한 분석파트너(partner@omicspharm.test)는 계정 값(op.accounts)을, 가상 파트너는 op.partnerReview를 바꾼다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zr">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zr">
-<script src="assets/common/site.js?v=20261029zr"></script>
-<script src="assets/common/projects-data.js?v=20261029zr"></script>
-<script src="assets/common/consult.js?v=20261029zr"></script>
-<script src="assets/common/mypage.js?v=20261029zr"></script>
-<script src="assets/common/flow.js?v=20261029zr"></script>
-<script src="assets/common/manage.js?v=20261029zr"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zs">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zs">
+<script src="assets/common/site.js?v=20261029zs"></script>
+<script src="assets/common/projects-data.js?v=20261029zs"></script>
+<script src="assets/common/consult.js?v=20261029zs"></script>
+<script src="assets/common/mypage.js?v=20261029zs"></script>
+<script src="assets/common/flow.js?v=20261029zs"></script>
+<script src="assets/common/manage.js?v=20261029zs"></script>
 <style>
   .plist2 { border-top:2px solid #000; }
   .prow2 { position:relative; display:flex; align-items:center; gap:16px; padding:16px 12px; border-bottom:1px solid var(--gray-200); }
@@ -129,8 +129,8 @@
     var draw = function () {
       $('#chips').innerHTML = TABS.map(function (t) {
         var TT = L.filter(function (o) { return !t[2] || t[2].indexOf(o.st) > -1; }), n = TT.length;
-        var nb = t[0] === 'all' ? '' : OP.my.tabNB(TT.map(function (o) { return o.key; }), cur === t[0]); // 탭 N (공통)
-        return '<button type="button" role="tab" data-t="' + t[0] + '"' + (cur === t[0] ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t[1] + '<b>' + n + '</b>' + nb + '</button>';
+        // 탭 N은 뺌: 회원 관리는 나중에 관리자 페이지로 옮김 (2026-10-29). 새 인증 요청은 메뉴 N으로
+        return '<button type="button" role="tab" data-t="' + t[0] + '"' + (cur === t[0] ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t[1] + '<b>' + n + '</b></button>';
       }).join('');
       var tab = TABS.filter(function (t) { return t[0] === cur; })[0], sv = $('#fSvc').value, og = $('#fOrg').value, q = $('#fQ').value.trim();
       var R = L.filter(function (o) { return (!tab[2] || tab[2].indexOf(o.st) > -1) && (!sv || svcTxt(o).indexOf(sv) > -1) && (!og || o.org === og) && (!q || [o.dept, o.name, o.tel].join(' ').indexOf(q) > -1); });
