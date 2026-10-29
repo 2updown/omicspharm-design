@@ -743,7 +743,8 @@
   F.repSec = function (id, role) {
     var s = state(id), raw = s.raw || [], rep = s.rep || [], adm = role === 'admin', fin = !!s.fin, ask = !fin && s.reReq;
     var pn = function (i) { return raw.slice(0, i + 1).filter(function (v) { return v.by !== 'admin'; }).length; }; // 분석파트너 결과 차수 (컨설턴트 직접 수정은 세지 않음)
-    var files = function (L) { return '<ul class="rp-files">' + L.map(function (n) { return '<li><img src="assets/auth/ic-paperclip.svg" alt="">' + esc(n) + '</li>'; }).join('') + '</ul>'; };
+    // 올린 파일은 눌러서 열기/내려받기 (2026-10-29, 프로토타입은 안내만)
+    var files = function (L) { return '<ul class="rp-files">' + L.map(function (n) { return '<li><button type="button" data-rp="file" data-name="' + esc(n) + '" title="' + esc(n) + ' 내려받기"><img src="assets/auth/ic-paperclip.svg" alt="">' + esc(n) + '</button></li>'; }).join('') + '</ul>'; };
     var h = '<section class="rp" data-rp-id="' + esc(id) + '"><div class="rp-h"><h3>결과보고서</h3>' + (adm ? '<span class="ai-lb"><i class="ai-ic" aria-hidden="true"></i><span>보고서 에이전트</span></span>' : '') + '</div>';
     if (!adm) {
       // 한 번 등록하면 업로드 버튼을 숨기고, 컨설턴트가 결과 재등록을 요청하면 다시 보임 (2026-10-28)
@@ -805,6 +806,7 @@
       return;
     }
     if (a === 'demo') { F.repRaw(id, ['RawData_' + String(id).replace(/^PRJ-/, '') + '.zip', '분석결과_정리.docx']); OP.toast('데모: 분석파트너가 결과를 등록했습니다. AI 보고서 초안이 생성되었습니다.'); if (F.repRedraw) F.repRedraw(); }
+    if (a === 'file') { OP.toast('데모: ' + b.dataset.name + ' 파일을 엽니다. (실제 서비스에서는 미리보기 또는 다운로드)'); return; }
     if (a === 'dl') OP.toast('데모: 보고서 워드 파일이 내려받아집니다.');
     if (a === 'undo') { F.repUndo(id, i); OP.toast('직접 수정을 취소했습니다.'); if (F.repRedraw) F.repRedraw(); return; }
     if (a === 'self') { F.repSelf(id); OP.toast('보고서 수정 항목을 만들었습니다. 고친 PDF를 등록해 전달해주세요.'); if (F.repRedraw) F.repRedraw(); }
