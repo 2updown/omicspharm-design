@@ -656,3 +656,6 @@ span.tbtn { cursor:default; }
 .mg-tabs button:hover { color:#000; }
 .mg-tabs button.on { border-color:var(--teal-600); color:var(--teal-700); font-weight:700; } .mg-tabs button.on b { background:var(--teal-600); color:#fff; }
 .mg-tabs .nb { flex:none; display:grid; place-items:center; width:16px; height:16px; border-radius:50%; background:#f00011; color:#fff; font-size:10px; font-weight:600; line-height:16px; }
+
+/* 데모용 버튼(예시 데이터 초기화, 데모: ...)은 주소에 ?demo=1 이 있을 때만 (2026-10-30) */
+html:not(.op-demo) .demo-row, html:not(.op-demo) .demo-reset, html:not(.op-demo) a.demo, html:not(.op-demo) [data-rp="demo"] { display:none !important; }

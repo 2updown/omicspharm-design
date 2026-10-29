@@ -280,6 +280,8 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     document.body.appendChild(w); if (WANT !== 'panel') document.body.style.overflow = 'hidden'; document.body.classList.add('op-ai-open'); // 열려 있는 동안 오른쪽 아래 챗봇 버튼 숨김
     w.querySelector('.op-ai-x').focus();
   };
+  // 데모 버튼 보이기: ?demo=1 로 한 번 열면 이 탭에서 계속 (?demo=0 으로 끔) (2026-10-30)
+  try { var dm = /[?&]demo=([01])/.exec(location.search); if (dm) sessionStorage.setItem('op.demo', dm[1]); if (sessionStorage.getItem('op.demo') === '1') document.documentElement.classList.add('op-demo'); } catch (e) {}
   OP.mypage = function (key) {
     var s = OP.session();
     if (!s) { location.replace('login.html?next=' + encodeURIComponent(location.pathname.split('/').pop() + location.search)); return null; }

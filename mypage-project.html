@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zz4">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zz4">
-<script src="assets/common/site.js?v=20261029zz4"></script>
-<script src="assets/common/consult.js?v=20261029zz4"></script>
-<script src="assets/common/mypage.js?v=20261029zz4"></script>
-<script src="assets/common/flow.js?v=20261029zz4"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261030a">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261030a">
+<script src="assets/common/site.js?v=20261030a"></script>
+<script src="assets/common/consult.js?v=20261030a"></script>
+<script src="assets/common/mypage.js?v=20261030a"></script>
+<script src="assets/common/flow.js?v=20261030a"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -505,8 +505,7 @@
         (!ADM && (x.flow ? FS.P[OP.session().email] && FS.P[OP.session().email].quote : CS) ? (function () { var mq = x.flow ? FS.P[OP.session().email] : CS.P[OP.flow.ME_PARTNER], tq = OP.flow.total(mq.quote);
           return '<section class="sec"><h3>제출한 견적서</h3><div class="myq"><span><em>최종 견적</em>' + OP.flow.money(tq.final, mq.quote.cur) + ' <small>(VAT 포함)</small></span><span><em>소요</em>' + esc(mq.quote.weeks || '-') + '주</span><span><em>제출일</em>' + OP.flow.ymd(mq.subAt || mq.at) + '</span><button type="button" class="btn line" data-myq>견적서 보기</button></div></section>' +
             '<details class="tpanel reqbox"><summary><h3>의뢰 내용</h3><img src="assets/find/ic-chevron-down.svg" alt=""></summary><div class="reqin">' + OP.flow.reqHTML(x.flow ? OP.flow.req(x.id) : CR) + '</div></details>'; })() : '') +
-        (x.flow && ADM ? '<p class="demo-note">※ 견적 중개로 매칭된 프로젝트입니다. <a href="mypage-request.html?id=' + encodeURIComponent(x.id) + '" style="text-decoration:underline">견적 내역 보기</a></p>' : '') +
-        (x.flow ? '' : '<p class="demo-note">※ 화면 확인용 예시 프로젝트입니다.</p>');
+        ''; // 화면 아래 예시 안내 문구는 뺌 (2026-10-30)
       document.title = x.title + ' · 마이페이지 · OmicsPharm';
       // 결과 등록 등으로 단계가 바뀌면 화면 전체를 다시 열어 진행 단계·안내를 맞춤 (새로고침은 예시 초기화라 주소를 바꿔서 이동). 파일만 고를 때는 결과보고서만 다시 그림
       document.addEventListener('click', function (e) { if (e.target.closest('[data-myq]')) OP.flow.showDoc(x.flow ? OP.flow.req(x.id) : CR, x.flow ? FS.P[OP.session().email].quote : CS.P[OP.flow.ME_PARTNER].quote, OP.flow.ME_PARTNER, '제출한 견적서'); });
@@ -522,8 +521,7 @@
       '<form class="psearch" id="pq" role="search"><input type="search" id="pqIn" placeholder="프로젝트명 또는 번호로 검색해보세요." aria-label="프로젝트 검색" autocomplete="off"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
       '<div class="b-tabw" id="pTabW"><button type="button" class="b-arr l" data-arr="-1" aria-label="이전 단계 보기" hidden><img src="assets/find/ic-caret-left.svg" alt=""></button><div class="b-tabs" id="pChips" role="tablist"></div><button type="button" class="b-arr r" data-arr="1" aria-label="다음 단계 보기" hidden><img src="assets/find/ic-caret-right.svg" alt=""></button></div>' +
       '<div class="pbar"><span class="total" id="pTotal"></span>' + (ADM ? '' : '<label class="sort" style="margin-left:auto;margin-right:8px"><select id="pRoute" aria-label="경로"><option value="">전체 경로</option><option value="match">OmicsPharm 매칭 요청</option><option value="self">직접 신청</option></select></label>') + '<label class="sort"><select id="pSort" aria-label="정렬"><option value="new">최신등록순</option><option value="due">납기임박순</option></select></label></div>' +
-      '<div class="list" id="pList"></div><nav class="pager" id="pPager" aria-label="페이지" hidden></nav>' +
-      '<p class="demo-note">※ 화면 확인용 예시 프로젝트입니다.</p>';
+      '<div class="list" id="pList"></div><nav class="pager" id="pPager" aria-label="페이지" hidden></nav>';
     // '확인하지 않은 Q&A·리뷰' 줄은 뺌 (Q&A 게시판 없음, 분석파트너 리뷰 공개는 미정). 새 견적 요청은 칩의 N으로
     function draw() {
       var q = st.q.trim().toLowerCase();
@@ -837,7 +835,6 @@
     // 승인 전(의뢰접수)에만 수정·삭제 (예시 의뢰는 제외). 승인 후 ~ 견적 협의는 [삭제](기록은 남김), 계약 진행 중은 컨설턴트 문의
     (FS.st === 'review' && !FS.ok && !d.demo ? '<div class="pacts"><p>분석파트너의 견적이 선정되기 전까지 의뢰 내용을 수정하거나 삭제할 수 있습니다.</p>' +
       '<div><button type="button" class="btn del" id="pDel">삭제</button><a class="btn primary" href="omicspharm-register.html?edit=' + encodeURIComponent(d.id) + '&t=' + Date.now() + '">수정하기</a></div></div>' : '') +
-    (d.demo ? '<p class="demo-note">※ 견적 중개 과정을 확인하기 위한 예시 의뢰입니다.</p>' : '') +
     '</details>' +
     (F.canCancel(d.id) ? '<div class="pacts"><p>계약 전까지 프로젝트를 삭제할 수 있습니다. 삭제하면 견적을 요청받은 분석파트너에게 알림이 가고 프로젝트 찾기에서 내려갑니다.</p><div><button type="button" class="btn del" id="pCancel">삭제</button></div></div>'
       : FS.st === 'matched' && !FS.ct && !FS.cancel ? '<div class="pacts"><p>계약 진행 중에는 직접 삭제할 수 없습니다. 삭제가 필요하면 OmicsPharm 컨설턴트에게 문의해 주세요.</p><div>' + OP.askBtn({ key: d.id, cat: d.svc, no: d.id, title: d.title }) + '</div></div>' : '');
