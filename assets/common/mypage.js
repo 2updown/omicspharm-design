@@ -81,7 +81,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       var s = OP.session(); if (!s || !(s.role === 'admin' || OP.partnerVerified())) return [];
       var M = OP.flow ? OP.flow.matched(s.role === 'admin' ? null : s.email) : [];
       // 예시 프로젝트도 분석파트너가 결과를 올리면 '보고서 등록'으로 (2026-10-27, 새로고침하면 예시 초기화)
-      return M.concat(PARTNER_DEMO.map(function (p) { var raw = OP.flow && (OP.flow.state(p.id).raw || []).length; return raw && p.stage === '분석 진행 중' ? Object.assign({}, p, { stage: '보고서 등록' }) : p; }));
+      return M.concat(PARTNER_DEMO.map(function (p) { var raw = OP.flow && (OP.flow.state(p.id).raw || []).length; var rep = OP.flow && (OP.flow.state(p.id).rep || []).length; return raw && (p.stage === '분석 진행 중' || p.stage === '보고서 등록') ? Object.assign({}, p, { stage: rep ? '보고서 검토' : '보고서 등록' }) : p; }));
     },
     esc: esc, ymd: ymd, ymdhm: ymdhm,
     // 이전 양식(V4 입력 기준 이전)으로 제출된 의뢰는 정리하고 V4 양식 의뢰만 보여줌
@@ -177,7 +177,15 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       return L;
     },
     markRead: function (ids) { var r = read('op.alarmRead', []); ids.forEach(function (i) { if (r.indexOf(i) < 0) r.push(i); }); write('op.alarmRead', r); if (OP.syncBell) OP.syncBell(); },
-    unread: function () { return D.alarms().filter(function (a) { return !a.read; }).length; }
+    unread: function () { return D.alarms().filter(function (a) { return !a.read; }).length; },
+    // 탭 N (2026-10-29 공통): 안 읽은 알림이 가리키는 프로젝트가 있는 탭에 N. 그 탭을 열면 확인한 것으로 기록 (op.tabSeen). '전체' 탭은 표시 안 함
+    tabNB: function (ids, open) {
+      var seen = read('op.tabSeen', []), hit = [];
+      D.alarms().forEach(function (a) { if (a.read || !a.href || seen.indexOf(a.id) > -1) return; var m = /[?&](?:id|rid)=([^&#]+)/.exec(a.href); if (m && ids.indexOf(decodeURIComponent(m[1])) > -1) hit.push(a.id); });
+      if (!hit.length) return '';
+      if (open) { write('op.tabSeen', seen.concat(hit)); return ''; }
+      return '<span class="nb" aria-label="새 소식">N</span>';
+    }
   };
 
   // 확인 모달: OP.confirm('제목', '설명', '삭제', 확인 시 실행할 함수)

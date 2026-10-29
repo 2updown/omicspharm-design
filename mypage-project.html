@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zh">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zh">
-<script src="assets/common/site.js?v=20261029zh"></script>
-<script src="assets/common/consult.js?v=20261029zh"></script>
-<script src="assets/common/mypage.js?v=20261029zh"></script>
-<script src="assets/common/flow.js?v=20261029zh"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zi">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zi">
+<script src="assets/common/site.js?v=20261029zi"></script>
+<script src="assets/common/consult.js?v=20261029zi"></script>
+<script src="assets/common/mypage.js?v=20261029zi"></script>
+<script src="assets/common/flow.js?v=20261029zi"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -309,7 +309,6 @@
   .b-tabs button b { min-width:20px; padding:0 6px; border-radius:99px; background:var(--gray-100); font-size:12px; font-weight:600; line-height:20px; color:var(--gray-600); text-align:center; }
   .b-tabs button[data-zero] { color:var(--gray-400); } .b-tabs button[data-zero] b { color:var(--gray-400); }
   .b-tabs button:hover { color:#000; }
-  .b-tabs .nb { flex:none; display:grid; place-items:center; width:16px; height:16px; border-radius:50%; background:#f00011; color:#fff; font-size:10px; font-weight:600; line-height:16px; } /* 새 견적 요청 (2026-10-27) */
   .b-tabs button.on { border-color:var(--teal-600); color:var(--teal-700); font-weight:700; } .b-tabs button.on b { background:var(--teal-600); color:#fff; }
   @media (max-width:640px) { .b-tabw { margin:0 -16px; } .b-tabs { padding:0 16px; } .b-arr { width:28px; height:28px; margin-top:-14px; } .b-arr.l { left:6px; } .b-arr.r { right:6px; } }
   @media (max-width:960px) { .prow:has(.pright) { flex-direction:column; align-items:flex-start; } .prow:has(.pright) .ptitle { flex:none; width:100%; } } /* 세로 배치일 때 제목 너비 기준(360px)이 높이로 잡히지 않게 */
@@ -512,8 +511,9 @@
       var qNew = QL.filter(function (p) { return p.stage === '견적 요청' && qSeen.indexOf(p.id) < 0; });
       if (st.stage === '견적 요청' && qNew.length) { try { localStorage.setItem('op.qSeen', JSON.stringify(qSeen.concat(qNew.map(function (p) { return p.id; })))); } catch (e) {} qNew = []; }
       $('#pChips').innerHTML = ['전체'].concat(LIST_ST).map(function (t) {
-        var n = t === '전체' ? base.length : base.filter(function (p) { return SG(p) === t; }).length;
-        return '<button type="button" role="tab" data-st="' + t + '"' + (st.stage === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b>' + (t === '견적 요청' && qNew.length ? '<span class="nb" aria-label="새 견적 요청">N</span>' : '') + '</button>';
+        var TT = base.filter(function (p) { return SG(p) === t; }), n = t === '전체' ? base.length : TT.length;
+        var nb = t === '전체' ? '' : OP.my.tabNB(TT.map(function (p) { return p.id; }), st.stage === t); // 탭 N (공통)
+        return '<button type="button" role="tab" data-st="' + t + '"' + (st.stage === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b>' + (t === '견적 요청' && qNew.length ? '<span class="nb" aria-label="새 견적 요청">N</span>' : nb) + '</button>';
       }).join('');
       var L = base.filter(function (p) { return st.stage === '전체' || SG(p) === st.stage; })
         .sort(st.sort === 'due' ? function (a, b) { return (a.stage === '프로젝트 완료') - (b.stage === '프로젝트 완료') || new Date(a.due) - new Date(b.due); } : function (a, b) { return b.at - a.at; });
@@ -614,8 +614,9 @@
       var B = (cOnly ? list.filter(function (x) { return newQN(x); }) : list).filter(hit); // 미열람글만 보기
       var DB = cOnly ? [] : drafts.filter(hit).sort(function (a, b) { return b.at - a.at; }); // 임시저장은 '전체'에도 포함 (맨 위)
       $('#cChips').innerHTML = ['전체'].concat(F.CLIENT_STEPS, [DR]).map(function (t) {
-        var n = t === '전체' ? B.length + DB.length : t === DR ? DB.length : B.filter(function (x) { return F.clientStage(x.id) === t; }).length;
-        return '<button type="button" role="tab" data-st="' + t + '"' + (cst === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b></button>';
+        var TT = B.filter(function (x) { return F.clientStage(x.id) === t; }), n = t === '전체' ? B.length + DB.length : t === DR ? DB.length : TT.length;
+        var nb = t === '전체' || t === DR ? '' : OP.my.tabNB(TT.map(function (x) { return x.id; }), cst === t); // 탭 N (공통)
+        return '<button type="button" role="tab" data-st="' + t + '"' + (cst === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b>' + nb + '</button>';
       }).join('');
       var D2 = cst === '전체' || cst === DR ? DB : [];
       var L = cst === DR ? [] : B.filter(function (x) { return cst === '전체' || F.clientStage(x.id) === cst; });

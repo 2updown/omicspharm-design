@@ -624,3 +624,5 @@ span.tbtn { cursor:default; }
 .fask-q td.c { text-align:center; white-space:nowrap; } .fask-q td.r { text-align:right; white-space:nowrap; }
 .fask-qt { display:flex; flex-wrap:wrap; gap:4px 12px; align-items:baseline; padding:10px 8px; font-size:13px; color:var(--gray-600); }
 .fask-qt b { margin-left:auto; font-size:14px; color:#000; }
+/* 탭 N 배지 (2026-10-29 공통, 메뉴 N과 같은 모양) */
+.b-tabs .nb { flex:none; display:grid; place-items:center; width:16px; height:16px; border-radius:50%; background:#f00011; color:#fff; font-size:10px; font-weight:600; line-height:16px; }

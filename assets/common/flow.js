@@ -798,20 +798,23 @@
       return h + '</section>';
     }
     // 전달 전 결과가 있으면 초록 머리 박스가 제목 역할 (분석파트너와 같게). 보고서 에이전트 라벨만 남김 (2026-10-29)
-    if (raw.some(function (x) { return !x.sent; })) h = h.replace('<h3>결과보고서</h3>', '');
+    if (raw.length) h = h.replace('<h3>결과보고서</h3>', ''); // 초록 머리 박스가 늘 보여서 제목은 뺌 (2026-10-29)
     if (!raw.length) h += '<div class="rp-empty">분석파트너가 결과를 등록하면 AI가 결과보고서 초안(워드)을 만들어 여기에 보여 드립니다.' + (fin ? '' : '<span><button type="button" class="tbtn primary" data-rp="demo">데모: AI 보고서 생성으로 등록</button><button type="button" class="tbtn primary" data-rp="demo" data-k="pdf">데모: 완성 PDF로 등록</button></span>') + '</div>';
     h += raw.map(function (x, i) {
       var step = x.sent ? 3 : x.pdf ? 2 : 1;
       var pdfK = x.kind === 'pdf' && x.by !== 'admin', nm = x.by === 'admin' ? '컨설턴트 직접 수정' : F.repName(pn(i) - 1), who = (x.by === 'admin' ? '' : esc(partner(s.pick).org) + '<i class="dv" aria-hidden="true"></i>') + ymd(x.at) + (x.by === 'admin' ? ' 시작' : ' 등록') + (x.by === 'admin' ? '' : '<i class="dv" aria-hidden="true"></i>' + (pdfK ? '완성 PDF' : 'AI 보고서 생성'));
       // 아직 전달 전인 결과는 분석파트너 등록 칸과 같은 초록 머리 박스 (2026-10-29)
-      var hd = x.sent ? '<div class="rp-item" data-rp-i="' + i + '"><div class="rp-ih"><b>' + nm + '</b><em>' + who + '</em><span class="badge done">' + F.repName(x.repN - 1) + ' 전달 완료</span></div>'
-        : '<div class="rp-item rp-form" data-rp-i="' + i + '"><div class="rp-fh"><b>' + nm + '</b><span>' + who + '</span>' + (x.by === 'admin' ? '<button type="button" class="tbtn rp-undo" data-rp="undo">직접 수정 취소</button>' : '') + '</div><div class="rp-fb">';
+      // 최신 결과는 전달 후에도 초록 머리 박스 (분석파트너 화면과 같게, 2026-10-29). 이전 결과는 회색
+      var gr = i === raw.length - 1;
+      if (gr && x.sent) who += '<i class="dv" aria-hidden="true"></i>' + F.repName(x.repN - 1) + ' 전달 완료';
+      var hd = !gr ? '<div class="rp-item" data-rp-i="' + i + '"><div class="rp-ih"><b>' + nm + '</b><em>' + who + '</em>' + (x.sent ? '<span class="badge done">' + F.repName(x.repN - 1) + ' 전달 완료</span>' : '') + '</div>'
+        : '<div class="rp-item rp-form" data-rp-i="' + i + '"><div class="rp-fh"><b>' + nm + '</b><span>' + who + '</span>' + (x.by === 'admin' && !x.sent ? '<button type="button" class="tbtn rp-undo" data-rp="undo">직접 수정 취소</button>' : '') + '</div><div class="rp-fb">';
       var rq = x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '';
       // 완성 PDF로 올린 결과: AI 초안 없이 확인 → 전달 2단계 (2026-10-29 미팅)
       if (pdfK) return hd + files(x.files) + rq + '<div class="rp-agent"><div class="rp-ah"><b>완성 보고서 (PDF)</b></div><ol class="rp-steps">' +
           '<li class="' + (x.sent ? 'done' : 'cur') + '"><div><b>보고서 확인</b><p>위 파일을 눌러 내려받아 내용을 확인해 주세요.</p></div></li>' +
           '<li class="' + (x.sent ? 'done' : '') + '"><div><b>클라이언트에 전달</b><p>전달하면 클라이언트 결과보고서에 등록되고 알림이 갑니다. (' + F.repName(x.sent ? x.repN - 1 : rep.length) + ')</p></div><div class="rp-act">' + (x.sent ? '<span class="rp-fn">' + ymd(x.sent) + ' 전달</span>' : '<button type="button" class="btn primary" data-rp="send">클라이언트에 전달</button>') + '</div></li>' +
-        '</ol></div>' + (x.sent ? '' : '</div>') + '</div>';
+        '</ol></div>' + (gr ? '</div>' : '') + '</div>';
       return hd + (x.files.length ? files(x.files) : '') + rq +
         (x.by === 'admin' ? '<div class="rp-agent"><div class="rp-ah"><b>보고서 수정</b></div>' : '<div class="rp-agent"><div class="rp-ah"><img src="assets/common/ic-sparkle-fill.svg" alt=""><b>AI 보고서 초안</b><span class="badge state">생성 완료</span></div>') +
         '<ol class="rp-steps">' +
@@ -820,7 +823,7 @@
           '<li class="' + (step > 2 ? 'done' : step === 2 ? 'cur' : '') + '"><div><b>PDF 등록</b><p>클라이언트에게 전달할 최종본은 PDF로 올려 주세요.</p></div><div class="rp-act">' + (x.sent ? (x.pdf ? '<span class="rp-fn">' + esc(x.pdf) + '</span>' : '') : '<div class="rp-upf"><span class="fn' + (x.pdf ? ' on' : '') + '">' + esc(x.pdf || '선택된 파일 없음') + '</span><label class="btn up">파일 선택<input type="file" accept=".pdf,application/pdf" hidden data-rp-file="pdf"></label></div>') + '</div></li>' + // PDF 등록: 파일 업로드 컴포넌트 (2026-10-29)
           ''+
           '<li class="' + (step > 2 ? 'done' : '') + '"><div><b>클라이언트에 전달</b><p>전달하면 클라이언트 결과보고서에 등록되고 알림이 갑니다. (' + F.repName(x.sent ? x.repN - 1 : rep.length) + ')</p></div><div class="rp-act">' + (x.sent ? '<span class="rp-fn">' + ymd(x.sent) + ' 전달</span>' : '<button type="button" class="btn primary" data-rp="send"' + (x.pdf ? '' : ' disabled') + '>클라이언트에 전달</button>') + '</div></li>' +
-        '</ol></div>' + (x.sent ? '' : '</div>') + '</div>';
+        '</ol></div>' + (gr ? '</div>' : '') + '</div>';
     }).reverse().join('');
     if (rep.length) h += '<div class="rp-sent"><b>클라이언트 결과보고서</b><span>' + rep.length + '건 전달<i class="dv" aria-hidden="true"></i>' + (fin ? '클라이언트 최종 승인 (' + ymd(s.fin) + ')' : '클라이언트 검수 대기') + '</span></div>';
     var last = raw[raw.length - 1], cq = F.cReqOpen(s);

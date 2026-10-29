@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zh">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zh">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261029zh">
-<script src="assets/common/site.js?v=20261029zh"></script>
-<script src="assets/common/consult.js?v=20261029zh"></script>
-<script src="assets/common/mypage.js?v=20261029zh"></script>
-<script src="assets/common/svc-spec.js?v=20261029zh"></script>
-<script src="assets/common/flow.js?v=20261029zh"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zi">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zi">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261029zi">
+<script src="assets/common/site.js?v=20261029zi"></script>
+<script src="assets/common/consult.js?v=20261029zi"></script>
+<script src="assets/common/mypage.js?v=20261029zi"></script>
+<script src="assets/common/svc-spec.js?v=20261029zi"></script>
+<script src="assets/common/flow.js?v=20261029zi"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -570,8 +570,9 @@
     function draw() {
       var T = base('st');
       $('#bTabs').innerHTML = ['전체'].concat(STG).map(function (t) {
-        var n = t === '전체' ? T.length : T.filter(function (o) { return o.st === t; }).length;
-        return '<button type="button" role="tab" data-st="' + t + '"' + (f.st === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b></button>';
+        var TT = T.filter(function (o) { return o.st === t; }), n = t === '전체' ? T.length : TT.length;
+        var nb = t === '전체' ? '' : OP.my.tabNB(TT.map(function (o) { return o.id; }), f.st === t); // 탭 N (공통)
+        return '<button type="button" role="tab" data-st="' + t + '"' + (f.st === t ? ' class="on" aria-selected="true"' : '') + (n ? '' : ' data-zero') + '>' + t + '<b>' + n + '</b>' + nb + '</button>';
       }).join('');
       var C = base('cat'); [].forEach.call(card.querySelectorAll('[data-cn]'), function (e) { e.textContent = C.filter(function (o) { return o.cat === e.dataset.cn; }).length; });
       var G = base('flag');
