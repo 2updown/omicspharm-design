@@ -386,6 +386,7 @@ span.tbtn { cursor:default; }
 .rp-tbl .fn { font-size:14px; color:var(--gray-500); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .rp-tbl .fn.on { color:#000; }
 .rp-tbl .rp-x { flex:none; width:24px; height:24px; color:var(--gray-500); }
+.rp-tbl .rp-exw { display:flex; flex-direction:column; gap:6px; min-width:0; padding:4px 0; }
 /* 제출 후 박스 (2026-10-29) */
 .rp-fl { display:inline-flex; align-items:center; gap:6px; min-width:0; font-size:14px; color:#000; text-align:left; }
 .rp-fl img { flex:none; width:14px; height:14px; }

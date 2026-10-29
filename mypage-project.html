@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zf">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zf">
-<script src="assets/common/site.js?v=20261029zf"></script>
-<script src="assets/common/consult.js?v=20261029zf"></script>
-<script src="assets/common/mypage.js?v=20261029zf"></script>
-<script src="assets/common/flow.js?v=20261029zf"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zh">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zh">
+<script src="assets/common/site.js?v=20261029zh"></script>
+<script src="assets/common/consult.js?v=20261029zh"></script>
+<script src="assets/common/mypage.js?v=20261029zh"></script>
+<script src="assets/common/flow.js?v=20261029zh"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -658,7 +658,7 @@
       sent: ['warn', F.cqList(FS).length + '차 견적서가 도착했습니다.', '견적서를 확인하고 [최종 견적 확인]을 눌러주세요. 궁금한 점은 문의하기로 남겨 주세요.', ''],
       matched: FS.fin ? (F.done(FS) ? ['', '프로젝트가 완료되었습니다.', FS.rate ? '만족도 평가를 남겨주셔서 감사합니다.' : '이용해 주셔서 감사합니다.', '']
                         : ['', '프로젝트가 완료되었습니다.', '서비스 만족도 평가를 남겨주시면 더 나은 서비스를 위해 반영하겠습니다.', '<button type="button" class="btn primary" data-open-tab="report">만족도 평가하기</button>'])
-             : REP.length ? ['warn', '결과보고서가 등록되었습니다.' + (REP.length > 1 ? ' (수정본 ' + (REP.length - 1) + ')' : ''), '내용을 검수하신 뒤 수정 요청 또는 최종 승인을 진행해주세요.', '<button type="button" class="btn primary" data-open-tab="report">결과보고서 확인</button>']
+             : REP.length ? ['warn', F.repName(REP.length - 1) + '가 등록되었습니다.', '내용을 검수하신 뒤 수정 요청 또는 최종 승인을 진행해주세요.', '<button type="button" class="btn primary" data-open-tab="report">결과보고서 확인</button>']
              : FS.ct ? ['', '분석이 진행 중입니다.', '납기일 ' + dot(DUE) + ' (' + dd(DUE) + ')까지 결과보고서를 등록해드립니다. 등록되면 알림으로 알려드립니다.', '']
                      : ['', FS.pick ? lastCQ().n + '차 견적을 확정했습니다.' : '', 'OmicsPharm 컨설턴트가 계약서를 준비하고 있습니다. 등록되면 알림으로 알려드립니다.', '']
     }[FS.st];
@@ -759,12 +759,12 @@
     return '' +
       // 최신 차수는 분석파트너 등록 칸과 같은 초록 머리 박스 (2026-10-29)
       '<section class="rver cur rp-form"><div class="rp-fh"><b>' + F.repName(n - 1) + '</b><span>' + (FS.fin ? '최종 승인 완료' : '검수 대기') + '<i class="dv" aria-hidden="true"></i>' + ymd(last.at) + ' 등록</span></div><div class="rp-fb">' +
-        (last.note ? '<p class="rv-note"><b>OmicsPharm 컨설턴트</b>' + esc(F.mask(FS, last.note)) + '</p>' : '') + filesHTML(last) +
+        (last.note ? '<p class="rv-note"><b>' + (n > 1 ? '변경 내용' : 'OmicsPharm 컨설턴트') + '</b>' + esc(F.mask(FS, last.note)) + '</p>' : '') + filesHTML(last) +
         (FS.fin ? '<p class="rv-fin">' + ymd(FS.fin) + ' 최종 승인했습니다. 이후 수정이 필요하면 문의하기로 요청해주세요.</p>'
           : (F.cReqOpen(FS) ? '<p class="rv-fin">' + ymd(F.cReqOpen(FS).at) + ' 수정을 요청했습니다. OmicsPharm 컨설턴트가 확인 후 안내드립니다.</p>' : '<div class="rv-acts"><button type="button" class="btn" id="repReq">수정 요청</button><button type="button" class="btn primary" id="repFin">최종 승인</button></div>')) +
       '</div></section>' +
       (n > 1 ? '<div class="rold">' + REP.slice(0, -1).map(function (v, i) { return { v: v, i: i }; }).reverse().map(function (o) {
-        return '<details class="rver"><summary><b>' + F.repName(o.i) + '</b><em>' + ymd(o.v.at) + ' 등록</em><img src="assets/find/ic-chevron-down.svg" alt=""></summary>' + (o.v.note ? '<p class="rv-note">' + esc(F.mask(FS, o.v.note)) + '</p>' : '') + filesHTML(o.v) + '</details>';
+        return '<details class="rver"><summary><b>' + F.repName(o.i) + '</b><em>' + ymd(o.v.at) + ' 등록</em><img src="assets/find/ic-chevron-down.svg" alt=""></summary>' + (o.v.note ? '<p class="rv-note"><b>' + (o.i ? '변경 내용' : 'OmicsPharm 컨설턴트') + '</b>' + esc(F.mask(FS, o.v.note)) + '</p>' : '') + filesHTML(o.v) + '</details>';
       }).join('') + '</div>' : '') +
       (FS.fin ? rateHTML() : '');
   }
