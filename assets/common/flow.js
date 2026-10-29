@@ -736,7 +736,7 @@
   F.cReqOpen = function (s) { var q = (s.cReq || []).slice(-1)[0], r = (s.rep || []).slice(-1)[0]; return q && !s.fin && (!r || q.at > r.at) ? q : null; };
   F.repAsk = function (id, note) { return put(id, function (s) { s.reReq = { at: Date.now(), note: note }; }); };
   F.repSet = function (id, i, k, v) { return put(id, function (s) { s.raw[i][k] = v; }); };
-  F.repSend = function (id, i, note) { return put(id, function (s) { var x = s.raw[i]; s.rep = (s.rep || []).concat([{ at: Date.now(), files: x.kind === 'pdf' ? x.files.slice() : [x.pdf], note: note || '' }]); x.sent = Date.now(); x.repN = s.rep.length; }); };
+  F.repSend = function (id, i, note) { return put(id, function (s) { var x = s.raw[i]; s.rep = (s.rep || []).concat([{ at: Date.now(), files: x.kind === 'pdf' ? x.files.slice() : [x.pdf].concat(x.extra || []), note: note || '' }]); x.sent = Date.now(); x.repN = s.rep.length; }); };
   // 분석파트너별 만족도 (컨설턴트만 봄): 완료 프로젝트의 클라이언트 별점 평균. 예시 파트너는 이전 실적(DEMO_RATE)을 함께 반영
   var DEMO_RATE = { 'p-bio': [4.6, 9], 'p-omx': [4.3, 6], 'p-gen': [4.8, 12], 'p-met': [4.1, 7], 'p-adc': [4.5, 4], 'p-mlt': [4.7, 10], 'partner@omicspharm.test': [4.4, 5] };
   F.partnerRating = function (k) {
@@ -764,7 +764,7 @@
       // 등록 칸은 버튼 없이 바로 보임 (2026-10-29)
       // 등록 칸이 있으면 '결과보고서' 제목 줄은 빼고 칸 머리가 제목 역할. 차수 대신 처음 = 결과보고서, 다시 올리면 = 수정본 (2026-10-29)
       if (canUp || mine.length) h = h.replace('<div class="rp-h"><h3>결과보고서</h3></div>', ''); // 제출 후에도 초록 박스가 제목 역할 (2026-10-29)
-      if (canUp) h += '<div class="rp-form"><div class="rp-fh"><b>' + F.repName(mine.length) + '</b><span>보고서 등록</span></div><div class="rp-fb">' +
+      if (canUp) h += '<div class="rp-form"><div class="rp-fh"><b>' + F.repName(rep.length) + '</b><span>보고서 등록</span></div><div class="rp-fb">' +
         (ask ? '<p class="rp-req"><em>재등록 요청 (' + ymd(s.reReq.at) + '):</em> ' + esc(s.reReq.note) + '</p>' : '') +
         '<div class="rp-guide">분석이 완료된 최종 보고서를 PDF 파일로 업로드해주세요.' + (mine.length ? '<br>추가 자료는 \'추가 파일\'에 형식 상관없이 올려 주세요.' : '') + '<br>OmicsPharm이 확인한 뒤 클라이언트에게 전달합니다.</div>' +
         // PDF 등록: 국문, 영문 리포트 행마다 [파일 선택] (계약서 파일 행과 같은 표 형식, 2026-10-29)
@@ -778,13 +778,14 @@
       if (canUp) h = h.replace('<div class="rp-form">', function () { return '<div class="rp-aientry"><span class="ai-lb"><i class="ai-ic" aria-hidden="true"></i><span>AI 보고서 생성</span></span><p>완성된 보고서가 없다면 Raw data, 엑셀(xlsx), 텍스트(txt) 파일을 올려 주세요. AI가 결과보고서로 변환 후 전달합니다.</p>' +
           '<div class="rp-ai-up"><div class="row"><label class="btn up">파일 선택<input type="file" multiple hidden data-rp-pick accept="' + RP_ACC + '"></label>' + (fl.length ? '' : '<span class="rp-none">선택된 파일 없음</span>') + '</div>' + (RP_ERR[id] ? '<p class="rp-err">' + (RP_ERR[id] === 'ext' ? 'Raw data(.raw), 엑셀(.xlsx), 텍스트(.txt) 파일만 올릴 수 있습니다.' : '파일은 최대 ' + RP_MAX + '개까지 올릴 수 있습니다.') + '</p>' : '') + (fl.length ? '<ul class="rp-stage">' + fl.map(function (n, j) { return '<li><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(n) + '</span><button type="button" data-rp="rm" data-j="' + j + '" aria-label="' + esc(n) + ' 빼기">✕</button></li>'; }).join('') + '</ul>' : '') + '</div>' +
           (fl.length ? '<div class="rp-up-go"><button type="button" class="btn primary" data-rp="raw" data-k="ai">제출하기</button></div>' : '') + '</div><div class="rp-form">'; });
-      var nm = F.repName;
+      // 이름은 클라이언트가 받는 차수 기준 (컨설턴트 직접 수정도 한 차수로 셈, 2026-10-29)
+      var nm = function (x) { return F.repName(x.sent ? x.repN - 1 : rep.length); };
       // 제출 후 (2026-10-29): 등록 칸 자리에 같은 초록 박스로 제출한 내용 표시. AI 카드는 숨김 (재등록 요청 때 다시 보임)
       if (!canUp && mine.length) {
         var lx = mine[mine.length - 1], li = mine.length - 1;
         var lab = function (n, j) { return (lx.labs || [])[j] || (/국문|_KO/i.test(n) ? '국문 리포트' : /영문|_EN/i.test(n) ? '영문 리포트' : '결과보고서'); };
         var fb = function (n) { return '<button type="button" class="rp-fl" data-rp="file" data-name="' + esc(n) + '" title="' + esc(n) + ' 내려받기"><img src="assets/auth/ic-paperclip.svg" alt="">' + esc(n) + '</button>'; };
-        h += '<div class="rp-form rp-done"><div class="rp-fh"><b>' + nm(li) + '</b><span>' + (lx.sent ? '클라이언트 전달 완료' : 'OmicsPharm 검토 중') + '</span></div><div class="rp-fb">' +
+        h += '<div class="rp-form rp-done"><div class="rp-fh"><b>' + nm(lx) + '</b><span>' + (lx.sent ? '클라이언트 전달 완료' : 'OmicsPharm 검토 중') + '</span></div><div class="rp-fb">' +
           (lx.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(lx.req.at) + '):</em> ' + esc(lx.req.note) + '</p>' : '') +
           (lx.kind === 'pdf' ? '<div class="rp-tbl">' + lx.files.map(function (n, j) { return '<div class="r"><b>' + lab(n, j) + '</b><div><div class="row">' + fb(n) + '</div></div></div>'; }).join('') + '</div>'
             : '<div class="rp-ai-done"><span class="ai-lb"><i class="ai-ic" aria-hidden="true"></i><span>AI 보고서 생성으로 제출</span></span>' + files(lx.files) + '</div>') +
@@ -792,7 +793,7 @@
       }
       var past = canUp ? mine : mine.slice(0, -1);
       h += past.length ? past.map(function (x, i) {
-        return '<div class="rp-item"><div class="rp-ih"><b>' + F.repName(i) + '</b><em>' + ymd(x.at) + ' 등록' + (x.kind === 'pdf' ? '' : '<i class="dv" aria-hidden="true"></i>AI 보고서 생성') + '</em><span class="badge ' + (x.sent ? 'done">클라이언트 전달 완료' : 'state">OmicsPharm 검토 중') + '</span></div>' + files(x.files) + (x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '') + '</div>';
+        return '<div class="rp-item"><div class="rp-ih"><b>' + nm(x) + '</b><em>' + ymd(x.at) + ' 등록' + (x.kind === 'pdf' ? '' : '<i class="dv" aria-hidden="true"></i>AI 보고서 생성') + '</em><span class="badge ' + (x.sent ? 'done">클라이언트 전달 완료' : 'state">OmicsPharm 검토 중') + '</span></div>' + files(x.files) + (x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '') + '</div>';
       }).reverse().join('') : '';
       if (mine.length && !fin && !ask) h += '<p class="rp-more">결과를 다시 보내야 하면 [문의하기]로 OmicsPharm에 알려 주세요.</p>';
       return h + '</section>';
@@ -802,13 +803,15 @@
     if (!raw.length) h += '<div class="rp-empty">분석파트너가 결과를 등록하면 AI가 결과보고서 초안(워드)을 만들어 여기에 보여 드립니다.' + (fin ? '' : '<span><button type="button" class="tbtn primary" data-rp="demo">데모: AI 보고서 생성으로 등록</button><button type="button" class="tbtn primary" data-rp="demo" data-k="pdf">데모: 완성 PDF로 등록</button></span>') + '</div>';
     h += raw.map(function (x, i) {
       var step = x.sent ? 3 : x.pdf ? 2 : 1;
-      var pdfK = x.kind === 'pdf' && x.by !== 'admin', nm = x.by === 'admin' ? '컨설턴트 직접 수정' : F.repName(pn(i) - 1), who = (x.by === 'admin' ? '' : esc(partner(s.pick).org) + '<i class="dv" aria-hidden="true"></i>') + ymd(x.at) + (x.by === 'admin' ? ' 시작' : ' 등록') + (x.by === 'admin' ? '' : '<i class="dv" aria-hidden="true"></i>' + (pdfK ? '완성 PDF' : 'AI 보고서 생성'));
+      var pdfK = x.kind === 'pdf' && x.by !== 'admin', nm = F.repName(x.sent ? x.repN - 1 : rep.length), who = (x.by === 'admin' ? '컨설턴트 직접 수정<i class="dv" aria-hidden="true"></i>' : esc(partner(s.pick).org) + '<i class="dv" aria-hidden="true"></i>') + ymd(x.at) + (x.by === 'admin' ? ' 시작' : ' 등록') + (x.by === 'admin' ? '' : '<i class="dv" aria-hidden="true"></i>' + (pdfK ? '완성 PDF' : 'AI 보고서 생성'));
       // 아직 전달 전인 결과는 분석파트너 등록 칸과 같은 초록 머리 박스 (2026-10-29)
       // 최신 결과는 전달 후에도 초록 머리 박스 (분석파트너 화면과 같게, 2026-10-29). 이전 결과는 회색
       var gr = i === raw.length - 1;
       if (gr && x.sent) who += '<i class="dv" aria-hidden="true"></i>' + F.repName(x.repN - 1) + ' 전달 완료';
       var hd = !gr ? '<div class="rp-item" data-rp-i="' + i + '"><div class="rp-ih"><b>' + nm + '</b><em>' + who + '</em>' + (x.sent ? '<span class="badge done">' + F.repName(x.repN - 1) + ' 전달 완료</span>' : '') + '</div>'
-        : '<div class="rp-item rp-form" data-rp-i="' + i + '"><div class="rp-fh"><b>' + nm + '</b><span>' + who + '</span>' + (x.by === 'admin' && !x.sent ? '<button type="button" class="tbtn rp-undo" data-rp="undo">직접 수정 취소</button>' : '') + '</div><div class="rp-fb">';
+        : '<div class="rp-item rp-form" data-rp-i="' + i + '"><div class="rp-fh"><b>' + nm + '</b><span>' + who + '</span></div><div class="rp-fb">';
+      // 직접 수정 취소: 머리 대신 박스 안 맨 아래 (2026-10-29)
+      var undo = x.by === 'admin' && !x.sent ? '<div class="rp-undo-row"><button type="button" class="tbtn" data-rp="undo">직접 수정 취소</button></div>' : '';
       var rq = x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '';
       // 완성 PDF로 올린 결과: AI 초안 없이 확인 → 전달 2단계 (2026-10-29 미팅)
       if (pdfK) return hd + files(x.files) + rq + '<div class="rp-agent"><div class="rp-ah"><b>완성 보고서 (PDF)</b></div><ol class="rp-steps">' +
@@ -821,11 +824,12 @@
           // 1단계: 초안(워드)을 내려받아 고친 뒤 PDF로 저장 → 2단계에서 PDF 등록. 고친 워드를 따로 올리는 [수정본 업로드]는 뺌 (2026-10-29)
           '<li class="' + (step > 1 ? 'done' : 'cur') + '"><div><b>' + (x.by === 'admin' ? '보고서 수정' : '초안 검토, 수정') + '</b><p>' + (x.by === 'admin' ? '지난 보고서 원본을 내려받아 고친 뒤 PDF로 저장해 주세요.' : '초안을 내려받아 검토하고 고친 뒤 PDF로 저장해 주세요.') + '</p></div><div class="rp-act"><button type="button" class="btn" data-rp="dl">' + esc(x.ai) + '</button></div></li>' +
           '<li class="' + (step > 2 ? 'done' : step === 2 ? 'cur' : '') + '"><div><b>PDF 등록</b><p>클라이언트에게 전달할 최종본은 PDF로 올려 주세요.</p></div><div class="rp-act">' + (x.sent ? (x.pdf ? '<span class="rp-fn">' + esc(x.pdf) + '</span>' : '') : '<div class="rp-upf"><span class="fn' + (x.pdf ? ' on' : '') + '">' + esc(x.pdf || '선택된 파일 없음') + '</span><label class="btn up">파일 선택<input type="file" accept=".pdf,application/pdf" hidden data-rp-file="pdf"></label></div>') + '</div></li>' + // PDF 등록: 파일 업로드 컴포넌트 (2026-10-29)
-          ''+
+          // 추가 파일 (선택, 형식 상관없이): 클라이언트가 Raw data 등 추가 자료를 요청한 경우 PDF와 함께 전달 (2026-10-29)
+          (x.sent && !(x.extra || []).length ? '' : '<li class="' + (step > 2 ? 'done' : '') + '"><div><b>추가 파일 (선택)</b><p>Raw data 등 함께 보낼 파일이 있으면 올려 주세요. 형식 상관없이 여러 개</p>' + ((x.extra || []).length ? '<ul class="rp-xl">' + x.extra.map(function (n, j) { return '<li><span>' + esc(n) + '</span>' + (x.sent ? '' : '<button type="button" class="rp-x" data-rp="rmextra" data-j="' + j + '" aria-label="' + esc(n) + ' 빼기">✕</button>') + '</li>'; }).join('') + '</ul>' : '') + '</div><div class="rp-act">' + (x.sent ? '' : '<label class="btn up">파일 선택<input type="file" multiple hidden data-rp-extra></label>') + '</div></li>') +
           '<li class="' + (step > 2 ? 'done' : '') + '"><div><b>클라이언트에 전달</b><p>전달하면 클라이언트 결과보고서에 등록되고 알림이 갑니다. (' + F.repName(x.sent ? x.repN - 1 : rep.length) + ')</p></div><div class="rp-act">' + (x.sent ? '<span class="rp-fn">' + ymd(x.sent) + ' 전달</span>' : '<button type="button" class="btn primary" data-rp="send"' + (x.pdf ? '' : ' disabled') + '>클라이언트에 전달</button>') + '</div></li>' +
-        '</ol></div>' + (gr ? '</div>' : '') + '</div>';
+        '</ol></div>' + undo + (gr ? '</div>' : '') + '</div>';
     }).reverse().join('');
-    if (rep.length) h += '<div class="rp-sent"><b>클라이언트 결과보고서</b><span>' + rep.length + '건 전달<i class="dv" aria-hidden="true"></i>' + (fin ? '클라이언트 최종 승인 (' + ymd(s.fin) + ')' : '클라이언트 검수 대기') + '</span></div>';
+    // '클라이언트 결과보고서 n건 전달' 회색 줄은 뺌: 초록 머리에 전달 상태가 있음 (2026-10-29)
     var last = raw[raw.length - 1], cq = F.cReqOpen(s);
     if (cq) h += '<div class="rp-creq"><b>클라이언트 수정 요청</b><em>' + ymd(cq.at) + '</em><p>' + esc(cq.note) + '</p></div>';
     if (!fin && ask) h += '<div class="rp-next"><div><b>분석파트너에게 결과 재등록을 요청했습니다.</b><p>' + ymd(s.reReq.at) + ' 요청<i class="dv" aria-hidden="true"></i>' + esc(s.reReq.note) + '</p></div></div>';
@@ -839,6 +843,11 @@
   document.addEventListener('change', function (e) {
     var sec = e.target.closest('.rp'); if (!sec) return;
     var id = sec.dataset.rpId, t = e.target;
+    if (t.matches('[data-rp-extra]')) {
+      var xi = +t.closest('[data-rp-i]').dataset.rpI, xn = [].map.call(t.files, function (f) { return f.name; }); t.value = '';
+      var cur0 = state(id).raw[xi].extra || []; F.repSet(id, xi, 'extra', cur0.concat(xn.filter(function (v) { return cur0.indexOf(v) < 0; }))); if (F.repRedraw) F.repRedraw();
+      return;
+    }
     if (t.matches('[data-rp-ex]')) {
       var o = RP_PDF[id] = RP_PDF[id] || {}, en = [].map.call(t.files, function (f) { return f.name; }); t.value = '';
       o.ex = (o.ex || []).concat(en.filter(function (x) { return (o.ex || []).indexOf(x) < 0; })); if (F.repRedraw) F.repRedraw();
@@ -866,11 +875,12 @@
     var b = e.target.closest('[data-rp]'); if (!b) return;
     var sec = b.closest('.rp'), id = sec.dataset.rpId, a = b.dataset.rp, it = b.closest('[data-rp-i]'), i = it ? +it.dataset.rpI : -1;
     if (a === 'rm') { RP_FILES[id].splice(+b.dataset.j, 1); RP_ERR[id] = false; if (F.repRedraw) F.repRedraw(); return; }
+    if (a === 'rmextra') { var xl = (state(id).raw[i].extra || []).slice(); xl.splice(+b.dataset.j, 1); F.repSet(id, i, 'extra', xl); if (F.repRedraw) F.repRedraw(); return; }
     if (a === 'rmex') { RP_PDF[id].ex.splice(+b.dataset.j, 1); if (F.repRedraw) F.repRedraw(); return; }
     if (a === 'rmpdf') { delete (RP_PDF[id] || {})[b.dataset.k]; if (F.repRedraw) F.repRedraw(); return; }
     if (a === 'raw') {
       var aiK = b.dataset.k === 'ai', L = aiK ? RP_FILES[id] || [] : pdfL(id); if (!L.length) return;
-      var as = F.repName((state(id).raw || []).filter(function (v) { return v.by !== 'admin'; }).length) + '로';
+      var as = F.repName((state(id).rep || []).length) + '로';
       F.ask({ title: aiK ? 'AI 보고서를 생성할까요?' : '결과보고서를 등록할까요?', desc: aiK ? '선택한 파일 ' + L.length + '개로 AI가 결과보고서를 만들어 ' + as + ' 제출합니다. 제출한 뒤에는 파일을 바꾸거나 추가할 수 없으며, OmicsPharm이 검토해 클라이언트에게 전달합니다.' : '선택한 파일 ' + L.length + '개를 ' + as + ' 제출합니다. 제출한 뒤에는 파일을 바꾸거나 추가할 수 없으며, OmicsPharm이 확인해 클라이언트에게 전달합니다.', label: false, yes: '등록하기' }, function () {
         F.repRaw(id, L.slice(), aiK ? 'ai' : 'pdf', aiK ? null : pdfLab(id)); RP_FILES[id] = []; RP_PDF[id] = {}; OP.toast(aiK ? 'AI 보고서 생성을 요청했습니다. OmicsPharm이 검토 후 클라이언트에게 전달합니다.' : '결과보고서를 등록했습니다. OmicsPharm이 확인 후 클라이언트에게 전달합니다.'); if (F.repRedraw) F.repRedraw();
       });
