@@ -770,7 +770,8 @@
         '<ol class="rp-steps">' +
           // 1단계: 초안(워드)을 내려받아 고친 뒤 PDF로 저장 → 2단계에서 PDF 등록. 고친 워드를 따로 올리는 [수정본 업로드]는 뺌 (2026-10-29)
           '<li class="' + (step > 1 ? 'done' : 'cur') + '"><div><b>' + (x.by === 'admin' ? '보고서 수정' : '초안 검토, 수정') + '</b><p>' + (x.by === 'admin' ? '지난 보고서 원본을 내려받아 고친 뒤 PDF로 저장해 주세요.' : '초안을 내려받아 검토하고 고친 뒤 PDF로 저장해 주세요.') + '</p></div><div class="rp-act"><button type="button" class="btn" data-rp="dl">' + esc(x.ai) + '</button></div></li>' +
-          '<li class="' + (step > 2 ? 'done' : step === 2 ? 'cur' : '') + '"><div><b>PDF 등록</b><p>클라이언트에게 전달할 최종본은 PDF로 올려 주세요.</p></div><div class="rp-act">' + (x.sent ? '' : '<label class="btn">PDF 선택<input type="file" accept=".pdf" hidden data-rp-file="pdf"></label>') + (x.pdf ? '<span class="rp-fn">' + esc(x.pdf) + '</span>' : '') + '</div></li>' +
+          '<li class="' + (step > 2 ? 'done' : step === 2 ? 'cur' : '') + '"><div><b>PDF 등록</b><p>클라이언트에게 전달할 최종본은 PDF로 올려 주세요.</p></div><div class="rp-act">' + (x.sent ? (x.pdf ? '<span class="rp-fn">' + esc(x.pdf) + '</span>' : '') : '<div class="rp-upf"><span class="fn' + (x.pdf ? ' on' : '') + '">' + esc(x.pdf || '선택된 파일 없음') + '</span><label class="btn up">파일 선택<input type="file" accept=".pdf,application/pdf" hidden data-rp-file="pdf"></label></div>') + '</div></li>' + // PDF 등록: 파일 업로드 컴포넌트 (2026-10-29)
+          ''+
           '<li class="' + (step > 2 ? 'done' : '') + '"><div><b>클라이언트에 전달</b><p>전달하면 클라이언트 결과보고서에 ' + (rep.length + (x.sent ? 0 : 1)) + '차로 등록되고 알림이 갑니다.</p></div><div class="rp-act">' + (x.sent ? '<span class="rp-fn">' + ymd(x.sent) + ' 전달</span>' : '<button type="button" class="btn primary" data-rp="send"' + (x.pdf ? '' : ' disabled') + '>클라이언트에 전달</button>') + '</div></li>' +
         '</ol></div></div>';
     }).reverse().join('');
@@ -793,6 +794,7 @@
       if (F.repRedraw) F.repRedraw();
       return;
     }
+    if (t.matches('[data-rp-file=pdf]') && t.files[0] && !/\.pdf$/i.test(t.files[0].name)) { t.value = ''; OP.toast('PDF 파일만 올릴 수 있습니다.'); return; }
     if (t.matches('[data-rp-file]') && t.files[0]) { var i = +t.closest('[data-rp-i]').dataset.rpI; F.repSet(id, i, t.dataset.rpFile, t.files[0].name); OP.toast(t.dataset.rpFile === 'pdf' ? 'PDF를 등록했습니다.' : '수정본을 올렸습니다.'); if (F.repRedraw) F.repRedraw(); }
   });
   document.addEventListener('click', function (e) {
