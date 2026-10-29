@@ -9,17 +9,18 @@
      ?rid=프로젝트 번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029t">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029t">
-<script src="assets/common/site.js?v=20261029t"></script>
-<script src="assets/common/consult.js?v=20261029t"></script>
-<script src="assets/common/mypage.js?v=20261029t"></script>
-<script src="assets/common/flow.js?v=20261029t"></script>
-<script src="assets/common/projects-data.js?v=20261029t"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029u">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029u">
+<script src="assets/common/site.js?v=20261029u"></script>
+<script src="assets/common/consult.js?v=20261029u"></script>
+<script src="assets/common/mypage.js?v=20261029u"></script>
+<script src="assets/common/flow.js?v=20261029u"></script>
+<script src="assets/common/projects-data.js?v=20261029u"></script>
 <style>
   /* 탭 (상단에 붙음) */
   .qtabs { position:sticky; top:70px; z-index:5; display:flex; gap:8px; margin:-24px -24px 0; padding:16px 24px; background:#fff; border-radius:16px 16px 0 0; border-bottom:1px solid var(--gray-200); }
-  .ui-white .main { gap:8px; } /* 안내 박스와 탭 사이 24 (8 + 탭 위 여백 16) = 분석파트너 상세와 같게 (2026-10-29) */
+  .ui-white #card { margin-top:-56px; } /* 안내 박스와 탭 사이 24 (섹션 간격 64 - 56 + 탭 위 여백 16) = 분석파트너 상세와 같게 (2026-10-29) */
+  @media (max-width:960px) { .ui-white #card { margin-top:-32px; } } /* 섹션 간격 40 */
   .ui-white .qtabs { margin:0; padding:16px 0; border-radius:0; } /* 흰 화면(카드 여백 없음)에서는 구분선이 본문 폭을 넘지 않게 (2026-10-28) */
   .qtabs button { height:36px; padding:0 16px; border-radius:99px; background:var(--gray-100); font-size:14px; font-weight:500; color:var(--gray-500); }
   .qtabs button.on { background:#000; color:#fff; }
