@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261029zz2">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zz2">
-<script src="assets/common/site.js?v=20261029zz2"></script>
-<script src="assets/common/consult.js?v=20261029zz2"></script>
-<script src="assets/common/mypage.js?v=20261029zz2"></script>
-<script src="assets/common/flow.js?v=20261029zz2"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261029zz3">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261029zz3">
+<script src="assets/common/site.js?v=20261029zz3"></script>
+<script src="assets/common/consult.js?v=20261029zz3"></script>
+<script src="assets/common/mypage.js?v=20261029zz3"></script>
+<script src="assets/common/flow.js?v=20261029zz3"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -798,7 +798,7 @@
       '<div class="prow"><div class="badges"><span class="badge tag">' + esc(d.svc) + '</span>' + stB(d.id) + '</div>' +
         '<span class="reg">등록일 ' + ymd(d.at) + (d.updatedAt ? '<i class="dv" aria-hidden="true"></i>수정일 ' + ymd(d.updatedAt) : '') + '<i class="dv" aria-hidden="true"></i>프로젝트 번호 ' + esc(d.id) + '</span></div>' +
       '<div class="prow"><h2 class="ptitle"><a class="back" href="mypage-project.html" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(d.title) + '</h2>' +
-        '<div class="pright">' + ((d.from || d.to) && sk === 0 ? '<div class="period"><b>모집기한</b><span>' + dot(d.from) + ' ~ ' + dot(d.to) + '</span><em>' + (closed ? '모집마감' : '모집중') + '</em></div>' : '') + OP.askBtn({ key: d.id, cat: d.svc, no: d.id, title: d.title }) + '</div></div>' +
+        '<div class="pright">' + ((d.from || d.to) && sk === 0 ? '<div class="period"><b>모집기한</b><span>' + dot(d.from) + ' ~ ' + dot(d.to) + '</span></div>' /* 의뢰접수(게시 전)라 모집중/모집마감 표시는 뺌 (2026-10-29) */ : '') + OP.askBtn({ key: d.id, cat: d.svc, no: d.id, title: d.title }) + '</div></div>' +
     '</div>' +
     '<ol class="fsteps" style="--n:' + F.CLIENT_STEPS.length + '" aria-label="진행 단계">' + F.CLIENT_STEPS.map(function (t, i) { return '<li class="' + (i < sk ? 'done' : i === sk ? 'cur' : '') + '"' + (i === sk ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
     todoHTML() +
