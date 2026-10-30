@@ -432,7 +432,7 @@
     // 계약서 등록 (컨설턴트): c = { client:{type:'form'|'file', name}, partner:{...} } → 분석 진행 단계로
     // 계약 정보 (2026-10-26, 기존 사이트 항목 그대로): 최종 계약 금액·통화, 계약일, 납기일 + 쪽마다 계약서·대금 지급 방법·기타. 임시저장 = ctDraft
     contract: function (id, c) { return put(id, function (s) { s.ct = Object.assign({ at: Date.now() }, c); delete s.ctDraft; }); },
-    contractEdit: function (id, c, ch) { return put(id, function (s) { var at = s.ct.at; s.ct = Object.assign({}, s.ct, c, { at: at }); s.ctLog = (s.ctLog || []).concat([{ at: Date.now(), ch: ch }]); }); }, // 계약 정보 수정 (2026-10-30)
+    ctSwap: function (id, side, name) { return put(id, function (s) { var c = Object.assign({}, s.ct[side] || {}), from = c.name || (c.type === 'form' ? '셀키 분석서비스 의뢰서(기본 양식)' : ''); c.type = 'file'; c.name = name; s.ct[side] = c; s.ctLog = (s.ctLog || []).concat([{ at: Date.now(), side: side, from: from, to: name }]); }); }, // 계약서 파일 교체 (2026-10-30, 분석 진행 중)
     contractDraft: function (id, c) { return put(id, function (s) { s.ctDraft = Object.assign({ savedAt: Date.now() }, c); }); },
     // 프로젝트 찾기에 게시된 의뢰 (컨설턴트 승인 후)
     posted: function () {
@@ -475,11 +475,12 @@
   var josa = function (w, a, b) { var c = String(w).replace(/[^가-힣a-zA-Z0-9]+$/, '').slice(-1).charCodeAt(0); return w + (c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 ? a : b); };
   var won = function (n) { return Math.round(n).toLocaleString('ko-KR') + '원'; };
   var qname = function (x) { return ((x.revN || 0) + 1) + '차 견적서'; };
-  // 계약 정보 수정 알림 (2026-10-30): 받는 사람과 관련된 항목만 (클라이언트는 분석파트너 금액·계약서를 모름)
+  // 계약서 교체 알림 (2026-10-30): 바뀐 쪽 계약 당사자에게만
   var ctEdAlarm = function (L, s, r, nm, who, href) {
-    (s.ctLog || []).forEach(function (g, i) { var ch = g.ch.filter(function (c) { return c.who === 'all' || c.who === who; }); if (!ch.length) return;
-      L.push({ id: 'f-cted-' + r.id + i, k: '계약정보변경', cat: 'project', at: g.at, t: nm + ' 프로젝트의 계약 정보가 수정되었습니다.', sub: ch.map(function (c) { return c.label.replace(/^(클라이언트|분석파트너) /, '') + ' ' + c.from + ' → ' + c.to; }).join(' · '), href: href }); });
+    (s.ctLog || []).forEach(function (g, i) { if (g.side !== who) return;
+      L.push({ id: 'f-cted-' + r.id + i, k: '계약서교체', cat: 'project', at: g.at, t: nm + ' 프로젝트의 계약서가 교체되었습니다.', sub: '새 계약서: ' + g.to, href: href }); });
   };
+
   F.josa = josa;
   F.alarms = function () {
     var ses = OP.session(); if (!ses) return [];
@@ -730,13 +731,13 @@
     document.body.appendChild(pv); document.body.style.overflow = 'hidden'; pv.querySelector('[data-close]').focus();
   };
   // 계약서 목록 (클라이언트·파트너·컨설턴트 화면 공통)
-  F.contractListHTML = function (s, sides) {
+  F.contractListHTML = function (s, sides, o) { // o.swap = 컨설턴트 분석 진행 중: 계약서 줄마다 [파일 교체] (2026-10-30)
     return '<div class="ctlist">' + sides.map(function (side) {
       // 계약서 줄 (2026-10-28): 파일 이름(업로드한 경우) + 이 계약의 최종 계약 금액 + 등록일
       var c = s.ct[side] || {}, cl = side === 'client', q = cl ? ((F.cqLast(s) || {}).quote || s.P[s.pick].quote) : s.P[s.pick].quote;
       var amt = cl ? s.ct.amt : s.ct.pAmt, cur = (cl ? s.ct.cur : s.ct.pCur) || q.cur; if (amt == null) amt = total(q).net;
       var dv = '<i class="dv" aria-hidden="true"></i>';
-      return '<div class="ctrow2"><div><b>' + (cl ? '클라이언트 계약서' : '분석파트너 계약서') + '</b><span>' + (c.type === 'file' && c.name ? esc(c.name) + dv : '') + '계약 금액 ' + money(amt, cur) + (cur === 'KRW' || !cur ? ' (VAT 별도)' : '') + dv + '등록 ' + ymd(s.ct.at) + '</span></div><button type="button" class="btn" data-ct="' + side + '">계약서 보기</button></div>';
+      return '<div class="ctrow2"><div><b>' + (cl ? '클라이언트 계약서' : '분석파트너 계약서') + '</b><span>' + (c.type === 'file' && c.name ? esc(c.name) + dv : '') + '계약 금액 ' + money(amt, cur) + (cur === 'KRW' || !cur ? ' (VAT 별도)' : '') + dv + '등록 ' + ymd(s.ct.at) + '</span></div><span class="ctbtns">' + (o && o.swap ? '<label class="btn">파일 교체<input type="file" accept=".pdf,.doc,.docx,.hwp,.hwpx" hidden data-ctswap="' + side + '"></label>' : '') + '<button type="button" class="btn" data-ct="' + side + '">계약서 보기</button></span></div>';
     }).join('') + '</div>';
   };
 

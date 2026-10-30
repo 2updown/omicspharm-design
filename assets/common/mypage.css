@@ -282,6 +282,7 @@ button { background:none; border:0; cursor:pointer; }
 .ctrow2 { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 12px; border-bottom:1px solid var(--gray-200); }
 .ctrow2 b { display:block; font-size:15px; font-weight:600; line-height:22px; }
 .ctrow2 span { font-size:13px; line-height:18px; color:var(--gray-500); }
+.ctrow2 .ctbtns { display:flex; flex:none; gap:8px; } /* [파일 교체] + [계약서 보기] (2026-10-30) */
 @media print { .pv-scroll .attach-t { display:none; } .pv-scroll .doc + .doc, .pv-scroll .attach-t + .doc { margin-top:0; page-break-before:always; } }
 @media (max-width:640px) { .ctrow2 { flex-direction:column; align-items:stretch; } }
 /* button_text (Figma 281:24596) Type=text — 글자만 있는 버튼. 기본 S(32)·16px, .xs = XS(24)·14px / .primary = teal */

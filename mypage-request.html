@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261030j">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261030j">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261030j">
-<script src="assets/common/site.js?v=20261030j"></script>
-<script src="assets/common/consult.js?v=20261030j"></script>
-<script src="assets/common/mypage.js?v=20261030j"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261030k">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261030k">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261030k">
+<script src="assets/common/site.js?v=20261030k"></script>
+<script src="assets/common/consult.js?v=20261030k"></script>
+<script src="assets/common/mypage.js?v=20261030k"></script>
 <script src="assets/common/svc-spec.js?v=20261030a"></script>
-<script src="assets/common/flow.js?v=20261030j"></script>
+<script src="assets/common/flow.js?v=20261030k"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -922,37 +922,20 @@
     // 2026-10-28: 클라이언트 계약(셀키 견적) / 분석파트너 계약(파트너 견적) 금액을 따로 받음. 계약일·납기일은 공통
     return { q: q, pq: pq0, wk: wk, amt: Math.round(F.total(q).net), cur: cc(q.cur), pAmt: Math.round(F.total(pq0).net), pCur: cc(pq0.cur), date: F.iso(Date.now()), due: F.iso(Date.now() + 864e5 * 7 * wk) };
   }
-  // 계약 정보 수정 (2026-10-30): 저장 후에도 컨설턴트가 [계약 정보 수정]으로 고침 (납기 연장·계약서 교체 등). 바뀐 내용은 클라이언트·분석파트너에게 알림, 수정 이력 남김
-  var CT_ED = {};
-  var CT_F = [['amt', '클라이언트 계약 금액', 'client'], ['pAmt', '분석파트너 계약 금액', 'partner'], ['date', '계약일', 'all'], ['due', '납기일', 'all'],
-    ['client.name', '클라이언트 계약서', 'client'], ['client.pay', '클라이언트 대금 지급 방법', 'client'], ['client.etc', '클라이언트 기타', 'client'],
-    ['partner.name', '분석파트너 계약서', 'partner'], ['partner.pay', '분석파트너 대금 지급 방법', 'partner'], ['partner.etc', '분석파트너 기타', 'partner']];
-  // 저장된 계약 정보 + 빠진 값 채움 (예전 데이터는 금액·파일명이 없을 수 있음: 기본 양식이면 양식 이름으로)
-  function ctFull(s) {
-    var b = ctBase(s), c = Object.assign({ amt: b.amt, cur: b.cur, pAmt: b.pAmt, pCur: b.pCur, date: F.iso(s.ct.at) }, s.ct);
-    ['client', 'partner'].forEach(function (k) { var x = Object.assign({}, c[k] || {}); if (!x.name) x.name = x.type === 'form' ? '셀키 분석서비스 의뢰서(기본 양식)' : ''; c[k] = x; });
-    return c;
-  }
-  function ctDiff(a, b) {
-    var g = function (o, k) { var p = k.split('.'); return p.length > 1 ? ((o[p[0]] || {})[p[1]] || '') : (o[k] == null ? '' : o[k]); };
-    var f = function (k, v) { return v === '' ? '-' : /amt/i.test(k) ? Number(v).toLocaleString('ko-KR') + '원' : /date|due/.test(k) ? String(v).replace(/-/g, '.') : String(v); };
-    var cur = function (k) { return k === 'amt' ? g(a, 'cur') !== g(b, 'cur') : k === 'pAmt' ? g(a, 'pCur') !== g(b, 'pCur') : false; };
-    return CT_F.filter(function (x) { return String(g(a, x[0])) !== String(g(b, x[0])) || cur(x[0]); }).map(function (x) { return { k: x[0], label: x[1], who: x[2], from: f(x[0], g(a, x[0])), to: f(x[0], g(b, x[0])) }; });
-  }
+  // 계약서 파일 교체 (2026-10-30): 분석 진행 중에만, 계약서 파일만 바꿈 (금액·날짜 등은 그대로). 교체 이력을 남기고 해당 쪽에 알림
   function contractHTML(s) {
-    if (s.ct && !CT_ED[id]) {
+    if (s.ct) {
       var c0 = s.ct, side = function (k, t) { var c = c0[k] || {}; return '<div class="r"><b>' + t + ' 대금 지급 방법</b><div>' + esc(c.pay || '-') + '</div></div>' + (c.etc ? '<div class="r"><b>' + t + ' 기타</b><div style="white-space:pre-line">' + esc(c.etc) + '</div></div>' : ''); };
-      return '<div class="blk"><div class="blk-h"><h3>계약 정보</h3>' + (s.fin ? '' : '<button type="button" class="btn" id="ctEdit">계약 정보 수정</button>') + '</div>' +
+      return '<div class="blk"><div class="blk-h"><h3>계약 정보</h3></div>' +
         '<div class="ctf">' + (c0.amt != null ? '<div class="r"><b>' + (c0.pAmt != null ? '클라이언트 최종 계약 금액' : '최종 계약 금액') + '</b><div>' + F.money(c0.amt, c0.cur) + (c0.cur === 'KRW' ? ' (공급가, VAT 별도)' : '') + '</div></div>' : '') +
           (c0.pAmt != null ? '<div class="r"><b>분석파트너 최종 계약 금액</b><div>' + F.money(c0.pAmt, c0.pCur) + (c0.pCur === 'KRW' ? ' (공급가, VAT 별도)' : '') + '</div></div>' : '') +
           '<div class="r"><b>계약일</b><div>' + (c0.date ? c0.date.replace(/-/g, '.') : F.ymd(c0.at)) + '</div></div>' +
           (c0.due ? '<div class="r"><b>납기일</b><div>' + c0.due.replace(/-/g, '.') + '</div></div>' : '') +
           (c0.client && (c0.client.pay || c0.client.etc) ? side('client', '클라이언트') : '') + (c0.partner && (c0.partner.pay || c0.partner.etc) ? side('partner', '분석파트너') : '') + '</div>' +
-        F.contractListHTML(s, ['client', 'partner']) +
-        ((s.ctLog || []).length ? '<div class="ctlog"><b>수정 이력</b><ul>' + s.ctLog.slice().reverse().map(function (g) { return '<li><em>' + F.ymd(g.at) + '</em>' + g.ch.map(function (c) { return esc(c.label) + ' ' + esc(c.from) + ' → ' + esc(c.to); }).join('<i class="dv" aria-hidden="true"></i>') + '</li>'; }).join('') + '</ul></div>' : '') + '</div>';
+        F.contractListHTML(s, ['client', 'partner'], { swap: F.adminStage(id) === '분석 진행 중' }) +
+        ((s.ctLog || []).length ? '<div class="ctlog"><b>계약서 교체 이력</b><ul>' + s.ctLog.slice().reverse().map(function (g) { return '<li><em>' + F.ymd(g.at) + '</em>' + (g.side === 'client' ? '클라이언트' : '분석파트너') + ' 계약서<i class="dv" aria-hidden="true"></i>' + esc(g.from || '-') + ' → ' + esc(g.to) + '</li>'; }).join('') + '</ul></div>' : '') + '</div>';
     }
-    var ED = !!(s.ct && CT_ED[id]);
-    var b = ctBase(s), d = (ED ? ctFull(s) : s.ctDraft) || {}, v = function (k) { return d[k] != null ? d[k] : b[k]; };
+    var b = ctBase(s), d = s.ctDraft || {}, v = function (k) { return d[k] != null ? d[k] : b[k]; };
     var sideHTML = function (side, t, who, other) {
       var c = d[side] || {};
       return '<div class="ctside" data-side="' + side + '"><h4>■ ' + t + ' <span style="font-weight:400;font-size:13px;color:var(--gray-500)">' + esc(who) + '</span></h4>' +
@@ -965,7 +948,7 @@
           '<div class="r"><b>기타</b><div><textarea data-k="etc" placeholder="계약 관련 특이사항을 입력해 주세요.">' + esc(c.etc || '') + '</textarea></div></div>' +
         '</div></div>';
     };
-    return '<div class="blk" id="ctBlk"><div class="blk-h"><h3>' + (ED ? '계약 정보 수정' : '계약 정보') + '</h3></div>' +
+    return '<div class="blk" id="ctBlk"><div class="blk-h"><h3>계약 정보</h3></div>' +
       '<div class="ctf">' +
         '<div class="r"><b>클라이언트 최종 계약 금액<i>*</i></b><div><div class="row"><input type="text" class="amt" id="ctAmt" inputmode="numeric" value="' + Number(v('amt')).toLocaleString('ko-KR') + '"><select id="ctCur" aria-label="클라이언트 계약 통화">' + CURS.map(function (c) { return '<option value="' + c[0] + '"' + (v('cur') === c[0] ? ' selected' : '') + '>' + c[1] + '</option>'; }).join('') + '</select></div></div></div>' +
         '<div class="r"><b>분석파트너 최종 계약 금액<i>*</i></b><div><div class="row"><input type="text" class="amt" id="ctPAmt" inputmode="numeric" value="' + Number(v('pAmt')).toLocaleString('ko-KR') + '"><select id="ctPCur" aria-label="분석파트너 계약 통화">' + CURS.map(function (c) { return '<option value="' + c[0] + '"' + (v('pCur') === c[0] ? ' selected' : '') + '>' + c[1] + '</option>'; }).join('') + '</select></div></div></div>' +
@@ -974,8 +957,7 @@
       '</div>' +
       sideHTML('client', '클라이언트', (r.org || '-') + (r.manager ? '(' + r.manager + ')' : ''), '분석파트너') +
       sideHTML('partner', '분석파트너', F.partner(s.pick).org, '클라이언트') +
-      (ED ? '<div class="ctacts"><button type="button" class="btn lg" id="ctCancel">취소</button><button type="button" class="btn primary lg" id="ctSave" data-ed="1" disabled>수정 저장</button></div></div>'
-        : '<div class="ctacts">' + (s.ctDraft ? '<span class="ctsaved">임시저장 ' + F.ymd(s.ctDraft.savedAt) + '</span>' : '') + '<button type="button" class="btn lg" id="ctDraft">임시저장</button><button type="button" class="btn primary lg" id="ctSave" disabled>계약서 최종 저장</button></div></div>');
+      '<div class="ctacts">' + (s.ctDraft ? '<span class="ctsaved">임시저장 ' + F.ymd(s.ctDraft.savedAt) + '</span>' : '') + '<button type="button" class="btn lg" id="ctDraft">임시저장</button><button type="button" class="btn primary lg" id="ctSave" disabled>계약서 최종 저장</button></div></div>';
   }
   // 입력값 모으기. strict = 최종 저장 검사 (금액·계약일·납기일·계약서 파일 필수, 납기일 ≥ 계약일)
   function ctPick(strict) {
@@ -993,6 +975,13 @@
   }
   // 필수 칸(금액 2개·계약일·납기일·계약서 파일 2개)이 다 채워져야 [계약서 최종 저장] 활성 (2026-10-30)
   function ctReady() { var b = $('#ctSave'); if (b) b.disabled = !ctPick(false).ok; }
+  function ctSwap(inp) {
+    var f = inp.files[0], side = inp.dataset.ctswap; inp.value = ''; if (!f) return;
+    var s = F.state(id), nm = side === 'client' ? '클라이언트' : '분석파트너', who = side === 'client' ? (r.org || '-') : F.partner(s.pick).org;
+    F.ask({ title: nm + ' 계약서를 교체할까요?', desc: '새 파일: ' + f.name + '\n금액, 계약일, 납기일 등 계약 정보는 그대로이고 파일만 바뀝니다. ' + who + '에 알림이 갑니다.', label: false, yes: '교체' }, function () {
+      F.ctSwap(id, side, f.name); OP.toast(nm + ' 계약서를 교체했습니다.'); render();
+    });
+  }
   function ctSync() {
     [].forEach.call(card.querySelectorAll('.ctside'), function (row) {
       var f = row.querySelector('input[type=file]'), fn = row.querySelector('.fn'); fn.textContent = f.files[0] ? f.files[0].name : fn.dataset.saved || '선택된 파일 없음'; fn.style.color = '';
@@ -1270,7 +1259,7 @@
   function order(x) { return { sub: 0, rev: 1, draft: 2, req: 2, dec: 3 }[x.status]; }
 
   function bind(s) {
-    card.onchange = function (e) { if (e.target.name === 'fw') syncFwd(); if (e.target.closest('.ctside')) ctSync(); if (e.target.closest('.ctf')) e.target.classList.remove('bad'); if (e.target.closest('#ctBlk')) ctReady(); };
+    card.onchange = function (e) { if (e.target.name === 'fw') syncFwd(); if (e.target.closest('.ctside')) ctSync(); if (e.target.matches('[data-ctswap]')) ctSwap(e.target); if (e.target.closest('.ctf')) e.target.classList.remove('bad'); if (e.target.closest('#ctBlk')) ctReady(); };
     card.oninput = function (e) {
       if (e.target.id === 'ctAmt' || e.target.id === 'ctPAmt') { var d = e.target.value.replace(/[^\d]/g, ''); e.target.value = d ? (+d).toLocaleString('ko-KR') : ''; }
       if (e.target.closest('.ctf')) e.target.classList.remove('bad');
@@ -1290,19 +1279,9 @@
         F.showContract(r, s, t.closest('[data-ct]').dataset.ct);
       } else if (t.closest('#ctDraft')) {
         F.contractDraft(id, ctPick(false).c); OP.toast('계약 정보를 임시저장했습니다. 클라이언트·분석파트너에게는 아직 보이지 않습니다.'); render();
-      } else if (t.closest('#ctEdit')) {
-        CT_ED[id] = true; render(); var cb = $('#ctBlk'); if (cb) cb.scrollIntoView({ block: 'start' });
-      } else if (t.closest('#ctCancel')) {
-        delete CT_ED[id]; render();
-      } else if (t.closest('#ctSave') && t.closest('#ctSave').dataset.ed) {
-        var pe = ctPick(true); if (!pe.ok) { OP.toast('필수 항목(*)을 확인해 주세요. 납기일은 계약일 이후여야 합니다.'); return; }
-        var ch = ctDiff(ctFull(s), pe.c); if (!ch.length) { OP.toast('바뀐 내용이 없습니다.'); delete CT_ED[id]; render(); return; }
-        F.ask({ title: '계약 정보를 수정할까요?', desc: ch.map(function (c) { return c.label + ': ' + c.from + ' → ' + c.to; }).join('\n') + '\n\n바뀐 내용은 클라이언트와 분석파트너에게 알림으로 갑니다. (각자 관련된 내용만)', label: false, yes: '수정 저장' }, function () {
-          F.contractEdit(id, pe.c, ch); delete CT_ED[id]; OP.toast('계약 정보를 수정했습니다.'); render();
-        });
       } else if (t.closest('#ctSave')) {
         var pk = ctPick(true); if (!pk.ok) { OP.toast('필수 항목(*)을 확인해 주세요. 납기일은 계약일 이후여야 하고, 기관 양식이면 파일을 올려야 합니다.'); var b0 = card.querySelector('.ctf .bad'); if (b0) b0.focus(); return; }
-        F.ask({ title: '계약서를 최종 저장할까요?', desc: '클라이언트(' + (r.org || '-') + ')와 분석파트너(' + F.partner(s.pick).org + ')에게 계약서 최종본 등록 알림이 가고, 프로젝트가 분석 진행 단계로 넘어갑니다. 저장한 뒤에도 [계약 정보 수정]으로 고칠 수 있습니다.', label: false, yes: '최종 저장' }, function () {
+        F.ask({ title: '계약서를 최종 저장할까요?', desc: '클라이언트(' + (r.org || '-') + ')와 분석파트너(' + F.partner(s.pick).org + ')에게 계약서 최종본 등록 알림이 가고, 프로젝트가 분석 진행 단계로 넘어갑니다. 분석 진행 중에는 계약서 파일만 교체할 수 있습니다.', label: false, yes: '최종 저장' }, function () {
           F.contract(id, pk.c); OP.toast('계약서를 최종 저장했습니다.'); render();
         });
       } else if (t.closest('#bizView')) {
