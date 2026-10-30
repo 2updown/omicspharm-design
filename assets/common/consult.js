@@ -78,7 +78,7 @@
     linkable: function (email) { email = String(email || '').toLowerCase(); return all().filter(function (c) { return !c.link && !OP.consult.isProj(c) && (c.owner === email || c.email === email); }).sort(function (a, b) { return OP.consult.lastAt(b) - OP.consult.lastAt(a); }); },
     link: function (id, rid) { var c = get(id); if (!c) return null; c.link = rid; c.linkedAt = Date.now(); return save(c); },
     unlink: function (id) { var c = get(id); if (!c) return null; delete c.link; delete c.linkedAt; return save(c); },
-    add: function (id, by, text, file) { var c = get(id); if (!c) return null; c.msgs.push({ at: Date.now(), by: by, text: text, file: file || '' }); return save(c); }, // file: 첨부 파일 이름 (이어 쓰는 글에도 첨부, 2026-10-26)
+    add: function (id, by, text, file) { var c = get(id); if (!c) return null; c.msgs.push({ at: Date.now(), by: by, text: text, file: file || '' }); if (by === 'admin' && !c.owner) c.linkAt = Date.now(); return save(c); }, // 비회원은 답변 메일과 함께 링크가 새로 나가므로 유효기간도 그때부터 // file: 첨부 파일 이름 (이어 쓰는 글에도 첨부, 2026-10-26)
     setNote: function (id, text) { var c = get(id); if (!c) return null; c.note = text; c.noteAt = Date.now(); return save(c); },
     // 만료된 링크 다시 받기: 같은 이메일의 상담마다 새 링크 (데모: 첫 번째 것을 돌려줌)
     renew: function (email) {
