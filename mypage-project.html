@@ -416,7 +416,7 @@
     var pNext = function (x) { // 계약 이후 프로젝트 (분석파트너)
       var ps = D.pStage(x), fs = x.flow ? OP.flow.state(x.id) : null;
       if (fs && fs.reReq && !fs.fin) return ['btn', '결과 재등록'];
-      if (ps === '계약 진행 중') return ['txt', x.flow && !fs.ct ? '계약서 준비 중' : '계약서 확인'];
+      if (ps === '계약 진행 중') return ['txt', '계약서 준비 중']; // 계약서를 저장하면 바로 분석 진행 중이라 '계약서 확인' 상태는 없음 (2026-10-30)
       if (ps === '분석 진행 중') return x.flow && (fs.raw || []).length ? ['txt', 'OmicsPharm 검토 중'] : ['btn', '결과 등록'];
       if (ps === '보고서 검토') return ['txt', x.stage === '보고서 등록' ? 'OmicsPharm 검토 중' : '클라이언트 확인 중']; // 분석파트너는 보고서 등록·검토를 한 단계로 (2026-10-28)
       return null;

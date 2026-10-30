@@ -229,7 +229,7 @@
     }).filter(Boolean).concat(PP.map(function (p) {
       // 오른쪽 할 일·기다림 = 프로젝트 관리 목록(pNext)과 같은 이름
       var ps = D.pStage(p), fs = p.flow ? F.state(p.id) : null, up = p.flow && (fs.raw || []).length;
-      var nx = ps === '계약 진행 중' ? (p.flow && !fs.ct ? '계약서 준비 중' : '계약서 확인') : ps === '분석 진행 중' ? (up ? 'OmicsPharm 검토 중' : '결과 등록 필요') : ps === '보고서 검토' ? (fs && fs.reReq && !fs.fin ? '결과 재등록 필요' : p.stage === '보고서 등록' ? 'OmicsPharm 검토 중' : '클라이언트 확인 중') : '';
+      var nx = ps === '계약 진행 중' ? '계약서 준비 중' : ps === '분석 진행 중' ? (up ? 'OmicsPharm 검토 중' : '결과 등록 필요') : ps === '보고서 검토' ? (fs && fs.reReq && !fs.fin ? '결과 재등록 필요' : p.stage === '보고서 등록' ? 'OmicsPharm 검토 중' : '클라이언트 확인 중') : '';
       return { href: 'mypage-project.html?id=' + encodeURIComponent(p.id), svc: D.svcKo(p.svc), st: ps, stCls: ps === '프로젝트 완료' ? 'done' : 'state', title: p.title, sub: p.client, next: nx, urgent: /필요$/.test(nx), at: p.at };
     }));
   }
