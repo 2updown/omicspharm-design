@@ -35,13 +35,15 @@
   .flabel { display:flex; align-items:center; padding:12px 18px; background:var(--gray-100); font-size:14px; font-weight:500; line-height:20px; }
   .flabel .req { color:var(--red-600); margin-left:2px; }
   .fbody { display:flex; flex-direction:column; justify-content:center; gap:6px; padding:12px; min-width:0; }
-  .reasons { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:4px 24px; }
+  /* 탈퇴 사유: 한 줄로 흐르는 체크박스, 기타는 옆에 입력칸 (피그마 2154:29487, 2026-10-30) */
+  .reasons { display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
+  .reasons .etcrow { display:flex; align-items:center; gap:8px; }
+  .reasons .etcrow .inp { width:343px; max-width:none; }
+  .inp:disabled { background:var(--gray-100); color:var(--gray-400); cursor:default; }
   .inp, textarea { width:100%; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font:inherit; font-size:14px; line-height:20px; }
   .inp { max-width:420px; height:40px; padding:0 12px; }
-  textarea { min-height:140px; padding:10px 12px; resize:vertical; }
+  textarea { min-height:110px; padding:10px 12px; resize:vertical; }
   .inp:focus, textarea:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
-  .etcbox { display:flex; flex-direction:column; gap:6px; margin-top:4px; }
-  .etcbox .inp { max-width:none; }
   .bad, .reasons.bad { border-color:var(--red-600); }
   .help { font-size:12px; line-height:18px; color:var(--gray-500); }
   .cnt { align-self:flex-end; font-size:12px; color:var(--gray-500); }
@@ -73,7 +75,7 @@
     .field { grid-template-columns:1fr; }
     .flabel { padding:10px 12px; }
     .fbody { padding:10px 0 14px; }
-    .reasons { grid-template-columns:1fr; }
+    .reasons .etcrow { flex:1 1 100%; } .reasons .etcrow .inp { flex:1; width:auto; min-width:0; }
     .inp { max-width:none; }
     .btns .btn { flex:1; width:auto; }
   }
@@ -107,7 +109,6 @@
             <div class="tbl">
               <div class="field"><div class="flabel">탈퇴 사유<span class="req">*</span></div><div class="fbody">
                 <div class="reasons" id="reasons" role="group" aria-label="탈퇴 사유 (복수 선택)"></div>
-                <div class="etcbox" id="etcBox" hidden><input class="inp" id="etc" maxlength="100" placeholder="기타 사유를 입력해주세요." aria-label="기타 탈퇴 사유"></div>
               </div></div>
               <div class="field"><label class="flabel" for="memo">개선사항</label><div class="fbody">
                 <textarea id="memo" maxlength="500" placeholder="OmicsPharm 이용 중 불편했던 점이나 개선되었으면 하는 점을 남겨주세요."></textarea>
@@ -115,7 +116,6 @@
               </div></div>
               <div class="field"><label class="flabel" for="pw">비밀번호 확인<span class="req">*</span></label><div class="fbody">
                 <input class="inp" id="pw" type="password" autocomplete="current-password" placeholder="현재 비밀번호">
-                <p class="help">본인 확인을 위해 비밀번호를 입력해주세요.</p>
               </div></div>
             </div>
           </div>
@@ -157,11 +157,14 @@
     '<li class="strong">회원 탈퇴 후에는 이전 계정 및 프로젝트 데이터를 복구할 수 없습니다.</li>';
 
   // 탈퇴 사유 (복수 선택)
-  var R = ['원하는 분석 서비스가 없음', '견적 가격이 맞지 않음', partner ? '받는 견적 요청이 적음' : '분석파트너 매칭·견적이 느림',
-    partner ? '정산·계약 절차가 불편함' : '분석 결과·보고서 품질 불만', '이용 빈도가 낮음', '사이트 이용이 불편함', '개인정보 유출 우려', '기타 (직접 입력)'];
-  $('#reasons').innerHTML = R.map(function (t, i) {
-    return '<label class="check"><input type="checkbox" value="' + esc(t) + '"' + (i === R.length - 1 ? ' data-etc' : '') + '><i></i><span>' + esc(t) + '</span></label>';
-  }).join('');
+  // 클라이언트·분석파트너 같은 목록 (피그마 2026-10-30)
+  var R = ['원하는 분석 서비스가 없음', '견적 가격이 맞지 않음', '정산·계약 절차가 불편함', '이용 빈도가 낮음', '사이트 이용이 불편함', '개인정보 유출 우려'];
+  $('#reasons').innerHTML = R.map(function (t) {
+    return '<label class="check"><input type="checkbox" value="' + esc(t) + '"><i></i><span>' + esc(t) + '</span></label>';
+  }).join('') +
+    // 기타: 체크하면 옆 입력칸이 열림 (체크 전에는 disabled)
+    '<span class="etcrow"><label class="check"><input type="checkbox" value="기타" data-etc><i></i><span>기타</span></label>' +
+    '<input class="inp" id="etc" maxlength="100" placeholder="직접 입력" aria-label="기타 탈퇴 사유" disabled></span>';
 
   // 진행 중인 프로젝트 확인: 클라이언트 = 내가 의뢰한 프로젝트, 분석파트너 = 매칭·계약된 프로젝트 중 완료 전
   // 데모 계정은 예시 프로젝트가 있어 항상 막히므로 ?free=1 로 '진행 중 프로젝트 없음' 상태를 볼 수 있게 함
@@ -191,13 +194,13 @@
   }
   var etc = function () { return $('#reasons [data-etc]').checked; };
   $('#reasons').addEventListener('change', function () {
-    var was = !$('#etcBox').hidden; $('#etcBox').hidden = !etc();
-    if (etc() && !was) $('#etc').focus(); // 기타를 고르면 입력창이 열리고 바로 입력
-    if (!etc()) { $('#etc').classList.remove('bad'); err($('#etcBox'), ''); }
+    var was = !$('#etc').disabled; $('#etc').disabled = !etc();
+    if (etc() && !was) $('#etc').focus(); // 기타를 고르면 입력칸이 열리고 바로 입력
+    if (!etc()) { $('#etc').classList.remove('bad'); err($('#reasons').parentNode, ''); }
     if (document.querySelector('#reasons input:checked')) err($('#reasons').parentNode, '');
   });
   $('#memo').addEventListener('input', function () { $('#memoN').textContent = this.value.length; });
-  $('#etc').addEventListener('input', function () { if (this.value.trim()) { this.classList.remove('bad'); err($('#etcBox'), ''); } });
+  $('#etc').addEventListener('input', function () { if (this.value.trim()) { this.classList.remove('bad'); err($('#reasons').parentNode, ''); } });
   $('#pw').addEventListener('input', function () { this.classList.remove('bad'); err(this.parentNode, ''); });
   $('.agree').addEventListener('change', function () { if ($('#ag1').checked) err($('.agree'), ''); });
 
@@ -208,7 +211,7 @@
     var memo = $('#memo'), pw = $('#pw'), first = null, cur = (OP.account(email) || {}).pw;
     var mark = function (el, box, msg) { if (el && el.classList) el.classList.toggle('bad', !!msg); err(box, msg); if (msg && !first) first = el; };
     mark($('#reasons input'), $('#reasons').parentNode, picked.length ? '' : '탈퇴 사유를 1개 이상 선택해주세요.');
-    mark($('#etc'), $('#etcBox'), etc() && !$('#etc').value.trim() ? '기타 사유를 입력해주세요.' : '');
+    if (picked.length) mark($('#etc'), $('#reasons').parentNode, etc() && !$('#etc').value.trim() ? '기타 사유를 입력해주세요.' : '');
     mark(pw, pw.parentNode, !pw.value ? '비밀번호를 입력해주세요.' : cur && pw.value !== cur ? '비밀번호가 일치하지 않습니다.' : '');
     mark($('#ag1'), $('.agree'), $('#ag1').checked ? '' : '탈퇴 안내에 동의해주세요.');
     if (first) { first.focus(); return; }
