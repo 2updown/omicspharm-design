@@ -10,13 +10,13 @@
        처리상태는 마지막 메시지로 자동(답변대기/답변완료), 처리내용 → '상담 기록'(컨설턴트만 보임), 답변은 대화로 문의자에게 보이고 메일로도 알림
      회원(클라이언트·분석파트너): 내 상담 목록(+ 챗봇 문의) → 대화 + 이어서 작성.
      2026-10-27: 프로젝트별 대화(?project=, pj)는 메뉴 '프로젝트 문의내역'(mypage-inquiry.html)에서 열리고 대화 화면만 여기를 씀. 의뢰에 연결된 상담(link)은 끝난 대화로 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261030k">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261030k">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261030k">
-<script src="assets/common/site.js?v=20261030k"></script>
-<script src="assets/common/consult.js?v=20261030k"></script>
-<script src="assets/common/mypage.js?v=20261030k"></script>
-<script src="assets/common/flow.js?v=20261030k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261030l">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261030l">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261030l">
+<script src="assets/common/site.js?v=20261030l"></script>
+<script src="assets/common/consult.js?v=20261030l"></script>
+<script src="assets/common/mypage.js?v=20261030l"></script>
+<script src="assets/common/flow.js?v=20261030l"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
   .cs-list { border-top:2px solid #000; }
@@ -63,6 +63,7 @@
 <script>
 (function () {
   var C = OP.consult, esc = C.esc, $ = function (s) { return document.querySelector(s); };
+  var LK = function (c) { return C.PRE && c.link; }; // 의뢰 전 상담 연결은 2단계라 기본 숨김 (?pre=1, 2026-10-30)
   var Q = new URLSearchParams(location.search), id = Q.get('id'), pid = Q.get('project'), qid = Q.get('q');
   // 메뉴 (2026-10-27): 프로젝트별 대화는 '프로젝트 문의내역', 그 외(Contact Us · 챗봇 문의)는 '상담내역'
   var c0 = id && C.get(id), PJ = !!pid || !!(c0 && C.isProj(c0));
@@ -70,7 +71,7 @@
   var adm = me.s.role === 'admin';
   if (PJ) document.title = '프로젝트 문의내역 · 마이페이지 · OmicsPharm';
   if (pid && adm) { location.replace('mypage-inquiry.html?project=' + encodeURIComponent(pid)); return; } // 컨설턴트 [문의하기] = 그 프로젝트의 문의 목록
-  var badge = function (c) { return c.link ? '<span class="badge done">의뢰 연결</span>' : C.waiting(c) ?'<span class="badge wait">답변대기</span>' : '<span class="badge done">답변완료</span>'; };
+  var badge = function (c) { return LK(c) ? '<span class="badge done">의뢰 연결</span>' : C.waiting(c) ?'<span class="badge wait">답변대기</span>' : '<span class="badge done">답변완료</span>'; };
   var src = function () { return adm ? C.all() : C.mine(); };
   var gen = function () { return src().filter(function (c) { return !C.isProj(c); }); }; // 상담내역에 보이는 것 (프로젝트 문의 제외)
   if (!adm) C.claim(me.s.email); // 같은 이메일로 남긴 상담은 이 계정에 붙임
@@ -133,7 +134,7 @@
             '<span class="dt">' + C.ymd(o.at) + '</span></a>'; }
         var c = o.c, m = c.msgs[c.msgs.length - 1];
         return '<a class="cs-row" href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '"><span class="st">' + badge(c) + '</span>' +
-          '<span class="mid"><span class="t">' + esc(c.title) + '</span><span class="sub">' + (c.link ? '의뢰로 이어짐 · ' + esc((projOf(c.link) || {}).title || c.link) : esc(c.type) + (c.rid ? ' · ' + esc(c.ref) : '') + ' · ' + (m.by === 'admin' ? 'OmicsPharm 컨설턴트: ' : '나: ') + esc(m.text.replace(/\s+/g, ' '))) + '</span></span>' +
+          '<span class="mid"><span class="t">' + esc(c.title) + '</span><span class="sub">' + (LK(c) ? '의뢰로 이어짐 · ' + esc((projOf(c.link) || {}).title || c.link) : esc(c.type) + (c.rid ? ' · ' + esc(c.ref) : '') + ' · ' + (m.by === 'admin' ? 'OmicsPharm 컨설턴트: ' : '나: ') + esc(m.text.replace(/\s+/g, ' '))) + '</span></span>' +
           '<span class="dt">' + C.ymd(o.at) + '</span></a>';
       }).join('') + '</div>' : '<div class="empty"><b>' + (f === 'all' ? '상담 내역이 없습니다' : '해당하는 상담이 없습니다') + '</b><p>분석 의뢰·견적 등 궁금한 점은 Contact Us로 남겨주세요.</p></div>';
     };
@@ -156,7 +157,7 @@
       $('#n').textContent = A.length; $('#nw').textContent = A.filter(C.waiting).length;
       $('#tb').innerHTML = L.length ? L.map(function (c, i) {
         var m = !!OP.account(c.email);
-        return '<tr><td class="c">' + (L.length - i) + '</td><td class="t"><a href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">' + esc(c.title) + '</a>' + (c.link ? '<br><small>의뢰로 이어짐 · ' + esc((projOf(c.link) || {}).title || c.link) + '</small>' : c.rid ? '<br><small>관련 프로젝트 · ' + esc(c.ref) + '</small>' : '') + '</td><td>' + esc(c.type) + '</td><td>' + esc(c.name) + '</td><td class="mail">' + esc(c.email) + '</td>' +
+        return '<tr><td class="c">' + (L.length - i) + '</td><td class="t"><a href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">' + esc(c.title) + '</a>' + (LK(c) ? '<br><small>의뢰로 이어짐 · ' + esc((projOf(c.link) || {}).title || c.link) + '</small>' : c.rid ? '<br><small>관련 프로젝트 · ' + esc(c.ref) + '</small>' : '') + '</td><td>' + esc(c.type) + '</td><td>' + esc(c.name) + '</td><td class="mail">' + esc(c.email) + '</td>' +
           '<td class="c">' + (m ? '<span class="mem">회원</span>' : '비회원') + '</td><td class="c">' + badge(c) + '</td><td class="c">' + C.ymd(C.lastAt(c)) + '</td><td class="c">' + C.ymd(c.at) + '</td></tr>';
       }).join('') : '<tr><td colspan="9" class="mg-empty">검색 결과가 없습니다.</td></tr>';
     };
@@ -182,7 +183,7 @@
     var c = C.get(cid);
     if (!c || (!adm && !src().some(function (x) { return x.id === cid; }))) { location.replace('mypage-consult.html'); return; }
     var acc = OP.account(c.email), kv = function (k, v, w) { return '<div' + (w ? ' class="wide"' : '') + '><dt>' + k + '</dt><dd>' + v + '</dd></div>'; };
-    var pj = C.isProj(c), done = !!c.link; // done: 의뢰로 이어진 상담은 더 쓰지 않음
+    var pj = C.isProj(c), done = !!LK(c); // done: 의뢰로 이어진 상담은 더 쓰지 않음
     $('#card').innerHTML =
       '<div class="mg-head"><a href="' + (pj ? 'mypage-inquiry.html' : 'mypage-consult.html') + '" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>' + esc(c.title) + '</h3>' + badge(c) + '</div>' +
       '<div class="det">' +

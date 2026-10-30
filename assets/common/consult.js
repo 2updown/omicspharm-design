@@ -74,8 +74,10 @@
     // 내 그 프로젝트 대화 (한 사람당 프로젝트 하나에 대화 하나)
     byProject: function (rid, email) { return all().filter(function (c) { return c.rid === rid && OP.consult.isProj(c) && (c.owner === email || c.email === email); })[0] || null; },
     // 의뢰 전 상담 연결: Contact Us 상담을 의뢰(rid)에 붙임. 붙은 상담은 그대로 남고, 그 의뢰의 프로젝트 문의 맨 위에 '의뢰 전 상담'으로 보임
-    pre: function (rid, email) { return all().filter(function (c) { return c.link === rid && (!email || c.owner === email || c.email === email); }).sort(function (a, b) { return a.at - b.at; }); },
-    linkable: function (email) { email = String(email || '').toLowerCase(); return all().filter(function (c) { return !c.link && !OP.consult.isProj(c) && (c.owner === email || c.email === email); }).sort(function (a, b) { return OP.consult.lastAt(b) - OP.consult.lastAt(a); }); },
+    // 2026-10-30: 2단계 기능이라 기본은 숨김 (의뢰서 상담 연결, 컨설턴트 의뢰 전 상담, 프로젝트 문의 맨 위, 문의내역 목록). ?pre=1로 열면 보임, ?pre=0으로 끔
+    PRE: (function () { try { var q = location.search.match(/[?&]pre=([01])/); if (q) sessionStorage.setItem('op.pre', q[1]); return sessionStorage.getItem('op.pre') === '1'; } catch (e) { return false; } })(),
+    pre: function (rid, email) { if (!OP.consult.PRE) return []; return all().filter(function (c) { return c.link === rid && (!email || c.owner === email || c.email === email); }).sort(function (a, b) { return a.at - b.at; }); },
+    linkable: function (email) { if (!OP.consult.PRE) return []; email = String(email || '').toLowerCase(); return all().filter(function (c) { return !c.link && !OP.consult.isProj(c) && (c.owner === email || c.email === email); }).sort(function (a, b) { return OP.consult.lastAt(b) - OP.consult.lastAt(a); }); },
     link: function (id, rid) { var c = get(id); if (!c) return null; c.link = rid; c.linkedAt = Date.now(); return save(c); },
     unlink: function (id) { var c = get(id); if (!c) return null; delete c.link; delete c.linkedAt; return save(c); },
     add: function (id, by, text, file) { var c = get(id); if (!c) return null; c.msgs.push({ at: Date.now(), by: by, text: text, file: file || '' }); if (by === 'admin' && !c.owner) c.linkAt = Date.now(); return save(c); }, // 비회원은 답변 메일과 함께 링크가 새로 나가므로 유효기간도 그때부터 // file: 첨부 파일 이름 (이어 쓰는 글에도 첨부, 2026-10-26)
