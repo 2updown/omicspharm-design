@@ -529,7 +529,7 @@
         waitPick: s.st === 'sent', // 견적 채택 대기: 클라이언트에게 전달 후 선택 전
         next: s.st === 'review' ? (s.ok ? '견적제안메일 발송 가능' : '의뢰 승인 필요') : s.st === 'quoting' ? (c.sub ? '견적 ' + c.sub + '건 도착 · 전달 가능' : '견적 대기 중') : s.st === 'sent' ? '클라이언트 견적 확인 대기' : s.ct ? (s.reReq && !s.fin ? '결과 재등록 요청 중' : repWait(s) ? ((s.raw || []).slice(-1)[0] || {}).by === 'admin' ? '수정 보고서 전달 필요' : 'AI 보고서 초안 검토 필요' : s.rate ? '만족도 ★' + s.rate.star + ' 등록' : '') : '계약서 등록 필요',
         urgent: (s.st === 'review' && !s.ok) || (s.st === 'matched' && !s.ct) || repWait(s) };
-    }).concat(OP.my.partnerProjects().filter(function (p) { return !p.flow; }).map(function (p) {
+    }).concat(OP.my.partnerProjects().filter(function (p) { return !p.flow && p.stage !== '계약 진행 중'; }).map(function (p) { // 계약 진행 중 예시(0037)는 뺌: 컨설턴트는 견적 중개 프로젝트(0050)에서 계약서를 저장하면 바로 분석 진행 중 (2026-10-30)
       return { href: 'mypage-project.html?id=' + encodeURIComponent(p.id), id: p.id, title: p.title, cat: EN[p.svc] || '기타 분석', st: F.P2A[p.stage] || p.stage, open: false, at: p.at,
         who: p.client, partner: '세움분석센터', samples: String(p.samples), due: p.due, period: '-', quotes: 1, all: 1, next: '', amount: p.amount };
     }));
