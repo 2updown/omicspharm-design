@@ -22,6 +22,10 @@
   .bar + #list { margin-top:-12px; } /* 건수 줄과 목록 사이 12 (카드 간격 24 - 12, 2026-10-29) */
   .cnt { font-size:14px; line-height:20px; color:var(--gray-600); } .cnt b { color:var(--teal-700); }
   .more { display:flex; justify-content:center; padding-top:16px; }
+  /* 더 많은 알림 보기 = DS button_text S(32) + 오른쪽 caret-down (밑줄 없음, 2026-10-30) */
+  .btn-more { display:inline-flex; align-items:center; gap:2px; height:32px; padding:0; border:0; background:none; font:inherit; font-size:16px; font-weight:500; line-height:24px; color:var(--gray-500); cursor:pointer; }
+  .btn-more::after { content:""; width:20px; height:20px; background:currentColor; -webkit-mask:url(assets/find/ic-caret-down.svg) center/contain no-repeat; mask:url(assets/find/ic-caret-down.svg) center/contain no-repeat; }
+  .btn-more:hover { color:var(--gray-700); }
   .alist { border-top:1px solid var(--gray-200); }
   .al { display:flex; align-items:flex-start; gap:14px; padding:18px 12px; border-bottom:1px solid var(--gray-200); }
   .al:hover { background:var(--gray-50); }
@@ -86,7 +90,7 @@
         '<span class="tx"><span class="top"><span class="cat">' + CAT[a.cat][0] + (a.k ? '<i class="dv" aria-hidden="true"></i>' + esc(a.k) : '') + '</span><span>' + D.ymdhm(a.at) + '</span>' + (a.read ? '' : '<i class="dot" aria-label="읽지 않음"></i>') + '</span>' +
           '<p class="t">' + esc(a.t) + '</p>' + (a.sub ? '<p class="sub">' + esc(a.sub).split(' · ').join('<i class="dv" aria-hidden="true"></i>') + '</p>' : '') + '</span>' +
         '<img class="car" src="assets/find/ic-caret-right.svg" alt=""></a>';
-    }).join('') + '</div>' + (ALL.length > state.n ? '<div class="more"><button type="button" class="btn-tx" id="more">더 많은 알림 보기</button></div>' : '') : '<div class="empty"><b>알림이 없습니다</b></div>';
+    }).join('') + '</div>' + (ALL.length > state.n ? '<div class="more"><button type="button" class="btn-more" id="more">더 많은 알림 보기</button></div>' : '') : '<div class="empty"><b>알림이 없습니다</b></div>';
   }
   $('#list').addEventListener('click', function (e) { if (e.target.closest('#more')) { state.n += PAGE; render(); return; } var a = e.target.closest('[data-id]'); if (a) D.markRead([a.dataset.id]); });
   $('#readAll').addEventListener('click', function () {
