@@ -719,10 +719,10 @@
   };
 
   // ── 결과보고서 + 보고서 에이전트 (1단계: 컨설턴트 내부용) ──
-  // 분석파트너: 완성 보고서 PDF를 올림 (기본, 기존 방식). 따로 [AI 보고서 생성]으로 raw, xlsx, txt를 올리면 AI 초안 (2026-10-29 미팅)
+  // 분석파트너: 완성 보고서 PDF를 올림 (기본, 기존 방식). 따로 [AI 보고서 생성]으로 xlsx, csv, txt를 올리면 AI 초안 (2026-10-29 미팅)
   // 컨설턴트: PDF는 확인 후 전달. AI 보고서 생성으로 올라온 결과는 AI 보고서 초안(워드)이 자동 생성 → 초안 내려받아 검토·수정 → 수정본 업로드(선택) → PDF 등록 → 클라이언트에 전달 (= s.rep, 클라이언트 결과보고서 차수)
   // 클라이언트: 전달된 PDF만 봄 (mypage-project.html 결과보고서). 최종 확인 = 프로젝트 완료
-  // kind: 'pdf' = 완성 보고서 PDF (기존 방식, AI 없음) / 'ai' = AI 보고서 생성 (raw, xlsx, txt → AI 초안). 예전 데이터는 'ai'로 봄 (2026-10-29 미팅)
+  // kind: 'pdf' = 완성 보고서 PDF (기존 방식, AI 없음) / 'ai' = AI 보고서 생성 (xlsx, csv, txt → AI 초안). 예전 데이터는 'ai'로 봄 (2026-10-29 미팅)
   // 결과보고서 이름 (2026-10-29): 차수로 통일 (1차, 2차 결과보고서). 추가 자료든 수정이든 받은 순서대로. 무엇이 바뀌었는지는 전달 메모(변경 내용)로. 세 화면 공통 (예전: 수정본 n, 팀 의견 받는 중)
   F.repName = function (i) { return (i + 1) + '차 결과보고서'; };
   F.repRaw = function (id, files, kind, labs) { return put(id, function (s) { var x = kind === 'pdf' ? { at: Date.now(), files: files, kind: 'pdf', labs: labs || null } : { at: Date.now(), files: files, kind: 'ai', ai: '결과보고서_AI초안_' + String(id).replace(/^PRJ-/, '') + '_v' + ((s.raw || []).length + 1) + '.docx' }; if (s.reReq) { x.req = s.reReq; delete s.reReq; } s.raw = (s.raw || []).concat([x]); }); };
@@ -748,7 +748,7 @@
   // 분석파트너 결과 등록 (2026-10-29, 기존 사이트 방식): n차 결과보고서 칸에 국문·영문 리포트를 하나씩 올리고 [저장]
   var RP_PDF = {}; // PDF 등록 표: { ko: 국문 리포트, en: 영문 리포트 } 파일 이름, 프로젝트별 (2026-10-29)
   var RP_MAX = 5, RP_ERR = {}; // AI 보고서 생성 파일 개수 제한, 넘으면 칸 아래 오류 문구 (2026-10-29)
-  var RP_EXT = /\.(raw|xlsx|txt)$/i, RP_ACC = '.raw,.xlsx,.txt'; // 안내 문구에 적힌 형식만 (Raw data, xlsx, txt)
+  var RP_EXT = /\.(xlsx|csv|txt)$/i, RP_ACC = '.xlsx,.csv,.txt'; // 안내 문구에 적힌 형식만 (xlsx, csv, txt. Raw data 빼고 csv 넣음, 2026-10-30)
   var RP_FILES = {}; // 고른 파일 이름 (등록 전), 프로젝트별. 형식 제한 없이 여러 개 (보고서 에이전트가 raw 데이터로도 초안을 만듦, 2026-10-29)
   var pdfL = function (id) { var o = RP_PDF[id] || {}; return [o.ko, o.en].filter(Boolean).concat(o.ex || []); };
   var pdfLab = function (id) { var o = RP_PDF[id] || {}; return [o.ko && '국문 리포트', o.en && '영문 리포트'].filter(Boolean).concat((o.ex || []).map(function () { return '추가 파일'; })); };
@@ -775,8 +775,8 @@
             ((RP_PDF[id] || {}).ex || []).map(function (n, j) { return '<div class="row"><span class="fn on">' + esc(n) + '</span><button type="button" class="rp-x" data-rp="rmex" data-j="' + j + '" aria-label="' + esc(n) + ' 빼기">✕</button></div>'; }).join('') + '</div></div></div>' : '') + '</div>' +
         '<div class="rp-up-go"><button type="button" class="btn primary" data-rp="raw"' + (pdfL(id).length ? '' : ' disabled') + '>제출하기</button></div></div></div>';
       // AI 보고서 생성: PDF 등록과 따로, 이 카드에서 바로 올림 (라벨은 버튼 아님). 결과보고서 칸 위에 둠 (2026-10-29)
-      if (canUp) h = h.replace('<div class="rp-form">', function () { return '<div class="rp-aientry"><span class="ai-lb"><i class="ai-ic" aria-hidden="true"></i><span>AI 보고서 생성</span></span><p>완성된 보고서가 없다면 Raw data, 엑셀(xlsx), 텍스트(txt) 파일을 올려 주세요. AI가 결과보고서로 변환 후 전달합니다.</p>' +
-          '<div class="rp-ai-up"><div class="row"><label class="btn up">파일 선택<input type="file" multiple hidden data-rp-pick accept="' + RP_ACC + '"></label>' + (fl.length ? '' : '<span class="rp-none">선택된 파일 없음</span>') + '</div>' + (RP_ERR[id] ? '<p class="rp-err">' + (RP_ERR[id] === 'ext' ? 'Raw data(.raw), 엑셀(.xlsx), 텍스트(.txt) 파일만 올릴 수 있습니다.' : '파일은 최대 ' + RP_MAX + '개까지 올릴 수 있습니다.') + '</p>' : '') + (fl.length ? '<ul class="rp-stage">' + fl.map(function (n, j) { return '<li><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(n) + '</span><button type="button" data-rp="rm" data-j="' + j + '" aria-label="' + esc(n) + ' 빼기">✕</button></li>'; }).join('') + '</ul>' : '') + '</div>' +
+      if (canUp) h = h.replace('<div class="rp-form">', function () { return '<div class="rp-aientry"><span class="ai-lb"><i class="ai-ic" aria-hidden="true"></i><span>AI 보고서 생성</span></span><p>완성된 보고서가 없다면 엑셀(xlsx), CSV(csv), 텍스트(txt) 파일을 올려 주세요. AI가 결과보고서로 변환하고, OmicsPharm이 확인한 뒤 클라이언트에게 전달합니다.</p>' +
+          '<div class="rp-ai-up"><div class="row"><label class="btn up">파일 선택<input type="file" multiple hidden data-rp-pick accept="' + RP_ACC + '"></label>' + (fl.length ? '' : '<span class="rp-none">선택된 파일 없음</span>') + '</div>' + (RP_ERR[id] ? '<p class="rp-err">' + (RP_ERR[id] === 'ext' ? '엑셀(.xlsx), CSV(.csv), 텍스트(.txt) 파일만 올릴 수 있습니다.' : '파일은 최대 ' + RP_MAX + '개까지 올릴 수 있습니다.') + '</p>' : '') + (fl.length ? '<ul class="rp-stage">' + fl.map(function (n, j) { return '<li><img src="assets/auth/ic-paperclip.svg" alt=""><span>' + esc(n) + '</span><button type="button" data-rp="rm" data-j="' + j + '" aria-label="' + esc(n) + ' 빼기">✕</button></li>'; }).join('') + '</ul>' : '') + '</div>' +
           (fl.length ? '<div class="rp-up-go"><button type="button" class="btn primary" data-rp="raw" data-k="ai">제출하기</button></div>' : '') + '</div><div class="rp-form">'; });
       // 이름은 클라이언트가 받는 차수 기준 (컨설턴트 직접 수정도 한 차수로 셈, 2026-10-29)
       var nm = function (x) { return F.repName(x.sent ? x.repN - 1 : rep.length); };
