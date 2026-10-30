@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261030f">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261030f">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261030f">
-<script src="assets/common/site.js?v=20261030f"></script>
-<script src="assets/common/consult.js?v=20261030f"></script>
-<script src="assets/common/mypage.js?v=20261030f"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261030g">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261030g">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261030g">
+<script src="assets/common/site.js?v=20261030g"></script>
+<script src="assets/common/consult.js?v=20261030g"></script>
+<script src="assets/common/mypage.js?v=20261030g"></script>
 <script src="assets/common/svc-spec.js?v=20261030a"></script>
-<script src="assets/common/flow.js?v=20261030f"></script>
+<script src="assets/common/flow.js?v=20261030g"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -196,6 +196,7 @@
   .cqm-sum span { font-size:13px; color:var(--gray-500); } .cqm-sum b { font-size:18px; font-weight:700; } .cqm-sum b.neg { color:#f00011; }
   .cqm-f { display:flex; flex-direction:column; gap:6px; margin-top:16px; font-size:14px; font-weight:600; }
   .cqm-f small { font-weight:400; color:var(--gray-500); }
+  .cqm-f input.wk { width:120px; height:40px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; font:inherit; font-weight:400; }
   .cqm-f textarea { padding:10px 12px; border:1px solid var(--gray-300); border-radius:8px; font:inherit; font-weight:400; line-height:1.6; resize:vertical; }
   .cqm .qm-tbl tr.del td { color:var(--gray-400); text-decoration:line-through; }
   .cqm-acts { display:flex; justify-content:flex-end; gap:8px; margin-top:20px; }
@@ -1111,9 +1112,9 @@
       // 게시·마감 정보 + 안내 = DS infobox (Figma 1153:52097). 안내가 있으면 default(제목 + 목록), 없으면 simple(한 줄) (2026-10-28)
       (function () { var hint = edit && subs.length && !F.cqList(s).length;
         return '<div class="op-ibox reqinfo' + (hint ? '' : ' simple') + '"><p class="t"><span class="rq"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>모집기한</b> ~' + dot(s.due || r.to) + (F.open(id) && s.due ? ' <button type="button" class="lnk" id="dueChg">변경</button>' : '') + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self && !hid(s, k); }).length + '<i class="dv" aria-hidden="true"></i>견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></span></p>' +
-          (hint ? '<ul><li>클라이언트에게 보낼 견적 1건을 선정하고 [1차 견적서 작성]을 누르세요.</li><li>단가, 수수료, 할인을 정해 ㈜셀키에이아이 명의로 보냅니다. 클라이언트에게는 분석파트너 이름이 보이지 않습니다.</li><li>견적 수정이 필요하면 견적을 선택하고 [수정 요청]을 누르세요.</li></ul>' : '') + '</div>'; })() +
+          (hint ? '<ul><li>클라이언트에게 보낼 견적 1건을 선정하고 [1차 견적서 작성]을 누르세요.</li><li>단가, 수수료, 할인을 정해 ㈜셀키에이아이 명의로 보냅니다. 클라이언트에게는 분석파트너 이름이 보이지 않습니다.</li><li>파트너 견적을 고쳐야 하면 견적을 선택하고 [수정하기]를 누르세요. 저장하면 분석파트너에게 알림이 갑니다.</li></ul>' : '') + '</div>'; })() +
       (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적 (VAT 포함)</span><span>소요</span><span>일자</span><span>견적서 보기</span></div>' + rows + '</div>' +
-        (edit && subs.length && !F.cqList(s).length ? '<div class="qbar"><span class="sel" id="qSel"></span><button type="button" class="btn" id="qRev" disabled>수정 요청</button>' + (!F.cqList(s).length ? '<button type="button" class="btn primary" id="qMk" disabled>1차 견적서 작성</button>' : '') + '</div>' : '')
+        (edit && subs.length && !F.cqList(s).length ? '<div class="qbar"><span class="sel" id="qSel"></span><button type="button" class="btn" id="qRev" disabled>수정하기</button>' + (!F.cqList(s).length ? '<button type="button" class="btn primary" id="qMk" disabled>1차 견적서 작성</button>' : '') + '</div>' : '')
         : '<div class="qempty">아직 견적을 작성 중인 분석파트너가 없습니다.<br>인증 분석파트너는 프로젝트 찾기에서 직접 견적을 작성할 수 있고, [AI 분석파트너 매칭]에서 적합한 기관에 요청할 수도 있습니다.</div>') +
       cqHTML(s, edit, subs) +
       (s.msg && s.st !== 'quoting' ? '<div class="msg"><b>클라이언트에게 전달한 메시지<i class="dv" aria-hidden="true"></i>' + F.ymd(s.sentAt) + '</b>' + esc(s.msg) + '</div>' : '') +
@@ -1124,7 +1125,7 @@
     var L = F.cqList(s);
     if (!L.length) return ''; // 안내 문구는 위 정보 상자(reqinfo) 안으로 옮김 (2026-10-28)
     var pq = function (v) { var x = s.P[v.base]; return x && x.quote ? F.total(x.quote).final : 0; };
-    return '<div class="cq"><div class="cq-h"><h4>클라이언트에게 보낸 견적</h4>' + (edit && s.st !== 'matched' ? '<span class="cq-acts"><button type="button" class="btn" data-rev="' + esc(L[L.length - 1].base) + '">기준 파트너에 수정 요청</button><button type="button" class="btn" id="cqRe">수정 견적 보내기</button></span>' : '') + '</div>' +
+    return '<div class="cq"><div class="cq-h"><h4>클라이언트에게 보낸 견적</h4>' + (edit && s.st !== 'matched' ? '<span class="cq-acts"><button type="button" class="btn" data-rev="' + esc(L[L.length - 1].base) + '">파트너 견적 수정하기</button><button type="button" class="btn" id="cqRe">수정 견적 보내기</button></span>' : '') + '</div>' +
       L.slice().reverse().map(function (v, ri) {
         var t = F.total(v.quote), last = ri === 0;
         return '<div class="cq-r' + (last ? ' cur' : '') + '"><b>' + v.n + '차</b>' + (last ? (s.pick ? '<span class="badge ok">최종 확인</span>' : '<span class="badge wait">확인 대기</span>') : '') +
@@ -1137,25 +1138,27 @@
   // 파트너 견적이 바뀌어야 하면(공급가·분석 범위·일정) [수정 요청]으로 파트너가 고쳐 다시 제출 (2026-10-28: 컨설턴트 직접 수정·변경 확인 요청은 없앰. 다시 제출 = 파트너 확인)
   // 클라이언트 견적 편집: 컨설턴트는 시험명, 세부내용, 수량, Unit, 단가를 모두 고치고 줄도 지울 수 있음 (2026-10-30, 컨설턴트는 최대한 다 수정 가능하게)
   var FEE = 'OmicsPharm 서비스', FEE_D = '분석 의뢰 관리 수수료';
-  function cqEditor(s, base) {
-    var L = F.cqList(s), prev = L.length ? L[L.length - 1] : null, n = L.length + 1;
+  // pm = 분석파트너 견적 직접 수정 (2026-10-30): 전화 등으로 협의한 내용을 컨설턴트가 바로 반영. [수정 요청] 대신 [수정하기]. 저장하면 파트너에게 알림
+  function cqEditor(s, base, pm) {
+    var L = F.cqList(s), prev = !pm && L.length ? L[L.length - 1] : null, n = L.length + 1;
     var pq = s.P[base].quote, cur = pq.cur || 'KRW', num = F.num;
     // 표 = 견적서 보기 '제안가' 표와 같은 모양 (2026-10-28): 시험명마다 세부내용 줄. 모든 칸 수정 가능.
     // 1차는 파트너 견적 + OmicsPharm 수수료 줄로 시작, 2차부터는 직전 차수 그대로 시작. 파트너 견적과 같은 줄이면 파트너 단가(pp)를 옆에 보여줌
     var ppOf = function (gn, d) { var pg = pq.groups.filter(function (x) { return x.name === gn; })[0], pl = pg && pg.lines.filter(function (x) { return x.d === d; })[0]; return pl ? num(pl.p) : null; };
     var G = (prev ? prev.quote.groups : pq.groups).map(function (g) {
-      return { name: g.name, lines: g.lines.map(function (l) { return { d: l.d, q: num(l.q) || 1, u: l.u || (prev ? '식' : 'EA'), p: num(l.p), pp: ppOf(g.name, l.d) }; }) };
+      return { name: g.name, lines: g.lines.map(function (l) { return { d: l.d, q: num(l.q) || 1, u: l.u || (prev ? '식' : 'EA'), p: num(l.p), pp: pm ? null : ppOf(g.name, l.d) }; }) };
     });
-    if (!prev) G.push({ name: FEE, lines: [{ d: FEE_D, q: 1, u: '식', p: 0, pp: null }] });
+    if (!prev && !pm) G.push({ name: FEE, lines: [{ d: FEE_D, q: 1, u: '식', p: 0, pp: null }] });
     var Q0 = prev ? prev.quote : pq, sale0 = num(Q0.sale), add0 = num(Q0.addSale); // 할인·추가 할인 처음 값 = 직전 차수 (1차는 파트너 견적)
     var m = document.createElement('div');
-    m.className = 'op-confirm qmail cqm'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', n + '차 견적서');
+    m.className = 'op-confirm qmail cqm'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', pm ? F.partner(base).org + ' 견적서 수정' : n + '차 견적서');
     m.innerHTML = '<div class="box"><button type="button" class="qm-x" aria-label="닫기">×</button>' +
-      '<h3>' + n + '차 견적서 <small>㈜셀키에이아이 명의</small></h3>' +
-      '<p class="cqm-lead">기준 견적: ' + esc(F.partner(base).org) + ' (소요 기간 ' + esc(pq.weeks || '-') + '주)</p>' + // 클라이언트 제목·긴 설명 뺌, 모든 칸 수정 가능 (2026-10-30)
+      (pm ? '<h3>' + esc(F.partner(base).org) + ' 견적서 수정</h3><p class="cqm-lead">분석파트너와 협의한 내용을 반영합니다. 저장하면 분석파트너에게 알림이 갑니다.</p>'
+        : '<h3>' + n + '차 견적서 <small>㈜셀키에이아이 명의</small></h3>' +
+      '<p class="cqm-lead">기준 견적: ' + esc(F.partner(base).org) + ' (소요 기간 ' + esc(pq.weeks || '-') + '주)</p>') + // 클라이언트 제목·긴 설명 뺌, 모든 칸 수정 가능 (2026-10-30)
       '<h4 class="cqm-h">제안가 <span>(' + ({ KRW: '원화, 공급가 VAT 별도', USD: '달러', JPY: '엔화' })[cur] + ')</span></h4>' +
-      '<div class="qm-tbl cq-it"><table><colgroup><col style="width:17%"><col><col style="width:9%"><col style="width:7%"><col style="width:13%"><col style="width:15%"><col style="width:13%"><col style="width:36px"></colgroup>' +
-        '<thead><tr><th>시험명<button type="button" class="add" id="cqAddG">추가</button></th><th>세부내용</th><th>수량</th><th>Unit</th><th>파트너 단가</th><th>단가</th><th>금액</th><th><span class="sr-only">삭제</span></th></tr></thead><tbody id="cqBody"></tbody></table></div>' +
+      '<div class="qm-tbl cq-it"><table><colgroup><col style="width:17%"><col><col style="width:9%"><col style="width:7%">' + (pm ? '' : '<col style="width:13%">') + '<col style="width:15%"><col style="width:13%"><col style="width:36px"></colgroup>' +
+        '<thead><tr><th>시험명<button type="button" class="add" id="cqAddG">추가</button></th><th>세부내용</th><th>수량</th><th>Unit</th>' + (pm ? '' : '<th>파트너 단가</th>') + '<th>단가</th><th>금액</th><th><span class="sr-only">삭제</span></th></tr></thead><tbody id="cqBody"></tbody></table></div>' +
       // 합계 = 분석파트너 견적서 작성 화면과 같은 표 (분석료 합계 · 할인 · 분석료 총계 · VAT 10% · 최종)
       '<table class="cq-tt"><tbody>' +
         '<tr><td>분석료 합계</td><td id="tSum"></td></tr>' +
@@ -1165,10 +1168,12 @@
         (cur === 'KRW' ? '<tr><td>VAT 10%</td><td id="tVat"></td></tr>' : '') +
         '<tr class="final"><td>최종</td><td id="tFinal"></td></tr>' +
       '</tbody></table>' +
-      '<div class="cqm-sum"><div><span>파트너 견적 (VAT 포함)</span><b>' + F.money(F.total(pq).final, cur) + '</b></div><div><span>클라이언트 견적 (VAT 포함)</span><b id="cqTot"></b></div><div><span>차액 (공급가)</span><b id="cqGap"></b></div></div>' +
-      '<label class="cqm-f">견적서 안내 문구 <small>클라이언트 견적서에 보입니다</small><textarea id="cqMemo" rows="3">' + esc(prev ? prev.quote.memo || '' : pq.memo || '') + '</textarea></label>' +
+      (pm ? '<label class="cqm-f">소요 기간 (주)<input type="number" min="1" class="wk" id="cqWk" value="' + esc(pq.weeks || '') + '"></label>'
+        : '<div class="cqm-sum"><div><span>파트너 견적 (VAT 포함)</span><b>' + F.money(F.total(pq).final, cur) + '</b></div><div><span>클라이언트 견적 (VAT 포함)</span><b id="cqTot"></b></div><div><span>차액 (공급가)</span><b id="cqGap"></b></div></div>') +
+      '<label class="cqm-f">견적서 안내 문구 <small>' + (pm ? '분석파트너 견적서에 보입니다' : '클라이언트 견적서에 보입니다') + '</small><textarea id="cqMemo" rows="3">' + esc(prev ? prev.quote.memo || '' : pq.memo || '') + '</textarea></label>' +
+      (pm ? '<label class="cqm-f">수정 내용 <small>분석파트너에게 알림으로 보입니다</small><textarea id="cqWhy" rows="2" placeholder="예) 전화로 협의한 대로 시료 수를 36개로 늘리고 단가를 조정했습니다."></textarea></label>' : '') +
       (prev ? '<label class="cqm-f">수정 사유 <small>클라이언트에게 ' + n + '차 변경 내용과 함께 보입니다</small><textarea id="cqWhy" rows="2" placeholder="예) 시료 수 확정에 따라 단가를 조정했습니다."></textarea></label>' : '') +
-      '<div class="cqm-acts"><button type="button" class="btn lg no">취소</button><button type="button" class="btn primary lg" id="cqSend">' + n + '차 견적서 보내기</button></div></div>';
+      '<div class="cqm-acts"><button type="button" class="btn lg no">취소</button><button type="button" class="btn primary lg" id="cqSend">' + (pm ? '수정 저장' : n + '차 견적서 보내기') + '</button></div></div>';
     document.body.appendChild(m); document.body.style.overflow = 'hidden';
     var draw = function () {
       m.querySelector('#cqBody').innerHTML = G.map(function (g, gi) {
@@ -1179,11 +1184,11 @@
             '<td class="l"><input type="text" class="txt wide" data-f="d" data-k="' + id + '" value="' + esc(l.d) + '" placeholder="세부내용" aria-label="세부내용"></td>' +
             '<td class="c"><input type="number" min="1" class="qty" data-f="q" data-k="' + id + '" value="' + (l.q || 1) + '" aria-label="수량"></td>' +
             '<td class="c"><input type="text" class="unit" data-f="u" data-k="' + id + '" value="' + esc(l.u || '식') + '" aria-label="Unit"></td>' +
-            '<td class="r">' + (l.pp != null ? F.money(l.pp, cur) : '-') + '</td>' +
+            (pm ? '' : '<td class="r">' + (l.pp != null ? F.money(l.pp, cur) : '-') + '</td>') +
             '<td><input type="number" min="0" step="1000" data-f="p" data-k="' + id + '" value="' + l.p + '" aria-label="' + esc(l.d || '추가 항목') + ' 단가"></td>' +
             '<td class="r"><span data-amt="' + id + '"></span></td>' +
             '<td class="c"><button type="button" class="del" data-rm="' + id + '" aria-label="이 줄 삭제" title="삭제">×</button></td></tr>'; // 분석파트너 견적서 작성 화면과 같은 × 버튼
-        }).join('') + '<tr class="sub"><td colspan="5" class="r">소계</td><td class="r" data-sub="' + gi + '"></td><td></td></tr>';
+        }).join('') + '<tr class="sub"><td colspan="' + (pm ? 4 : 5) + '" class="r">소계</td><td class="r" data-sub="' + gi + '"></td><td></td></tr>';
       }).join('');
     };
     // 화면 입력값 → G (단가·수량은 0 이상)
@@ -1197,12 +1202,13 @@
         var lines = g.lines.filter(function (l) { return (l.d || '').trim() || num(l.p); }).map(function (l) { return { d: (l.d || '').trim(), q: num(l.q) || 1, u: l.u || '식', p: String(Math.max(0, Math.round(num(l.p)))) }; });
         if (lines.length) out.push({ name: (g.name || '').trim() || '추가 항목', lines: lines });
       });
-      return { at: Date.now(), cur: cur, groups: out, sale: String(Math.round(num(m.querySelector('#cqSale').value)) || ''), addSale: String(Math.round(num(m.querySelector('#cqAdd').value)) || ''), weeks: pq.weeks, supplier: F.SELLER, memo: m.querySelector('#cqMemo').value.trim() };
+      return { at: Date.now(), cur: cur, groups: out, sale: String(Math.round(num(m.querySelector('#cqSale').value)) || ''), addSale: String(Math.round(num(m.querySelector('#cqAdd').value)) || ''), weeks: pm ? String(num(m.querySelector('#cqWk').value) || pq.weeks || '') : pq.weeks, supplier: pm ? pq.supplier : F.SELLER, memo: m.querySelector('#cqMemo').value.trim() };
     };
     var calc = function () {
       var q = build(), t = F.total(q), pt = F.total(pq);
       G.forEach(function (g, gi) { var sub = 0; g.lines.forEach(function (l, li) { var a = (num(l.q) || 1) * Math.max(0, num(l.p)); sub += a; var c = m.querySelector('[data-amt="' + gi + '-' + li + '"]'); if (c) c.textContent = F.money(a, cur); }); var sc = m.querySelector('[data-sub="' + gi + '"]'); if (sc) sc.textContent = F.money(sub, cur); });
       m.querySelector('#tSum').textContent = F.money(t.sum, cur); m.querySelector('#tNet').textContent = F.money(t.net, cur); var tv = m.querySelector('#tVat'); if (tv) tv.textContent = F.money(t.vat, cur); m.querySelector('#tFinal').textContent = F.money(t.final, cur);
+      if (pm) return;
       m.querySelector('#cqTot').textContent = F.money(t.final, cur);
       var gap = t.net - pt.net, gg = m.querySelector('#cqGap'); gg.textContent = (gap >= 0 ? '+' : '-') + F.money(Math.abs(gap), cur); gg.className = gap < 0 ? 'neg' : '';
     };
@@ -1215,7 +1221,13 @@
       if (t.closest('#cqAddG')) { read(); G.push({ name: '', lines: [{ d: '', q: 1, u: '식', p: 0 }] }); draw(); calc(); var gn = m.querySelector('[data-gn="' + (G.length - 1) + '"]'); if (gn) gn.focus(); return; }
       if (t.closest('[data-rm]')) { read(); var a = t.closest('[data-rm]').dataset.rm.split('-'), g = G[+a[0]]; g.lines.splice(+a[1], 1); if (!g.lines.length) G.splice(+a[0], 1); draw(); calc(); return; }
       if (t.closest('#cqSend')) {
-        var q = build(), why = prev ? m.querySelector('#cqWhy').value.trim() : '';
+        var q = build(), why = prev || pm ? m.querySelector('#cqWhy').value.trim() : '';
+        if (pm) {
+          F.ask({ title: '견적서 수정을 저장할까요?', desc: F.partner(base).org + ' 견적이 ' + F.money(F.total(q).final, cur) + '(VAT 포함)로 바뀌고 분석파트너에게 알림이 갑니다.', label: false, yes: '저장' }, function () {
+            F.editQ(id, base, Object.assign({}, pq, q), why); close(); OP.toast('분석파트너 견적서를 수정했습니다.'); render();
+          });
+          return;
+        }
         F.ask({ title: n + '차 견적서를 클라이언트에게 보낼까요?', desc: '㈜셀키에이아이 명의 ' + F.money(F.total(q).final, cur) + '(VAT 포함) 견적이 클라이언트에게 전달되고 견적확인요청 알림이 갑니다.' + (n === 1 ? ' ' + F.partner(base).org + ' 견적이 선정 상태가 됩니다.' : ''), label: false, yes: '보내기' }, function () {
           F.sendCQ(id, base, q, why); close(); OP.toast(n + '차 견적서를 클라이언트에게 보냈습니다.'); render();
         });
@@ -1282,8 +1294,10 @@
         mailModal(s);
       } else if (t.closest('[data-doc]')) {
         var k = t.closest('[data-doc]').dataset.doc; F.showDoc(r, s.P[k].quote, k, F.partner(k).org + ' 견적서');
-      } else if (t.closest('[data-rev]')) {
-        var k2 = t.closest('[data-rev]').dataset.rev;
+      } else if (t.closest('[data-rev]')) { // [수정하기] = 컨설턴트가 파트너 견적을 직접 수정 (2026-10-30, 수정 요청 대신)
+        cqEditor(s, t.closest('[data-rev]').dataset.rev, true);
+      } else if (false) {
+        var k2;
         F.ask({ title: F.partner(k2).org + '에 수정 요청', desc: '수정 요청한 견적은 파트너가 다시 제출할 때까지 클라이언트에게 전달할 수 없습니다.', html: F.itemsHTML(s.P[k2].quote), label: '수정 요청 내용', ph: '예) 전화로 협의한 대로 단가를 30만 원에서 28만 원으로 반영해 다시 제출해 주세요.', yes: '수정 요청', required: true }, function (v) {
           F.revise(id, k2, v); OP.toast('수정 요청을 보냈습니다.'); render();
         });
