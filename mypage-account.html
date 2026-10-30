@@ -151,7 +151,7 @@
           <div class="field"><label class="flabel" for="name">이름<span class="req">*</span></label><div class="fbody"><input class="inp" id="name" placeholder="이름" autocomplete="name"></div></div>
           <div class="field"><label class="flabel" for="nick">닉네임<span class="req">*</span></label><div class="fbody"><input class="inp" id="nick" placeholder="닉네임"></div></div>
           <div class="field"><label class="flabel" for="ph">휴대폰 번호<span class="req">*</span></label><div class="fbody"><div id="phoneHost" class="phwrap"></div></div></div>
-          <div class="field"><label class="flabel" for="org">소속(기관·회사)<span class="req">*</span></label><div class="fbody"><input class="inp" id="org" placeholder="소속 검색 또는 입력"></div></div>
+          <div class="field"><label class="flabel" for="org">소속(기관·회사)<span class="req">*</span></label><div class="fbody"><input class="inp" id="org" placeholder="소속 검색 또는 입력"><p class="help" id="orgHelp" hidden>인증된 소속은 직접 수정할 수 없습니다. 변경이 필요하면 문의하기로 알려 주세요.</p></div></div>
           <div class="field"><label class="flabel" for="dept">부서<span class="req">*</span></label><div class="fbody"><input class="inp" id="dept" placeholder="부서 검색 또는 입력"></div></div>
           <!-- 국가: 회원가입과 같은 선택지 (기존 사이트도 가입 후 변경 가능) -->
           <div class="field"><label class="flabel" for="country">국가<span class="req">*</span></label><div class="fbody"><select class="inp" id="country"><option>South Korea</option><option>United States</option><option>Japan</option><option>China</option><option>Other</option></select></div></div>
@@ -208,6 +208,7 @@
   var email = me.s.email, acc = me.acc, partner = me.s.role === 'partner', client = me.s.role === 'client';
   // 컨설턴트(어드민) 계정은 회원 탈퇴 없음: 추후 관리자 페이지/슈퍼어드민에서 처리 (2026-10-30)
   if (me.s.role === 'admin') { var lv = $('#leave'); if (lv) lv.remove(); }
+  if (me.s.role === 'admin') setTimeout(function () { lockOrg(true); });
   var hasDoc = client; // 사업자등록증: 클라이언트(프로젝트 등록 시 필요). 분석파트너는 [파트너 인증] 메뉴에서
 
   // 비밀번호 재확인: 실서비스는 틀리면 입력란 아래 '현재 비밀번호가 일치하지 않습니다.' (개발팀 문의 5번 회신대로, 2026-10-23)
@@ -324,6 +325,8 @@
   }
   vrole();
   OP.orgCombo($('#org'), $('#dept')); // 소속·부서: DB 자동완성 + 직접 입력
+  // 소속 잠금 (2026-10-30): 클라이언트 = 사업자등록증 확인 완료 뒤, 분석파트너 = 파트너 인증 완료 뒤, 컨설턴트 = 항상 (셀키 발급 계정)
+  var lockOrg = function (on) { $('#org').disabled = !!on; $('#orgHelp').hidden = !on || me.s.role === 'admin'; };
   $('#name').value = acc.name || ''; $('#nick').value = acc.nick || ''; $('#country').value = acc.country || 'South Korea'; $('#org').value = acc.org || me.org || ''; $('#dept').value = acc.dept || '';
   var PHN = OP.phoneField($('#phoneHost'), { value: acc.phone || '', id: 'ph' });
 
@@ -333,7 +336,7 @@
   var bizDoc = acc.bizDoc || '', savedDoc = bizDoc, bizFile = null; // savedDoc: 계정에 저장된 파일, bizFile: 저장 전 고른 파일 원본
   var okd = function () { var a = OP.account(email) || {}; return !!savedDoc && !!a.bizOk && a.bizOkName === savedDoc; };
   function showDoc() {
-    var n = $('#docName'), cOk = okd();
+    var n = $('#docName'), cOk = okd(); lockOrg(cOk);
     $('#docBadge').hidden = !cOk; $('#docLock').hidden = !cOk;
     n.classList.toggle('none', !bizDoc);
     n.innerHTML = '<span>' + OP.my.esc(bizDoc || '등록된 파일 없음') + '</span>';
@@ -376,7 +379,7 @@
     $('#docName').classList.toggle('none', !acc.bizDoc); $('#docName').innerHTML = '<span>' + OP.my.esc(acc.bizDoc || '등록된 파일 없음') + '</span>';
     $('#docBtn').hidden = true; $('#docDel').hidden = true; $('#docHelp').hidden = true;
     // 인증 상태 (파트너 인증 화면과 같은 기준): 인증완료 / 재제출 요청 / 인증 검토 중 / 미제출
-    var b = $('#docBadge'), ok = OP.partnerVerified(); b.hidden = false;
+    var b = $('#docBadge'), ok = OP.partnerVerified(); b.hidden = false; lockOrg(ok);
     b.textContent = ok ? '인증완료' : acc.bizAsk ? '재제출 요청' : acc.bizDoc ? '인증 검토 중' : '미제출';
     b.className = 'op-vchip lg' + (ok ? ' ok' : '');
   }
