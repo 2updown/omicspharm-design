@@ -376,6 +376,9 @@ span.tbtn { cursor:default; }
 .rp-aientry .ai-lb { font-size:16px; line-height:24px; }
 .rp-ai-up { display:flex; flex-direction:column; align-items:flex-start; gap:10px; width:100%; margin-top:4px; }
 .rp-ai-up .rp-stage { width:100%; }
+/* 파일이 많아지면 (최대 30개) 6개 높이까지만 보이고 목록 안에서 스크롤 (2026-10-30) */
+.rp-ai-up .rp-stage { max-height:246px; overflow-y:auto; overscroll-behavior:contain; }
+.rp-ai-up .rp-cnt { display:inline-flex; align-items:center; font-size:14px; color:var(--gray-500); } .rp-ai-up .rp-cnt b { margin-left:4px; font-weight:600; color:var(--teal-700); }
 .rp-ai-up .row { display:flex; align-items:center; gap:10px; }
 .rp-ai-up .rp-none { font-size:14px; color:var(--gray-500); } /* PDF 표의 선택된 파일 없음과 같게 */
 .rp-ai-up .rp-err { font-size:13px; line-height:20px; color:var(--red-600, #dc2626); }
@@ -426,7 +429,7 @@ span.tbtn { cursor:default; }
 .rp-ih b { font-size:15px; font-weight:600; line-height:22px; }
 .rp-ih em { font-style:normal; font-size:13px; color:var(--gray-500); }
 .rp-ih .badge { margin-left:auto; }
-.rp-files { display:flex; flex-wrap:wrap; gap:6px 16px; }
+.rp-files { display:flex; flex-wrap:wrap; gap:6px 16px; max-height:124px; overflow-y:auto; } /* 제출한 파일이 많으면 5줄까지 보이고 스크롤 (2026-10-30) */
 .rp-files li { list-style:none; display:flex; align-items:center; gap:4px; font-size:13px; line-height:20px; color:var(--gray-600); }
 .rp-files img { width:14px; height:14px; opacity:.6; }
 .rp-files button { display:inline-flex; align-items:center; gap:4px; padding:2px 4px; margin:-2px -4px; border-radius:6px; font:inherit; color:inherit; } .rp-files button:hover { color:var(--gray-900, #191919); text-decoration:underline; }
