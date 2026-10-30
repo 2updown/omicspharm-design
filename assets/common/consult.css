@@ -45,6 +45,7 @@
 .cs-file button { font-size:12px; color:#737373; text-decoration:underline; }
 .cs-file input { display:none; }
 .cs-compose .att-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:12px; color:#a3a3a3; }
+.cs-compose .att-row #go { margin-left:auto; } /* 보내기 버튼 = 파일 첨부 줄 오른쪽 (2026-10-30) */
 
 /* 상담 정보 */
 .cs-info { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); border-top:2px solid #000; font-size:14px; line-height:20px; }

@@ -10,13 +10,13 @@
        처리상태는 마지막 메시지로 자동(답변대기/답변완료), 처리내용(= 실서비스의 답변 입력 칸) → 대화의 답변 입력으로 바뀜. 답변은 문의자에게 보이고 메일로도 알림 (2026-10-30 정정)
      회원(클라이언트·분석파트너): 내 상담 목록(+ 챗봇 문의) → 대화 + 이어서 작성.
      2026-10-27: 프로젝트별 대화(?project=, pj)는 메뉴 '프로젝트 문의내역'(mypage-inquiry.html)에서 열리고 대화 화면만 여기를 씀. 의뢰에 연결된 상담(link)은 끝난 대화로 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261030l">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261030l">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261030l">
-<script src="assets/common/site.js?v=20261030l"></script>
-<script src="assets/common/consult.js?v=20261030l"></script>
-<script src="assets/common/mypage.js?v=20261030l"></script>
-<script src="assets/common/flow.js?v=20261030l"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261030m">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261030m">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261030m">
+<script src="assets/common/site.js?v=20261030m"></script>
+<script src="assets/common/consult.js?v=20261030m"></script>
+<script src="assets/common/mypage.js?v=20261030m"></script>
+<script src="assets/common/flow.js?v=20261030m"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
   .cs-list { border-top:2px solid #000; }
@@ -196,8 +196,7 @@
         (done ? linkedHTML(c) : '') +
         '<form class="cs-compose"' + (done ? ' hidden' : '') + ' id="send" novalidate><label class="sr-only" for="msg">' + (adm ? '답변' : '메시지') + '</label>' +
           '<textarea id="msg" placeholder="' + (adm ? '답변을 입력하세요. 문의자에게 보이고 메일로도 알림이 갑니다.' : '이어서 상담할 내용을 입력하세요.') + '"></textarea>' +
-          '<div class="att-row"><label class="cs-file" id="fbox" for="fin"><img src="assets/auth/ic-paperclip.svg" alt=""><span id="fname">파일 첨부</span><button type="button" id="fclr" hidden>삭제</button><input type="file" id="fin" accept=".jpg,.jpeg,.png,.pdf,.zip"></label><span>JPG, PNG, PDF, ZIP · 1개 · 30MB 이하</span></div>' +
-          '<div class="row"><span>' + (adm ? (acc ? '회원에게는 알림과 메일로 알려드립니다.' : '비회원에게는 메일(상담 보기 링크)로 알려드립니다.' + (C.waiting(c) ? '' : ' <a href="mail-consult.html?t=' + encodeURIComponent(c.token) + '&k=reply" target="_blank" style="text-decoration:underline">보낸 메일 보기 (데모)</a>')) : '답변이 등록되면 알림과 메일로 알려드립니다.') + '</span><button class="btn primary" type="submit" id="go" disabled>' + (adm ? '답변 보내기' : '보내기') + '</button></div></form>' +
+          '<div class="att-row"><label class="cs-file" id="fbox" for="fin"><img src="assets/auth/ic-paperclip.svg" alt=""><span id="fname">파일 첨부</span><button type="button" id="fclr" hidden>삭제</button><input type="file" id="fin" accept=".jpg,.jpeg,.png,.pdf,.zip"></label><span>JPG, PNG, PDF, ZIP · 1개 · 30MB 이하</span><button class="btn primary" type="submit" id="go" disabled>' + (adm ? '답변 보내기' : '보내기') + '</button></div></form>' + // 아래 안내 문장은 빼고 버튼을 파일 첨부 줄 오른쪽으로 (2026-10-30)
         // 상담 기록(컨설턴트 메모)은 뺌 (2026-10-30): 대화 자체가 기록. 실서비스 '처리내용'은 답변 칸이라 위 답변 입력이 그 자리
       '</div>';
     var msg = $('#msg'), go = $('#go'), fin = $('#fin'), fname = '';
