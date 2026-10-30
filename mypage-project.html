@@ -375,6 +375,16 @@
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
   // 계약서 등록 전 = 견적 중개 프로젝트는 계약서 저장 전, 예시 프로젝트는 '계약 진행 중' 단계 (실제 흐름은 계약서를 저장하면 바로 분석 진행 중, 2026-10-30)
   var PRE = function (x) { return x.flow ? !x.ct : x.stage === '계약 진행 중'; };
+  // 계약서 파일 교체 (컨설턴트, 분석 진행 중). 예시 프로젝트는 이 화면에서만 바뀜 (2026-10-30)
+  document.addEventListener('change', function (e) {
+    var inp = e.target.closest && e.target.closest('[data-ctswap]'); if (!inp || !inp.files[0]) return;
+    var f = inp.files[0], side = inp.dataset.ctswap, nm = side === 'client' ? '클라이언트' : '분석파트너', pid = new URLSearchParams(location.search).get('id'); inp.value = '';
+    OP.flow.ask({ title: nm + ' 계약서를 교체할까요?', desc: '새 파일: ' + f.name + '\n금액, 계약일, 납기일 등 계약 정보는 그대로이고 파일만 바뀝니다. ' + nm + '에게 알림이 갑니다.', label: false, yes: '교체' }, function () {
+      if (OP.flow.state(pid).ct) { OP.flow.ctSwap(pid, side, f.name); location.reload(); return; }
+      var row = inp.closest('.ctrow2'), sp = row && row.querySelector('div > span'); if (sp) sp.innerHTML = OP.flow.esc(f.name) + '<i class="dv" aria-hidden="true"></i>' + sp.innerHTML.replace(/^[^<]*\.(pdf|docx?|hwpx?)<i class="dv" aria-hidden="true"><\/i>/i, '');
+      OP.toast(nm + ' 계약서를 교체했습니다.');
+    });
+  });
   // 진행상태 탭 슬라이드 (컨설턴트 프로젝트 관리와 같은 동작): 양쪽 화살표 + 가장자리 흐림, 마우스 드래그·휠
   function slideTabs(tw) {
     var tabs = tw.querySelector('.b-tabs'), drag = null;
@@ -495,8 +505,8 @@
         // 결과보고서: 분석파트너는 결과 등록, 컨설턴트는 보고서 에이전트 (계약 후 = 분석 단계부터)
         ((x.flow ? FS && FS.ct : (x.stage === '분석 진행 중' || (OP.flow.state(x.id).raw || []).length)) ? OP.flow.repSec(x.id, ADM ? 'admin' : 'partner') : '') +
         // 견적 중개로 매칭된 프로젝트: 컨설턴트가 올린 계약서
-        (CS && !PRE(x) ? '<section class="sec"><h3>계약서</h3>' + OP.flow.contractListHTML(CS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) + '</section>' : '') +
-        (x.flow && FS.ct ? '<section class="sec"><h3>계약서</h3>' + (OP.flow.contractListHTML(FS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) +
+        (CS && !PRE(x) ? '<section class="sec"><h3>계약서</h3>' + OP.flow.contractListHTML(CS, ADM ? ['client', 'partner'] : ['partner'], { swap: ADM && x.stage === '분석 진행 중' }) + '</section>' : '') + // 컨설턴트: 분석 진행 중에만 [파일 교체] (2026-10-30)
+        (x.flow && FS.ct ? '<section class="sec"><h3>계약서</h3>' + (OP.flow.contractListHTML(FS, ADM ? ['client', 'partner'] : ['partner'], { swap: ADM && x.stage === '분석 진행 중' }) +
           '') + '</section>' : '') + // 계약서 등록 전에는 섹션 없음 (위 안내 박스로 알림, 2026-10-28)
         '<div class="sections"><section class="sec"><h3>' + (PRE(x) ? '프로젝트 정보' : '프로젝트 및 계약 정보') + '</h3><dl class="kv">' + /* 계약 후: 계약 진행 때 입력한 최종 계약 금액·대금 지급 방법·기타까지 (2026-10-29) */
           [['클라이언트', x.client]].concat(x.partner && OP.session().role === 'admin' ? [['분석파트너', x.partner]] : []).concat(x.flow && !ADM && FS.P[OP.session().email] ? [['경로', FS.P[OP.session().email].self ? '직접 신청' : 'OmicsPharm 매칭 요청']] : []) /* 견적 경로 (2026-10-28) */.concat(PRE(x) ? [['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['선정일', dotd(x.contract)]] : [['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['최종 계약 금액', x.amount + ' (VAT 별도)'], ['계약일', dotd(x.contract)], ['납기일', dotd(x.due)], ['대금 지급 방법', (x.flow && FS.ct && FS.ct.partner && FS.ct.partner.pay) || '-'], ['기타', (x.flow && FS.ct && FS.ct.partner && FS.ct.partner.etc) || '-']]) // 계약서 등록 전: 금액·계약일·납기일은 아직 없음
