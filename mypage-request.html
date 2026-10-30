@@ -953,7 +953,7 @@
       '</div>' +
       sideHTML('client', '클라이언트', (r.org || '-') + (r.manager ? '(' + r.manager + ')' : ''), '분석파트너') +
       sideHTML('partner', '분석파트너', F.partner(s.pick).org, '클라이언트') +
-      '<div class="ctacts">' + (s.ctDraft ? '<span class="ctsaved">임시저장 ' + F.ymd(s.ctDraft.savedAt) + '</span>' : '') + '<button type="button" class="btn lg" id="ctDraft">임시저장</button><button type="button" class="btn primary lg" id="ctSave">계약서 최종 저장</button></div></div>';
+      '<div class="ctacts">' + (s.ctDraft ? '<span class="ctsaved">임시저장 ' + F.ymd(s.ctDraft.savedAt) + '</span>' : '') + '<button type="button" class="btn lg" id="ctDraft">임시저장</button><button type="button" class="btn primary lg" id="ctSave" disabled>계약서 최종 저장</button></div></div>';
   }
   // 입력값 모으기. strict = 최종 저장 검사 (금액·계약일·납기일·계약서 파일 필수, 납기일 ≥ 계약일)
   function ctPick(strict) {
@@ -969,6 +969,8 @@
     });
     return { ok: ok, c: out };
   }
+  // 필수 칸(금액 2개·계약일·납기일·계약서 파일 2개)이 다 채워져야 [계약서 최종 저장] 활성 (2026-10-30)
+  function ctReady() { var b = $('#ctSave'); if (b) b.disabled = !ctPick(false).ok; }
   function ctSync() {
     [].forEach.call(card.querySelectorAll('.ctside'), function (row) {
       var f = row.querySelector('input[type=file]'), fn = row.querySelector('.fn'); fn.textContent = f.files[0] ? f.files[0].name : fn.dataset.saved || '선택된 파일 없음'; fn.style.color = '';
@@ -1246,12 +1248,13 @@
   function order(x) { return { sub: 0, rev: 1, draft: 2, req: 2, dec: 3 }[x.status]; }
 
   function bind(s) {
-    card.onchange = function (e) { if (e.target.name === 'fw') syncFwd(); if (e.target.closest('.ctside')) ctSync(); if (e.target.closest('.ctf')) e.target.classList.remove('bad'); };
+    card.onchange = function (e) { if (e.target.name === 'fw') syncFwd(); if (e.target.closest('.ctside')) ctSync(); if (e.target.closest('.ctf')) e.target.classList.remove('bad'); if (e.target.closest('#ctBlk')) ctReady(); };
     card.oninput = function (e) {
       if (e.target.id === 'ctAmt' || e.target.id === 'ctPAmt') { var d = e.target.value.replace(/[^\d]/g, ''); e.target.value = d ? (+d).toLocaleString('ko-KR') : ''; }
       if (e.target.closest('.ctf')) e.target.classList.remove('bad');
+      if (e.target.closest('#ctBlk')) ctReady();
     };
-    if ($('#ctBlk')) ctSync();
+    if ($('#ctBlk')) { ctSync(); ctReady(); }
     card.onclick = function (e) {
       var t = e.target;
       if (t.closest('[data-dl]')) { // 기본 양식 다운로드: 위탁 분석 서비스 계약서(바뀌는 칸은 빈칸) + 별첨1 견적서 (워드에서 열리는 .doc)

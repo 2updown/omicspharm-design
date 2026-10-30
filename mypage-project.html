@@ -373,6 +373,8 @@
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var esc = function (t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+  // 계약서 등록 전 = 견적 중개 프로젝트는 계약서 저장 전, 예시 프로젝트는 '계약 진행 중' 단계 (실제 흐름은 계약서를 저장하면 바로 분석 진행 중, 2026-10-30)
+  var PRE = function (x) { return x.flow ? !x.ct : x.stage === '계약 진행 중'; };
   // 진행상태 탭 슬라이드 (컨설턴트 프로젝트 관리와 같은 동작): 양쪽 화살표 + 가장자리 흐림, 마우스 드래그·휠
   function slideTabs(tw) {
     var tabs = tw.querySelector('.b-tabs'), drag = null;
@@ -466,7 +468,7 @@
         CS.P[me] = { subAt: subT, quote: { cur: 'KRW', weeks: '6', memo: '', subAt: subT, supplier: { s_org: OP.flow.partner(me).org }, groups: [{ name: CR.svc, lines: [{ d: '시료 분석 및 결과 보고서', q: String(n), u: 'EA', p: String(Math.round(won / n / 1000) * 1000) }] }] } };
       }
       var TODO = {
-        '계약 진행 중': x.flow ? ['계약서를 준비하고 있습니다', 'OmicsPharm 컨설턴트가 계약서를 등록하면 분석 단계로 넘어갑니다.', '', 'gray'] : ['계약서를 확인해주세요', '계약 내용 확인 후 시료 수령 일정을 클라이언트와 협의합니다.', '계약서 확인', 'warn'],
+        '계약 진행 중': ['계약서를 준비하고 있습니다', 'OmicsPharm 컨설턴트가 계약서를 등록하면 분석 단계로 넘어갑니다.', '', 'gray'], // 예시도 실제 흐름과 같게 (분석파트너 계약서 확인 단계 없음, 2026-10-30)
         '분석 진행 중': ['분석이 진행 중입니다', '분석이 끝나면 아래에서 결과보고서를 제출해 주세요.', '', 'warn'],
         '보고서 등록': ['등록한 결과를 OmicsPharm이 검토하고 있습니다', '수정이 필요하면 알림으로 알려드립니다.', '', 'gray'],
         '보고서 검토': ['클라이언트가 보고서를 확인하고 있습니다', '클라이언트가 최종 승인하면 프로젝트가 완료됩니다.', '', 'gray'],
@@ -474,7 +476,7 @@
       }[x.stage];
       // 컨설턴트가 예시 프로젝트를 볼 때는 컨설턴트 문구 (위 표는 분석파트너 기준, 2026-10-30)
       if (ADM) TODO = {
-        '계약 진행 중': ['계약서가 등록되었습니다', '분석파트너가 계약서를 확인하고 시료 수령 일정을 협의합니다.', '', 'gray'],
+        '계약 진행 중': ['견적이 확정되었습니다. 계약서를 등록해주세요.', '기본 양식(셀키 분석서비스 의뢰서)으로 만들거나, 기관 자체 시험의뢰서를 파일로 올릴 수 있습니다.', '', 'warn'],
         '분석 진행 중': ['분석파트너가 분석을 진행하고 있습니다', '결과가 등록되면 알림으로 알려드립니다. 아래 결과보고서에서 검토할 수 있습니다.', '', 'gray'],
         '보고서 등록': ['분석 결과가 등록되었습니다. 보고서를 검토해 클라이언트에게 전달해주세요.', '아래 결과보고서에서 AI 초안을 확인하고 수정한 뒤 전달할 수 있습니다.', '', 'warn']
       }[x.stage] || TODO;
@@ -484,20 +486,20 @@
       $('#project').outerHTML =
         '<div class="phead">' +
           '<div class="prow"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stBadge(x) + '</div>' +
-            '<span class="reg">' + (x.flow && !x.ct ? '선정일 ' : '계약일 ') + dotd(x.contract) + '<i class="dv" aria-hidden="true"></i>프로젝트 번호 ' + esc(x.id) + '</span></div>' +
+            '<span class="reg">' + (PRE(x) ? '선정일 ' : '계약일 ') + dotd(x.contract) + '<i class="dv" aria-hidden="true"></i>프로젝트 번호 ' + esc(x.id) + '</span></div>' +
           '<div class="prow"><h2 class="ptitle"><a class="back" href="' + (OP.session().role === 'admin' ? 'mypage-request.html' : 'mypage-project.html') + '" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(x.title) + '</h2>' +
-            '<div class="pright"><div class="period"><b>' + (x.flow && !x.ct ? '희망완료일' : '납기일') + '</b><span>' + dotd(x.due) + '</span>' + (x.stage === '프로젝트 완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div>' + OP.askBtn({ key: x.id, cat: OP.my.svcKo(x.svc), no: x.id, title: x.title }) + '</div></div>' +
+            '<div class="pright"><div class="period"><b>' + (PRE(x) ? '희망완료일' : '납기일') + '</b><span>' + dotd(x.due) + '</span>' + (x.stage === '프로젝트 완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div>' + OP.askBtn({ key: x.id, cat: OP.my.svcKo(x.svc), no: x.id, title: x.title }) + '</div></div>' +
         '</div>' +
         '<ol class="fsteps" aria-label="진행 단계" style="--n:' + PS.length + '">' + PS.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
         '<div class="ftodo ' + TODO[3] + '"><div><b>' + TODO[0] + '</b><p>' + TODO[1] + '</p></div>' + (TODO[2] ? '<div class="acts">' + (TODO[2] === '계약서 확인' && CS ? '<button type="button" class="btn primary" data-ct="partner">계약서 확인</button>' : '<a class="btn primary" href="#" data-soon="' + TODO[2] + '">' + TODO[2] + '</a>') + '</div>' : '') + '</div>' +
         // 결과보고서: 분석파트너는 결과 등록, 컨설턴트는 보고서 에이전트 (계약 후 = 분석 단계부터)
         ((x.flow ? FS && FS.ct : (x.stage === '분석 진행 중' || (OP.flow.state(x.id).raw || []).length)) ? OP.flow.repSec(x.id, ADM ? 'admin' : 'partner') : '') +
         // 견적 중개로 매칭된 프로젝트: 컨설턴트가 올린 계약서
-        (CS ? '<section class="sec"><h3>계약서</h3>' + OP.flow.contractListHTML(CS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) + '</section>' : '') +
+        (CS && !PRE(x) ? '<section class="sec"><h3>계약서</h3>' + OP.flow.contractListHTML(CS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) + '</section>' : '') +
         (x.flow && FS.ct ? '<section class="sec"><h3>계약서</h3>' + (OP.flow.contractListHTML(FS, OP.session().role === 'admin' ? ['client', 'partner'] : ['partner']) +
           '') + '</section>' : '') + // 계약서 등록 전에는 섹션 없음 (위 안내 박스로 알림, 2026-10-28)
-        '<div class="sections"><section class="sec"><h3>' + (x.flow && !x.ct ? '프로젝트 정보' : '프로젝트 및 계약 정보') + '</h3><dl class="kv">' + /* 계약 후: 계약 진행 때 입력한 최종 계약 금액·대금 지급 방법·기타까지 (2026-10-29) */
-          [['클라이언트', x.client]].concat(x.partner && OP.session().role === 'admin' ? [['분석파트너', x.partner]] : []).concat(x.flow && !ADM && FS.P[OP.session().email] ? [['경로', FS.P[OP.session().email].self ? '직접 신청' : 'OmicsPharm 매칭 요청']] : []) /* 견적 경로 (2026-10-28) */.concat(x.flow && !x.ct ? [['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['선정일', dotd(x.contract)]] : [['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['최종 계약 금액', x.amount + ' (VAT 별도)'], ['계약일', dotd(x.contract)], ['납기일', dotd(x.due)], ['대금 지급 방법', (x.flow && FS.ct && FS.ct.partner && FS.ct.partner.pay) || '-'], ['기타', (x.flow && FS.ct && FS.ct.partner && FS.ct.partner.etc) || '-']]) // 계약서 등록 전: 금액·계약일·납기일은 아직 없음
+        '<div class="sections"><section class="sec"><h3>' + (PRE(x) ? '프로젝트 정보' : '프로젝트 및 계약 정보') + '</h3><dl class="kv">' + /* 계약 후: 계약 진행 때 입력한 최종 계약 금액·대금 지급 방법·기타까지 (2026-10-29) */
+          [['클라이언트', x.client]].concat(x.partner && OP.session().role === 'admin' ? [['분석파트너', x.partner]] : []).concat(x.flow && !ADM && FS.P[OP.session().email] ? [['경로', FS.P[OP.session().email].self ? '직접 신청' : 'OmicsPharm 매칭 요청']] : []) /* 견적 경로 (2026-10-28) */.concat(PRE(x) ? [['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['선정일', dotd(x.contract)]] : [['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['최종 계약 금액', x.amount + ' (VAT 별도)'], ['계약일', dotd(x.contract)], ['납기일', dotd(x.due)], ['대금 지급 방법', (x.flow && FS.ct && FS.ct.partner && FS.ct.partner.pay) || '-'], ['기타', (x.flow && FS.ct && FS.ct.partner && FS.ct.partner.etc) || '-']]) // 계약서 등록 전: 금액·계약일·납기일은 아직 없음
             .map(function (r) { return '<div><dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') +
         '</dl></section></div>' +
         // 분석파트너: 제출한 견적서·의뢰 내용을 이 화면 안에서 (예전: 견적서 화면으로 이동하는 링크, 2026-10-28)
@@ -555,7 +557,7 @@
             (ADM ? '' : nextHTML(pNext(x))) + '</div>' + // 계약 후 카드는 납기 D-n 안 보임 (납기일은 정보 줄에)
           '<h3>' + esc(x.title) + '</h3></div>' +
           '<div class="info"><div class="meta">' + (ADM ? '' : '<span class="route">' + (routeOf(x) ? '직접 신청' : 'OmicsPharm 매칭 요청') + '</span>') + '<span>' + esc(x.client) + '</span><span><em>샘플</em>' + x.samples + '개</span><span><em>계약금액</em>' + esc(x.amount) + '</span><span><em>납기일</em>' + dotd(x.due) + '</span></div>' +
-          '<p class="reg">' + (x.flow && !x.ct ? '선정일 ' : '계약일 ') + dotd(x.contract) + '</p></div></a>'; // 계약서 등록 전에는 선정일
+          '<p class="reg">' + (PRE(x) ? '선정일 ' : '계약일 ') + dotd(x.contract) + '</p></div></a>'; // 계약서 등록 전에는 선정일
       }), JSON.stringify(st), draw) || '<div class="empty"><b>' + (st.q || st.route ? '조건에 맞는 프로젝트가 없습니다' : '진행 중인 프로젝트가 없습니다') + '</b><p>OmicsPharm의 매칭을 거쳐 계약된 프로젝트가 여기에 표시됩니다.</p></div>';
     }
     $('#pq').addEventListener('submit', function (e) { e.preventDefault(); st.q = $('#pqIn').value; draw(); });
