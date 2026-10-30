@@ -102,7 +102,6 @@
     '<div class="top"><div class="tags"><span>' + esc(c.type) + (c.svc ? ' · ' + esc(c.svc) : '') + '</span><span>접수번호 ' + esc(c.id) + '</span><span>' + C.ymd(c.at) + ' 접수</span></div>' +
       '<h2>' + esc(c.title) + ' ' + (C.waiting(c) ? '<span class="badge wait">답변대기</span>' : '<span class="badge done">답변완료</span>') + '</h2></div>' +
     C.thread(c, 'user') +
-    (C.waiting(c) ? '<p class="meta">OmicsPharm 컨설턴트가 확인하고 있습니다. 답변이 등록되면 메일로 알려드립니다.</p>' : '') +
     '<div class="cta"><div><b>추가로 상담하시겠어요?</b><p>' + (member
         ? '이미 가입된 이메일입니다. 로그인하면 마이페이지 &gt; 상담내역에서 이 상담을 이어서 작성할 수 있습니다.'
         : '회원가입 후 이 상담을 이어서 작성할 수 있습니다.') + '</p></div>' +
