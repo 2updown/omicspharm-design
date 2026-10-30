@@ -6,7 +6,7 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>받은 메일 · 상담 · OmicsPharm</title>
 <!-- [데모] 상담 메일 미리보기. 실제 서비스에서는 이 내용이 문의자 메일함으로 감 (메일 템플릿 참고용)
-     ?t=상담 링크 토큰 (consult.js) · &k=reply(답변 등록, 기본) | renew(새 링크). 접수 메일은 보내지 않음 (2026-10-30) -->
+     ?t=상담 링크 토큰 (consult.js) · &k=reply(답변 등록, 기본) | renew(만료 링크 재발송 = 같은 메일 + 제목 [재발송]). 접수 메일은 보내지 않음 (2026-10-30) -->
 <link rel="stylesheet" href="assets/common/site.css?v=20261030b">
 <script src="assets/common/site.js?v=20261030b"></script>
 <script src="assets/common/consult.js?v=20261030b"></script>
@@ -36,10 +36,9 @@
 (function () {
   var P = new URLSearchParams(location.search), t = P.get('t'), k = P.get('k') === 'renew' ? 'renew' : 'reply', C = OP.consult, c = C.byToken(t), v = document.getElementById('view'), esc = C.esc;
   if (!c) { v.innerHTML = '<div class="none">메일을 찾을 수 없습니다. <a href="contact.html">Contact Us</a>에서 다시 문의해주세요.</div>'; return; }
-  var M = {
-    reply: ['[OmicsPharm] 상담에 답변이 등록되었습니다', '답변이 등록되었습니다', esc(c.name) + '님, 남겨주신 상담에 OmicsPharm 컨설턴트의 답변이 등록되었습니다.<br>아래 버튼에서 답변을 확인해주세요.'],
-    renew: ['[OmicsPharm] 상담 보기 링크를 다시 보내드립니다', '상담 보기 링크', esc(c.name) + '님, 요청하신 상담 보기 링크입니다.<br>아래 버튼에서 상담 내용과 답변을 확인해주세요.']
-  }[k] || null;
+  // 답변 메일 하나. 만료 링크 다시 받기(renew)는 같은 메일에 제목 앞만 [재발송] (2026-10-30)
+  var M = ['[OmicsPharm] 상담에 답변이 등록되었습니다', '답변이 등록되었습니다', esc(c.name) + '님, 남겨주신 상담에 OmicsPharm 컨설턴트의 답변이 등록되었습니다.<br>아래 버튼에서 답변을 확인해주세요.'];
+  if (k === 'renew') M[0] = '[재발송] ' + M[0];
   var ts = C.ymdhm(k === 'reply' ? C.lastAt(c) : c.linkAt);
   v.innerHTML =
     '<div class="bar"><span>데모 · 받은 메일 미리보기 (실제로는 문의자 메일함으로 발송)</span><a href="contact.html">Contact Us로</a></div>' +
@@ -49,7 +48,7 @@
       '<h1>' + M[1] + '</h1>' +
       '<p>' + M[2] + '</p>' +
       '<div class="note" style="margin-top:20px">· 제목: ' + esc(c.title) + '<br>· 접수번호: ' + esc(c.id) + '</div>' +
-      '<a class="go" href="consult-view.html?t=' + encodeURIComponent(c.token) + '">' + (k === 'renew' ? '상담 내용 보기' : '답변 확인하기') + '</a>' +
+      '<a class="go" href="consult-view.html?t=' + encodeURIComponent(c.token) + '">' + '답변 확인하기' + '</a>' +
       '<div class="note">· 이 링크는 발송 후 ' + C.LINK_DAYS + '일 동안 사용할 수 있습니다. 기간이 지나면 링크 화면에서 새 링크를 받을 수 있습니다.<br>· 추가로 상담하시려면 링크 화면에서 회원가입 후 이어서 작성할 수 있습니다.</div>' +
       '<p class="foot">본 메일은 발신 전용입니다.</p>' +
     '</div></div>';
