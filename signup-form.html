@@ -237,7 +237,7 @@
   var email = $('#email'), pw = $('#pw'), start = $('#startBtn');
   if (CONS) {
     email.value = CONS.email; email.readOnly = true;
-    var cn = document.createElement('p'); cn.className = 'consult-note'; cn.textContent = '상담 때 입력한 이메일로 가입합니다. 메일 링크로 확인된 이메일이라 이메일 인증은 필요 없습니다.';
+    var cn = document.createElement('p'); cn.className = 'consult-note'; cn.textContent = '상담 때 입력한 이메일로 가입합니다.';
     $('#f-email').appendChild(cn);
     if (!$('#name').value) $('#name').value = CONS.name;
   }
