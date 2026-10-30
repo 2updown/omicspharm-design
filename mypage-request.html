@@ -1126,7 +1126,7 @@
     var L = F.cqList(s);
     if (!L.length) return ''; // 안내 문구는 위 정보 상자(reqinfo) 안으로 옮김 (2026-10-28)
     var pq = function (v) { var x = s.P[v.base]; return x && x.quote ? F.total(x.quote).final : 0; };
-    return '<div class="cq"><div class="cq-h"><h4>클라이언트에게 보낸 견적</h4>' + (edit && s.st !== 'matched' ? '<span class="cq-acts"><button type="button" class="btn" data-rev="' + esc(L[L.length - 1].base) + '">파트너 견적 수정하기</button><button type="button" class="btn" id="cqRe">수정 견적 보내기</button></span>' : '') + '</div>' +
+    return '<div class="cq"><div class="cq-h"><h4>클라이언트에게 보낸 견적</h4>' + (edit && s.st !== 'matched' ? '<span class="cq-acts"><button type="button" class="btn" data-rev="' + esc(L[L.length - 1].base) + '">파트너 견적 수정하기</button><button type="button" class="btn primary" id="cqRe">수정 견적 보내기</button></span>' : '') + '</div>' +
       L.slice().reverse().map(function (v, ri) {
         var t = F.total(v.quote), last = ri === 0;
         return '<div class="cq-r' + (last ? ' cur' : '') + '"><b>' + v.n + '차</b>' + (last ? (s.pick ? '<span class="badge ok">최종 확인</span>' : '<span class="badge wait">확인 대기</span>') : '') +
