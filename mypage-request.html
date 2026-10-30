@@ -1112,9 +1112,9 @@
       // 게시·마감 정보 + 안내 = DS infobox (Figma 1153:52097). 안내가 있으면 default(제목 + 목록), 없으면 simple(한 줄) (2026-10-28)
       (function () { var hint = edit && subs.length && !F.cqList(s).length;
         return '<div class="op-ibox reqinfo' + (hint ? '' : ' simple') + '"><p class="t"><span class="rq"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>모집기한</b> ~' + dot(s.due || r.to) + (F.open(id) && s.due ? ' <button type="button" class="lnk" id="dueChg">변경</button>' : '') + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self && !hid(s, k); }).length + '<i class="dv" aria-hidden="true"></i>견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></span></p>' +
-          (hint ? '<ul><li>클라이언트에게 보낼 견적 1건을 선정하고 [1차 견적서 작성]을 누르세요.</li><li>단가, 수수료, 할인을 정해 ㈜셀키에이아이 명의로 보냅니다. 클라이언트에게는 분석파트너 이름이 보이지 않습니다.</li><li>파트너 견적을 고쳐야 하면 견적을 선택하고 [수정하기]를 누르세요. 저장하면 분석파트너에게 알림이 갑니다.</li></ul>' : '') + '</div>'; })() +
+          (hint ? '<ul><li>클라이언트에게 보낼 견적 1건을 선정하고 [1차 견적서 작성]을 누르세요.</li><li>단가, 수수료, 할인을 정해 ㈜셀키에이아이 명의로 보냅니다. 클라이언트에게는 분석파트너 이름이 보이지 않습니다.</li><li>파트너 견적을 고쳐야 하면 견적을 선택하고 [파트너 견적 수정하기]를 누르세요. 저장하면 분석파트너에게 알림이 갑니다.</li></ul>' : '') + '</div>'; })() +
       (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적 (VAT 포함)</span><span>소요</span><span>일자</span><span>견적서 보기</span></div>' + rows + '</div>' +
-        (edit && subs.length && !F.cqList(s).length ? '<div class="qbar"><span class="sel" id="qSel"></span><button type="button" class="btn" id="qRev" disabled>수정하기</button>' + (!F.cqList(s).length ? '<button type="button" class="btn primary" id="qMk" disabled>1차 견적서 작성</button>' : '') + '</div>' : '')
+        (edit && subs.length && !F.cqList(s).length ? '<div class="qbar"><span class="sel" id="qSel"></span><button type="button" class="btn" id="qRev" disabled>파트너 견적 수정하기</button>' + (!F.cqList(s).length ? '<button type="button" class="btn primary" id="qMk" disabled>1차 견적서 작성</button>' : '') + '</div>' : '')
         : '<div class="qempty">아직 견적을 작성 중인 분석파트너가 없습니다.<br>인증 분석파트너는 프로젝트 찾기에서 직접 견적을 작성할 수 있고, [AI 분석파트너 매칭]에서 적합한 기관에 요청할 수도 있습니다.</div>') +
       cqHTML(s, edit, subs) +
       (s.msg && s.st !== 'quoting' ? '<div class="msg"><b>클라이언트에게 전달한 메시지<i class="dv" aria-hidden="true"></i>' + F.ymd(s.sentAt) + '</b>' + esc(s.msg) + '</div>' : '') +
@@ -1170,8 +1170,8 @@
       '</tbody></table>' +
       (pm ? '<label class="cqm-f">소요 기간 (주)<input type="number" min="1" class="wk" id="cqWk" value="' + esc(pq.weeks || '') + '"></label>'
         : '<div class="cqm-sum"><div><span>파트너 견적 (VAT 포함)</span><b>' + F.money(F.total(pq).final, cur) + '</b></div><div><span>클라이언트 견적 (VAT 포함)</span><b id="cqTot"></b></div><div><span>차액 (공급가)</span><b id="cqGap"></b></div></div>') +
-      '<label class="cqm-f">견적서 안내 문구 <small>' + (pm ? '분석파트너 견적서에 보입니다' : '클라이언트 견적서에 보입니다') + '</small><textarea id="cqMemo" rows="3">' + esc(prev ? prev.quote.memo || '' : pq.memo || '') + '</textarea></label>' +
-      (pm ? '<label class="cqm-f">수정 내용 <small>분석파트너에게 알림으로 보입니다</small><textarea id="cqWhy" rows="2" placeholder="예) 전화로 협의한 대로 시료 수를 36개로 늘리고 단가를 조정했습니다."></textarea></label>' : '') +
+      '<label class="cqm-f">견적서 안내 문구' + (pm ? '' : ' <small>클라이언트 견적서에 보입니다</small>') + '<textarea id="cqMemo" rows="3">' + esc(prev ? prev.quote.memo || '' : pq.memo || '') + '</textarea></label>' +
+      (pm ? '<label class="cqm-f">수정 내용<textarea id="cqWhy" rows="2"></textarea></label>' : '') +
       (prev ? '<label class="cqm-f">수정 사유 <small>클라이언트에게 ' + n + '차 변경 내용과 함께 보입니다</small><textarea id="cqWhy" rows="2" placeholder="예) 시료 수 확정에 따라 단가를 조정했습니다."></textarea></label>' : '') +
       '<div class="cqm-acts"><button type="button" class="btn lg no">취소</button><button type="button" class="btn primary lg" id="cqSend">' + (pm ? '수정 저장' : n + '차 견적서 보내기') + '</button></div></div>';
     document.body.appendChild(m); document.body.style.overflow = 'hidden';
