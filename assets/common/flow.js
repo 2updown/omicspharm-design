@@ -226,6 +226,14 @@
     s.P['p-bio'] = { at: T0 - DAY * 9, status: 'sub', quote: genQuote(partner('p-bio'), r), subAt: T0 - DAY * 7 };
     return true;
   }
+  // 2026-10-30: 수정 요청이 없어짐 → 이미 저장된 '수정 요청' 견적은 컨설턴트가 직접 수정한 것으로 바꿈
+  function revMig(S) {
+    var ch = false;
+    Object.keys(S).forEach(function (id) { var P = S[id].P || {}; Object.keys(P).forEach(function (k) { var x = P[k]; if (x.status !== 'rev') return;
+      x.status = 'sub'; x.ed = { at: x.rev ? x.rev.at : Date.now(), note: id === 'PRJ-2026-0049' ? '클라이언트 요청으로 시료를 30개에서 36개로 늘려 단가와 소요 기간을 조정했습니다.' : '' }; x.subAt = x.ed.at;
+      if (id === 'PRJ-2026-0049') x.fwd = true; delete x.rev; ch = true; }); });
+    return ch;
+  }
   // 직접 신청 예시 (2026-10-27): 분석파트너 데모의 0047 견적은 프로젝트 찾기에서 직접 신청해 제출한 건으로
   function selfDemo(S) { var x = S['PRJ-2026-0047'] && S['PRJ-2026-0047'].P[ME_PARTNER]; if (!x || x.selfSet) return false; x.self = true; x.selfSet = 1; return true; }
   function waitDemo(S) { if (S['PRJ-2026-0048']) return false; S['PRJ-2026-0048'] = { st: 'review', ok: T0 - DAY * 1, P: {} }; return true; }
@@ -252,6 +260,7 @@
     if (d && d.v === 6) { ['PRJ-2026-0040', 'PRJ-2026-0041'].forEach(function (k) { var x = d.S[k]; if (x && (x.pick === 'p-met' || x.pick === 'p-mlt')) delete d.S[k]; }); seed6(d.S); d.v = VER; write(KEY, d); }
     if (!d || d.v !== VER) { d = seed(); write(KEY, d); }
     if (d && histDemo(d.S)) write(KEY, d);
+    if (d && revMig(d.S)) write(KEY, d);
     if (d && repDemo(d.S)) write(KEY, d);
     if (d && waitDemo(d.S)) write(KEY, d);
     if (d && selfDemo(d.S)) write(KEY, d);
