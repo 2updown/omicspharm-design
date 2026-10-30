@@ -151,7 +151,8 @@
     var n = $('#docName'), v = V();
     $('#lockBox').hidden = !v;
     ['#ceo', '#bizno', '#addr', '#addr2'].forEach(function (k) { $(k).disabled = v; });
-    document.querySelector('.addr .btn').disabled = v; // 인증 후: 검색 버튼은 보이되 비활성 (내 정보 관리와 같음) $('#save').closest('.actions').hidden = v;
+    document.querySelector('.addr .btn').disabled = v; // 인증 후: 검색 버튼은 보이되 비활성 (내 정보 관리와 같음)
+    $('#save').closest('.actions').hidden = v; // 인증 후에는 수정 불가라 [저장하기]도 숨김
     n.classList.toggle('none', !bizDoc);
     n.innerHTML = '<span>' + esc(bizDoc || '등록된 파일 없음') + '</span>';
     if (v) { $('#docBtn').hidden = true; $('#docDel').hidden = true; $('#docHelp').textContent = ''; $('#docHelp').hidden = true; return; }
