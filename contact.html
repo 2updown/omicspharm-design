@@ -315,7 +315,8 @@
     $('#doneSum').innerHTML = [['접수번호', c.id], ['문의 유형', c.type + (c.svc ? ' · ' + c.svc : '')], ['제목', c.title]].concat(c.ref ? [['관련 프로젝트', c.ref]] : [])
       .map(function (r) { return '<div><dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('');
     $('#doneBtns').innerHTML = c.owner ? '<a class="btn line" href="index.html">메인으로</a><a class="btn pri" href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">상담내역 보기</a>'
-      : '<a class="btn pri" href="index.html">메인으로</a>'; // 데모 메일은 컨설턴트가 답변한 뒤 상담내역의 [보낸 메일 보기 (데모)]에서
+      // 받은 메일 보기: 답변 등록 후 가는 메일 미리보기 (데모 확인용, 실개발 시 빼는 버튼)
+      : '<a class="btn line" href="index.html">메인으로</a><a class="btn pri" href="mail-consult.html?t=' + encodeURIComponent(c.token) + '&k=reply" target="_blank">받은 메일 보기 (데모, 실개발 시 안 뜨는 버튼)</a>';
     $('#form').hidden = true; $('#done').hidden = false;
     window.scrollTo({ top: 0, behavior: 'smooth' });
     OP.toast('상담이 접수되었습니다.');
