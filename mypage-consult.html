@@ -17,6 +17,7 @@
 <script src="assets/common/consult.js?v=20261030m"></script>
 <script src="assets/common/mypage.js?v=20261030m"></script>
 <script src="assets/common/flow.js?v=20261030m"></script>
+<script src="assets/common/projects-data.js?v=20261030a"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
   .cs-list { border-top:2px solid #000; }
@@ -79,14 +80,20 @@
   var projOf = function (rid) {
     var r = OP.flow && OP.flow.req(rid); if (r) return { id: rid, title: r.title, svc: r.svc, flow: true };
     var p = OP.my.partnerProjects().filter(function (x) { return x.id === rid; })[0]; // 계약 이후 예시 프로젝트 (분석파트너)
-    return p ? { id: rid, title: p.title, svc: OP.my.svcKo(p.svc), flow: false } : null;
+    if (p) return { id: rid, title: p.title, svc: OP.my.svcKo(p.svc), flow: false };
+    var g = pubOf(rid); // 프로젝트 찾기 예시 프로젝트 (의뢰서 없음, 2026-11-02)
+    return g ? { id: rid, title: g.title, svc: g.cat, flow: false, pub: g } : null;
   };
-  var projHref = function (rid) { var P = projOf(rid); if (!P) return ''; if (adm) return P.flow ? 'mypage-request.html?id=' + encodeURIComponent(rid) : 'mypage-project.html?id=' + encodeURIComponent(rid);
+  var pubOf = function (rid) { var D = window.OP_PROJECTS; return D ? D.DATA.filter(function (x) { return D.no(x) === rid; })[0] : null; };
+  // 참여자가 아니면(다른 클라이언트·견적 요청을 안 받은 파트너, 예시 프로젝트) 프로젝트 찾기 상세로
+  var projHref = function (rid) { var P = projOf(rid); if (!P) return ''; var g = P.pub || pubOf(rid);
+    if (adm) return P.flow ? 'mypage-request.html?id=' + encodeURIComponent(rid) : g ? OP_PROJECTS.url(g) : 'mypage-project.html?id=' + encodeURIComponent(rid);
+    if (P.pub || (P.flow && !C.participant(rid, me.s.email))) return g ? OP_PROJECTS.url(g) : '';
     var s = P.flow ? OP.flow.state(rid) : null; return me.s.role === 'partner' && s && s.st !== 'matched' ? 'mypage-quote.html?rid=' + encodeURIComponent(rid) : 'mypage-project.html?id=' + encodeURIComponent(rid); };
   if (pid && !adm) {
     var P0 = projOf(pid), mine0 = C.byProject(pid, me.s.email);
     if (mine0) { history.replaceState(null, '', 'mypage-consult.html?id=' + encodeURIComponent(mine0.id)); detail(mine0.id); }
-    else if (P0 && (!P0.flow || C.participant(pid, me.s.email))) compose(P0);
+    else if (P0) compose(P0); // 로그인 회원은 누구나 그 프로젝트에 문의 (2026-11-02)
     else location.replace('contact.html?type=project&rid=' + encodeURIComponent(pid) + (P0 ? '&ref=' + encodeURIComponent(P0.title) : ''));
   } else if (id) detail(id); else if (qid && !adm) botDetail(qid); else (adm ? adminList : memberList)();
   function linkedHTML(c) { // 의뢰로 이어진 상담: 끝난 대화, 이후는 프로젝트 문의에서

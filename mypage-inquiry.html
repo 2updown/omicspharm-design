@@ -15,6 +15,7 @@
 <script src="assets/common/consult.js?v=20261030m"></script>
 <script src="assets/common/mypage.js?v=20261030m"></script>
 <script src="assets/common/flow.js?v=20261030m"></script>
+<script src="assets/common/projects-data.js?v=20261030a"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
   .cs-list { border-top:2px solid #000; }
@@ -60,7 +61,9 @@
   var projOf = function (rid) {
     var r = OP.flow && OP.flow.req(rid); if (r) return { title: r.title, svc: r.svc };
     var p = OP.my.partnerProjects().filter(function (x) { return x.id === rid; })[0];
-    return p ? { title: p.title, svc: OP.my.svcKo(p.svc) } : { title: rid, svc: '' };
+    if (p) return { title: p.title, svc: OP.my.svcKo(p.svc) };
+    var D = window.OP_PROJECTS, g = D && D.DATA.filter(function (x) { return D.no(x) === rid; })[0]; // 프로젝트 찾기 예시 프로젝트
+    return g ? { title: g.title, svc: g.cat } : { title: rid, svc: '' };
   };
   var badge = function (c) { return C.waiting(c) ? '<span class="badge wait">답변대기</span>' : '<span class="badge done">답변완료</span>'; };
   var who = function (m, c) { return m.by === 'admin' ? 'OmicsPharm 컨설턴트: ' : adm ? c.name + ': ' : '나: '; };
