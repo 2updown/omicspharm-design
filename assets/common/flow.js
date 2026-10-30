@@ -432,6 +432,7 @@
     // 계약서 등록 (컨설턴트): c = { client:{type:'form'|'file', name}, partner:{...} } → 분석 진행 단계로
     // 계약 정보 (2026-10-26, 기존 사이트 항목 그대로): 최종 계약 금액·통화, 계약일, 납기일 + 쪽마다 계약서·대금 지급 방법·기타. 임시저장 = ctDraft
     contract: function (id, c) { return put(id, function (s) { s.ct = Object.assign({ at: Date.now() }, c); delete s.ctDraft; }); },
+    contractEdit: function (id, c, ch) { return put(id, function (s) { var at = s.ct.at; s.ct = Object.assign({}, s.ct, c, { at: at }); s.ctLog = (s.ctLog || []).concat([{ at: Date.now(), ch: ch }]); }); }, // 계약 정보 수정 (2026-10-30)
     contractDraft: function (id, c) { return put(id, function (s) { s.ctDraft = Object.assign({ savedAt: Date.now() }, c); }); },
     // 프로젝트 찾기에 게시된 의뢰 (컨설턴트 승인 후)
     posted: function () {
@@ -474,6 +475,11 @@
   var josa = function (w, a, b) { var c = String(w).replace(/[^가-힣a-zA-Z0-9]+$/, '').slice(-1).charCodeAt(0); return w + (c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 ? a : b); };
   var won = function (n) { return Math.round(n).toLocaleString('ko-KR') + '원'; };
   var qname = function (x) { return ((x.revN || 0) + 1) + '차 견적서'; };
+  // 계약 정보 수정 알림 (2026-10-30): 받는 사람과 관련된 항목만 (클라이언트는 분석파트너 금액·계약서를 모름)
+  var ctEdAlarm = function (L, s, r, nm, who, href) {
+    (s.ctLog || []).forEach(function (g, i) { var ch = g.ch.filter(function (c) { return c.who === 'all' || c.who === who; }); if (!ch.length) return;
+      L.push({ id: 'f-cted-' + r.id + i, k: '계약정보변경', cat: 'project', at: g.at, t: nm + ' 프로젝트의 계약 정보가 수정되었습니다.', sub: ch.map(function (c) { return c.label.replace(/^(클라이언트|분석파트너) /, '') + ' ' + c.from + ' → ' + c.to; }).join(' · '), href: href }); });
+  };
   F.josa = josa;
   F.alarms = function () {
     var ses = OP.session(); if (!ses) return [];
@@ -502,6 +508,7 @@
         var qh = 'mypage-quote.html?rid=' + encodeURIComponent(r.id);
         if (r.updatedAt && r.updatedAt > x.at) L.push({ id: 'f-ed-' + r.id + r.updatedAt, k: '의뢰수정', cat: 'project', at: r.updatedAt, t: nm + ' 프로젝트의 의뢰 내용이 수정되었습니다. 견적서 작성 전 변경 내용을 확인해주세요.', href: qh });
         if (s.ct && s.pick === ses.email) L.push({ id: 'f-ct-' + r.id, k: '계약', cat: 'project', at: s.ct.at, t: nm + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
+        if (s.ct && s.pick === ses.email) ctEdAlarm(L, s, r, nm, 'partner', 'mypage-project.html?id=' + encodeURIComponent(r.id));
         if (s.pick === ses.email) (s.raw || []).concat(s.reReq ? [{ req: s.reReq }] : []).forEach(function (v) { if (v.req) L.push({ id: 'f-rereq-' + r.id + v.req.at, k: '결과재등록요청', cat: 'project', at: v.req.at, t: nm + ' 프로젝트의 분석 결과를 다시 등록해주세요.', sub: v.req.note, href: 'mypage-project.html?id=' + encodeURIComponent(r.id) }); });
         if (s.fin && s.pick === ses.email) L.push({ id: 'f-fin-' + r.id, k: '프로젝트완료', cat: 'project', at: s.fin, t: nm + ' 프로젝트가 완료되었습니다. 클라이언트가 결과보고서를 최종 승인했습니다.', href: 'mypage-project.html?id=' + encodeURIComponent(r.id) });
         if (s.cancel) L.push({ id: 'f-cancel-' + r.id, k: '의뢰취소', cat: 'project', at: s.cancel.at, t: nm + ' 프로젝트가 삭제되어 견적 요청이 종료되었습니다.', href: 'mypage-quote.html' });
@@ -513,6 +520,7 @@
       } else if (role === 'client' && (!r.demo || (r.owner || 'client@omicspharm.test') === ses.email)) {
         var ph = 'mypage-project.html?id=' + encodeURIComponent(r.id);
         if (s.ct) L.push({ id: 'f-ct-' + r.id, k: '계약', cat: 'project', at: s.ct.at, t: nm + ' 프로젝트의 계약서 최종본이 등록되었습니다.', href: ph + '&tab=contract' });
+        if (s.ct) ctEdAlarm(L, s, r, nm, 'client', ph + '&tab=contract');
         if (s.cancel && s.cancel.by === 'admin') L.push({ id: 'f-cancel-' + r.id, k: '의뢰삭제', cat: 'project', at: s.cancel.at, t: '의뢰하신 ' + nm + ' 프로젝트가 OmicsPharm에 의해 삭제되었습니다.', sub: s.cancel.reason ? '사유: ' + s.cancel.reason : '', href: 'mypage-project.html' });
         (s.rep || []).forEach(function (v, i) { L.push({ id: 'f-rep-' + r.id + i, k: '보고서등록', cat: 'project', at: v.at, t: nm + ' 프로젝트에 ' + F.repName(i) + '가 등록되었습니다. 확인 후 최종 확인 또는 수정 요청을 해주세요.', href: ph + '&tab=report' }); });
         if (s.ok) L.push({ id: 'f-ok-' + r.id, k: '의뢰승인', cat: 'project', at: s.ok, t: '의뢰하신 ' + nm + ' 프로젝트가 승인되어 등록되었습니다.', href: ph });
@@ -814,7 +822,7 @@
     }
     // 전달 전 결과가 있으면 초록 머리 박스가 제목 역할 (분석파트너와 같게). 보고서 에이전트 라벨만 남김 (2026-10-29)
     if (raw.length) h = h.replace('<h3>결과보고서</h3>', ''); // 초록 머리 박스가 늘 보여서 제목은 뺌 (2026-10-29)
-    if (!raw.length) h += '<div class="rp-empty">분석파트너가 결과를 등록하면 AI가 결과보고서 초안(워드)을 만들어 여기에 보여 드립니다.' + (fin ? '' : '<span><button type="button" class="tbtn primary" data-rp="demo">데모: AI 보고서 생성으로 등록</button><button type="button" class="tbtn primary" data-rp="demo" data-k="pdf">데모: 완성 PDF로 등록</button></span>') + '</div>';
+    if (!raw.length) h += '<div class="rp-empty">분석파트너가 결과보고서를 등록하면 여기에 보여 드립니다.<br>AI 보고서 생성으로 올린 결과는 AI 초안(워드)도 함께 만들어집니다.' + (fin ? '' : '<span><button type="button" class="tbtn primary" data-rp="demo">데모: AI 보고서 생성으로 등록</button><button type="button" class="tbtn primary" data-rp="demo" data-k="pdf">데모: 완성 PDF로 등록</button></span>') + '</div>';
     h += raw.map(function (x, i) {
       var step = x.sent ? 3 : x.pdf ? 2 : 1;
       var pdfK = x.kind === 'pdf' && x.by !== 'admin', nm = F.repName(x.sent ? x.repN - 1 : rep.length), who = (x.by === 'admin' ? '컨설턴트 직접 수정<i class="dv" aria-hidden="true"></i>' : esc(partner(s.pick).org) + '<i class="dv" aria-hidden="true"></i>') + ymd(x.at) + (x.by === 'admin' ? ' 시작' : ' 등록') + (x.by === 'admin' ? '' : '<i class="dv" aria-hidden="true"></i>' + (pdfK ? '완성 PDF' : 'AI 보고서 생성'));

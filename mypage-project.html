@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261030i">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261030i">
-<script src="assets/common/site.js?v=20261030i"></script>
-<script src="assets/common/consult.js?v=20261030i"></script>
-<script src="assets/common/mypage.js?v=20261030i"></script>
-<script src="assets/common/flow.js?v=20261030i"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261030j">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261030j">
+<script src="assets/common/site.js?v=20261030j"></script>
+<script src="assets/common/consult.js?v=20261030j"></script>
+<script src="assets/common/mypage.js?v=20261030j"></script>
+<script src="assets/common/flow.js?v=20261030j"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -478,7 +478,7 @@
       if (ADM) TODO = {
         '계약 진행 중': ['견적이 확정되었습니다. 계약서를 등록해주세요.', '기본 양식(셀키 분석서비스 의뢰서)으로 만들거나, 기관 자체 시험의뢰서를 파일로 올릴 수 있습니다.', '', 'warn'],
         '분석 진행 중': ['분석파트너가 분석을 진행하고 있습니다', '결과가 등록되면 알림으로 알려드립니다. 아래 결과보고서에서 검토할 수 있습니다.', '', 'gray'],
-        '보고서 등록': ['분석 결과가 등록되었습니다. 보고서를 검토해 클라이언트에게 전달해주세요.', '아래 결과보고서에서 AI 초안을 확인하고 수정한 뒤 전달할 수 있습니다.', '', 'warn']
+        '보고서 등록': ['분석 결과가 등록되었습니다. 보고서를 검토해 클라이언트에게 전달해주세요.', '아래 결과보고서에서 확인한 뒤 전달할 수 있습니다. AI 보고서 생성으로 올린 결과는 AI 초안을 확인하고 수정할 수 있습니다.', '', 'warn']
       }[x.stage] || TODO;
       // 컨설턴트가 결과 재등록을 요청함 (2026-10-28): 결과 등록 칸이 다시 열림
       var RQ = x.flow && FS && !FS.fin && FS.reReq;
