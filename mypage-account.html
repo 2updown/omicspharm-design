@@ -206,6 +206,8 @@
   var me = OP.mypage('account'); if (!me) return;
   var $ = function (s) { return document.querySelector(s); };
   var email = me.s.email, acc = me.acc, partner = me.s.role === 'partner', client = me.s.role === 'client';
+  // 컨설턴트(어드민) 계정은 회원 탈퇴 없음: 추후 관리자 페이지/슈퍼어드민에서 처리 (2026-10-30)
+  if (me.s.role === 'admin') { var lv = $('#leave'); if (lv) lv.remove(); }
   var hasDoc = client; // 사업자등록증: 클라이언트(프로젝트 등록 시 필요). 분석파트너는 [파트너 인증] 메뉴에서
 
   // 비밀번호 재확인: 실서비스는 틀리면 입력란 아래 '현재 비밀번호가 일치하지 않습니다.' (개발팀 문의 5번 회신대로, 2026-10-23)

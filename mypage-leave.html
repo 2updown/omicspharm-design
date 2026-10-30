@@ -139,6 +139,7 @@
 <script>
 (function () {
   var me = OP.mypage('account'); if (!me) return;
+  if (me.s.role === 'admin') { location.replace('mypage-account.html'); return; } // 컨설턴트는 탈퇴 화면 없음 (2026-10-30)
   var $ = function (s) { return document.querySelector(s); };
   var esc = OP.my.esc, email = me.s.email, role = me.s.role, partner = role === 'partner';
 
@@ -170,9 +171,7 @@
     : partner ? OP.my.partnerProjects().filter(function (p) { return p.stage !== '프로젝트 완료'; }).map(function (p) { return { id: p.id, t: p.title, st: OP.my.pStage(p), h: 'mypage-project.html?id=' + p.id }; })
     : [];
 
-  if (role === 'admin') {
-    lock('컨설턴트 계정은 탈퇴할 수 없습니다.', '컨설턴트 계정은 OmicsPharm 관리자가 발급·해지합니다. 계정 해지가 필요하면 관리자에게 요청해주세요.', '');
-  } else if (ING.length) {
+  if (ING.length) {
     lock('진행 중인 프로젝트가 ' + ING.length + '건 있어 탈퇴할 수 없습니다.', partner ? '아래 프로젝트의 모든 절차(분석·결과 등록·보고서)가 완료되거나 관리자 문의 후 탈퇴할 수 있습니다.' : '계약 전(의뢰접수·의뢰승인·견적 확인) 프로젝트는 삭제하고, 계약 진행 중 이후 프로젝트는 모든 절차가 완료되거나 관리자 문의 후 탈퇴할 수 있습니다.',
       '<div class="rows">' + ING.slice(0, 3).map(function (p) { return '<div><span>' + esc(p.st) + '</span><a href="' + p.h + '">' + esc(p.t) + '</a></div>'; }).join('') + (ING.length > 3 ? '<div class="more-n">외 ' + (ING.length - 3) + '건</div>' : '') + '</div>' +
       '<div class="acts"><a class="btn" href="mypage-project.html">프로젝트 관리로 이동</a>' +
