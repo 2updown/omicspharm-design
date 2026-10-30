@@ -156,7 +156,9 @@
   // [‹ 이전으로] 공통 (2026-10-23): 같은 사이트 안에서 왔으면 직전 화면으로, 아니면(링크로 바로 들어옴 등) fallback 주소로
   OP.goBack = function (fallback) {
     var same = document.referrer && document.referrer.indexOf(location.origin) === 0 && document.referrer !== location.href;
-    if (same && history.length > 1) history.back(); else location.href = fallback || 'index.html';
+    // 가입·로그인·상담 링크 화면에서 넘어온 경우는 되돌아가지 않고 목록으로 (예: 상담 링크 → 회원가입 → 상담내역 상세의 ‹ = 상담내역 목록) 2026-10-30
+    var flow = /\/(signup[\w-]*|login|find-[\w-]+|reset-[\w-]+|consult-view|mail-consult|contact)\.html/.test(document.referrer || '');
+    if (same && !flow && history.length > 1) history.back(); else location.href = fallback || 'index.html';
   };
   OP.orgDB = function () {
     var db = {};
