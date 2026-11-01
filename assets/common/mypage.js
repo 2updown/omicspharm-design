@@ -407,9 +407,18 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     }
     // AI Agent를 연 채로 새로고침하면 다시 열어 둠 (같은 화면에서만, 2026-10-27)
     // AI 화면(iframe) 안에서도 이 함수가 불리므로 바깥 화면에서만 처리 (안에서 지우면 새로고침 때 안 열리던 문제, 2026-10-27)
-    if (key !== 'ai' && window === window.top) try { var ao = JSON.parse(sessionStorage.getItem('op.aiOpen') || 'null'); if (ao && ao.p === location.pathname) setTimeout(function () { OP.openAI(ao.m, { full: ao.full }); }, 0); else if (ao) sessionStorage.removeItem('op.aiOpen'); } catch (e) {}
+    // 2026-11-02: 새로고침일 때만 다시 엶. 메뉴를 눌러 같은 화면으로 다시 들어온 경우는 닫힌 채로 (메뉴를 누르면 AI 창이 닫혀야 함)
+    var RELOAD = ((performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {}).type === 'reload';
+    if (key !== 'ai' && window === window.top) try { var ao = JSON.parse(sessionStorage.getItem('op.aiOpen') || 'null'); if (ao && !RELOAD) { sessionStorage.removeItem('op.aiOpen'); ao = null; } if (ao && ao.p === location.pathname) setTimeout(function () { OP.openAI(ao.m, { full: ao.full }); }, 0); else if (ao) sessionStorage.removeItem('op.aiOpen'); } catch (e) {}
     return { s: s, acc: acc, name: name, org: org };
   };
+  // AI Agent 창이 열린 채로 마이페이지 메뉴(왼쪽 메뉴·모바일 탭)를 누르면 창을 닫음 (2026-11-02 피드백). 지금 화면 메뉴면 이동 없이 닫기만
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('.side .menu a[href], .m-tabs a[href]'), x = document.querySelector('.op-ai .op-ai-x');
+    if (!a || !x || a.getAttribute('href') === 'mypage-ai.html' || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    x.click();
+    if (a.pathname === location.pathname && !a.search) e.preventDefault();
+  }, true);
   // 상세 화면 제목 옆 [‹] (2026-10-23): 원래 왔던 화면으로 (대시보드 알림 → 상세 → ‹ = 대시보드). 링크로 바로 들어왔으면 원래 주소(목록)로
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a.back, .mg-head > a'); if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
