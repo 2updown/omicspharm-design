@@ -12,6 +12,7 @@
   var pad = function (n) { return ('0' + n).slice(-2); };
   var ymd = function (t) { var d = new Date(t); return d.getFullYear() + '.' + pad(d.getMonth() + 1) + '.' + pad(d.getDate()); };
   var ymdhm = function (t) { var d = new Date(t); return ymd(t) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+  var DV = '<i class="dv" aria-hidden="true"></i>'; // 정보 줄 구분선 (가운뎃점 대신)
   var tok = function () { return Math.random().toString(36).slice(2, 10) + Date.now().toString(36); };
 
   // 예시 상담 (처음 한 번만 넣음). 시각은 오늘 기준
@@ -39,14 +40,29 @@
     // 데모: 홍길동의 상담(C-DEMO2)은 그 뒤에 올린 의뢰 PRJ-2026-0046에 연결된 상태로 (2026-10-27, 한 번만)
     var d2 = L.filter(function (c) { return c.id === 'C-DEMO2'; })[0];
     if (d2 && !d2.linkSet) { d2.linkSet = 1; d2.link = 'PRJ-2026-0046'; d2.linkedAt = d2.msgs[d2.msgs.length - 1].at + 36e5; write(L); }
+    // 데모: 프로젝트 문의 3건 (2026-11-02, 한 번만). 제목 입력은 없고 프로젝트명이 제목
+    if (!L.some(function (c) { return c.id === 'C-DEMO5'; })) { L = L.concat(seedPj()); write(L); }
     return L;
+  }
+  function seedPj() {
+    var now = Date.now(), H = 36e5, cl = 'client@omicspharm.test', pa = 'partner@omicspharm.test';
+    var pj = function (id, rid, title, svc, email, name, msgs) { return { id: id, demo: true, pj: true, at: msgs[0].at, type: '의뢰 프로젝트', svc: svc, ref: title, rid: rid, name: name, email: email, owner: email, title: title, token: 'demo-' + id, linkAt: msgs[0].at, msgs: msgs, note: '' }; };
+    return [
+      pj('C-DEMO5', 'PRJ-2026-0046', '세포 배양액 분비 단백질 Label-free 정량 분석', '단백체 분석', cl, '홍길동', [
+        { at: now - DAY * 3, by: 'user', text: '견적서에 표준물질 구매 비용이 포함되어 있는지 궁금합니다. 별도라면 대략 어느 정도인지도 알려 주세요.' },
+        { at: now - DAY * 3 + H * 4, by: 'admin', text: '안녕하세요, OmicsPharm 컨설턴트입니다.\nLabel-free 정량은 표준물질이 따로 필요하지 않아 견적 금액에 추가 비용은 없습니다. 다른 궁금한 점이 있으면 여기에 남겨 주세요.' }]),
+      pj('C-DEMO6', 'PRJ-2026-0036', '간암 조직 인산화 단백체 분석', '단백체 분석', cl, '홍길동', [
+        { at: now - H * 20, by: 'user', text: '결과보고서를 영문으로도 받을 수 있을까요? 논문 투고에 쓰려고 합니다.', file: '투고_양식_가이드.pdf' }]),
+      pj('C-DEMO7', 'PRJ-2026-0038', '대장암 환자 혈청 대사체 프로파일링', '대사체 분석', pa, '김파트너', [
+        { at: now - H * 6, by: 'user', text: '시료 중 3개가 용혈이 심해 재수령이 필요합니다. 클라이언트에게 일정 조율을 요청드려도 될까요? 희망완료일이 1주 정도 늦어질 수 있습니다.' }])
+    ];
   }
   function save(c) { var L = all(), i = L.map(function (x) { return x.id; }).indexOf(c.id); if (i < 0) L.unshift(c); else L[i] = c; write(L); return c; }
   function get(id) { return all().filter(function (c) { return c.id === id; })[0] || null; }
   function last(c) { return c.msgs[c.msgs.length - 1] || {}; }
 
   OP.consult = {
-    LINK_DAYS: LINK_DAYS, esc: esc, ymd: ymd, ymdhm: ymdhm,
+    LINK_DAYS: LINK_DAYS, esc: esc, DV: DV, ymd: ymd, ymdhm: ymdhm,
     all: all, get: get, save: save,
     byToken: function (t) { return t ? all().filter(function (c) { return c.token === t; })[0] || null : null; },
     expired: function (c) { return Date.now() - c.linkAt > LINK_DAYS * DAY; },
@@ -95,7 +111,7 @@
     preHTML: function (L, viewer) {
       if (!L.length) return '';
       return '<div class="cs-pre"><p class="cs-pre-h">의뢰 전 상담 <b>' + L.length + '</b><span>Contact Us로 나눈 상담이 이 의뢰에 연결되어 있습니다.</span></p>' + L.map(function (c) {
-        return '<details><summary><span class="t">' + esc(c.title) + '</span><span class="d">' + ymd(c.at) + ' ~ ' + ymd(OP.consult.lastAt(c)) + ' · 대화 ' + c.msgs.length + '개</span></summary>' + OP.consult.thread(c, viewer) + '</details>';
+        return '<details><summary><span class="t">' + esc(c.title) + '</span><span class="d">' + ymd(c.at) + ' ~ ' + ymd(OP.consult.lastAt(c)) + DV + '대화 ' + c.msgs.length + '개</span></summary>' + OP.consult.thread(c, viewer) + '</details>';
       }).join('') + '</div>';
     },
     // 대화창. viewer = 'user' | 'admin'. 상담 기록(note)은 컨설턴트에게만
@@ -104,7 +120,7 @@
         var me = m.by === viewer;
         return '<li class="' + (m.by === 'admin' ? 'adm' : 'usr') + (me ? ' mine' : '') + '">' +
           (m.by === 'admin' ? '<span class="av" aria-hidden="true">O</span>' : '') +
-          '<div class="bub"><b>' + (m.by === 'admin' ? 'OmicsPharm 컨설턴트' : esc(c.name)) + '</b>' + (m.text ? '<p>' + esc(m.text) + '</p>' : '') + (m.file ? '<span class="att">첨부 · ' + esc(m.file) + '</span>' : '') + '</div>' +
+          '<div class="bub"><b>' + (m.by === 'admin' ? 'OmicsPharm 컨설턴트' : esc(c.name)) + '</b>' + (m.text ? '<p>' + esc(m.text) + '</p>' : '') + (m.file ? '<span class="att">첨부' + DV + esc(m.file) + '</span>' : '') + '</div>' +
           '<time>' + ymdhm(m.at) + '</time></li>';
       }).join('') + '</ol>';
     }

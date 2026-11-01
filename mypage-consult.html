@@ -10,13 +10,13 @@
        처리상태는 마지막 메시지로 자동(답변대기/답변완료), 처리내용(= 실서비스의 답변 입력 칸) → 대화의 답변 입력으로 바뀜. 답변은 문의자에게 보이고 메일로도 알림 (2026-10-30 정정)
      회원(클라이언트·분석파트너): 내 상담 목록(+ 챗봇 문의) → 대화 + 이어서 작성.
      2026-10-27: 프로젝트별 대화(?project=, pj)는 메뉴 '프로젝트 문의내역'(mypage-inquiry.html)에서 열리고 대화 화면만 여기를 씀. 의뢰에 연결된 상담(link)은 끝난 대화로 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261030m">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261030m">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261030m">
-<script src="assets/common/site.js?v=20261030m"></script>
-<script src="assets/common/consult.js?v=20261030m"></script>
-<script src="assets/common/mypage.js?v=20261030m"></script>
-<script src="assets/common/flow.js?v=20261030m"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102a">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261102a">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261102a">
+<script src="assets/common/site.js?v=20261102a"></script>
+<script src="assets/common/consult.js?v=20261102a"></script>
+<script src="assets/common/mypage.js?v=20261102a"></script>
+<script src="assets/common/flow.js?v=20261102a"></script>
 <script src="assets/common/projects-data.js?v=20261030a"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
@@ -37,8 +37,6 @@
   .note label span { margin-left:6px; font-size:12px; font-weight:400; color:var(--gray-500); }
   .note textarea { width:100%; min-height:88px; padding:10px 14px; border:1px solid var(--gray-300); border-radius:8px; font:inherit; font-size:14px; line-height:1.6; resize:vertical; background:#fff; }
   .note .row { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; color:var(--gray-500); }
-  .cs-ttl { width:100%; height:44px; padding:0 16px; border:1px solid var(--gray-300); border-radius:12px; font:inherit; font-size:15px; }
-  .cs-ttl:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
   .lead { font-size:14px; line-height:20px; color:var(--gray-500); }
   @media (max-width:640px) {
     .cs-row { flex-wrap:wrap; gap:6px 10px; padding:14px 4px; }
@@ -63,7 +61,7 @@
 
 <script>
 (function () {
-  var C = OP.consult, esc = C.esc, $ = function (s) { return document.querySelector(s); };
+  var C = OP.consult, esc = C.esc, DV = C.DV, $ = function (s) { return document.querySelector(s); };
   var LK = function (c) { return C.PRE && c.link; }; // 의뢰 전 상담 연결은 2단계라 기본 숨김 (?pre=1, 2026-10-30)
   var Q = new URLSearchParams(location.search), id = Q.get('id'), pid = Q.get('project'), qid = Q.get('q');
   // 메뉴 (2026-10-27): 프로젝트별 대화는 '프로젝트 문의내역', 그 외(Contact Us · 챗봇 문의)는 '상담내역'
@@ -102,23 +100,34 @@
       '<a class="btn" href="' + (adm ? 'mypage-request.html?id=' + encodeURIComponent(c.link) : 'mypage-consult.html?project=' + encodeURIComponent(c.link)) + '">' + (adm ? '의뢰 상세 보기' : '프로젝트 문의로 이동') + '</a></div>';
   }
 
-  // 프로젝트 문의 첫 작성: 문의 유형 '의뢰 프로젝트' 고정, 제목 기본값 '[프로젝트명] 관련 문의드립니다'
+  // 답변 칸 아래 줄: 파일 첨부 + 보내기 버튼 (대화 화면 · 프로젝트 문의 첫 작성 공통)
+  function attRow(label) {
+    return '<div class="att-row"><label class="cs-file" id="fbox" for="fin"><img src="assets/auth/ic-paperclip.svg" alt=""><span id="fname">파일 첨부</span><button type="button" id="fclr" hidden>삭제</button><input type="file" id="fin" accept=".jpg,.jpeg,.png,.pdf,.zip"></label><span>JPG, PNG, PDF, ZIP' + DV + '1개' + DV + '30MB 이하</span><button class="btn primary" type="submit" id="go" disabled>' + label + '</button></div>';
+  }
+  // 첨부 (파일만 보내도 됨). 파일 이름이 바뀌면 onFile(이름)
+  function bindAtt(onFile) {
+    var fin = $('#fin');
+    var setFile = function (n) { $('#fname').textContent = n || '파일 첨부'; $('#fbox').classList.toggle('has', !!n); $('#fclr').hidden = !n; onFile(n); };
+    fin.addEventListener('change', function () { var f = fin.files[0]; if (f && f.size > 30 * 1024 * 1024) { OP.toast('30MB 이하 파일만 첨부할 수 있습니다.'); fin.value = ''; f = null; } setFile(f ? f.name : ''); });
+    $('#fclr').addEventListener('click', function (e) { e.preventDefault(); fin.value = ''; setFile(''); });
+  }
+
+  // 프로젝트 문의 첫 작성: 문의 유형 '의뢰 프로젝트' 고정. 제목 입력 없음 (프로젝트명이 제목), 첨부 + 보내기 (2026-11-02)
   function compose(P) {
     var acc = OP.account(me.s.email) || {};
     $('#card').innerHTML =
       '<div class="mg-head"><a href="mypage-inquiry.html" aria-label="프로젝트 문의내역으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>프로젝트 문의</h3></div>' +
-      '<div class="det"><dl class="cs-info"><div class="wide"><dt>관련 프로젝트</dt><dd><a href="' + projHref(P.id) + '" style="text-decoration:underline">' + esc(P.title) + '</a> <span style="color:var(--gray-500)">(' + esc(P.svc) + ' · ' + esc(P.id) + ')</span></dd></div>' +
+      '<div class="det"><dl class="cs-info"><div class="wide"><dt>관련 프로젝트</dt><dd><a href="' + projHref(P.id) + '" style="text-decoration:underline">' + esc(P.title) + '</a> <span style="color:var(--gray-500)">(' + esc(P.svc) + DV + esc(P.id) + ')</span></dd></div>' +
         '<div class="wide"><dt>문의 유형</dt><dd>의뢰 프로젝트</dd></div></dl>' +
         C.preHTML(C.pre(P.id, me.s.email), 'user') +
-        '<form class="cs-compose" id="first" novalidate><label class="sr-only" for="ttl">제목</label><input id="ttl" class="cs-ttl" value="' + esc('[' + P.title + '] 관련 문의드립니다') + '">' +
-          '<label class="sr-only" for="msg">내용</label><textarea id="msg" placeholder="이 프로젝트에 대해 문의할 내용을 입력하세요. OmicsPharm 컨설턴트가 확인 후 답변드립니다."></textarea>' +
-          '<div class="row"><span>답변은 마이페이지 &gt; 프로젝트 문의내역과 알림으로 알려드립니다.</span><button class="btn primary" type="submit" id="go" disabled>문의 보내기</button></div></form></div>';
-    var msg = $('#msg'), go = $('#go'), ttl = $('#ttl');
-    var sync = function () { go.disabled = !msg.value.trim() || !ttl.value.trim(); };
-    msg.addEventListener('input', sync); ttl.addEventListener('input', sync);
+        '<form class="cs-compose" id="first" novalidate><label class="sr-only" for="msg">내용</label><textarea id="msg" placeholder="이 프로젝트에 대해 문의할 내용을 입력하세요. OmicsPharm 컨설턴트가 확인 후 답변드립니다."></textarea>' +
+          attRow('보내기') + '</form></div>';
+    var msg = $('#msg'), go = $('#go'), fname = '';
+    var sync = function () { go.disabled = !msg.value.trim() && !fname; };
+    msg.addEventListener('input', sync); bindAtt(function (n) { fname = n; sync(); });
     $('#first').addEventListener('submit', function (e) {
       e.preventDefault(); if (go.disabled) return;
-      var c = C.create({ type: '의뢰 프로젝트', svc: P.svc, ref: P.title, rid: P.id, pj: true, name: acc.name || me.s.email.split('@')[0], email: me.s.email, title: ttl.value.trim(), body: msg.value.trim() });
+      var c = C.create({ type: '의뢰 프로젝트', svc: P.svc, ref: P.title, rid: P.id, pj: true, name: acc.name || me.s.email.split('@')[0], email: me.s.email, title: P.title, body: msg.value.trim(), file: fname });
       OP.toast('문의를 보냈습니다.'); location.replace('mypage-consult.html?id=' + encodeURIComponent(c.id));
     });
   }
@@ -137,11 +146,11 @@
       $('#list').innerHTML = L.length ? '<div class="cs-list">' + L.map(function (o) {
         if (o.bot) { var q = o.bot;
           return '<a class="cs-row" href="mypage-consult.html?q=' + encodeURIComponent(q.id) + '"><span class="st">' + (q.answer ? '<span class="badge done">답변완료</span>' : '<span class="badge wait">답변대기</span>') + '</span>' +
-            '<span class="mid"><span class="t">' + esc(q.title) + '</span><span class="sub">챗봇 문의 · ' + esc(q.type) + ' · ' + esc((q.answer ? 'OmicsPharm: ' + q.answer.body : '나: ' + q.body).replace(/\s+/g, ' ')) + '</span></span>' +
+            '<span class="mid"><span class="t">' + esc(q.title) + '</span><span class="sub">챗봇 문의' + DV + esc(q.type) + DV + esc((q.answer ? 'OmicsPharm: ' + q.answer.body : '나: ' + q.body).replace(/\s+/g, ' ')) + '</span></span>' +
             '<span class="dt">' + C.ymd(o.at) + '</span></a>'; }
         var c = o.c, m = c.msgs[c.msgs.length - 1];
         return '<a class="cs-row" href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '"><span class="st">' + badge(c) + '</span>' +
-          '<span class="mid"><span class="t">' + esc(c.title) + '</span><span class="sub">' + (LK(c) ? '의뢰로 이어짐 · ' + esc((projOf(c.link) || {}).title || c.link) : esc(c.type) + (c.rid ? ' · ' + esc(c.ref) : '') + ' · ' + (m.by === 'admin' ? 'OmicsPharm 컨설턴트: ' : '나: ') + esc(m.text.replace(/\s+/g, ' '))) + '</span></span>' +
+          '<span class="mid"><span class="t">' + esc(c.title) + '</span><span class="sub">' + (LK(c) ? '의뢰로 이어짐' + DV + esc((projOf(c.link) || {}).title || c.link) : esc(c.type) + (c.rid ? DV + esc(c.ref) : '') + DV + (m.by === 'admin' ? 'OmicsPharm 컨설턴트: ' : '나: ') + esc((m.text || '첨부 ' + m.file).replace(/\s+/g, ' '))) + '</span></span>' +
           '<span class="dt">' + C.ymd(o.at) + '</span></a>';
       }).join('') + '</div>' : '<div class="empty"><b>' + (f === 'all' ? '상담 내역이 없습니다' : '해당하는 상담이 없습니다') + '</b><p>분석 의뢰·견적 등 궁금한 점은 Contact Us로 남겨주세요.</p></div>';
     };
@@ -164,7 +173,7 @@
       $('#n').textContent = A.length; $('#nw').textContent = A.filter(C.waiting).length;
       $('#tb').innerHTML = L.length ? L.map(function (c, i) {
         var m = !!OP.account(c.email);
-        return '<tr><td class="c">' + (L.length - i) + '</td><td class="t"><a href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">' + esc(c.title) + '</a>' + (LK(c) ? '<br><small>의뢰로 이어짐 · ' + esc((projOf(c.link) || {}).title || c.link) + '</small>' : c.rid ? '<br><small>관련 프로젝트 · ' + esc(c.ref) + '</small>' : '') + '</td><td>' + esc(c.type) + '</td><td>' + esc(c.name) + '</td><td class="mail">' + esc(c.email) + '</td>' +
+        return '<tr><td class="c">' + (L.length - i) + '</td><td class="t"><a href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">' + esc(c.title) + '</a>' + (LK(c) ? '<br><small>의뢰로 이어짐' + DV + esc((projOf(c.link) || {}).title || c.link) + '</small>' : c.rid ? '<br><small>관련 프로젝트' + DV + esc(c.ref) + '</small>' : '') + '</td><td>' + esc(c.type) + '</td><td>' + esc(c.name) + '</td><td class="mail">' + esc(c.email) + '</td>' +
           '<td class="c">' + (m ? '<span class="mem">회원</span>' : '비회원') + '</td><td class="c">' + badge(c) + '</td><td class="c">' + C.ymd(C.lastAt(c)) + '</td><td class="c">' + C.ymd(c.at) + '</td></tr>';
       }).join('') : '<tr><td colspan="9" class="mg-empty">검색 결과가 없습니다.</td></tr>';
     };
@@ -180,7 +189,7 @@
     var c = { name: '나', msgs: [{ at: q.at, by: 'user', text: q.body, file: q.file || '' }].concat(q.answer ? [{ at: q.answer.at, by: 'admin', text: q.answer.body }] : []) };
     $('#card').innerHTML =
       '<div class="mg-head"><a href="mypage-consult.html" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>' + esc(q.title) + '</h3>' + (q.answer ? '<span class="badge done">답변완료</span>' : '<span class="badge wait">답변대기</span>') + '</div>' +
-      '<div class="det"><p class="lead">챗봇 문의 · ' + esc(q.type + (q.svc ? ' · ' + q.svc : '')) + ' · 접수번호 ' + esc(q.id) + ' · ' + C.ymd(q.at) + ' 접수' + (q.ref ? ' · 관련 프로젝트 ' + esc(q.ref) : '') + '</p>' +
+      '<div class="det"><p class="lead">챗봇 문의' + DV + esc(q.type) + (q.svc ? DV + esc(q.svc) : '') + DV + '접수번호 ' + esc(q.id) + DV + C.ymd(q.at) + ' 접수' + (q.ref ? DV + '관련 프로젝트 ' + esc(q.ref) : '') + '</p>' +
         '<div><h4 style="margin-bottom:12px">상담 내용</h4>' + C.thread(c, 'user') + '</div>' +
         (q.answer ? '' : '<p class="lead">담당자가 내용을 확인하고 있습니다. 영업일 기준 1~2일 안에 답변드리겠습니다.</p>') +
         '</div>';
@@ -192,27 +201,23 @@
     var acc = OP.account(c.email), kv = function (k, v, w) { return '<div' + (w ? ' class="wide"' : '') + '><dt>' + k + '</dt><dd>' + v + '</dd></div>'; };
     var pj = C.isProj(c), done = !!LK(c); // done: 의뢰로 이어진 상담은 더 쓰지 않음
     $('#card').innerHTML =
-      '<div class="mg-head"><a href="' + (pj ? 'mypage-inquiry.html' : 'mypage-consult.html') + '" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>' + esc(c.title) + '</h3>' + badge(c) + '</div>' +
+      '<div class="mg-head"><a href="' + (pj ? 'mypage-inquiry.html' : 'mypage-consult.html') + '" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>' + esc(pj ? ((projOf(c.rid) || {}).title || c.ref) : c.title) + '</h3>' + badge(c) + '</div>' + // 프로젝트 문의는 프로젝트명이 제목
       '<div class="det">' +
-        (adm ? '<dl class="cs-info">' + kv('문의 유형', esc(c.type + (c.svc ? ' · ' + c.svc : ''))) + kv('접수번호', esc(c.id)) + kv('성함', esc(c.name)) + kv('이메일', esc(c.email)) +
-            kv('회원 여부', acc ? '회원 (' + (OP.ROLE_LABEL[acc.role] || '') + (acc.org ? ' · ' + esc(acc.org) : '') + ')' : '비회원 · 메일 링크로 답변 확인') + kv('접수일', C.ymdhm(c.at)) +
-            (c.ref ? kv('관련 프로젝트', c.rid && projHref(c.rid) ? '<a href="' + projHref(c.rid) + '" style="text-decoration:underline">' + esc(c.ref) + '</a>' : esc(c.ref), 1) : '') + (acc ? '' : kv('링크 유효기간', C.ymd(C.linkUntil(c)) + '까지' + (C.expired(c) ? ' (만료 · 문의자가 링크 화면에서 새로 받을 수 있음)' : ''), 1)) + '</dl>'
-           : '<p class="lead">' + esc(c.type + (c.svc ? ' · ' + c.svc : '')) + ' · 접수번호 ' + esc(c.id) + ' · ' + C.ymd(c.at) + ' 접수' + (c.rid && projHref(c.rid) ? ' · 관련 프로젝트 <a href="' + projHref(c.rid) + '" style="text-decoration:underline">' + esc(c.ref) + '</a>' : '') + '</p>') +
+        (adm ? '<dl class="cs-info">' + kv('문의 유형', esc(c.type) + (c.svc ? DV + esc(c.svc) : '')) + kv('접수번호', esc(c.id)) + kv('성함', esc(c.name)) + kv('이메일', esc(c.email)) +
+            kv('회원 여부', acc ? '회원 (' + (OP.ROLE_LABEL[acc.role] || '') + (acc.org ? DV + esc(acc.org) : '') + ')' : '비회원' + DV + '메일 링크로 답변 확인') + kv('접수일', C.ymdhm(c.at)) +
+            (c.ref ? kv('관련 프로젝트', c.rid && projHref(c.rid) ? '<a href="' + projHref(c.rid) + '" style="text-decoration:underline">' + esc(c.ref) + '</a>' : esc(c.ref), 1) : '') + (acc ? '' : kv('링크 유효기간', C.ymd(C.linkUntil(c)) + '까지' + (C.expired(c) ? ' (만료' + DV + '문의자가 링크 화면에서 새로 받을 수 있음)' : ''), 1)) + '</dl>'
+           : '<p class="lead">' + esc(c.type) + (c.svc ? DV + esc(c.svc) : '') + DV + '접수번호 ' + esc(c.id) + DV + C.ymd(c.at) + ' 접수' + (c.rid && projHref(c.rid) ? DV + '관련 프로젝트 <a href="' + projHref(c.rid) + '" style="text-decoration:underline">' + esc(c.ref) + '</a>' : '') + '</p>') +
         (pj ? C.preHTML(C.pre(c.rid, c.owner || c.email), adm ? 'admin' : 'user') : '') +
         '<div><h4 style="margin-bottom:12px">' + (pj ? '프로젝트 문의' : '상담 내용') + '</h4>' + C.thread(c, adm ? 'admin' : 'user') + '</div>' +
         (done ? linkedHTML(c) : '') +
         '<form class="cs-compose"' + (done ? ' hidden' : '') + ' id="send" novalidate><label class="sr-only" for="msg">' + (adm ? '답변' : '메시지') + '</label>' +
           '<textarea id="msg" placeholder="' + (adm ? '답변을 입력하세요. 문의자에게 보이고 메일로도 알림이 갑니다.' : '이어서 상담할 내용을 입력하세요.') + '"></textarea>' +
-          '<div class="att-row"><label class="cs-file" id="fbox" for="fin"><img src="assets/auth/ic-paperclip.svg" alt=""><span id="fname">파일 첨부</span><button type="button" id="fclr" hidden>삭제</button><input type="file" id="fin" accept=".jpg,.jpeg,.png,.pdf,.zip"></label><span>JPG, PNG, PDF, ZIP · 1개 · 30MB 이하</span><button class="btn primary" type="submit" id="go" disabled>' + (adm ? '답변 보내기' : '보내기') + '</button></div></form>' + // 아래 안내 문장은 빼고 버튼을 파일 첨부 줄 오른쪽으로 (2026-10-30)
+          attRow(adm ? '답변 보내기' : '보내기') + '</form>' + // 아래 안내 문장은 빼고 버튼을 파일 첨부 줄 오른쪽으로 (2026-10-30)
         // 상담 기록(컨설턴트 메모)은 뺌 (2026-10-30): 대화 자체가 기록. 실서비스 '처리내용'은 답변 칸이라 위 답변 입력이 그 자리
       '</div>';
-    var msg = $('#msg'), go = $('#go'), fin = $('#fin'), fname = '';
+    var msg = $('#msg'), go = $('#go'), fname = '';
     var can = function () { go.disabled = !msg.value.trim() && !fname; };
-    msg.addEventListener('input', can);
-    // 첨부 (파일만 보내도 됨)
-    var setFile = function (n) { fname = n; $('#fname').textContent = n || '파일 첨부'; $('#fbox').classList.toggle('has', !!n); $('#fclr').hidden = !n; can(); };
-    fin.addEventListener('change', function () { var f = fin.files[0]; if (f && f.size > 30 * 1024 * 1024) { OP.toast('30MB 이하 파일만 첨부할 수 있습니다.'); fin.value = ''; f = null; } setFile(f ? f.name : ''); });
-    $('#fclr').addEventListener('click', function (e) { e.preventDefault(); fin.value = ''; setFile(''); });
+    msg.addEventListener('input', can); bindAtt(function (n) { fname = n; can(); });
     $('#send').addEventListener('submit', function (e) {
       e.preventDefault(); if (!msg.value.trim() && !fname) return;
       C.add(c.id, adm ? 'admin' : 'user', msg.value.trim(), fname);
