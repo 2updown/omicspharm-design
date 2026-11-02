@@ -271,6 +271,15 @@
   }
   function req2(id) { return DEMO_REQS.filter(function (r) { return r.id === id; })[0]; }
   // 버전 3 → 4: 진행하던 기록은 그대로 두고 새 예시(0046·0047)만 추가
+  // 예시 의뢰와 번호가 겹친 직접 제출 의뢰는 0051부터 새 번호로 (2026-11-02, 예전 번호 계산 오류로 0048·0049와 겹침). 그 번호의 진행 상태는 예시 것이라 새로 시작
+  (function () {
+    var L = read('op.submitted', null); if (!L || !L.length) return;
+    var used = {}, demo = {}, ch = false; DEMO_REQS.forEach(function (r) { demo[r.id] = 1; });
+    var y = new Date().getFullYear(), max = 50;
+    L.forEach(function (x) { var m = /^PRJ-(\d{4})-(\d+)$/.exec(x.id || ''); if (m && +m[1] === y && !demo[x.id]) max = Math.max(max, +m[2]); });
+    L.forEach(function (x) { if (demo[x.id] || used[x.id]) { x.id = 'PRJ-' + y + '-' + ('000' + (++max)).slice(-4); ch = true; } used[x.id] = 1; });
+    if (ch) write('op.submitted', L);
+  })();
   function db() {
     var d = read(KEY, null);
     // 컨설턴트 의견 예시에서 기관명 → A사·B사 (기록은 그대로)
