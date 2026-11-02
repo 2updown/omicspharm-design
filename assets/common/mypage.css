@@ -391,7 +391,7 @@ span.tbtn { cursor:default; }
 .rp-tbl .row { display:flex; align-items:center; gap:8px; min-width:0; }
 .rp-tbl .fn { font-size:14px; color:var(--gray-500); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .rp-tbl .fn.on { color:#000; }
-.rp-tbl .rp-x { flex:none; width:24px; height:24px; color:var(--gray-500); }
+.rp-tbl .rp-x { width:24px; height:24px; } /* 모양은 공통 .op-fx (site.css) */
 .rp-tbl .rp-exw { display:flex; flex-direction:column; gap:6px; min-width:0; padding:4px 0; }
 /* 제출 후 박스 (2026-10-29) */
 .rp-fl { display:inline-flex; align-items:center; gap:6px; min-width:0; font-size:14px; color:#000; text-align:left; }
@@ -645,7 +645,7 @@ span.tbtn { cursor:default; }
 .pager img { width:20px; height:20px; }
 .rp-xl { display:flex; flex-direction:column; gap:4px; margin-top:6px; }
 .rp-steps .rp-xl li { counter-increment:none; display:flex; align-items:center; justify-content:flex-start; gap:6px; padding:0; border:0; font-size:13px; color:#000; list-style:none; }
-.rp-xl .rp-x { width:20px; height:20px; color:var(--gray-500); }
+/* .rp-xl .rp-x = 공통 .op-fx 20px */
 /* 관리 화면 탭 = 프로젝트 관리 밑줄 탭과 같은 모양 (2026-10-29) */
 .mg-tabw { border-bottom:1px solid var(--gray-200); }
 .mg-tabs { display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; }

@@ -41,7 +41,7 @@
 .pq-ft { padding:12px 16px 16px; border-top:1px solid var(--gray-200); }
 .pq-att { display:flex; align-items:center; gap:6px; margin:0 4px 8px; font-size:13px; color:var(--gray-600); }
 .pq-att[hidden] { display:none; }
-.pq-att button { border:0; background:none; color:var(--gray-400); cursor:pointer; font-size:16px; line-height:1; }
+
 .pq-in { display:flex; align-items:flex-end; gap:6px; padding:6px 6px 6px 8px; border:1px solid var(--gray-300); border-radius:12px; }
 .pq-in:focus-within { border-color:var(--teal-600); }
 .pq-in textarea { flex:1; min-width:0; max-height:120px; padding:7px 4px; border:0; outline:0; resize:none; font:inherit; font-size:15px; line-height:22px; }

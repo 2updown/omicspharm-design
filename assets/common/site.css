@@ -289,3 +289,9 @@ div.op-phone.bad input, div.op-phone.bad select { border-color:var(--op-red-600)
 .op-gate .gi.opt { border-color:#d4d4d4; color:#737373; } /* 선택 항목: 회색 아웃라인, 글자 gray 500 */
 .op-gate a.gi.opt:hover { background:#fafafa; border-color:#d4d4d4; color:#525252; } /* button_outline tertiary hovered: 배경 gray 50, 글자 gray 600 */
 .op-gate .gi .tag { padding:1px 7px; border:1px solid #525252; border-radius:8px; color:#525252; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; } /* badge_basic gray outline (605:41259) */
+
+/* 첨부 파일 빼기 X (공통, 2026-11-02): 파일을 고른 뒤 파일 이름 옆에 나오는 Phosphor X. '삭제' 글자 버튼 대신 모든 첨부에 같이 씀 */
+.op-fx { flex:none; display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; padding:0; border:0; border-radius:4px; background:none; color:var(--op-gray-500, #737373); cursor:pointer; }
+.op-fx::before { content:''; width:14px; height:14px; background:currentColor; -webkit-mask:url(../main/ic-x.svg) center/contain no-repeat; mask:url(../main/ic-x.svg) center/contain no-repeat; }
+.op-fx:hover { color:#000; background:var(--op-gray-100, #f5f5f5); }
+.op-fx[hidden] { display:none; }

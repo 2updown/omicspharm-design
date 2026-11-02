@@ -40,7 +40,7 @@
         '<div class="pq-prj" id="pqPrjBox"><small><b id="pqCat"></b><span id="pqNo"></span></small><strong id="pqPrj"></strong></div>' +
         '<div class="pq-log" id="pqLog" aria-live="polite"></div>' +
         '<div class="pq-ft">' +
-          '<div class="pq-att" id="pqAtt" hidden>' + CLIP.replace(/20/g, '14') + '<span></span><button type="button" aria-label="첨부 취소">×</button></div>' +
+          '<div class="pq-att" id="pqAtt" hidden>' + CLIP.replace(/20/g, '14') + '<span></span><button type="button" class="op-fx" aria-label="첨부 취소"></button></div>' +
           '<div class="pq-in"><button type="button" class="pq-ib" id="pqClip" aria-label="파일 첨부">' + CLIP + '</button><input type="file" id="pqFile" hidden>' +
             '<textarea id="pqTx" rows="1" placeholder="궁금한 점을 입력해주세요"></textarea>' +
             '<button type="button" class="pq-ib pq-send" id="pqSend" aria-label="보내기" disabled><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 16V4M5 9l5-5 5 5"/></svg></button></div>' +

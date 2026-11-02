@@ -8,10 +8,10 @@
 <!-- Contact Us (Figma 시안 없음 — 04_Resource/Component 토큰·컴포넌트로 구성). 2026-10-22 상담 흐름으로 변경
      비회원: 문의 유형·이름·이메일·제목·내용만 → 메일 링크(consult-view.html)로 답변 확인, 추가 상담은 회원가입 후. 회원: 마이페이지 > 상담내역으로 (assets/common/consult.js)
      ?type=quote|project|service|partner|data|etc  문의 유형 미리 선택(분석 견적일 때만 관련 분석 서비스 노출) / ?ref=제목 또는 프로젝트 번호  관련 프로젝트 표시 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261102o">
-<script src="assets/common/site.js?v=20261102o"></script>
-<script src="assets/common/flow.js?v=20261102o"></script>
-<script src="assets/common/consult.js?v=20261102o"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102p">
+<script src="assets/common/site.js?v=20261102p"></script>
+<script src="assets/common/flow.js?v=20261102p"></script>
+<script src="assets/common/consult.js?v=20261102p"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -67,7 +67,6 @@
   .file.has { border-style:solid; color:#000; }
   .file img { width:20px; height:20px; }
   .file span { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .file button { font-size:13px; color:var(--gray-500); }
   .file input { display:none; }
   /* 사진 첨부 미리보기 */
   .fprev { display:flex; align-items:flex-end; gap:8px; margin-top:8px; }
@@ -175,7 +174,7 @@
           <p class="help"><span>개인정보(주민등록번호 등)는 입력하지 마세요.</span><span id="count">0 / 2000</span></p>
         </div></div>
         <div class="field"><div class="flabel">첨부파일</div><div class="fbody">
-          <label class="file" id="fileBox" for="file"><img src="assets/auth/ic-paperclip.svg" alt=""><span id="fileName">파일 선택</span><button type="button" id="fileClear" hidden>삭제</button><input type="file" id="file" accept=".jpg,.jpeg,.png,.pdf,.zip"></label>
+          <label class="file" id="fileBox" for="file"><img src="assets/auth/ic-paperclip.svg" alt=""><span id="fileName">파일 선택</span><button type="button" class="op-fx" id="fileClear" aria-label="첨부 파일 빼기" hidden></button><input type="file" id="file" accept=".jpg,.jpeg,.png,.pdf,.zip"></label>
           <p class="help">JPG, PNG, PDF, ZIP 형식만 업로드 가능합니다. (최대 1개, 30MB)</p>
           <div class="fprev" id="fPrev" hidden><img id="fPrevImg" alt="첨부 사진 미리보기"></div>
         </div></div>
