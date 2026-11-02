@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261102u">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261102u">
-<script src="assets/common/site.js?v=20261102u"></script>
-<script src="assets/common/consult.js?v=20261102u"></script>
-<script src="assets/common/mypage.js?v=20261102u"></script>
-<script src="assets/common/flow.js?v=20261102u"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102v">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261102v">
+<script src="assets/common/site.js?v=20261102v"></script>
+<script src="assets/common/consult.js?v=20261102v"></script>
+<script src="assets/common/mypage.js?v=20261102v"></script>
+<script src="assets/common/flow.js?v=20261102v"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -249,6 +249,7 @@
   .lcard .row1 { display:flex; align-items:center; justify-content:space-between; }
   .lcard .dday { font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); }
   .lcard .row1 .dday { margin-left:auto; }
+  .lcard .row1 .ddel { margin-left:12px; }
   /* 할 일 (2026-10-27): 배지는 분석 서비스 + 프로젝트 단계만, 세부 상태는 오른쪽에 버튼(할 일) 또는 회색 글자 — 대시보드 최근 프로젝트와 같음 */
   .lcard .row1 .nxb { flex:none; height:32px; margin-left:12px; padding:0 12px; font-size:13px; line-height:18px; }
   .lcard .row1 .badges + .nxb, .lcard .row1 .badges + .nx { margin-left:auto; }
@@ -612,7 +613,7 @@
     var left = Math.max(0, Math.ceil((x.at + DRAFT_DAYS * 864e5 - Date.now()) / 864e5));
     return '<a class="lcard" href="omicspharm-register.html?draft=' + encodeURIComponent(x.id) + '"><div class="head">' +
       '<div class="row1"><div class="badges">' + (x.svc && x.svc !== '서비스 미선택' ? '<span class="badge tag">' + esc(x.svc) + '</span>' : '') + '<span class="badge draft">임시저장</span></div>' +
-        '<span class="dday">보관 D-' + String(left).padStart(2, '0') + '</span></div>' +
+        '<span class="dday">보관 D-' + String(left).padStart(2, '0') + '</span><button type="button" class="tbtn xs ddel" data-ddel="' + esc(x.id) + '">삭제</button></div>' + // 임시저장 의뢰서도 삭제 가능 (계약 전 삭제 정책과 같게, 2026-11-02)
       '<h3>' + esc(x.title) + '</h3></div>' +
       '<div class="info"><div class="meta"><span><em>작성 단계</em>' + (x.step || 1) + '/4단계</span><span><em>마지막 저장</em>' + hm(x.at) + '</span></div></div></a>'; // 보관 안내 문장은 뺌 (보관 D-day로 충분, 2026-11-02)
   };
@@ -662,6 +663,16 @@
     };
     $('#cq').addEventListener('submit', function (e) { e.preventDefault(); cq = $('#cqIn').value; cdraw(); });
     $('#cqIn').addEventListener('input', function () { if (!this.value && cq) { cq = ''; cdraw(); } });
+    // 임시저장 의뢰서 삭제: 카드 안 [삭제] → 확인 후 목록에서 지움 (의뢰 등록 화면의 '의뢰서 불러오기' 삭제와 같은 저장소)
+    $('#cList').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-ddel]'); if (!b) return; e.preventDefault(); e.stopPropagation();
+      var x = drafts.filter(function (d) { return d.id === b.dataset.ddel; })[0]; if (!x) return;
+      OP.my.confirm('의뢰서를 삭제하시겠습니까?', '"' + x.title + '" 의뢰서가 삭제되며 복구할 수 없습니다.', '삭제', function () {
+        drafts = drafts.filter(function (d) { return d.id !== x.id; });
+        try { localStorage.setItem('omicspharm:drafts', JSON.stringify(drafts)); } catch (err) {}
+        cdraw(); OP.toast('삭제되었습니다.');
+      });
+    });
     $('#cChips').addEventListener('click', function (e) { var b = e.target.closest('[data-st]'); if (b) { cst = b.dataset.st; cdraw(); history.replaceState(null, '', cst === '전체' ? 'mypage-project.html' : '?stage=' + encodeURIComponent(cst)); } });
     cdraw();
     slideTabs($('#cTabW'));
