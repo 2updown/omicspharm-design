@@ -854,9 +854,12 @@
     }).reverse().join('');
     // '클라이언트 결과보고서 n건 전달' 회색 줄은 뺌: 초록 머리에 전달 상태가 있음 (2026-10-29)
     var last = raw[raw.length - 1], cq = F.cReqOpen(s);
-    if (cq) h += '<div class="rp-creq"><b>클라이언트 수정 요청</b><em>' + ymd(cq.at) + '</em><p>' + esc(cq.note) + '</p></div>';
+    // 다시 보내기 버튼: 클라이언트 수정 요청이 있으면 주황 박스 안, 없으면 따로 한 줄 (안내 문장은 뺌, 2026-11-02)
+    var reAct = '<div class="rp-act"><button type="button" class="btn" data-rp="self">직접 수정해서 보내기</button><button type="button" class="btn" data-rp="ask">결과 재등록 요청</button></div>';
+    var canRe = !fin && !ask && last && last.sent;
+    if (cq) h += '<div class="rp-creq"><b>클라이언트 수정 요청</b><em>' + ymd(cq.at) + '</em><p>' + esc(cq.note) + '</p>' + (canRe ? reAct : '') + '</div>';
     if (!fin && ask) h += '<div class="rp-next"><div><b>분석파트너에게 결과 재등록을 요청했습니다.</b><p>' + ymd(s.reReq.at) + ' 요청<i class="dv" aria-hidden="true"></i>' + esc(s.reReq.note) + '</p></div></div>';
-    else if (!fin && last && last.sent) h += '<div class="rp-next"><div><b>보고서를 다시 보내야 하나요?</b><p>클라이언트가 수정을 요청하면 여기에 표시됩니다. 직접 고칠 수 있으면 [직접 수정해서 보내기], 분석을 다시 해야 하면 [결과 재등록 요청]을 눌러주세요.</p></div><div class="rp-act"><button type="button" class="btn" data-rp="self">직접 수정해서 보내기</button><button type="button" class="btn" data-rp="ask">결과 재등록 요청</button></div></div>';
+    else if (canRe && !cq) h += '<div class="rp-next"><div><b>보고서를 다시 보내야 하나요?</b></div>' + reAct + '</div>';
     // 클라이언트 만족도 평가: 지금은 컨설턴트만 봄 (분석파트너 공개는 미정). 별점·후기는 프로젝트별로 모아 두고 나중에 매칭·AI에 활용
     if (fin) h += s.rate ? '<div class="rp-rate"><div class="rp-rh"><b>클라이언트 만족도 평가</b><span class="rp-stars" aria-label="별점 ' + s.rate.star + '점">' + [1, 2, 3, 4, 5].map(function (i) { return '<img src="assets/project/ic-star' + (i <= s.rate.star ? '-fill' : '') + '.svg" alt="">'; }).join('') + '</span><em>' + ymd(s.rate.at) + ' 제출</em></div>' + (s.rate.text ? '<p>' + esc(s.rate.text) + '</p>' : '<p class="none">남긴 의견이 없습니다.</p>') + '<span class="rp-note">컨설턴트만 볼 수 있습니다.</span></div>'
       : '<div class="rp-rate"><div class="rp-rh"><b>클라이언트 만족도 평가</b></div><p class="none">' + (s.rateSkip ? '클라이언트가 평가를 건너뛰었습니다. (' + ymd(s.rateSkip) + ')' : '아직 평가가 등록되지 않았습니다.') + '</p></div>';
