@@ -215,7 +215,7 @@
             (c.ref ? kv('관련 프로젝트', c.rid && projHref(c.rid) ? '<a href="' + projHref(c.rid) + '" style="text-decoration:underline">' + esc(c.ref) + '</a>' : esc(c.ref), 1) : '') + (acc ? '' : kv('링크 유효기간', C.ymd(C.linkUntil(c)) + '까지' + (C.expired(c) ? ' (만료' + DV + '문의자가 링크 화면에서 새로 받을 수 있음)' : ''), 1)) + '</dl>'
            : '<p class="lead">' + esc(c.type) + (c.svc ? DV + esc(c.svc) : '') + DV + '접수번호 ' + esc(c.id) + DV + C.ymd(c.at) + ' 접수' + (c.rid && projHref(c.rid) ? DV + '관련 프로젝트 <a href="' + projHref(c.rid) + '" style="text-decoration:underline">' + esc(c.ref) + '</a>' : '') + '</p>') +
         (pj ? C.preHTML(C.pre(c.rid, c.owner || c.email), adm ? 'admin' : 'user') : '') +
-        '<div><h4 style="margin-bottom:12px">' + (pj ? '프로젝트 문의' : '상담 내용') + '</h4>' + C.thread(c, adm ? 'admin' : 'user') + '</div>' +
+        '<div>' + (pj ? '' : '<h4 style="margin-bottom:12px">상담 내용</h4>') + C.thread(c, adm ? 'admin' : 'user') + '</div>' + // 프로젝트 문의는 제목 없이 대화만 (2026-11-02)
         (done ? linkedHTML(c) : '') +
         '<form class="cs-compose"' + (done ? ' hidden' : '') + ' id="send" novalidate><label class="sr-only" for="msg">' + (adm ? '답변' : '메시지') + '</label>' +
           '<textarea id="msg" placeholder="' + (adm ? '답변을 입력하세요. 문의자에게 보이고 메일로도 알림이 갑니다.' : '이어서 상담할 내용을 입력하세요.') + '"></textarea>' +
