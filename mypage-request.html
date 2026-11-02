@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261102za">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261102za">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261102za">
-<script src="assets/common/site.js?v=20261102za"></script>
-<script src="assets/common/consult.js?v=20261102za"></script>
-<script src="assets/common/mypage.js?v=20261102za"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102zd">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261102zd">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261102zd">
+<script src="assets/common/site.js?v=20261102zd"></script>
+<script src="assets/common/consult.js?v=20261102zd"></script>
+<script src="assets/common/mypage.js?v=20261102zd"></script>
 <script src="assets/common/svc-spec.js?v=20261030a"></script>
-<script src="assets/common/flow.js?v=20261102za"></script>
+<script src="assets/common/flow.js?v=20261102zd"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -405,7 +405,9 @@
   .qm-tbl th { position:sticky; top:0; z-index:1; padding:10px 8px; background:var(--gray-50); border-bottom:1px solid var(--gray-200); font-weight:500; text-align:center; white-space:nowrap; }
   .qm-tbl td { padding:12px 8px; border-bottom:1px solid var(--gray-200); text-align:center; color:var(--gray-700); word-break:keep-all; overflow-wrap:anywhere; }
   .qm-tbl td.org { font-weight:600; color:#000; text-align:left; } .qm-tbl th:nth-child(2) { text-align:left; }
-  .qm-tbl td.sv span { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; max-width:240px; margin:0 auto; } /* 분석 서비스가 많으면 2줄까지, 넘치면 … (2026-11-02) */
+  .qm-tbl td.sv span { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; width:330px; margin:0 auto; } /* 분석 서비스 7개까지 2줄 안에 (330px). 그 이상은 … (2026-11-02) */
+  .qmail .box.qm2.qmp { max-width:1120px; } /* 견적 제안 보내기: 표라서 넓게 (2026-11-02) */
+  .qm-tbl td:nth-child(2), .qm-tbl td:nth-child(3), .qm-tbl td:nth-child(4) { white-space:nowrap; }
   .qm-tbl td.ml { word-break:break-all; } .qm-tbl td.st { white-space:nowrap; color:var(--gray-500); } .qm-tbl tr.was td.st { color:var(--teal-700); }
   .qm-tbl input[type=checkbox] { width:18px; height:18px; accent-color:var(--teal-600); vertical-align:middle; }
   .qm-sum:empty { display:none; } /* 견적 제안 보내기(직접 고르기)는 AI 요약 줄 없음 */
@@ -1003,7 +1005,7 @@
   // plain = 견적 제안 보내기 (2026-11-02): AI 비교 없이 인증 분석파트너 목록에서 직접 골라 견적제안. 미리 체크 없음
   function mailModal(s, plain) {
     var KEY = ['단백체', '대사체', '유전체', '전사체', 'Olink', '바이오의약품', '기타']; // 의뢰 등록과 같은 7개 (2026-11-02 기타 추가)
-    var svcName = function (x) { return x === '바이오의약품' ? '바이오의약품 특성 분석' : x === 'Olink' ? 'Olink 분석' : x + ' 분석'; };
+    var svcName = function (x) { return x === '바이오의약품' ? '바이오의약품·ADC' : x === 'Olink' ? 'Olink 분석' : x + ' 분석'; }; // 의뢰 등록의 서비스 이름 그대로 (2026-11-02)
     var TABS = plain ? [['all', '인증 분석파트너'], ['join', '참여 중']] : [['rec', '추천'], ['info', '정보 부족'], ['join', '참여 중']];
     var GROUP = { rec: ['ok', 'chk', 'miss'], info: ['none', 'other'] };
     var AG = [], picked = {}, tab = plain ? 'all' : 'rec', q = { svc: '', kw: '' }, open = {}, busy = !plain && !aiRun();
@@ -1014,7 +1016,7 @@
     var m = document.createElement('div');
     m.className = 'op-confirm qmail'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', plain ? '견적 제안 보내기' : 'AI 분석파트너 매칭');
     // 2026-10-28 개편: 위(제목·검색·탭)와 아래(메시지·발송)는 고정, 가운데 목록만 스크롤. 카드는 기관명·실적 한 줄 + 칩(미지원·확인 필요 먼저, 맞는 값은 일부만) + 연락처 접기
-    m.innerHTML = '<div class="box qm2"><div class="qm-top">' +
+    m.innerHTML = '<div class="box qm2' + (plain ? ' qmp' : '') + '"><div class="qm-top">' +
       '<div class="qm-t"><h3>' + (plain ? '견적 제안 보내기' : '<img src="assets/common/ic-sparkle-fill.svg" alt="">AI 분석파트너 매칭') + '</h3><button type="button" class="qm-x" aria-label="닫기">×</button></div>' +
       '<div class="qm-f2"><select id="qmSvc" aria-label="분석 서비스"><option value="">분석 서비스 전체</option>' + KEY.map(function (k) { return '<option value="' + k + '">' + svcName(k) + '</option>'; }).join('') + '</select>' +
         '<form id="qmForm" class="qm-s"><input type="search" id="qmQ" placeholder="기관명, 담당자, 이메일 검색" aria-label="분석파트너 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form></div>' +
@@ -1061,7 +1063,7 @@
         var en = T.filter(function (x) { return !s.P[x.key]; });
         m.querySelector('#qmList').innerHTML = T.length ? '<table class="qm-tbl"><thead><tr><th><input type="checkbox" id="qmAll" aria-label="전체 선택"' + (en.length && en.every(function (x) { return picked[x.key]; }) ? ' checked' : '') + (en.length ? '' : ' disabled') + '></th><th>기관명</th><th>담당자</th><th>연락처</th><th>이메일</th><th>분석 서비스</th><th>상태</th></tr></thead><tbody>' +
           T.map(function (x) { var p = x.p, sent = s.P[p.key];
-            return '<tr' + (sent ? ' class="was"' : '') + '><td><input type="checkbox" value="' + p.key + '"' + (picked[p.key] ? ' checked' : '') + (sent ? ' disabled' : '') + ' aria-label="' + esc(p.org) + ' 선택"></td><td class="org">' + esc(p.org) + '</td><td>' + esc(p.name || '-') + '</td><td>' + esc(p.tel || '-') + '</td><td class="ml">' + esc(p.mail || '-') + '</td><td class="sv"><span title="' + (p.svc || []).map(function (k) { return esc(svcName(k)); }).join(', ') + '">' + (p.svc || []).map(function (k) { return esc(svcName(k)); }).join(', ') + '</span></td><td class="st">' + (sent ? '발송 ' + F.ymd(sent.at).slice(5) : '미발송') + '</td></tr>'; }).join('') +
+            return '<tr' + (sent ? ' class="was"' : '') + '><td><input type="checkbox" value="' + p.key + '"' + (picked[p.key] ? ' checked' : '') + (sent ? ' disabled' : '') + ' aria-label="' + esc(p.org) + ' 선택"></td><td class="org">' + esc(p.org) + '</td><td>' + esc(p.name || '-') + '</td><td>' + esc(p.tel || '-') + '</td><td class="ml">' + esc(p.mail || '-') + '</td><td class="sv"><span>' + (p.svc || []).map(function (k) { return esc(svcName(k)); }).join(', ') + '</span></td><td class="st">' + (sent ? '발송 ' + F.ymd(sent.at).slice(5) : '미발송') + '</td></tr>'; }).join('') +
           '</tbody></table>' : '<p class="qm-none">조건에 맞는 인증 분석파트너가 없습니다.</p>';
         sync(); return;
       }
