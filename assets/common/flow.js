@@ -149,7 +149,7 @@
     ['p-bio', 'p-met'].forEach(function (k, i) { var p = partner(k); S[r2.id].P[k] = { at: T0 - DAY * 3, status: 'sub', quote: genQuote(p, r2), subAt: T0 - DAY * (2 - i) }; });
     S[r3.id] = { st: 'sent', ok: T0 - DAY * 8.5, reqAt: T0 - DAY * 8, due: '2026-10-01', memo: '', P: {}, sentAt: T0 - DAY * 2, msg: OLDMSG[1] };
     [['p-gen', 1], ['p-omx', 1], ['p-bio', 0]].forEach(function (a, i) {
-      var p = partner(a[0]); S[r3.id].P[a[0]] = a[1] ? { at: T0 - DAY * 8, status: 'sub', quote: genQuote(p, r3), subAt: T0 - DAY * (6 - i), fwd: true }
+      var p = partner(a[0]); S[r3.id].P[a[0]] = a[1] ? { at: T0 - DAY * 8, status: 'sub', quote: genQuote(p, r3), subAt: T0 - DAY * (6 - i), fwd: a[0] === 'p-omx' } // 클라이언트에게 보내는 견적은 한 곳만 (2026-11-02)
         : { at: T0 - DAY * 8, status: 'dec', dec: { at: T0 - DAY * 7, why: '해당 기간 시퀀싱 장비 일정이 모두 차 있습니다.' } };
     });
     // 전달된 견적 하나는 수정 요청을 한 번 거친 것으로
@@ -201,6 +201,7 @@
     ['PRJ-2026-0037', 'PRJ-2026-0038', 'PRJ-2026-0039', 'PRJ-2026-0040', 'PRJ-2026-0041', 'PRJ-2026-0042'].forEach(function (k) { if (S[k]) { delete S[k].raw; delete S[k].rep; delete S[k].cReq; delete S[k].reReq; } });
     partDemo(S);
     var o = 'user01@example.test'; if (OP.account && OP.account(o)) OP.saveAccount(o, { bizOk: 0, bizOkName: '' }); // 0048 사업자등록증도 확인 전으로
+    try { localStorage.removeItem('op.svcAsk'); } catch (e) {} // 분석 서비스 정보 입력 요청도 처음 상태로 (2026-11-02)
     histDemo(S); repDemo(S); waitDemo(S); selfDemo(S); revDemo(S); ctDemo(S);
     return true;
   }
@@ -311,7 +312,7 @@
     pst: function (s, k) {
       var x = s.P[k]; if (!x) return null;
       if (s.st === 'matched' && x.status === 'sub') return s.pick === k ? '선정' : '미선정';
-      if (x.status === 'sub') return x.fwd && s.st === 'sent' ? '클라이언트 검토 중' : '제출 완료';
+      if (x.status === 'sub') { var cb = s.st === 'sent' && F.cqLast(s); return (cb ? cb.base === k : x.fwd && s.st === 'sent') ? '클라이언트 검토 중' : '제출 완료'; } // 클라이언트 견적의 기준 1곳만
       return { req: '작성 대기', draft: '임시저장', rev: '수정 요청', dec: '거절' }[x.status];
     },
     // 견적 마감일 변경 (2026-10-28, 컨설턴트). 마감일이 지나면 분석파트너는 새 견적을 제출할 수 없음 (수정 요청받은 견적은 제출 가능)

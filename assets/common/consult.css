@@ -46,13 +46,7 @@
 .cs-compose textarea:focus { outline:0; border-color:#00786e; box-shadow:0 0 0 3px #00786e33; }
 .cs-compose .row { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:13px; color:#737373; }
 /* 이어 쓰는 글 첨부 (2026-10-26): Contact Us 폼과 같은 규칙 (JPG·PNG·PDF·ZIP, 1개, 30MB) */
-.cs-file { display:inline-flex; align-items:center; gap:6px; max-width:100%; height:36px; padding:0 12px; border:1px dashed #d4d4d4; border-radius:8px; background:#fff; cursor:pointer; font-size:13px; color:#737373; }
-.cs-file:hover { border-color:#a3a3a3; }
-.cs-file.has { border-style:solid; color:#000; }
-.cs-file img { width:16px; height:16px; }
-.cs-file span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.cs-file .op-fx { margin-left:2px; } /* 첨부 빼기 = 공통 X (site.css .op-fx) */
-.cs-file input { display:none; }
+.cs-compose .att-row .op-file { width:280px; max-width:100%; } /* 파일 첨부 칸 = 공통 .op-file (Contact Us와 같음, 2026-11-02) */
 .cs-compose .att-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:12px; color:#a3a3a3; }
 .cs-compose .att-row #go { margin-left:auto; } /* 보내기 버튼 = 파일 첨부 줄 오른쪽 (2026-10-30) */
 

@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261102p">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261102p">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261102p">
-<script src="assets/common/site.js?v=20261102p"></script>
-<script src="assets/common/consult.js?v=20261102p"></script>
-<script src="assets/common/mypage.js?v=20261102p"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102q">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261102q">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261102q">
+<script src="assets/common/site.js?v=20261102q"></script>
+<script src="assets/common/consult.js?v=20261102q"></script>
+<script src="assets/common/mypage.js?v=20261102q"></script>
 <script src="assets/common/svc-spec.js?v=20261030a"></script>
-<script src="assets/common/flow.js?v=20261102p"></script>
+<script src="assets/common/flow.js?v=20261102q"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -82,8 +82,7 @@
   .qt .r { min-height:48px; padding:8px 0; border-bottom:1px solid var(--gray-200); font-size:14px; line-height:20px; }
   .qt .r.win { background:var(--teal-50); }
   .qt .r input[type=radio] { display:block; width:20px; height:20px; margin:0 auto 0 2px; accent-color:var(--teal-600); cursor:pointer; }
-  .qt .who b { display:block; font-size:16px; font-weight:500; line-height:22px; word-break:keep-all; overflow-wrap:anywhere; }
-  .qt .who .qn { margin-left:6px; padding:1px 6px; border-radius:6px; background:var(--gray-100); font-size:12px; font-weight:500; color:var(--gray-600); }
+  .qt .who b { display:flex; align-items:center; flex-wrap:wrap; gap:4px 6px; font-size:16px; font-weight:500; line-height:22px; word-break:keep-all; overflow-wrap:anywhere; } /* 이름과 배지 가운데 맞춤 (2026-11-02) */
   .qt .who span { font-size:12px; line-height:18px; color:var(--gray-500); }
   .qt .who .svcm { display:flex; align-items:center; gap:6px; margin-top:2px; font-size:12px; font-weight:500; line-height:18px; color:#fd4900; }
   .qt .who .svcm .tbtn { height:18px; font-size:12px; line-height:18px; }
@@ -1110,7 +1109,7 @@
       var x = s.P[k], p = F.partner(k), q = x.quote, sub = x.status === 'sub';
       return '<div class="r' + (s.pick === k ? ' win' : '') + '">' +
         (edit && sub && !F.cqList(s).length ? '<span><input type="radio" name="qpick" value="' + esc(k) + '" aria-label="' + esc(p.org) + ' 견적 선택"></span>' : '<span title="' + (x.fwd ? '클라이언트 견적의 기준 견적' : '') + '">' + (x.fwd ? '✓' : '') + '</span>') + // 고른 견적에 아래 [수정 요청]·[1차 견적서 작성] (2026-10-28)
-        '<div class="who"><b>' + esc(p.org) + (x.fwd ? ' <small class="qn">클라이언트 견적 기준</small>' : '') + '</b>' + (x.self || x.revN ? '<span>' + (x.self ? '<i class="src self">직접 신청</i>' : '') + (x.revN ? '수정 ' + x.revN + '회' : '') + '</span>' : '') + svcMiss(k) + '</div>' +
+        '<div class="who"><b>' + esc(p.org) + (x.fwd ? '<span class="badge done">클라이언트 견적 기준</span>' : '') + '</b>' + (x.self || x.revN ? '<span>' + (x.self ? '<i class="src self">직접 신청</i>' : '') + (x.revN ? '수정 ' + x.revN + '회' : '') + '</span>' : '') + svcMiss(k) + '</div>' +
         '<div class="st">' + badge(k) + '</div>' +
         '<div class="amt">' + (sub ? F.money(F.total(q).final) + (k === low ? '<span class="badge teal">최저가</span>' : '') + '<small class="mobv">VAT 포함</small>' : '--') + (sub ? '<span class="mob"><i class="dv" aria-hidden="true"></i>' + esc(q.weeks || '-') + '주</span>' : '') + '</div>' +
         '<div class="wk">' + (sub ? esc(q.weeks || '-') + '주' + (k === fast ? '<span class="badge teal">최단</span>' : '') : '--') + '</div>' +
