@@ -11,6 +11,15 @@
 .cs-thread li.usr .bub b { color:#404040; }
 .cs-thread .bub p { font-size:15px; line-height:1.65; color:#262626; white-space:pre-line; word-break:break-word; }
 .cs-thread .bub .att { display:inline-block; margin-top:8px; font-size:12px; color:#737373; }
+/* 첨부 (2026-11-02): 이미지 미리보기 + 파일 칩 */
+.cs-thread .bub .att-img { display:block; margin-top:10px; width:240px; max-width:100%; border-radius:8px; overflow:hidden; border:1px solid #e5e5e5; background:#fff; cursor:zoom-in; }
+.cs-thread .bub .att-img img { display:block; width:100%; height:auto; }
+.cs-thread .bub .att-file { display:flex; align-items:center; gap:8px; width:fit-content; max-width:100%; margin-top:8px; padding:8px 12px; border:1px solid #e5e5e5; border-radius:8px; background:#fff; font-size:13px; line-height:18px; color:#404040; cursor:pointer; }
+.cs-thread .bub .att-img + .att-file { margin-top:6px; }
+.cs-thread .bub .att-file > img { flex:none; width:18px; height:18px; }
+.cs-thread .bub .att-file span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.cs-thread .bub .att-file .dl { width:16px; height:16px; margin-left:4px; opacity:.6; }
+.cs-thread .bub .att-file:hover { border-color:#00786e; }
 .cs-thread time { flex:none; font-size:12px; line-height:16px; color:#a3a3a3; white-space:nowrap; }
 
 /* 의뢰 전 상담 (2026-10-27): 프로젝트 문의 맨 위 · 컨설턴트 의뢰 상세. 상담마다 접어 둠 */

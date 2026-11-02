@@ -42,6 +42,9 @@
     if (d2 && !d2.linkSet) { d2.linkSet = 1; d2.link = 'PRJ-2026-0046'; d2.linkedAt = d2.msgs[d2.msgs.length - 1].at + 36e5; write(L); }
     // 데모: 프로젝트 문의 3건 (2026-11-02, 한 번만). 제목 입력은 없고 프로젝트명이 제목
     if (!L.some(function (c) { return c.id === 'C-DEMO5'; })) { L = L.concat(seedPj()); write(L); }
+    // C-DEMO5는 첨부(이미지·파일)가 있는 긴 답변완료 대화로 (2026-11-02, 한 번만)
+    var d5 = L.filter(function (c) { return c.id === 'C-DEMO5'; })[0];
+    if (d5 && !d5.v2) { d5.v2 = 1; d5.msgs = seedPj()[0].msgs; d5.at = d5.msgs[0].at; write(L); }
     return L;
   }
   function seedPj() {
@@ -49,8 +52,12 @@
     var pj = function (id, rid, title, svc, email, name, msgs) { return { id: id, demo: true, pj: true, at: msgs[0].at, type: '의뢰 프로젝트', svc: svc, ref: title, rid: rid, name: name, email: email, owner: email, title: title, token: 'demo-' + id, linkAt: msgs[0].at, msgs: msgs, note: '' }; };
     return [
       pj('C-DEMO5', 'PRJ-2026-0046', '세포 배양액 분비 단백질 Label-free 정량 분석', '단백체 분석', cl, '홍길동', [
-        { at: now - DAY * 3, by: 'user', text: '견적서에 표준물질 구매 비용이 포함되어 있는지 궁금합니다. 별도라면 대략 어느 정도인지도 알려 주세요.' },
-        { at: now - DAY * 3 + H * 4, by: 'admin', text: '안녕하세요, OmicsPharm 컨설턴트입니다.\nLabel-free 정량은 표준물질이 따로 필요하지 않아 견적 금액에 추가 비용은 없습니다. 다른 궁금한 점이 있으면 여기에 남겨 주세요.' }]),
+        { at: now - DAY * 5, by: 'user', text: '견적서에 표준물질 구매 비용이 포함되어 있는지 궁금합니다. 별도라면 대략 어느 정도인지도 알려 주세요.' },
+        { at: now - DAY * 5 + H * 4, by: 'admin', text: '안녕하세요, OmicsPharm 컨설턴트입니다.\nLabel-free 정량은 표준물질이 따로 필요하지 않아 견적 금액에 추가 비용은 없습니다. 다른 궁금한 점이 있으면 여기에 남겨 주세요.' },
+        { at: now - DAY * 4, by: 'user', text: '시료를 보내기 전에 보관 상태를 확인받고 싶습니다. 12개 중 2개가 다른 시료보다 색이 붉은데, 분석에 문제가 없을까요?', file: '시료_보관상태.jpg', thumb: 'assets/consult/demo-sample.svg' },
+        { at: now - DAY * 4 + H * 3, by: 'admin', text: '사진 확인했습니다. 붉게 보이는 2개는 세포 잔해나 배지 성분이 섞였을 수 있어요.\n보내기 전에 원심분리로 상층액만 옮겨 주시면 됩니다. 전처리 방법을 정리한 안내서를 첨부드립니다.', file: '시료_전처리_안내.pdf' },
+        { at: now - DAY * 3, by: 'user', text: '안내서대로 원심분리 후 다시 나눠 담았습니다. 발송할 시료 목록도 함께 보내드립니다.', file: '발송_시료_목록.pdf' },
+        { at: now - DAY * 3 + H * 2, by: 'admin', text: '시료 목록 확인했습니다. 12개 모두 진행 가능하며, 분석파트너에게도 전달해 두었습니다.\n발송은 평일 오전에 아이스팩과 함께 보내 주세요. 수령되면 알림으로 알려드리겠습니다.' }]),
       pj('C-DEMO6', 'PRJ-2026-0036', '간암 조직 인산화 단백체 분석', '단백체 분석', cl, '홍길동', [
         { at: now - H * 20, by: 'user', text: '결과보고서를 영문으로도 받을 수 있을까요? 논문 투고에 쓰려고 합니다.', file: '투고_양식_가이드.pdf' }]),
       pj('C-DEMO7', 'PRJ-2026-0038', '대장암 환자 혈청 대사체 프로파일링', '대사체 분석', pa, '김파트너', [
@@ -73,7 +80,7 @@
     // Contact Us 제출 (비회원이면 메일 링크 발급, 회원이면 내 상담내역에 바로)
     create: function (o) {
       var s = OP.session && OP.session(), c = { id: 'C-' + Date.now().toString(36).toUpperCase(), at: Date.now(), type: o.type, svc: o.svc || '', ref: o.ref || '', rid: o.rid || '', pj: !!o.pj, name: o.name, email: o.email.toLowerCase(), title: o.title,
-        file: o.file || '', owner: s && s.email === o.email.toLowerCase() ? s.email : '', token: tok(), linkAt: Date.now(), msgs: [{ at: Date.now(), by: 'user', text: o.body, file: o.file || '' }], note: '' };
+        file: o.file || '', owner: s && s.email === o.email.toLowerCase() ? s.email : '', token: tok(), linkAt: Date.now(), msgs: [{ at: Date.now(), by: 'user', text: o.body, file: o.file || '', thumb: o.thumb || '' }], note: '' };
       return save(c);
     },
     // 프로젝트 문의 (2026-10-22): 그 프로젝트의 의뢰 클라이언트 · 견적 요청을 받은 분석파트너(선정 전까지, 선정되면 선정된 곳만)는
@@ -96,7 +103,7 @@
     linkable: function (email) { if (!OP.consult.PRE) return []; email = String(email || '').toLowerCase(); return all().filter(function (c) { return !c.link && !OP.consult.isProj(c) && (c.owner === email || c.email === email); }).sort(function (a, b) { return OP.consult.lastAt(b) - OP.consult.lastAt(a); }); },
     link: function (id, rid) { var c = get(id); if (!c) return null; c.link = rid; c.linkedAt = Date.now(); return save(c); },
     unlink: function (id) { var c = get(id); if (!c) return null; delete c.link; delete c.linkedAt; return save(c); },
-    add: function (id, by, text, file) { var c = get(id); if (!c) return null; c.msgs.push({ at: Date.now(), by: by, text: text, file: file || '' }); if (by === 'admin' && !c.owner) c.linkAt = Date.now(); return save(c); }, // 비회원은 답변 메일과 함께 링크가 새로 나가므로 유효기간도 그때부터 // file: 첨부 파일 이름 (이어 쓰는 글에도 첨부, 2026-10-26)
+    add: function (id, by, text, file, thumb) { var c = get(id); if (!c) return null; c.msgs.push({ at: Date.now(), by: by, text: text, file: file || '', thumb: thumb || '' }); if (by === 'admin' && !c.owner) c.linkAt = Date.now(); return save(c); }, // 비회원은 답변 메일과 함께 링크가 새로 나가므로 유효기간도 그때부터 // file: 첨부 파일 이름 (이어 쓰는 글에도 첨부, 2026-10-26)
     setNote: function (id, text) { var c = get(id); if (!c) return null; c.note = text; c.noteAt = Date.now(); return save(c); },
     // 만료된 링크 다시 받기: 같은 이메일의 상담마다 새 링크 (데모: 첫 번째 것을 돌려줌)
     renew: function (email) {
@@ -114,13 +121,21 @@
         return '<details><summary><span class="t">' + esc(c.title) + '</span><span class="d">' + ymd(c.at) + ' ~ ' + ymd(OP.consult.lastAt(c)) + DV + '대화 ' + c.msgs.length + '개</span></summary>' + OP.consult.thread(c, viewer) + '</details>';
       }).join('') + '</div>';
     },
+    // 첨부 (2026-11-02): 이미지는 미리보기, 그 외는 파일 칩. 실제 서비스에서는 눌러서 원본 보기·내려받기 (데모는 이름만 저장)
+    attHTML: function (m) {
+      if (!m.file) return '';
+      var ext = (m.file.split('.').pop() || '').toLowerCase(), img = /^(jpe?g|png)$/.test(ext);
+      var ic = img ? 'assets/project/ic-image.svg' : ext === 'pdf' ? 'assets/project/ic-file-pdf.svg' : 'assets/main/ic-file.svg';
+      return (img && m.thumb ? '<span class="att-img"><img src="' + esc(m.thumb) + '" alt="' + esc(m.file) + '"></span>' : '') +
+        '<span class="att-file" title="내려받기"><img src="' + ic + '" alt=""><span>' + esc(m.file) + '</span><img class="dl" src="assets/project/ic-download-simple.svg" alt="내려받기"></span>';
+    },
     // 대화창. viewer = 'user' | 'admin'. 상담 기록(note)은 컨설턴트에게만
     thread: function (c, viewer) {
       return '<ol class="cs-thread">' + c.msgs.map(function (m) {
         var me = m.by === viewer;
         return '<li class="' + (m.by === 'admin' ? 'adm' : 'usr') + (me ? ' mine' : '') + '">' +
           (m.by === 'admin' ? '<span class="av" aria-hidden="true">O</span>' : '') +
-          '<div class="bub"><b>' + (m.by === 'admin' ? 'OmicsPharm 컨설턴트' : esc(c.name)) + '</b>' + (m.text ? '<p>' + esc(m.text) + '</p>' : '') + (m.file ? '<span class="att">첨부' + DV + esc(m.file) + '</span>' : '') + '</div>' +
+          '<div class="bub"><b>' + (m.by === 'admin' ? 'OmicsPharm 컨설턴트' : esc(c.name)) + '</b>' + (m.text ? '<p>' + esc(m.text) + '</p>' : '') + OP.consult.attHTML(m) + '</div>' +
           '<time>' + ymdhm(m.at) + '</time></li>';
       }).join('') + '</ol>';
     }

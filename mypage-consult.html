@@ -10,13 +10,13 @@
        처리상태는 마지막 메시지로 자동(답변대기/답변완료), 처리내용(= 실서비스의 답변 입력 칸) → 대화의 답변 입력으로 바뀜. 답변은 문의자에게 보이고 메일로도 알림 (2026-10-30 정정)
      회원(클라이언트·분석파트너): 내 상담 목록(+ 챗봇 문의) → 대화 + 이어서 작성.
      2026-10-27: 프로젝트별 대화(?project=, pj)는 메뉴 '프로젝트 문의내역'(mypage-inquiry.html)에서 열리고 대화 화면만 여기를 씀. 의뢰에 연결된 상담(link)은 끝난 대화로 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261102b">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261102b">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261102b">
-<script src="assets/common/site.js?v=20261102b"></script>
-<script src="assets/common/consult.js?v=20261102b"></script>
-<script src="assets/common/mypage.js?v=20261102b"></script>
-<script src="assets/common/flow.js?v=20261102b"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102c">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261102c">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261102c">
+<script src="assets/common/site.js?v=20261102c"></script>
+<script src="assets/common/consult.js?v=20261102c"></script>
+<script src="assets/common/mypage.js?v=20261102c"></script>
+<script src="assets/common/flow.js?v=20261102c"></script>
 <script src="assets/common/projects-data.js?v=20261030a"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
@@ -104,11 +104,18 @@
   function attRow(label) {
     return '<div class="att-row"><label class="cs-file" id="fbox" for="fin"><img src="assets/auth/ic-paperclip.svg" alt=""><span id="fname">파일 첨부</span><button type="button" id="fclr" hidden>삭제</button><input type="file" id="fin" accept=".jpg,.jpeg,.png,.pdf,.zip"></label><span>JPG, PNG, PDF, ZIP' + DV + '1개' + DV + '30MB 이하</span><button class="btn primary" type="submit" id="go" disabled>' + label + '</button></div>';
   }
-  // 첨부 (파일만 보내도 됨). 파일 이름이 바뀌면 onFile(이름)
+  // 첨부 (파일만 보내도 됨). 파일이 바뀌면 onFile(이름, 이미지 미리보기)
+  // 데모: 이미지는 브라우저에서 줄인 미리보기(최대 480px)를 함께 저장해 대화에 보여 줌. 실제 서비스는 서버에 올린 원본 주소
   function bindAtt(onFile) {
     var fin = $('#fin');
-    var setFile = function (n) { $('#fname').textContent = n || '파일 첨부'; $('#fbox').classList.toggle('has', !!n); $('#fclr').hidden = !n; onFile(n); };
-    fin.addEventListener('change', function () { var f = fin.files[0]; if (f && f.size > 30 * 1024 * 1024) { OP.toast('30MB 이하 파일만 첨부할 수 있습니다.'); fin.value = ''; f = null; } setFile(f ? f.name : ''); });
+    var setFile = function (n, th) { $('#fname').textContent = n || '파일 첨부'; $('#fbox').classList.toggle('has', !!n); $('#fclr').hidden = !n; onFile(n, th || ''); };
+    var thumb = function (f, done) {
+      var u = URL.createObjectURL(f), im = new Image();
+      im.onload = function () { var k = Math.min(1, 480 / im.width), cv = document.createElement('canvas'); cv.width = im.width * k; cv.height = im.height * k; cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height); URL.revokeObjectURL(u); done(cv.toDataURL('image/jpeg', .75)); };
+      im.onerror = function () { done(''); }; im.src = u;
+    };
+    fin.addEventListener('change', function () { var f = fin.files[0]; if (f && f.size > 30 * 1024 * 1024) { OP.toast('30MB 이하 파일만 첨부할 수 있습니다.'); fin.value = ''; f = null; }
+      if (f && /^image\/(jpeg|png)$/.test(f.type)) thumb(f, function (th) { setFile(f.name, th); }); else setFile(f ? f.name : ''); });
     $('#fclr').addEventListener('click', function (e) { e.preventDefault(); fin.value = ''; setFile(''); });
   }
 
@@ -122,12 +129,12 @@
         C.preHTML(C.pre(P.id, me.s.email), 'user') +
         '<form class="cs-compose" id="first" novalidate><label class="sr-only" for="msg">내용</label><textarea id="msg" placeholder="이 프로젝트에 대해 문의할 내용을 입력하세요. OmicsPharm 컨설턴트가 확인 후 답변드립니다."></textarea>' +
           attRow('보내기') + '</form></div>';
-    var msg = $('#msg'), go = $('#go'), fname = '';
+    var msg = $('#msg'), go = $('#go'), fname = '', fthumb = '';
     var sync = function () { go.disabled = !msg.value.trim() && !fname; };
-    msg.addEventListener('input', sync); bindAtt(function (n) { fname = n; sync(); });
+    msg.addEventListener('input', sync); bindAtt(function (n, th) { fname = n; fthumb = th; sync(); });
     $('#first').addEventListener('submit', function (e) {
       e.preventDefault(); if (go.disabled) return;
-      var c = C.create({ type: '의뢰 프로젝트', svc: P.svc, ref: P.title, rid: P.id, pj: true, name: acc.name || me.s.email.split('@')[0], email: me.s.email, title: P.title, body: msg.value.trim(), file: fname });
+      var c = C.create({ type: '의뢰 프로젝트', svc: P.svc, ref: P.title, rid: P.id, pj: true, name: acc.name || me.s.email.split('@')[0], email: me.s.email, title: P.title, body: msg.value.trim(), file: fname, thumb: fthumb });
       OP.toast('문의를 보냈습니다.'); location.replace('mypage-consult.html?id=' + encodeURIComponent(c.id));
     });
   }
@@ -215,12 +222,12 @@
           attRow(adm ? '답변 보내기' : '보내기') + '</form>' + // 아래 안내 문장은 빼고 버튼을 파일 첨부 줄 오른쪽으로 (2026-10-30)
         // 상담 기록(컨설턴트 메모)은 뺌 (2026-10-30): 대화 자체가 기록. 실서비스 '처리내용'은 답변 칸이라 위 답변 입력이 그 자리
       '</div>';
-    var msg = $('#msg'), go = $('#go'), fname = '';
+    var msg = $('#msg'), go = $('#go'), fname = '', fthumb = '';
     var can = function () { go.disabled = !msg.value.trim() && !fname; };
-    msg.addEventListener('input', can); bindAtt(function (n) { fname = n; can(); });
+    msg.addEventListener('input', can); bindAtt(function (n, th) { fname = n; fthumb = th; can(); });
     $('#send').addEventListener('submit', function (e) {
       e.preventDefault(); if (!msg.value.trim() && !fname) return;
-      C.add(c.id, adm ? 'admin' : 'user', msg.value.trim(), fname);
+      C.add(c.id, adm ? 'admin' : 'user', msg.value.trim(), fname, fthumb);
       OP.toast(adm ? '답변을 보냈습니다.' : '메시지를 보냈습니다.');
       detail(c.id);
       var th = document.querySelector('.cs-thread li:last-child'); if (th) th.scrollIntoView({ block: 'center' });
