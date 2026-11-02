@@ -22,18 +22,14 @@
   .items { display:flex; flex-direction:column; gap:20px; }
   .item-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
   .item-head b { font-size:15px; font-weight:600; line-height:22px; }
-  .item-head button { font-size:13px; font-weight:500; color:var(--gray-500); text-decoration:underline; text-underline-offset:3px; }
   .item-head .tg { display:flex; align-items:center; gap:6px; min-width:0; text-align:left; font:inherit; color:inherit; text-decoration:none; }
   .item-head .tg img { width:20px; height:20px; flex:none; transition:transform .15s; }
   .item.fold .item-head .tg img { transform:rotate(-90deg); }
   .item-head .tg:hover b { color:var(--teal-700); }
   .item .sum { padding:12px 14px; border-top:2px solid #000; border-bottom:1px solid var(--gray-200); font-size:13px; line-height:20px; color:var(--gray-600); cursor:pointer; }
   .item .sum b { font-weight:600; color:#000; }
-  .card-head .fold-all { margin-left:auto; font-size:13px; font-weight:500; color:var(--gray-500); text-decoration:underline; text-underline-offset:3px; }
-  .card-head .fold-all:hover { color:var(--teal-700); }
+  .card-head .fold-all { margin-left:auto; } /* 모두 펼치기·복사·삭제 = button_text Type=text XS (링크형은 링크가 있을 때만, 2026-11-02) */
   .item-head .acts { display:flex; align-items:center; gap:12px; }
-  .item-head button[data-copy]:hover { color:var(--teal-700); }
-  .item-head button[data-del]:hover { color:var(--red-600); }
   /* 표 형식 입력 (내 정보 관리와 동일) */
   .tbl { border-top:2px solid #000; }
   .field { display:grid; grid-template-columns:200px 1fr; border-bottom:1px solid var(--gray-200); }
@@ -85,7 +81,7 @@
 
   <div class="main">
     <section class="card">
-      <div class="card-head"><h3>분석 서비스 정보<span class="cnt" id="cnt"></span></h3><button type="button" class="fold-all" id="foldAll" hidden></button></div>
+      <div class="card-head"><h3>분석 서비스 정보<span class="cnt" id="cnt"></span></h3><button type="button" class="tbtn xs fold-all" id="foldAll" hidden></button></div>
       <div class="op-ibox warn simple" id="askBox" hidden><p class="t"><span>OmicsPharm이 분석 서비스 정보 입력을 요청했습니다. 서비스별 세부 항목을 입력해 주세요.</span></p></div>
       <div class="op-ibox"><p class="t">등록한 서비스는 견적 확인과 OmicsPharm 컨설턴트의 프로젝트 매칭에 활용됩니다.</p>
         <ul><li>서비스를 고르면 그 서비스에서 지원하는 항목을 체크할 수 있습니다.</li>
@@ -165,7 +161,7 @@
     var sel = etc ? '기타' : o.svc, sp = SPEC[sel];
     var same = L.filter(function (x, j) { return j <= i && x.svc === o.svc && o.svc; }).length, dup = o.svc && L.filter(function (x) { return x.svc === o.svc; }).length > 1;
     var open = OPEN.has(o), sum = summary(o);
-    var h = '<div class="item' + (open ? '' : ' fold') + '" data-i="' + i + '"><div class="item-head"><button type="button" class="tg" data-tg aria-expanded="' + open + '"><img src="assets/find/ic-caret-down.svg" alt=""><b>서비스 ' + (i + 1) + (o.svc ? ' · ' + esc(o.svc) : '') + (dup ? ' · 수행 조건 ' + same : '') + '</b>' + (!o._snap ? '<span class="op-vchip">저장 전</span>' : o.svc && SPEC[o.svc] && !hasDetail(o) ? '<span class="op-vchip">세부 항목 미입력</span>' : '') + '</button><span class="acts">' + (o.svc ? '<button type="button" data-copy>복사</button>' : '') + '<button type="button" data-del>삭제</button></span></div>' +
+    var h = '<div class="item' + (open ? '' : ' fold') + '" data-i="' + i + '"><div class="item-head"><button type="button" class="tg" data-tg aria-expanded="' + open + '"><img src="assets/find/ic-caret-down.svg" alt=""><b>서비스 ' + (i + 1) + (o.svc ? ' · ' + esc(o.svc) : '') + (dup ? ' · 수행 조건 ' + same : '') + '</b>' + (!o._snap ? '<span class="op-vchip">저장 전</span>' : o.svc && SPEC[o.svc] && !hasDetail(o) ? '<span class="op-vchip">세부 항목 미입력</span>' : '') + '</button><span class="acts">' + (o.svc ? '<button type="button" class="tbtn xs" data-copy>복사</button>' : '') + '<button type="button" class="tbtn xs" data-del>삭제</button></span></div>' +
       (open ? '' : '<div class="sum" data-tg>' + sum + '</div>') +
       '<div class="tbl"' + (open ? '' : ' hidden') + '>' + row('서비스', true, chips(n + '-svc', SVC, sel) + '<input class="inp etc" data-k="etc" placeholder="서비스명 직접 입력" value="' + esc(etc) + '"' + (sel === '기타' ? '' : ' hidden') + '>');
     if (sp) {
