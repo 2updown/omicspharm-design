@@ -173,7 +173,7 @@
 .op-chat img { display:block; width:84px; height:84px; }
 .op-chat:hover { filter:brightness(.92); }
 .op-drawer-open .op-float { display:none; }
-@media (max-width:760px) {
+@media (max-width:640px) { /* 모바일 기준 640 (2026-11-02, 760에서 변경) */
   .op-float { right:16px; bottom:16px; gap:8px; }
   .op-chat, .op-chat img { width:64px; height:64px; }
   .op-top { width:44px; height:44px; }
@@ -203,7 +203,7 @@
   .op-gnb-login, .op-gnb-join { display:none; }
   .op-gnb-logo img { width:152px; height:16px; }
 }
-@media (max-width:760px) {
+@media (max-width:640px) { /* 본문 여백과 같은 기준 (2026-11-02, 760에서 변경) */
   .op-gnb, .op-footer { padding-left:16px; padding-right:16px; }
   .op-f-top { flex-direction:column; align-items:flex-start; gap:20px; }
   .op-f-bottom { flex-direction:column; align-items:flex-start; height:auto; gap:8px; }
