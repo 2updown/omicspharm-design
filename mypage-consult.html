@@ -10,13 +10,13 @@
        처리상태는 마지막 메시지로 자동(답변대기/답변완료), 처리내용(= 실서비스의 답변 입력 칸) → 대화의 답변 입력으로 바뀜. 답변은 문의자에게 보이고 메일로도 알림 (2026-10-30 정정)
      회원(클라이언트·분석파트너): 내 상담 목록(+ 챗봇 문의) → 대화 + 이어서 작성.
      2026-10-27: 프로젝트별 대화(?project=, pj)는 메뉴 '프로젝트 문의내역'(mypage-inquiry.html)에서 열리고 대화 화면만 여기를 씀. 의뢰에 연결된 상담(link)은 끝난 대화로 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261102zi">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261102zi">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261102zi">
-<script src="assets/common/site.js?v=20261102zi"></script>
-<script src="assets/common/consult.js?v=20261102zi"></script>
-<script src="assets/common/mypage.js?v=20261102zi"></script>
-<script src="assets/common/flow.js?v=20261102zi"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102zj">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261102zj">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261102zj">
+<script src="assets/common/site.js?v=20261102zj"></script>
+<script src="assets/common/consult.js?v=20261102zj"></script>
+<script src="assets/common/mypage.js?v=20261102zj"></script>
+<script src="assets/common/flow.js?v=20261102zj"></script>
 <script src="assets/common/projects-data.js?v=20261030a"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
@@ -159,7 +159,7 @@
         return '<a class="cs-row" href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '"><span class="st">' + badge(c) + '</span>' +
           '<span class="mid"><span class="t">' + esc(c.title) + '</span><span class="sub">' + (LK(c) ? '의뢰로 이어짐' + DV + esc((projOf(c.link) || {}).title || c.link) : esc(c.type) + (c.rid ? DV + esc(c.ref) : '') + DV + (m.by === 'admin' ? 'OmicsPharm 컨설턴트: ' : '나: ') + esc((m.text || '첨부 ' + m.file).replace(/\s+/g, ' '))) + '</span></span>' +
           '<span class="dt">' + C.ymd(o.at) + '</span></a>';
-      }).join('') + '</div>' : '<div class="empty"><b>' + (f === 'all' ? '상담 내역이 없습니다' : '해당하는 상담이 없습니다') + '</b><p>분석 의뢰·견적 등 궁금한 점은 Contact Us로 남겨주세요.</p></div>';
+      }).join('') + '</div>' : '<div class="empty"><b>' + (f === 'all' ? '상담 내역이 없습니다' : '해당하는 상담이 없습니다') + '</b><p>' + (me.s.role === 'partner' ? '궁금한 점은 Contact Us로 남겨주세요.' : '분석 의뢰, 견적 등 궁금한 점은 Contact Us로 남겨주세요.') + '</p></div>';
     };
     $('#chips').addEventListener('click', function (e) { var b = e.target.closest('[data-f]'); if (b) { f = b.dataset.f; draw(); } });
     draw();
@@ -211,7 +211,7 @@
       '<div class="mg-head"><a href="' + (pj ? 'mypage-inquiry.html' : 'mypage-consult.html') + '" aria-label="목록으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>' + esc(pj ? ((projOf(c.rid) || {}).title || c.ref) : c.title) + '</h3>' + badge(c) + '</div>' + // 프로젝트 문의는 프로젝트명이 제목
       '<div class="det">' +
         (adm ? '<dl class="cs-info">' + kv('문의 유형', esc(c.type) + (c.svc ? DV + esc(c.svc) : '')) + kv('접수번호', esc(c.id)) + kv('성함', esc(c.name)) + kv('이메일', esc(c.email)) +
-            kv('회원 여부', acc ? '회원 (' + (OP.ROLE_LABEL[acc.role] || '') + (acc.org ? DV + esc(acc.org) : '') + ')' : '비회원' + DV + '메일 링크로 답변 확인') + kv('접수일', C.ymdhm(c.at)) +
+            kv('회원 여부', acc ? (OP.ROLE_LABEL[acc.role] || '') + ' 회원' + (acc.org ? DV + esc(acc.org) : '') : '비회원' + DV + '메일 링크로 답변 확인') + kv('접수일', C.ymdhm(c.at)) +
             (c.ref ? kv('관련 프로젝트', c.rid && projHref(c.rid) ? '<a href="' + projHref(c.rid) + '" style="text-decoration:underline">' + esc(c.ref) + '</a>' : esc(c.ref), 1) : '') + (acc ? '' : kv('링크 유효기간', C.ymd(C.linkUntil(c)) + '까지' + (C.expired(c) ? ' (만료' + DV + '문의자가 링크 화면에서 새로 받을 수 있음)' : ''), 1)) + '</dl>'
            : '<p class="lead">' + esc(c.type) + (c.svc ? DV + esc(c.svc) : '') + DV + '접수번호 ' + esc(c.id) + DV + C.ymd(c.at) + ' 접수' + (c.rid && projHref(c.rid) ? DV + '관련 프로젝트 <a href="' + projHref(c.rid) + '" style="text-decoration:underline">' + esc(c.ref) + '</a>' : '') + '</p>') +
         (pj ? C.preHTML(C.pre(c.rid, c.owner || c.email), adm ? 'admin' : 'user') : '') +
