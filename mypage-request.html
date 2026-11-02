@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261102zf">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261102zf">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261102zf">
-<script src="assets/common/site.js?v=20261102zf"></script>
-<script src="assets/common/consult.js?v=20261102zf"></script>
-<script src="assets/common/mypage.js?v=20261102zf"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102zg">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261102zg">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261102zg">
+<script src="assets/common/site.js?v=20261102zg"></script>
+<script src="assets/common/consult.js?v=20261102zg"></script>
+<script src="assets/common/mypage.js?v=20261102zg"></script>
 <script src="assets/common/svc-spec.js?v=20261030a"></script>
-<script src="assets/common/flow.js?v=20261102zf"></script>
+<script src="assets/common/flow.js?v=20261102zg"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -385,6 +385,7 @@
   .qg { display:flex; flex-direction:column; gap:6px; }
   .qg-h { font-size:14px; font-weight:600; line-height:20px; }
   .qg-h b { font-weight:500; color:var(--gray-500); }
+  .qg-h .qg-l { display:inline-flex; align-items:center; gap:8px; cursor:pointer; } .qg-h .qg-cb { width:18px; height:18px; margin:0; accent-color:var(--teal-600); } /* 묶음 전체 선택 (2026-11-02) */
   .qg-h.ok { color:var(--teal-700); } .qg-h.miss { color:#ca0008; } .qg-h.none, .qg-h.other, .qg-h.unv { color:var(--gray-500); }
   .qr { display:grid; grid-template-columns:20px minmax(0,1fr) auto; align-items:start; gap:12px; padding:12px 14px; border:1px solid var(--gray-200); border-radius:10px; background:#fff; cursor:pointer; }
   .qr:hover { border-color:var(--teal-500, #00bba6); }
@@ -1071,14 +1072,19 @@
       var html = tab === 'join' || tab === 'all' ? (T.length ? '<div class="qg">' + T.map(function (x) { return row(x, x.cat); }).join('') + '</div>' : '')
         : GROUP[tab].map(function (c) {
             var G = T.filter(function (x) { return x.cat === c; }); if (!G.length) return '';
-            return '<div class="qg">' + '<p class="qg-h ' + c + '">' + CAT[c] + ' <b>' + G.length + '</b></p>' +
+            // 묶음 제목 앞 체크박스 = 그 묶음 안에서 아직 안 보낸 곳 전체 선택 (2026-11-02, B안). 다 보낸 묶음은 체크박스 없음
+            var SK = G.filter(function (x) { return !s.P[x.key]; }).map(function (x) { return x.key; });
+            var hd = CAT[c] + ' <b>' + G.length + '</b>';
+            return '<div class="qg">' + '<p class="qg-h ' + c + '">' + (SK.length ? '<label class="qg-l"><input type="checkbox" class="qg-cb" data-keys="' + SK.join(',') + '" aria-label="' + CAT[c] + ' 전체 선택">' + hd + '</label>' : hd) + '</p>' +
               G.map(function (x) { return row(x, c); }).join('') + '</div>';
           }).join('');
       m.querySelector('#qmList').innerHTML = html || '<p class="qm-none">' + { rec: '추천할 분석파트너가 없습니다.', info: '정보가 부족한 분석파트너가 없습니다.', join: '아직 참여 중인 분석파트너가 없습니다.', all: '조건에 맞는 인증 분석파트너가 없습니다.' }[tab] + '</p>';
       sync();
     };
     var keys = function () { return Object.keys(picked).filter(function (k) { return picked[k] && !s.P[k]; }); };
-    var sync = function () { var n = keys().length, b = m.querySelector('#qmSend'); b.disabled = !n; b.textContent = n ? '선택한 ' + n + '곳에 견적제안 발송' : '견적제안 발송'; };
+    var sync = function () {
+      [].forEach.call(m.querySelectorAll('.qg-cb'), function (g) { var K = g.dataset.keys.split(','), on = K.filter(function (k) { return picked[k]; }).length; g.checked = on === K.length; g.indeterminate = on > 0 && on < K.length; });
+      var n = keys().length, b = m.querySelector('#qmSend'); b.disabled = !n; b.textContent = n ? '선택한 ' + n + '곳에 견적제안 발송' : '견적제안 발송'; };
     // [다시 비교] 버튼 없음 (2026-10-29): 팝업을 열 때마다 최신 분석 서비스 정보로 다시 비교. 처음 한 번만 '비교 중' 표시
     var compare = function () {
       busy = true; draw();
@@ -1090,6 +1096,7 @@
     m.querySelector('#qmSvc').onchange = function () { q.svc = this.value; draw(); };
     m.querySelector('#qmForm').onsubmit = function (e) { e.preventDefault(); q.kw = m.querySelector('#qmQ').value.trim(); draw(); };
     m.querySelector('#qmList').onchange = function (e) {
+      if (e.target.classList.contains('qg-cb')) { var on = e.target.checked; e.target.dataset.keys.split(',').forEach(function (k) { picked[k] = on; var c = m.querySelector('#qmList .qr input[value="' + k + '"]'); if (c) c.checked = on; }); sync(); return; }
       if (e.target.id === 'qmAll') { [].forEach.call(m.querySelectorAll('#qmList tbody input[type=checkbox]:not(:disabled)'), function (c) { c.checked = e.target.checked; picked[c.value] = e.target.checked; }); sync(); return; }
       if (e.target.type === 'checkbox') { picked[e.target.value] = e.target.checked; var all = m.querySelector('#qmAll'); if (all) { var B = m.querySelectorAll('#qmList tbody input[type=checkbox]:not(:disabled)'); all.checked = B.length && [].every.call(B, function (c) { return c.checked; }); } sync(); }
     };
