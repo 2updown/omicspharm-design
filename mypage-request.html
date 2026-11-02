@@ -1002,7 +1002,7 @@
   // 미인증 분석파트너는 견적을 낼 수 없어 목록에서 제외하고 개수만 안내
   // plain = 견적 제안 보내기 (2026-11-02): AI 비교 없이 인증 분석파트너 목록에서 직접 골라 견적제안. 미리 체크 없음
   function mailModal(s, plain) {
-    var KEY = ['단백체', '대사체', '유전체', '전사체', 'Olink', '바이오의약품'];
+    var KEY = ['단백체', '대사체', '유전체', '전사체', 'Olink', '바이오의약품', '기타']; // 의뢰 등록과 같은 7개 (2026-11-02 기타 추가)
     var svcName = function (x) { return x === '바이오의약품' ? '바이오의약품 특성 분석' : x === 'Olink' ? 'Olink 분석' : x + ' 분석'; };
     var TABS = plain ? [['all', '인증 분석파트너'], ['join', '참여 중']] : [['rec', '추천'], ['info', '정보 부족'], ['join', '참여 중']];
     var GROUP = { rec: ['ok', 'chk', 'miss'], info: ['none', 'other'] };
