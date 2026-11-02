@@ -430,7 +430,7 @@ span.tbtn { cursor:default; }
 .rp-ih b { font-size:15px; font-weight:600; line-height:22px; }
 .rp-ih em { font-style:normal; font-size:13px; color:var(--gray-500); }
 .rp-ih .badge { margin-left:auto; }
-.rp-files { display:flex; flex-wrap:wrap; gap:6px 16px; max-height:124px; overflow-y:auto; } /* 제출한 파일이 많으면 5줄까지 보이고 스크롤 (2026-10-30) */
+.rp-files { display:flex; flex-wrap:wrap; gap:6px 16px; max-height:128px; overflow-y:auto; padding:2px 4px; margin:-2px -4px; } /* 버튼의 음수 여백 때문에 생기던 빈 스크롤바 없앰 (2026-11-02) */ /* 제출한 파일이 많으면 5줄까지 보이고 스크롤 (2026-10-30) */
 .rp-files li { list-style:none; display:flex; align-items:center; gap:4px; font-size:13px; line-height:20px; color:var(--gray-600); }
 .rp-files img { width:14px; height:14px; opacity:.6; }
 .rp-files button { display:inline-flex; align-items:center; gap:4px; padding:2px 4px; margin:-2px -4px; border-radius:6px; font:inherit; color:inherit; } .rp-files button:hover { color:var(--gray-900, #191919); text-decoration:underline; }

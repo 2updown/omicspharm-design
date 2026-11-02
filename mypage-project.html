@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261102h">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261102h">
-<script src="assets/common/site.js?v=20261102h"></script>
-<script src="assets/common/consult.js?v=20261102h"></script>
-<script src="assets/common/mypage.js?v=20261102h"></script>
-<script src="assets/common/flow.js?v=20261102h"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102i">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261102i">
+<script src="assets/common/site.js?v=20261102i"></script>
+<script src="assets/common/consult.js?v=20261102i"></script>
+<script src="assets/common/mypage.js?v=20261102i"></script>
+<script src="assets/common/flow.js?v=20261102i"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -446,7 +446,7 @@
     }
     var pid = new URLSearchParams(location.search).get('id');
     var dotd = function (v) { return v ? v.replace(/-/g, '.') : '-'; };
-    var dday = function (v) { var n = Math.round((new Date(v) - new Date(2026, 9, 1)) / 864e5); return n >= 0 ? '납기 D-' + String(n).padStart(2, '0') : '납기 ' + (-n) + '일 경과'; };
+    var dday = function (v) { var n = Math.ceil((new Date(v) - new Date(new Date().toDateString())) / 864e5) /* 오늘 기준 (클라이언트 화면과 같게, 2026-11-02) */; return n >= 0 ? '납기 D-' + String(n).padStart(2, '0') : '납기 ' + (-n) + '일 경과'; };
     var stBadge = function (x) { return '<span class="badge ' + (x.stage === '프로젝트 완료' ? 'fin' : 'state') + '">' + SG(x) + '</span>' + (!ADM && D.pWaiting(x) ? '<span class="badge wait">확인 대기</span>' : ''); };
     $('.toprow').hidden = true;
 
@@ -502,7 +502,7 @@
           '<div class="prow"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stBadge(x) + '</div>' +
             '<span class="reg">' + (PRE(x) ? '선정일 ' : '계약일 ') + dotd(x.contract) + '<i class="dv" aria-hidden="true"></i>프로젝트 번호 ' + esc(x.id) + '</span></div>' +
           '<div class="prow"><h2 class="ptitle"><a class="back" href="' + (OP.session().role === 'admin' ? 'mypage-request.html' : 'mypage-project.html') + '" aria-label="뒤로 가기" title="뒤로 가기"><img src="assets/detail/ic-caret-left.svg" alt=""></a>' + esc(x.title) + '</h2>' +
-            '<div class="pright"><div class="period"><b>' + (PRE(x) ? '희망완료일' : '납기일') + '</b><span>' + dotd(x.due) + '</span>' + (x.stage === '프로젝트 완료' ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div>' + OP.askBtn({ key: x.id, cat: OP.my.svcKo(x.svc), no: x.id, title: x.title }) + '</div></div>' +
+            '<div class="pright"><div class="period"><b>' + (PRE(x) ? '희망완료일' : '납기일') + '</b><span>' + dotd(x.due) + '</span>' + (x.stage === '프로젝트 완료' || (OP.flow.state(x.id).rep || []).length ? '' : '<em>' + dday(x.due).replace('납기 ', '') + '</em>') + '</div>' + OP.askBtn({ key: x.id, cat: OP.my.svcKo(x.svc), no: x.id, title: x.title }) + '</div></div>' +
         '</div>' +
         '<ol class="fsteps" aria-label="진행 단계" style="--n:' + PS.length + '">' + PS.map(function (t, i) { return '<li class="' + (i < k ? 'done' : i === k ? 'cur' : '') + '"' + (i === k ? ' aria-current="step"' : '') + '>' + t + '</li>'; }).join('') + '</ol>' +
         '<div class="ftodo ' + TODO[3] + '"><div><b>' + TODO[0] + '</b><p>' + TODO[1] + '</p></div>' + (TODO[2] ? '<div class="acts">' + (TODO[2] === '계약서 확인' && CS ? '<button type="button" class="btn primary" data-ct="partner">계약서 확인</button>' : '<a class="btn primary" href="#" data-soon="' + TODO[2] + '">' + TODO[2] + '</a>') + '</div>' : '') + '</div>' +
