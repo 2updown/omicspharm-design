@@ -859,9 +859,7 @@
           sec.rows.map(function (r) { return '<div><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl></section>';
       }).join('') +
     '</div>' +
-    // 승인 전(의뢰접수)에만 수정·삭제 (예시 의뢰는 제외). 승인 후 ~ 견적 협의는 [삭제](기록은 남김), 계약 진행 중은 컨설턴트 문의
-    (FS.st === 'review' && !FS.ok && !d.demo ? '<div class="pacts"><p>분석파트너의 견적이 선정되기 전까지 의뢰 내용을 수정하거나 삭제할 수 있습니다.</p>' +
-      '<div><button type="button" class="btn del" id="pDel">삭제</button><a class="btn primary" href="omicspharm-register.html?edit=' + encodeURIComponent(d.id) + '&t=' + Date.now() + '">수정하기</a></div></div>' : '') +
+    // 의뢰접수(컨설턴트 확인 중)에는 수정·삭제 없음 (2026-11-02). 의뢰확인부터 수정은 컨설턴트, 삭제는 계약 전까지 아래 [삭제]
     '</details>' +
     (F.canCancel(d.id) ? '<div class="pacts"><p>계약 전까지 프로젝트를 삭제할 수 있습니다. 삭제하면 견적을 요청받은 분석파트너에게 알림이 가고 프로젝트 찾기에서 내려갑니다.</p><div><button type="button" class="btn del" id="pCancel">삭제</button></div></div>'
       : FS.st === 'matched' && !FS.ct && !FS.cancel ? '<div class="pacts"><p>계약 진행 중에는 직접 삭제할 수 없습니다. 삭제가 필요하면 OmicsPharm 컨설턴트에게 문의해 주세요.</p><div>' + OP.askBtn({ key: d.id, cat: d.svc, no: d.id, title: d.title }) + '</div></div>' : '');
