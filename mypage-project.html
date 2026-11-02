@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261102q">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261102q">
-<script src="assets/common/site.js?v=20261102q"></script>
-<script src="assets/common/consult.js?v=20261102q"></script>
-<script src="assets/common/mypage.js?v=20261102q"></script>
-<script src="assets/common/flow.js?v=20261102q"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102s">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261102s">
+<script src="assets/common/site.js?v=20261102s"></script>
+<script src="assets/common/consult.js?v=20261102s"></script>
+<script src="assets/common/mypage.js?v=20261102s"></script>
+<script src="assets/common/flow.js?v=20261102s"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -253,6 +253,7 @@
   .lcard .row1 .nxb { flex:none; height:32px; margin-left:12px; padding:0 12px; font-size:13px; line-height:18px; }
   .lcard .row1 .badges + .nxb, .lcard .row1 .badges + .nx { margin-left:auto; }
   .lcard .row1 .nx { flex:none; margin-left:12px; font-size:13px; font-weight:500; line-height:18px; color:var(--gray-500); }
+  .lcard .row1 .dv + .nx { margin-left:0; } /* 모집 마감 | 임시저장 날짜 (2026-11-02) */
   .lcard h3 { font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
   .lcard .info { display:flex; flex-direction:column; gap:10px; }
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -435,7 +436,7 @@
     var QL = !ADM && OP.canQuote() ? OP.flow.inbox(OP.session().email).map(function (o) {
       // 삭제된 프로젝트 (2026-10-28): 원래 탭(견적 요청·견적 제출)에 그대로 두고 '프로젝트 삭제' 표시 → 누르면 목록에서 제거할지 묻는 모달
       var t = OP.flow.pstMe(o.s, OP.session().email), t0 = OP.flow.pst(o.s, OP.session().email); if (!Q_ST[t0] || o.x.hidden) return null;
-      return { kind: 'q', id: o.r.id, href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, title: o.r.title, client: o.r.org || '-', samples: o.r.samples || '-', stage: Q_ST[t0], pst: !o.s.cancel && /작성 대기|임시저장/.test(t) && OP.flow.dueOver(o.s) ? '모집 마감' : t, del: !!o.s.cancel, sub: !!o.x.subAt, due: o.s.due, at: o.x.at || o.r.at, self: o.x.self };
+      return { kind: 'q', id: o.r.id, href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, title: o.r.title, client: o.r.org || '-', samples: o.r.samples || '-', stage: Q_ST[t0], pst: !o.s.cancel && /작성 대기|임시저장/.test(t) && OP.flow.dueOver(o.s) ? '모집 마감' : t, del: !!o.s.cancel, sub: !!o.x.subAt, due: o.s.due, at: o.x.at || o.r.at, self: o.x.self, savedAt: o.x.status === 'draft' ? (o.x.savedAt || o.x.at) : 0 };
     }).filter(Boolean) : [];
     var routeOf = function (x) { var p = x.flow && OP.flow.state(x.id).P[OP.session().email]; return !!(p && p.self); }; // 직접 신청 = 프로젝트 찾기에서 직접 견적을 보낸 건
     var LIST_ST = ADM ? STAGES : ['견적 요청', '견적 제출'].concat(STAGES).concat(['미선정·거절']);
@@ -559,7 +560,7 @@
           var open = x.stage === '견적 요청' && !x.del, dl = Math.ceil((new Date(x.due + 'T23:59:59') - Date.now()) / 864e5);
           return '<a class="lcard' + (x.del ? ' gone' : '') + '" href="' + x.href + '"' + (x.del ? ' data-gone="' + esc(x.id) + '" data-title="' + esc(x.title) + '"' + (x.sub ? ' data-sub' : '') : '') + '><div class="head">' +
             '<div class="row1"><div class="badges"><span class="badge tag">' + esc(x.svc) + '</span><span class="badge ' + Q_SB[x.stage] + '">' + x.stage + '</span></div>' +
-              '<span class="dday">' + (open && x.due ? (dl < 0 ? '모집 마감' : '모집 마감 D-' + String(dl).padStart(2, '0')) : '') + '</span>' + nextHTML(Q_NX[x.pst]) +
+              '<span class="dday">' + (open && x.due ? (dl < 0 ? '모집 마감' : '모집 마감 D-' + String(dl).padStart(2, '0')) : '') + '</span>' + (x.pst === '임시저장' && x.savedAt ? (open && x.due ? '<i class="dv" aria-hidden="true"></i>' : '') + '<span class="nx">임시저장 ' + OP.flow.ymd(x.savedAt) + '</span>' : '') + nextHTML(Q_NX[x.pst]) + // 임시저장한 견적: 할 일 버튼 왼쪽에 저장일 (배지 대신 글자, 2026-11-02)
               '</div>' +
             '<h3>' + esc(x.title) + '</h3></div>' +
             '<div class="info"><div class="meta"><span class="route">' + (x.self ? '직접 신청' : 'OmicsPharm 매칭 요청') + '</span><span>' + esc(x.client) + '</span><span><em>샘플</em>' + esc(x.samples) + '개</span>' + (x.due ? '<span><em>모집기한</em>~' + dotd(x.due) + '</span>' : '') + '</div>' +

@@ -157,7 +157,7 @@
     // 분석파트너 데모: 0046은 임시저장, 0047은 제출 완료(컨설턴트 확인 전)
     var r4 = DEMO_REQS[3], r5 = DEMO_REQS[4], me = partner(ME_PARTNER);
     S[r4.id] = { st: 'quoting', ok: T0 - DAY * 2.5, reqAt: T0 - DAY * 2, due: iso(Date.now() + DAY * 12), memo: '', P: {} };
-    S[r4.id].P[ME_PARTNER] = { at: T0 - DAY * 2, status: 'draft', quote: genQuote(me, r4) };
+    S[r4.id].P[ME_PARTNER] = { at: T0 - DAY * 2, status: 'draft', quote: genQuote(me, r4), savedAt: T0 - DAY };
     S[r4.id].P['p-adc'] = { at: T0 - DAY * 2, status: 'sub', quote: genQuote(partner('p-adc'), r4), subAt: T0 - DAY };
     S[r5.id] = { st: 'quoting', ok: T0 - DAY * 5.5, reqAt: T0 - DAY * 5, due: '2026-10-12', memo: '절대정량이 가능한 기관 위주로 요청드립니다.', P: {} };
     S[r5.id].P[ME_PARTNER] = { at: T0 - DAY * 5, status: 'sub', quote: genQuote(me, r5), subAt: T0 - DAY * 3 };
@@ -165,13 +165,17 @@
     seed6(S);
     return { v: VER, S: S };
   }
-  // 6·7: 분석 진행(0036)·결과 수령(0035) 예시 + 0045의 B사 견적을 2차로(1차는 hist)
+  // 클라이언트 견적(㈜셀키에이아이 명의) 1건 만들기: 분석파트너 견적에 수수료를 붙인 것 (지금 방식, 2026-11-02)
+  function cqOf(k, r, rate, weeks) { var q = genQuote(partner(k), r, rate); q.supplier = F.SELLER; q.sale = ''; if (weeks) q.weeks = weeks; q.final = total(q).final; return q; }
+  function cqSet(s, list) { s.CQ = list.map(function (v, i) { return { n: i + 1, at: v.at, base: v.base, quote: v.quote, why: v.why || '', baseAmt: v.baseAmt || 0 }; }); s.sends = list.map(function (v, i) { return { at: v.at, keys: [v.base], cq: i + 1 }; }); s.sentAt = list[0].at; Object.keys(s.P).forEach(function (k) { s.P[k].fwd = k === list[list.length - 1].base; }); }
+  // 6·7: 분석 진행(0036)·결과 수령(0035) 예시 + 0045 = 하늬오믹스 견적으로 1차 → 일정 단축 요청으로 2차 (클라이언트 견적은 지금 방식으로 2026-11-02)
   function seed6(S) {
     var a = req2('PRJ-2026-0036'), b = req2('PRJ-2026-0035');
     if (!S[a.id]) {
       S[a.id] = { st: 'matched', ok: T0 - DAY * 29, reqAt: T0 - DAY * 28, due: '2026-09-15', memo: '', P: {}, sentAt: T0 - DAY * 20, pick: 'p-mlt', pickAt: T0 - DAY * 17,
         ct: { at: T0 - DAY * 12, due: '2026-12-04', client: { type: 'form' }, partner: { type: 'form' } } };
       S[a.id].P['p-mlt'] = { at: T0 - DAY * 28, status: 'sub', quote: genQuote(partner('p-mlt'), a), subAt: T0 - DAY * 22, fwd: true };
+      cqSet(S[a.id], [{ at: T0 - DAY * 20, base: 'p-mlt', quote: cqOf('p-mlt', a, 1.15) }]);
     }
     if (!S[b.id]) {
       S[b.id] = { st: 'matched', ok: T0 - DAY * 59, reqAt: T0 - DAY * 58, due: '2026-08-14', memo: '', P: {}, sentAt: T0 - DAY * 50, pick: ME_PARTNER, pickAt: T0 - DAY * 47,
@@ -179,15 +183,22 @@
         rep: [{ at: T0 - DAY * 6, files: ['분석결과보고서_국문_v1.pdf', '분석결과보고서_영문_v1.pdf', '결과이미지_v1.pdf', 'RawData.xlsx'] },
               { at: T0 - DAY * 1, files: ['분석결과보고서_국문_v2.pdf', '분석결과보고서_영문_v2.pdf', '결과이미지_v2.pdf', 'RawData.xlsx'], note: '요청하신 대로 그룹별 Boxplot을 추가하고, 통계 검정 방법을 Wilcoxon으로 바꿨습니다.' }] };
       S[b.id].P[ME_PARTNER] = { at: T0 - DAY * 58, status: 'sub', quote: genQuote(partner(ME_PARTNER), b), subAt: T0 - DAY * 52, fwd: true }; // 2026-10-28: 결과 재등록 요청을 분석파트너 데모 계정으로 볼 수 있게 세움분석센터로
+      cqSet(S[b.id], [{ at: T0 - DAY * 50, base: ME_PARTNER, quote: cqOf(ME_PARTNER, b, 1.15) }]);
     }
     var x = S['PRJ-2026-0045'] && S['PRJ-2026-0045'].P['p-omx'];
     if (x && x.quote && !x.hist) { var hq = genQuote(partner('p-omx'), req2('PRJ-2026-0045'), 1.06); hq.subAt = T0 - DAY * 4; x.hist = [{ quote: hq, at: T0 - DAY * 4 }]; x.ver2At = T0 - DAY; }
     histDemo(S);
+    var s45 = S['PRJ-2026-0045'], r45 = req2('PRJ-2026-0045');
+    if (s45 && x && !s45.CQ) {
+      delete s45.msg; delete x.why; // 예전 방식의 비교 안내 메시지·파트너 견적 수정 사유는 빼고, 사유는 클라이언트 견적 2차에
+      cqSet(s45, [{ at: T0 - DAY * 4, base: 'p-omx', quote: cqOf('p-omx', r45, 1.06 * 1.15, '8'), baseAmt: x.hist && x.hist[0] ? total(x.hist[0].quote).final : 0 },
+        { at: T0 - DAY, base: 'p-omx', quote: cqOf('p-omx', r45, 1.15), why: '클라이언트의 일정 단축 요청에 따라 기기 분석 단가와 소요 기간을 조정했습니다.' }]);
+    }
   }
   // 2차 견적 예시: 1차는 8주였고, 일정 단축 요청으로 단가·기간을 조정한 것으로 (이미 저장된 기록에도 채움)
   function histDemo(S) {
     var x = S['PRJ-2026-0045'] && S['PRJ-2026-0045'].P['p-omx'];
-    if (x && x.hist && x.hist[0] && !x.why) { x.hist[0].quote.weeks = '8'; x.why = '클라이언트의 일정 단축 요청에 따라 기기 분석 단가와 소요 기간을 조정했습니다.'; return true; }
+    if (x && x.hist && x.hist[0] && !x.why && !(S['PRJ-2026-0045'].CQ)) { x.hist[0].quote.weeks = '8'; x.why = '클라이언트의 일정 단축 요청에 따라 기기 분석 단가와 소요 기간을 조정했습니다.'; return true; }
   }
   // 보고서 에이전트 예시: 0036 = 분석파트너가 결과를 올려 AI 초안이 생성된 상태(컨설턴트 검토 대기), 0035 = 1·2차 결과를 보고서로 전달한 이력
   // 보고서 에이전트 예시는 새로고침(F5)하면 처음 상태로: 0036 = AI 초안 검토 대기, 0035 = 1차 전달 완료(클라이언트 검수 대기), 분석파트너 예시 0037~0039 = 결과 등록 전, 0040~0042 = 단계에 맞는 기록(partDemo)
@@ -408,7 +419,7 @@
     },
     // 파트너 저장·제출·거절
     partnerSave: function (id, k, quote, submit) {
-      return put(id, function (s) { var x = s.P[k]; if (!x) return; x.quote = quote; if (submit) { x.status = 'sub'; x.subAt = Date.now(); } else if (x.status === 'req') x.status = 'draft'; });
+      return put(id, function (s) { var x = s.P[k]; if (!x) return; x.quote = quote; if (submit) { x.status = 'sub'; x.subAt = Date.now(); } else { if (x.status === 'req') x.status = 'draft'; if (x.status === 'draft') x.savedAt = Date.now(); } }); // 임시저장 시각 (목록 카드에 표시, 2026-11-02)
     },
     // 임시저장 삭제: 요청받은 견적은 '작성 대기'로, 직접 신청한 견적은 신청 자체를 지움
     discard: function (id, k) { return put(id, function (s) { var x = s.P[k]; if (!x || x.status !== 'draft') return; if (x.self) delete s.P[k]; else { x.status = 'req'; delete x.quote; } }); },
@@ -430,7 +441,7 @@
       return put(id, function (s) {
         if (!s.CQ) s.CQ = F.cqList(s).map(function (v) { return { n: v.n, at: v.at, base: v.base, quote: v.quote, why: v.why || '' }; }); // 예전 데이터는 이어서 차수 매김
         var n = s.CQ.length + 1, at = Date.now();
-        s.CQ.push({ n: n, at: at, base: base, quote: quote, why: why || '' });
+        s.CQ.push({ n: n, at: at, base: base, quote: quote, why: why || '', baseAmt: s.P[base] && s.P[base].quote ? total(s.P[base].quote).final : 0 });
         Object.keys(s.P).forEach(function (k) { s.P[k].fwd = k === base; });
         s.st = 'sent'; s.sentAt = s.sentAt || at;
         s.sends = (s.sends || []).concat([{ at: at, keys: [base], cq: n }]);
