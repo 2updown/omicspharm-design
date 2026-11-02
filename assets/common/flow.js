@@ -212,7 +212,7 @@
     ['PRJ-2026-0037', 'PRJ-2026-0038', 'PRJ-2026-0039', 'PRJ-2026-0040', 'PRJ-2026-0041', 'PRJ-2026-0042'].forEach(function (k) { if (S[k]) { delete S[k].raw; delete S[k].rep; delete S[k].cReq; delete S[k].reReq; } });
     partDemo(S);
     var o = 'user01@example.test'; if (OP.account && OP.account(o)) OP.saveAccount(o, { bizOk: 0, bizOkName: '' }); // 0048 사업자등록증도 확인 전으로
-    try { localStorage.removeItem('op.svcAsk'); } catch (e) {} // 분석 서비스 정보 입력 요청도 처음 상태로 (2026-11-02)
+    try { localStorage.removeItem('op.svcAsk'); localStorage.removeItem('op.demoEdit'); } catch (e) {} // 분석 서비스 정보 입력 요청도 처음 상태로 (2026-11-02)
     histDemo(S); repDemo(S); waitDemo(S); selfDemo(S); revDemo(S); ctDemo(S);
     return true;
   }
@@ -309,7 +309,9 @@
   function put(id, fn) { var d = db(), s = d.S[id] || { st: 'review', P: {} }; fn(s); d.S[id] = s; save(d); return s; }
 
   // 의뢰 목록: 이 브라우저에서 제출된 의뢰(V4) + 예시 의뢰
-  function requests() { return ((OP.my && OP.my.projects()) || []).concat(DEMO_REQS).sort(function (a, b) { return b.at - a.at; }); }
+  // 예시 의뢰를 컨설턴트가 [수정하기]로 고친 내용 (op.demoEdit, 2026-11-02). 새로고침하면 지움
+  function demoReqs() { var de = read('op.demoEdit', {}); return DEMO_REQS.map(function (r) { var e = de[r.id]; return e ? Object.assign({}, r, { svc: e.svc, title: e.title, purpose: e.purpose, open: e.open, samples: e.samples, due: e.due, from: e.from, to: e.to, budget: e.budget, sections: e.sections, updatedAt: e.updatedAt }) : r; }); }
+  function requests() { return ((OP.my && OP.my.projects()) || []).concat(demoReqs()).sort(function (a, b) { return b.at - a.at; }); }
   function req(id) { return requests().filter(function (r) { return r.id === id; })[0] || null; }
 
   var F = {

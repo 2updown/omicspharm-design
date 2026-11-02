@@ -581,9 +581,10 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261102x">
-<script src="assets/common/site.js?v=20261102x"></script>
-<script src="assets/common/consult.js?v=20261102x"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102y">
+<script src="assets/common/site.js?v=20261102y"></script>
+<script src="assets/common/consult.js?v=20261102y"></script>
+<script src="assets/common/demo-forms.js?v=20261102y"></script>
 <script>if (!((OP.session() || {}).role === 'admin' && /[?&]edit=/.test(location.search))) OP.requireClient(); /* 클라이언트만 접근 (컨설턴트는 의뢰 수정(?edit=)만): 비로그인 → 로그인, 파트너 → 메인 */</script>
 </head>
 <body>
@@ -1318,6 +1319,11 @@
     d.ver=FORM_VER; d.form=collect(); d.form.id=null; // 수정하기에서 입력값을 그대로 다시 불러오기 위해 보관
     d.bizDoc=DOC;
     var ss=OP.session(), ADM=ss&&ss.role==='admin'; d.owner=EDIT&&EDIT.owner?EDIT.owner:(ss?ss.email:d.owner); // 컨설턴트가 수정해도 의뢰한 계정은 그대로
+    if(EDIT&&EDIT.demo){ // 예시 의뢰 수정: 제출 목록(op.submitted)이 아니라 op.demoEdit에 (번호 그대로)
+      d.id=EDIT.id; d.at=EDIT.at; d.updatedAt=Date.now(); d.demo=true; var de={}; try{ de=JSON.parse(localStorage.getItem('op.demoEdit')||'{}'); }catch(e){}
+      de[d.id]=d; try{ localStorage.setItem('op.demoEdit', JSON.stringify(de)); }catch(e){}
+      dirty=false; OP.flash('의뢰 내용이 수정되었습니다.'); location.href=(ADM?'mypage-request.html?id=':'mypage-project.html?id=')+encodeURIComponent(d.id); return;
+    }
     var fp=null; if(ss&&!ADM&&DOC&&DOC!==DOC_SAVED){ OP.saveAccount(ss.email,{bizDoc:DOC}); if(DOC_FILE) fp=OP.files.put('biz:acc:'+ss.email,DOC_FILE); } // 새로 올린 파일은 내 정보 관리에도 저장 (원본은 컨설턴트 확인용)
     try{ list=JSON.parse(localStorage.getItem('op.submitted')||'[]'); }catch(e){}
     var k=EDIT?list.findIndex(function(x){return x.id===EDIT.id}):-1;
@@ -1456,6 +1462,9 @@
     var id=new URLSearchParams(location.search).get('edit'); if(!id) return null;
     var L=[]; try{ L=JSON.parse(localStorage.getItem('op.submitted')||'[]'); }catch(e){}
     var d=L.filter(function(x){return x.id===id})[0];
+    // 예시 의뢰 (2026-11-02): 미리 만든 입력값(demo-forms.js)으로 열고, 고친 내용은 op.demoEdit에 따로 저장 (새로고침하면 예시는 처음 상태로)
+    if(!d && window.OP_DEMO_FORMS && OP_DEMO_FORMS[id]){ var de={}; try{ de=JSON.parse(localStorage.getItem('op.demoEdit')||'{}'); }catch(e){}
+      d=de[id]&&de[id].form?Object.assign({},de[id],{demo:true}):{ id:id, demo:true, ver:FORM_VER, form:OP_DEMO_FORMS[id], at:0, owner:'client@omicspharm.test' }; }
     if(!d || d.ver!==FORM_VER || !d.form){ OP.flash('의뢰를 찾을 수 없습니다.'); location.replace('mypage-project.html'); return null; }
     return d;
   })();
