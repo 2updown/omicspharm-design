@@ -234,6 +234,14 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
   // ctx = { key: 프로젝트 번호, cat: 분석 서비스, no: 프로젝트 번호, title }. 컨설턴트는 이 프로젝트의 상담 목록으로
   OP.askBtn = function (ctx) { OP.chatCtx = ctx; return '<button type="button" class="btn op-ask" data-chat><img src="assets/project/ic-chat-circle-dots.svg" alt="">문의하기</button>'; };
   OP.my = D;
+  // 상세 화면을 열면 그 프로젝트·문의를 가리키는 알림을 읽음으로 (2026-11-02). 알림 목록·대시보드·탭 N 어디서 확인하든 같은 읽음 기록(op.alarmRead)
+  // 프로젝트는 컨설턴트(request)·파트너 견적(quote)·상세(project)가 같은 번호라 번호만 비교
+  window.addEventListener('load', function () {
+    if (!OP.session() || !/mypage-(project|request|quote|consult|partners)\.html$/.test(location.pathname)) return;
+    var q = new URLSearchParams(location.search), v = q.get('id') || q.get('rid') || q.get('key') || q.get('q'); if (!v) return;
+    var ids = D.alarms().filter(function (a) { if (a.read || !a.href) return false; var m = /[?&](?:id|rid|key|q)=([^&#]+)/.exec(a.href); return m && decodeURIComponent(m[1]) === v; }).map(function (a) { return a.id; });
+    if (ids.length) D.markRead(ids);
+  });
   // AI Agent 띄우기 (2026-10-21: 전체 화면 페이지보다 지금 화면 위에 띄우는 쪽으로). 내용은 mypage-ai.html을 그대로 iframe으로
   OP.openAI = function (mode, opts) {
     // 2026-10-26 D안(inline = 마이페이지 본문 칸) 확정. overlay·under·panel은 ?ai= 비교용
