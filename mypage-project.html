@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261102e">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261102e">
-<script src="assets/common/site.js?v=20261102e"></script>
-<script src="assets/common/consult.js?v=20261102e"></script>
-<script src="assets/common/mypage.js?v=20261102e"></script>
-<script src="assets/common/flow.js?v=20261102e"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102g">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261102g">
+<script src="assets/common/site.js?v=20261102g"></script>
+<script src="assets/common/consult.js?v=20261102g"></script>
+<script src="assets/common/mypage.js?v=20261102g"></script>
+<script src="assets/common/flow.js?v=20261102g"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -509,7 +509,7 @@
         (x.flow && FS.ct ? '<section class="sec"><h3>계약서</h3>' + (OP.flow.contractListHTML(FS, ADM ? ['client', 'partner'] : ['partner'], { swap: ADM && x.stage === '분석 진행 중' }) +
           '') + '</section>' : '') + // 계약서 등록 전에는 섹션 없음 (위 안내 박스로 알림, 2026-10-28)
         '<div class="sections"><section class="sec"><h3>' + (PRE(x) ? '프로젝트 정보' : '프로젝트 및 계약 정보') + '</h3><dl class="kv">' + /* 계약 후: 계약 진행 때 입력한 최종 계약 금액·대금 지급 방법·기타까지 (2026-10-29) */
-          [['클라이언트', x.client]].concat(x.partner && OP.session().role === 'admin' ? [['분석파트너', x.partner]] : []).concat(x.flow && !ADM && FS.P[OP.session().email] ? [['경로', FS.P[OP.session().email].self ? '직접 신청' : 'OmicsPharm 매칭 요청']] : []) /* 견적 경로 (2026-10-28) */.concat(PRE(x) ? [['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['선정일', dotd(x.contract)]] : [['분석 서비스', x.svc], ['시료 수', x.samples + '개'], ['최종 계약 금액', x.amount + ' (VAT 별도)'], ['계약일', dotd(x.contract)], ['납기일', dotd(x.due)], ['대금 지급 방법', (x.flow && FS.ct && FS.ct.partner && FS.ct.partner.pay) || '-'], ['기타', (x.flow && FS.ct && FS.ct.partner && FS.ct.partner.etc) || '-']]) // 계약서 등록 전: 금액·계약일·납기일은 아직 없음
+          [['클라이언트', x.client]].concat(ADM && (x.partner || !x.flow) ? [['분석파트너', x.partner || OP.flow.partner(OP.flow.state(x.id).pick || OP.flow.ME_PARTNER).org /* 분석파트너 예시는 세움분석센터 (2026-11-02) */]] : []).concat(x.flow && !ADM && FS.P[OP.session().email] ? [['경로', FS.P[OP.session().email].self ? '직접 신청' : 'OmicsPharm 매칭 요청']] : []) /* 견적 경로 (2026-10-28) */.concat(PRE(x) ? [['분석 서비스', D.svcKo(x.svc)], ['시료 수', x.samples + '개'], ['선정일', dotd(x.contract)]] : [['분석 서비스', D.svcKo(x.svc)], ['시료 수', x.samples + '개'], ['최종 계약 금액', x.amount + ' (VAT 별도)'], ['계약일', dotd(x.contract)], ['납기일', dotd(x.due)], ['대금 지급 방법', (x.flow && FS.ct && FS.ct.partner && FS.ct.partner.pay) || '-'], ['기타', (x.flow && FS.ct && FS.ct.partner && FS.ct.partner.etc) || '-']]) // 계약서 등록 전: 금액·계약일·납기일은 아직 없음
             .map(function (r) { return '<div><dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd></div>'; }).join('') +
         '</dl></section></div>' +
         // 분석파트너: 제출한 견적서·의뢰 내용을 이 화면 안에서 (예전: 견적서 화면으로 이동하는 링크, 2026-10-28)

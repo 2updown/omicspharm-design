@@ -190,7 +190,7 @@
     if (x && x.hist && x.hist[0] && !x.why) { x.hist[0].quote.weeks = '8'; x.why = '클라이언트의 일정 단축 요청에 따라 기기 분석 단가와 소요 기간을 조정했습니다.'; return true; }
   }
   // 보고서 에이전트 예시: 0036 = 분석파트너가 결과를 올려 AI 초안이 생성된 상태(컨설턴트 검토 대기), 0035 = 1·2차 결과를 보고서로 전달한 이력
-  // 보고서 에이전트 예시는 새로고침(F5)하면 처음 상태로: 0036 = AI 초안 검토 대기, 0035 = 1차 전달 완료(클라이언트 검수 대기), 분석파트너 예시(0037~0042) = 결과 등록 전
+  // 보고서 에이전트 예시는 새로고침(F5)하면 처음 상태로: 0036 = AI 초안 검토 대기, 0035 = 1차 전달 완료(클라이언트 검수 대기), 분석파트너 예시 0037~0039 = 결과 등록 전, 0040~0042 = 단계에 맞는 기록(partDemo)
   // 다른 화면으로 이동하거나 계정을 바꿀 때는 그대로 둠 (전달 → 클라이언트 화면 확인처럼 이어서 볼 수 있게)
   // 2026-10-28: 예시 의뢰(DEMO_REQS)는 견적 진행 상태까지 전부 처음 값으로 다시 만듦. 직접 제출한 의뢰는 그대로 둠
   function repReset(S) {
@@ -198,7 +198,8 @@
     if (!nav || nav.type !== 'reload') return false;
     var n = seed().S;
     DEMO_REQS.forEach(function (r) { delete S[r.id]; if (n[r.id]) S[r.id] = n[r.id]; });
-    ['PRJ-2026-0037', 'PRJ-2026-0038', 'PRJ-2026-0039', 'PRJ-2026-0040', 'PRJ-2026-0041', 'PRJ-2026-0042'].forEach(function (k) { if (S[k]) { delete S[k].raw; delete S[k].rep; } });
+    ['PRJ-2026-0037', 'PRJ-2026-0038', 'PRJ-2026-0039', 'PRJ-2026-0040', 'PRJ-2026-0041', 'PRJ-2026-0042'].forEach(function (k) { if (S[k]) { delete S[k].raw; delete S[k].rep; delete S[k].cReq; delete S[k].reReq; } });
+    partDemo(S);
     var o = 'user01@example.test'; if (OP.account && OP.account(o)) OP.saveAccount(o, { bizOk: 0, bizOkName: '' }); // 0048 사업자등록증도 확인 전으로
     histDemo(S); repDemo(S); waitDemo(S); selfDemo(S); revDemo(S); ctDemo(S);
     return true;
@@ -244,6 +245,18 @@
     if (b && b.rep && !b.raw) { b.raw = b.rep.map(function (v, i) { return { at: v.at - DAY, files: i ? ['RawData_v2.xlsx', '수정사항_정리.docx'] : ['RawData.xlsx', 'SCFA_분석결과.docx'], ai: '결과보고서_AI초안_2026-0035_v' + (i + 1) + '.docx', pdf: v.files[0], sent: v.at, repN: i + 1 }; }); ch = true; }
     return ch;
   }
+  // 분석파트너 예시 0040~0042도 단계에 맞는 결과보고서 기록 (2026-11-02): 0040 보고서 등록 = AI 초안 검토 대기, 0041 보고서 검토 = 1차 전달 후 클라이언트 확인 중, 0042 완료 = 전달 + 최종 승인 + 만족도
+  function partDemo(S) {
+    var ch = false, at = function (k) { if (!S[k]) S[k] = { st: 'demo', P: {} }; if (!S[k].pick) S[k].pick = ME_PARTNER; return S[k]; };
+    var a = at('PRJ-2026-0040'), b = at('PRJ-2026-0041'), c = at('PRJ-2026-0042');
+    if (!a.raw) { a.raw = [{ at: T0 - DAY * 1, kind: 'ai', files: ['Olink_NPX_Data.xlsx', 'Olink_QC_Summary.csv'], ai: '결과보고서_AI초안_2026-0040_v1.docx' }]; ch = true; }
+    if (!b.raw) { var bf = ['WGS_변이분석_결과보고서_국문.pdf', 'WGS_Variant_Report_EN.pdf'];
+      b.raw = [{ at: T0 - DAY * 23, kind: 'pdf', files: bf, labs: ['국문 리포트', '영문 리포트'], sent: T0 - DAY * 21, repN: 1 }]; b.rep = [{ at: T0 - DAY * 21, files: bf.slice(), note: '' }]; ch = true; }
+    if (!c.raw) { var cf = ['펩타이드매핑_결과보고서_국문.pdf', 'Peptide_Mapping_Report_EN.pdf'];
+      c.raw = [{ at: T0 - DAY * 72, kind: 'pdf', files: cf, labs: ['국문 리포트', '영문 리포트'], sent: T0 - DAY * 70, repN: 1 }]; c.rep = [{ at: T0 - DAY * 70, files: cf.slice(), note: '' }];
+      c.fin = T0 - DAY * 66; c.rate = { star: 5, text: '시퀀스 커버리지 정리가 깔끔해서 내부 보고에 바로 쓸 수 있었습니다.', at: T0 - DAY * 66 }; ch = true; }
+    return ch;
+  }
   function req2(id) { return DEMO_REQS.filter(function (r) { return r.id === id; })[0]; }
   // 버전 3 → 4: 진행하던 기록은 그대로 두고 새 예시(0046·0047)만 추가
   function db() {
@@ -266,6 +279,7 @@
     if (d && selfDemo(d.S)) write(KEY, d);
     if (d && revDemo(d.S)) write(KEY, d);
     if (d && ctDemo(d.S)) write(KEY, d);
+    if (d && partDemo(d.S)) write(KEY, d);
     if (d && !repReset.done) { repReset.done = 1; if (repReset(d.S)) write(KEY, d); }
     d.X = d.X || []; return d;
   }

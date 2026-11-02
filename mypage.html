@@ -7,12 +7,12 @@
 <title>마이페이지 · OmicsPharm</title>
 <!-- 마이페이지 > 대시보드 (Figma 시안 없음 — 프로젝트 관리 화면과 같은 틀로 구성)
      진행 현황 / 최근 프로젝트 / 최근 알림 / 최근 문의. 데이터는 이 브라우저에서 제출한 의뢰·문의 기준 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261102e">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261102e">
-<script src="assets/common/site.js?v=20261102e"></script>
-<script src="assets/common/consult.js?v=20261102e"></script>
-<script src="assets/common/mypage.js?v=20261102e"></script>
-<script src="assets/common/flow.js?v=20261102e"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102g">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261102g">
+<script src="assets/common/site.js?v=20261102g"></script>
+<script src="assets/common/consult.js?v=20261102g"></script>
+<script src="assets/common/mypage.js?v=20261102g"></script>
+<script src="assets/common/flow.js?v=20261102g"></script>
 <style>
   /* 진행 현황: 단계별 개수 */
   .flow { display:grid; grid-template-columns:repeat(var(--n,5), minmax(0,1fr)); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; }
@@ -163,7 +163,7 @@
   var pipe = null;
   if (admin) {
     // 컨설턴트: 의뢰접수 ~ 프로젝트 완료 전 단계 (프로젝트 관리와 같은 단계)
-    var AS = F.requests().map(function (r) { return F.adminStage(r.id); }).concat(D.partnerProjects().filter(function (p) { return !p.flow; }).map(function (p) { return F.P2A[p.stage] || p.stage; }));
+    var AS = F.requests().map(function (r) { return F.adminStage(r.id); }).concat(D.partnerProjects().filter(function (p) { return !p.flow && p.stage !== '계약 진행 중'; }).map( /* 프로젝트 관리 목록과 같게 계약 진행 중 예시(0037)는 뺌 (2026-11-02) */function (p) { return F.P2A[p.stage] || p.stage; }));
     pipe = ['프로젝트 진행 현황', 'mypage-request.html', F.ADMIN_STAGES.map(function (t) {
       return [t, AS.filter(function (x) { return x === t; }).length, '?stage=' + encodeURIComponent(t)];
     })];
