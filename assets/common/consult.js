@@ -45,6 +45,14 @@
     // C-DEMO5는 첨부(이미지·파일)가 있는 긴 답변완료 대화로 (2026-11-02, 한 번만)
     var d5 = L.filter(function (c) { return c.id === 'C-DEMO5'; })[0];
     if (d5 && !d5.v2) { d5.v2 = 1; d5.msgs = seedPj()[0].msgs; d5.at = d5.msgs[0].at; write(L); }
+    // 한 사람당 프로젝트 하나에 대화 하나: 예시를 넣기 전에 직접 만든 같은 프로젝트 대화가 있으면 예시 대화에 합침 (2026-11-02)
+    var dup = false;
+    L.filter(function (c) { return c.demo && c.pj; }).forEach(function (d) {
+      L.filter(function (c) { return c !== d && !c.demo && c.rid === d.rid && (c.owner || c.email) === d.owner && OP.consult.isProj(c); }).forEach(function (c) {
+        d.msgs = d.msgs.concat(c.msgs).sort(function (a, b) { return a.at - b.at; }); c.gone = 1; dup = true;
+      });
+    });
+    if (dup) { L = L.filter(function (c) { return !c.gone; }); write(L); }
     return L;
   }
   function seedPj() {
