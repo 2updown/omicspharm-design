@@ -647,7 +647,7 @@
     $('#cUnread').innerHTML = '<span>확인하지 않은 견적서 <b>' + qN + '건</b>이 있습니다.</span><label><input type="checkbox" id="cOnly">미열람글만 보기</label>';
     $('#cOnly').addEventListener('change', function () { cOnly = this.checked; cdraw(); });
     var cdraw = function () {
-      var q = cq.trim().toLowerCase(), hit = function (x) { return !q || String((x.title || '') + ' ' + (x.id || '')).toLowerCase().indexOf(q) > -1; };
+      var q = cq.trim().toLowerCase(), hit = function (x) { return !q || String((x.title || '') + ' ' + (/^PRJ-/.test(x.id || '') ? x.id : '')).toLowerCase().indexOf(q) > -1; }; // 임시저장 의뢰서의 내부 번호(d+시각)는 검색에서 뺌 (2026-11-02)
       var B = (cOnly ? list.filter(function (x) { return newQN(x); }) : list).filter(hit); // 미열람글만 보기
       var DB = cOnly ? [] : drafts.filter(hit).sort(function (a, b) { return b.at - a.at; }); // 임시저장은 '전체'에도 포함 (맨 위)
       $('#cChips').innerHTML = ['전체'].concat(F.CLIENT_STEPS, [DR]).map(function (t) {
