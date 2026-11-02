@@ -60,7 +60,11 @@
 @media (max-width:640px) {
   .cs-thread { padding:16px 12px; gap:16px; }
   .cs-thread .bub { max-width:84%; }
-  .cs-thread time { display:none; }
+  /* 모바일: 보낸 시간은 말풍선 아래 작게 (2026-11-02, 숨김에서 변경) */
+  .cs-thread li { flex-wrap:wrap; row-gap:4px; }
+  .cs-thread time { flex-basis:100%; font-size:11px; }
+  .cs-thread li.mine time { text-align:right; }
+  .cs-thread li.adm:not(.mine) time { padding-left:44px; } .cs-thread li.adm.mine time { padding-right:44px; }
   .cs-info { grid-template-columns:1fr; }
   .cs-info dt { width:96px; padding:10px 12px; }
   .cs-info dd { padding:10px 12px; }
