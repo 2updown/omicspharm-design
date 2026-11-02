@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261102t">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261102t">
-<script src="assets/common/site.js?v=20261102t"></script>
-<script src="assets/common/consult.js?v=20261102t"></script>
-<script src="assets/common/mypage.js?v=20261102t"></script>
-<script src="assets/common/flow.js?v=20261102t"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102u">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261102u">
+<script src="assets/common/site.js?v=20261102u"></script>
+<script src="assets/common/consult.js?v=20261102u"></script>
+<script src="assets/common/mypage.js?v=20261102u"></script>
+<script src="assets/common/flow.js?v=20261102u"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -611,11 +611,10 @@
   var draftCard = function (x) {
     var left = Math.max(0, Math.ceil((x.at + DRAFT_DAYS * 864e5 - Date.now()) / 864e5));
     return '<a class="lcard" href="omicspharm-register.html?draft=' + encodeURIComponent(x.id) + '"><div class="head">' +
-      '<div class="row1"><div class="badges">' + (x.svc && x.svc !== '서비스 미선택' ? '<span class="badge tag">' + esc(x.svc) + '</span>' : '') + '</div>' +
-        '<span class="dday">보관 D-' + String(left).padStart(2, '0') + '</span><i class="dv" aria-hidden="true"></i><span class="nx">임시저장 ' + ymd(x.at) + '</span><span class="btn line nxb">이어서 작성</span></div>' + // 임시저장은 배지 대신 오른쪽 글자 + 할 일 버튼 (분석파트너 견적 카드와 같게, 2026-11-02)
+      '<div class="row1"><div class="badges">' + (x.svc && x.svc !== '서비스 미선택' ? '<span class="badge tag">' + esc(x.svc) + '</span>' : '') + '<span class="badge draft">임시저장</span></div>' +
+        '<span class="dday">보관 D-' + String(left).padStart(2, '0') + '</span></div>' +
       '<h3>' + esc(x.title) + '</h3></div>' +
-      '<div class="info"><div class="meta"><span><em>작성 단계</em>' + (x.step || 1) + '/4단계</span><span><em>마지막 저장</em>' + hm(x.at) + '</span></div>' +
-      '<p class="reg">저장일로부터 ' + DRAFT_DAYS + '일 동안 보관되며, 클릭하면 이어서 작성할 수 있습니다.</p></div></a>';
+      '<div class="info"><div class="meta"><span><em>작성 단계</em>' + (x.step || 1) + '/4단계</span><span><em>마지막 저장</em>' + hm(x.at) + '</span></div></div></a>'; // 보관 안내 문장은 뺌 (보관 D-day로 충분, 2026-11-02)
   };
 
   // ?id 없으면 프로젝트 관리 목록 (최근 제출 순). 클라이언트는 분석파트너 목록처럼 검색 + 총 건수 + 단계 칩(맨 끝 '임시저장')
