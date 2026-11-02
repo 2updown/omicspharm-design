@@ -123,7 +123,7 @@
   function compose(P) {
     var acc = OP.account(me.s.email) || {};
     $('#card').innerHTML =
-      '<div class="mg-head"><a href="mypage-inquiry.html" aria-label="프로젝트 문의내역으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>프로젝트 문의</h3></div>' +
+      '<div class="mg-head"><a href="mypage-inquiry.html" aria-label="프로젝트 문의내역으로"><img src="assets/detail/ic-caret-left.svg" alt=""></a><h3>' + esc(P.title) + '</h3></div>' + // 상세와 같게 프로젝트명이 제목 (2026-11-02)
       '<div class="det"><dl class="cs-info"><div class="wide"><dt>관련 프로젝트</dt><dd><a href="' + projHref(P.id) + '" style="text-decoration:underline">' + esc(P.title) + '</a> <span style="color:var(--gray-500)">(' + esc(P.svc) + DV + esc(P.id) + ')</span></dd></div>' +
         '<div class="wide"><dt>문의 유형</dt><dd>의뢰 프로젝트</dd></div></dl>' +
         C.preHTML(C.pre(P.id, me.s.email), 'user') +
