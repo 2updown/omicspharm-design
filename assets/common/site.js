@@ -432,7 +432,7 @@
   var FLOAT =
     '<div class="op-float">' +
       '<button type="button" class="op-top" aria-label="맨 위로"><img src="' + A + 'ic-arrow-up.svg" alt=""></button>' +
-      '<a class="op-chat" href="#" aria-label="상담 챗봇"><img src="' + A + 'fab.svg" alt=""></a>' +
+      // 챗봇 FAB(.op-chat)는 뺌 (2026-11-02): 기존 사이트 챗봇을 그대로 쓰고 이번 리뉴얼에서는 건드리지 않음
     '</div>';
 
   function render() {
