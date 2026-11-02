@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261102g">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261102g">
-<script src="assets/common/site.js?v=20261102g"></script>
-<script src="assets/common/consult.js?v=20261102g"></script>
-<script src="assets/common/mypage.js?v=20261102g"></script>
-<script src="assets/common/flow.js?v=20261102g"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102h">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261102h">
+<script src="assets/common/site.js?v=20261102h"></script>
+<script src="assets/common/consult.js?v=20261102h"></script>
+<script src="assets/common/mypage.js?v=20261102h"></script>
+<script src="assets/common/flow.js?v=20261102h"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -488,8 +488,12 @@
       if (ADM) TODO = {
         '계약 진행 중': ['견적이 확정되었습니다. 계약서를 등록해주세요.', '클라이언트와 분석파트너의 서명된 계약서 파일을 각각 올려 주세요.', '', 'warn'],
         '분석 진행 중': ['분석파트너가 분석을 진행하고 있습니다', '결과가 등록되면 알림으로 알려드립니다. 아래 결과보고서에서 검토할 수 있습니다.', '', 'gray'],
-        '보고서 등록': ['분석 결과가 등록되었습니다. 보고서를 검토해 클라이언트에게 전달해주세요.', '아래 결과보고서에서 확인한 뒤 전달할 수 있습니다. AI 보고서 생성으로 올린 결과는 AI 초안을 확인하고 수정할 수 있습니다.', '', 'warn']
+        '보고서 등록': ['분석 결과가 등록되었습니다. 보고서를 검토해 클라이언트에게 전달해주세요.', '아래 결과보고서에서 확인한 뒤 전달할 수 있습니다. AI 보고서 생성으로 올린 결과는 AI 초안을 확인하고 수정할 수 있습니다.', '', 'warn'],
+        // 보고서 검토·완료도 견적 중개 프로젝트(mypage-request.html)와 같은 문구 (2026-11-02)
+        '보고서 검토': ['클라이언트가 결과보고서를 검토하고 있습니다.', '클라이언트가 [최종 승인]을 누르면 프로젝트가 완료됩니다. 수정을 요청하면 아래 결과보고서에 표시됩니다.', '', 'gray'],
+        '프로젝트 완료': ['프로젝트가 완료되었습니다.', (OP.flow.state(x.id).fin ? D.ymd(OP.flow.state(x.id).fin) + ' 클라이언트 최종 승인' : '') + (OP.flow.state(x.id).rate ? ', 만족도 평가 등록' : ''), '', '']
       }[x.stage] || TODO;
+      if (ADM && !x.flow && OP.flow.cReqOpen(OP.flow.state(x.id)) && !OP.flow.state(x.id).reReq) TODO = ['클라이언트가 결과보고서 수정을 요청했습니다.', '아래 결과보고서에서 요청 내용을 확인하고 [직접 수정해서 보내기] 또는 [결과 재등록 요청]을 진행해주세요.', '', 'warn'];
       // 컨설턴트가 결과 재등록을 요청함 (2026-10-28): 결과 등록 칸이 다시 열림
       var RQ = x.flow && FS && !FS.fin && FS.reReq;
       if (RQ && !ADM) TODO = ['OmicsPharm이 결과 재등록을 요청했습니다', esc(RQ.note) + '\n아래에서 결과보고서를 다시 제출해 주세요.', '', 'warn'];
