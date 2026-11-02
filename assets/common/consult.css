@@ -51,7 +51,7 @@
 .cs-file.has { border-style:solid; color:#000; }
 .cs-file img { width:16px; height:16px; }
 .cs-file span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.cs-file button { font-size:12px; color:#737373; text-decoration:underline; }
+.cs-file button { margin-left:4px; } /* 첨부 지우기 = button_text XS (2026-11-02) */
 .cs-file input { display:none; }
 .cs-compose .att-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:12px; color:#a3a3a3; }
 .cs-compose .att-row #go { margin-left:auto; } /* 보내기 버튼 = 파일 첨부 줄 오른쪽 (2026-10-30) */

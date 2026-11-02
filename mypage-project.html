@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261102n">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261102n">
-<script src="assets/common/site.js?v=20261102n"></script>
-<script src="assets/common/consult.js?v=20261102n"></script>
-<script src="assets/common/mypage.js?v=20261102n"></script>
-<script src="assets/common/flow.js?v=20261102n"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102o">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261102o">
+<script src="assets/common/site.js?v=20261102o"></script>
+<script src="assets/common/consult.js?v=20261102o"></script>
+<script src="assets/common/mypage.js?v=20261102o"></script>
+<script src="assets/common/flow.js?v=20261102o"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -195,7 +195,7 @@
   /* 계약정보 */
   .kv .amt { font-size:16px; color:var(--teal-700); } .kv .sub { color:var(--gray-500); font-size:13px; }
   .kv .dday { margin-left:6px; font-style:normal; font-weight:600; color:var(--orange-600); }
-  .kv .lnk { margin-left:8px; font-size:13px; color:var(--teal-700); text-decoration:underline; }
+  .kv .lnk { margin-left:8px; vertical-align:middle; } /* button_text XS primary (2026-11-02) */
   /* 결과보고서 */
   .rnotice { padding:16px 20px; border-radius:8px; background:var(--gray-50); font-size:14px; line-height:22px; color:var(--gray-700); }
   .rnotice b { color:var(--teal-700); }
@@ -773,7 +773,7 @@
         (FS.ct.amt != null // 컨설턴트가 계약 정보에 입력한 금액 (2026-10-26). 예전 데이터는 견적 금액
           ? '<div><dt>최종 계약 금액</dt><dd><b class="amt">' + F.money(FS.ct.amt, FS.ct.cur) + '</b>' + (FS.ct.cur === 'KRW' ? ' <span class="sub">(공급가, VAT 별도)</span>' : '') + '</dd></div>'
           : '<div><dt>최종 계약 금액</dt><dd><b class="amt">' + F.money(t.final, q.cur) + '</b> <span class="sub">(공급가 ' + F.money(t.net, q.cur) + ' + VAT)</span></dd></div>') +
-        '<div><dt>계약 견적</dt><dd>' + lastCQ().n + '차 견적 (㈜셀키에이아이) <button type="button" class="lnk" data-doc-pick>견적서 보기</button></dd></div>' +
+        '<div><dt>계약 견적</dt><dd>' + lastCQ().n + '차 견적 (㈜셀키에이아이) <button type="button" class="tbtn xs primary lnk" data-doc-pick>견적서 보기</button></dd></div>' +
         '<div><dt>계약일</dt><dd>' + (FS.ct.date ? dot(FS.ct.date) : ymd(FS.ct.at)) + '</dd></div>' +
         '<div><dt>납기일</dt><dd>' + dot(DUE) + (FS.fin || REP.length ? '' : ' <em class="dday">' + dd(DUE) + '</em>') + '</dd></div>' +
         // 대금 지급 방법·기타: 클라이언트 쪽 계약 내용만 (분석파트너 쪽은 보이지 않음)
