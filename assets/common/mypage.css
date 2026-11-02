@@ -354,8 +354,8 @@ span.tbtn { cursor:default; }
 .rp-h { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .rp-h > .ai-lb:only-child { margin-left:auto; } /* 제목을 뺀 경우 라벨만 오른쪽 (2026-10-29) */
 .rp-h h3 { font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
-/* 보고서 에이전트 라벨: [AI 분석파트너 매칭] 버튼과 같은 그라데이션 (2026-10-29) */
-.ai-lb { display:inline-flex; align-items:center; gap:4px; font-size:14px; font-weight:700; line-height:20px; white-space:nowrap; }
+/* 보고서 에이전트 라벨: [AI 분석파트너 매칭] 버튼과 같은 그라데이션 (2026-10-29) · 16 Bold = Figma Body/Medium/B (2026-11-02) */
+.ai-lb { display:inline-flex; align-items:center; gap:4px; font-size:16px; font-weight:700; line-height:22px; white-space:nowrap; }
 .ai-lb span { background:linear-gradient(90deg, #00a070, #2f6bff); -webkit-background-clip:text; background-clip:text; color:transparent; }
 .ai-lb .ai-ic { flex:none; width:16px; height:16px; background:linear-gradient(135deg, #22c57e, #2f6bff); -webkit-mask:url(ic-sparkle-fill.svg) center/contain no-repeat; mask:url(ic-sparkle-fill.svg) center/contain no-repeat; }
 /* 분석파트너 결과보고서 등록 (기존 사이트 방식, 2026-10-29) */
@@ -374,7 +374,6 @@ span.tbtn { cursor:default; }
 .ai-tx .ai-car { flex:none; width:16px; height:16px; background:#2f6bff; -webkit-mask:url(../../assets/detail/ic-caret-right-20.svg) center/contain no-repeat; mask:url(../../assets/detail/ic-caret-right-20.svg) center/contain no-repeat; }
 .rp-aientry { display:flex; flex-direction:column; align-items:flex-start; gap:8px; padding:16px 20px; border:1px dashed var(--teal-500); border-radius:12px; } /* 버튼 왼쪽, 점선 색 (2026-10-29) */
 .rp-aientry p { font-size:13px; line-height:20px; color:var(--gray-500); }
-.rp-aientry .ai-lb { font-size:16px; line-height:24px; }
 .rp-ai-up { display:flex; flex-direction:column; align-items:flex-start; gap:10px; width:100%; margin-top:4px; }
 .rp-ai-up .rp-stage { width:100%; }
 /* 파일이 많아지면 (최대 30개) 6개 높이까지만 보이고 목록 안에서 스크롤 (2026-10-30) */
