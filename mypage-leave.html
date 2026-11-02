@@ -22,7 +22,7 @@
   .op-ibox li.strong { font-weight:600; text-decoration:underline; text-underline-offset:3px; }
   .op-ibox .rows { display:flex; flex-direction:column; gap:6px; width:100%; }
   .op-ibox .rows div { display:flex; align-items:center; gap:8px; min-width:0; font-size:14px; line-height:20px; }
-  .op-ibox .rows span { flex:none; height:22px; padding:0 8px; border-radius:4px; background:#fff; border:1px solid #ffc7c9; font-size:12px; line-height:20px; color:var(--gray-600); }
+  .op-ibox .rows .badge { flex:none; } /* 단계 = DS badge_basic tertiary (docs/status-badges.md, 2026-11-02) */
   .op-ibox .rows a { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#000; }
   .op-ibox .rows .more-n { color:var(--gray-500); }
   .op-ibox .rows a:hover { text-decoration:underline; }
@@ -174,9 +174,10 @@
     : partner ? OP.my.partnerProjects().filter(function (p) { return p.stage !== '프로젝트 완료'; }).map(function (p) { return { id: p.id, t: p.title, st: OP.my.pStage(p), h: 'mypage-project.html?id=' + p.id }; })
     : [];
 
+  var stCls = function (st) { var r = (OP.session() || {}).role; return (r === 'client' && /견적 확인|보고서 검토/.test(st)) || (r === 'partner' && st === '견적 요청') || (r === 'admin' && st === '의뢰접수') ? 'wait' : 'state'; }; // 보는 사람이 처리할 단계만 주황
   if (ING.length) {
     lock('진행 중인 프로젝트가 ' + ING.length + '건 있어 탈퇴할 수 없습니다.', partner ? '아래 프로젝트의 모든 절차(분석·결과 등록·보고서)가 완료되거나 관리자 문의 후 탈퇴할 수 있습니다.' : '계약 전(의뢰접수·의뢰승인·견적 확인) 프로젝트는 삭제하고, 계약 진행 중 이후 프로젝트는 모든 절차가 완료되거나 관리자 문의 후 탈퇴할 수 있습니다.',
-      '<div class="rows">' + ING.slice(0, 3).map(function (p) { return '<div><span>' + esc(p.st) + '</span><a href="' + p.h + '">' + esc(p.t) + '</a></div>'; }).join('') + (ING.length > 3 ? '<div class="more-n">외 ' + (ING.length - 3) + '건</div>' : '') + '</div>' +
+      '<div class="rows">' + ING.slice(0, 3).map(function (p) { return '<div><span class="badge ' + stCls(p.st) + '">' + esc(p.st) + '</span><a href="' + p.h + '">' + esc(p.t) + '</a></div>'; }).join('') + (ING.length > 3 ? '<div class="more-n">외 ' + (ING.length - 3) + '건</div>' : '') + '</div>' +
       '<div class="acts"><a class="btn" href="mypage-project.html">프로젝트 관리로 이동</a>' +
       '<a class="demo" href="?free=1">데모: 진행 중 프로젝트가 없는 상태로 보기</a></div>');
   }
