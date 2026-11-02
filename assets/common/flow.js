@@ -552,6 +552,9 @@
       if (role === 'admin') L.push({ id: 'f-del-' + x.id, k: '의뢰삭제', cat: 'project', pj: x.title, at: x.at, t: (x.org || '의뢰사') + '의 ' + x.title + ' 의뢰가 삭제되었습니다.', sub: x.keys.length ? '견적을 요청한 분석파트너 ' + x.keys.length + '곳에도 알림이 전달되었습니다.' : '', href: 'mypage-request.html' });
       if (role === 'partner' && x.keys.indexOf(ses.email) > -1) L.push({ id: 'f-del-' + x.id, k: '의뢰삭제', cat: 'project', pj: x.title, at: x.at, t: x.title + ' 프로젝트 의뢰가 취소되어 견적 요청이 종료되었습니다.', href: 'mypage-quote.html' });
     });
+    // 알림 id에 발생 시각을 붙임 (2026-11-02): 새로고침으로 예시가 처음 상태가 된 뒤 같은 일(수정 요청 등)을 다시 하면
+    // 순번이 같아 예전 읽음·탭 N 확인 기록에 걸려 N이 안 뜨던 문제
+    L.forEach(function (a) { a.id += '@' + a.at; });
     return L;
   };
 
