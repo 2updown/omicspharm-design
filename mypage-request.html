@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261102zd">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261102zd">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261102zd">
-<script src="assets/common/site.js?v=20261102zd"></script>
-<script src="assets/common/consult.js?v=20261102zd"></script>
-<script src="assets/common/mypage.js?v=20261102zd"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261102ze">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261102ze">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261102ze">
+<script src="assets/common/site.js?v=20261102ze"></script>
+<script src="assets/common/consult.js?v=20261102ze"></script>
+<script src="assets/common/mypage.js?v=20261102ze"></script>
 <script src="assets/common/svc-spec.js?v=20261030a"></script>
-<script src="assets/common/flow.js?v=20261102zd"></script>
+<script src="assets/common/flow.js?v=20261102ze"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -1053,10 +1053,11 @@
       var kw = q.kw.toLowerCase();
       var L = AG.filter(function (x) { var p = x.p; return (!q.svc || p.svc.indexOf(q.svc) > -1) && (!kw || [p.name, p.org, p.mail].join(' ').toLowerCase().indexOf(kw) > -1); });
       var N = { rec: 0, info: 0, join: 0, all: 0 }; L.forEach(function (x) { N[tabOf(x)]++; });
+      if (plain) N.all = L.length; // 견적 제안 보내기: 보낸 곳(답한 곳 포함)도 목록에 남기고 체크만 막음 (2026-11-02)
       m.querySelector('#qmTabs').innerHTML = TABS.map(function (b) { return '<button type="button" role="tab" data-tab="' + b[0] + '" aria-selected="' + (tab === b[0]) + '"' + (tab === b[0] ? ' class="on"' : '') + '>' + b[1] + ' <b>' + (busy ? '-' : N[b[0]]) + '</b></button>'; }).join('');
       m.querySelector('#qmDesc').textContent = DESC[tab]; m.querySelector('#qmDesc').hidden = !DESC[tab];
       if (busy) { m.querySelector('#qmList').innerHTML = '<p class="qm-none">의뢰 내용과 분석 서비스 정보를 비교하고 있습니다…</p>'; sync(); return; }
-      var T = L.filter(function (x) { return tabOf(x) === tab; });
+      var T = plain && tab === 'all' ? L.slice() : L.filter(function (x) { return tabOf(x) === tab; });
       if (tab === 'all') T.sort(function (a, b) { return a.p.org.localeCompare(b.p.org, 'ko'); });
       // 견적 제안 보내기: 예전 견적제안메일 발송 창처럼 표 + 전체 선택 (2026-11-02)
       if (tab === 'all') {
