@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261104a">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261104a">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261104a">
-<script src="assets/common/site.js?v=20261104a"></script>
-<script src="assets/common/consult.js?v=20261104a"></script>
-<script src="assets/common/mypage.js?v=20261104a"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261104b">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261104b">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261104b">
+<script src="assets/common/site.js?v=20261104b"></script>
+<script src="assets/common/consult.js?v=20261104b"></script>
+<script src="assets/common/mypage.js?v=20261104b"></script>
 <script src="assets/common/svc-spec.js?v=20261030a"></script>
-<script src="assets/common/flow.js?v=20261104a"></script>
+<script src="assets/common/flow.js?v=20261104b"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -775,8 +775,8 @@
   // 견적 마감일 변경 (2026-10-28): 작성 대기·임시저장 분석파트너에게 알림. 지난 날짜로는 바꿀 수 없음
   document.addEventListener('click', function (e) {
     if (!e.target.closest('#dueChg')) return;
-    var s0 = F.state(id), today = F.iso(Date.now());
-    F.ask({ title: '모집기한을 변경할까요?', desc: '지금 모집기한: ~' + dot(s0.due) + '\n아직 견적을 제출하지 않은 분석파트너에게 변경 알림이 갑니다.', label: '새 모집기한 (마감일)', input: 'date', min: today, value: s0.due >= today ? s0.due : '', required: true, yes: '변경하기' }, function (v) {
+    var s0 = F.state(id), today = F.iso(Date.now()), cur0 = s0.due || r.to || ''; // 승인 직후(견적 요청 전)에도 변경 가능 (2026-11-04)
+    F.ask({ title: '모집기한을 변경할까요?', desc: '지금 모집기한: ~' + dot(cur0) + '\n아직 견적을 제출하지 않은 분석파트너에게 변경 알림이 갑니다.', label: '새 모집기한 (마감일)', input: 'date', min: today, value: cur0 >= today ? cur0 : '', required: true, yes: '변경하기' }, function (v) {
       if (!v || v < today) { OP.toast('오늘 이후 날짜를 선택해주세요.'); return; }
       F.setDue(id, v); OP.toast('모집기한을 ' + dot(v) + '까지로 변경했습니다.'); render();
     });
@@ -1168,7 +1168,7 @@
       '<div class="blk-h"><h3>견적서 확인 <span style="color:var(--teal-600)">' + c.sub + '</span> / ' + c.all + '</h3>' + (edit || s.st === 'review' ? '<span class="aim"><button type="button" class="ai-tx" id="more"><i class="ai-ic" aria-hidden="true"></i><span>AI 분석파트너 매칭</span><i class="ai-car" aria-hidden="true"></i></button><button type="button" class="btn" id="qPlain">견적 제안 보내기</button></span>' : '') + '</div>' +
       // 게시·마감 정보 + 안내 = DS infobox (Figma 1153:52097). 안내가 있으면 default(제목 + 목록), 없으면 simple(한 줄) (2026-10-28)
       (function () { var hint = edit && subs.length && !F.cqList(s).length;
-        return '<div class="op-ibox reqinfo' + (hint ? '' : ' simple') + '"><p class="t"><span class="rq"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>모집기한</b> ~' + dot(s.due || r.to) + (F.open(id) && s.due ? ' <button type="button" class="lnk" id="dueChg">변경</button>' : '') + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self && !hid(s, k); }).length + '<i class="dv" aria-hidden="true"></i>견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></span></p>' +
+        return '<div class="op-ibox reqinfo' + (hint ? '' : ' simple') + '"><p class="t"><span class="rq"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>모집기한</b> ~' + dot(s.due || r.to) + (F.open(id) ? ' <button type="button" class="lnk" id="dueChg">변경</button>' : '') + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self && !hid(s, k); }).length + '<i class="dv" aria-hidden="true"></i>견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></span></p>' +
           (hint ? '<ul><li>클라이언트에게 보낼 견적 1건을 선정하고 [1차 견적서 작성]을 누르세요.</li><li>단가, 수수료, 할인을 정해 ㈜셀키에이아이 명의로 보냅니다. 클라이언트에게는 분석파트너 이름이 보이지 않습니다.</li><li>파트너 견적을 고쳐야 하면 견적을 선택하고 [파트너 견적 수정하기]를 누르세요. 저장하면 분석파트너에게 알림이 갑니다.</li></ul>' : '') + '</div>'; })() +
       (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적' + (subs.some(function (k) { return (s.P[k].quote.cur || 'KRW') !== 'KRW'; }) ? ' (원화 VAT 포함)' : ' (VAT 포함)') + '</span><span>소요</span><span>일자</span><span>견적서 보기</span></div>' + rows + '</div>' +
         (edit && subs.length && !F.cqList(s).length ? '<div class="qbar"><span class="sel" id="qSel"></span><button type="button" class="btn" id="qRev" disabled>파트너 견적 수정하기</button>' + (!F.cqList(s).length ? '<button type="button" class="btn primary" id="qMk" disabled>1차 견적서 작성</button>' : '') + '</div>' : '')
