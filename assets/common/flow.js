@@ -820,7 +820,9 @@
     var pn = function (i) { return raw.slice(0, i + 1).filter(function (v) { return v.by !== 'admin'; }).length; }; // 분석파트너 결과 차수 (컨설턴트 직접 수정은 세지 않음)
     // 올린 파일은 눌러서 다운로드 (2026-10-29, 프로토타입은 안내만)
     var files = function (L) { return '<ul class="rp-files">' + L.map(function (n) { return '<li><button type="button" data-rp="file" data-name="' + esc(n) + '" title="' + esc(n) + ' 내려받기"><img src="assets/auth/ic-paperclip.svg" alt="">' + esc(n) + '</button></li>'; }).join('') + '</ul>'; };
-    var h = '<section class="rp" data-rp-id="' + esc(id) + '"><div class="rp-h"><h3>결과보고서</h3>' + (adm ? '<span class="ai-lb"><i class="ai-ic" aria-hidden="true"></i><span>보고서 에이전트</span></span>' : '') + '</div>';
+    // 보고서 에이전트 라벨: 결과가 들어온 뒤에는 AI 보고서 생성으로 올린 결과가 있을 때만 (완성 PDF만 받은 프로젝트는 AI 초안을 안 쓰므로 뺌, 2026-11-03)
+    var useAI = !raw.length || raw.some(function (v) { return v.by !== 'admin' && v.kind !== 'pdf'; });
+    var h = '<section class="rp" data-rp-id="' + esc(id) + '"><div class="rp-h"><h3>결과보고서</h3>' + (adm && useAI ? '<span class="ai-lb"><i class="ai-ic" aria-hidden="true"></i><span>보고서 에이전트</span></span>' : '') + '</div>';
     if (!adm) {
       // 한 번 등록하면 업로드 버튼을 숨기고, 컨설턴트가 결과 재등록을 요청하면 다시 보임 (2026-10-28)
       var mine = raw.filter(function (v) { return v.by !== 'admin'; }), canUp = !fin && (!mine.length || ask), fl = RP_FILES[id] || [];
@@ -862,7 +864,7 @@
       return h + '</section>';
     }
     // 전달 전 결과가 있으면 초록 머리 박스가 제목 역할 (분석파트너와 같게). 보고서 에이전트 라벨만 남김 (2026-10-29)
-    if (raw.length) h = h.replace('<h3>결과보고서</h3>', ''); // 초록 머리 박스가 늘 보여서 제목은 뺌 (2026-10-29)
+    if (raw.length) h = h.replace('<h3>결과보고서</h3>', '').replace('<div class="rp-h"></div>', ''); // 초록 머리 박스가 늘 보여서 제목은 뺌 (2026-10-29). 라벨도 없으면 빈 줄째 뺌
     if (!raw.length) h += '<div class="rp-empty">분석파트너가 결과보고서를 등록하면 여기에 보여 드립니다.<br>AI 보고서 생성으로 올린 결과는 AI 초안(워드)도 함께 만들어집니다.' + (fin ? '' : '<span><button type="button" class="tbtn primary" data-rp="demo">데모: AI 보고서 생성으로 등록</button><button type="button" class="tbtn primary" data-rp="demo" data-k="pdf">데모: 완성 PDF로 등록</button></span>') + '</div>';
     h += raw.map(function (x, i) {
       var step = x.sent ? 3 : x.pdf ? 2 : 1;
