@@ -334,6 +334,7 @@
     pst: function (s, k) {
       var x = s.P[k]; if (!x) return null;
       if (s.st === 'matched' && x.status === 'sub') return s.pick === k ? '선정' : '미선정';
+      if (s.st === 'matched' && /^(req|draft)$/.test(x.status)) return '견적 마감'; // 최종 견적 확인 뒤 미제출(작성 대기·임시저장) → 견적 요청 닫힘, 알림 없음 (2026-11-03 업체 질문 3)
       if (x.status === 'sub') { var cb = s.st === 'sent' && F.cqLast(s); return (cb ? cb.base === k : x.fwd && s.st === 'sent') ? '클라이언트 검토 중' : '제출 완료'; } // 클라이언트 견적의 기준 1곳만
       return { req: '작성 대기', draft: '임시저장', rev: '수정 요청', dec: '거절' }[x.status];
     },
