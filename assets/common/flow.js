@@ -684,14 +684,17 @@
       var vq = V ? V[cur].q : q;
       return (V && cur ? '<p class="pv-old">이전 견적입니다. 지금 확정할 수 있는 견적은 ' + esc(V[0].t) + '입니다.</p>' : '') + F.docHTML(r, vq, k, o);
     };
-    pv.innerHTML = '<div class="pv-bar"><b>' + esc(title || '견적서') + '</b>' +
+    // 차수 탭을 바꾸면 창 제목(화면 낭독기가 읽는 이름 포함)도 고른 차수로 (2026-11-03 업체 질문 8)
+    var ttl = function () { return V ? V[cur].t + ' 견적서' : title || '견적서'; };
+    pv.setAttribute('aria-label', ttl());
+    pv.innerHTML = '<div class="pv-bar"><b class="pv-t">' + esc(ttl()) + '</b>' +
       (V ? '<div class="pv-ver" role="tablist" aria-label="견적 차수">' + V.map(function (v, i) { return '<button type="button" role="tab" data-ver="' + i + '" aria-selected="' + (i === cur) + '">' + esc(v.t) + (i ? '' : ' (최신)') + '</button>'; }).join('') + '</div>' : '') +
       '<div><button type="button" data-print>인쇄 / PDF 저장</button><button type="button" class="x" data-close>닫기</button></div></div><div class="pv-scroll">' + body() + '</div>';
     var close = function () { pv.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', key); };
     var key = function (e) { if (e.key === 'Escape') close(); };
     pv.addEventListener('click', function (e) {
       var vb = e.target.closest('[data-ver]');
-      if (vb) { cur = +vb.dataset.ver; [].forEach.call(pv.querySelectorAll('[data-ver]'), function (b) { b.setAttribute('aria-selected', b === vb); }); pv.querySelector('.pv-scroll').innerHTML = body(); pv.querySelector('.pv-scroll').scrollTop = 0; }
+      if (vb) { cur = +vb.dataset.ver; [].forEach.call(pv.querySelectorAll('[data-ver]'), function (b) { b.setAttribute('aria-selected', b === vb); }); pv.querySelector('.pv-scroll').innerHTML = body(); pv.querySelector('.pv-scroll').scrollTop = 0; pv.querySelector('.pv-t').textContent = ttl(); pv.setAttribute('aria-label', ttl()); }
       else if (e.target.closest('[data-close]') || e.target === pv) close(); else if (e.target.closest('[data-print]')) window.print();
     });
     document.addEventListener('keydown', key);

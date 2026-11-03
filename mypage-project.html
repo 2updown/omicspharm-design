@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261103i">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261103i">
-<script src="assets/common/site.js?v=20261103i"></script>
-<script src="assets/common/consult.js?v=20261103i"></script>
-<script src="assets/common/mypage.js?v=20261103i"></script>
-<script src="assets/common/flow.js?v=20261103i"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261103j">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261103j">
+<script src="assets/common/site.js?v=20261103j"></script>
+<script src="assets/common/consult.js?v=20261103j"></script>
+<script src="assets/common/mypage.js?v=20261103j"></script>
+<script src="assets/common/flow.js?v=20261103j"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -722,17 +722,18 @@
   // 견적서 탭: 컨설턴트가 보낸 ㈜셀키에이아이 견적(차수별) → 최종 견적 확인
   // n차 견적 변경 내역: 차수별 날짜·금액 + 직전 차수와 달라진 항목(단가·수량·추가/삭제·할인·소요 기간) + 수정 사유
   function qdiff(a, b) {
-    var cur = b.cur || 'KRW', M = function (q) { var m = {}; (q.groups || []).forEach(function (g) { g.lines.forEach(function (l) { m[(g.name || '') + '|' + (l.d || '')] = l; }); }); return m; };
-    var A = M(a), B = M(b), out = [], nm = function (k) { return k.split('|')[1] || k.split('|')[0]; };
+    // 직전 차수와 통화가 다르면 맨 앞에 '통화 변경'을 적고, 직전 값은 직전 통화 기호로 (2026-11-03 업체 질문 7)
+    var cur = b.cur || 'KRW', pc = a.cur || 'KRW', CN = { KRW: '원화', USD: '달러', JPY: '엔화' }, M = function (q) { var m = {}; (q.groups || []).forEach(function (g) { g.lines.forEach(function (l) { m[(g.name || '') + '|' + (l.d || '')] = l; }); }); return m; };
+    var A = M(a), B = M(b), out = pc !== cur ? ['통화 변경: ' + CN[pc] + ' → ' + CN[cur]] : [], nm = function (k) { return k.split('|')[1] || k.split('|')[0]; };
     Object.keys(B).forEach(function (k) {
       var x = A[k], y = B[k];
       if (!x) { out.push('추가: ' + nm(k) + ' ' + F.money(F.num(y.q) * F.num(y.p), cur)); return; }
-      if (F.num(x.p) !== F.num(y.p)) out.push(nm(k) + ' 단가 ' + F.money(F.num(x.p), cur) + ' → ' + F.money(F.num(y.p), cur));
+      if (F.num(x.p) !== F.num(y.p)) out.push(nm(k) + ' 단가 ' + F.money(F.num(x.p), pc) + ' → ' + F.money(F.num(y.p), cur));
       if (F.num(x.q) !== F.num(y.q)) out.push(nm(k) + ' 수량 ' + F.num(x.q) + ' → ' + F.num(y.q));
     });
     Object.keys(A).forEach(function (k) { if (!B[k]) out.push('삭제: ' + nm(k)); });
     var sa = F.num(a.sale) + F.num(a.addSale), sb = F.num(b.sale) + F.num(b.addSale);
-    if (sa !== sb) out.push('할인 ' + (sa ? F.money(sa, cur) : '없음') + ' → ' + (sb ? F.money(sb, cur) : '없음'));
+    if (sa !== sb) out.push('할인 ' + (sa ? F.money(sa, pc) : '없음') + ' → ' + (sb ? F.money(sb, cur) : '없음'));
     if (String(a.weeks || '') !== String(b.weeks || '')) out.push('소요 기간 ' + (a.weeks || '-') + '주 → ' + (b.weeks || '-') + '주');
     return out;
   }
@@ -748,7 +749,7 @@
     var K = CQL[CQL.length - 1].base, X = { quote: CQL[CQL.length - 1].quote }, done = FS.st === 'matched' || !!FS.cancel; // 확정·삭제한 프로젝트는 견적 확인 버튼 없음
     var V = CQL.map(function (v) { return { q: v.quote, at: v.at, why: v.why }; }), n = V.length;
     var row = function (v, i) {
-      var q = v.q, t = F.total(q), last = i === n - 1, prev = i ? F.total(V[i - 1].q).final : 0, D = i ? qdiff(V[i - 1].q, q) : [];
+      var q = v.q, t = F.total(q), last = i === n - 1, prev = i && (V[i - 1].q.cur || 'KRW') === (q.cur || 'KRW') ? F.total(V[i - 1].q).final : 0, D = i ? qdiff(V[i - 1].q, q) : [];
       return '<details class="qv' + (last ? ' cur' : '') + '"' + (last ? ' open' : '') + '><summary>' +
           '<b>' + (i + 1) + '차 견적</b>' + (last ? (FS.pick ? '<span class="badge ok">최종 확인</span>' : '<span class="badge wait">최신</span>') : '') +
           '<em class="amt">' + F.money(t.final, q.cur) + '</em><span class="dt">' + ymd(v.at) + '</span><img src="assets/find/ic-chevron-down.svg" alt="">' +

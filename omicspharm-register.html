@@ -581,10 +581,10 @@
   }
   @media (max-width:640px){.page{margin:0 16px}.card,.scard{padding:16px}.crumb .back{font-size:0;gap:0}.crumb .tb{height:40px;font-size:14px}}
 </style>
-<link rel="stylesheet" href="assets/common/site.css?v=20261103i">
-<script src="assets/common/site.js?v=20261103i"></script>
-<script src="assets/common/consult.js?v=20261103i"></script>
-<script src="assets/common/demo-forms.js?v=20261103i"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261103j">
+<script src="assets/common/site.js?v=20261103j"></script>
+<script src="assets/common/consult.js?v=20261103j"></script>
+<script src="assets/common/demo-forms.js?v=20261103j"></script>
 <script>if (!((OP.session() || {}).role === 'admin' && /[?&]edit=/.test(location.search))) OP.requireClient(); /* 클라이언트만 접근 (컨설턴트는 의뢰 수정(?edit=)만): 비로그인 → 로그인, 파트너 → 메인 */</script>
 </head>
 <body>
@@ -1132,9 +1132,12 @@
     return true;
   }
   // '기타'를 골랐는데 상세 내용을 비워 둔 경우 (기타 선택 시 상세 설명 필수)
+  // 필수가 아닌 항목도 같음 (2026-11-03, R&D 입력 검토 3번). 희망국가 드롭다운의 '기타'도 포함
   function etcEmpty(f){
+    var c=$('#cty',f); if(c && c.value==='기타' && !$('#ctyEtc').value.trim()) return true;
     return $$('input[data-etc]:checked',f).some(function(i){ var l=i.closest('label'), t=l&&l.nextElementSibling; return visible(i) && t && t.classList.contains('etcin') && !t.value.trim(); });
   }
+  function isReq(f){ return !!f.dataset.req && required(f); }
   function filled(f){ return baseFilled(f) && !etcEmpty(f); }
   function baseFilled(f){
     var t=f.dataset.req, b=$('.fbody',f);
@@ -1154,7 +1157,7 @@
     var l=$('.flabel',f); return l?l.textContent.replace('*','').trim():'';
   }
   function stepMiss(n){
-    return $$('.step[data-step="'+n+'"] .field[data-req]').filter(function(f){return visible(f)&&required(f)&&!filled(f)})
+    return $$('.step[data-step="'+n+'"] .field').filter(function(f){return visible(f)&&(isReq(f)?!filled(f):etcEmpty(f))})
       .map(function(f){return {step:n,label:labelOf(f),el:f}});
   }
   function allMiss(){var m=[];for(var i=1;i<=MAX;i++)m=m.concat(stepMiss(i));return m}
@@ -1165,15 +1168,15 @@
     // 상단 오류 요약 박스 없음: 빈 필드 아래 빨간 헬프텍스트 + 단계 탭 표시, 첫 번째 빈 필드로 스크롤
     miss.forEach(function(m){ m.el.classList.add('invalid');
       // 빨간 테두리는 채워야 하는 칸에만: 텍스트형은 필수 입력칸([data-v]·표적 단백질), 선택형은 '기타'를 골랐는데 비어 있는 상세 입력칸
-      var t=m.el.dataset.req, need = t==='text' ? $$('[data-v]',m.el) : t==='tags' ? [$('#tgtIn')] : $$('.etcin',m.el).filter(function(i){ var c=i.previousElementSibling&&$('input[data-etc]',i.previousElementSibling); return c&&c.checked; });
+      var t=m.el.dataset.req, need = t==='text' ? $$('[data-v]',m.el) : t==='tags' ? [$('#tgtIn')] : $$('#ctyEtc',m.el).concat($$('.etcin',m.el).filter(function(i){ var c=i.previousElementSibling&&$('input[data-etc]',i.previousElementSibling); return c&&c.checked; }));
       need.forEach(function(i){ if(i && i.offsetParent && !String(i.value).trim()) i.classList.add('inv'); });
       var body=$('.fbody',m.el)||m.el, p=$('.emsg',m.el);
       if(!p){ p=document.createElement('p'); p.className='emsg'; }
-      p.textContent = m.el.id==='phoneField' ? '휴대폰 인증을 완료해 주세요.' : (baseFilled(m.el) && etcEmpty(m.el)) ? '기타 내용을 입력해 주세요.' : '필수 입력 항목입니다.';
+      p.textContent = m.el.id==='phoneField' ? '휴대폰 인증을 완료해 주세요.' : ((!isReq(m.el) || baseFilled(m.el)) && etcEmpty(m.el)) ? '기타 내용을 입력해 주세요.' : '필수 입력 항목입니다.';
       // 선택형은 오류 문구를 선택지 바로 아래에 (뒤에 오는 선택 입력칸·안내문 아래로 밀리지 않게). 보이는 하위 선택지가 있으면 그 아래
       var kids=[].slice.call(body.children).filter(function(c){ return c!==p && (c.matches('.opts')||$('.opts',c)) && c.offsetParent; });
       // 표적 단백질명: 입력칸 바로 아래(헬프텍스트 자리)에 오류, 안내문은 그 아래로
-      if((t==='choice'||t==='any') && kids.length) kids[kids.length-1].after(p); else if(t==='tags') $('#tgtTags').after(p); else body.appendChild(p);
+      if((t==='choice'||t==='any'||!t) && kids.length) kids[kids.length-1].after(p); else if(t==='tags') $('#tgtTags').after(p); else body.appendChild(p);
       tabs[m.step-1].classList.add('err') });
     if(!one){ cur=miss[0].step; render(); }
     setTimeout(function(){ miss[0].el.scrollIntoView({behavior:'smooth',block:'center'}); },40);

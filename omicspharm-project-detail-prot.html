@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261103i">
-<script src="assets/common/site.js?v=20261103i"></script>
-<script src="assets/common/consult.js?v=20261103i"></script>
-<script src="assets/common/mypage.js?v=20261103i"></script>
-<script src="assets/common/flow.js?v=20261103i"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261103j">
+<script src="assets/common/site.js?v=20261103j"></script>
+<script src="assets/common/consult.js?v=20261103j"></script>
+<script src="assets/common/mypage.js?v=20261103j"></script>
+<script src="assets/common/flow.js?v=20261103j"></script>
 <script src="assets/common/projects-data.js?v=20261030a"></script>
 <style>
   :root {
@@ -443,9 +443,15 @@
     pn.id = 'quote';
     // OmicsPharm 의뢰(컨설턴트 승인 후 게시): 견적 요청을 받은 분석파트너만 견적서 작성
     // OmicsPharm 의뢰(컨설턴트 승인 후 게시): 인증 분석파트너 누구나 견적 작성 가능. 이미 시작했거나 컨설턴트 요청을 받았으면 그 견적서로
-    var fx = x.rid ? OP.flow.state(x.rid).P[OP.session().email] : null;
+    var fs = x.rid ? OP.flow.state(x.rid) : null, fx = fs ? fs.P[OP.session().email] : null;
+    var qh = x.rid ? 'mypage-quote.html?rid=' + encodeURIComponent(x.rid) + '#quote' : '';
+    // 거절 = 견적서 보기, 제출하지 않은 채 견적 접수가 끝남(마감일 지남, 최종 견적 확인, 프로젝트 삭제) = 비활성 [견적 마감] (2026-11-03 업체 질문 5)
+    var fxEnd = fx && (/^(req|draft)$/.test(fx.status) ? OP.flow.dueOver(fs) || !OP.flow.open(x.rid) || !!fs.cancel : fx.status === 'rev' && (!OP.flow.open(x.rid) || !!fs.cancel));
     pn.innerHTML = x.rid
-      ? (fx ? (/^(req|draft|rev)$/.test(fx.status) ? (fx.self || fx.status === 'draft' ? ph('작성 중인 견적이 있습니다', '이어서 작성하고 마감일 전에 제출해 주세요.') : ph('견적 요청을 받은 프로젝트입니다', '의뢰 내용을 확인하고 견적서를 제출해 주세요.')) : ph('견적서를 제출했습니다', '제출한 견적서는 견적관리에서 확인할 수 있습니다.')) + (/^(req|draft|rev)$/.test(fx.status) ? '<a class="btn-filled" href="mypage-quote.html?rid=' + encodeURIComponent(x.rid) + '#quote">' + (fx.status === 'draft' ? '견적서 이어서 작성' : '견적서 작성') + '</a>' : '<a class="btn-filled done" href="mypage-quote.html?rid=' + encodeURIComponent(x.rid) + '#quote">견적서 제출 완료</a>')
+      ? (fx ? (fx.status === 'dec' ? ph('견적 요청을 거절했습니다', '거절 사유는 견적서 화면에서 확인할 수 있습니다.') + '<a class="btn-filled done" href="' + qh + '">견적서 보기</a>'
+          : fxEnd ? ph('견적 접수가 마감되었습니다', '다른 모집중 프로젝트를 확인해 보세요.') + '<span class="btn-filled off" aria-disabled="true">견적 마감</span>'
+          : /^(req|draft|rev)$/.test(fx.status) ? (fx.self || fx.status === 'draft' ? ph('작성 중인 견적이 있습니다', '이어서 작성하고 마감일 전에 제출해 주세요.') : ph('견적 요청을 받은 프로젝트입니다', '의뢰 내용을 확인하고 견적서를 제출해 주세요.')) + '<a class="btn-filled" href="' + qh + '">' + (fx.status === 'draft' ? '견적서 이어서 작성' : '견적서 작성') + '</a>'
+          : ph('견적서를 제출했습니다', '제출한 견적서는 견적관리에서 확인할 수 있습니다.') + '<a class="btn-filled done" href="' + qh + '">견적서 제출 완료</a>')
           : OP.flow.open(x.rid) ? ph('이 프로젝트에 견적을 제안해보세요', '의뢰 내용을 확인하고 견적서를 작성해 주세요.') + '<a class="btn-filled" href="#" id="applyQ">견적서 작성</a>'
           : ph('견적 접수가 마감되었습니다', '다른 모집중 프로젝트를 확인해 보세요.') + '<span class="btn-filled off" aria-disabled="true">견적 마감</span>')
       : x.open
