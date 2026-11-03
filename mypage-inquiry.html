@@ -86,8 +86,8 @@
       $('#n').textContent = A.length; $('#nw').textContent = A.filter(C.waiting).length;
       $('#tb').innerHTML = L.length ? L.map(function (c, i) {
         var acc = OP.account(c.owner || c.email), pre = C.pre(c.rid, c.owner || c.email).length;
-        // 제목 열은 뺌 (2026-11-02): 프로젝트 문의는 제목 입력이 없고 프로젝트명이 제목
-        return '<tr><td class="c">' + (L.length - i) + '</td><td class="t"><a href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">' + esc(projOf(c.rid).title) + '</a><br><small>' + esc(c.rid) + (pre ? DV + '의뢰 전 상담 ' + pre + '건 연결' : '') + '</small></td>' +
+        // 제목 열은 뺌 (2026-11-02): 프로젝트 문의는 제목 입력이 없고 프로젝트명이 제목. 프로젝트명 아래 분석 서비스 | 프로젝트 번호 (기존 사이트 '분석 서비스' 열, 2026-11-03)
+        return '<tr><td class="c">' + (L.length - i) + '</td><td class="t"><a href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">' + esc(projOf(c.rid).title) + '</a><br><small>' + (projOf(c.rid).svc ? esc(projOf(c.rid).svc) + DV : '') + esc(c.rid) + (pre ? DV + '의뢰 전 상담 ' + pre + '건 연결' : '') + '</small></td>' +
           '<td>' + esc(c.name) + '</td><td class="c">' + (acc ? OP.ROLE_LABEL[acc.role] || '' : '-') + '</td><td class="c">' + badge(c) + '</td><td class="c">' + C.ymd(C.lastAt(c)) + '</td><td class="c">' + C.ymd(c.at) + '</td></tr>';
       }).join('') : '<tr><td colspan="7" class="mg-empty">프로젝트 문의가 없습니다.</td></tr>';
     };
