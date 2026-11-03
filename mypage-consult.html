@@ -169,22 +169,23 @@
   function adminList() {
     $('#card').innerHTML = '<div class="card-head"><h3>상담내역</h3></div>' +
       '<div class="mg-filter"><select class="mg-sel" id="fSt"><option value="">처리상태</option><option value="wait">답변대기</option><option value="done">답변완료</option></select>' +
+        '<select class="mg-sel" id="fType"><option value="">문의 유형</option>' + ['분석 견적', '의뢰 프로젝트', '서비스 이용', '분석 파트너 제휴', '분석 결과·데이터', '기타'].map(function (v) { return '<option>' + v + '</option>'; }).join('') + '</select>' + // Contact Us 문의 유형과 같은 보기 (2026-11-03)
         '<select class="mg-sel" id="fMem"><option value="">회원 여부</option><option value="y">회원</option><option value="n">비회원</option></select>' + C.dateBox() +
         '<div class="mg-q" role="search"><input type="search" id="fQ" placeholder="제목, 성함, 이메일 검색" aria-label="검색어"><button type="button" id="go" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></div></div>' +
       '<p class="mg-total">(<b style="color:var(--red-600)" id="nw">0</b>건 답변대기 / 총 <b id="n">0</b>건)</p>' +
-      '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">번호</th><th>제목</th><th>문의 유형</th><th>성함</th><th>이메일</th><th class="c">회원</th><th class="c">처리상태</th><th class="c">최근 대화</th><th class="c">등록일</th></tr></thead><tbody id="tb"></tbody></table></div>';
+      '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">번호</th><th>문의 유형</th><th>제목</th><th>성함</th><th>이메일</th><th class="c">회원</th><th class="c">처리상태</th><th class="c">최근 대화</th><th class="c">등록일</th></tr></thead><tbody id="tb"></tbody></table></div>';
     var draw = function () {
-      var st = $('#fSt').value, mem = $('#fMem').value, q = $('#fQ').value.trim().toLowerCase(), df = $('#fFrom').value, dt = $('#fTo').value;
+      var st = $('#fSt').value, mem = $('#fMem').value, q = $('#fQ').value.trim().toLowerCase(), df = $('#fFrom').value, dt = $('#fTo').value, ty = $('#fType').value;
       var A = gen().sort(function (a, b) { return b.at - a.at; });
-      var L = A.filter(function (c) { var m = !!OP.account(c.email); return C.inRange(c.at, df, dt) && (!st || (st === 'wait') === C.waiting(c)) && (!mem || (mem === 'y') === m) && (!q || [c.title, c.name, c.email].join(' ').toLowerCase().indexOf(q) > -1); });
+      var L = A.filter(function (c) { var m = !!OP.account(c.email); return C.inRange(c.at, df, dt) && (!ty || c.type === ty) && (!st || (st === 'wait') === C.waiting(c)) && (!mem || (mem === 'y') === m) && (!q || [c.title, c.name, c.email].join(' ').toLowerCase().indexOf(q) > -1); });
       $('#n').textContent = A.length; $('#nw').textContent = A.filter(C.waiting).length;
       $('#tb').innerHTML = L.length ? L.map(function (c, i) {
         var m = !!OP.account(c.email);
-        return '<tr><td class="c">' + (L.length - i) + '</td><td class="t"><a href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">' + esc(c.title) + '</a>' + (LK(c) ? '<br><small>의뢰로 이어짐' + DV + esc((projOf(c.link) || {}).title || c.link) + '</small>' : c.rid ? '<br><small>관련 프로젝트' + DV + esc(c.ref) + '</small>' : '') + '</td><td>' + esc(c.type) + '</td><td>' + esc(c.name) + '</td><td class="mail">' + esc(c.email) + '</td>' +
+        return '<tr><td class="c">' + (L.length - i) + '</td><td>' + esc(c.type) + '</td><td class="t"><a href="mypage-consult.html?id=' + encodeURIComponent(c.id) + '">' + esc(c.title) + '</a>' + (LK(c) ? '<br><small>의뢰로 이어짐' + DV + esc((projOf(c.link) || {}).title || c.link) + '</small>' : c.rid ? '<br><small>관련 프로젝트' + DV + esc(c.ref) + '</small>' : '') + '</td><td>' + esc(c.name) + '</td><td class="mail">' + esc(c.email) + '</td>' +
           '<td class="c">' + (m ? '<span class="mem">회원</span>' : '비회원') + '</td><td class="c">' + badge(c) + '</td><td class="c">' + C.ymd(C.lastAt(c)) + '</td><td class="c">' + C.ymd(c.at) + '</td></tr>';
       }).join('') : '<tr><td colspan="9" class="mg-empty">검색 결과가 없습니다.</td></tr>';
     };
-    ['fSt', 'fMem', 'fFrom', 'fTo'].forEach(function (k) { $('#' + k).addEventListener('change', draw); }); $('#go').addEventListener('click', draw);
+    ['fSt', 'fType', 'fMem', 'fFrom', 'fTo'].forEach(function (k) { $('#' + k).addEventListener('change', draw); }); $('#go').addEventListener('click', draw);
     $('#fQ').addEventListener('keydown', function (e) { if (e.key === 'Enter') draw(); });
     draw();
   }
