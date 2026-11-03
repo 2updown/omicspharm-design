@@ -360,8 +360,8 @@ span.tbtn { cursor:default; }
 .ai-lb .ai-ic { flex:none; width:16px; height:16px; background:linear-gradient(135deg, #22c57e, #2f6bff); -webkit-mask:url(ic-sparkle-fill.svg) center/contain no-repeat; mask:url(ic-sparkle-fill.svg) center/contain no-repeat; }
 /* 분석파트너 결과보고서 등록 (기존 사이트 방식, 2026-10-29) */
 .rp-form { border:1px solid var(--teal-600); border-radius:12px; overflow:hidden; }
-.rp-fh { display:flex; align-items:center; gap:12px; height:52px; padding:0 12px 0 20px; background:var(--teal-600); color:#fff; }
-.rp-fh b { flex:1; font-size:16px; font-weight:600; } .rp-fh span { font-size:13px; font-weight:500; }
+.rp-fh { display:flex; align-items:center; gap:12px; min-height:52px; padding:10px 12px 10px 20px; background:var(--teal-600); color:#fff; }
+.rp-fh b { flex:none; white-space:nowrap; font-size:16px; font-weight:600; } .rp-fh span { margin-left:auto; min-width:0; text-align:right; font-size:13px; font-weight:500; } /* 제목(n차 결과보고서)은 한 줄로, 긴 정보 줄이 대신 줄바꿈 (2026-11-03) */
 .rp-fb { display:flex; flex-direction:column; gap:16px; padding:20px; }
 .rp-item.rp-form { gap:0; padding:0; border-color:var(--teal-600); } /* 컨설턴트: 전달 전 결과 (2026-10-29) */
 .rp-fh .dv { background:rgba(255,255,255,.5); }
