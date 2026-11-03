@@ -1,12 +1,14 @@
 /* 상담 대화창 (consult-view.html · mypage-consult.html 공통). 챗봇처럼 쌓이는 형태 */
-.cs-thread { display:flex; flex-direction:column; gap:20px; padding:24px; border-radius:16px; background:#f6faf9; list-style:none; }
+.cs-thread { display:flex; flex-direction:column; gap:12px; padding:8px 0; list-style:none; } /* 채팅UI_4 (2026-11-03): 배경 박스 없이 말풍선만 */
+.cs-thread li.day { align-items:center; gap:12px; margin:4px 0; font-size:12px; line-height:16px; color:#737373; white-space:nowrap; } /* 날짜 구분선: 날이 바뀔 때만 */
+.cs-thread li.day::before, .cs-thread li.day::after { content:''; flex:1; height:1px; background:#e5e5e5; }
 .cs-thread li { display:flex; align-items:flex-end; gap:8px; max-width:100%; }
 .cs-thread li.mine { flex-direction:row-reverse; }
 .cs-thread .av { flex:none; align-self:flex-start; display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:#009788; color:#fff; font-size:14px; font-weight:700; }
-.cs-thread .bub { max-width:min(560px, 78%); padding:14px 16px; border-radius:16px; background:#fff; border:1px solid #e5e5e5; }
-.cs-thread li.adm .bub { border-top-left-radius:4px; }
-.cs-thread li.mine .bub { border-top-left-radius:16px; border-top-right-radius:4px; }
-.cs-thread li.usr .bub { background:#e7f6f3; border-color:#d3ece7; }
+.cs-thread .bub { max-width:min(560px, 78%); padding:14px 16px; border-radius:16px; background:#f5f5f5; } /* 테두리 없이 채운 색: 컨설턴트 연회색, 문의자 민트 */
+.cs-thread li:not(.mine) .bub { border-top-left-radius:4px; } /* 말한 쪽 위 모서리만 덜 둥글게 */
+.cs-thread li.mine .bub { border-top-right-radius:4px; }
+.cs-thread li.usr .bub { background:#e7f6f3; }
 .cs-thread .bub b { display:block; margin-bottom:4px; font-size:13px; font-weight:600; line-height:18px; color:#00786e; }
 .cs-thread li.usr .bub b { color:#404040; }
 .cs-thread .bub p { font-size:15px; line-height:1.65; color:#262626; white-space:pre-line; word-break:break-word; }
@@ -34,7 +36,7 @@
 .cs-pre details[open] summary::after { transform:rotate(180deg); }
 .cs-pre summary .t { min-width:0; font-size:15px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .cs-pre summary .d { flex:none; font-size:13px; color:#737373; }
-.cs-pre details .cs-thread { margin:0 12px 12px; padding:16px; }
+.cs-pre details .cs-thread { margin:0 16px 12px; padding:4px 0 8px; }
 .cs-linked { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:16px 20px; border-radius:12px; background:#f5f5f5; font-size:14px; line-height:20px; color:#525252; }
 .cs-linked b { color:#000; }
 @media (max-width:640px) { .cs-pre summary { flex-wrap:wrap; gap:4px 8px; } .cs-pre summary .t { flex-basis:calc(100% - 32px); white-space:normal; } .cs-pre summary::after { order:-1; position:absolute; right:16px; } .cs-pre details { position:relative; } }
@@ -58,7 +60,8 @@
 .cs-info .wide { grid-column:1 / -1; }
 
 @media (max-width:640px) {
-  .cs-thread { padding:16px 12px; gap:16px; }
+  .cs-thread { gap:12px; }
+  .cs-thread li.day { flex-wrap:nowrap; }
   .cs-thread .bub { max-width:84%; }
   /* 모바일: 보낸 시간은 말풍선 아래 작게 (2026-11-02, 숨김에서 변경) */
   .cs-thread li { flex-wrap:wrap; row-gap:4px; }

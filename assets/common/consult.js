@@ -142,13 +142,16 @@
         '<span class="att-file" title="내려받기"><img src="' + ic + '" alt=""><span>' + esc(m.file) + '</span><img class="dl" src="assets/project/ic-download-simple.svg" alt="내려받기"></span>';
     },
     // 대화창. viewer = 'user' | 'admin'. 상담 기록(note)은 컨설턴트에게만
+    // 대화 (2026-11-03 채팅UI_4): 날이 바뀔 때만 날짜 구분선, 말풍선 옆에는 시간만
     thread: function (c, viewer) {
+      var WD = '일월화수목금토', prev = '';
       return '<ol class="cs-thread">' + c.msgs.map(function (m) {
-        var me = m.by === viewer;
-        return '<li class="' + (m.by === 'admin' ? 'adm' : 'usr') + (me ? ' mine' : '') + '">' +
+        var me = m.by === viewer, d = ymd(m.at), t = new Date(m.at);
+        var day = d !== prev ? '<li class="day"><span>' + d + ' (' + WD[t.getDay()] + ')</span></li>' : ''; prev = d;
+        return day + '<li class="' + (m.by === 'admin' ? 'adm' : 'usr') + (me ? ' mine' : '') + '">' +
           (m.by === 'admin' ? '<span class="av" aria-hidden="true">O</span>' : '') +
           '<div class="bub"><b>' + (m.by === 'admin' ? 'OmicsPharm 컨설턴트' : esc(c.name)) + '</b>' + (m.text ? '<p>' + esc(m.text) + '</p>' : '') + OP.consult.attHTML(m) + '</div>' +
-          '<time>' + ymdhm(m.at) + '</time></li>';
+          '<time datetime="' + new Date(m.at).toISOString() + '">' + ymdhm(m.at).slice(11) + '</time></li>';
       }).join('') + '</ol>';
     }
   };
