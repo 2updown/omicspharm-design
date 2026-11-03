@@ -232,7 +232,8 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
 
   // 프로젝트 상세 [문의하기]: 세 계정 모두 제목 줄 오른쪽. 누르면 마이페이지 > 상담내역의 이 프로젝트 대화로 (site.js, 챗봇과 무관 · 2026-10-22)
   // ctx = { key: 프로젝트 번호, cat: 분석 서비스, no: 프로젝트 번호, title }. 컨설턴트는 이 프로젝트의 상담 목록으로
-  OP.askBtn = function (ctx) { OP.chatCtx = ctx; return '<button type="button" class="btn op-ask" data-chat><img src="assets/project/ic-chat-circle-dots.svg" alt="">문의하기</button>'; };
+  // 컨설턴트는 문의를 남기는 쪽이 아니라 보고 답하는 쪽이라 '문의내역 보기' (2026-11-03)
+  OP.askBtn = function (ctx) { OP.chatCtx = ctx; var adm = (OP.session() || {}).role === 'admin'; return '<button type="button" class="btn op-ask" data-chat><img src="assets/project/ic-chat-circle-dots.svg" alt="">' + (adm ? '문의내역 보기' : '문의하기') + '</button>'; };
   OP.my = D;
   // 상세 화면을 열면 그 프로젝트·문의를 가리키는 알림을 읽음으로 (2026-11-02). 알림 목록·대시보드·탭 N 어디서 확인하든 같은 읽음 기록(op.alarmRead)
   // 프로젝트는 컨설턴트(request)·파트너 견적(quote)·상세(project)가 같은 번호라 번호만 비교

@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>프로젝트 상세 · 단백체 분석 · OmicsPharm</title>
 <!-- Figma: 프로젝트 상세 – 단백체 분석 (867:21166). ?id=로 프로젝트를 고르며, 상단 요약은 데이터에서, 아래 상세 항목은 예시 내용을 공통으로 사용. 오른쪽 '비슷한 프로젝트 찾기 · 검색 AI' 카드(1063:26165)는 기능 확정 전이라 제외 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261103b">
-<script src="assets/common/site.js?v=20261103b"></script>
-<script src="assets/common/consult.js?v=20261103b"></script>
-<script src="assets/common/mypage.js?v=20261103b"></script>
-<script src="assets/common/flow.js?v=20261103b"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261103c">
+<script src="assets/common/site.js?v=20261103c"></script>
+<script src="assets/common/consult.js?v=20261103c"></script>
+<script src="assets/common/mypage.js?v=20261103c"></script>
+<script src="assets/common/flow.js?v=20261103c"></script>
 <script src="assets/common/projects-data.js?v=20261030a"></script>
 <style>
   :root {
@@ -417,8 +417,11 @@
   var cta = $('#ctaBtn');
   var partner = OP.canQuote();
   var ses0 = OP.session(), inPrj = !!(ses0 && x.rid && OP.consult && OP.consult.participant(x.rid, ses0.email)), pid = OP_PROJECTS.no(x);
-  if (x.open || inPrj) {
-    $('#ctaSub').textContent = ses0 ? '이 프로젝트에 대해 OmicsPharm 컨설턴트에게 문의할 수 있습니다' : '로그인하면 이 프로젝트에 대해 OmicsPharm 컨설턴트에게 문의할 수 있습니다';
+  if (ses0 && ses0.role === 'admin') { // 컨설턴트: 문의를 남기지 않고 이 프로젝트에 들어온 문의를 봄. 모집 마감이어도 볼 수 있음 (2026-11-03)
+    $('#ctaSub').textContent = '이 프로젝트에 들어온 문의를 확인하고 답변할 수 있습니다';
+    cta.textContent = '문의내역 보기'; cta.href = 'mypage-inquiry.html?project=' + encodeURIComponent(pid);
+  } else if (x.open || inPrj) {
+    $('#ctaSub').textContent = ses0 ?'이 프로젝트에 대해 OmicsPharm 컨설턴트에게 문의할 수 있습니다' : '로그인하면 이 프로젝트에 대해 OmicsPharm 컨설턴트에게 문의할 수 있습니다';
     cta.href = !ses0 ? 'login.html?next=' + encodeURIComponent('omicspharm-project-detail-prot.html?id=' + x.id)
       : ses0.role === 'admin' ? 'mypage-inquiry.html?project=' + encodeURIComponent(pid)
       : 'mypage-consult.html?project=' + encodeURIComponent(pid);
