@@ -78,6 +78,9 @@
 
   OP.consult = {
     LINK_DAYS: LINK_DAYS, esc: esc, DV: DV, ymd: ymd, ymdhm: ymdhm,
+    // 컨설턴트 목록 기간 검색 (등록일 시작일~종료일, 2026-11-03). 상담내역 · 프로젝트 문의내역 공통
+    dateBox: function () { return '<div class="mg-date"><input type="date" id="fFrom" aria-label="시작일"><span>~</span><input type="date" id="fTo" aria-label="종료일"></div>'; },
+    inRange: function (t, from, to) { var k = ymd(t).replace(/\./g, '-'); return (!from || k >= from) && (!to || k <= to); },
     all: all, get: get, save: save,
     byToken: function (t) { return t ? all().filter(function (c) { return c.token === t; })[0] || null : null; },
     expired: function (c) { return Date.now() - c.linkAt > LINK_DAYS * DAY; },

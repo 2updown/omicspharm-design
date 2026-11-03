@@ -299,6 +299,11 @@ span.tbtn { cursor:default; }
 .mg-filter { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
 .mg-sel { height:40px; padding:0 32px 0 12px; border:1px solid var(--gray-300); border-radius:8px; background:#fff url(../main/ic-caret-down.svg) right 10px center/14px no-repeat; font-size:14px; appearance:none; -webkit-appearance:none; cursor:pointer; }
 .mg-q { flex:1; min-width:220px; display:flex; align-items:center; gap:4px; height:40px; padding:0 8px 0 12px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; } /* 입력칸 안 돋보기 (프로젝트 관리 검색과 같게, 2026-10-29) */
+.mg-date { display:flex; align-items:center; gap:6px; } /* 등록일 시작일~종료일 (2026-11-03) */
+.mg-date input { width:148px; height:40px; padding:0 10px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font-size:14px; }
+.mg-date input:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+.mg-date span { color:var(--gray-500); }
+@media (max-width:640px) { .mg-date { width:100%; } .mg-date input { flex:1; width:auto; min-width:0; } }
 .mg-q input { flex:1; min-width:0; height:38px; border:0; outline:0; background:none; font-size:14px; }
 .mg-q input::-webkit-search-cancel-button { display:none; }
 .mg-q button { display:flex; align-items:center; justify-content:center; flex:none; width:28px; height:28px; border-radius:6px; }

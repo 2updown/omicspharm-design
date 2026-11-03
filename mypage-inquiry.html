@@ -9,12 +9,12 @@
      - 프로젝트 상세 [문의하기]로 시작한 대화 (한 사람당 프로젝트 하나에 대화 하나, 대화 화면은 mypage-consult.html?id=)
      - 의뢰할 때 연결한 Contact Us 상담은 그 대화 맨 위에 '의뢰 전 상담'으로 붙음. 아직 대화가 없으면 '의뢰 전 상담'만 있는 줄로 보임
      - 컨설턴트: 전체 프로젝트 문의 목록 (?project= 이면 그 프로젝트만) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261103c">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261103c">
-<script src="assets/common/site.js?v=20261103c"></script>
-<script src="assets/common/consult.js?v=20261103c"></script>
-<script src="assets/common/mypage.js?v=20261103c"></script>
-<script src="assets/common/flow.js?v=20261103c"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261103d">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261103d">
+<script src="assets/common/site.js?v=20261103d"></script>
+<script src="assets/common/consult.js?v=20261103d"></script>
+<script src="assets/common/mypage.js?v=20261103d"></script>
+<script src="assets/common/flow.js?v=20261103d"></script>
 <script src="assets/common/projects-data.js?v=20261030a"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
@@ -74,15 +74,15 @@
     var one = pid && threads.filter(function (c) { return c.rid === pid; });
     if (one && one.length === 1) { location.replace('mypage-consult.html?id=' + encodeURIComponent(one[0].id)); return; }
     $('#card').innerHTML = '<div class="card-head"><h3>프로젝트 문의내역</h3></div>' +
-      '<div class="mg-filter"><select class="mg-sel" id="fSt"><option value="">처리상태</option><option value="wait">답변대기</option><option value="done">답변완료</option></select>' +
+      '<div class="mg-filter"><select class="mg-sel" id="fSt"><option value="">처리상태</option><option value="wait">답변대기</option><option value="done">답변완료</option></select>' + C.dateBox() +
         '<div class="mg-q"><input type="search" id="fQ" placeholder="프로젝트명, 성함 검색"><button type="button" class="btn" id="go">검색</button></div></div>' +
       (pid ? '<p class="lead">프로젝트 <b>' + esc(projOf(pid).title) + '</b>의 문의만 보는 중' + DV + '<a href="mypage-inquiry.html" style="text-decoration:underline">전체 보기</a></p>' : '') +
       '<p class="mg-total">(<b style="color:var(--red-600)" id="nw">0</b>건 답변대기 / 총 <b id="n">0</b>건)</p>' +
       '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">번호</th><th>프로젝트</th><th>성함</th><th class="c">회원 유형</th><th class="c">처리상태</th><th class="c">최근 대화</th><th class="c">등록일</th></tr></thead><tbody id="tb"></tbody></table></div>';
     var draw = function () {
-      var st = $('#fSt').value, q = $('#fQ').value.trim().toLowerCase();
+      var st = $('#fSt').value, q = $('#fQ').value.trim().toLowerCase(), df = $('#fFrom').value, dt = $('#fTo').value;
       var A = threads.filter(function (c) { return !pid || c.rid === pid; }).sort(function (a, b) { return C.lastAt(b) - C.lastAt(a); });
-      var L = A.filter(function (c) { return (!st || (st === 'wait') === C.waiting(c)) && (!q || [projOf(c.rid).title, c.rid, c.name].join(' ').toLowerCase().indexOf(q) > -1); });
+      var L = A.filter(function (c) { return C.inRange(c.at, df, dt) && (!st || (st === 'wait') === C.waiting(c)) && (!q || [projOf(c.rid).title, c.rid, c.name].join(' ').toLowerCase().indexOf(q) > -1); });
       $('#n').textContent = A.length; $('#nw').textContent = A.filter(C.waiting).length;
       $('#tb').innerHTML = L.length ? L.map(function (c, i) {
         var acc = OP.account(c.owner || c.email), pre = C.pre(c.rid, c.owner || c.email).length;
@@ -91,7 +91,7 @@
           '<td>' + esc(c.name) + '</td><td class="c">' + (acc ? OP.ROLE_LABEL[acc.role] || '' : '-') + '</td><td class="c">' + badge(c) + '</td><td class="c">' + C.ymd(C.lastAt(c)) + '</td><td class="c">' + C.ymd(c.at) + '</td></tr>';
       }).join('') : '<tr><td colspan="7" class="mg-empty">프로젝트 문의가 없습니다.</td></tr>';
     };
-    $('#fSt').addEventListener('change', draw); $('#go').addEventListener('click', draw);
+    ['fSt', 'fFrom', 'fTo'].forEach(function (k) { $('#' + k).addEventListener('change', draw); }); $('#go').addEventListener('click', draw);
     $('#fQ').addEventListener('keydown', function (e) { if (e.key === 'Enter') draw(); });
     draw();
     return;
