@@ -74,15 +74,17 @@
     var one = pid && threads.filter(function (c) { return c.rid === pid; });
     if (one && one.length === 1) { location.replace('mypage-consult.html?id=' + encodeURIComponent(one[0].id)); return; }
     $('#card').innerHTML = '<div class="card-head"><h3>프로젝트 문의내역</h3></div>' +
-      '<div class="mg-filter"><select class="mg-sel" id="fSt"><option value="">처리상태</option><option value="wait">답변대기</option><option value="done">답변완료</option></select>' + C.dateBox() +
+      '<div class="mg-filter"><select class="mg-sel" id="fSt"><option value="">처리상태</option><option value="wait">답변대기</option><option value="done">답변완료</option></select>' +
+        // 분석 서비스 (프로젝트 관리 필터와 같은 7개, 2026-11-03)
+        '<select class="mg-sel" id="fSvc"><option value="">분석 서비스</option>' + ['단백체 분석', '대사체 분석', '유전체 분석', '전사체 분석', 'Olink 분석', '바이오의약품·ADC', '기타 분석'].map(function (v) { return '<option>' + v + '</option>'; }).join('') + '</select>' + C.dateBox() +
         '<div class="mg-q" role="search"><input type="search" id="fQ" placeholder="프로젝트명, 성함 검색" aria-label="검색어"><button type="button" id="go" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></div></div>' +
       (pid ? '<p class="lead">프로젝트 <b>' + esc(projOf(pid).title) + '</b>의 문의만 보는 중' + DV + '<a href="mypage-inquiry.html" style="text-decoration:underline">전체 보기</a></p>' : '') +
       '<p class="mg-total">(<b style="color:var(--red-600)" id="nw">0</b>건 답변대기 / 총 <b id="n">0</b>건)</p>' +
       '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">번호</th><th>프로젝트</th><th>성함</th><th class="c">회원 유형</th><th class="c">처리상태</th><th class="c">최근 대화</th><th class="c">등록일</th></tr></thead><tbody id="tb"></tbody></table></div>';
     var draw = function () {
-      var st = $('#fSt').value, q = $('#fQ').value.trim().toLowerCase(), df = $('#fFrom').value, dt = $('#fTo').value;
+      var st = $('#fSt').value, q = $('#fQ').value.trim().toLowerCase(), df = $('#fFrom').value, dt = $('#fTo').value, sv = $('#fSvc').value;
       var A = threads.filter(function (c) { return !pid || c.rid === pid; }).sort(function (a, b) { return C.lastAt(b) - C.lastAt(a); });
-      var L = A.filter(function (c) { return C.inRange(c.at, df, dt) && (!st || (st === 'wait') === C.waiting(c)) && (!q || [projOf(c.rid).title, c.rid, c.name].join(' ').toLowerCase().indexOf(q) > -1); });
+      var L = A.filter(function (c) { return C.inRange(c.at, df, dt) && (!sv || String(projOf(c.rid).svc).slice(0, 2) === sv.slice(0, 2)) && (!st || (st === 'wait') === C.waiting(c)) && (!q || [projOf(c.rid).title, c.rid, c.name].join(' ').toLowerCase().indexOf(q) > -1); });
       $('#n').textContent = A.length; $('#nw').textContent = A.filter(C.waiting).length;
       $('#tb').innerHTML = L.length ? L.map(function (c, i) {
         var acc = OP.account(c.owner || c.email), pre = C.pre(c.rid, c.owner || c.email).length;
@@ -91,7 +93,7 @@
           '<td>' + esc(c.name) + '</td><td class="c">' + (acc ? OP.ROLE_LABEL[acc.role] || '' : '-') + '</td><td class="c">' + badge(c) + '</td><td class="c">' + C.ymd(C.lastAt(c)) + '</td><td class="c">' + C.ymd(c.at) + '</td></tr>';
       }).join('') : '<tr><td colspan="7" class="mg-empty">프로젝트 문의가 없습니다.</td></tr>';
     };
-    ['fSt', 'fFrom', 'fTo'].forEach(function (k) { $('#' + k).addEventListener('change', draw); }); $('#go').addEventListener('click', draw);
+    ['fSt', 'fSvc', 'fFrom', 'fTo'].forEach(function (k) { $('#' + k).addEventListener('change', draw); }); $('#go').addEventListener('click', draw);
     $('#fQ').addEventListener('keydown', function (e) { if (e.key === 'Enter') draw(); });
     draw();
     return;
