@@ -108,7 +108,7 @@
       '<h2>' + esc(c.title) + ' ' + (C.waiting(c) ? '<span class="badge wait">답변대기</span>' : '<span class="badge done">답변완료</span>') + '</h2></div>' +
     C.thread(c, 'user') +
     '<div class="cta"><div><b>추가로 상담하시겠어요?</b><p>' + (member
-        ? '이미 가입된 이메일입니다. 로그인하면 마이페이지 &gt; 상담내역에서 이 상담을 이어서 작성할 수 있습니다.'
+        ? '이미 가입된 이메일입니다.<br>로그인하면 마이페이지 &gt; 상담내역에서 이 상담을 이어서 작성할 수 있습니다.'
         : '회원가입 후 이 상담을 이어서 작성할 수 있습니다.') + '</p></div>' +
       (member ? '<a class="btn pri" href="login.html?email=' + encodeURIComponent(c.email) + '&next=' + encodeURIComponent(next) + '">로그인하고 이어서 상담하기</a>'
               : '<a class="btn pri" href="signup.html?consult=' + encodeURIComponent(c.token) + '">회원가입하고 이어서 상담하기</a>') + '</div>' +
