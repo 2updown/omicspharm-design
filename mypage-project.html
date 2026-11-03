@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261103k">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261103k">
-<script src="assets/common/site.js?v=20261103k"></script>
-<script src="assets/common/consult.js?v=20261103k"></script>
-<script src="assets/common/mypage.js?v=20261103k"></script>
-<script src="assets/common/flow.js?v=20261103k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261103l">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261103l">
+<script src="assets/common/site.js?v=20261103l"></script>
+<script src="assets/common/consult.js?v=20261103l"></script>
+<script src="assets/common/mypage.js?v=20261103l"></script>
+<script src="assets/common/flow.js?v=20261103l"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -755,7 +755,7 @@
           '<em class="amt">' + F.money(t.final, q.cur) + '</em><span class="dt">' + ymd(v.at) + '</span><img src="assets/find/ic-chevron-down.svg" alt="">' +
         '</summary><div class="qv-in">' +
           // 견적서 펼침 (2026-10-29): 결과보고서와 같은 초록 머리 박스 + 금액 한 줄 + 조건 표 + 변경 내용 박스
-          '<div class="qc-price"><em>최종 견적 (VAT 포함)</em><div class="pl"><b>' + F.money(t.final, q.cur) + '</b>' + (prev && prev !== t.final ? '<i class="delta ' + (t.final < prev ? 'down' : 'up') + '">' + i + '차 대비 ' + (t.final < prev ? '▼ ' : '▲ ') + F.money(Math.abs(t.final - prev), q.cur) + '</i>' : '') + '<span>공급가 ' + F.money(t.net, q.cur) + ' + VAT</span></div></div>' +
+          '<div class="qc-price"><em>최종 견적' + (t.vat ? ' (VAT 포함)' : '') + '</em><div class="pl"><b>' + F.money(t.final, q.cur) + '</b>' + (prev && prev !== t.final ? '<i class="delta ' + (t.final < prev ? 'down' : 'up') + '">' + i + '차 대비 ' + (t.final < prev ? '▼ ' : '▲ ') + F.money(Math.abs(t.final - prev), q.cur) + '</i>' : '') + '' + (t.vat ? '<span>공급가 ' + F.money(t.net, q.cur) + ' + VAT</span>' : '') + '</div></div>' +
           '<div class="rp-tbl qc-tbl">' + [['공급자', esc(F.SELLER.s_org)], ['소요 기간', '시료 수령 후 ' + esc(q.weeks || '-') + '주'], ['할인', F.num(q.sale) + F.num(q.addSale) ? '-' + F.money(F.num(q.sale) + F.num(q.addSale), q.cur) : '없음'], ['시험 항목', esc(q.groups.map(function (g) { return g.name; }).filter(Boolean).join(', '))]].concat(q.memo ? [['안내', '<span class="memo">' + esc(F.mask(FS, q.memo)) + '</span>']] : []).map(function (r) { return '<div class="r"><b>' + r[0] + '</b><div>' + r[1] + '</div></div>'; }).join('') + '</div>' +
           (D.length || v.why ? '<div class="rv-note qv-chg"><b>' + i + '차 대비 변경 내용</b>' + (D.length ? '<ul class="qh-diff">' + D.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' : '') + (v.why ? '<p class="qh-why">수정 사유<i class="dv" aria-hidden="true"></i>' + esc(F.mask(FS, v.why)) + '</p>' : '') + '</div>' : '') +
           '<div class="qc-acts"><button type="button" class="btn" data-doc="' + i + '">견적서 보기</button>' +
@@ -784,7 +784,7 @@
     return '<section class="sec"><h3>계약 정보</h3><dl class="kv">' +
         (FS.ct.amt != null // 컨설턴트가 계약 정보에 입력한 금액 (2026-10-26). 예전 데이터는 견적 금액
           ? '<div><dt>최종 계약 금액</dt><dd><b class="amt">' + F.money(FS.ct.amt, FS.ct.cur) + '</b>' + (FS.ct.cur === 'KRW' ? ' <span class="sub">(공급가, VAT 별도)</span>' : '') + '</dd></div>'
-          : '<div><dt>최종 계약 금액</dt><dd><b class="amt">' + F.money(t.final, q.cur) + '</b> <span class="sub">(공급가 ' + F.money(t.net, q.cur) + ' + VAT)</span></dd></div>') +
+          : '<div><dt>최종 계약 금액</dt><dd><b class="amt">' + F.money(t.final, q.cur) + '</b>' + (t.vat ? ' <span class="sub">(공급가 ' + F.money(t.net, q.cur) + ' + VAT)</span>' : '') + '</dd></div>') +
         '<div><dt>계약 견적</dt><dd>' + lastCQ().n + '차 견적 (㈜셀키에이아이) <button type="button" class="tbtn xs primary lnk" data-doc-pick>견적서 보기</button></dd></div>' +
         '<div><dt>계약일</dt><dd>' + (FS.ct.date ? dot(FS.ct.date) : ymd(FS.ct.at)) + '</dd></div>' +
         '<div><dt>납기일</dt><dd>' + dot(DUE) + (FS.fin || REP.length ? '' : ' <em class="dday">' + dd(DUE) + '</em>') + '</dd></div>' +

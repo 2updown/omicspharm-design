@@ -11,14 +11,14 @@
      데이터: assets/common/flow.js (localStorage op.flow)
      AI 분석파트너 매칭(의뢰 승인 후 ~ 견적 확정 전): 의뢰 입력값 ↔ 파트너 분석 서비스 정보(v5 공급자 항목, svc-spec.js) 비교. 순위·점수 없이 인증 파트너 전부를 묶어서 보여줌.
      지금은 단순 규칙. 나중에 매칭 에이전트 결과로 바꿈. 예시 파트너 서비스 정보는 가상 값(DEMO_SVC) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261103k">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261103k">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261103k">
-<script src="assets/common/site.js?v=20261103k"></script>
-<script src="assets/common/consult.js?v=20261103k"></script>
-<script src="assets/common/mypage.js?v=20261103k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261103l">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261103l">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261103l">
+<script src="assets/common/site.js?v=20261103l"></script>
+<script src="assets/common/consult.js?v=20261103l"></script>
+<script src="assets/common/mypage.js?v=20261103l"></script>
 <script src="assets/common/svc-spec.js?v=20261030a"></script>
-<script src="assets/common/flow.js?v=20261103k"></script>
+<script src="assets/common/flow.js?v=20261103l"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -1128,7 +1128,9 @@
     var keys = Object.keys(s.P).filter(function (k) { return !hid(s, k); }).sort(function (a, b) { return order(s.P[a]) - order(s.P[b]) || s.P[a].at - s.P[b].at; });
     var subs = keys.filter(function (k) { return s.P[k].status === 'sub'; });
     var amt = function (k) { return F.total(s.P[k].quote).final; };
-    var low = subs.length > 1 ? subs.reduce(function (a, b) { return amt(b) < amt(a) ? b : a; }) : null;
+    // 최저가는 모든 견적이 같은 통화일 때만 (환산 비교 안 함, 2026-11-03 업체 질문 4)
+    var cur1 = subs.every(function (k) { return (s.P[k].quote.cur || 'KRW') === (s.P[subs[0]].quote.cur || 'KRW'); });
+    var low = subs.length > 1 && cur1 ? subs.reduce(function (a, b) { return amt(b) < amt(a) ? b : a; }) : null;
     var fast = subs.length > 1 ? subs.reduce(function (a, b) { return +s.P[b].quote.weeks < +s.P[a].quote.weeks ? b : a; }) : null;
     var edit = s.st === 'quoting' || s.st === 'sent'; // 클라이언트가 확정하기 전까지 견적 확인·추가 전달 가능
     var badge = function (k) {
@@ -1144,7 +1146,7 @@
         (edit && sub && !F.cqList(s).length ? '<span><input type="radio" name="qpick" value="' + esc(k) + '" aria-label="' + esc(p.org) + ' 견적 선택"></span>' : '<span title="' + (x.fwd ? '클라이언트 견적의 기준 견적' : '') + '">' + (x.fwd ? '✓' : '') + '</span>') + // 고른 견적에 아래 [수정 요청]·[1차 견적서 작성] (2026-10-28)
         '<div class="who"><b>' + esc(p.org) + (x.fwd ? '<span class="badge done">클라이언트 견적 기준</span>' : '') + '</b>' + (x.self || x.revN ? '<span>' + (x.self ? '<i class="src self">직접 신청</i>' : '') + (x.revN ? '수정 ' + x.revN + '회' : '') + '</span>' : '') + svcMiss(k) + '</div>' +
         '<div class="st">' + badge(k) + '</div>' +
-        '<div class="amt">' + (sub ? F.money(F.total(q).final) + (k === low ? '<span class="badge teal">최저가</span>' : '') + '<small class="mobv">VAT 포함</small>' : '--') + (sub ? '<span class="mob"><i class="dv" aria-hidden="true"></i>' + esc(q.weeks || '-') + '주</span>' : '') + '</div>' +
+        '<div class="amt">' + (sub ? F.money(F.total(q).final, q.cur) + (k === low ? '<span class="badge teal">최저가</span>' : '') + ((q.cur || 'KRW') === 'KRW' ? '<small class="mobv">VAT 포함</small>' : '') : '--') + (sub ? '<span class="mob"><i class="dv" aria-hidden="true"></i>' + esc(q.weeks || '-') + '주</span>' : '') + '</div>' +
         '<div class="wk">' + (sub ? esc(q.weeks || '-') + '주' + (k === fast ? '<span class="badge teal">최단</span>' : '') : '--') + '</div>' +
         '<div class="dt">' + (x.subAt && sub ? F.ymd(x.subAt) : x.status === 'dec' ? F.ymd(x.dec.at) : '--') + '</div>' +
         '<div class="act">' + (sub ? '<button type="button" class="btn line" data-doc="' + k + '"><i aria-hidden="true"></i>견적서</button>' : '') + '</div>' +
@@ -1159,7 +1161,7 @@
       (function () { var hint = edit && subs.length && !F.cqList(s).length;
         return '<div class="op-ibox reqinfo' + (hint ? '' : ' simple') + '"><p class="t"><span class="rq"><span><b>게시</b> ' + F.ymd(s.ok || r.at) + '</span><span><b>모집기한</b> ~' + dot(s.due || r.to) + (F.open(id) && s.due ? ' <button type="button" class="lnk" id="dueChg">변경</button>' : '') + '</span><span>직접 신청 ' + Object.keys(s.P).filter(function (k) { return s.P[k].self && !hid(s, k); }).length + '<i class="dv" aria-hidden="true"></i>견적제안 ' + Object.keys(s.P).filter(function (k) { return !s.P[k].self; }).length + '</span></span></p>' +
           (hint ? '<ul><li>클라이언트에게 보낼 견적 1건을 선정하고 [1차 견적서 작성]을 누르세요.</li><li>단가, 수수료, 할인을 정해 ㈜셀키에이아이 명의로 보냅니다. 클라이언트에게는 분석파트너 이름이 보이지 않습니다.</li><li>파트너 견적을 고쳐야 하면 견적을 선택하고 [파트너 견적 수정하기]를 누르세요. 저장하면 분석파트너에게 알림이 갑니다.</li></ul>' : '') + '</div>'; })() +
-      (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적 (VAT 포함)</span><span>소요</span><span>일자</span><span>견적서 보기</span></div>' + rows + '</div>' +
+      (keys.length ? '<div class="qt"><div class="h"><span></span><span>분석파트너</span><span>상태</span><span>최종 견적' + (subs.some(function (k) { return (s.P[k].quote.cur || 'KRW') !== 'KRW'; }) ? ' (원화 VAT 포함)' : ' (VAT 포함)') + '</span><span>소요</span><span>일자</span><span>견적서 보기</span></div>' + rows + '</div>' +
         (edit && subs.length && !F.cqList(s).length ? '<div class="qbar"><span class="sel" id="qSel"></span><button type="button" class="btn" id="qRev" disabled>파트너 견적 수정하기</button>' + (!F.cqList(s).length ? '<button type="button" class="btn primary" id="qMk" disabled>1차 견적서 작성</button>' : '') + '</div>' : '')
         : '<div class="qempty">아직 견적을 작성 중인 분석파트너가 없습니다.<br>[AI 분석파트너 매칭]이나 [견적 제안 보내기]로 인증 분석파트너에게 견적을 요청할 수 있습니다.</div>') +
       cqHTML(s, edit, subs) +
@@ -1175,7 +1177,7 @@
       L.slice().reverse().map(function (v, ri) {
         var t = F.total(v.quote), last = ri === 0;
         return '<div class="cq-r' + (last ? ' cur' : '') + '"><b>' + v.n + '차</b>' + (last ? (s.pick ? '<span class="badge ok">최종 확인</span>' : '<span class="badge wait">확인 대기</span>') : '') +
-          '<span class="amt">' + F.money(t.final, v.quote.cur) + '<small>VAT 포함</small></span>' +
+          '<span class="amt">' + F.money(t.final, v.quote.cur) + (t.vat ? '<small>VAT 포함</small>' : '') + '</span>' +
           '<span class="meta">기준 ' + esc(F.partner(v.base).org) + ' ' + F.money(pq(v)) + (v.legacy ? '<i class="dv" aria-hidden="true"></i>예전 방식(파트너 견적 그대로 전달)' : '') + '<i class="dv" aria-hidden="true"></i>' + F.ymd(v.at) + '</span>' +
           '<button type="button" class="btn" data-cqdoc="' + (v.n - 1) + '">견적서 보기</button>' +
           (v.why ? '<p class="note">수정 사유 — ' + esc(v.why) + '</p>' : '') + '</div>';
