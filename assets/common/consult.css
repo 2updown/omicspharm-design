@@ -11,7 +11,7 @@
 .cs-thread li.usr .bub { background:#e7f6f3; }
 .cs-thread .bub b { display:block; margin-bottom:4px; font-size:13px; font-weight:600; line-height:18px; color:#00786e; }
 .cs-thread li.usr .bub b { color:#404040; }
-.cs-thread .bub p { font-size:15px; line-height:1.65; color:#262626; white-space:pre-line; word-break:break-word; }
+.cs-thread .bub p { font-size:15px; line-height:1.65; color:#000; white-space:pre-line; word-break:break-word; }
 .cs-thread .bub .att { display:inline-block; margin-top:8px; font-size:12px; color:#737373; }
 /* 첨부 (2026-11-02): 이미지 미리보기 + 파일 칩 */
 .cs-thread .bub .att-img { display:block; margin-top:10px; width:240px; max-width:100%; border-radius:8px; overflow:hidden; border:1px solid #e5e5e5; background:#fff; cursor:zoom-in; }
