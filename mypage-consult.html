@@ -176,7 +176,7 @@
       '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">번호</th><th>문의 유형</th><th>제목</th><th>성함</th><th>이메일</th><th class="c">회원</th><th class="c">처리상태</th><th class="c">최근 대화</th><th class="c">등록일</th></tr></thead><tbody id="tb"></tbody></table></div>';
     var draw = function () {
       var st = $('#fSt').value, mem = $('#fMem').value, q = $('#fQ').value.trim().toLowerCase(), df = $('#fFrom').value, dt = $('#fTo').value, ty = $('#fType').value;
-      var A = gen().sort(function (a, b) { return b.at - a.at; });
+      var A = gen().sort(function (a, b) { return C.lastAt(b) - C.lastAt(a); }); // 최근 대화 순 (프로젝트 문의내역과 같게, 2026-11-03)
       var L = A.filter(function (c) { var m = !!OP.account(c.email); return C.inRange(c.at, df, dt) && (!ty || c.type === ty) && (!st || (st === 'wait') === C.waiting(c)) && (!mem || (mem === 'y') === m) && (!q || [c.title, c.name, c.email].join(' ').toLowerCase().indexOf(q) > -1); });
       $('#n').textContent = A.length; $('#nw').textContent = A.filter(C.waiting).length;
       $('#tb').innerHTML = L.length ? L.map(function (c, i) {
