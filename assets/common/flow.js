@@ -21,9 +21,9 @@
     // name·tel·mail: 견적제안메일 발송 목록용 (데모 값)
     { key: ME_PARTNER, org: '세움분석센터', name: '김파트너', tel: '010-2345-6789', mail: ME_PARTNER, svc: ['단백체', '대사체', '바이오의약품'], verified: true, done: 38, lead: '평균 6주', login: true },
     { key: 'p-bio', org: '라온바이오랩', name: '이담당', tel: '02-000-1001', mail: 'contact@biolab.test', svc: ['단백체', 'Olink', '대사체'], verified: true, done: 52, lead: '평균 5주', rate: .92, weeks: 5 },
-    { key: 'p-omx', org: '하늬오믹스', name: '박담당', tel: '031-000-1002', mail: 'sales@omics.test', svc: ['전사체', '유전체', '단백체'], verified: true, done: 27, lead: '평균 7주', rate: 1.08, weeks: 7 },
+    { key: 'p-omx', org: '하늬오믹스', name: '박담당', tel: '031-000-1002', mail: 'sales@omics.test', svc: ['전사체', '유전체', '단백체', '대사체'], verified: true, done: 27, lead: '평균 7주', rate: 1.08, weeks: 7 },
     { key: 'p-gen', org: '다온유전체센터', name: '최담당', tel: '042-000-1003', mail: 'info@genome.test', svc: ['유전체', '전사체'], verified: true, done: 64, lead: '평균 6주', rate: 1, weeks: 6 },
-    { key: 'p-met', org: '온누리대사체연구소', name: '정담당', tel: '02-000-1004', mail: 'lab@metabo.test', svc: ['대사체', 'Olink'], verified: true, done: 19, lead: '평균 6주', rate: .97, weeks: 6 },
+    { key: 'p-met', org: '온누리대사체연구소', name: '정담당', tel: '02-000-1004', mail: 'lab@metabo.test', svc: ['대사체', 'Olink', '단백체'], verified: true, done: 19, lead: '평균 6주', rate: .97, weeks: 6 },
     { key: 'p-adc', org: '이룸바이오로직스', name: '한담당', tel: '032-000-1005', mail: 'bd@biologics.test', svc: ['바이오의약품', '단백체'], verified: true, done: 11, lead: '평균 8주', rate: 1.15, weeks: 8, svcInfo: false }, // svcInfo:false = 분석 서비스 정보 미입력 예시
     { key: 'p-prt', org: '가람프로틴랩', name: '윤담당', tel: '02-000-1007', mail: 'lab@protein.test', svc: ['단백체'], verified: true, done: 8, lead: '평균 6주', rate: 1.02, weeks: 6, svcInfo: false }, // 견적에 참여하지 않은 분석 서비스 정보 미입력 예시 (AI 매칭 '정보 부족' 탭)
     { key: 'p-mlt', org: '누리멀티오믹스', name: '서담당', tel: '02-000-1008', mail: 'hello@multiomics.test', svc: ['단백체', '대사체', '전사체', '유전체'], verified: true, done: 45, lead: '평균 6주', rate: 1, weeks: 6 }, // 여러 오믹스를 폭넓게 지원하는 예시 (AI 매칭 '조건 충족' 예시)
@@ -528,7 +528,7 @@
       var n0 = L.length; // 아래에서 넣은 알림에 프로젝트명(pj)을 붙임 (대시보드 최근 알림 두 번째 줄)
       if (role === 'admin') {
         var href = 'mypage-request.html?id=' + encodeURIComponent(r.id);
-        L.push({ id: 'f-new-' + r.id, k: '의뢰접수', cat: 'project', at: r.at, t: cl + '의 ' + nm + ' 의뢰서가 접수 되었습니다. 확인 후 승인처리 해주세요.', href: href });
+        L.push({ id: 'f-new-' + r.id, k: '의뢰접수', cat: 'project', at: r.at, t: cl + '의 ' + nm + ' 의뢰서가 접수되었습니다. 확인 후 승인 처리해 주세요.', href: href });
         Object.keys(s.P).forEach(function (k) {
           var x = s.P[k], o = partner(k).org;
           if (x.subAt && x.quote) L.push({ id: 'f-sub-' + r.id + k + (x.revN || 0), k: '견적등록', cat: 'project', at: x.subAt, t: o + '의 ' + qname(x) + '가 등록되었습니다.', sub: '프로젝트명: ' + nm + ' · 견적금액: ' + won(total(x.quote).final), href: href });
@@ -536,8 +536,8 @@
         });
         if (r.updatedAt) L.push({ id: 'f-ed-' + r.id + r.updatedAt, k: '의뢰수정', cat: 'project', at: r.updatedAt, t: cl + '의 ' + nm + ' 의뢰서가 수정되었습니다. 변경 내용을 확인해주세요.', href: href });
         if (s.biz && s.biz.reAt) L.push({ id: 'f-biz-re-' + r.id + s.biz.reAt, k: '사업자등록증재제출', cat: 'project', at: s.biz.reAt, t: cl + '의 ' + nm + ' 의뢰 사업자등록증이 다시 제출되었습니다. 확인 후 승인처리 해주세요.', href: href });
-        if (s.pick) L.push({ id: 'f-pick-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: josa(cl, '이', '가') + ' ' + nm + ' 프로젝트의 최종 견적을 확정 했습니다.', sub: '공급사: ' + partner(s.pick).org + ' · 클라이언트 견적금액: ' + won(total((F.cqLast(s) || {}).quote || s.P[s.pick].quote).final), href: href });
-        (s.raw || []).filter(function (x) { return x.by !== 'admin'; }).forEach(function (x, i) { L.push({ id: 'f-raw-' + r.id + i, k: '결과등록', cat: 'project', at: x.at, t: josa(partner(s.pick).org, '이', '가') + ' ' + nm + ' 프로젝트의 ' + (i + 1) + '차 분석 결과를 등록했습니다. AI 보고서 초안을 검토해주세요.', href: href }); });
+        if (s.pick) L.push({ id: 'f-pick-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: josa(cl, '이', '가') + ' ' + nm + ' 프로젝트의 최종 견적을 확정했습니다.', sub: '공급사: ' + partner(s.pick).org + ' · 클라이언트 견적금액: ' + won(total((F.cqLast(s) || {}).quote || s.P[s.pick].quote).final), href: href });
+        (s.raw || []).filter(function (x) { return x.by !== 'admin'; }).forEach(function (x, i) { L.push({ id: 'f-raw-' + r.id + i, k: '결과등록', cat: 'project', at: x.at, t: josa(partner(s.pick).org, '이', '가') + ' ' + nm + ' 프로젝트의 ' + (i + 1) + '차 분석 결과를 등록했습니다. ' + (x.kind === 'pdf' ? '결과보고서 PDF를 확인해주세요.' : 'AI 보고서 초안을 검토해주세요.'), href: href }); });
         if (s.cancel) L.push({ id: 'f-cancel-' + r.id, k: '의뢰취소', cat: 'project', at: s.cancel.at, t: s.cancel.by === 'admin' ? nm + ' 프로젝트를 삭제했습니다.' : cl + '의 ' + nm + ' 프로젝트가 삭제되었습니다.', sub: s.cancel.reason ? '사유: ' + s.cancel.reason : '', href: href });
         (s.cReq || []).forEach(function (q, i) { L.push({ id: 'f-creq-' + r.id + i, k: '보고서수정요청', cat: 'project', at: q.at, t: cl + '의 ' + nm + ' 결과보고서 수정 요청이 등록되었습니다.', sub: q.note, href: href }); });
         if (s.rate) L.push({ id: 'f-rate-' + r.id, k: '리뷰등록', cat: 'project', at: s.rate.at, t: cl + '의 ' + nm + ' 프로젝트에 만족도 평가(별점 ' + s.rate.star + '점)가 등록되었습니다.', href: href });
@@ -599,7 +599,7 @@
       '</dl></section>' +
       (r.sections || []).map(function (sec) {
         if (sec.note) return '<section class="fsec"><h4>' + esc(sec.title) + '</h4><p class="fnote">' + esc(sec.note) + '</p></section>';
-        return '<section class="fsec"><h4>' + esc(sec.title) + '</h4><dl class="fkv">' + sec.rows.map(function (x) { return '<div><dt>' + esc(x[0]) + '</dt><dd>' + esc(x[1]) + '</dd></div>'; }).join('') + '</dl></section>';
+        return '<section class="fsec"><h4>' + esc(sec.title) + '</h4><dl class="fkv">' + sec.rows.map(function (x) { return '<div><dt>' + esc(x[0]) + '</dt><dd>' + esc(String(x[1]).replace(/(\d{4})-(\d{2})-(\d{2})/g, '$1.$2.$3')) + '</dd></div>'; }) /* 날짜는 2026.12.20 형식으로 통일 (2026-11-04) */.join('') + '</dl></section>';
       }).join('');
   };
 
