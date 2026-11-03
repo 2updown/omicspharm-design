@@ -301,6 +301,8 @@ span.tbtn { cursor:default; }
 .mg-q { flex:1; min-width:220px; display:flex; align-items:center; gap:4px; height:40px; padding:0 8px 0 12px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; } /* 입력칸 안 돋보기 (프로젝트 관리 검색과 같게, 2026-10-29) */
 .mg-date { display:flex; align-items:center; gap:6px; } /* 등록일 시작일~종료일 (2026-11-03) */
 .mg-date input { width:148px; height:40px; padding:0 10px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font-size:14px; }
+.mg-date input[type=text] { padding-right:34px; background:#fff url(../find/ic-calendar-black.svg) right 10px center/18px no-repeat; } /* 비어 있을 때도 달력 아이콘 */
+.mg-date input::placeholder { color:var(--gray-400); }
 .mg-date input:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
 .mg-date span { color:var(--gray-500); }
 @media (max-width:640px) { .mg-date { width:100%; } .mg-date input { flex:1; width:auto; min-width:0; } }

@@ -10,13 +10,13 @@
        처리상태는 마지막 메시지로 자동(답변대기/답변완료), 처리내용(= 실서비스의 답변 입력 칸) → 대화의 답변 입력으로 바뀜. 답변은 문의자에게 보이고 메일로도 알림 (2026-10-30 정정)
      회원(클라이언트·분석파트너): 내 상담 목록(+ 챗봇 문의) → 대화 + 이어서 작성.
      2026-10-27: 프로젝트별 대화(?project=, pj)는 메뉴 '프로젝트 문의내역'(mypage-inquiry.html)에서 열리고 대화 화면만 여기를 씀. 의뢰에 연결된 상담(link)은 끝난 대화로 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261103d">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261103d">
-<link rel="stylesheet" href="assets/common/consult.css?v=20261103d">
-<script src="assets/common/site.js?v=20261103d"></script>
-<script src="assets/common/consult.js?v=20261103d"></script>
-<script src="assets/common/mypage.js?v=20261103d"></script>
-<script src="assets/common/flow.js?v=20261103d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261103f">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261103f">
+<link rel="stylesheet" href="assets/common/consult.css?v=20261103f">
+<script src="assets/common/site.js?v=20261103f"></script>
+<script src="assets/common/consult.js?v=20261103f"></script>
+<script src="assets/common/mypage.js?v=20261103f"></script>
+<script src="assets/common/flow.js?v=20261103f"></script>
 <script src="assets/common/projects-data.js?v=20261030a"></script>
 <style>
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
@@ -170,7 +170,7 @@
     $('#card').innerHTML = '<div class="card-head"><h3>상담내역</h3></div>' +
       '<div class="mg-filter"><select class="mg-sel" id="fSt"><option value="">처리상태</option><option value="wait">답변대기</option><option value="done">답변완료</option></select>' +
         '<select class="mg-sel" id="fMem"><option value="">회원 여부</option><option value="y">회원</option><option value="n">비회원</option></select>' + C.dateBox() +
-        '<div class="mg-q"><input type="search" id="fQ" placeholder="제목, 성함, 이메일 검색"><button type="button" class="btn" id="go">검색</button></div></div>' +
+        '<div class="mg-q" role="search"><input type="search" id="fQ" placeholder="제목, 성함, 이메일 검색" aria-label="검색어"><button type="button" id="go" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></div></div>' +
       '<p class="mg-total">(<b style="color:var(--red-600)" id="nw">0</b>건 답변대기 / 총 <b id="n">0</b>건)</p>' +
       '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">번호</th><th>제목</th><th>문의 유형</th><th>성함</th><th>이메일</th><th class="c">회원</th><th class="c">처리상태</th><th class="c">최근 대화</th><th class="c">등록일</th></tr></thead><tbody id="tb"></tbody></table></div>';
     var draw = function () {

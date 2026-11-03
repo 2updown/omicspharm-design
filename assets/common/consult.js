@@ -79,7 +79,8 @@
   OP.consult = {
     LINK_DAYS: LINK_DAYS, esc: esc, DV: DV, ymd: ymd, ymdhm: ymdhm,
     // 컨설턴트 목록 기간 검색 (등록일 시작일~종료일, 2026-11-03). 상담내역 · 프로젝트 문의내역 공통
-    dateBox: function () { return '<div class="mg-date"><input type="date" id="fFrom" aria-label="시작일"><span>~</span><input type="date" id="fTo" aria-label="종료일"></div>'; },
+    // 날짜 칸은 비어 있을 때 '시작일/종료일' 안내가 보이게 text로 두고, 누르면 date로 바꿔 달력을 엶 (2026-11-03)
+    dateBox: function () { var d = function (id, ph) { return '<input type="text" id="' + id + '" placeholder="' + ph + '" aria-label="' + ph + '" onfocus="this.type=\'date\';try{this.showPicker()}catch(e){}" onblur="if(!this.value)this.type=\'text\'">'; }; return '<div class="mg-date">' + d('fFrom', '시작일') + '<span>~</span>' + d('fTo', '종료일') + '</div>'; },
     inRange: function (t, from, to) { var k = ymd(t).replace(/\./g, '-'); return (!from || k >= from) && (!to || k <= to); },
     all: all, get: get, save: save,
     byToken: function (t) { return t ? all().filter(function (c) { return c.token === t; })[0] || null : null; },
