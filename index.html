@@ -89,6 +89,7 @@
   .service-shot.in .wire .ar .l { animation:svDrawL 2s linear .3s infinite; }
   .service-shot.in .wire .ar .h { animation:svDrawH 2s linear .3s infinite; }
   .service-shot.in > img.rep { animation:svRise .8s cubic-bezier(.2,.7,.2,1) 1.8s forwards; }
+  .service-shot > img.rep.done { animation:none; opacity:1; } /* 다 떠오르면 애니메이션 해제: 합성 레이어로 남아 흐려지는 것 방지 */
   @keyframes svFlow { to { stroke-dashoffset:-88; } }
   @keyframes svDrawL { 0% { stroke-dashoffset:1; opacity:1; animation-timing-function:cubic-bezier(.4,0,.2,1); } 25%,80% { stroke-dashoffset:0; opacity:1; } 95%,100% { stroke-dashoffset:0; opacity:0; } }
   @keyframes svDrawH { 0%,25% { stroke-dashoffset:1; opacity:1; animation-timing-function:ease-out; } 37.5%,80% { stroke-dashoffset:0; opacity:1; } 95%,100% { stroke-dashoffset:0; opacity:0; } }
@@ -525,6 +526,9 @@
     featImg.classList.add('fade');
     setTimeout(() => { featImg.src = tab.dataset.img; featImg.alt = tab.querySelector('.t').textContent + ' 화면 예시'; featImg.classList.remove('fade'); }, 200);
   }));
+</script>
+<script>
+(function () { var r = document.querySelector('.service-shot > img.rep'); if (r) r.addEventListener('animationend', function () { r.classList.add('done'); }); })();
 </script>
 <script>
 /* 메인 스크롤 등장 효과 (배경·배경 이미지는 고정, 글자·내용만): 요소마다 .rv를 붙이고 화면에 들어오면 .in (같은 묶음 안에서는 순서대로 조금씩 늦게) */
