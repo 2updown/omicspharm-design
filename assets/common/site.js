@@ -334,6 +334,7 @@
       '<nav class="op-dr-nav" aria-label="전체 메뉴">' +
         '<a class="op-dr-link" href="omicspharm-register.html?from=gnb" data-client-only>프로젝트 의뢰</a>' +
         '<a class="op-dr-link" href="projects.html">프로젝트 찾기</a>' +
+        '<a class="op-dr-link" href="workspace.html">솔루션</a>' + /* 2026-11-04: 지금은 Workspace 하나라 바로 연결, 항목이 늘면 드롭다운 */
         groups +
       '</nav>' +
       (s ? '<div class="op-dr-foot"><button type="button" data-op-logout>로그아웃</button></div>'
@@ -350,6 +351,7 @@
       '<nav class="op-gnb-menu">' +
         '<a href="omicspharm-register.html?from=gnb" data-client-only' + on('register') + '>프로젝트 의뢰</a>' /* GNB에서 들어오면 [이전으로] 숨김 */ +
         '<a href="projects.html"' + on('find') + '>프로젝트 찾기</a>' +
+        '<a href="workspace.html"' + on('workspace') + '>솔루션</a>' + /* 2026-11-04: 지금은 Workspace 하나라 바로 연결, 항목이 늘면 드롭다운 */
         dropdown('community') + dropdown('service') + dropdown('support') +
       '</nav>';
     var cta = s
