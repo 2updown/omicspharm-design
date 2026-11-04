@@ -334,7 +334,6 @@
       '<nav class="op-dr-nav" aria-label="전체 메뉴">' +
         '<a class="op-dr-link" href="omicspharm-register.html?from=gnb" data-client-only>프로젝트 의뢰</a>' +
         '<a class="op-dr-link" href="projects.html">프로젝트 찾기</a>' +
-        '<a class="op-dr-link" href="workspace.html">솔루션</a>' + /* 2026-11-04: 지금은 Workspace 하나라 바로 연결, 항목이 늘면 드롭다운 */
         groups +
       '</nav>' +
       (s ? '<div class="op-dr-foot"><button type="button" data-op-logout>로그아웃</button></div>'
@@ -343,6 +342,7 @@
   }
   var BURGER = '<button type="button" class="op-burger" aria-controls="opDrawer" aria-expanded="false" aria-label="메뉴 열기"><img class="i-open" src="' + A + 'ic-list.svg" alt=""><img class="i-close" src="' + A + 'ic-x.svg" alt=""></button>';
 
+  // [외주사 참고 2026-11-04] 메인 Service·Features 콘텐츠와 워크스페이스(솔루션) 작업으로 GNB 메뉴 구조가 바뀔 수 있습니다. 확정되면 따로 전달드립니다.
   function gnb(active) {
     var s = OP.session();
     var on = function (k) { return active === k ? ' class="on"' : ''; };
@@ -350,7 +350,6 @@
       '<nav class="op-gnb-menu">' +
         '<a href="omicspharm-register.html?from=gnb" data-client-only' + on('register') + '>프로젝트 의뢰</a>' /* GNB에서 들어오면 [이전으로] 숨김 */ +
         '<a href="projects.html"' + on('find') + '>프로젝트 찾기</a>' +
-        '<a href="workspace.html"' + on('workspace') + '>솔루션</a>' + /* 2026-11-04: 지금은 Workspace 하나라 바로 연결, 항목이 늘면 드롭다운 */
         dropdown('community') + dropdown('service') + dropdown('support') +
       '</nav>';
     var cta = s
