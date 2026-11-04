@@ -71,12 +71,12 @@
 
   /* ── Service (959:12422) ── */
   .service { position:relative; overflow:hidden; display:flex; justify-content:center; }
-  /* 배경 그라데이션 3개는 흐름 그래픽 기준 (2026-11-04): 화면 크기가 바뀌어도 항상 그래픽 뒤 같은 자리. 값은 그래픽(1368×695) 대비 % */
+  /* 배경 그라데이션 3개는 흐름 그래픽 기준 (2026-11-04): 화면 크기가 바뀌어도 항상 그래픽 뒤 같은 자리. 값은 그래픽(1368×593) 대비 %. 11-04 그래픽 아래 여백 102 줄임(Figma 2346:31097) */
   .service-shot .glow { position:absolute; pointer-events:none; }
   .service-shot .glow img { display:block; width:100%; height:100%; object-fit:fill; }
-  .glow.blue { left:49.97%; top:-6.16%; width:43.86%; height:109.27%; }
-  .glow.peach { left:5.12%; top:-.89%; width:43.86%; height:101.76%; }
-  .glow.green { left:23.81%; top:-6.16%; width:51.17%; height:109.27%; opacity:.6; }
+  .glow.blue { left:49.97%; top:-7.22%; width:43.86%; height:128.07%; }
+  .glow.peach { left:5.12%; top:-1.04%; width:43.86%; height:119.26%; }
+  .glow.green { left:23.81%; top:-7.22%; width:51.17%; height:128.07%; opacity:.6; }
   .service-shot > img.flow { position:relative; z-index:1; }
   /* 결과보고서 카드: 섹션이 보이면 점선 뒤에 한 번 떠오르고 그대로 유지 (2026-11-04) */
   .service-shot > svg.wire { position:absolute; inset:0; z-index:2; width:100%; height:100%; pointer-events:none; overflow:visible; }
@@ -102,7 +102,7 @@
   .sec-head .desc { font-size:18px; font-weight:500; line-height:24px; letter-spacing:-.18px; color:var(--gray-700); }
   .service h2 { color:var(--dark-green); }
   .service .sec-head h2 + .desc { margin-top:-4px; } /* 제목-설명 간격 20px (Figma 959:12435) */
-  .service-shot { position:relative; flex:none; width:1368px; max-width:calc(100vw - 40px); aspect-ratio:2736/1390; } /* 흐름 그래픽(투명 배경)은 박스·그림자 없이 섹션 위에 바로, 글 너비(876)보다 넓게 (2026-11-04) */
+  .service-shot { position:relative; flex:none; width:1368px; max-width:calc(100vw - 40px); aspect-ratio:2736/1186; } /* 흐름 그래픽(투명 배경)은 박스·그림자 없이 섹션 위에 바로, 글 너비(876)보다 넓게 (2026-11-04) */
   .service-shot img { width:100%; height:100%; object-fit:contain; }
 
   /* ── Features (1088:33718) ── */
@@ -401,7 +401,7 @@
       <h2>멀티오믹스 분석, 한곳에서 의뢰하고<br>인사이트까지 얻으세요.</h2>
       <p class="desc">분석 기관을 따로 찾고 비교할 필요 없이, 의뢰부터 결과 확인까지 OmicsPharm에서 이어집니다.</p>
     </div>
-    <div class="service-shot"><div class="glow blue"><img src="assets/main/bg-blue-gradient.png" alt=""></div><div class="glow peach"><img src="assets/main/bg-peach-gradient.png" alt=""></div><div class="glow green"><img src="assets/main/bg-green-gradient.png" alt=""></div><img class="flow" src="assets/main/service-flow-base.png" alt="분석 서비스를 한곳에서 의뢰하고 견적, 계약, 분석을 거쳐 결과보고서까지 받는 흐름"><svg class="wire" viewBox="0 0 1368 695" fill="none" aria-hidden="true"><g class="d" transform="translate(306 112)"><path d="M0 0 C64 0 64 204 124 204"/><path d="M0 68 C64 68 64 204 124 204"/><path d="M0 136 C64 136 64 204 124 204"/><path d="M0 204 C64 204 64 204 124 204"/><path d="M0 272 C64 272 64 204 124 204"/><path d="M0 340 C64 340 64 204 124 204"/><path d="M0 408 C64 408 64 204 124 204"/></g><g class="ar"><path class="l" pathLength="1" d="M950 316 L1012 316"/><path class="h" pathLength="1" d="M1012 316 L1004 308"/><path class="h" pathLength="1" d="M1012 316 L1004 324"/></g></svg><img class="rep" src="assets/main/service-flow-report-v2.png" alt=""></div><!-- 2026-11-04 B안: 서비스 흐름 그래픽 (AI 요소 없음) -->
+    <div class="service-shot"><div class="glow blue"><img src="assets/main/bg-blue-gradient.png" alt=""></div><div class="glow peach"><img src="assets/main/bg-peach-gradient.png" alt=""></div><div class="glow green"><img src="assets/main/bg-green-gradient.png" alt=""></div><img class="flow" src="assets/main/service-flow-base-v2.png" alt="분석 서비스를 한곳에서 의뢰하고 견적, 계약, 분석을 거쳐 결과보고서까지 받는 흐름"><svg class="wire" viewBox="0 0 1368 593" fill="none" aria-hidden="true"><g class="d" transform="translate(306 112)"><path d="M0 0 C64 0 64 204 124 204"/><path d="M0 68 C64 68 64 204 124 204"/><path d="M0 136 C64 136 64 204 124 204"/><path d="M0 204 C64 204 64 204 124 204"/><path d="M0 272 C64 272 64 204 124 204"/><path d="M0 340 C64 340 64 204 124 204"/><path d="M0 408 C64 408 64 204 124 204"/></g><g class="ar"><path class="l" pathLength="1" d="M950 316 L1012 316"/><path class="h" pathLength="1" d="M1012 316 L1004 308"/><path class="h" pathLength="1" d="M1012 316 L1004 324"/></g></svg><img class="rep" src="assets/main/service-flow-report-v3.png" alt=""></div><!-- 2026-11-04 B안: 서비스 흐름 그래픽 (AI 요소 없음) -->
   </div>
 </section>
 
