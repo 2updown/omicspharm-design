@@ -245,6 +245,8 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
   });
   // AI Agent 띄우기 (2026-10-21: 전체 화면 페이지보다 지금 화면 위에 띄우는 쪽으로). 내용은 mypage-ai.html을 그대로 iframe으로
   OP.openAI = function (mode, opts) {
+    // 모바일·태블릿(960 이하)은 아직 지원 안 함 (2026-11-04): 버튼에 'PC 전용' 배지 + 누르면 안내 토스트
+    if (window.matchMedia('(max-width:960px)').matches) { if (!(opts && opts.restore)) OP.toast('AI Agent는 PC에서 이용할 수 있습니다. 모바일 버전은 준비 중입니다.'); return; }
     // 2026-10-26 D안(inline = 마이페이지 본문 칸) 확정. overlay·under·panel은 ?ai= 비교용
     var WANT = mode || ((location.search.match(/[?&]ai=(overlay|panel|under|inline)\b/) || [])[1] || 'inline');
     if (document.querySelector('.op-ai')) return;
@@ -407,7 +409,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
           return '<a href="' + href + '"' + (m[2] === '#' ? ' data-soon="' + m[1] + '"' : '') + (m[0] === key ? ' class="on" aria-current="page"' : '') + '>' + m[1] + (side.querySelector('a[href="' + href + '"] .nb') ? NB : '') + '</a>';
         }).join('');
         // '‹ 마이페이지'와 탭을 한 덩어리로 (등장 효과도 같이). site.js 등장 효과에서 빼고 여기서 직접 붙임
-        ph.insertAdjacentHTML(dash ? 'beforeend' : 'afterbegin', '<div class="m-head op-enter" data-op-skip-enter>' + (dash ? '<button type="button" class="m-ai" data-ph-ai><img src="assets/common/ic-sparkle-fill.svg" alt=""><b>AI Agent</b><em>beta</em></button>' : '<a class="m-back" href="mypage.html"><img src="assets/detail/ic-caret-left.svg" alt="">마이페이지</a>') +
+        ph.insertAdjacentHTML(dash ? 'beforeend' : 'afterbegin', '<div class="m-head op-enter" data-op-skip-enter>' + (dash ? '<button type="button" class="m-ai" data-ph-ai><img src="assets/common/ic-sparkle-fill.svg" alt=""><b>AI Agent</b><em>PC 전용</em></button>' : '<a class="m-back" href="mypage.html"><img src="assets/detail/ic-caret-left.svg" alt="">마이페이지</a>') +
           '<nav class="m-tabs" aria-label="마이페이지 메뉴"><div>' + tabs + '</div></nav></div>');
         var mai = ph.querySelector('.m-ai'); if (mai) mai.addEventListener('click', function () { OP.openAI(); });
         var mt = document.querySelector('.m-tabs > div'), on = mt.querySelector('.on');
@@ -418,7 +420,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     // AI 화면(iframe) 안에서도 이 함수가 불리므로 바깥 화면에서만 처리 (안에서 지우면 새로고침 때 안 열리던 문제, 2026-10-27)
     // 2026-11-02: 새로고침일 때만 다시 엶. 메뉴를 눌러 같은 화면으로 다시 들어온 경우는 닫힌 채로 (메뉴를 누르면 AI 창이 닫혀야 함)
     var RELOAD = ((performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {}).type === 'reload';
-    if (key !== 'ai' && window === window.top) try { var ao = JSON.parse(sessionStorage.getItem('op.aiOpen') || 'null'); if (ao && !RELOAD) { sessionStorage.removeItem('op.aiOpen'); ao = null; } if (ao && ao.p === location.pathname) setTimeout(function () { OP.openAI(ao.m, { full: ao.full }); }, 0); else if (ao) sessionStorage.removeItem('op.aiOpen'); } catch (e) {}
+    if (key !== 'ai' && window === window.top) try { var ao = JSON.parse(sessionStorage.getItem('op.aiOpen') || 'null'); if (ao && !RELOAD) { sessionStorage.removeItem('op.aiOpen'); ao = null; } if (ao && ao.p === location.pathname) setTimeout(function () { OP.openAI(ao.m, { full: ao.full, restore: true }); }, 0); else if (ao) sessionStorage.removeItem('op.aiOpen'); } catch (e) {}
     return { s: s, acc: acc, name: name, org: org };
   };
   // AI Agent 창이 열린 채로 마이페이지 메뉴(왼쪽 메뉴·모바일 탭)를 누르면 창을 닫음 (2026-11-02 피드백). 지금 화면 메뉴면 이동 없이 닫기만
