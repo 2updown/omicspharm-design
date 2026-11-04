@@ -184,7 +184,7 @@
   width:max-content; max-width:min(600px, calc(100vw - 32px)); min-height:54px; padding:8px 16px; border-radius:12px; background:var(--op-toast); color:#fff;
   font-family:var(--op-font); font-size:14px; font-weight:400; line-height:20px; transition:opacity .2s, transform .2s, visibility .2s; }
 .op-toast > img { flex:none; width:20px; height:20px; }
-.op-toast span { flex:1; min-width:0; word-break:keep-all; }
+.op-toast span { flex:1; min-width:0; word-break:keep-all; white-space:pre-line; } /* 메시지 안 \n은 줄바꿈 */
 .op-toast button { flex:none; display:flex; width:20px; height:20px; padding:0; border:0; background:none; cursor:pointer; }
 .op-toast button img { width:20px; height:20px; }
 .op-toast.show { opacity:1; visibility:visible; transform:translate(-50%, 0); }

@@ -246,7 +246,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
   // AI Agent 띄우기 (2026-10-21: 전체 화면 페이지보다 지금 화면 위에 띄우는 쪽으로). 내용은 mypage-ai.html을 그대로 iframe으로
   OP.openAI = function (mode, opts) {
     // 모바일·태블릿(960 이하)은 아직 지원 안 함 (2026-11-04): 버튼에 'PC 전용' 배지 + 누르면 안내 토스트
-    if (window.matchMedia('(max-width:960px)').matches) { if (!(opts && opts.restore)) OP.toast('AI Agent는 PC에서 이용할 수 있습니다. 모바일 버전은 준비 중입니다.'); return; }
+    if (window.matchMedia('(max-width:960px)').matches) { if (!(opts && opts.restore)) OP.toast('AI Agent는 PC에서 이용할 수 있습니다.\n모바일 버전은 준비 중입니다.'); return; }
     // 2026-10-26 D안(inline = 마이페이지 본문 칸) 확정. overlay·under·panel은 ?ai= 비교용
     var WANT = mode || ((location.search.match(/[?&]ai=(overlay|panel|under|inline)\b/) || [])[1] || 'inline');
     if (document.querySelector('.op-ai')) return;
