@@ -80,7 +80,7 @@
   .service-shot > img.flow { position:relative; z-index:1; }
   /* 결과보고서 카드: 섹션이 보이면 점선 뒤에 한 번 떠오르고 그대로 유지 (2026-11-04) */
   .service-shot > svg.wire { position:absolute; inset:0; z-index:2; width:100%; height:100%; pointer-events:none; overflow:visible; }
-  .service-shot > img.rep { position:absolute; z-index:3; left:72.661%; top:20%; width:25.292%; height:54.964%; opacity:0; }
+  .service-shot > img.rep { position:absolute; z-index:3; inset:0; width:100%; height:100%; opacity:0; } /* 기본 이미지와 같은 크기 캔버스로 겹쳐서 축소 비율·위치를 똑같이 (선명도) */
   /* 섹션이 보이면: 왼쪽 점선은 계속 흐르고, 오른쪽 화살표는 2초마다 그려지기를 반복, 결과보고서는 화살표 뒤 약 1초에 한 번 떠올라 유지 (2026-11-04) */
   .wire .d path { stroke:#9fd8cf; stroke-width:2; stroke-dasharray:5 6; fill:none; animation:svFlow 6s linear infinite paused; }
   .service-shot.in .wire .d path { animation-play-state:running; }
@@ -401,7 +401,7 @@
       <h2>멀티오믹스 분석, 한곳에서 의뢰하고<br>인사이트까지 얻으세요.</h2>
       <p class="desc">분석 기관을 따로 찾고 비교할 필요 없이, 의뢰부터 결과 확인까지 OmicsPharm에서 이어집니다.</p>
     </div>
-    <div class="service-shot"><div class="glow blue"><img src="assets/main/bg-blue-gradient.png" alt=""></div><div class="glow peach"><img src="assets/main/bg-peach-gradient.png" alt=""></div><div class="glow green"><img src="assets/main/bg-green-gradient.png" alt=""></div><img class="flow" src="assets/main/service-flow-base.png" alt="분석 서비스를 한곳에서 의뢰하고 견적, 계약, 분석을 거쳐 결과보고서까지 받는 흐름"><svg class="wire" viewBox="0 0 1368 695" fill="none" aria-hidden="true"><g class="d" transform="translate(306 112)"><path d="M0 0 C64 0 64 204 124 204"/><path d="M0 68 C64 68 64 204 124 204"/><path d="M0 136 C64 136 64 204 124 204"/><path d="M0 204 C64 204 64 204 124 204"/><path d="M0 272 C64 272 64 204 124 204"/><path d="M0 340 C64 340 64 204 124 204"/><path d="M0 408 C64 408 64 204 124 204"/></g><g class="ar"><path class="l" pathLength="1" d="M950 316 L1012 316"/><path class="h" pathLength="1" d="M1012 316 L1004 308"/><path class="h" pathLength="1" d="M1012 316 L1004 324"/></g></svg><img class="rep" src="assets/main/service-flow-report.png" alt=""></div><!-- 2026-11-04 B안: 서비스 흐름 그래픽 (AI 요소 없음) -->
+    <div class="service-shot"><div class="glow blue"><img src="assets/main/bg-blue-gradient.png" alt=""></div><div class="glow peach"><img src="assets/main/bg-peach-gradient.png" alt=""></div><div class="glow green"><img src="assets/main/bg-green-gradient.png" alt=""></div><img class="flow" src="assets/main/service-flow-base.png" alt="분석 서비스를 한곳에서 의뢰하고 견적, 계약, 분석을 거쳐 결과보고서까지 받는 흐름"><svg class="wire" viewBox="0 0 1368 695" fill="none" aria-hidden="true"><g class="d" transform="translate(306 112)"><path d="M0 0 C64 0 64 204 124 204"/><path d="M0 68 C64 68 64 204 124 204"/><path d="M0 136 C64 136 64 204 124 204"/><path d="M0 204 C64 204 64 204 124 204"/><path d="M0 272 C64 272 64 204 124 204"/><path d="M0 340 C64 340 64 204 124 204"/><path d="M0 408 C64 408 64 204 124 204"/></g><g class="ar"><path class="l" pathLength="1" d="M950 316 L1012 316"/><path class="h" pathLength="1" d="M1012 316 L1004 308"/><path class="h" pathLength="1" d="M1012 316 L1004 324"/></g></svg><img class="rep" src="assets/main/service-flow-report-v2.png" alt=""></div><!-- 2026-11-04 B안: 서비스 흐름 그래픽 (AI 요소 없음) -->
   </div>
 </section>
 
