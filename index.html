@@ -71,7 +71,7 @@
 
   /* ── Service (959:12422) ── */
   .service { position:relative; overflow:hidden; display:flex; justify-content:center; }
-  .service .glow { position:absolute; top:33.58%; bottom:-7.38%; display:flex; flex-direction:column; justify-content:center; pointer-events:none; }
+  .service .glow { position:absolute; top:381px; height:600px; /* Figma bg 그룹 위치 그대로 (2026-11-04) */ display:flex; flex-direction:column; justify-content:center; pointer-events:none; }
   .service .glow img { width:100%; height:100%; object-fit:fill; }
   .glow.blue { width:613.636px; left:calc(50% + 306.45px); transform:translateX(-50%); }
   .glow.blue img { max-width:600px; }
@@ -79,7 +79,7 @@
   .glow.peach img { max-width:600px; height:93.13%; margin-top:3.44%; }
   .glow.green { width:715.909px; left:calc(50% - .36px); transform:translateX(-50%); opacity:.6; }
   .glow.green img { max-width:700px; }
-  .service-in { position:relative; width:876px; max-width:100%; display:flex; flex-direction:column; align-items:center; gap:60px; }
+  .service-in { position:relative; width:876px; max-width:100%; display:flex; flex-direction:column; align-items:center; gap:20px; } /* 제목-그래픽 20 (그래픽 위쪽 투명 여백 40 포함해 보이는 간격 60, Figma와 같음) */
   .sec-head { display:flex; flex-direction:column; align-items:center; gap:24px; text-align:center; }
   .eyebrow { display:flex; align-items:center; gap:6px; font-size:16px; font-weight:500; line-height:22px; color:var(--highlight); } /* 16 Medium, 로켓 아이콘 없음 (2026-11-04) */
   .sec-head h2 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; word-break:keep-all; }
