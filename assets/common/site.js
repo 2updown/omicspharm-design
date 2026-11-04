@@ -310,7 +310,7 @@
       '<div class="op-dd-menu" role="menu"><a href="#" role="menuitem" class="on" data-lang="ko">KOR</a><a href="#" role="menuitem" data-soon="영문(ENG)">ENG</a></div>' +
     '</div>';
 
-  // 좁은 화면(900px 미만): 알림·아바타·언어 대신 햄버거 메뉴 (Phosphor List / X 아이콘)
+  // 좁은 화면(1080px 미만): 알림·아바타·언어 대신 햄버거 메뉴 (Phosphor List / X 아이콘)
   function drawer(s) {
     var groups = Object.keys(MENUS).map(function (k) {
       var m = MENUS[k];
