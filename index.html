@@ -241,14 +241,12 @@
   .ws-cta::before, .ws-cta::after { content:""; position:absolute; left:50%; border-radius:50%; pointer-events:none; }
   .ws-cta::before { bottom:-170px; width:960px; height:320px; margin-left:-480px; background:linear-gradient(90deg,#00bba6,#3be0c5 50%,#4f8dff); opacity:.6; filter:blur(120px); }
   .ws-cta::after { bottom:-90px; width:440px; height:160px; margin-left:-220px; background:#c9fff3; opacity:.45; filter:blur(70px); }
-  /* 점 배경 (2026-11-05): 옅은 점 + 마우스 주변만 밝아지는 점(마우스가 없으면 빛이 천천히 좌우로 지나감). ?dots=flow 이면 대신 점이 천천히 흐름 */
+  /* 점 배경 (2026-11-05): 옅은 점 + 마우스 주변만 밝아지는 점(마우스가 없으면 빛이 천천히 좌우로 지나감) */
   .ws-dots, .ws-spot { position:absolute; inset:0; pointer-events:none; }
   .ws-dots { background:radial-gradient(circle, rgba(255,255,255,.09) .9px, transparent 1.1px) 0 0/12px 12px; }
   .ws-spot { background:radial-gradient(circle, rgba(140,255,232,.75) 1px, transparent 1.3px) 0 0/12px 12px;
     -webkit-mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); }
-  .dots-flow .ws-spot { display:none; } .dots-flow .ws-dots { animation:wsDots 18s linear infinite; }
-  @keyframes wsDots { to { background-position:120px 60px; } }
-  @media (prefers-reduced-motion:reduce) { .ws-spot { display:none; } .ws-dots { animation:none !important; } }
+  @media (prefers-reduced-motion:reduce) { .ws-spot { display:none; } }
   .ws-in { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:32px; }
   .ws-head { display:flex; flex-direction:column; align-items:center; gap:16px; }
   .ws-eyebrow { font-size:16px; font-weight:500; line-height:22px; background:linear-gradient(90deg, #3be0c5, #6fb2ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
@@ -264,7 +262,7 @@
   .ws-tile .ic { width:42%; height:42%; }
   @keyframes wsFloat { 0%, 100% { transform:translateY(0) rotate(var(--r)); } 50% { transform:translateY(-12px) rotate(var(--r)); } } /* 타일이 천천히 위아래로 떠다님 */
   @media (prefers-reduced-motion:reduce) { .ws-tile { animation:none; } }
-  .cta-full .cta-sec { padding:0; } .cta-full .ws-cta { width:100%; border-radius:0; min-height:480px; } .cta-full .ws-tiles { left:calc(50% - min(660px, 50%)); right:auto; width:min(1320px, 100%); } /* 타일은 카드형과 같은 1320 폭 기준 (제목 가까이) */ /* 비교용: index.html?cta=full 이면 화면 전체 폭 */
+  .cta-full .cta-sec { padding:0; } .cta-full .ws-cta { width:100%; border-radius:0; min-height:480px; } .cta-full .ws-tiles { left:calc(50% - min(660px, 50%)); right:auto; width:min(1320px, 100%); } /* 기본은 화면 전체 폭, 타일은 1320 폭 기준 (제목 가까이). 카드형(1320, 둥근 모서리) 비교용은 index.html?cta=card */
   .cta-sec.full { padding:0; }
   .cta-sec.full .cta { width:100%; min-height:400px; justify-content:center; padding:100px 24px; border-radius:0; }
   .cta-sec.full .cta > img { top:0; height:100%; }
@@ -476,7 +474,7 @@
 
 <!-- Feature 4개: AI 보고서 작성 / AI 결과 해석 / AI 파트너 매칭 / AI 챗봇 CS (이미지는 임시). 첫 번째 항목이 기본
      아이콘: Phosphor Icons Regular (FileText, ListMagnifyingGlass, Sparkle, ChatCircleDots) — 출처 목록 assets/ICONS.md -->
-<script>if (/[?&]feat=1\b/.test(location.search)) document.documentElement.classList.add('feat1'); if (/[?&]cta=full\b/.test(location.search)) document.documentElement.classList.add('cta-full'); if (/[?&]dots=flow\b/.test(location.search)) document.documentElement.classList.add('dots-flow');</script>
+<script>if (/[?&]feat=1\b/.test(location.search)) document.documentElement.classList.add('feat1'); if (!/[?&]cta=card\b/.test(location.search)) document.documentElement.classList.add('cta-full');</script>
 <section class="sec features">
   <div class="sec-head">
     <div class="eyebrow">Features</div>
@@ -647,7 +645,7 @@
 /* 하단 CTA 점 빛 (2026-11-05): 마우스 위치를 따라 밝아짐. 마우스가 없으면(모바일 포함) 빛이 천천히 좌우로 지나감. 화면에 보일 때만 움직임 */
 (function () {
   var box = document.querySelector('.ws-cta'), spot = box && box.querySelector('.ws-spot');
-  if (!spot || document.documentElement.classList.contains('dots-flow') || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  if (!spot || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
   var hover = false, seen = false, raf = 0, t0 = performance.now();
   function set(x, y) { spot.style.setProperty('--mx', x + 'px'); spot.style.setProperty('--my', y + 'px'); }
   function idle(now) { raf = 0; if (hover) return; var rr = box.getBoundingClientRect(); seen = rr.bottom > 0 && rr.top < innerHeight; if (!seen) return; var w = box.clientWidth, h = box.clientHeight, k = (now - t0) / 9000; set(w / 2 + Math.sin(k * Math.PI * 2) * w * 0.42, h * (0.55 + Math.sin(k * Math.PI * 4) * 0.2)); raf = requestAnimationFrame(idle); }
