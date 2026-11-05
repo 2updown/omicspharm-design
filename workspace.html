@@ -9,12 +9,11 @@
      원본 Private/Enterprise 페이지 내용은 이 페이지의 '도입 방식'(#plans) 섹션으로 합침. 반복 섹션(고도화·보안·Managed AI Service·FAQ)은 assets/workspace/ws.js 한 곳에서 관리 -->
 <link rel="stylesheet" href="assets/common/site.css?v=20261105g">
 <script src="assets/common/site.js?v=20261105g"></script>
-<link rel="stylesheet" href="assets/workspace/ws.css?v=1">
-<script src="assets/workspace/ws.js?v=2"></script>
+<link rel="stylesheet" href="assets/workspace/ws.css?v=3">
+<script src="assets/workspace/ws.js?v=5"></script>
 </head>
 <body>
 <div data-op-gnb="workspace"></div>
-<nav class="ws-tabs" data-ws-tabs="overview" aria-label="워크스페이스 메뉴"></nav>
 
 <main>
 <section class="ws-hero"><div class="wrap">
@@ -54,7 +53,13 @@
   </div>
 </div></section>
 
-<section class="sec"><div class="wrap">
+<!-- 페이지 안 이동 탭 (2026-11-05, 레퍼런스 IBM watsonx.ai·Azure AI Foundry): 히어로 아래에 두고 스크롤하면 위에 붙음. 누르면 이 페이지의 해당 섹션으로 이동, 보고 있는 섹션 표시.
+     for Hospital / for Biopharma 페이지는 '분야별' 섹션 카드로 들어감 -->
+<nav class="ws-anchors" aria-label="워크스페이스 안내"><div class="wrap">
+  <a href="#research">워크스페이스란</a><a href="#growth">지속 고도화</a><a href="#security">보안</a><a href="#sectors">분야별 Workspace</a><a href="#plans">도입 방식</a><a href="#managed">운영 지원</a><a href="#faq">FAQ</a>
+</div></nav>
+
+<section class="sec" id="research"><div class="wrap">
   <div class="sec-head">
     <div><span class="eyebrow">Built for Research</span><h2 class="ttl">연구 지식은 이어지고, <br>데이터는 안전하게.</h2></div>
     <p>분석 결과를 다음 연구에 활용하고, 중요한 자료는 연구팀의 권한 안에서 관리합니다.</p>

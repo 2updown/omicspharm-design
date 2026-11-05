@@ -128,6 +128,18 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
+    /* 페이지 안 이동 탭: 지금 보고 있는 섹션 표시, 선택한 탭이 가로로 보이게 */
+    var anc = document.querySelector('.ws-anchors');
+    if (anc) {
+      var links = [].slice.call(anc.querySelectorAll('a'));
+      var spy = function () {
+        var line = 140, cur = links[0];
+        links.forEach(function (a) { var t = document.querySelector(a.getAttribute('href')); if (t && t.getBoundingClientRect().top - line <= 0) cur = a; });
+        if (anc.getBoundingClientRect().top > 80) cur = null;
+        links.forEach(function (a) { var on = a === cur; if (on && !a.classList.contains('on')) a.parentNode.scrollTo({ left: a.offsetLeft - 20, behavior: 'smooth' }); a.classList.toggle('on', on); });
+      };
+      window.addEventListener('scroll', spy, { passive: true }); window.addEventListener('load', spy); setTimeout(spy, 0);
+    }
     document.querySelectorAll('[data-ws-tabs]').forEach(function (el) { el.innerHTML = tabs(el.getAttribute('data-ws-tabs')); });
     document.querySelectorAll('[data-ws]').forEach(function (el) {
       var k = el.getAttribute('data-ws'), p = k.split('-');
