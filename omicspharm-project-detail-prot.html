@@ -612,10 +612,14 @@
   var tabs = [].slice.call(document.querySelectorAll('#tabs a'));
   var secs = tabs.map(function (a) { return document.querySelector(a.getAttribute('href')); });
   function setOn(i) { tabs.forEach(function (a, k) { a.classList.toggle('on', k === i); }); }
-  tabs.forEach(function (a, i) { a.addEventListener('click', function (e) { e.preventDefault(); secs[i].scrollIntoView({ behavior: 'smooth', block: 'start' }); setOn(i); }); });
+  // 누른 탭은 사용자가 직접 스크롤할 때까지 유지 (아래쪽 짧은 항목을 누르면 페이지 끝에 닿아 마지막 탭이 선택되던 문제, 2026-11-05)
+  var picked = null;
+  ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (t) { window.addEventListener(t, function (e) { if (!e.target.closest || !e.target.closest('#tabs')) picked = null; }, { passive: true }); });
+  tabs.forEach(function (a, i) { a.addEventListener('click', function (e) { e.preventDefault(); picked = i; secs[i].scrollIntoView({ behavior: 'smooth', block: 'start' }); setOn(i); }); });
   window.addEventListener('scroll', function () {
     var y = 150, cur = 0;
     var tb = document.getElementById('tabs'); tb.classList.toggle('stuck', tb.getBoundingClientRect().top <= 70.5);
+    if (picked !== null) { setOn(picked); return; }
     secs.forEach(function (s, i) { if (s.getBoundingClientRect().top <= y) cur = i; });
     if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) cur = secs.length - 1;
     setOn(cur);

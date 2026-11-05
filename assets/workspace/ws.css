@@ -20,26 +20,26 @@ ul { list-style:none; }
 
 /* 워크스페이스 안 이동 탭 (GNB 아래) */
 .ws-tabs { position:sticky; top:70px; z-index:20; background:#fff; border-bottom:1px solid var(--gray-200); padding:0 60px; }
-.ws-tabs .wrap { display:flex; align-items:center; gap:32px; height:56px; }
-.ws-tabs .brand { margin-right:8px; font-size:16px; font-weight:700; color:var(--teal-700); white-space:nowrap; }
-.ws-tabs a { position:relative; display:flex; align-items:center; height:100%; font-size:16px; font-weight:500; color:var(--gray-500); white-space:nowrap; }
-.ws-tabs a:hover { color:#000; }
-.ws-tabs a[aria-current="page"] { color:#000; font-weight:600; }
+.ws-tabs .wrap { display:flex; align-items:center; gap:0; height:48px; }
+.ws-tabs .brand { margin-right:16px; font-size:16px; font-weight:700; color:var(--teal-700); white-space:nowrap; }
+.ws-tabs a { position:relative; display:flex; align-items:center; height:100%; padding:0 16px; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-400); white-space:nowrap; } /* 프로젝트 상세 탭과 같게 */
+.ws-tabs a:hover { color:var(--gray-600); }
+.ws-tabs a[aria-current="page"] { color:var(--teal-600); font-weight:700; }
 .ws-tabs a[aria-current="page"]::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--teal-600); }
 .ws-tabs .soon { margin-left:auto; height:24px; padding:0 9px; border-radius:8px; background:var(--violet-50); color:var(--violet-600); font-size:12px; font-weight:500; line-height:24px; }
 
 /* 공통 글자 */
 .eyebrow { display:block; font-size:16px; font-weight:500; line-height:22px; color:var(--highlight); }
 .green { color:var(--teal-600); }
-h1.ttl { margin-top:12px; font-size:48px; font-weight:700; line-height:62px; letter-spacing:-.5px; }
-h2.ttl { margin-top:12px; font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; }
+h1.ttl { margin-top:16px; font-size:48px; font-weight:700; line-height:62px; letter-spacing:-.5px; }
+h2.ttl { margin-top:16px; font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; }
 .lead { margin-top:20px; font-size:18px; font-weight:500; line-height:28px; letter-spacing:-.18px; color:var(--gray-700); }
 .note { margin-top:20px; font-size:14px; line-height:20px; color:var(--gray-500); }
 
 /* 버튼 */
 .btns { display:flex; flex-wrap:wrap; gap:12px; margin-top:32px; }
-.btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; height:56px; padding:0 24px; border-radius:8px; font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; border:1px solid var(--gray-300); background:#fff; color:#000; }
-.btn:hover { border-color:var(--gray-400); }
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; height:56px; padding:0 24px; border-radius:8px; font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; border:1px solid var(--gray-300); background:#fff; color:var(--gray-500); } /* 메인 히어로 버튼과 같게 (btn-tertiary / .pri = btn-primary) */
+.btn:hover { background:var(--gray-50); color:var(--gray-600); }
 .btn.pri { border-color:var(--teal-600); background:var(--teal-600); color:#fff; }
 .btn.pri:hover { background:var(--teal-700); border-color:var(--teal-700); }
 .btn .ico { width:18px; height:18px; }
@@ -63,7 +63,7 @@ h2.ttl { margin-top:12px; font-size:40px; font-weight:700; line-height:52px; let
 .ws-res li { display:flex; align-items:center; gap:6px; height:32px; padding:0 12px; border-radius:99px; background:var(--teal-50); color:var(--teal-700); font-size:14px; font-weight:500; }
 .ws-res .ico { width:16px; height:16px; }
 .targets { display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; }
-.targets > span { height:28px; padding:0 10px; border-radius:8px; border:1px solid var(--gray-200); background:#fff; font-size:13px; font-weight:500; line-height:26px; color:var(--gray-600); }
+.targets > span { padding:2px 8px; border-radius:8px; border:1px solid var(--teal-600); background:#fff; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; color:var(--teal-600); } /* DS badge_basic outline (카테고리) */
 
 /* 개요 히어로: Workspace 화면 예시 */
 .board { border-radius:16px; background:#fff; box-shadow:0 16px 40px rgba(0,79,74,.12), 0 2px 6px rgba(0,0,0,.04); overflow:hidden; }
@@ -137,7 +137,7 @@ a.card:hover { border-color:var(--teal-600); }
 .tier .who { font-size:14px; font-weight:500; color:var(--gray-500); }
 .tier .one { margin-top:12px; font-size:18px; font-weight:600; line-height:26px; color:#000; }
 .tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:16px; }
-.tags > span { height:26px; padding:0 9px; border-radius:8px; border:1px solid var(--teal-600); color:var(--teal-700); font-size:13px; font-weight:500; line-height:24px; }
+.tags > span { padding:2px 8px; border-radius:8px; border:1px solid var(--teal-600); color:var(--teal-600); font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; } /* DS badge_basic outline */
 .shared { display:flex; align-items:center; gap:24px; margin-top:20px; padding:20px 28px; border-radius:16px; background:var(--teal-900); color:#fff; }
 .shared b { font-size:18px; font-weight:700; } .shared p { margin-top:4px; font-size:15px; line-height:22px; color:#ffffffcc; }
 .shared .chips { margin:0 0 0 auto; flex-wrap:nowrap; } .shared .chips > span { border-color:#ffffff40; color:#fff; }
@@ -146,14 +146,14 @@ a.card:hover { border-color:var(--teal-600); }
 .growth { display:grid; grid-template-columns:1fr 560px; gap:64px; align-items:start; }
 .loop { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:32px; }
 .loop div { padding:16px; border-radius:12px; background:#fff; box-shadow:var(--shadow2); }
-.who-tag { display:inline-block; height:22px; padding:0 8px; border-radius:6px; font-size:12px; font-weight:500; line-height:22px; }
+.who-tag { display:inline-block; padding:2px 8px; border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; } /* DS badge_basic tertiary */
 .who-h { background:var(--gray-100); color:var(--gray-600); } .who-a { background:var(--teal-50); color:var(--teal-700); }
 .loop b { display:block; margin-top:8px; font-size:16px; font-weight:700; } .loop p { margin-top:4px; font-size:14px; line-height:20px; color:var(--gray-600); }
 .loop-cap { margin-top:16px; font-size:14px; line-height:22px; color:var(--gray-600); } .loop-cap strong { color:var(--teal-700); }
 .tl { border-radius:16px; background:#fff; box-shadow:var(--shadow2); overflow:hidden; }
 .tl-tabs { display:grid; grid-template-columns:repeat(3,1fr); border-bottom:1px solid var(--gray-200); }
-.tl-tabs button { height:52px; font-size:15px; font-weight:500; color:var(--gray-500); border-bottom:2px solid transparent; margin-bottom:-1px; }
-.tl-tabs button[aria-selected="true"] { color:#000; font-weight:600; border-color:var(--teal-600); }
+.tl-tabs button { height:48px; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-400); border-bottom:2px solid transparent; margin-bottom:-1px; } .tl-tabs button:hover { color:var(--gray-600); } /* 프로젝트 상세 탭과 같게 */
+.tl-tabs button[aria-selected="true"] { color:var(--teal-600); font-weight:700; border-color:var(--teal-600); }
 .tl-panel { padding:24px; }
 .tl-panel h3 { font-size:20px; font-weight:700; line-height:28px; } .tl-panel > p { margin-top:6px; font-size:15px; line-height:22px; color:var(--gray-600); }
 .mem { margin-top:16px; border-top:1px solid var(--gray-100); }
@@ -236,9 +236,9 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .flow h3 { margin-top:2px; font-size:18px; font-weight:700; } .flow p { margin-top:4px; font-size:15px; line-height:22px; color:var(--gray-600); }
 
 /* 바이오제약: 업무 탭 */
-.utabs { display:inline-flex; gap:4px; padding:4px; border-radius:99px; background:var(--gray-100); margin-bottom:28px; }
-.utabs button { height:44px; padding:0 20px; border-radius:99px; font-size:16px; font-weight:500; color:var(--gray-600); }
-.utabs button[aria-selected="true"] { background:#fff; color:#000; font-weight:600; box-shadow:var(--shadow2); }
+.utabs { display:flex; overflow-x:auto; scrollbar-width:none; border-bottom:1px solid var(--gray-200); margin-bottom:28px; } /* 프로젝트 상세 탭과 같게 (2026-11-05, 알약 모양에서) */
+.utabs button { flex:none; height:48px; padding:0 16px; border-bottom:2px solid transparent; margin-bottom:-1px; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-400); white-space:nowrap; } .utabs button:hover { color:var(--gray-600); }
+.utabs button[aria-selected="true"] { color:var(--teal-600); font-weight:700; border-bottom-color:var(--teal-600); }
 .upanel { display:grid; grid-template-columns:400px 1fr; gap:48px; align-items:start; }
 .upanel h3 { margin-top:8px; font-size:28px; font-weight:700; line-height:38px; } .upanel .ux p { margin-top:12px; font-size:16px; line-height:26px; color:var(--gray-600); }
 .upanel .tags > span { border-color:var(--gray-300); color:var(--gray-600); }
@@ -253,12 +253,13 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .rcase .acc { display:block; margin-top:4px; font-size:12px; color:var(--gray-500); }
 
 /* FAQ */
-.faq { max-width:880px; margin:0 auto; border-top:1px solid var(--gray-200); }
+.faq { max-width:880px; margin:0 auto; border-top:2px solid #000; background:#fff; } /* 고객지원 FAQ(faq.html)와 같게 */
 .faq details { border-bottom:1px solid var(--gray-200); }
-.faq summary { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:22px 4px; font-size:17px; font-weight:600; line-height:26px; cursor:pointer; list-style:none; }
+.faq summary { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 24px; font-size:16px; font-weight:500; line-height:24px; word-break:keep-all; cursor:pointer; list-style:none; }
+.faq summary:hover { background:var(--gray-50); }
 .faq summary::-webkit-details-marker { display:none; }
-.faq summary .ico { color:var(--gray-500); transition:transform .2s; } .faq details[open] summary .ico { transform:rotate(180deg); }
-.faq details p { padding:0 4px 22px; font-size:16px; line-height:26px; color:var(--gray-600); }
+.faq summary .ico { flex:none; width:20px; height:20px; color:var(--gray-500); transition:transform .2s; } .faq details[open] summary .ico { transform:rotate(180deg); }
+.faq details p { padding:20px 24px 24px; background:var(--gray-50); border-top:1px solid var(--gray-200); font-size:15px; line-height:24px; color:var(--gray-700); word-break:keep-all; }
 
 /* CTA */
 .cta { padding:0 60px 100px; background:#fff; }

@@ -131,13 +131,16 @@
     /* 페이지 안 이동 탭: 지금 보고 있는 섹션 표시, 선택한 탭이 가로로 보이게 */
     var anc = document.querySelector('.ws-anchors');
     if (anc) {
-      var links = [].slice.call(anc.querySelectorAll('a'));
+      var links = [].slice.call(anc.querySelectorAll('a')), picked = null; /* 누른 탭은 사용자가 직접 스크롤할 때까지 유지 */
+      links.forEach(function (a) { a.addEventListener('click', function () { picked = a; }); });
+      ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (t) { window.addEventListener(t, function (e) { if (!e.target.closest || !e.target.closest('.ws-anchors')) picked = null; }, { passive: true }); });
       var spy = function () {
         var line = 140, cur = links[0];
         links.forEach(function (a) { var t = document.querySelector(a.getAttribute('href')); if (t && t.getBoundingClientRect().top - line <= 0) cur = a; });
         var top = anc.getBoundingClientRect().top; anc.classList.toggle('stuck', top <= (innerWidth < 1080 ? 56.5 : 70.5));
         if (top > 80) cur = null;
         if (cur && innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = links[links.length - 1];
+        if (picked && top <= 80) cur = picked;
         links.forEach(function (a) { var on = a === cur; if (on && !a.classList.contains('on')) a.parentNode.scrollTo({ left: a.offsetLeft - 20, behavior: 'smooth' }); a.classList.toggle('on', on); });
       };
       window.addEventListener('scroll', spy, { passive: true }); window.addEventListener('load', spy); setTimeout(spy, 0);
