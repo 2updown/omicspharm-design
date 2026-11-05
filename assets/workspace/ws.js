@@ -5,7 +5,7 @@
 (function () {
   var I = function (n) { return '<span class="ico" style="--i:url(ic-' + n + '.svg)"></span>'; };
   window.WS_ICON = I;
-  var CONTACT = 'contact.html?type=etc'; /* 도입 상담: 지금은 공통 문의하기로 연결 */
+  var CONTACT = 'contact.html?type=workspace'; /* 도입 상담: 문의 폼 'Workspace 도입 상담' 유형 (2026-11-05) */
 
   var TABS = [['overview', 'workspace.html', '개요'], ['hospital', 'workspace-hospital.html', 'for Hospital'], ['biopharma', 'workspace-biopharma.html', 'for Biopharma']];
   function tabs(cur) {

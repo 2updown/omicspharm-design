@@ -7,7 +7,7 @@
 <title>Contact Us · OmicsPharm</title>
 <!-- Contact Us (Figma 시안 없음 — 04_Resource/Component 토큰·컴포넌트로 구성). 2026-10-22 상담 흐름으로 변경
      비회원: 문의 유형·이름·이메일·제목·내용만 → 메일 링크(consult-view.html)로 답변 확인, 추가 상담은 회원가입 후. 회원: 마이페이지 > 상담내역으로 (assets/common/consult.js)
-     ?type=quote|project|service|partner|data|etc  문의 유형 미리 선택(분석 견적일 때만 관련 분석 서비스 노출) / ?ref=제목 또는 프로젝트 번호  관련 프로젝트 표시 -->
+     ?type=quote|project|service|partner|data|workspace|etc  문의 유형 미리 선택(분석 견적일 때만 관련 분석 서비스 노출) / ?ref=제목 또는 프로젝트 번호  관련 프로젝트 표시 -->
 <link rel="stylesheet" href="assets/common/site.css?v=20261105c">
 <script src="assets/common/site.js?v=20261105c"></script>
 <script src="assets/common/flow.js?v=20261105c"></script>
@@ -136,6 +136,7 @@
             <option value="service">서비스 이용</option>
             <option value="partner">분석 파트너 제휴</option>
             <option value="data">분석 결과·데이터</option>
+            <option value="workspace">Workspace 도입 상담</option><!-- 2026-11-05 메인 하단 CTA '도입 상담'에서 ?type=workspace 로 옴 -->
             <option value="etc">기타</option>
           </select>
         </div></div>
@@ -226,7 +227,9 @@
   // 다른 화면에서 넘어온 값: 문의 유형·관련 프로젝트·서비스
   // 분석 견적일 때만 관련 분석 서비스 표시
   var type = $('#type');
-  function syncType() { $('#f-svc').hidden = type.value !== 'quote'; }
+  // Workspace 도입 상담: 내용 안내 문구를 상담에 필요한 항목으로 (참고 Workspace 페이지의 도입 상담 안내 내용)
+  var bodyPh = $('#body').getAttribute('placeholder'), WS_PH = '아래 내용을 알려주시면 연구 분야와 규모에 맞는 구성을 함께 검토합니다.\n- 연구 목적과 주요 요구사항\n- 보유 시료·데이터·문서의 종류\n- 사용할 팀 수와 희망 구축 환경(전용 클라우드 / 기관 내부)\n\n초기 상담에는 연구 대상자 개인정보나 기밀 데이터를 첨부하지 않아도 됩니다.';
+  function syncType() { $('#f-svc').hidden = type.value !== 'quote'; $('#body').setAttribute('placeholder', type.value === 'workspace' ? WS_PH : bodyPh); }
   var t = P.get('type'); if (t && type.querySelector('option[value="' + t + '"]')) type.value = t;
   type.addEventListener('change', function () { setErr('f-type', ''); syncType(); });
   // 프로젝트 찾기 상세에서 옴 (?type=project&ref=프로젝트명&rid=): 제목 기본값 '[프로젝트명] 관련 문의드립니다'

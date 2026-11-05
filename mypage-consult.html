@@ -169,7 +169,7 @@
   function adminList() {
     $('#card').innerHTML = '<div class="card-head"><h3>상담내역</h3></div>' +
       '<div class="mg-filter"><select class="mg-sel" id="fSt"><option value="">처리상태</option><option value="wait">답변대기</option><option value="done">답변완료</option></select>' +
-        '<select class="mg-sel" id="fType"><option value="">문의 유형</option>' + ['분석 견적', '의뢰 프로젝트', '서비스 이용', '분석 파트너 제휴', '분석 결과·데이터', '기타'].map(function (v) { return '<option>' + v + '</option>'; }).join('') + '</select>' + // Contact Us 문의 유형과 같은 보기 (2026-11-03)
+        '<select class="mg-sel" id="fType"><option value="">문의 유형</option>' + ['분석 견적', '의뢰 프로젝트', '서비스 이용', '분석 파트너 제휴', '분석 결과·데이터', 'Workspace 도입 상담', '기타'].map(function (v) { return '<option>' + v + '</option>'; }).join('') + '</select>' + // Contact Us 문의 유형과 같은 보기 (2026-11-03)
         '<select class="mg-sel" id="fMem"><option value="">회원 여부</option><option value="y">회원</option><option value="n">비회원</option></select>' + C.dateBox() +
         '<div class="mg-q" role="search"><input type="search" id="fQ" placeholder="제목, 성함, 이메일 검색" aria-label="검색어"><button type="button" id="go" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></div></div>' +
       '<p class="mg-total">(<b style="color:var(--red-600)" id="nw">0</b>건 답변대기 / 총 <b id="n">0</b>건)</p>' +
