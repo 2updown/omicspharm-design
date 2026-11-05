@@ -135,7 +135,9 @@
       var spy = function () {
         var line = 140, cur = links[0];
         links.forEach(function (a) { var t = document.querySelector(a.getAttribute('href')); if (t && t.getBoundingClientRect().top - line <= 0) cur = a; });
-        if (anc.getBoundingClientRect().top > 80) cur = null;
+        var top = anc.getBoundingClientRect().top; anc.classList.toggle('stuck', top <= (innerWidth < 1080 ? 56.5 : 70.5));
+        if (top > 80) cur = null;
+        if (cur && innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = links[links.length - 1];
         links.forEach(function (a) { var on = a === cur; if (on && !a.classList.contains('on')) a.parentNode.scrollTo({ left: a.offsetLeft - 20, behavior: 'smooth' }); a.classList.toggle('on', on); });
       };
       window.addEventListener('scroll', spy, { passive: true }); window.addEventListener('load', spy); setTimeout(spy, 0);
