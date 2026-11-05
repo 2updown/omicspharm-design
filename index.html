@@ -256,7 +256,7 @@
   .ws-tile .ic { width:42%; height:42%; }
   @keyframes wsFloat { 0%, 100% { transform:translateY(0) rotate(var(--r)); } 50% { transform:translateY(-12px) rotate(var(--r)); } } /* 타일이 천천히 위아래로 떠다님 */
   @media (prefers-reduced-motion:reduce) { .ws-tile { animation:none; } }
-  .cta-full .cta-sec { padding:0; } .cta-full .ws-cta { width:100%; border-radius:0; min-height:480px; } /* 비교용: index.html?cta=full 이면 화면 전체 폭 */
+  .cta-full .cta-sec { padding:0; } .cta-full .ws-cta { width:100%; border-radius:0; min-height:480px; } .cta-full .ws-tiles { left:calc(50% - min(660px, 50%)); right:auto; width:min(1320px, 100%); } /* 타일은 카드형과 같은 1320 폭 기준 (제목 가까이) */ /* 비교용: index.html?cta=full 이면 화면 전체 폭 */
   .cta-sec.full { padding:0; }
   .cta-sec.full .cta { width:100%; min-height:400px; justify-content:center; padding:100px 24px; border-radius:0; }
   .cta-sec.full .cta > img { top:0; height:100%; }
