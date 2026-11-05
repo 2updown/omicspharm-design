@@ -279,6 +279,7 @@
   .sol-shot .glow { position:absolute; pointer-events:none; } .sol-shot .glow img { display:block; width:100%; height:100%; object-fit:fill; }
   .sol-shot .glow.blue { left:50%; top:-6%; width:44%; height:112%; } .sol-shot .glow.peach { left:6%; top:0; width:44%; height:104%; } .sol-shot .glow.green { left:24%; top:-6%; width:51%; height:112%; }
   .sol-board { position:relative; width:880px; max-width:100%; height:auto; border-radius:20px; box-shadow:0 24px 60px rgba(0,79,74,.16), 0 2px 8px rgba(0,0,0,.05); }
+  .sol-feats { display:contents; }
   .sol-pill { position:absolute; display:flex; align-items:center; gap:8px; padding:12px 18px; border-radius:99px; background:#fff; box-shadow:0 10px 30px rgba(0,79,74,.14), 0 1px 3px rgba(0,0,0,.05); font-size:16px; font-weight:600; line-height:22px; white-space:nowrap; }
   .sol-pill .ic { width:20px; height:20px; color:var(--teal-600); }
   .sol-pill.p1 { left:9%; top:6%; } .sol-pill.p2 { right:8%; top:44%; } .sol-pill.p3 { left:11%; bottom:4%; } /* 화면 모서리에 걸치게 (안쪽 글자 안 가리게) */
@@ -287,6 +288,8 @@
     .sec, .cta-sec { padding-left:24px; padding-right:24px; }
     .feat-box { height:auto; } .feat-in { position:static; transform:none; padding:36px 24px; }
     .feat-tabs { flex-wrap:wrap; width:100%; } .feat-view { width:100%; }
+    .sol-shot { height:auto; flex-direction:column; gap:12px; } .sol-shot .glows { display:none; } /* Solution: 태블릿부터 특징은 화면 아래에, 길이는 가장 긴 것에 맞춤 */
+    .sol-feats { display:grid; gap:10px; margin-top:12px; } .sol-pill { position:static; justify-content:center; }
     .fb-row { flex-direction:column; } .fb.interpret, .fb.support, .fb.report, .fb.matching { flex:none; aspect-ratio:auto; } /* 시안 2: 좁으면 한 줄에 하나, 제목 아래 이미지 */
     .fb .fh, .fb.report .fh, .fb.matching .fh { position:static; width:auto; padding:24px 24px 20px; }
     /* 좁은 화면: 네 카드 화면이 같은 비율로 줄도록 Figma 카드 800 폭 기준으로 (결과 해석 = 카드 폭, 나머지는 원래 크기 비율대로, 매칭은 넘치는 양옆을 자름) */
@@ -306,9 +309,7 @@
     .features { gap:32px; }
     .cta-sec.full .cta { min-height:0; padding:64px 16px; }
     .cta-b .ws-in { flex-direction:column; align-items:flex-start; gap:28px; } .cta-b .ws-head { gap:16px; } .cta-b .ws-btns { justify-content:flex-start; }
-    .solution { gap:32px; } .sol-shot { height:auto; padding:28px 0; } .sol-shot .glows { display:none; }
-    .sol-pill { gap:6px; padding:8px 12px; font-size:13px; line-height:18px; } .sol-pill .ic { width:16px; height:16px; } /* 모바일: PC처럼 화면 위에 겹치게, 작게 */
-    .sol-pill.p1 { left:0; top:0; } .sol-pill.p2 { right:0; top:44%; } .sol-pill.p3 { left:4%; bottom:0; }
+    .solution { gap:32px; }
     .ws-cta { min-height:0; padding:64px 20px 72px; } .ws-cta h2 { font-size:28px; line-height:38px; } .ws-cta .ws-desc br { display:none; } .ws-in { gap:28px; }
     .sec-head h2, .an-head h2, .cta h2 { font-size:28px; line-height:38px; }
     .sec-head .desc br, .cta p br { display:none; }
@@ -547,9 +548,11 @@
   <div class="sol-shot">
     <div class="glows"><div class="glow blue"><img src="assets/main/bg-blue-gradient.png" alt=""></div><div class="glow peach"><img src="assets/main/bg-peach-gradient.png" alt=""></div><div class="glow green"><img src="assets/main/bg-green-gradient.png" alt=""></div></div>
     <img class="sol-board" src="assets/main/solution-board.png?v=2" alt="OmicsPharm Workspace 화면 예시: 분석 결과·연구 문헌·검토 이력이 연구 인사이트로 이어지고, 결과 해석과 후속 연구 제안을 하는 화면">
+    <div class="sol-feats">
     <span class="sol-pill p1"><span class="ic" style="--src:url(assets/main/ic-lock-key-regular.svg)"></span>팀 전용 보안 공간</span>
     <span class="sol-pill p2"><span class="ic" style="--src:url(assets/main/ic-sparkle.svg)"></span>분야별 전문 AI Agent</span>
     <span class="sol-pill p3"><span class="ic" style="--src:url(assets/main/ic-users-three.svg)"></span>전문 AI 팀의 운영·고도화</span>
+    </div>
   </div>
 </section>
 
