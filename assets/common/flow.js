@@ -774,7 +774,7 @@
     document.addEventListener('keydown', key);
     document.body.appendChild(pv); document.body.style.overflow = 'hidden'; pv.querySelector('[data-close]').focus();
   };
-  // 계약서 줄 [다운로드]: 계약서 보기를 거치지 않고 바로 받음 (2026-11-05, 프로토타입은 안내만)
+  // 계약서 줄 파일명 링크: 계약서 보기를 거치지 않고 바로 받음 (2026-11-05, 프로토타입은 안내만)
   document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ctdl]'); if (b) OP.toast('데모: ' + b.dataset.ctdl + ' 파일이 내려받아집니다.'); });
   // 계약서 목록 (클라이언트·파트너·컨설턴트 화면 공통)
   F.contractListHTML = function (s, sides, o) { // o.swap = 컨설턴트 분석 진행 중: 계약서 줄마다 [파일 교체] (2026-10-30)
@@ -783,8 +783,8 @@
       var c = s.ct[side] || {}, cl = side === 'client', q = cl ? ((F.cqLast(s) || {}).quote || s.P[s.pick].quote) : s.P[s.pick].quote;
       var amt = cl ? s.ct.amt : s.ct.pAmt, cur = (cl ? s.ct.cur : s.ct.pCur) || q.cur; if (amt == null) amt = total(q).net;
       var dv = '<i class="dv" aria-hidden="true"></i>';
-      var fn = c.type === 'file' && c.name ? c.name : '셀키 분석서비스 의뢰서(기본 양식)'; // 파일명 항상 표시 (기본 양식은 양식 이름, 2026-11-05)
-      return '<div class="ctrow2"><div><b>' + (cl ? '클라이언트 계약서' : '분석파트너 계약서') + '</b><span>' + esc(fn) + dv + '계약 금액 ' + money(amt, cur) + (cur === 'KRW' || !cur ? ' (VAT 별도)' : '') + dv + '등록 ' + ymd(s.ct.at) + '</span></div><span class="ctbtns">' + (o && o.swap ? '<label class="btn">파일 교체<input type="file" accept=".pdf,.doc,.docx,.hwp,.hwpx" hidden data-ctswap="' + side + '"></label>' : '') + '<button type="button" class="btn" data-ct="' + side + '">계약서 보기</button><button type="button" class="btn" data-ctdl="' + esc(fn) + '">다운로드</button></span></div>';
+      var fn = c.type === 'file' && c.name ? c.name : '셀키 분석서비스 의뢰서(기본 양식)'; // 버튼 왼쪽 파일명, 누르면 다운로드 (기본 양식은 양식 이름, 2026-11-05)
+      return '<div class="ctrow2"><div><b>' + (cl ? '클라이언트 계약서' : '분석파트너 계약서') + '</b><span>계약 금액 ' + money(amt, cur) + (cur === 'KRW' || !cur ? ' (VAT 별도)' : '') + dv + '등록 ' + ymd(s.ct.at) + '</span></div><span class="ctbtns"><button type="button" class="ctfn" data-ctdl="' + esc(fn) + '" title="' + esc(fn) + ' 내려받기"><img src="assets/auth/ic-paperclip.svg" alt="">' + esc(fn) + '</button>' + (o && o.swap ? '<label class="btn">파일 교체<input type="file" accept=".pdf,.doc,.docx,.hwp,.hwpx" hidden data-ctswap="' + side + '"></label>' : '') + '<button type="button" class="btn" data-ct="' + side + '">계약서 보기</button></span></div>';
     }).join('') + '</div>';
   };
 
