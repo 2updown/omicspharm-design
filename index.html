@@ -235,7 +235,7 @@
   .cta p { font-size:18px; line-height:24px; letter-spacing:-.18px; color:#edeff6; }
   .cta .btn-action { padding:0 32px; }
   /* 하단 CTA: 카드 대신 화면 폭을 가득 채우는 띠 (상단 히어로와 맞춤). 배경은 고정, 글자만 움직임 */
-  /* 하단 CTA: Workspace (2026-11-05, Figma CTA C안 2385:19177, 레퍼런스 cloudflare.com). 콘텐츠 폭(1320) 카드, teal 그라디언트 + 점 패턴 + 아래 민트 빛 + 떠다니는 아이콘 타일 */
+  /* 하단 CTA: Workspace (2026-11-05, Figma CTA C안 2385:19177, 레퍼런스 cloudflare.com). 콘텐츠 폭(1320) 카드, teal 그라디언트 + 점 패턴 + 아래 민트 빛 + (떠다니는 아이콘 타일은 2026-11-05 뺌) */
   .ws-cta { position:relative; width:var(--wrap); max-width:100%; min-height:460px; padding:96px 24px; border-radius:24px; overflow:hidden; display:flex; align-items:center; justify-content:center; text-align:center;
     background:linear-gradient(160deg, #0a2a27 0%, #04201d 55%, #031a18 100%); } /* 2026-11-05 짙은 잉크 teal (중간 톤 teal은 탁해 보여서) */
   .ws-cta::before, .ws-cta::after { content:""; position:absolute; left:50%; border-radius:50%; pointer-events:none; }
@@ -256,20 +256,7 @@
   .ws-btns .btn-action { padding:0 32px; }
   .btn-ghost { display:inline-flex; align-items:center; justify-content:center; height:56px; padding:0 32px; border:1px solid rgba(255,255,255,.35); border-radius:99px; background:rgba(255,255,255,.14); color:#fff; font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; transition:background .2s; }
   .btn-ghost:hover { background:rgba(255,255,255,.22); }
-  .ws-tiles { position:absolute; inset:0; z-index:1; pointer-events:none; }
-  .ws-tile { position:absolute; left:var(--x); top:var(--y); width:var(--s); height:var(--s); border-radius:calc(var(--s) * .2); border:1px solid rgba(255,255,255,.32); background:rgba(255,255,255,.12); box-shadow:0 8px 20px rgba(0,51,46,.18); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.9);
-    transform:rotate(var(--r)); animation:wsFloat var(--t, 6s) ease-in-out var(--d, 0s) infinite; }
-  .ws-tile .ic { width:42%; height:42%; }
-  /* 비교용 (2026-11-05): ?tiles=none 타일 없이 점 빛만 / ?tiles=4 양쪽 2개씩, 가까운 건 크고 선명하게·먼 건 작고 흐리게, 더 느리게 */
-  .tiles-none .ws-tiles { display:none; }
-  .tiles-4 .ws-tile.t2, .tiles-4 .ws-tile.t5 { display:none; }
-  .tiles-4 .ws-tile.t1, .tiles-4 .ws-tile.t4 { --s:52px !important; opacity:.45; filter:blur(1.5px); --t:11s !important; }
-  .tiles-4 .ws-tile.t3, .tiles-4 .ws-tile.t6 { --s:84px !important; --t:9s !important; }
-  .tiles-4 .ws-tile.t1 { --x:14% !important; --y:20% !important; } .tiles-4 .ws-tile.t3 { --x:9% !important; --y:46% !important; }
-  .tiles-4 .ws-tile.t4 { --x:80% !important; --y:16% !important; } .tiles-4 .ws-tile.t6 { --x:85% !important; --y:44% !important; }
-  @keyframes wsFloat { 0%, 100% { transform:translateY(0) rotate(var(--r)); } 50% { transform:translateY(-12px) rotate(var(--r)); } } /* 타일이 천천히 위아래로 떠다님 */
-  @media (prefers-reduced-motion:reduce) { .ws-tile { animation:none; } }
-  .cta-full .cta-sec { padding:0; } .cta-full .ws-cta { width:100%; border-radius:0; min-height:480px; } .cta-full .ws-tiles { left:calc(50% - min(660px, 50%)); right:auto; width:min(1320px, 100%); } /* 기본은 화면 전체 폭, 타일은 1320 폭 기준 (제목 가까이). 카드형(1320, 둥근 모서리) 비교용은 index.html?cta=card */
+  .cta-full .cta-sec { padding:0; } .cta-full .ws-cta { width:100%; border-radius:0; min-height:480px; } /* 기본은 화면 전체 폭. 카드형(1320, 둥근 모서리) 비교용은 index.html?cta=card */
   .cta-sec.full { padding:0; }
   .cta-sec.full .cta { width:100%; min-height:400px; justify-content:center; padding:100px 24px; border-radius:0; }
   .cta-sec.full .cta > img { top:0; height:100%; }
@@ -302,8 +289,6 @@
     .features { gap:32px; }
     .cta-sec.full .cta { min-height:0; padding:64px 16px; }
     .ws-cta { min-height:0; padding:64px 20px 72px; } .ws-cta h2 { font-size:28px; line-height:38px; } .ws-cta .ws-desc br { display:none; } .ws-in { gap:28px; }
-    .ws-tile { --s:44px !important; opacity:.7; } .ws-tile.t3, .ws-tile.t6 { display:none; } /* 모바일: 작은 타일 4개만 모서리에 */
-    .ws-tile.t1 { --x:4% !important; --y:5% !important; } .ws-tile.t2 { --x:-4% !important; --y:80% !important; } .ws-tile.t4 { --x:84% !important; --y:4% !important; } .ws-tile.t5 { --x:90% !important; --y:78% !important; }
     .sec-head h2, .an-head h2, .cta h2 { font-size:28px; line-height:38px; }
     .sec-head .desc br, .cta p br { display:none; }
     /* 최근 프로젝트: 모바일 2열 × 4줄, 카드 글자·여백 축소 ('모집기한' 글자는 숨기고 날짜·상태만) */
@@ -481,7 +466,7 @@
 
 <!-- Feature 4개: AI 보고서 작성 / AI 결과 해석 / AI 파트너 매칭 / AI 챗봇 CS (이미지는 임시). 첫 번째 항목이 기본
      아이콘: Phosphor Icons Regular (FileText, ListMagnifyingGlass, Sparkle, ChatCircleDots) — 출처 목록 assets/ICONS.md -->
-<script>if (/[?&]feat=1\b/.test(location.search)) document.documentElement.classList.add('feat1'); if (!/[?&]cta=card\b/.test(location.search)) document.documentElement.classList.add('cta-full'); var tq = (location.search.match(/[?&]tiles=(none|4)\b/) || [])[1]; if (tq) document.documentElement.classList.add('tiles-' + tq);</script>
+<script>if (/[?&]feat=1\b/.test(location.search)) document.documentElement.classList.add('feat1'); if (!/[?&]cta=card\b/.test(location.search)) document.documentElement.classList.add('cta-full');</script>
 <section class="sec features">
   <div class="sec-head">
     <div class="eyebrow">Features</div>
@@ -536,7 +521,6 @@
 <section class="cta-sec">
   <div class="ws-cta">
     <div class="ws-dots" aria-hidden="true"></div><div class="ws-spot" aria-hidden="true"></div>
-    <div class="ws-tiles" aria-hidden="true"><span class="ws-tile t1" style="--x:10.7%;--y:15.2%;--s:72px;--r:12deg;--t:6.5s;--d:0s"><span class="ic" style="--src:url(assets/main/ic-flask.svg)"></span></span><span class="ws-tile t2" style="--x:5%;--y:43.5%;--s:64px;--r:-8deg;--t:7.5s;--d:-2s"><span class="ic" style="--src:url(assets/main/ic-lock-key-regular.svg)"></span></span><span class="ws-tile t3" style="--x:17.9%;--y:54.3%;--s:68px;--r:10deg;--t:6s;--d:-4s"><span class="ic" style="--src:url(assets/main/ic-list-magnifying-glass.svg)"></span></span><span class="ws-tile t4" style="--x:84.3%;--y:13%;--s:76px;--r:-14deg;--t:7s;--d:-1s"><span class="ic" style="--src:url(assets/main/ic-sparkle.svg)"></span></span><span class="ws-tile t5" style="--x:92.1%;--y:41.3%;--s:64px;--r:9deg;--t:6.5s;--d:-3s"><span class="ic" style="--src:url(assets/main/ic-folders.svg)"></span></span><span class="ws-tile t6" style="--x:79.3%;--y:52.2%;--s:68px;--r:-6deg;--t:8s;--d:-5s"><span class="ic" style="--src:url(assets/main/ic-users-three.svg)"></span></span></div>
     <div class="ws-in">
       <div class="ws-head">
         <p class="ws-eyebrow">Let's Build Your Workspace</p>
