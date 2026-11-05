@@ -256,6 +256,10 @@
   .ws-btns .btn-action { padding:0 32px; }
   .btn-ghost { display:inline-flex; align-items:center; justify-content:center; height:56px; padding:0 32px; border:1px solid rgba(255,255,255,.35); border-radius:99px; background:rgba(255,255,255,.14); color:#fff; font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; transition:background .2s; }
   .btn-ghost:hover { background:rgba(255,255,255,.22); }
+  /* B안 (2026-11-05, Figma 2372:33957): ?cta=b 이면 글은 왼쪽, 버튼은 오른쪽 (높이는 같음) */
+  .cta-b .ws-in { width:1312px; max-width:100%; flex-direction:row; justify-content:space-between; align-items:center; gap:24px; text-align:left; }
+  .cta-b .ws-head { align-items:flex-start; gap:24px; }
+  .cta-b .ws-btns { flex:none; justify-content:flex-end; }
   .cta-full .cta-sec { padding:0; } .cta-full .ws-cta { width:100%; border-radius:0; min-height:480px; } /* 기본은 화면 전체 폭. 카드형(1320, 둥근 모서리) 비교용은 index.html?cta=card */
   .cta-sec.full { padding:0; }
   .cta-sec.full .cta { width:100%; min-height:400px; justify-content:center; padding:100px 24px; border-radius:0; }
@@ -288,6 +292,7 @@
     .proof { padding:36px 0; gap:28px; }
     .features { gap:32px; }
     .cta-sec.full .cta { min-height:0; padding:64px 16px; }
+    .cta-b .ws-in { flex-direction:column; align-items:flex-start; gap:28px; } .cta-b .ws-head { gap:16px; } .cta-b .ws-btns { justify-content:flex-start; }
     .ws-cta { min-height:0; padding:64px 20px 72px; } .ws-cta h2 { font-size:28px; line-height:38px; } .ws-cta .ws-desc br { display:none; } .ws-in { gap:28px; }
     .sec-head h2, .an-head h2, .cta h2 { font-size:28px; line-height:38px; }
     .sec-head .desc br, .cta p br { display:none; }
@@ -466,7 +471,7 @@
 
 <!-- Feature 4개: AI 보고서 작성 / AI 결과 해석 / AI 파트너 매칭 / AI 챗봇 CS (이미지는 임시). 첫 번째 항목이 기본
      아이콘: Phosphor Icons Regular (FileText, ListMagnifyingGlass, Sparkle, ChatCircleDots) — 출처 목록 assets/ICONS.md -->
-<script>if (/[?&]feat=1\b/.test(location.search)) document.documentElement.classList.add('feat1'); if (!/[?&]cta=card\b/.test(location.search)) document.documentElement.classList.add('cta-full');</script>
+<script>if (/[?&]feat=1\b/.test(location.search)) document.documentElement.classList.add('feat1'); if (!/[?&]cta=card\b/.test(location.search)) document.documentElement.classList.add('cta-full'); if (/[?&]cta=b\b/.test(location.search)) document.documentElement.classList.add('cta-b');</script>
 <section class="sec features">
   <div class="sec-head">
     <div class="eyebrow">Features</div>
