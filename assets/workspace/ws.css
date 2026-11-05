@@ -298,3 +298,27 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
   .faq summary { font-size:16px; padding:18px 0; } .faq details p { padding:0 0 18px; font-size:15px; }
 }
 .upanel[hidden] { display:none; }
+
+/* 도입 방식 페이지 (workspace-adopt.html, 2026-11-05): Private / Enterprise 탭 + Enterprise 콘솔 예시 */
+.adopt-intro { padding-bottom:48px; }
+.adopt-intro .sec-head { margin-bottom:32px; }
+.adopt-switch { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.adopt-switch button { display:flex; flex-direction:column; gap:4px; padding:22px 28px; border:1px solid var(--gray-200); border-radius:16px; background:#fff; text-align:left; cursor:pointer; transition:border-color .15s, background .15s; }
+.adopt-switch button small { font-size:14px; font-weight:500; color:var(--gray-500); }
+.adopt-switch button b { font-size:22px; font-weight:700; line-height:30px; color:var(--gray-600); }
+.adopt-switch button:hover { border-color:var(--gray-400); }
+.adopt-switch button[aria-selected="true"] { border-color:var(--teal-600); background:var(--teal-50); box-shadow:inset 0 0 0 1px var(--teal-600); }
+.adopt-switch button[aria-selected="true"] b { color:var(--teal-900); }
+.console .con-h { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:14px; }
+.console .con-h b { font-size:16px; font-weight:700; } .console .con-h span { font-size:13px; color:var(--gray-500); }
+.teams { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+.teams li { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:10px; border:1px solid var(--gray-200); background:#fff; }
+.teams li > div { flex:1; min-width:0; } .teams b { display:block; font-size:14px; font-weight:600; line-height:20px; } .teams span { font-size:12px; color:var(--gray-500); }
+.teams em { font-style:normal; font-size:12px; color:var(--gray-500); white-space:nowrap; }
+.teams i { font-style:normal; height:22px; padding:0 8px; border-radius:6px; background:var(--teal-50); color:var(--teal-700); font-size:12px; font-weight:500; line-height:22px; white-space:nowrap; }
+.teams li.new { border-color:var(--teal-600); animation:teamIn .3s ease-out; }
+@keyframes teamIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+.console .con-f { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; }
+.console .con-f .btn { height:40px; padding:0 14px; font-size:14px; } .console .con-f span { font-size:13px; color:var(--gray-500); }
+.console .zn { margin-top:10px; font-size:12px; color:var(--gray-400); }
+@media (max-width:760px) { .adopt-switch { grid-template-columns:1fr; } .adopt-switch button b { font-size:18px; line-height:26px; } .teams em { display:none; } }

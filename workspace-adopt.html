@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
+<title>Workspace 도입 방식 · OmicsPharm</title>
+<!-- 워크스페이스 > 도입 방식 (2026-11-05). GNB 솔루션 ▾ > Workspace 도입 방식. 원본 OmicsPharm_Workspace.html #private · #enterprise 를 한 페이지로:
+     위쪽은 Private / Enterprise 탭으로 내용이 바뀌고(#private, #enterprise), 아래 비교표·보안·Managed AI Service·FAQ는 공통. 반복 섹션은 assets/workspace/ws.js -->
+<link rel="stylesheet" href="assets/common/site.css?v=20261105d">
+<script src="assets/common/site.js?v=20261105d"></script>
+<link rel="stylesheet" href="assets/workspace/ws.css?v=2">
+<script src="assets/workspace/ws.js?v=3"></script>
+</head>
+<body>
+<div data-op-gnb="workspace"></div>
+<nav class="ws-tabs" data-ws-tabs="adopt" aria-label="워크스페이스 메뉴"></nav>
+
+<main>
+<section class="sec adopt-intro"><div class="wrap">
+  <div class="sec-head">
+    <div><span class="eyebrow">How to Adopt · Private vs Enterprise</span><h1 class="ttl">개인 연구실에서, <br>병원·회사 전체까지.</h1></div>
+    <p>Private은 개인 연구나 연구실 단위의 활용에, Enterprise는 여러 연구실·부서의 워크스페이스를 통합 관리하는 센터·병원, 연구소·회사에 적합합니다. 두 방식 모두 AI 구축·개선·운영을 지원합니다.</p>
+  </div>
+  <div class="adopt-switch" role="tablist" aria-label="도입 방식">
+    <button type="button" role="tab" data-plan="private" aria-selected="true"><small>개인 연구 · 연구실 단위</small><b>Private Workspace</b></button>
+    <button type="button" role="tab" data-plan="enterprise" aria-selected="false"><small>센터·병원 / 연구소·회사 단위</small><b>Enterprise Workspace</b></button>
+  </div>
+</div></section>
+
+<!-- Private (원본 #private) -->
+<div class="plan-panel" id="private">
+<section class="ws-hero"><div class="wrap">
+  <div>
+    <span class="eyebrow">Private Workspace</span>
+    <h2 class="ttl">개인 연구부터 연구실까지, <br><span class="green">나만의 AI 연구 환경.</span></h2>
+    <p class="lead">개인 연구 또는 연구실 단위로, 연구 목적에 맞는 전용 워크스페이스에서 분석을 의뢰하고 AI를 활용하세요. 별도 AI 전담팀 없이도 바이오·헬스케어 전문 AI 팀이 운영과 개선을 지원합니다.</p>
+    <div class="btns"><a class="btn pri" data-contact>Private Workspace 상담</a><a class="btn" href="#compare">Enterprise와 비교 <i data-i="arrow-down"></i></a></div>
+    <div class="targets"><span>개인 연구자</span><span>병원·대학 연구실</span><span>바이오텍 R&amp;D팀</span></div>
+  </div>
+  <div class="roles">
+    <small>연구 목적별 분석과 AI 지원</small>
+    <div class="zone">
+      <div class="samples" style="margin-top:0"><span><i data-i="drop"></i>혈액</span><span><i data-i="dna"></i>조직</span><span><i data-i="test-tube"></i>세포주·균주</span><span><i data-i="database"></i>보유 데이터</span></div>
+    </div>
+    <div class="down"><i data-i="arrow-down"></i></div>
+    <div class="zone ws">
+      <div class="out"><span class="tg">연구 목적</span><b>연구 질문에 맞춘 분석 설계와 데이터 생산</b><p>Wet-Lab 분석 · 오믹스 데이터 생산 · 품질 확인 · 데이터 정리</p></div>
+      <div class="down"><i data-i="arrow-down"></i></div>
+      <div class="out"><span class="tg">우리 팀 전용 AI Agent</span><b>결과 해석 · 후보 비교 · 후속 연구 제안</b></div>
+    </div>
+    <div class="chips"><span><i data-i="lock-key"></i>연구실 전용 독립 공간</span><span><i data-i="users-three"></i>허용된 연구자만 접근</span><span><i data-i="sparkle"></i>AI 고도화·운영 지원</span></div>
+  </div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-head">
+    <div><span class="eyebrow">Your Research Knowledge</span><h2 class="ttl">연구가 이어질수록 <br>축적되는 지식.</h2></div>
+    <p>분석 결과와 연구 자료, 팀의 검토 기준이 한 공간에 쌓여 다음 연구에 활용됩니다.</p>
+  </div>
+  <div class="grid2">
+    <article class="card"><span class="ic-c"><i data-i="database"></i></span><h3>연구 데이터</h3><p>의뢰한 분석의 원시 데이터, 보고서, 시료 정보를 프로젝트별로 연결해 후속 분석에 활용합니다.</p></article>
+    <article class="card"><span class="ic-c"><i data-i="books"></i></span><h3>연구 지식</h3><p>연구 노트, 내부 보고서, 참고 문헌을 출처와 함께 연결해 Agent가 근거를 찾을 수 있게 합니다.</p></article>
+    <article class="card"><span class="ic-c"><i data-i="shield-check"></i></span><h3>팀의 판단 기준</h3><p>연구자의 승인·수정 이력을 기록하고, 검토된 해석 기준을 AI 응답과 품질 평가에 반영합니다.</p></article>
+    <article class="card"><span class="ic-c"><i data-i="arrows-clockwise"></i></span><h3>반복 연구 절차</h3><p>반복되는 분석·정리 절차를 AI 작업 흐름으로 구성하고, 활용 결과에 따라 개선합니다.</p></article>
+  </div>
+  <p class="note">연구 지원을 위한 구성입니다. 결과 해석과 연구 의사결정은 연구자의 검토를 거쳐 진행합니다.</p>
+</div></section>
+</div>
+
+<!-- Enterprise (원본 #enterprise) -->
+<div class="plan-panel" id="enterprise" hidden>
+<section class="ws-hero"><div class="wrap">
+  <div>
+    <span class="eyebrow">Enterprise Workspace</span>
+    <h2 class="ttl">센터·병원, 연구소·회사 단위로 <br><span class="green">통합 도입하고 관리하세요.</span></h2>
+    <p class="lead">for Hospital은 센터 또는 병원 전체, for Biopharma는 연구소 또는 회사 전체 단위로 도입합니다. 관리자가 연구실·부서별 워크스페이스와 권한을 한곳에서 관리하고, OmicsPharm이 AI 개선과 운영을 지원합니다.</p>
+    <div class="btns"><a class="btn pri" data-contact>Enterprise 도입 상담</a><a class="btn" href="#compare">Private과 비교 <i data-i="arrow-down"></i></a></div>
+    <div class="targets"><span>병원</span><span>제약사</span><span>바이오텍</span><span>CDMO</span></div>
+  </div>
+  <div class="roles console">
+    <div class="con-h"><b>Enterprise Console</b><span>OO대학교병원 관리자</span></div>
+    <div class="zone ws"><span class="own">기관 공통 지식</span><b class="zt">SOP · 연구윤리 가이드 · 공통 문헌 DB</b></div>
+    <ul class="teams" id="teams">
+      <li><div><b>종양내과 연구팀</b><span>단백체 바이오마커 Agent</span></div><em>구성원 8</em><i>독립 공간</i></li>
+      <li><div><b>진단검사의학 연구팀</b><span>대사체 해석 Agent</span></div><em>구성원 5</em><i>독립 공간</i></li>
+      <li><div><b>임상시험센터</b><span>문헌 근거 · 보고서 Agent</span></div><em>구성원 12</em><i>독립 공간</i></li>
+    </ul>
+    <div class="con-f"><button type="button" class="btn" id="addTeam"><i data-i="plus"></i>팀 Workspace 생성</button><span id="teamCount">팀 Workspace 3개 운영 중</span></div>
+    <div class="chips"><span><i data-i="lock-key"></i>팀 간 데이터 분리</span><span><i data-i="users-three"></i>계정·권한 정책</span><span><i data-i="chart-line-up"></i>사용량·접근 기록</span></div>
+    <p class="zn">콘솔 구성 예시 · 버튼을 눌러 팀 Workspace를 만들어 보세요</p>
+  </div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <div class="sec-head">
+    <div><span class="eyebrow">Enterprise Scope</span><h2 class="ttl">분야에 따라 <br>도입 단위가 다릅니다.</h2></div>
+    <p>필요한 범위에서 시작해 전체로 넓힐 수 있습니다. 도입 단위 안에서는 관리자가 연구실·부서별 워크스페이스를 직접 생성하고 배정합니다.</p>
+  </div>
+  <div class="grid2 scope">
+    <article class="card"><small class="f">for Hospital</small><h3>센터 단위 <span>→</span> 병원 전체</h3><p>암센터·임상시험센터처럼 센터 단위로 도입하거나, 병원 전체 진료과·연구실을 하나의 관리 체계로 운영합니다.</p><div class="units"><span>센터</span><span>진료과</span><span>연구실</span></div></article>
+    <article class="card"><small class="f">for Biopharma</small><h3>연구소 단위 <span>→</span> 회사 전체</h3><p>중앙연구소 단위로 도입하거나, 연구·개발·생산·품질 부서까지 회사 전체로 확장합니다.</p><div class="units"><span>연구소</span><span>부서</span><span>프로젝트팀</span></div></article>
+  </div>
+  <h3 class="sub-h"><small>How Enterprise Works</small>도입은 센터·회사 단위로, 운영은 연구실 단위로.</h3>
+  <div class="steps">
+    <div><small>01</small><b>도입 단위 결정·환경 구축</b><p>센터·병원 또는 연구소·회사 단위를 정하고, 전용 클라우드나 기관 내부에 환경을 구축합니다.</p></div>
+    <div><small>02</small><b>팀 Workspace 생성·배정</b><p>관리자가 콘솔에서 진료과·연구소·부서별 Workspace를 만들고 구성원을 배정합니다.</p></div>
+    <div><small>03</small><b>팀별 Agent 구성</b><p>각 팀의 연구 목적에 맞는 AI Agent를 설정하고, 활용 데이터와 접근 권한을 정합니다.</p></div>
+    <div><small>04</small><b>기관 지식으로 확장</b><p>팀 지식은 분리해 관리하고, 기관 공통 지식은 정책에 따라 여러 팀이 함께 활용합니다.</p></div>
+  </div>
+  <h3 class="sub-h"><small>Built for Organizations</small>기관 전체를 위한 관리 기능.</h3>
+  <div class="grid3 feat3">
+    <article class="card"><h3>팀 Workspace 생성·관리</h3><p>관리자가 필요한 팀에 Workspace를 직접 만들고, 프로젝트가 끝나면 보관하거나 정리합니다.</p></article>
+    <article class="card"><h3>팀 간 데이터 분리</h3><p>같은 기관 안에서도 팀별 데이터와 Agent 기록은 서로 보이지 않습니다. 공유는 승인된 범위에서만 이뤄집니다.</p></article>
+    <article class="card"><h3>기관 공통 지식 관리</h3><p>SOP, 가이드라인, 공통 문헌처럼 모든 팀이 참고할 자료는 한 번 등록해 여러 Workspace에서 활용합니다.</p></article>
+    <article class="card"><h3>계정·권한 정책</h3><p>기관 계정과 연동하고, 역할별 접근 권한과 외부 AI 사용 범위를 기관 단위로 정합니다.</p></article>
+    <article class="card"><h3>사용량·접근 기록</h3><p>팀별 사용량과 Agent 활용 현황, 데이터 접근 기록을 관리자가 한곳에서 확인합니다.</p></article>
+    <article class="card"><h3>기존 시스템 연계</h3><p>LIMS, ELN, 문서관리 시스템 등 기관이 사용하는 시스템과의 연계 범위를 함께 설계합니다.</p></article>
+  </div>
+  <p class="note">관리 기능과 시스템 연계의 구체적인 범위는 도입 환경과 별도 협의에 따라 정합니다.</p>
+</div></section>
+</div>
+
+<!-- 공통: 비교표 -->
+<section class="sec pale" id="compare"><div class="wrap">
+  <div class="sec-head center"><span class="eyebrow">Private vs Enterprise</span><h2 class="ttl">한눈에 비교하기</h2></div>
+  <div class="cmp-wrap">
+    <table class="cmp">
+      <thead><tr><th scope="col">구분</th><th scope="col">Private Workspace<small>개인 연구 · 연구실 단위</small></th><th scope="col" class="ent">Enterprise Workspace<small>센터·병원 / 연구소·회사 단위</small></th></tr></thead>
+      <tbody>
+        <tr><th scope="row">도입 단위</th><td>개인 연구 또는 연구실</td><td><b>for Hospital</b>센터 또는 병원 전체 <br><b>for Biopharma</b>연구소 또는 회사 전체</td></tr>
+        <tr><th scope="row">적합한 곳</th><td>개인 연구자, 병원·대학 연구실, 바이오텍 R&amp;D팀</td><td>여러 진료과·연구실을 둔 센터와 병원, 여러 부서를 둔 연구소와 기업, CDMO</td></tr>
+        <tr><th scope="row">Workspace 생성</th><td>연구 목적에 맞춰 OmicsPharm이 구축</td><td>관리자가 콘솔에서 연구실·부서별 워크스페이스를 직접 생성·배정</td></tr>
+        <tr><th scope="row">데이터 분리</th><td>개인·연구실 전용 독립 공간</td><td>전용 환경 안에서 연구실·부서별 데이터 분리</td></tr>
+        <tr><th scope="row">Agentic AI</th><td>연구 목적별 AI Agent</td><td>팀별 전문 Agent + 기관 공통 Agent</td></tr>
+        <tr><th scope="row">지식 공유</th><td>연구실 내부에서 축적·활용</td><td>팀 지식은 분리, 기관 공통 지식(SOP·가이드라인 등)은 선택적으로 공유</td></tr>
+        <tr><th scope="row">관리</th><td>연구자 또는 연구책임자가 구성원과 권한 관리</td><td>관리자 콘솔: 계정 연동, 권한 정책, 사용량, 접근 기록</td></tr>
+        <tr><th scope="row">구축 환경</th><td>전용 클라우드</td><td>전용 클라우드 또는 기관 내부 구축(On-Premises)</td></tr>
+        <tr><th scope="row">운영</th><td><span class="ok"><i data-i="check"></i>Managed AI Service</span><br>전문 AI 팀의 운영·고도화</td><td><span class="ok"><i data-i="check"></i>Managed AI Service</span><br>전문 AI 팀의 운영·고도화</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div></section>
+
+<div data-ws="privacy"></div>
+<div data-ws="ops"></div>
+<div data-ws="faq"></div>
+
+<section class="cta"><div class="wrap">
+  <div data-cta="private"><h2>연구 질문 하나에서 시작하세요.</h2><p>시료와 데이터, 연구 목적을 바탕으로 개인·연구실 전용 워크스페이스와 Agent 구성을 제안합니다.</p></div>
+  <div data-cta="enterprise" hidden><h2>센터·연구소에서 시작해 병원·회사 전체로 확장하세요.</h2><p>시범 적용으로 효과를 검토한 뒤, 연구실·부서별 워크스페이스와 AI 운영 범위를 단계적으로 확대합니다.</p></div>
+  <a class="btn" data-contact>도입 상담</a>
+</div></section>
+</main>
+
+<div data-op-footer></div>
+<script>
+/* Private / Enterprise 탭: 주소 #private · #enterprise 로 바로 열림 (GNB·개요 카드에서 연결). 팀 Workspace 생성은 화면 예시 */
+(function () {
+  function show(k) {
+    if (k !== 'enterprise') k = 'private';
+    document.querySelectorAll('[data-plan]').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.plan === k)); });
+    document.querySelectorAll('.plan-panel').forEach(function (p) { p.hidden = p.id !== k; });
+    document.querySelectorAll('[data-cta]').forEach(function (c) { c.hidden = c.dataset.cta !== k; });
+  }
+  document.querySelectorAll('[data-plan]').forEach(function (b) { b.addEventListener('click', function () { history.replaceState(null, '', '#' + b.dataset.plan); show(b.dataset.plan); }); });
+  window.addEventListener('hashchange', function () { var h = location.hash.slice(1); if (h === 'private' || h === 'enterprise') { show(h); document.querySelector('.adopt-intro').scrollIntoView(); } });
+  show(location.hash.slice(1));
+  if (location.hash === '#private' || location.hash === '#enterprise') setTimeout(function () { document.querySelector('.adopt-intro').scrollIntoView(); }, 0);
+  var n = 3, names = ['새 연구팀', '바이오마커 연구팀', '신약개발 연구팀', '품질관리팀'];
+  document.getElementById('addTeam').addEventListener('click', function () {
+    if (n >= 6) { OP.toast('화면 예시에서는 6개까지 만들 수 있습니다.'); return; }
+    var li = document.createElement('li'); li.className = 'new';
+    li.innerHTML = '<div><b>' + names[n - 3] + '</b><span>Agent 구성 전</span></div><em>구성원 0</em><i>독립 공간</i>';
+    document.getElementById('teams').appendChild(li); n++;
+    document.getElementById('teamCount').textContent = '팀 Workspace ' + n + '개 운영 중';
+  });
+})();
+</script>
+</body>
+</html>
