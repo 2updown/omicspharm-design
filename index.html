@@ -278,10 +278,10 @@
   .sol-shot .glows { position:absolute; inset:0; opacity:.5; pointer-events:none; }
   .sol-shot .glow { position:absolute; pointer-events:none; } .sol-shot .glow img { display:block; width:100%; height:100%; object-fit:fill; }
   .sol-shot .glow.blue { left:50%; top:-6%; width:44%; height:112%; } .sol-shot .glow.peach { left:6%; top:0; width:44%; height:104%; } .sol-shot .glow.green { left:24%; top:-6%; width:51%; height:112%; }
-  .sol-board { position:relative; width:700px; max-width:100%; height:auto; border-radius:20px; box-shadow:0 24px 60px rgba(0,79,74,.16), 0 2px 8px rgba(0,0,0,.05); }
+  .sol-board { position:relative; width:880px; max-width:100%; height:auto; border-radius:20px; box-shadow:0 24px 60px rgba(0,79,74,.16), 0 2px 8px rgba(0,0,0,.05); }
   .sol-pill { position:absolute; display:flex; align-items:center; gap:8px; padding:12px 18px; border-radius:99px; background:#fff; box-shadow:0 10px 30px rgba(0,79,74,.14), 0 1px 3px rgba(0,0,0,.05); font-size:16px; font-weight:600; line-height:22px; white-space:nowrap; }
   .sol-pill .ic { width:20px; height:20px; color:var(--teal-600); }
-  .sol-pill.p1 { left:11%; top:20%; } .sol-pill.p2 { right:9%; top:44%; } .sol-pill.p3 { left:14%; bottom:16%; }
+  .sol-pill.p1 { left:9%; top:6%; } .sol-pill.p2 { right:8%; top:44%; } .sol-pill.p3 { left:11%; bottom:4%; } /* 화면 모서리에 걸치게 (안쪽 글자 안 가리게) */
   /* ── 좁은 화면 ── */
   @media (max-width:1180px) {
     .sec, .cta-sec { padding-left:24px; padding-right:24px; }
@@ -544,7 +544,7 @@
   </div>
   <div class="sol-shot">
     <div class="glows"><div class="glow blue"><img src="assets/main/bg-blue-gradient.png" alt=""></div><div class="glow peach"><img src="assets/main/bg-peach-gradient.png" alt=""></div><div class="glow green"><img src="assets/main/bg-green-gradient.png" alt=""></div></div>
-    <img class="sol-board" src="assets/main/solution-board.png" alt="OmicsPharm Workspace 화면 예시: 왼쪽 메뉴(AI Agents, 분석 의뢰, 연구 데이터, 연구 지식, 운영 현황)와 AI 분석 예시">
+    <img class="sol-board" src="assets/main/solution-board.png?v=2" alt="OmicsPharm Workspace 화면 예시: 분석 결과·연구 문헌·검토 이력이 연구 인사이트로 이어지고, 결과 해석과 후속 연구 제안을 하는 화면">
     <span class="sol-pill p1"><span class="ic" style="--src:url(assets/main/ic-lock-key-regular.svg)"></span>팀 전용 보안 공간</span>
     <span class="sol-pill p2"><span class="ic" style="--src:url(assets/main/ic-sparkle.svg)"></span>분야별 전문 AI Agent</span>
     <span class="sol-pill p3"><span class="ic" style="--src:url(assets/main/ic-users-three.svg)"></span>전문 AI 팀의 운영·고도화</span>
