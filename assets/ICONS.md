@@ -72,6 +72,8 @@
 | `main/ic-flask.svg` | Flask | Phosphor (regular, 메인 하단 Workspace CTA 타일) |
 | `main/ic-users-three.svg` | UsersThree | Phosphor (regular, 메인 하단 Workspace CTA 타일) |
 | `main/ic-lock-key-regular.svg` | LockKey | Phosphor (regular, 메인 하단 Workspace CTA 타일) |
+| `main/ic-lock-key-fill.svg` | LockKey | Phosphor (fill, 메인 Solution 특징 알약) |
+| `main/ic-users-three-fill.svg` | UsersThree | Phosphor (fill, 메인 Solution 특징 알약) |
 | `main/ic-x.svg` | - | Phosphor (Figma에서 내보냄, 레이어 이름 없음) |
 | `service/ic-check-circle.svg` | - | Phosphor (Figma에서 내보냄, 레이어 이름 없음) |
 | `service/ic-cpu.svg` | - | Phosphor (Figma에서 내보냄, 레이어 이름 없음) |
