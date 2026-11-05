@@ -135,7 +135,7 @@
   .fb.report > img { left:calc(50% - 203px); width:406px; } .fb.matching > img { left:calc(50% - 449px); width:898px; }
   .fb .fh { position:absolute; left:31px; top:31px; display:flex; flex-direction:column; gap:12px; }
   .fb.report .fh { left:50px; top:32px; width:308px; } .fb.matching .fh { left:39px; top:39px; }
-  .fb::after { content:''; position:absolute; left:0; right:0; bottom:0; height:54px; background:linear-gradient(rgba(245,245,245,0), #f5f5f5); pointer-events:none; } /* 카드 아래 회색 그라디언트 (Figma Rectangle 34624211, 2026-11-05): 화면 이미지가 잘린 끝을 흐리게 */
+  .fb::after { content:''; position:absolute; left:0; right:0; bottom:0; height:54px; background:linear-gradient(rgba(245,245,245,0), #f5f5f5); pointer-events:none; } .fb.interpret::after { content:none; } /* 카드 아래 회색 그라디언트 (결과 해석은 Figma 내보내기에 이미 들어 있음) (Figma Rectangle 34624211, 2026-11-05): 화면 이미지가 잘린 끝을 흐리게 */
   .fb .t { display:flex; align-items:center; gap:8px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; color:#000; }
   .fb .t .ic { width:24px; height:24px; color:#000; }
   .fb .fh p { font-size:16px; line-height:22px; color:#5b617a; }
@@ -248,8 +248,10 @@
     .feat-tabs { flex-wrap:wrap; width:100%; } .feat-view { width:100%; }
     .fb-row { flex-direction:column; } .fb.interpret, .fb.support, .fb.report, .fb.matching { flex:none; aspect-ratio:auto; } /* 시안 2: 좁으면 한 줄에 하나, 제목 아래 이미지 */
     .fb .fh, .fb.report .fh, .fb.matching .fh { position:static; width:auto; padding:24px 24px 20px; }
-    .fb.interpret > img, .fb.support > img, .fb.report > img, .fb.matching > img { position:static; display:block; width:100%; max-width:100%; }
-    .fb.report > img { width:auto; margin:0 auto; }
+    /* 좁은 화면: 네 카드 화면이 같은 비율로 줄도록 Figma 카드 800 폭 기준으로 (결과 해석 = 카드 폭, 나머지는 원래 크기 비율대로, 매칭은 넘치는 양옆을 자름) */
+    .fb.interpret > img, .fb.support > img, .fb.report > img, .fb.matching > img { position:static; display:block; max-width:none; }
+    .fb.interpret > img { width:99.75%; } .fb.support > img { width:63.25%; margin:0 auto; } .fb.report > img { width:50.75%; margin:0 auto; }
+    .fb.matching > img { width:112.25%; margin-left:-6.125%; } .fb .fh p br { display:none; }
     .proj-grid { grid-template-columns:repeat(2,1fr); }
     .an-grid { grid-template-columns:repeat(2,1fr); }
   }
@@ -453,7 +455,7 @@
   <!-- 시안 2 (2026-11-05, Figma 2346:31548): 카드 그리드가 기본. 위 탭형(예전)은 ?feat=1 일 때만 -->
   <div class="feat-bento">
     <div class="fb-row">
-      <div class="fb interpret"><div class="fh"><div class="t"><span class="ic" style="--src:url(assets/main/ic-list-magnifying-glass.svg)"></span>AI 기반 결과 해석<span class="ftag beta">Beta</span></div><p>기존 분석 결과를 검색·비교해 결과가 의미하는 바를 쉽게 해석할 수 있도록 돕습니다.</p></div><img src="assets/main/features/bento/interpret.png?v=2" alt="AI 기반 결과 해석 화면 예시"></div>
+      <div class="fb interpret"><div class="fh"><div class="t"><span class="ic" style="--src:url(assets/main/ic-list-magnifying-glass.svg)"></span>AI 기반 결과 해석<span class="ftag beta">Beta</span></div><p>기존 분석 결과를 검색·비교해 결과가 의미하는 바를 쉽게 해석할 수 있도록 돕습니다.</p></div><img src="assets/main/features/bento/interpret.png?v=3" alt="AI 기반 결과 해석 화면 예시"></div>
       <div class="fb support"><div class="fh"><div class="t"><span class="ic" style="--src:url(assets/main/ic-chats.svg?v=2)"></span>AI Customer Support</div><p>프로젝트 의뢰부터 진행 상황까지 궁금한 점을 AI 챗봇이 언제든<br>빠르게 안내합니다.</p></div><img src="assets/main/features/bento/support.png" alt="AI 상담 챗봇 화면 예시"></div>
     </div>
     <div class="fb-row">
