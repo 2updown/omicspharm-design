@@ -291,12 +291,12 @@
   var A = 'assets/main/';
   // 메가메뉴 (Figma 메가메뉴 1303:74974 · Header State=menu1 1029:13726). 하위 화면은 아직 없어 누르면 준비 중 안내.
   var MENUS = {
-    solution:  { label: '솔루션', items: ['Workspace 소개'] }, /* 2026-11-05 다른 메뉴처럼 드롭다운 (하위 메뉴로 이동) */
+    solution:  { label: '솔루션', items: ['OmicsPharm Workspace'] }, /* 2026-11-05 다른 메뉴처럼 드롭다운 (하위 메뉴로 이동) */
     community: { label: '커뮤니티', items: ['공지사항', 'Insights'] },
     service:   { label: '서비스 소개', items: ['분석 서비스 안내', '이용방법'] },
     support:   { label: '고객지원', items: ['Contact Us', 'FAQ'] }
   };
-  var PAGES = { 'Contact Us': 'contact.html', 'FAQ': 'faq.html', 'Insights': 'blog.html', '공지사항': 'notice.html', '분석 서비스 안내': 'service.html', '이용방법': 'guide.html', 'Workspace 소개': 'workspace.html' };
+  var PAGES = { 'Contact Us': 'contact.html', 'FAQ': 'faq.html', 'Insights': 'blog.html', '공지사항': 'notice.html', '분석 서비스 안내': 'service.html', '이용방법': 'guide.html', 'OmicsPharm Workspace': 'workspace.html' };
   function link(t) { return PAGES[t] ? 'href="' + PAGES[t] + '"' : 'href="#" data-soon="' + t + '"'; }
   function dropdown(key, on) {
     var m = MENUS[key];
