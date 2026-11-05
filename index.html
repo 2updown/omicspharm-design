@@ -89,7 +89,7 @@
   .wire .ar .l { stroke-linecap:butt; } /* 꼬리는 직각: 가운데 카드와 겹쳐 보이지 않게 */
   .service-shot.in .wire .ar .l { animation:svDrawL 2s linear .3s infinite; }
   .service-shot.in .wire .ar .h { animation:svDrawH 2s linear .3s infinite; }
-  .service-shot.in > img.rep { animation:svRise .8s cubic-bezier(.2,.7,.2,1) 1.8s forwards; }
+  .service-shot.in > img.rep { animation:svRise .8s cubic-bezier(.2,.7,.2,1) .8s forwards; }
   .service-shot > img.rep.done { animation:none; opacity:1; } /* 다 떠오르면 애니메이션 해제: 합성 레이어로 남아 흐려지는 것 방지 */
   @keyframes svFlow { to { stroke-dashoffset:-88; } }
   @keyframes svDrawL { 0% { stroke-dashoffset:1; opacity:1; animation-timing-function:cubic-bezier(.4,0,.2,1); } 25%,80% { stroke-dashoffset:0; opacity:1; } 95%,100% { stroke-dashoffset:0; opacity:0; } }
