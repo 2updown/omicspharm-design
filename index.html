@@ -70,7 +70,7 @@
   .client .ctr img { width:100%; height:100%; object-fit:cover; }
 
   /* ── Service (959:12422) ── */
-  .service { position:relative; overflow:hidden; display:flex; justify-content:center; }
+  .service { position:relative; overflow:hidden; display:flex; justify-content:center; padding-bottom:40px; } /* 아래 여백 60 → 40 (Figma 2346:31097, 2026-11-05) */
   /* 배경 그라데이션 3개는 흐름 그래픽 기준 (2026-11-04): 화면 크기가 바뀌어도 항상 그래픽 뒤 같은 자리. 값은 그래픽(1368×593) 대비 %. 11-04 그래픽 아래 여백 102 줄임(Figma 2346:31097) */
   .service-shot .glows { position:absolute; inset:0; opacity:.5; pointer-events:none; } /* 배경 3색을 묶어서 투명도 50% (Figma bg 그룹 2346:32283, 2026-11-04) */
   .service-shot .glow { position:absolute; pointer-events:none; }
@@ -432,6 +432,14 @@
   </div>
 </section>
 
+<section class="sec projects" id="projects">
+  <div class="proj-head">
+    <h2>최근 프로젝트</h2>
+    <div class="pager"><button type="button" class="on" data-page="0" aria-label="1페이지">1</button><button type="button" data-page="1" aria-label="2페이지">2</button><a href="projects.html">전체보기</a></div>
+  </div>
+  <div class="proj-viewport" id="projView"></div>
+</section>
+
 <!-- Feature 4개: AI 보고서 작성 / AI 결과 해석 / AI 파트너 매칭 / AI 챗봇 CS (이미지는 임시). 첫 번째 항목이 기본
      아이콘: Phosphor Icons Regular (FileText, ListMagnifyingGlass, Sparkle, ChatCircleDots) — 출처 목록 assets/ICONS.md -->
 <script>if (/[?&]feat=1\b/.test(location.search)) document.documentElement.classList.add('feat1');</script>
@@ -466,13 +474,6 @@
   </div>
 </section>
 
-<section class="sec projects" id="projects">
-  <div class="proj-head">
-    <h2>최근 프로젝트</h2>
-    <div class="pager"><button type="button" class="on" data-page="0" aria-label="1페이지">1</button><button type="button" data-page="1" aria-label="2페이지">2</button><a href="projects.html">전체보기</a></div>
-  </div>
-  <div class="proj-viewport" id="projView"></div>
-</section>
 
 <section class="sec analysis" id="analysis">
   <div class="an-head">
