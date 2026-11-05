@@ -237,10 +237,10 @@
   /* 하단 CTA: 카드 대신 화면 폭을 가득 채우는 띠 (상단 히어로와 맞춤). 배경은 고정, 글자만 움직임 */
   /* 하단 CTA: Workspace (2026-11-05, Figma CTA C안 2385:19177, 레퍼런스 cloudflare.com). 콘텐츠 폭(1320) 카드, teal 그라디언트 + 점 패턴 + 아래 민트 빛 + 떠다니는 아이콘 타일 */
   .ws-cta { position:relative; width:var(--wrap); max-width:100%; min-height:460px; padding:96px 24px; border-radius:24px; overflow:hidden; display:flex; align-items:center; justify-content:center; text-align:center;
-    background:radial-gradient(circle, rgba(255,255,255,.12) .9px, transparent 1.1px) 0 0/12px 12px, linear-gradient(143deg, #00a08f, #006e64); }
+    background:radial-gradient(circle, rgba(255,255,255,.09) .9px, transparent 1.1px) 0 0/12px 12px, linear-gradient(160deg, #0a2a27 0%, #04201d 55%, #031a18 100%); } /* 2026-11-05 짙은 잉크 teal (중간 톤 teal은 탁해 보여서) */
   .ws-cta::before, .ws-cta::after { content:""; position:absolute; left:50%; border-radius:50%; pointer-events:none; }
-  .ws-cta::before { bottom:-170px; width:960px; height:320px; margin-left:-480px; background:#3be0c5; opacity:.55; filter:blur(120px); }
-  .ws-cta::after { bottom:-90px; width:440px; height:160px; margin-left:-220px; background:#e9fff9; opacity:.55; filter:blur(70px); }
+  .ws-cta::before { bottom:-170px; width:960px; height:320px; margin-left:-480px; background:linear-gradient(90deg,#00bba6,#3be0c5 50%,#4f8dff); opacity:.6; filter:blur(120px); }
+  .ws-cta::after { bottom:-90px; width:440px; height:160px; margin-left:-220px; background:#c9fff3; opacity:.45; filter:blur(70px); }
   .ws-in { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:32px; }
   .ws-head { display:flex; flex-direction:column; align-items:center; gap:16px; }
   .ws-eyebrow { font-size:16px; font-weight:500; line-height:22px; background:linear-gradient(90deg, #3be0c5, #6fb2ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
