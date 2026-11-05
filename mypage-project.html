@@ -7,12 +7,12 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261104k">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261104k">
-<script src="assets/common/site.js?v=20261104k"></script>
-<script src="assets/common/consult.js?v=20261104k"></script>
-<script src="assets/common/mypage.js?v=20261104k"></script>
-<script src="assets/common/flow.js?v=20261104k"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261105a">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261105a">
+<script src="assets/common/site.js?v=20261105a"></script>
+<script src="assets/common/consult.js?v=20261105a"></script>
+<script src="assets/common/mypage.js?v=20261105a"></script>
+<script src="assets/common/flow.js?v=20261105a"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -383,7 +383,7 @@
     var f = inp.files[0], side = inp.dataset.ctswap, nm = side === 'client' ? '클라이언트' : '분석파트너', pid = new URLSearchParams(location.search).get('id'); inp.value = '';
     OP.flow.ask({ title: nm + ' 계약서를 교체할까요?', desc: '새 파일: ' + f.name + '\n금액, 계약일, 납기일 등 계약 정보는 그대로이고 파일만 바뀝니다. ' + nm + '에게 알림이 갑니다.', label: false, yes: '교체' }, function () {
       if (OP.flow.state(pid).ct) { OP.flow.ctSwap(pid, side, f.name); location.reload(); return; }
-      var row = inp.closest('.ctrow2'), sp = row && row.querySelector('div > span'); if (sp) sp.innerHTML = OP.flow.esc(f.name) + '<i class="dv" aria-hidden="true"></i>' + sp.innerHTML.replace(/^[^<]*\.(pdf|docx?|hwpx?)<i class="dv" aria-hidden="true"><\/i>/i, '');
+      var row = inp.closest('.ctrow2'), sp = row && row.querySelector('div > span'); if (sp) sp.innerHTML = OP.flow.esc(f.name) + sp.innerHTML.replace(/^[^<]*/, ''); var dl = row && row.querySelector('[data-ctdl]'); if (dl) dl.dataset.ctdl = f.name; // 줄 맨 앞 = 파일명 (2026-11-05)
       OP.toast(nm + ' 계약서를 교체했습니다.');
     });
   });
