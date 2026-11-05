@@ -256,6 +256,7 @@
   .ws-tile .ic { width:42%; height:42%; }
   @keyframes wsFloat { 0%, 100% { transform:translateY(0) rotate(var(--r)); } 50% { transform:translateY(-12px) rotate(var(--r)); } } /* 타일이 천천히 위아래로 떠다님 */
   @media (prefers-reduced-motion:reduce) { .ws-tile { animation:none; } }
+  .cta-full .cta-sec { padding:0; } .cta-full .ws-cta { width:100%; border-radius:0; min-height:480px; } /* 비교용: index.html?cta=full 이면 화면 전체 폭 */
   .cta-sec.full { padding:0; }
   .cta-sec.full .cta { width:100%; min-height:400px; justify-content:center; padding:100px 24px; border-radius:0; }
   .cta-sec.full .cta > img { top:0; height:100%; }
@@ -467,7 +468,7 @@
 
 <!-- Feature 4개: AI 보고서 작성 / AI 결과 해석 / AI 파트너 매칭 / AI 챗봇 CS (이미지는 임시). 첫 번째 항목이 기본
      아이콘: Phosphor Icons Regular (FileText, ListMagnifyingGlass, Sparkle, ChatCircleDots) — 출처 목록 assets/ICONS.md -->
-<script>if (/[?&]feat=1\b/.test(location.search)) document.documentElement.classList.add('feat1');</script>
+<script>if (/[?&]feat=1\b/.test(location.search)) document.documentElement.classList.add('feat1'); if (/[?&]cta=full\b/.test(location.search)) document.documentElement.classList.add('cta-full');</script>
 <section class="sec features">
   <div class="sec-head">
     <div class="eyebrow">Features</div>
