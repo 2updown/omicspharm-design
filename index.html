@@ -168,8 +168,9 @@
   .proj-grid.leave-right { position:absolute; inset:0 auto auto 0; animation:projOutRight .45s cubic-bezier(.22,.61,.36,1) both; }
   @keyframes projInRight  { from { transform:translateX(100%); } to { transform:none; } }
   @keyframes projInLeft   { from { transform:translateX(-100%); } to { transform:none; } }
-  @keyframes projOutLeft  { from { transform:none; } to { transform:translateX(-100%); } }
-  @keyframes projOutRight { from { transform:none; } to { transform:translateX(100%); } }
+  @keyframes projOutLeft  { from { transform:translateX(var(--dx,0px)); } to { transform:translateX(-100%); } }
+  @keyframes projOutRight { from { transform:translateX(var(--dx,0px)); } to { transform:translateX(100%); } }
+  .proj-viewport { touch-action:pan-y; cursor:grab; user-select:none; -webkit-user-select:none; } .proj-viewport.drag { cursor:grabbing; } .proj-viewport.drag .pcard { pointer-events:none; } /* 드래그·밀기로 넘기기 */
   .proj-grid { width:var(--wrap); max-width:100%; display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
   .pcard { display:flex; flex-direction:column; gap:16px; padding:3px 3px 15px; background:var(--white); border:1px solid var(--gray-200); border-radius:12px; overflow:hidden; transition:border-color .15s, box-shadow .15s; }
   .pcard .top { display:flex; flex-direction:column; gap:12px; padding:16px 12px; border-radius:8px; background:linear-gradient(99.06deg, #f6f9f8 10.77%, #f8fffd 100.96%); }
@@ -532,17 +533,47 @@
   let page = 0;
   function grid(p) { const g = document.createElement('div'); g.className = 'proj-grid'; g.innerHTML = PROJECTS.slice(p * 8, p * 8 + 8).map(card).join(''); return g; }
   projView.appendChild(grid(0));
-  document.querySelectorAll('.pager [data-page]').forEach(b => b.addEventListener('click', () => {
-    const next = +b.dataset.page;
-    if (next === page) return;
+  const PAGES = Math.ceil(PROJECTS.length / 8);
+  function goTo(next, dx) {
+    if (next === page || next < 0 || next >= PAGES) return;
     const forward = next > page, old = projView.querySelector('.proj-grid:not(.leave-left):not(.leave-right)'), g = grid(next);
+    old.style.removeProperty('transform'); old.style.setProperty('--dx', (dx || 0) + 'px'); // 끌던 위치에서 이어서 빠짐
     old.className = 'proj-grid ' + (forward ? 'leave-left' : 'leave-right');
     g.classList.add(forward ? 'enter-right' : 'enter-left');
     projView.appendChild(g);
     setTimeout(() => old.remove(), 460);
     page = next;
     document.querySelectorAll('.pager [data-page]').forEach(x => x.classList.toggle('on', +x.dataset.page === page));
-  }));
+  }
+  document.querySelectorAll('.pager [data-page]').forEach(b => b.addEventListener('click', () => goTo(+b.dataset.page)));
+  // 최근 프로젝트 넘기기 (2026-11-05): PC는 마우스 드래그, 모바일은 손가락으로 밀기. 60px 넘게 밀면 다음/이전 페이지, 아니면 제자리
+  // 끌고 난 뒤의 클릭은 카드 열기로 치지 않음. 첫/마지막 페이지에서 바깥쪽으로 밀면 살짝만 움직임
+  let pd = null;
+  projView.addEventListener('dragstart', e => e.preventDefault());
+  projView.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    const cur = projView.querySelector('.proj-grid:not(.leave-left):not(.leave-right)');
+    if (cur) pd = { x: e.clientX, y: e.clientY, cur, dx: 0, on: false, id: e.pointerId };
+  });
+  projView.addEventListener('pointermove', e => {
+    if (!pd || e.pointerId !== pd.id) return;
+    const dx = e.clientX - pd.x, dy = e.clientY - pd.y;
+    if (!pd.on) { if (Math.abs(dx) < 6 || Math.abs(dx) < Math.abs(dy)) { if (Math.abs(dy) > 10) pd = null; return; } pd.on = true; projView.classList.add('drag'); try { projView.setPointerCapture(e.pointerId); } catch (_) {} }
+    const edge = (dx > 0 && page === 0) || (dx < 0 && page === PAGES - 1);
+    pd.dx = edge ? dx * 0.25 : dx;
+    pd.cur.style.transform = 'translateX(' + pd.dx + 'px)';
+  });
+  const pEnd = e => {
+    if (!pd || e.pointerId !== pd.id) return;
+    const d = pd; pd = null; projView.classList.remove('drag');
+    if (!d.on) return;
+    projView.dataset.dragged = '1'; setTimeout(() => { delete projView.dataset.dragged; }, 0);
+    const next = d.dx < -60 ? page + 1 : d.dx > 60 ? page - 1 : page;
+    if (next !== page && next >= 0 && next < PAGES) goTo(next, d.dx);
+    else { d.cur.style.transition = 'transform .3s cubic-bezier(.22,.61,.36,1)'; d.cur.style.transform = ''; setTimeout(() => { d.cur.style.transition = ''; }, 320); }
+  };
+  projView.addEventListener('pointerup', pEnd); projView.addEventListener('pointercancel', pEnd);
+  projView.addEventListener('click', e => { if (projView.dataset.dragged) { e.preventDefault(); e.stopPropagation(); } }, true);
 
   // Feature 탭: 활성 표시 이동 + 기능별 이미지로 교체 (이미지는 임시)
   const featImg = document.getElementById('featImg'), featTabs = document.querySelector('.feat-tabs'), featTw = document.getElementById('featTw'), featDesc = document.getElementById('featDesc');
