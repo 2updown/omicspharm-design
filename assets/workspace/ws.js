@@ -1,5 +1,5 @@
 /* OmicsPharm Workspace 공통 블록·동작 (워크스페이스 3페이지가 같이 씀)
-   - <nav data-ws-tabs="overview|hospital|biopharma|adopt">: 워크스페이스 안 이동 탭
+   - <nav data-ws-tabs="overview|hospital|biopharma">: 워크스페이스 안 이동 탭
    - <div data-ws="growth|privacy|ops|faq|plan-hospital|plan-biopharma">: 여러 페이지에 반복되는 섹션 (한 곳에서 고치면 다 바뀜)
    - 화면 예시(board), 지속 고도화 단계 탭(timeline), 바이오제약 업무 탭(utabs) 동작 */
 (function () {
@@ -7,7 +7,7 @@
   window.WS_ICON = I;
   var CONTACT = 'contact.html?type=workspace'; /* 도입 상담: 문의 폼 'Workspace 도입 상담' 유형 (2026-11-05) */
 
-  var TABS = [['overview', 'workspace.html', '개요'], ['hospital', 'workspace-hospital.html', 'for Hospital'], ['biopharma', 'workspace-biopharma.html', 'for Biopharma'], ['adopt', 'workspace-adopt.html', '도입 방식']]; /* 도입 방식 = Private·Enterprise (2026-11-05 별도 페이지로) */
+  var TABS = [['overview', 'workspace.html', '개요'], ['hospital', 'workspace-hospital.html', 'for Hospital'], ['biopharma', 'workspace-biopharma.html', 'for Biopharma']]; /* 도입 방식(workspace-adopt.html)은 탭에 넣지 않고 GNB 솔루션 ▾ 에서 따로 (2026-11-05) */
   function tabs(cur) {
     return '<div class="wrap"><span class="brand">OmicsPharm Workspace</span>' +
       TABS.map(function (t) { return '<a href="' + t[1] + '"' + (t[0] === cur ? ' aria-current="page"' : '') + '>' + t[2] + '</a>'; }).join('') +
