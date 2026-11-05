@@ -123,14 +123,16 @@
   .ftag { flex:none; padding:0 8px; border-radius:8px; font-size:12px; font-weight:500; line-height:22px; }
   .ftag.beta { background:var(--teal-50); color:var(--teal-700); }
   .ftag.soon { background:#eee9ff; color:#8635f6; } /* DS badge_basic tertiary violet */
-  /* Features 시안 2 (2026-11-05, Figma 2346:31548): 카드 4개 그리드. index.html?feat=2 에서만 보이고 기본은 위 탭형 그대로 */
-  .feat-bento { display:none; flex-direction:column; gap:12px; width:var(--wrap); max-width:100%; }
-  .feat2 .feat-box { display:none; } .feat2 .feat-bento { display:flex; }
+  /* Features 시안 2 (2026-11-05, Figma 2346:31548): 카드 4개 그리드가 기본. 예전 탭형은 index.html?feat=1 에서만 */
+  .feat-bento { display:flex; flex-direction:column; gap:12px; width:var(--wrap); max-width:100%; }
+  .feat-box { display:none; } .feat1 .feat-box { display:block; } .feat1 .feat-bento { display:none; }
   .fb-row { display:flex; gap:12px; }
   .fb { position:relative; min-width:0; overflow:hidden; border:1px solid var(--gray-200); border-radius:8px; background:var(--gray-50); }
   .fb.interpret { flex:800 1 0; aspect-ratio:800/420; } .fb.support { flex:508 1 0; aspect-ratio:508/420; }
   .fb.report { flex:408 1 0; aspect-ratio:408/476; } .fb.matching { flex:900 1 0; aspect-ratio:900/476; }
-  .fb > img { position:absolute; left:0; bottom:0; width:100%; } /* 카드 아래쪽 화면 이미지 (Figma 카드 2배 내보내기에서 제목 아래만 자름) */
+  .fb > img { position:absolute; bottom:0; max-width:none; } /* 카드 아래쪽 화면 이미지 (Figma 카드 2배 내보내기에서 제목 아래만 자름). 늘리거나 줄이면 글자가 흐려져서 원래 크기(1/2) 그대로, 넘치는 부분은 카드가 자름 */
+  .fb.interpret > img { left:0; width:798px; } .fb.support > img { left:calc(50% - 253px); width:506px; }
+  .fb.report > img { left:calc(50% - 203px); width:406px; } .fb.matching > img { left:calc(50% - 449px); width:898px; }
   .fb .fh { position:absolute; left:31px; top:31px; display:flex; flex-direction:column; gap:12px; }
   .fb.report .fh { left:50px; top:32px; width:308px; } .fb.matching .fh { left:39px; top:39px; }
   .fb .t { display:flex; align-items:center; gap:8px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; color:#000; }
@@ -244,8 +246,9 @@
     .feat-box { height:auto; } .feat-in { position:static; transform:none; padding:36px 24px; }
     .feat-tabs { flex-wrap:wrap; width:100%; } .feat-view { width:100%; }
     .fb-row { flex-direction:column; } .fb.interpret, .fb.support, .fb.report, .fb.matching { flex:none; aspect-ratio:auto; } /* 시안 2: 좁으면 한 줄에 하나, 제목 아래 이미지 */
-    .fb .fh, .fb.report .fh, .fb.matching .fh { position:static; width:auto; padding:24px 24px 20px; } .fb > img { position:static; display:block; }
-    .fb.report > img { width:auto; max-width:100%; margin:0 auto; }
+    .fb .fh, .fb.report .fh, .fb.matching .fh { position:static; width:auto; padding:24px 24px 20px; }
+    .fb.interpret > img, .fb.support > img, .fb.report > img, .fb.matching > img { position:static; display:block; width:100%; max-width:100%; }
+    .fb.report > img { width:auto; margin:0 auto; }
     .proj-grid { grid-template-columns:repeat(2,1fr); }
     .an-grid { grid-template-columns:repeat(2,1fr); }
   }
@@ -427,7 +430,7 @@
 
 <!-- Feature 4개: AI 보고서 작성 / AI 결과 해석 / AI 파트너 매칭 / AI 챗봇 CS (이미지는 임시). 첫 번째 항목이 기본
      아이콘: Phosphor Icons Regular (FileText, ListMagnifyingGlass, Sparkle, ChatCircleDots) — 출처 목록 assets/ICONS.md -->
-<script>if (/[?&]feat=2\b/.test(location.search)) document.documentElement.classList.add('feat2');</script>
+<script>if (/[?&]feat=1\b/.test(location.search)) document.documentElement.classList.add('feat1');</script>
 <section class="sec features">
   <div class="sec-head">
     <div class="eyebrow">Features</div>
@@ -446,7 +449,7 @@
       <div class="feat-view"><div class="screen"><img id="featImg" src="assets/main/features/feature-interpret-v3.png" alt="AI 기반 결과 해석 화면 예시"></div></div>
     </div>
   </div>
-  <!-- 시안 2 (2026-11-05, Figma 2346:31548): 카드 그리드. ?feat=2 일 때만 위 탭형 대신 보임 -->
+  <!-- 시안 2 (2026-11-05, Figma 2346:31548): 카드 그리드가 기본. 위 탭형(예전)은 ?feat=1 일 때만 -->
   <div class="feat-bento">
     <div class="fb-row">
       <div class="fb interpret"><div class="fh"><div class="t"><span class="ic" style="--src:url(assets/main/ic-list-magnifying-glass.svg)"></span>AI 기반 결과 해석<span class="ftag beta">Beta</span></div><p>기존 분석 결과를 검색·비교해 결과가 의미하는 바를 쉽게 해석할 수 있도록 돕습니다.</p></div><img src="assets/main/features/bento/interpret.png?v=2" alt="AI 기반 결과 해석 화면 예시"></div>
