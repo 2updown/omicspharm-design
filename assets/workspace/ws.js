@@ -7,11 +7,11 @@
   window.WS_ICON = I;
   var CONTACT = 'contact.html?type=workspace'; /* 도입 상담: 문의 폼 'Workspace 도입 상담' 유형 (2026-11-05) */
 
-  var TABS = [['overview', 'workspace.html', '개요'], ['hospital', 'workspace-hospital.html', 'for Hospital'], ['biopharma', 'workspace-biopharma.html', 'for Biopharma']]; /* 도입 방식(workspace-adopt.html)은 탭에 넣지 않고 GNB 솔루션 ▾ 에서 따로 (2026-11-05) */
+  var TABS = [['overview', 'workspace.html', '개요'], ['hospital', 'workspace-hospital.html', 'for Hospital'], ['biopharma', 'workspace-biopharma.html', 'for Biopharma']];
   function tabs(cur) {
     return '<div class="wrap"><span class="brand">OmicsPharm Workspace</span>' +
       TABS.map(function (t) { return '<a href="' + t[1] + '"' + (t[0] === cur ? ' aria-current="page"' : '') + '>' + t[2] + '</a>'; }).join('') +
-      '</div>';
+      '<a href="workspace.html#plans">도입 방식</a></div>';
   }
 
   var B = {
@@ -87,14 +87,13 @@
         Q.map(function (q) { return '<details><summary>' + q[0] + I('caret-down') + '</summary><p>' + q[1] + '</p></details>'; }).join('') + '</div></div></section>';
     },
     plan: function (sec) {
-      var ent = sec === 'all' ? ['센터·병원 / 연구소·회사 단위', '여러 연구실·부서의 워크스페이스를 관리자가 생성·배정하고, 기관 단위로 통합 관리합니다.']
-        : sec === 'hospital' ? ['센터 · 병원 전체 단위', '센터 또는 병원 전체로 도입하고, 관리자가 진료과·연구실별 워크스페이스를 생성해 통합 관리합니다.']
+      var ent = sec === 'hospital' ? ['센터 · 병원 전체 단위', '센터 또는 병원 전체로 도입하고, 관리자가 진료과·연구실별 워크스페이스를 생성해 통합 관리합니다.']
         : ['연구소 · 회사 전체 단위', '연구소 또는 회사 전체로 도입하고, 관리자가 부서·프로젝트팀별 워크스페이스를 생성해 통합 관리합니다.'];
       return '<section class="sec" id="plans"><div class="wrap"><div class="sec-head"><div><span class="eyebrow">How to Adopt</span><h2 class="ttl">도입 방식은 규모에 맞게.</h2></div>' +
         '<p>개인 연구·연구실 단위로 시작하거나, 기관 단위로 도입할 수 있습니다. 두 방식 모두 AI 구축·개선·운영을 지원합니다.</p></div>' +
         '<div class="plan-mini">' +
-          '<a class="card" href="workspace-adopt.html#private"><small>개인 연구 · 연구실 단위</small><h3>Private Workspace</h3><p>개인 연구자나 한 연구실의 연구 목적에 맞춰 분석 서비스와 AI를 연결하는 전용 워크스페이스입니다.</p><span class="more">도입 방식 비교 ' + I('arrow-right') + '</span></a>' +
-          '<a class="card" href="workspace-adopt.html#enterprise"><small>' + ent[0] + '</small><h3>Enterprise Workspace</h3><p>' + ent[1] + '</p><span class="more">도입 방식 비교 ' + I('arrow-right') + '</span></a>' +
+          '<a class="card" href="workspace.html#plans"><small>개인 연구 · 연구실 단위</small><h3>Private Workspace</h3><p>개인 연구자나 한 연구실의 연구 목적에 맞춰 분석 서비스와 AI를 연결하는 전용 워크스페이스입니다.</p><span class="more">도입 방식 비교 ' + I('arrow-right') + '</span></a>' +
+          '<a class="card" href="workspace.html#plans"><small>' + ent[0] + '</small><h3>Enterprise Workspace</h3><p>' + ent[1] + '</p><span class="more">도입 방식 비교 ' + I('arrow-right') + '</span></a>' +
         '</div></div></section>';
     }
   };
