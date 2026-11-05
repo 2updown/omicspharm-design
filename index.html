@@ -257,6 +257,7 @@
   .btn-ghost { display:inline-flex; align-items:center; justify-content:center; height:56px; padding:0 32px; border:1px solid rgba(255,255,255,.35); border-radius:99px; background:rgba(255,255,255,.14); color:#fff; font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; transition:background .2s; }
   .btn-ghost:hover { background:rgba(255,255,255,.22); }
   /* B안 (2026-11-05, Figma 2372:33957): ?cta=b 이면 글은 왼쪽, 버튼은 오른쪽 (높이는 같음) */
+  .cta-b-only, .cta-b .cta-a-only { display:none; } .cta-b .cta-b-only { display:block; } /* A안·B안은 문구도 다름 */
   .cta-b .ws-cta { padding-top:110px; padding-bottom:110px; }
   .cta-b .ws-in { width:1312px; max-width:100%; flex-direction:row; justify-content:space-between; align-items:center; gap:24px; text-align:left; }
   .cta-b .ws-head { align-items:flex-start; gap:24px; }
@@ -530,8 +531,10 @@
     <div class="ws-in">
       <div class="ws-head">
         <p class="ws-eyebrow">Let's Build Your Workspace</p>
-        <h2>연구실에도 Agentic AI가 필요하신가요?</h2>
-        <p class="ws-desc">연구실의 데이터와 분석 이력을 바탕으로 근거 탐색부터 결과 해석까지 AI가 연결합니다. <br>연구 분야와 규모에 맞춰 필요한 구성을 함께 제안해 드립니다.</p>
+        <h2 class="cta-a-only">연구실에도 Agentic AI가 필요하신가요?</h2>
+        <p class="ws-desc cta-a-only">연구실의 데이터와 분석 이력을 바탕으로 근거 탐색부터 결과 해석까지 AI가 연결합니다. <br>연구 분야와 규모에 맞춰 필요한 구성을 함께 제안해 드립니다.</p>
+        <h2 class="cta-b-only">우리 연구에 맞는 Workspace를 설계해 보세요.</h2><!-- B안 문구 (Figma 2372:33957) -->
+        <p class="ws-desc cta-b-only">연구실의 데이터와 분석 이력을 바탕으로 Agentic AI가 근거 탐색부터 결과 해석까지 연결합니다. <br>연구 분야와 규모에 맞춰 필요한 구성을 함께 제안해 드립니다.</p>
       </div>
       <div class="ws-btns">
         <a class="btn-action" href="workspace.html">Workspace 알아보기 <span class="ic" style="--src:url(assets/main/ic-arrow-right.svg)"></span></a>
