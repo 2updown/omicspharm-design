@@ -534,9 +534,9 @@
   function grid(p) { const g = document.createElement('div'); g.className = 'proj-grid'; g.innerHTML = PROJECTS.slice(p * 8, p * 8 + 8).map(card).join(''); return g; }
   projView.appendChild(grid(0));
   const PAGES = Math.ceil(PROJECTS.length / 8);
-  function goTo(next, dx) {
+  function goTo(next, dx, dir) {
     if (next === page || next < 0 || next >= PAGES) return;
-    const forward = next > page, old = projView.querySelector('.proj-grid:not(.leave-left):not(.leave-right)'), g = grid(next);
+    const forward = dir ? dir > 0 : next > page, old = projView.querySelector('.proj-grid:not(.leave-left):not(.leave-right)'), g = grid(next);
     old.style.removeProperty('transform'); old.style.setProperty('--dx', (dx || 0) + 'px'); // 끌던 위치에서 이어서 빠짐
     old.className = 'proj-grid ' + (forward ? 'leave-left' : 'leave-right');
     g.classList.add(forward ? 'enter-right' : 'enter-left');
@@ -547,7 +547,7 @@
   }
   document.querySelectorAll('.pager [data-page]').forEach(b => b.addEventListener('click', () => goTo(+b.dataset.page)));
   // 최근 프로젝트 넘기기 (2026-11-05): PC는 마우스 드래그, 모바일은 손가락으로 밀기. 60px 넘게 밀면 다음/이전 페이지, 아니면 제자리
-  // 끌고 난 뒤의 클릭은 카드 열기로 치지 않음. 첫/마지막 페이지에서 바깥쪽으로 밀면 살짝만 움직임
+  // 끌고 난 뒤의 클릭은 카드 열기로 치지 않음. 마지막 페이지에서 계속 밀면 첫 페이지로 (반대도 같음)
   let pd = null;
   projView.addEventListener('dragstart', e => e.preventDefault());
   projView.addEventListener('pointerdown', e => {
@@ -559,8 +559,7 @@
     if (!pd || e.pointerId !== pd.id) return;
     const dx = e.clientX - pd.x, dy = e.clientY - pd.y;
     if (!pd.on) { if (Math.abs(dx) < 6 || Math.abs(dx) < Math.abs(dy)) { if (Math.abs(dy) > 10) pd = null; return; } pd.on = true; projView.classList.add('drag'); try { projView.setPointerCapture(e.pointerId); } catch (_) {} }
-    const edge = (dx > 0 && page === 0) || (dx < 0 && page === PAGES - 1);
-    pd.dx = edge ? dx * 0.25 : dx;
+    pd.dx = dx;
     pd.cur.style.transform = 'translateX(' + pd.dx + 'px)';
   });
   const pEnd = e => {
@@ -568,8 +567,8 @@
     const d = pd; pd = null; projView.classList.remove('drag');
     if (!d.on) return;
     projView.dataset.dragged = '1'; setTimeout(() => { delete projView.dataset.dragged; }, 0);
-    const next = d.dx < -60 ? page + 1 : d.dx > 60 ? page - 1 : page;
-    if (next !== page && next >= 0 && next < PAGES) goTo(next, d.dx);
+    const dir = d.dx < -60 ? 1 : d.dx > 60 ? -1 : 0, next = (page + dir + PAGES) % PAGES;
+    if (dir && next !== page) goTo(next, d.dx, dir);
     else { d.cur.style.transition = 'transform .3s cubic-bezier(.22,.61,.36,1)'; d.cur.style.transform = ''; setTimeout(() => { d.cur.style.transition = ''; }, 320); }
   };
   projView.addEventListener('pointerup', pEnd); projView.addEventListener('pointercancel', pEnd);
