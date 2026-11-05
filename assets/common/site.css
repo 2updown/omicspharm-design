@@ -31,7 +31,7 @@
 .op-dd { position:relative; height:100%; display:flex; align-items:center; }
 .op-gnb .op-dd-btn { display:flex; align-items:center; gap:8px; height:70px; font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; } /* .op-gnb button의 font:inherit보다 우선 */
 .op-dd-btn img { transition:transform .15s; }
-.op-dd.open .op-dd-btn, .op-dd-btn:hover { color:var(--op-teal-600); }
+.op-dd.open .op-dd-btn, .op-dd-btn:hover, .op-dd-btn.on { color:var(--op-teal-600); }
 .op-dd.open .op-dd-btn img { transform:rotate(180deg); }
 .op-dd-menu { position:absolute; top:calc(100% + 8px); left:-1px; min-width:205px; padding:10px; background:#fff; border-radius:8px; box-shadow:var(--op-shadow2);
   display:none; flex-direction:column; z-index:60; }
