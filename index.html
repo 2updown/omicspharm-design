@@ -237,10 +237,18 @@
   /* 하단 CTA: 카드 대신 화면 폭을 가득 채우는 띠 (상단 히어로와 맞춤). 배경은 고정, 글자만 움직임 */
   /* 하단 CTA: Workspace (2026-11-05, Figma CTA C안 2385:19177, 레퍼런스 cloudflare.com). 콘텐츠 폭(1320) 카드, teal 그라디언트 + 점 패턴 + 아래 민트 빛 + 떠다니는 아이콘 타일 */
   .ws-cta { position:relative; width:var(--wrap); max-width:100%; min-height:460px; padding:96px 24px; border-radius:24px; overflow:hidden; display:flex; align-items:center; justify-content:center; text-align:center;
-    background:radial-gradient(circle, rgba(255,255,255,.09) .9px, transparent 1.1px) 0 0/12px 12px, linear-gradient(160deg, #0a2a27 0%, #04201d 55%, #031a18 100%); } /* 2026-11-05 짙은 잉크 teal (중간 톤 teal은 탁해 보여서) */
+    background:linear-gradient(160deg, #0a2a27 0%, #04201d 55%, #031a18 100%); } /* 2026-11-05 짙은 잉크 teal (중간 톤 teal은 탁해 보여서) */
   .ws-cta::before, .ws-cta::after { content:""; position:absolute; left:50%; border-radius:50%; pointer-events:none; }
   .ws-cta::before { bottom:-170px; width:960px; height:320px; margin-left:-480px; background:linear-gradient(90deg,#00bba6,#3be0c5 50%,#4f8dff); opacity:.6; filter:blur(120px); }
   .ws-cta::after { bottom:-90px; width:440px; height:160px; margin-left:-220px; background:#c9fff3; opacity:.45; filter:blur(70px); }
+  /* 점 배경 (2026-11-05): 옅은 점 + 마우스 주변만 밝아지는 점(마우스가 없으면 빛이 천천히 좌우로 지나감). ?dots=flow 이면 대신 점이 천천히 흐름 */
+  .ws-dots, .ws-spot { position:absolute; inset:0; pointer-events:none; }
+  .ws-dots { background:radial-gradient(circle, rgba(255,255,255,.09) .9px, transparent 1.1px) 0 0/12px 12px; }
+  .ws-spot { background:radial-gradient(circle, rgba(140,255,232,.75) 1px, transparent 1.3px) 0 0/12px 12px;
+    -webkit-mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); }
+  .dots-flow .ws-spot { display:none; } .dots-flow .ws-dots { animation:wsDots 18s linear infinite; }
+  @keyframes wsDots { to { background-position:120px 60px; } }
+  @media (prefers-reduced-motion:reduce) { .ws-spot { display:none; } .ws-dots { animation:none !important; } }
   .ws-in { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:32px; }
   .ws-head { display:flex; flex-direction:column; align-items:center; gap:16px; }
   .ws-eyebrow { font-size:16px; font-weight:500; line-height:22px; background:linear-gradient(90deg, #3be0c5, #6fb2ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
@@ -468,7 +476,7 @@
 
 <!-- Feature 4개: AI 보고서 작성 / AI 결과 해석 / AI 파트너 매칭 / AI 챗봇 CS (이미지는 임시). 첫 번째 항목이 기본
      아이콘: Phosphor Icons Regular (FileText, ListMagnifyingGlass, Sparkle, ChatCircleDots) — 출처 목록 assets/ICONS.md -->
-<script>if (/[?&]feat=1\b/.test(location.search)) document.documentElement.classList.add('feat1'); if (/[?&]cta=full\b/.test(location.search)) document.documentElement.classList.add('cta-full');</script>
+<script>if (/[?&]feat=1\b/.test(location.search)) document.documentElement.classList.add('feat1'); if (/[?&]cta=full\b/.test(location.search)) document.documentElement.classList.add('cta-full'); if (/[?&]dots=flow\b/.test(location.search)) document.documentElement.classList.add('dots-flow');</script>
 <section class="sec features">
   <div class="sec-head">
     <div class="eyebrow">Features</div>
@@ -522,6 +530,7 @@
 <!-- 하단 CTA (2026-11-05): 문의하기 → Workspace 소개. 문의하기는 Hero에 있음. 도입 상담은 문의 폼 유형 'Workspace 도입 상담'(?type=workspace) -->
 <section class="cta-sec">
   <div class="ws-cta">
+    <div class="ws-dots" aria-hidden="true"></div><div class="ws-spot" aria-hidden="true"></div>
     <div class="ws-tiles" aria-hidden="true"><span class="ws-tile t1" style="--x:10.7%;--y:15.2%;--s:72px;--r:12deg;--t:6.5s;--d:0s"><span class="ic" style="--src:url(assets/main/ic-flask.svg)"></span></span><span class="ws-tile t2" style="--x:5%;--y:43.5%;--s:64px;--r:-8deg;--t:7.5s;--d:-2s"><span class="ic" style="--src:url(assets/main/ic-lock-key-regular.svg)"></span></span><span class="ws-tile t3" style="--x:17.9%;--y:54.3%;--s:68px;--r:10deg;--t:6s;--d:-4s"><span class="ic" style="--src:url(assets/main/ic-list-magnifying-glass.svg)"></span></span><span class="ws-tile t4" style="--x:84.3%;--y:13%;--s:76px;--r:-14deg;--t:7s;--d:-1s"><span class="ic" style="--src:url(assets/main/ic-sparkle.svg)"></span></span><span class="ws-tile t5" style="--x:92.1%;--y:41.3%;--s:64px;--r:9deg;--t:6.5s;--d:-3s"><span class="ic" style="--src:url(assets/main/ic-folders.svg)"></span></span><span class="ws-tile t6" style="--x:79.3%;--y:52.2%;--s:68px;--r:-6deg;--t:8s;--d:-5s"><span class="ic" style="--src:url(assets/main/ic-users-three.svg)"></span></span></div>
     <div class="ws-in">
       <div class="ws-head">
@@ -635,6 +644,19 @@
 (function () { var r = document.querySelector('.service-shot > img.rep'); if (r) r.addEventListener('animationend', function () { r.classList.add('done'); }); })();
 </script>
 <script>
+/* 하단 CTA 점 빛 (2026-11-05): 마우스 위치를 따라 밝아짐. 마우스가 없으면(모바일 포함) 빛이 천천히 좌우로 지나감. 화면에 보일 때만 움직임 */
+(function () {
+  var box = document.querySelector('.ws-cta'), spot = box && box.querySelector('.ws-spot');
+  if (!spot || document.documentElement.classList.contains('dots-flow') || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  var hover = false, seen = false, raf = 0, t0 = performance.now();
+  function set(x, y) { spot.style.setProperty('--mx', x + 'px'); spot.style.setProperty('--my', y + 'px'); }
+  function idle(now) { raf = 0; if (hover) return; var rr = box.getBoundingClientRect(); seen = rr.bottom > 0 && rr.top < innerHeight; if (!seen) return; var w = box.clientWidth, h = box.clientHeight, k = (now - t0) / 9000; set(w / 2 + Math.sin(k * Math.PI * 2) * w * 0.42, h * (0.55 + Math.sin(k * Math.PI * 4) * 0.2)); raf = requestAnimationFrame(idle); }
+  function start() { if (!raf) raf = requestAnimationFrame(idle); }
+  box.addEventListener('pointermove', function (e) { if (e.pointerType !== 'mouse') return; hover = true; var r = box.getBoundingClientRect(); set(e.clientX - r.left, e.clientY - r.top); });
+  box.addEventListener('pointerleave', function () { hover = false; t0 = performance.now() - 2250; start(); });
+  window.addEventListener('scroll', start, { passive: true }); start(); // 화면에 들어오면 다시 시작 (밖에 있으면 멈춤)
+})();
+
 /* 메인 스크롤 등장 효과 (배경·배경 이미지는 고정, 글자·내용만): 요소마다 .rv를 붙이고 화면에 들어오면 .in (같은 묶음 안에서는 순서대로 조금씩 늦게) */
 (function () {
   var groups = [
