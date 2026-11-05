@@ -569,7 +569,8 @@
     ['.hero-copy h1', '.hero-copy p', '.hero-btns'],
     ['.proof > p', '.proof .marquee'],
     ['.service .sec-head', '.service-shot'],
-    ['.features .sec-head', '.feat-in > *', '.feat-bento > *'],
+    ['.features .sec-head', '.feat-in > *'],
+    ['.fb'], // Features 시안 2: 카드 하나씩, 왼쪽 위부터 순서대로
     ['.proj-head', '#projView'],
     ['.an-head'], ['.an-grid .acard'],
     ['.cta > h2', '.cta > p', '.cta > .btn-action']
@@ -579,7 +580,7 @@
     var n = 0;
     g.forEach(function (sel) {
       [].forEach.call(document.querySelectorAll(sel), function (el, k) {
-        var step = sel === '.an-grid .acard' ? (k % 3) : n++;
+        var step = sel === '.an-grid .acard' ? (k % 3) : sel === '.fb' ? k * 1.5 : n++;
         el.classList.add('rv'); el.style.setProperty('--d', (step * 0.12) + 's'); els.push(el);
       });
     });
