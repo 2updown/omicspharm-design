@@ -65,6 +65,10 @@
 | `main/ic-rocket-launch.svg` | RocketLaunch | Phosphor (Figma에서 내보냄) |
 | `main/ic-seal-check.svg` | - | Phosphor (Figma에서 내보냄, 레이어 이름 없음) |
 | `main/ic-sparkle.svg` | Sparkle | Phosphor (Figma에서 내보냄) |
+| `main/ic-list-magnifying-glass-fill.svg` | ListMagnifyingGlass | Phosphor (fill, 메인 Features 카드 제목) |
+| `main/ic-chat-circle-dots-fill.svg` | ChatCircleDots | Phosphor (fill, 메인 Features 카드 제목) |
+| `main/ic-file-text-fill.svg` | FileText | Phosphor (fill, 메인 Features 카드 제목) |
+| `main/ic-sparkle-fill.svg` | Sparkle | Phosphor (fill, 메인 Features 카드 제목) |
 | `main/ic-x.svg` | - | Phosphor (Figma에서 내보냄, 레이어 이름 없음) |
 | `service/ic-check-circle.svg` | - | Phosphor (Figma에서 내보냄, 레이어 이름 없음) |
 | `service/ic-cpu.svg` | - | Phosphor (Figma에서 내보냄, 레이어 이름 없음) |
