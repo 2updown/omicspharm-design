@@ -460,3 +460,7 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .ws-hero2 .h2-tile { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.16); box-shadow:0 16px 40px rgba(0,0,0,.28); color:#7ff0cf; }
 .ws-hero2 .h2-tile.t2 { animation-duration:8.5s; animation-delay:-2s; } .ws-hero2 .h2-tile.t3 { animation-duration:9.5s; animation-delay:-4s; } .ws-hero2 .h2-tile.t4 { animation-duration:8s; animation-delay:-6s; }
 @media (max-width:1200px) { .ws-hero2 .h2-tile { display:none; } }
+
+/* 2026-11-06 히어로 문구 두 줄 (굵은 소제목 삭제, Figma 2427:19391 기준: 제목과 간격 24, 설명 20/32) */
+.ws-hero2 .h2-desc { margin-top:24px; font-size:20px; line-height:32px; color:rgba(255,255,255,.8); }
+@media (max-width:760px) { .ws-hero2 .h2-desc { font-size:16px; line-height:26px; } .ws-hero2 .h2-desc br { display:none; } }
