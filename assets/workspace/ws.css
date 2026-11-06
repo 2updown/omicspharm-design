@@ -597,3 +597,11 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .cmp3 .chd { position:sticky; top:126px; z-index:6; background:#f6f9f9; border:1px solid var(--ln); border-bottom:0; box-shadow:0 1px 0 var(--ln); }
 .cmp3 .chd .cv.ent { background:#e9f4f2; }
 @media (max-width:1079px) { .cmp3 .chd { top:104px; } }
+/* 모바일: 따라오는 머리 줄이 화면을 덜 가리도록 낮게 (이름 14 한 줄, 버튼 28) / 툴팁은 탭(포커스)으로도 열림 */
+@media (max-width:960px) {
+  .cmp3 .chd .cv { gap:6px; padding:10px 6px; }
+  .cmp3 .chd b { font-size:14px; line-height:20px; white-space:nowrap; }
+  .cmp3 .pill { height:28px; padding:0 12px; font-size:13px; line-height:18px; }
+}
+.cmp3 .info:focus .tip { display:block; }
+@media (max-width:960px) { .cmp3 .info .tip { left:auto; right:-8px; transform:none; } .cmp3 .info .tip::after { left:auto; right:14px; transform:none; } }
