@@ -435,6 +435,8 @@
     '<div class="op-float">' +
       '<button type="button" class="op-top" aria-label="맨 위로"><img src="' + A + 'ic-arrow-up.svg" alt=""></button>' +
       // 챗봇 FAB(.op-chat)는 뺌 (2026-11-02): 기존 사이트 챗봇을 그대로 쓰고 이번 리뉴얼에서는 건드리지 않음
+      // 기존 사이트 CS봇 버튼 모양만 표시 (2026-11-06, 데모라 누르면 아무 동작 없음). 기존 사이트와 달리 맨 위로 버튼을 CS봇 위에 둠
+      '<button type="button" class="op-csbot" aria-label="CS 챗봇 (데모)"><img src="' + A + 'cs-bot.png" alt=""></button>' +
     '</div>';
 
   function render() {

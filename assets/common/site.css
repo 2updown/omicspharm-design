@@ -173,11 +173,15 @@
 .op-chat { display:block; width:84px; height:84px; border-radius:50%; } /* Figma FAB (1088:33719). 챗봇 기능이 정해지면 교체 */
 .op-chat img { display:block; width:84px; height:84px; }
 .op-chat:hover { filter:brightness(.92); }
+.op-csbot { display:grid; place-items:center; width:68px; height:68px; border-radius:50%; background:#fff !important; border:1px solid #e9f4f2 !important; box-shadow:0 6px 20px rgba(0,0,0,.18); transition:transform .2s; } /* 기존 omicspharm.com CS봇 버튼과 같게 */
+.op-csbot:hover { transform:scale(1.05); }
+.op-csbot img { width:68%; height:auto; }
 .op-drawer-open .op-float { display:none; }
 @media (max-width:640px) { /* 모바일 기준 640 (2026-11-02, 760에서 변경) */
   .op-float { right:16px; bottom:16px; gap:8px; }
   .op-chat, .op-chat img { width:64px; height:64px; }
   .op-top { width:44px; height:44px; }
+  .op-csbot { width:60px; height:60px; }
 }
 
 /* ── Toast ── */
