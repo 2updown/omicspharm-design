@@ -207,7 +207,7 @@
   });
 })();
 
-// 히어로 배경 (2026-11-06, 크몽 Biz 상단 참고): WebGL로 그리는 부드러운 빛. 오른쪽 아래 빛 세 개가 천천히 퍼졌다 모이며 움직임, 왼쪽·가운데는 어둡게.
+// 히어로 배경 (2026-11-06, 크몽 Biz 상단 참고): WebGL로 그리는 부드러운 빛. 빛 네 개가 화면 전체를 천천히 오가며 퍼졌다 모임, 글자 뒤는 살짝 어둡게.
 // 움직임 줄이기 설정이면 한 장면만 그림. WebGL이 안 되면 CSS 빛(h2-glow)이 그대로 보임.
 document.addEventListener('DOMContentLoaded', function () {
   var hero = document.querySelector('.ws-hero2'); if (!hero) return;
@@ -218,14 +218,15 @@ document.addEventListener('DOMContentLoaded', function () {
     'precision mediump float;uniform vec2 r;uniform float t;',
     // 부드러운 빛 덩어리: 중심에서 멀어질수록 가우시안으로 옅어짐
     'float L(vec2 p,vec2 c,float s){vec2 d=p-c;return exp(-dot(d,d)/(s*s));}',
-    'void main(){vec2 uv=gl_FragCoord.xy/r;vec2 p=vec2(uv.x*r.x/r.y,uv.y);float a=r.x/r.y;float s=t*.26;',
-    // 빛 세 개가 천천히 커졌다 작아지며 조금씩 자리를 옮김 (오른쪽 아래 중심)
-    'float l1=L(p,vec2(a*.92+.08*sin(s*.7),.05+.10*sin(s*.5)),.78+.20*sin(s*.9));',
-    'float l2=L(p,vec2(a*.70+.20*sin(s*.43+1.),.10+.30*cos(s*.37)),.50+.14*sin(s*.61+2.));',
-    'float l3=L(p,vec2(a*1.02+.06*cos(s*.53),.85+.10*sin(s*.47+.5)),.38+.08*cos(s*.71));',
-    'float l4=L(p,vec2(.10+.05*sin(s*.4),1.05),.55);', // 왼쪽 위 은은한 파랑
+    'void main(){vec2 uv=gl_FragCoord.xy/r;vec2 p=vec2(uv.x*r.x/r.y,uv.y);float a=r.x/r.y;float s=t*.32;',
+    // 빛 네 개가 화면 전체를 가로질러 천천히 오가며 커졌다 작아짐
+    'float l1=L(p,vec2(a*(.5+.45*sin(s*.35)),.15+.25*sin(s*.5)),.85+.25*sin(s*.8));',
+    'float l2=L(p,vec2(a*(.5+.45*sin(s*.29+2.4)),.75+.2*cos(s*.41)),.65+.2*sin(s*.6+1.));',
+    'float l3=L(p,vec2(a*(.5+.4*cos(s*.23+1.)),.5+.4*sin(s*.31+3.)),.55+.15*cos(s*.7));',
+    'float l4=L(p,vec2(a*(.5+.45*cos(s*.19+4.)),.9),.7);',
     'vec3 c=vec3(.012,.07,.065);',
-    'c+=vec3(.05,.42,.36)*l1+vec3(.10,.62,.52)*l2*.55+vec3(.04,.36,.32)*l3*.55+vec3(.03,.07,.16)*l4*.9;',
+    'c+=vec3(.05,.42,.36)*l1*.7+vec3(.10,.58,.50)*l2*.42+vec3(.04,.34,.30)*l3*.5+vec3(.04,.12,.24)*l4*.6;',
+    'vec2 d=uv-vec2(.5,.52);c*=1.-.35*exp(-dot(d*vec2(1.6,2.4),d*vec2(1.6,2.4))*3.);', // 글자 뒤 살짝 어둡게
     'c+=(fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453)-.5)/255.;', // 띠 무늬 방지
     'gl_FragColor=vec4(c,1.);}'
   ].join('\n');
