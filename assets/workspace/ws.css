@@ -607,3 +607,4 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 @media (max-width:960px) { .cmp3 .info .tip { left:auto; right:-8px; transform:none; } .cmp3 .info .tip::after { left:auto; right:14px; transform:none; } }
 /* 2026-11-06 Figma 줄 높이 조정: 항목 줄 75 → 70, 관리 기능 줄 65 → 60 (경계선 1 포함) */
 @media (min-width:961px) { .cmp3 .cr .cl, .cmp3 .cr .cv { min-height:69px; } .cmp3 .marks .cl, .cmp3 .marks .cv { min-height:59px; } }
+@media (min-width:961px) { .cmp3 .chd .cv { gap:24px; } } /* Figma: 이름과 도입 상담 버튼 사이 24 */
