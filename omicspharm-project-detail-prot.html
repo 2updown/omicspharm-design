@@ -62,8 +62,8 @@
 
   /* 탭 */
   /* 탭은 스크롤해도 GNB 바로 아래에 고정 */
-  .tabs { display:flex; overflow-x:auto; scrollbar-width:none; position:sticky; top:70px; z-index:10; background:#fff; margin:0 -24px; padding:0 24px; }
-  .tabs.stuck { box-shadow:0 1px 0 var(--gray-200); }
+  .tabs { display:flex; overflow-x:auto; scrollbar-width:none; position:sticky; top:70px; z-index:10; background:#fff; margin:0 -24px; padding:0 24px; box-shadow:inset 0 -1px 0 var(--gray-200); } /* 아래 회색 선: 분석 서비스 안내·워크스페이스 탭과 같게 (2026-11-06) */
+  .tabs.stuck { box-shadow:inset 0 -1px 0 var(--gray-200); }
   .tabs::-webkit-scrollbar { display:none; }
   .tabs a { flex:none; display:flex; align-items:center; height:48px; padding:0 16px; border-bottom:2px solid transparent; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-400); white-space:nowrap; }
   .tabs a:hover { color:var(--gray-600); }
