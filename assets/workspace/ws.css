@@ -543,3 +543,7 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 @media (max-width:960px) { .cmp2 .cv { text-align:left; } .cmp2 .ch .cv.ent { padding:0 6px; } }
 .cmp2 .ch .cv { text-align:left; color:#000; }
 .cmp2 .cr:last-child .cv.ent { border-radius:0; }
+/* 2026-11-06 표시를 Phosphor 아이콘으로 (Figma DS: Fill CheckCircle / Outline X) */
+.cmp2 .mk.yes, .cmp2 .mk.no { background:none; border-radius:0; display:inline-grid; place-items:center; }
+.cmp2 .mk .ico { width:20px; height:20px; margin:0; vertical-align:0; }
+.cmp2 .mk.yes .ico { color:var(--teal-600); } .cmp2 .mk.no .ico { color:#a3a3a3; }
