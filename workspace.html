@@ -9,15 +9,14 @@
      원본 Private/Enterprise 페이지 내용은 이 페이지의 '도입 방식'(#plans) 섹션으로 합침. 반복 섹션(고도화·보안·Managed AI Service·FAQ)은 assets/workspace/ws.js 한 곳에서 관리 -->
 <link rel="stylesheet" href="assets/common/site.css?v=20261105g">
 <script src="assets/common/site.js?v=20261105g"></script>
-<link rel="stylesheet" href="assets/workspace/ws.css?v=18">
+<link rel="stylesheet" href="assets/workspace/ws.css?v=19">
 <script src="assets/workspace/ws.js?v=13"></script>
 </head>
 <body>
 <div data-op-gnb="workspace"></div>
-<script>if (/[?&]hero=b\b/.test(location.search)) document.documentElement.classList.add('hero-b');</script>
 
 <main>
-<!-- 히어로 시안 B (2026-11-06, 레퍼런스 Azure AI Foundry): ?hero=b 에서만. 화면 폭 가득한 배경 + 가운데 제품명·설명, 버튼·화면 예시 없음, 아이콘 장식 없음 -->
+<!-- 히어로 (2026-11-06, 레퍼런스 Azure AI Foundry): 기존 2단 히어로(화면 예시·버튼)를 대체. 화면 폭 가득한 배경 + 가운데 제품명·설명, 버튼·화면 예시 없음, 아이콘 장식 없음 -->
 <section class="ws-hero2" aria-labelledby="h2ttl"><div class="h2-glow" aria-hidden="true"></div>
   <div class="h2-in">
     <h1 id="h2ttl">OmicsPharm Workspace</h1>
@@ -26,43 +25,6 @@
     <ul class="h2-res"><li><i data-i="cpu"></i>GPU</li><li><i data-i="database"></i>데이터 저장소</li><li><i data-i="sparkle"></i>AI 모델</li><li><i data-i="share-network"></i>네트워크</li><li class="lbl">를 독립적으로 쓰는 우리 팀 전용 연구 공간</li></ul>
   </div>
 </section>
-<section class="ws-hero"><div class="wrap">
-  <div>
-    <span class="eyebrow">OmicsPharm Workspace</span>
-    <h1 class="ttl">연구 경험이 쌓일수록, <br><span class="green">더 정교해지는 <br>Agentic AI 연구소.</span></h1>
-    <div class="ws-def">
-      <p><b>워크스페이스란?</b> GPU, 데이터 저장소, AI 모델, 네트워크를 독립적으로 사용하는 <strong>나만의 AI 기반 멀티오믹스 연구 공간</strong>입니다.</p>
-      <ul class="ws-res"><li><i data-i="cpu"></i>GPU</li><li><i data-i="database"></i>데이터 저장소</li><li><i data-i="sparkle"></i>AI 모델</li><li><i data-i="share-network"></i>네트워크</li></ul>
-    </div>
-    <p class="lead">우리 연구팀의 데이터와 검토 이력을 바탕으로, Agentic AI가 근거 탐색부터 결과 해석·후속 연구 제안까지 연결합니다. OmicsPharm의 바이오·헬스케어 전문 AI 팀이 운영과 고도화를 지원합니다.</p>
-    <div class="btns"><a class="btn pri" data-contact>도입 상담</a><a class="btn" href="#sectors">분야별 Workspace 보기 <i data-i="arrow-down"></i></a></div>
-  </div>
-  <div>
-    <div class="board">
-      <div class="board-top"><div class="dots"><i></i><i></i><i></i></div><b>OmicsPharm Workspace</b><span class="tag">독립 보안 공간</span></div>
-      <div class="board-body">
-        <div class="board-side">
-          <div class="st">우리 팀 Workspace</div>
-          <button data-board="agents"><i data-i="robot"></i>AI Agents</button>
-          <button data-board="analysis"><i data-i="flask"></i>분석 의뢰</button>
-          <button data-board="data"><i data-i="folders"></i>연구 데이터</button>
-          <button data-board="knowledge"><i data-i="books"></i>연구 지식</button>
-          <button data-board="ops"><i data-i="chart-line-up"></i>운영 현황</button>
-        </div>
-        <div class="board-main">
-          <div class="cap" data-b-cap></div>
-          <h3 data-b-title></h3>
-          <p class="desc" data-b-desc></p>
-          <div class="task"><span class="tag" data-b-tag></span><strong data-b-task></strong><p data-b-detail></p><div class="prog"><i></i><i></i><i></i></div></div>
-          <div class="files"><div><b data-b-f1></b><small data-b-f1s></small></div><div><b data-b-f2></b><small data-b-f2s></small></div></div>
-        </div>
-      </div>
-      <div class="board-foot"><span>허용된 연구자만 접근</span><span>분석 · 데이터 · AI · 운영</span></div>
-    </div>
-    <p class="demo-cap">Workspace 화면 예시 · 왼쪽 메뉴를 눌러 보세요</p>
-  </div>
-</div></section>
-
 <!-- 페이지 안 이동 탭 (2026-11-05, 레퍼런스 IBM watsonx.ai·Azure AI Foundry): 히어로 아래, 스크롤하면 위에 붙음. 누르면 해당 섹션으로 이동 -->
 <nav class="ws-anchors" aria-label="워크스페이스 안내"><div class="wrap">
   <a href="#why">왜 Workspace</a><a href="#growth">지속 고도화</a><a href="#sectors">분야별 Workspace</a><a href="#security">보안</a><a href="#plans">도입 방식</a><a href="#managed">운영 지원</a><a href="#faq">FAQ</a>

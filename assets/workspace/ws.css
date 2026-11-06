@@ -355,8 +355,7 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 @media (max-width:760px) { .wcta { padding:64px 20px 72px; } .wcta-in { flex-direction:column; align-items:flex-start; gap:28px; } .wcta-head { gap:16px; } .wcta h2 { font-size:28px; line-height:38px; } .wcta-desc br { display:none; } }
 
 /* 히어로 시안 B (2026-11-06, Azure AI Foundry 참고) — ?hero=b */
-.ws-hero2 { display:none; position:relative; overflow:hidden; padding:112px 60px 104px; text-align:center; background:linear-gradient(180deg, #f2fbf9 0%, #ffffff 100%); }
-.hero-b .ws-hero2 { display:block; } .hero-b .ws-hero { display:none; }
+.ws-hero2 { position:relative; overflow:hidden; padding:112px 60px 104px; text-align:center; background:linear-gradient(180deg, #f2fbf9 0%, #ffffff 100%); }
 .h2-glow { position:absolute; inset:0; pointer-events:none; background:radial-gradient(520px 320px at 22% 30%, rgba(59,224,197,.28), transparent 70%), radial-gradient(560px 340px at 80% 26%, rgba(111,178,255,.24), transparent 70%), radial-gradient(520px 300px at 50% 100%, rgba(255,196,160,.22), transparent 70%); }
 .h2-tiles { position:absolute; inset:0; pointer-events:none; }
 .h2-tile { position:absolute; left:var(--x); top:var(--y); width:var(--s); height:var(--s); border-radius:calc(var(--s) * .26); background:rgba(255,255,255,.7); border:1px solid rgba(255,255,255,.9); box-shadow:0 16px 40px rgba(0,79,74,.12), 0 2px 6px rgba(0,0,0,.04); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); display:grid; place-items:center; color:var(--teal-600); transform:rotate(var(--r)); animation:h2Float 7s ease-in-out infinite; }
