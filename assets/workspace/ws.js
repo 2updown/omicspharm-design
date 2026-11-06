@@ -40,13 +40,16 @@
         '<span class="eyebrow">Privacy-First</span>' +
         '<h2 class="ttl">우리 팀의 전용 공간에서, <br><span class="green">연구 데이터를 안전하게.</span></h2>' +
         '<p class="lead">연구 자료는 팀 전용 공간에 보관하고, 허용된 구성원만 활용합니다. 외부 AI에 전달할 정보도 기관이 정한 범위로 제한합니다.</p>' +
-        '<div class="iso"><div class="bound"><small>우리 Workspace 경계</small><div class="chips"><span>' + I('cpu') + 'GPU</span><span>' + I('database') + '데이터 저장소</span><span>' + I('sparkle') + 'AI 모델</span><span>' + I('share-network') + '네트워크</span></div></div>' +
-        '<div class="gate">' + I('lock-key') + '<span>외부 AI · 외부 시스템</span><b>기관이 허용한 정보만 통과</b></div></div>' +
-        '</div><div class="grid2">' +
-          '<article class="card"><h3>분리된 공간</h3><p>다른 기관과 분리해 보관하고, 같은 기관 안에서도 팀별 공유 범위를 정합니다.</p></article>' +
-          '<article class="card"><h3>허용된 사람만 접근</h3><p>연구팀과 프로젝트별로 자료를 조회·활용할 수 있는 사람과 권한을 정합니다.</p></article>' +
-          '<article class="card"><h3>외부로 나가는 정보 통제</h3><p>외부 AI에 전달할 데이터와 모델 학습 활용 여부를 기관과 미리 정하고 계약에 반영합니다.</p></article>' +
-          '<article class="card"><h3>근거와 기록이 남는 AI</h3><p>AI가 참고한 자료와 연구자의 검토, 데이터 접근 기록을 확인할 수 있습니다.</p></article>' +
+        /* 2026-11-06 크몽 Biz '선택하는 이유' 탭 내용 참고: 왼쪽 체크 목록 + 오른쪽 궤도 그림(가운데 아이콘, 키워드 말풍선). 기존 경계 그림·카드 4개를 대체 */
+        '<ul class="pv-chk">' +
+          '<li>' + I('check') + '<div><b>분리된 공간</b><span>다른 기관과 분리해 보관하고, 같은 기관 안에서도 팀별 공유 범위를 정합니다.</span></div></li>' +
+          '<li>' + I('check') + '<div><b>허용된 사람만 접근</b><span>연구팀과 프로젝트별로 자료를 조회·활용할 수 있는 사람과 권한을 정합니다.</span></div></li>' +
+          '<li>' + I('check') + '<div><b>외부로 나가는 정보 통제</b><span>외부 AI에 전달할 데이터와 모델 학습 활용 여부를 기관과 미리 정하고 계약에 반영합니다.</span></div></li>' +
+          '<li>' + I('check') + '<div><b>근거와 기록이 남는 AI</b><span>AI가 참고한 자료와 연구자의 검토, 데이터 접근 기록을 확인할 수 있습니다.</span></div></li>' +
+        '</ul></div>' +
+        '<div class="orbit" aria-hidden="true"><i class="ring r1"></i><i class="ring r2"></i><i class="ring r3"></i>' +
+          '<div class="core">' + I('shield-check') + '</div>' +
+          '<span class="op o1">팀 전용 공간</span><span class="op o2">권한별 접근</span><span class="op o3">외부 전송 통제</span><span class="op o4">접근 기록</span>' +
         '</div></div></section>';
     },
     ops: function () {
@@ -167,6 +170,16 @@
     document.querySelectorAll('main > section.sec').forEach(function (sec, i) { sec.classList.toggle('pale', i % 2 === 1); });
     document.querySelectorAll('[data-contact]').forEach(function (a) { a.setAttribute('href', CONTACT); });
     document.querySelectorAll('[data-i]').forEach(function (el) { el.outerHTML = I(el.getAttribute('data-i')); });
+    /* 단계 순서대로 켜기 (2026-11-06, 크몽 Biz 이용 4단계 참고): 화면에 들어오면 회색 → teal로 하나씩. 지속 고도화 4단계·운영 지원 4단계 */
+    if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (!e.isIntersecting) return; io.unobserve(e.target);
+          [].forEach.call(e.target.children, function (c, i) { setTimeout(function () { c.classList.add('lit'); }, 200 + i * 450); });
+        });
+      }, { threshold: .5 });
+      document.querySelectorAll('.loop, .steps').forEach(function (el) { el.classList.add('seq'); io.observe(el); });
+    }
     document.querySelectorAll('[data-tl]').forEach(function (tl) {
       setStage(tl, 0);
       tl.querySelectorAll('[data-stage]').forEach(function (b) { b.addEventListener('click', function () { setStage(tl, +b.dataset.stage); }); });
