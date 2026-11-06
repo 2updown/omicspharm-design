@@ -280,8 +280,9 @@
   .sol-shot .glow.blue { left:50%; top:-6%; width:44%; height:112%; } .sol-shot .glow.peach { left:6%; top:0; width:44%; height:104%; } .sol-shot .glow.green { left:24%; top:-6%; width:51%; height:112%; }
   .sol-frame { position:relative; width:880px; max-width:78%; container-type:inline-size; } /* 화면 이미지 + 특징 3개를 한 그래픽으로: 특징 위치는 이미지 기준 % (화면이 줄어도 같은 자리) */
   .sol-board { display:block; width:100%; height:auto; border-radius:20px; box-shadow:0 24px 60px rgba(0,79,74,.16), 0 2px 8px rgba(0,0,0,.05); }
-  .sol-note { margin-top:-12px; display:flex; align-items:center; gap:8px; font-size:15px; line-height:22px; color:var(--gray-500); } /* 설명 아래 상태 안내 */
+  .sol-note { margin-top:-12px; display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px; font-size:15px; line-height:22px; color:var(--gray-500); } /* 설명 아래 상태 안내 */
   .sol-note i { width:6px; height:6px; border-radius:50%; background:var(--teal-500); }
+  .sol-note a { display:inline-flex; align-items:center; gap:2px; margin-left:4px; font-weight:600; color:var(--teal-600); } .sol-note a .ic { width:16px; height:16px; } .sol-note a:hover { color:var(--teal-700); }
   .sol-feats { display:contents; }
   .sol-pill { position:absolute; display:flex; align-items:center; gap:.5em; padding:.75em 1.125em; border-radius:99px; background:#fff; box-shadow:0 10px 30px rgba(0,79,74,.14), 0 1px 3px rgba(0,0,0,.05); font-size:clamp(10px, 1.82cqw, 16px); font-weight:600; line-height:1.375; white-space:nowrap; }
   .sol-pill .ic { width:1.25em; height:1.25em; color:var(--teal-600); }
@@ -546,7 +547,7 @@
     <div class="eyebrow">Solution</div>
     <h2>우리 팀의 연구가 쌓이는,<br>전용 AI Workspace.</h2>
     <p class="desc">연구 데이터와 검토 이력을 팀 전용 공간에 축적하고, AI와 함께 결과 해석부터 후속 연구까지 이어갈 수 있습니다. <br>OmicsPharm 전문 AI 팀이 운영과 지속적인 고도화를 지원합니다.</p>
-    <p class="sol-note"><i aria-hidden="true"></i>OmicsPharm Workspace는 현재 사전 상담을 받고 있습니다.</p><!-- 워크스페이스는 아직 개발 전: 배지 대신 설명 아래 안내 한 줄 (2026-11-06) -->
+    <p class="sol-note"><i aria-hidden="true"></i>OmicsPharm Workspace는 현재 사전 상담을 받고 있습니다.<a href="contact.html?type=workspace">도입 상담 <span class="ic" style="--src:url(assets/main/ic-arrow-right.svg)"></span></a></p><!-- 워크스페이스는 아직 개발 전: 배지 대신 설명 아래 안내 한 줄 (2026-11-06) -->
   </div>
   <div class="sol-shot">
     <div class="glows"><div class="glow blue"><img src="assets/main/bg-blue-gradient.png" alt=""></div><div class="glow peach"><img src="assets/main/bg-peach-gradient.png" alt=""></div><div class="glow green"><img src="assets/main/bg-green-gradient.png" alt=""></div></div>
