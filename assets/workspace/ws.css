@@ -480,3 +480,9 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 /* 2026-11-06 히어로 타일도 페이지 진입 효과(site.css opEnter)에 맞춰 글자와 함께 올라옴 — 공통 스크립트는 절대배치 요소를 건너뛰므로 여기서 따로 */
 .ws-hero2:has(.h2-in.op-enter) .h2-tiles { animation:opEnter .8s ease both; }
 @media (prefers-reduced-motion:reduce) { .ws-hero2 .h2-tiles { animation:none !important; } }
+
+/* 2026-11-06 배경 빛 흐름을 더 눈에 띄게: 빛을 진하고 크게, 이동 폭을 넓히고 주기를 짧게 (10~13초) */
+.ws-hero2 .h2-glow::before { width:70%; height:90%; background:radial-gradient(closest-side, rgba(59,224,197,.75), rgba(59,224,197,.25) 55%, transparent); filter:blur(60px); animation:h2Aurora1b 10s ease-in-out infinite alternate; }
+.ws-hero2 .h2-glow::after { width:56%; height:76%; background:radial-gradient(closest-side, rgba(79,141,255,.42), transparent); filter:blur(60px); animation:h2Aurora2b 13s ease-in-out infinite alternate; }
+@keyframes h2Aurora1b { 0% { transform:translate(0,0) scale(1); } 50% { transform:translate(-30%,-18%) scale(1.2); } 100% { transform:translate(-55%,6%) scale(.9); } }
+@keyframes h2Aurora2b { 0% { transform:translate(0,0) scale(1); } 50% { transform:translate(35%,20%) scale(1.15); } 100% { transform:translate(70%,-6%) scale(.9); } }
