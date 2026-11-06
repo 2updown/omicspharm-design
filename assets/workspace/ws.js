@@ -84,7 +84,7 @@
         ['AI Agent 구축만 의뢰하는 것과 무엇이 다른가요?', '분석 의뢰부터 데이터 축적, AI 활용과 후속 연구를 연결합니다. 도입 이후에도 바이오·헬스케어 전문 AI 팀이 AI를 운영하고 연구 결과에 맞춰 개선합니다.']
       ];
       /* 서비스 소개 > 이용방법(guide.html) 맨 아래 '자주 묻는 질문'과 같은 모양 (2026-11-06) */
-      return '<section class="sec" id="faq"><div class="wrap"><div class="faq-head"><h2>도입 전 궁금한 점</h2><p>더 궁금한 점은 <a data-contact>도입 상담</a>을 이용해 주세요.</p></div><div class="qa">' +
+      return '<section class="sec" id="faq"><div class="wrap"><div class="faq-head"><h2>자주 묻는 질문</h2><p>더 궁금한 점은 <a data-contact>문의하기</a>를 이용해 주세요.</p></div><div class="qa">' +
         Q.map(function (q) { return '<details><summary><span class="q">Q</span><span class="t">' + q[0] + '</span>' + I('caret-down') + '</summary><div class="a"><b>A</b><div>' + q[1] + '</div></div></details>'; }).join('') + '</div></div></section>';
     },
     plan: function (sec) {
