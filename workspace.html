@@ -9,7 +9,7 @@
      원본 Private/Enterprise 페이지 내용은 이 페이지의 '도입 방식'(#plans) 섹션으로 합침. 반복 섹션(고도화·보안·Managed AI Service·FAQ)은 assets/workspace/ws.js 한 곳에서 관리 -->
 <link rel="stylesheet" href="assets/common/site.css?v=20261106b">
 <script src="assets/common/site.js?v=20261106b"></script>
-<link rel="stylesheet" href="assets/workspace/ws.css?v=34">
+<link rel="stylesheet" href="assets/workspace/ws.css?v=35">
 <script src="assets/workspace/ws.js?v=24"></script>
 </head>
 <body>
@@ -131,7 +131,7 @@
     <div><span class="eyebrow">How to Adopt</span><h2 class="ttl">개인 연구실에서, <br>병원·회사 전체까지.</h2></div>
     <p>Private은 개인 연구나 연구실 단위의 활용에, Enterprise는 여러 연구실·부서의 워크스페이스를 통합 관리하는 센터·병원, 연구소·회사에 적합합니다. 두 방식 모두 AI 구축·개선·운영을 지원합니다.</p>
   </div>
-  <!-- 2026-11-06 WeTransfer 가격 비교표 참고: 위는 플랜 박스(이름·도입 단위·도입 상담), 아래는 묶음 제목 + 항목별 비교 행. Enterprise 열은 옅은 teal 배경. 관리 기능도 표 안 묶음으로 -->
+  <!-- 2026-11-06 위는 플랜 박스(이름·도입 단위·도입 상담), 아래는 Claude 요금제 표 참고 비교 행(가운데 정렬, 있음 = 채운 원 체크, 없음 = 회색 ×). 관리 기능도 표 안 묶음으로 -->
   <div class="cmp2">
     <div class="cr ch"><div class="cl"></div>
       <div class="cv"><article class="plan"><header><div><h3>Private Workspace</h3><p>개인 연구 · 연구실 단위</p></div><div class="unit"><b>연구실</b><span>단위로 도입</span></div></header><a class="plan-btn" data-contact>도입 상담</a></article></div>
@@ -148,14 +148,14 @@
     <div class="cr cg"><div class="cl"><h4>관리와 운영</h4></div><div class="cv"></div><div class="cv ent"></div></div>
     <div class="cr"><div class="cl"><b>관리</b></div><div class="cv">연구자 또는 연구책임자가 구성원과 권한 관리</div><div class="cv ent">관리자 콘솔: 계정 연동, 권한 정책, 사용량, 접근 기록</div></div>
     <div class="cr"><div class="cl"><b>구축 환경</b></div><div class="cv">전용 클라우드</div><div class="cv ent">전용 클라우드 또는 기관 내부 구축(On-Premises)</div></div>
-    <div class="cr"><div class="cl"><b>Managed AI Service</b></div><div class="cv"><i data-i="check"></i>전문 AI 팀의 운영·고도화</div><div class="cv ent"><i data-i="check"></i>전문 AI 팀의 운영·고도화</div></div>
+    <div class="cr"><div class="cl"><b>Managed AI Service</b></div><div class="cv"><span class="mk yes" role="img" aria-label="제공"></span>전문 AI 팀의 운영·고도화</div><div class="cv ent"><span class="mk yes" role="img" aria-label="제공"></span>전문 AI 팀의 운영·고도화</div></div>
     <div class="cr cg"><div class="cl"><h4>기관 전체를 위한 관리 기능</h4></div><div class="cv"></div><div class="cv ent"></div></div>
-    <div class="cr"><div class="cl"><b>팀 Workspace 생성·관리</b></div><div class="cv"><span class="na">해당 없음</span></div><div class="cv ent"><i data-i="check"></i></div></div>
-    <div class="cr"><div class="cl"><b>팀 간 데이터 분리</b></div><div class="cv"><span class="na">해당 없음</span></div><div class="cv ent"><i data-i="check"></i></div></div>
-    <div class="cr"><div class="cl"><b>기관 공통 지식 관리</b></div><div class="cv"><span class="na">해당 없음</span></div><div class="cv ent"><i data-i="check"></i></div></div>
-    <div class="cr"><div class="cl"><b>계정·권한 정책</b></div><div class="cv"><span class="na">해당 없음</span></div><div class="cv ent"><i data-i="check"></i></div></div>
-    <div class="cr"><div class="cl"><b>사용량·접근 기록</b></div><div class="cv"><span class="na">해당 없음</span></div><div class="cv ent"><i data-i="check"></i></div></div>
-    <div class="cr"><div class="cl"><b>기존 시스템 연계</b></div><div class="cv"><span class="na">해당 없음</span></div><div class="cv ent"><i data-i="check"></i></div></div>
+    <div class="cr"><div class="cl"><b>팀 Workspace 생성·관리</b></div><div class="cv"><span class="mk no" role="img" aria-label="없음"></span></div><div class="cv ent"><span class="mk yes" role="img" aria-label="제공"></span></div></div>
+    <div class="cr"><div class="cl"><b>팀 간 데이터 분리</b></div><div class="cv"><span class="mk no" role="img" aria-label="없음"></span></div><div class="cv ent"><span class="mk yes" role="img" aria-label="제공"></span></div></div>
+    <div class="cr"><div class="cl"><b>기관 공통 지식 관리</b></div><div class="cv"><span class="mk no" role="img" aria-label="없음"></span></div><div class="cv ent"><span class="mk yes" role="img" aria-label="제공"></span></div></div>
+    <div class="cr"><div class="cl"><b>계정·권한 정책</b></div><div class="cv"><span class="mk no" role="img" aria-label="없음"></span></div><div class="cv ent"><span class="mk yes" role="img" aria-label="제공"></span></div></div>
+    <div class="cr"><div class="cl"><b>사용량·접근 기록</b></div><div class="cv"><span class="mk no" role="img" aria-label="없음"></span></div><div class="cv ent"><span class="mk yes" role="img" aria-label="제공"></span></div></div>
+    <div class="cr"><div class="cl"><b>기존 시스템 연계</b></div><div class="cv"><span class="mk no" role="img" aria-label="없음"></span></div><div class="cv ent"><span class="mk yes" role="img" aria-label="제공"></span></div></div>
   </div>
   <p class="note">관리 기능과 시스템 연계의 구체적인 범위는 도입 환경과 별도 협의에 따라 정합니다.</p>
 </div></section>

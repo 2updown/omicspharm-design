@@ -527,3 +527,19 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
   .cmp2 .ch .cl { display:none; } .cmp2 .ch .cv { padding:0 6px; } .cmp2 .ch .cv.ent { padding:8px 8px 0; }
   .plan { padding:16px; } .plan header { flex-direction:column; gap:8px; } .plan .unit { align-items:flex-start; text-align:left; } .plan h3 { font-size:17px; line-height:24px; } .plan .unit b { font-size:22px; line-height:30px; } .plan-btn { margin-top:16px; height:44px; font-size:15px; }
 }
+
+/* 2026-11-06 비교 행을 Claude 요금제 표처럼: 열 배경 없음, 값 가운데 정렬, 14~15px 회색 글자, 행 높이 52 안팎, 있음 = 채운 원 체크 / 없음 = 작은 회색 × */
+.cmp2 .cv.ent { background:none; }
+.cmp2 .ch .cv.ent { border-radius:0; }
+.cmp2 .cl, .cmp2 .cv { padding-top:15px; padding-bottom:15px; font-size:15px; line-height:22px; }
+.cmp2 .cl b { font-weight:500; color:var(--gray-700); }
+.cmp2 .cv { text-align:center; color:var(--gray-600); }
+.cmp2 .cg .cl, .cmp2 .cg .cv { padding-top:48px; padding-bottom:12px; }
+.cmp2 .cg h4 { font-size:20px; line-height:28px; }
+.cmp2 .mk { display:inline-block; width:20px; height:20px; vertical-align:-5px; }
+.cmp2 .mk.yes { border-radius:50%; background:var(--teal-600) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.2l2.6 2.6L14 7.4' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/20px no-repeat; }
+.cmp2 .mk.no { background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M7.5 7.5l5 5M12.5 7.5l-5 5' fill='none' stroke='%23a3a3a3' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center/20px no-repeat; }
+.cmp2 .cv .mk + * , .cmp2 .cv .mk { margin-right:6px; }
+@media (max-width:960px) { .cmp2 .cv { text-align:left; } .cmp2 .ch .cv.ent { padding:0 6px; } }
+.cmp2 .ch .cv { text-align:left; color:#000; }
+.cmp2 .cr:last-child .cv.ent { border-radius:0; }
