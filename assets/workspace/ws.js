@@ -17,7 +17,7 @@
   var B = {
     growth: function () {
       return '<section class="sec pale" id="growth"><div class="wrap growth"><div>' +
-        '<span class="eyebrow">Continuous Research &amp; AI Improvement</span>' +
+        '<span class="eyebrow">Continuous Improvement</span>' +
         '<h2 class="ttl">분석 결과가 쌓이고, <br>다음 연구가 정교해집니다.</h2>' +
         '<p class="lead">분석을 의뢰하면 결과가 Workspace에 쌓입니다. 전문 AI 팀이 AI를 개선하고, AI는 결과 해석과 다음 연구 방향을 제안합니다.</p>' +
         '<div class="loop">' +
@@ -44,7 +44,7 @@
         ['근거와 기록', 'file-text', '근거와 기록이 남는 AI', 'AI가 참고한 자료와 연구자의 검토, 데이터 접근 기록을 확인할 수 있습니다.', ['AI가 참고한 자료와 출처 확인', '연구자의 검토 이력 기록', '데이터 접근 기록 확인'], ['참고 출처', '검토 이력', '접근 기록']]
       ];
       return '<section class="sec" id="security"><div class="wrap">' +
-        '<div class="sec-head center"><span class="eyebrow">Privacy-First</span>' +
+        '<div class="sec-head center"><span class="eyebrow">Security</span>' +
         '<h2 class="ttl">우리 팀의 전용 공간에서, <br><span class="green">연구 데이터를 안전하게.</span></h2>' +
         '<p class="lead">연구 자료는 팀 전용 공간에 보관하고, 허용된 구성원만 활용합니다. 외부 AI에 전달할 정보도 기관이 정한 범위로 제한합니다.</p></div>' +
         '<div class="seg" role="tablist">' + P.map(function (p, i) { return '<button role="tab" data-pv="' + i + '" aria-selected="' + (i === 0) + '">' + p[0] + '</button>'; }).join('') + '</div>' +
@@ -58,7 +58,7 @@
     },
     ops: function () {
       return '<section class="sec pale" id="managed"><div class="wrap"><div class="ops"><div>' +
-        '<span class="eyebrow">Managed AI Service</span>' +
+        '<span class="eyebrow">Operations Support</span>' +
         '<h2 class="ttl">AI 전담팀이 없어도, <br>전문가와 함께 운영하세요.</h2>' +
         '<p class="lead">OmicsPharm의 바이오·헬스케어 전문 AI 팀이 연구 목적에 맞춰 AI Agent를 구축하고 운영합니다. 새 데이터와 연구자의 검토를 반영해 AI를 지속적으로 고도화하므로, 별도 AI 전담팀 없이도 연구에 맞게 발전하는 AI를 활용할 수 있습니다.</p>' +
         '</div><div class="layers"><div class="top">바이오·헬스케어 전문 AI 팀</div>' +
