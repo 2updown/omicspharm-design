@@ -580,3 +580,10 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
   .cmp3 .marks .cl, .cmp3 .marks .cv { min-height:0; } .cmp3 .marks .cv { min-height:48px; }
 }
 #plans .sec-head.center { margin-bottom:48px; }
+/* 2026-11-06 비교표 항목 설명 툴팁 (Figma: WarningCircle 20 + tooltip type=down, 프로젝트 목록 툴팁과 같은 모양) */
+.cmp3 .info { position:relative; display:inline-grid; place-items:center; margin-left:4px; cursor:help; }
+.cmp3 .info .ico { width:20px; height:20px; color:#000; }
+.cmp3 .info .tip { position:absolute; left:50%; bottom:calc(100% + 6px); transform:translateX(-50%); width:max-content; min-width:102px; max-width:242px; padding:4px 8px; border-radius:4px; background:#1b1b1b; color:#fff; font-size:14px; font-weight:500; line-height:20px; text-align:center; word-break:keep-all; display:none; z-index:5; }
+.cmp3 .info .tip::after { content:""; position:absolute; left:50%; top:100%; transform:translateX(-50%); border:3px solid transparent; border-bottom:0; border-top-color:#1b1b1b; }
+.cmp3 .info:hover .tip, .cmp3 .info:focus-visible .tip { display:block; }
+.cmp3 .info .tip { max-width:none; white-space:nowrap; }
