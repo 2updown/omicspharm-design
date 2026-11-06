@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function () {
     'precision mediump float;uniform vec2 r;uniform float t;',
     // 부드러운 빛 덩어리: 중심에서 멀어질수록 가우시안으로 옅어짐
     'float L(vec2 p,vec2 c,float s){vec2 d=p-c;return exp(-dot(d,d)/(s*s));}',
-    'void main(){vec2 uv=gl_FragCoord.xy/r;vec2 p=vec2(uv.x*r.x/r.y,uv.y);float a=r.x/r.y;float s=t*.32;',
+    'void main(){vec2 uv=gl_FragCoord.xy/r;vec2 p=vec2(uv.x*r.x/r.y,uv.y);float a=r.x/r.y;float s=t*.6;',
     // 빛 네 개가 왼쪽 위 → 오른쪽 아래 대각선을 따라 서로 다른 때에 오가며 커졌다 작아짐 (위아래로도 움직임)
     'vec2 A=vec2(-.1,1.15),B=vec2(a+.1,-.15),N=normalize(vec2(B.y-A.y,A.x-B.x));',
     'float k1=.5+.5*sin(s*.33),k2=.5+.5*sin(s*.27+2.1),k3=.5+.5*sin(s*.21+4.2),k4=.5+.5*sin(s*.39+1.);',
@@ -227,7 +227,8 @@ document.addEventListener('DOMContentLoaded', function () {
     'float l3=L(p,mix(A,B,k3)-N*.30*sin(s*.37+1.),.55+.15*cos(s*.7));',
     'float l4=L(p,mix(A,B,k4)+N*.45*cos(s*.29+2.),.6);',
     'vec3 c=vec3(.012,.07,.065);',
-    'c+=vec3(.05,.42,.36)*l1*.7+vec3(.10,.58,.50)*l2*.42+vec3(.04,.34,.30)*l3*.5+vec3(.04,.12,.24)*l4*.6;',
+    'c+=vec3(.06,.50,.43)*l1*.9+vec3(.14,.70,.60)*l2*.6+vec3(.04,.40,.36)*l3*.6+vec3(.08,.22,.42)*l4*.7;',
+    'c=(1.-exp(-c*1.8))*.72;', // 빛이 겹쳐도 너무 밝아지지 않게
     'vec2 d=uv-vec2(.5,.52);c*=1.-.35*exp(-dot(d*vec2(1.6,2.4),d*vec2(1.6,2.4))*3.);', // 글자 뒤 살짝 어둡게
     'c+=(fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453)-.5)/255.;', // 띠 무늬 방지
     'gl_FragColor=vec4(c,1.);}'
