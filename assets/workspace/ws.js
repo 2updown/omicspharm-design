@@ -83,8 +83,9 @@
         ['분석 서비스를 이용하지 않아도 Workspace를 도입할 수 있나요?', '네. 보유한 데이터와 문서로 시작할 수 있습니다. 이후 새 데이터가 필요하면 연구 목적에 맞는 Wet-Lab 분석이나 추가 데이터 분석을 의뢰할 수 있습니다.'],
         ['AI Agent 구축만 의뢰하는 것과 무엇이 다른가요?', '분석 의뢰부터 데이터 축적, AI 활용과 후속 연구를 연결합니다. 도입 이후에도 바이오·헬스케어 전문 AI 팀이 AI를 운영하고 연구 결과에 맞춰 개선합니다.']
       ];
-      return '<section class="sec" id="faq"><div class="wrap"><div class="sec-head center"><span class="eyebrow">Questions, Answered</span><h2 class="ttl">도입 전 궁금한 점</h2></div><div class="faq">' +
-        Q.map(function (q) { return '<details><summary>' + q[0] + I('caret-down') + '</summary><p>' + q[1] + '</p></details>'; }).join('') + '</div></div></section>';
+      /* 서비스 소개 > 이용방법(guide.html) 맨 아래 '자주 묻는 질문'과 같은 모양 (2026-11-06) */
+      return '<section class="sec" id="faq"><div class="wrap"><div class="faq-head"><h2>도입 전 궁금한 점</h2><p>더 궁금한 점은 <a data-contact>도입 상담</a>을 이용해 주세요.</p></div><div class="qa">' +
+        Q.map(function (q) { return '<details><summary><span class="q">Q</span><span class="t">' + q[0] + '</span>' + I('caret-down') + '</summary><div class="a"><b>A</b><div>' + q[1] + '</div></div></details>'; }).join('') + '</div></div></section>';
     },
     plan: function (sec) {
       var ent = sec === 'hospital' ? ['센터 · 병원 전체 단위', '센터 또는 병원 전체로 도입하고, 관리자가 진료과·연구실별 워크스페이스를 생성해 통합 관리합니다.']
