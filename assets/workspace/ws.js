@@ -206,3 +206,45 @@
     });
   });
 })();
+
+// 히어로 배경 (2026-11-06, 크몽 Biz 상단 참고): WebGL로 그리는 흐르는 그라디언트. 오른쪽 아래가 밝고 왼쪽·가운데는 어둡게.
+// 움직임 줄이기 설정이면 한 장면만 그림. WebGL이 안 되면 CSS 빛(h2-glow)이 그대로 보임.
+document.addEventListener('DOMContentLoaded', function () {
+  var hero = document.querySelector('.ws-hero2'); if (!hero) return;
+  var cv = document.createElement('canvas'); cv.className = 'h2-canvas'; cv.setAttribute('aria-hidden', 'true');
+  var gl = cv.getContext('webgl', { premultipliedAlpha: false, antialias: false }); if (!gl) return;
+  var vs = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+  var fs = [
+    'precision mediump float;uniform vec2 r;uniform float t;',
+    'float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}',
+    'float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}',
+    'float fb(vec2 p){float v=0.,a=.5;for(int k=0;k<3;k++){v+=a*n(p);p*=2.02;a*=.5;}return v;}',
+    'void main(){vec2 uv=gl_FragCoord.xy/r;vec2 q=vec2(uv.x*r.x/r.y,uv.y);float s=t*.06;',
+    'vec2 w=vec2(fb(q*.55+vec2(s,-s*.7)),fb(q*.55+vec2(-s*.8,s)+3.1));',
+    'float f=fb(q*.6+w*1.4+vec2(s*.6,0.));',
+    'float m=smoothstep(.3,1.2,uv.x*.9+(1.-uv.y)*.35+(f-.5)*1.1);', // 오른쪽 아래로 갈수록 밝게
+    'vec3 c0=vec3(.012,.07,.065),c1=vec3(.03,.17,.15),c2=vec3(.06,.36,.31),c3=vec3(.13,.58,.5);',
+    'vec3 c=mix(c0,c1,smoothstep(0.,.45,m));c=mix(c,c2,smoothstep(.4,.8,m));c=mix(c,c3,smoothstep(.78,1.,m)*.7);',
+    'c+=vec3(.03,.06,.12)*smoothstep(.55,.0,distance(uv,vec2(.08,1.)));', // 왼쪽 위 은은한 파랑
+    'vec2 d=uv-.5;c*=1.-.45*smoothstep(.55,0.,length(d*vec2(1.,1.6)))*.6;', // 글자 뒤 살짝 어둡게
+    'gl_FragColor=vec4(c,1.);}'
+  ].join('\n');
+  function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; }
+  var pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(pr);
+  if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
+  gl.useProgram(pr);
+  var b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  var lp = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 2, gl.FLOAT, false, 0, 0);
+  var ur = gl.getUniformLocation(pr, 'r'), ut = gl.getUniformLocation(pr, 't');
+  hero.insertBefore(cv, hero.firstChild); hero.classList.add('has-canvas');
+  function size() { var k = Math.min(window.devicePixelRatio || 1, 1.5) * .5; cv.width = Math.round(hero.offsetWidth * k); cv.height = Math.round(hero.offsetHeight * k); gl.viewport(0, 0, cv.width, cv.height); }
+  size(); window.addEventListener('resize', size);
+  var still = matchMedia('(prefers-reduced-motion:reduce)').matches, t0 = performance.now(), vis = true;
+  if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { vis = es[0].isIntersecting; if (vis && !still) requestAnimationFrame(draw); }).observe(hero);
+  function draw(now) {
+    gl.uniform2f(ur, cv.width, cv.height); gl.uniform1f(ut, still ? 20 : (now - t0) / 1000 + 20);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    if (!still && vis) requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+});

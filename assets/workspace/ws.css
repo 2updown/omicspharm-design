@@ -486,3 +486,8 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .ws-hero2 .h2-glow::after { width:56%; height:76%; background:radial-gradient(closest-side, rgba(79,141,255,.42), transparent); filter:blur(60px); animation:h2Aurora2b 13s ease-in-out infinite alternate; }
 @keyframes h2Aurora1b { 0% { transform:translate(0,0) scale(1); } 50% { transform:translate(-30%,-18%) scale(1.2); } 100% { transform:translate(-55%,6%) scale(.9); } }
 @keyframes h2Aurora2b { 0% { transform:translate(0,0) scale(1); } 50% { transform:translate(35%,20%) scale(1.15); } 100% { transform:translate(70%,-6%) scale(.9); } }
+
+/* 2026-11-06 히어로 배경을 WebGL 흐르는 그라디언트로 (크몽 Biz 참고, 색은 teal). 캔버스가 뜨면 CSS 빛은 끔. 밝기는 이전처럼 어둡게 */
+.ws-hero2 .h2-canvas { position:absolute; inset:0; width:100%; height:100%; display:block; pointer-events:none; }
+.ws-hero2.has-canvas .h2-glow { display:none; }
+.ws-hero2.has-canvas .h2-dots { opacity:.5; }
