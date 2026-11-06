@@ -309,8 +309,8 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 
 /* 개요 페이지 안 이동 탭 (2026-11-05): 히어로 아래, 스크롤하면 GNB 아래에 붙음. 모양은 프로젝트 상세 탭과 같게 */
 .ws-anchors { position:sticky; top:70px; z-index:20; background:#fff; padding:0 60px; transition:box-shadow .15s; }
-.ws-anchors.stuck { box-shadow:0 1px 0 var(--gray-200); }
-.ws-anchors .wrap { display:flex; overflow-x:auto; scrollbar-width:none; box-shadow:inset 0 -1px 0 var(--gray-200); } /* 분석 서비스 안내 탭처럼 아래 회색 선 (2026-11-06), 선택 밑줄 2px이 그 위에 겹치게 */
+.ws-anchors, .ws-anchors.stuck { box-shadow:inset 0 -1px 0 var(--gray-200); } /* 아래 회색 선은 화면 끝까지 (히어로에 바로 붙고 위에 고정되는 탭, 2026-11-06). 선택 밑줄 2px이 위에 겹침 */
+.ws-anchors .wrap { display:flex; overflow-x:auto; scrollbar-width:none; }
 .ws-anchors .wrap::-webkit-scrollbar { display:none; }
 .ws-anchors a { flex:none; display:flex; align-items:center; height:56px; padding:0 20px; border-bottom:2px solid transparent; font-size:18px; font-weight:500; line-height:22px; color:var(--gray-400); white-space:nowrap; }
 .ws-anchors a:hover { color:var(--gray-600); }
