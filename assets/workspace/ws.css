@@ -310,9 +310,9 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 /* 개요 페이지 안 이동 탭 (2026-11-05): 히어로 아래, 스크롤하면 GNB 아래에 붙음. 모양은 프로젝트 상세 탭과 같게 */
 .ws-anchors { position:sticky; top:70px; z-index:20; background:#fff; padding:0 60px; transition:box-shadow .15s; }
 .ws-anchors.stuck { box-shadow:0 1px 0 var(--gray-200); }
-.ws-anchors .wrap { display:flex; overflow-x:auto; scrollbar-width:none; }
+.ws-anchors .wrap { display:flex; overflow-x:auto; scrollbar-width:none; border-bottom:1px solid var(--gray-200); } /* 분석 서비스 안내 탭처럼 아래 회색 선 (2026-11-06) */
 .ws-anchors .wrap::-webkit-scrollbar { display:none; }
-.ws-anchors a { flex:none; display:flex; align-items:center; height:48px; padding:0 16px; border-bottom:2px solid transparent; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-400); white-space:nowrap; }
+.ws-anchors a { flex:none; display:flex; align-items:center; height:48px; padding:0 16px; margin-bottom:-1px; border-bottom:2px solid transparent; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-400); white-space:nowrap; }
 .ws-anchors a:hover { color:var(--gray-600); }
 .ws-anchors a.on { border-bottom-color:var(--teal-600); color:var(--teal-600); font-weight:700; }
 @media (max-width:1079px) { .ws-anchors { top:56px; padding:0 20px; } }
