@@ -349,7 +349,7 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .wcta-eb { font-size:16px; font-weight:500; line-height:22px; background:linear-gradient(90deg, #3be0c5, #6fb2ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
 .wcta h2 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; color:#fff; word-break:keep-all; }
 .wcta-desc { font-size:18px; line-height:24px; letter-spacing:-.18px; color:rgba(255,255,255,.85); word-break:keep-all; }
-.wcta-btn { flex:none; display:inline-flex; align-items:center; justify-content:center; height:56px; padding:0 32px; border-radius:99px; background:#fff; color:var(--teal-600); font-size:16px; font-weight:500; white-space:nowrap; }
-.wcta-btn:hover { color:var(--teal-700); }
+.wcta-btn { flex:none; display:inline-flex; align-items:center; justify-content:center; height:56px; padding:0 32px; border:1px solid rgba(255,255,255,.35); border-radius:99px; background:rgba(255,255,255,.14); color:#fff; font-size:16px; font-weight:500; white-space:nowrap; transition:background .2s; } /* 메인 CTA '도입 상담'과 같은 반투명 버튼 */
+.wcta-btn:hover { background:rgba(255,255,255,.22); }
 @media (prefers-reduced-motion:reduce) { .wcta .ws-spot { display:none; } }
 @media (max-width:760px) { .wcta { padding:64px 20px 72px; } .wcta-in { flex-direction:column; align-items:flex-start; gap:28px; } .wcta-head { gap:16px; } .wcta h2 { font-size:28px; line-height:38px; } .wcta-desc br { display:none; } }
