@@ -36,21 +36,25 @@
           '</div></div></div></section>';
     },
     privacy: function () {
-      return '<section class="sec" id="security"><div class="wrap privacy"><div>' +
-        '<span class="eyebrow">Privacy-First</span>' +
+      /* 2026-11-06 크몽 Biz '선택하는 이유' 레이아웃: 가운데 제목 + 4칸 상자 탭 + (왼쪽 아이콘·제목·설명·체크 3개 / 오른쪽 궤도 그림) */
+      var P = [
+        ['분리된 공간', 'buildings', '다른 기관과 분리된 우리 팀 공간', '다른 기관과 분리해 보관하고, 같은 기관 안에서도 팀별 공유 범위를 정합니다.', ['GPU·데이터 저장소·AI 모델·네트워크를 독립적으로 사용', '팀별 데이터와 Agent 기록 분리', '기관 공통 지식은 승인된 범위에서만 공유'], ['전용 GPU', '데이터 저장소', 'AI 모델']],
+        ['허용된 사람만 접근', 'users-three', '허용된 사람만 자료에 접근합니다', '연구팀과 프로젝트별로 자료를 조회·활용할 수 있는 사람과 권한을 정합니다.', ['연구팀·프로젝트별 조회·활용 권한 설정', '연구책임자 또는 관리자가 구성원 관리', 'Enterprise는 기관 계정과 연동'], ['역할별 권한', '구성원 관리', '기관 계정 연동']],
+        ['외부 전송 통제', 'lock-key', '외부로 나가는 정보를 통제합니다', '외부 AI에 전달할 데이터와 모델 학습 활용 여부를 기관과 미리 정하고 계약에 반영합니다.', ['외부 AI에 전달할 데이터 범위 사전 협의', '모델 학습 활용 여부를 계약에 반영', '기관 내부 구축(On-Premises) 선택 가능'], ['전달 범위 제한', '학습 활용 협의', 'On-Premises']],
+        ['근거와 기록', 'file-text', '근거와 기록이 남는 AI', 'AI가 참고한 자료와 연구자의 검토, 데이터 접근 기록을 확인할 수 있습니다.', ['AI가 참고한 자료와 출처 확인', '연구자의 검토 이력 기록', '데이터 접근 기록 확인'], ['참고 출처', '검토 이력', '접근 기록']]
+      ];
+      return '<section class="sec" id="security"><div class="wrap">' +
+        '<div class="sec-head center"><span class="eyebrow">Privacy-First</span>' +
         '<h2 class="ttl">우리 팀의 전용 공간에서, <br><span class="green">연구 데이터를 안전하게.</span></h2>' +
-        '<p class="lead">연구 자료는 팀 전용 공간에 보관하고, 허용된 구성원만 활용합니다. 외부 AI에 전달할 정보도 기관이 정한 범위로 제한합니다.</p>' +
-        /* 2026-11-06 크몽 Biz '선택하는 이유' 탭 내용 참고: 왼쪽 체크 목록 + 오른쪽 궤도 그림(가운데 아이콘, 키워드 말풍선). 기존 경계 그림·카드 4개를 대체 */
-        '<ul class="pv-chk">' +
-          '<li>' + I('check') + '<div><b>분리된 공간</b><span>다른 기관과 분리해 보관하고, 같은 기관 안에서도 팀별 공유 범위를 정합니다.</span></div></li>' +
-          '<li>' + I('check') + '<div><b>허용된 사람만 접근</b><span>연구팀과 프로젝트별로 자료를 조회·활용할 수 있는 사람과 권한을 정합니다.</span></div></li>' +
-          '<li>' + I('check') + '<div><b>외부로 나가는 정보 통제</b><span>외부 AI에 전달할 데이터와 모델 학습 활용 여부를 기관과 미리 정하고 계약에 반영합니다.</span></div></li>' +
-          '<li>' + I('check') + '<div><b>근거와 기록이 남는 AI</b><span>AI가 참고한 자료와 연구자의 검토, 데이터 접근 기록을 확인할 수 있습니다.</span></div></li>' +
-        '</ul></div>' +
-        '<div class="orbit" aria-hidden="true"><i class="ring r1"></i><i class="ring r2"></i><i class="ring r3"></i>' +
-          '<div class="core">' + I('shield-check') + '</div>' +
-          '<span class="op o1">팀 전용 공간</span><span class="op o2">권한별 접근</span><span class="op o3">외부 전송 통제</span><span class="op o4">접근 기록</span>' +
-        '</div></div></section>';
+        '<p class="lead">연구 자료는 팀 전용 공간에 보관하고, 허용된 구성원만 활용합니다. 외부 AI에 전달할 정보도 기관이 정한 범위로 제한합니다.</p></div>' +
+        '<div class="seg" role="tablist">' + P.map(function (p, i) { return '<button role="tab" data-pv="' + i + '" aria-selected="' + (i === 0) + '">' + p[0] + '</button>'; }).join('') + '</div>' +
+        P.map(function (p, i) {
+          return '<div class="pv-panel" data-pvp="' + i + '"' + (i ? ' hidden' : '') + '><div class="pv-txt"><span class="pv-ic">' + I(p[1]) + '</span><h3>' + p[2] + '</h3><p>' + p[3] + '</p>' +
+            '<ul class="pv-list">' + p[4].map(function (t) { return '<li>' + I('check') + t + '</li>'; }).join('') + '</ul></div>' +
+            '<div class="orbit" aria-hidden="true"><i class="ring r1"></i><i class="ring r2"></i><i class="ring r3"></i><div class="core">' + I('shield-check') + '</div>' +
+            p[5].map(function (t, k) { return '<span class="op o' + (k + 1) + '">' + t + '</span>'; }).join('') + '</div></div>';
+        }).join('') +
+        '</div></section>';
     },
     ops: function () {
       return '<section class="sec pale" id="managed"><div class="wrap"><div class="ops"><div>' +
@@ -66,11 +70,12 @@
           '<article class="card"><span class="k">Private Cloud</span><h3>전용 클라우드</h3><p>팀 또는 기관 전용 환경에서 AI를 활용합니다. 필요한 시스템 운영과 보안 관리는 함께 지원합니다.</p></article>' +
           '<article class="card"><span class="k">On-Premises</span><h3>기관 내부 구축</h3><p>기관 서버에 Workspace와 AI 실행 환경을 구축합니다. 내부 처리 범위와 외부 연결 정책을 기관의 보안 기준에 맞춰 설계합니다.</p></article>' +
         '</div>' +
-        '<div class="steps">' +
-          '<div><small>01 Design</small><b>연구·데이터 진단</b><p>연구 목적, 적용 연구, 보안 요구사항 확인</p></div>' +
-          '<div><small>02 Validate</small><b>시범 적용·활용 평가</b><p>대표 연구에서 정확성과 활용 가능성 검토</p></div>' +
-          '<div><small>03 Deploy</small><b>Workspace·Agent 배포</b><p>데이터 연계, Agent 구성, 권한 설정, 교육</p></div>' +
-          '<div><small>04 Operate</small><b>운영·지속 고도화</b><p>전문 AI 팀의 품질 평가·개선, 적용 연구 확대</p></div>' +
+        '<h3 class="sub-h center"><small>How to Start</small>도입은 이렇게 진행됩니다.</h3>' +
+        '<div class="steps">' + /* 2026-11-06 크몽 Biz 이용 4단계 참고: 점선 위 번호 원 + 가운데 글 */
+          '<div><i class="sn">01</i><small>Design</small><b>연구·데이터 진단</b><p>연구 목적, 적용 연구, 보안 요구사항 확인</p></div>' +
+          '<div><i class="sn">02</i><small>Validate</small><b>시범 적용·활용 평가</b><p>대표 연구에서 정확성과 활용 가능성 검토</p></div>' +
+          '<div><i class="sn">03</i><small>Deploy</small><b>Workspace·Agent 배포</b><p>데이터 연계, Agent 구성, 권한 설정, 교육</p></div>' +
+          '<div><i class="sn">04</i><small>Operate</small><b>운영·지속 고도화</b><p>전문 AI 팀의 품질 평가·개선, 적용 연구 확대</p></div>' +
         '</div>' +
         '<p class="note">분석 서비스, 시스템 운영, 전문가 지원 범위와 AI 개선 주기는 연구 목적에 맞춰 협의합니다.</p>' +
         '</div></section>';
@@ -180,6 +185,12 @@
       }, { threshold: .5 });
       document.querySelectorAll('.loop, .steps').forEach(function (el) { el.classList.add('seq'); io.observe(el); });
     }
+    document.querySelectorAll('#security').forEach(function (sec) { /* 보안 4칸 탭 */
+      var bs = sec.querySelectorAll('[data-pv]');
+      bs.forEach(function (b) { b.addEventListener('click', function () {
+        bs.forEach(function (x) { var on = x === b; x.setAttribute('aria-selected', String(on)); sec.querySelector('[data-pvp="' + x.dataset.pv + '"]').hidden = !on; });
+      }); });
+    });
     document.querySelectorAll('[data-tl]').forEach(function (tl) {
       setStage(tl, 0);
       tl.querySelectorAll('[data-stage]').forEach(function (b) { b.addEventListener('click', function () { setStage(tl, +b.dataset.stage); }); });
