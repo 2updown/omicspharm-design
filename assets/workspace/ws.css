@@ -491,3 +491,25 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .ws-hero2 .h2-canvas { position:absolute; inset:0; width:100%; height:100%; display:block; pointer-events:none; }
 .ws-hero2.has-canvas .h2-glow { display:none; }
 .ws-hero2.has-canvas .h2-dots { opacity:.5; }
+
+/* 2026-11-06 도입 방식: Tally 가격표(Do more with Tally) 참고 — 카드 두 장, 머리(이름 + 오른쪽 큰 도입 단위), 꽉 찬 버튼, 아이콘 위·굵은 제목 + 회색 설명 이어 쓰기 */
+.plans { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:stretch; }
+.plan { display:flex; flex-direction:column; padding:32px; border:1px solid var(--gray-200); border-radius:16px; background:#fcfdfd; }
+.plan header { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
+.plan h3 { font-size:22px; font-weight:700; line-height:30px; }
+.plan header p { margin-top:2px; font-size:14px; line-height:20px; color:var(--gray-500); }
+.plan .unit { display:flex; flex-direction:column; align-items:flex-end; text-align:right; }
+.plan .unit b { font-size:32px; font-weight:700; line-height:40px; letter-spacing:-.5px; }
+.plan .unit span { font-size:14px; line-height:20px; color:var(--gray-500); }
+.plan-btn { display:flex; justify-content:center; align-items:center; height:48px; margin:28px 0 36px; border-radius:8px; background:var(--teal-600); color:#fff; font-size:16px; font-weight:600; cursor:pointer; transition:background .15s; }
+.plan-btn:hover { background:var(--teal-700); }
+.plan.ent .plan-btn { background:#0a2a27; } .plan.ent .plan-btn:hover { background:#000; }
+.feat { display:grid; grid-template-columns:1fr 1fr; gap:32px 28px; }
+.feat li { display:flex; flex-direction:column; gap:12px; }
+.feat li .ico { width:24px; height:24px; color:var(--teal-600); }
+.plan.ent .feat li .ico { color:#0a2a27; }
+.feat li p { font-size:15px; line-height:24px; color:var(--gray-500); word-break:keep-all; }
+.feat li p b { font-weight:600; color:#000; }
+.feat.adm2 { grid-template-columns:repeat(3,1fr); gap:36px 32px; }
+@media (max-width:960px) { .plans { grid-template-columns:1fr; } .feat.adm2 { grid-template-columns:1fr 1fr; } }
+@media (max-width:760px) { .plan { padding:24px 20px; } .plan .unit b { font-size:24px; line-height:32px; } .feat, .feat.adm2 { grid-template-columns:1fr; gap:24px; } }
