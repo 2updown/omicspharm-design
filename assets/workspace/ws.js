@@ -17,7 +17,7 @@
   var B = {
     growth: function () {
       return '<section class="sec pale" id="growth"><div class="wrap growth"><div>' +
-        '<span class="eyebrow">지속 고도화</span>' +
+        '<span class="eyebrow">작동 방식</span>' +
         '<h2 class="ttl">분석 결과가 쌓이고, <br>다음 연구가 정교해집니다.</h2>' +
         '<p class="lead">분석을 의뢰하면 결과가 Workspace에 쌓입니다. 전문 AI 팀이 AI를 개선하고, AI는 결과 해석과 다음 연구 방향을 제안합니다.</p>' +
         '<div class="loop">' +
