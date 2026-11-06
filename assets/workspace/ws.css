@@ -464,3 +464,15 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 /* 2026-11-06 히어로 문구 두 줄 (굵은 소제목 삭제, Figma 2427:19391 기준: 제목과 간격 24, 설명 20/32) */
 .ws-hero2 .h2-desc { margin-top:24px; font-size:20px; line-height:32px; color:rgba(255,255,255,.8); }
 @media (max-width:760px) { .ws-hero2 .h2-desc { font-size:16px; line-height:26px; } .ws-hero2 .h2-desc br { display:none; } }
+
+/* 2026-11-06 히어로: 높이는 문구 줄이기 전과 같게 (430), 타일은 고정, 배경 빛이 천천히 흐르는 효과 */
+.ws-hero2 { padding:139px 60px 131px; }
+.ws-hero2 .h2-tile { animation:none; }
+.ws-hero2 .h2-glow { inset:-20%; background:none; }
+.ws-hero2 .h2-glow::before, .ws-hero2 .h2-glow::after { content:''; position:absolute; border-radius:50%; filter:blur(80px); will-change:transform; }
+.ws-hero2 .h2-glow::before { width:60%; height:70%; right:-4%; bottom:-6%; background:radial-gradient(closest-side, rgba(59,224,197,.55), transparent); animation:h2Aurora1 16s ease-in-out infinite alternate; }
+.ws-hero2 .h2-glow::after { width:46%; height:56%; left:4%; top:2%; background:radial-gradient(closest-side, rgba(79,141,255,.22), transparent); animation:h2Aurora2 20s ease-in-out infinite alternate; }
+@keyframes h2Aurora1 { 0% { transform:translate(0,0) scale(1); } 50% { transform:translate(-14%,-10%) scale(1.15); } 100% { transform:translate(-26%,4%) scale(.95); } }
+@keyframes h2Aurora2 { 0% { transform:translate(0,0) scale(1); } 50% { transform:translate(18%,12%) scale(1.1); } 100% { transform:translate(30%,-4%) scale(.9); } }
+@media (prefers-reduced-motion:reduce) { .ws-hero2 .h2-glow::before, .ws-hero2 .h2-glow::after { animation:none; } }
+@media (max-width:760px) { .ws-hero2 { padding:96px 20px 88px; } }
