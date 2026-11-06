@@ -207,7 +207,7 @@
   });
 })();
 
-// 히어로 배경 (2026-11-06, 크몽 Biz 상단 참고): WebGL로 그리는 부드러운 빛. 빛 네 개가 왼쪽 위↔오른쪽 아래 대각선을 따라 천천히 오가며 퍼졌다 모임, 글자 뒤는 살짝 어둡게.
+// 히어로 배경 (2026-11-06, 크몽 Biz 상단 참고): WebGL로 그리는 부드러운 빛. 화면 곳곳의 빛 다섯 개가 서로 다른 박자로 퍼졌다 모임, 글자 뒤는 살짝 어둡게.
 // 움직임 줄이기 설정이면 한 장면만 그림. WebGL이 안 되면 CSS 빛(h2-glow)이 그대로 보임.
 document.addEventListener('DOMContentLoaded', function () {
   var hero = document.querySelector('.ws-hero2'); if (!hero) return;
@@ -218,16 +218,16 @@ document.addEventListener('DOMContentLoaded', function () {
     'precision mediump float;uniform vec2 r;uniform float t;',
     // 부드러운 빛 덩어리: 중심에서 멀어질수록 가우시안으로 옅어짐
     'float L(vec2 p,vec2 c,float s){vec2 d=p-c;return exp(-dot(d,d)/(s*s));}',
-    'void main(){vec2 uv=gl_FragCoord.xy/r;vec2 p=vec2(uv.x*r.x/r.y,uv.y);float a=r.x/r.y;float s=t*.6;',
-    // 빛 네 개가 왼쪽 위 → 오른쪽 아래 대각선을 따라 서로 다른 때에 오가며 커졌다 작아짐 (위아래로도 움직임)
-    'vec2 A=vec2(-.1,1.15),B=vec2(a+.1,-.15),N=normalize(vec2(B.y-A.y,A.x-B.x));',
-    'float k1=.5+.5*sin(s*.33),k2=.5+.5*sin(s*.27+2.1),k3=.5+.5*sin(s*.21+4.2),k4=.5+.5*sin(s*.39+1.);',
-    'float l1=L(p,mix(A,B,k1)+N*.25*sin(s*.5),.85+.2*sin(s*.8));',
-    'float l2=L(p,mix(A,B,k2)+N*.35*cos(s*.41),.62+.18*sin(s*.6+1.));',
-    'float l3=L(p,mix(A,B,k3)-N*.30*sin(s*.37+1.),.55+.15*cos(s*.7));',
-    'float l4=L(p,mix(A,B,k4)+N*.45*cos(s*.29+2.),.6);',
+    'void main(){vec2 uv=gl_FragCoord.xy/r;vec2 p=vec2(uv.x*r.x/r.y,uv.y);float a=r.x/r.y;float s=t*.9;',
+    // 화면 곳곳(왼쪽 위·오른쪽 아래·오른쪽 위·왼쪽 아래·가운데 아래)에 놓인 빛이 서로 다른 박자로 커졌다 작아지며 퍼짐. 자리는 조금만 움직임
+    'float b1=.5+.5*sin(s*.45),b2=.5+.5*sin(s*.38+2.),b3=.5+.5*sin(s*.52+4.),b4=.5+.5*sin(s*.41+1.),b5=.5+.5*sin(s*.33+3.);',
+    'float l1=L(p,vec2(a*.12+.06*sin(s*.2),.92+.05*cos(s*.23)),.35+.45*b1)*(.45+.55*b1);',
+    'float l2=L(p,vec2(a*.9+.06*cos(s*.21),.1+.05*sin(s*.27)),.4+.5*b2)*(.45+.55*b2);',
+    'float l3=L(p,vec2(a*.82+.05*sin(s*.19),.95),.3+.35*b3)*(.4+.6*b3);',
+    'float l4=L(p,vec2(a*.2+.05*cos(s*.24),.05),.3+.35*b4)*(.4+.6*b4);',
+    'float l5=L(p,vec2(a*.5+.08*sin(s*.17),-.15),.35+.4*b5)*(.4+.6*b5);',
     'vec3 c=vec3(.012,.07,.065);',
-    'c+=vec3(.06,.50,.43)*l1*.9+vec3(.14,.70,.60)*l2*.6+vec3(.04,.40,.36)*l3*.6+vec3(.08,.22,.42)*l4*.7;',
+    'c+=vec3(.06,.50,.43)*l1*.8+vec3(.10,.62,.53)*l2*.9+vec3(.08,.24,.44)*l3*.6+vec3(.04,.40,.36)*l4*.6+vec3(.10,.58,.50)*l5*.7;',
     'c=(1.-exp(-c*1.8))*.72;', // 빛이 겹쳐도 너무 밝아지지 않게
     'vec2 d=uv-vec2(.5,.52);c*=1.-.35*exp(-dot(d*vec2(1.6,2.4),d*vec2(1.6,2.4))*3.);', // 글자 뒤 살짝 어둡게
     'c+=(fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453)-.5)/255.;', // 띠 무늬 방지
