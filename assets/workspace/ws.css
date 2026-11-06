@@ -335,3 +335,21 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .sec-panel > .ux { max-width:760px; }
 .sec-panel .grid4 .card h3, .sec-panel .rcase h3 { margin-top:0; font-size:18px; line-height:26px; } .sec-panel .grid4 .card p { font-size:15px; line-height:22px; }
 .case-mini .flow h3 { margin-top:2px; font-size:16px; line-height:24px; } .case-mini .flow p { font-size:14px; line-height:20px; }
+
+/* 하단 CTA (2026-11-06): 메인 index.html 하단 CTA(.ws-cta, 양쪽 정렬 B안)와 같은 디자인 */
+.wcta { position:relative; overflow:hidden; padding:110px 64px; background:linear-gradient(160deg, #0a2a27 0%, #04201d 55%, #031a18 100%); }
+.wcta::before, .wcta::after { content:""; position:absolute; left:50%; border-radius:50%; pointer-events:none; }
+.wcta::before { bottom:-170px; width:960px; height:320px; margin-left:-480px; background:linear-gradient(90deg,#00bba6,#3be0c5 50%,#4f8dff); opacity:.6; filter:blur(120px); }
+.wcta::after { bottom:-90px; width:440px; height:160px; margin-left:-220px; background:#c9fff3; opacity:.45; filter:blur(70px); }
+.wcta .ws-dots, .wcta .ws-spot { position:absolute; inset:0; pointer-events:none; }
+.wcta .ws-dots { background:radial-gradient(circle, rgba(255,255,255,.09) .9px, transparent 1.1px) 0 0/12px 12px; }
+.wcta .ws-spot { background:radial-gradient(circle, rgba(140,255,232,.75) 1px, transparent 1.3px) 0 0/12px 12px; -webkit-mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); }
+.wcta-in { position:relative; z-index:2; max-width:1312px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+.wcta-head { display:flex; flex-direction:column; gap:24px; }
+.wcta-eb { font-size:16px; font-weight:500; line-height:22px; background:linear-gradient(90deg, #3be0c5, #6fb2ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.wcta h2 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; color:#fff; word-break:keep-all; }
+.wcta-desc { font-size:18px; line-height:24px; letter-spacing:-.18px; color:rgba(255,255,255,.85); word-break:keep-all; }
+.wcta-btn { flex:none; display:inline-flex; align-items:center; justify-content:center; height:56px; padding:0 32px; border-radius:99px; background:#fff; color:var(--teal-600); font-size:16px; font-weight:500; white-space:nowrap; }
+.wcta-btn:hover { color:var(--teal-700); }
+@media (prefers-reduced-motion:reduce) { .wcta .ws-spot { display:none; } }
+@media (max-width:760px) { .wcta { padding:64px 20px 72px; } .wcta-in { flex-direction:column; align-items:flex-start; gap:28px; } .wcta-head { gap:16px; } .wcta h2 { font-size:28px; line-height:38px; } .wcta-desc br { display:none; } }

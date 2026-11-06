@@ -151,6 +151,18 @@
       var k = el.getAttribute('data-ws'), p = k.split('-');
       el.outerHTML = p[0] === 'plan' ? B.plan(p[1]) : B[k]();
     });
+    /* 하단 CTA 점 빛: 마우스 주변 점이 밝아지고, 마우스가 없으면 빛이 천천히 좌우로 지나감 (메인 하단 CTA와 같음) */
+    (function () {
+      var box = document.querySelector('.wcta'), spot = box && box.querySelector('.ws-spot');
+      if (!spot || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+      var hover = false, raf = 0, t0 = performance.now();
+      function set(x, y) { spot.style.setProperty('--mx', x + 'px'); spot.style.setProperty('--my', y + 'px'); }
+      function idle(now) { raf = 0; if (hover) return; var r = box.getBoundingClientRect(); if (r.bottom <= 0 || r.top >= innerHeight) return; var w = box.clientWidth, h = box.clientHeight, k = (now - t0) / 9000; set(w / 2 + Math.sin(k * Math.PI * 2) * w * 0.42, h * (0.55 + Math.sin(k * Math.PI * 4) * 0.2)); raf = requestAnimationFrame(idle); }
+      function start() { if (!raf) raf = requestAnimationFrame(idle); }
+      box.addEventListener('pointermove', function (e) { if (e.pointerType !== 'mouse') return; hover = true; var r = box.getBoundingClientRect(); set(e.clientX - r.left, e.clientY - r.top); });
+      box.addEventListener('pointerleave', function () { hover = false; start(); });
+      window.addEventListener('scroll', start, { passive: true }); start();
+    })();
     /* 섹션 배경을 흰색·연한 녹색으로 번갈아 (한 페이지로 합치면서 순서가 바뀌어도 안 겹치게, 2026-11-05) */
     document.querySelectorAll('main > section.sec').forEach(function (sec, i) { sec.classList.toggle('pale', i % 2 === 1); });
     document.querySelectorAll('[data-contact]').forEach(function (a) { a.setAttribute('href', CONTACT); });
