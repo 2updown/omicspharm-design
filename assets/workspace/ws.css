@@ -309,3 +309,22 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .ws-anchors a:hover { color:var(--gray-600); }
 .ws-anchors a.on { border-bottom-color:var(--teal-600); color:var(--teal-600); font-weight:700; }
 @media (max-width:1079px) { .ws-anchors { top:56px; padding:0 20px; } }
+
+/* 한 페이지 통합 (2026-11-05): 왜 Workspace(고민 3개) · 분야별 탭 · 관리 기능 목록 */
+.why .card { display:flex; flex-direction:column; }
+.why .card p { flex:1; }
+.why .ans { display:flex; gap:8px; margin-top:20px; padding-top:16px; border-top:1px solid var(--gray-200); font-size:15px; font-weight:600; line-height:22px; color:var(--teal-800, #00675e); }
+.why .ans .ico { flex:none; width:18px; height:18px; margin-top:2px; color:var(--teal-600); }
+.sector-tabs > .utabs { margin-bottom:32px; }
+.sec-panel .ux { margin-bottom:28px; }
+.mini-h { margin:40px 0 16px; font-size:20px; font-weight:700; line-height:28px; }
+.sec-panel .ux + .mini-h { margin-top:0; }
+.case-mini { margin-top:24px; padding:28px; border-radius:16px; background:#fff; border:1px solid var(--gray-200); }
+.case-mini .cm-h { display:flex; flex-direction:column; gap:4px; margin-bottom:20px; } .case-mini .lab { font-size:14px; font-weight:500; color:var(--highlight); } .case-mini .cm-h b { font-size:20px; font-weight:700; line-height:28px; }
+.adm { display:grid; grid-template-columns:repeat(3,1fr); gap:12px 24px; }
+.adm li { display:flex; flex-direction:column; gap:4px; padding:16px 0; border-top:1px solid var(--gray-200); font-size:15px; line-height:22px; color:var(--gray-600); } .adm li b { font-size:16px; font-weight:600; color:#000; }
+@media (max-width:760px) { .adm { grid-template-columns:1fr; } }
+.upanel.sec-panel { display:block; } .upanel.sec-panel[hidden] { display:none; } /* 분야별 탭 패널은 세로로 (안쪽 업무 탭 패널만 2단) */
+.sec-panel > .ux { max-width:760px; }
+.sec-panel .grid4 .card h3, .sec-panel .rcase h3 { margin-top:0; font-size:18px; line-height:26px; } .sec-panel .grid4 .card p { font-size:15px; line-height:22px; }
+.case-mini .flow h3 { margin-top:2px; font-size:16px; line-height:24px; } .case-mini .flow p { font-size:14px; line-height:20px; }

@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>OmicsPharm Workspace</title>
-<!-- 워크스페이스 개요 (2026-11-04, 아직 GNB 미연결). 원본 OmicsPharm_Workspace.html 5페이지 → 개요 + for Hospital + for Biopharma 3페이지로 정리.
+<!-- 워크스페이스 개요 (2026-11-04, 아직 GNB 미연결). 원본 OmicsPharm_Workspace.html 5페이지를 이 한 페이지로 합침 (2026-11-05: for Hospital·for Biopharma는 '분야별' 탭, Private·Enterprise는 '도입 방식').
      원본 Private/Enterprise 페이지 내용은 이 페이지의 '도입 방식'(#plans) 섹션으로 합침. 반복 섹션(고도화·보안·Managed AI Service·FAQ)은 assets/workspace/ws.js 한 곳에서 관리 -->
 <link rel="stylesheet" href="assets/common/site.css?v=20261105g">
 <script src="assets/common/site.js?v=20261105g"></script>
-<link rel="stylesheet" href="assets/workspace/ws.css?v=7">
-<script src="assets/workspace/ws.js?v=9"></script>
+<link rel="stylesheet" href="assets/workspace/ws.css?v=10">
+<script src="assets/workspace/ws.js?v=10"></script>
 </head>
 <body>
 <div data-op-gnb="workspace"></div>
@@ -53,51 +53,109 @@
   </div>
 </div></section>
 
-<!-- 페이지 안 이동 탭 (2026-11-05, 레퍼런스 IBM watsonx.ai·Azure AI Foundry): 히어로 아래에 두고 스크롤하면 위에 붙음. 누르면 이 페이지의 해당 섹션으로 이동, 보고 있는 섹션 표시.
-     for Hospital / for Biopharma 페이지는 '분야별' 섹션 카드로 들어감 -->
+<!-- 페이지 안 이동 탭 (2026-11-05, 레퍼런스 IBM watsonx.ai·Azure AI Foundry): 히어로 아래, 스크롤하면 위에 붙음. 누르면 해당 섹션으로 이동 -->
 <nav class="ws-anchors" aria-label="워크스페이스 안내"><div class="wrap">
-  <a href="#research">워크스페이스란</a><a href="#growth">지속 고도화</a><a href="#security">보안</a><a href="#sectors">분야별 Workspace</a><a href="#plans">도입 방식</a><a href="#managed">운영 지원</a><a href="#faq">FAQ</a>
+  <a href="#why">왜 Workspace</a><a href="#growth">지속 고도화</a><a href="#sectors">분야별 Workspace</a><a href="#security">보안</a><a href="#plans">도입 방식</a><a href="#managed">운영 지원</a><a href="#faq">FAQ</a>
 </div></nav>
 
-<section class="sec" id="research"><div class="wrap">
+<!-- Why Workspace (2026-11-05): 병원·바이오제약 공통 문제 제기. 원본 개요 'Built for Research'를 대체 -->
+<section class="sec" id="why"><div class="wrap">
   <div class="sec-head">
-    <div><span class="eyebrow">Built for Research</span><h2 class="ttl">연구 지식은 이어지고, <br>데이터는 안전하게.</h2></div>
-    <p>분석 결과를 다음 연구에 활용하고, 중요한 자료는 연구팀의 권한 안에서 관리합니다.</p>
+    <div><span class="eyebrow">Why Workspace</span><h2 class="ttl">연구는 쌓이는데, <br>데이터와 AI는 따로 움직입니다.</h2></div>
+    <p>병원 연구실도, 제약·바이오 연구팀도 같은 고민에서 시작합니다. OmicsPharm Workspace는 분석과 AI를 한 공간에서 이어 줍니다.</p>
   </div>
-  <div class="grid2">
-    <a class="card" href="#growth"><div class="ic-c"><i data-i="robot"></i></div><span class="k">Agentic AI</span><h3>연구 지식을 반영하는 AI</h3><p>Agentic AI가 연구 목적에 맞춰 필요한 자료와 도구를 연결하고 분석을 수행합니다. 축적된 결과와 연구자의 검토를 다음 분석·제안에 반영합니다.</p></a>
-    <a class="card" href="#security"><div class="ic-c"><i data-i="shield-check"></i></div><span class="k">Secure Research Workspace</span><h3>독립된 보안 연구공간</h3><p>팀별로 연구공간을 분리하고, 허용된 구성원만 자료에 접근합니다. 외부 AI에 전달할 정보도 기관이 정합니다.</p></a>
+  <div class="grid3 why">
+    <article class="card"><span class="k">고민 01</span><h3>분석과 AI를 따로 준비해야 합니다</h3><p>분석 기관을 찾고, AI 개발사를 찾고, 데이터를 옮기는 일을 각각 해야 합니다.</p><div class="ans"><i data-i="check"></i>시료 분석부터 AI Agent 구축·운영까지 한 팀이 맡습니다.</div></article>
+    <article class="card"><span class="k">고민 02</span><h3>결과가 다음 연구로 이어지지 않습니다</h3><p>분석 결과, 보고서, 문헌이 흩어져 있어 비교하고 근거를 찾는 일을 매번 처음부터 합니다.</p><div class="ans"><i data-i="check"></i>결과와 검토 이력이 팀 공간에 쌓여 AI가 다음 연구에 활용합니다.</div></article>
+    <article class="card"><span class="k">고민 03</span><h3>AI를 맡을 사람이 없습니다</h3><p>도입은 해도 운영하고 개선할 전담 인력이 없어 활용이 멈춥니다.</p><div class="ans"><i data-i="check"></i>바이오·헬스케어 전문 AI 팀이 운영과 고도화를 함께합니다.</div></article>
   </div>
 </div></section>
 
 <div data-ws="growth"></div>
-<div data-ws="privacy"></div>
 
+<!-- 분야별 Workspace (2026-11-05): 원본 for Hospital / for Biopharma 두 페이지를 탭 하나로 합침 (히어로 문장은 탭 소개로, 사례는 요약) -->
 <section class="sec pale" id="sectors"><div class="wrap">
   <div class="sec-head">
     <div><span class="eyebrow">Built for Your Field</span><h2 class="ttl">하나의 Workspace, <br>분야에 맞는 전문 AI.</h2></div>
     <p>연구 분야와 목적에 맞춰 데이터, AI, 보안 환경을 구성합니다.</p>
   </div>
-  <div class="grid2">
-    <a class="card tier" href="workspace-hospital.html">
-      <span class="who">OmicsPharm Workspace for</span><h3>Hospital</h3>
-      <p class="one">시료만 준비하세요. 연구 AI는 함께 만듭니다.</p>
-      <p>혈액·조직·세포주 등 시료에서 시작해 분석, AI Agent 도입·운영·고도화까지 지원합니다.</p>
-      <div class="tags"><span>Wet-Lab as an AI Service</span><span>바이오마커 연구</span><span>임상연구</span></div>
-      <span class="more">Hospital 알아보기 <i data-i="arrow-right"></i></span>
-    </a>
-    <a class="card tier" href="workspace-biopharma.html">
-      <span class="who">OmicsPharm Workspace for</span><h3>Biopharma</h3>
-      <p class="one">반복 분석은 줄이고, 다음 연구에 집중하세요.</p>
-      <p>자료 검색, 결과 비교, 보고서 작성을 AI로 연결합니다. 신약개발부터 제조·품질까지 전문팀이 함께합니다.</p>
-      <div class="tags"><span>Drug Development</span><span>Biomanufacturing</span><span>CDMO</span></div>
-      <span class="more">Biopharma 알아보기 <i data-i="arrow-right"></i></span>
-    </a>
+  <div data-utabs class="sector-tabs">
+    <div class="utabs" role="tablist"><button role="tab" data-use="sec-hospital" aria-selected="true">for Hospital</button><button role="tab" data-use="sec-bio" aria-selected="false">for Biopharma</button></div>
+    <div class="upanel sec-panel" id="sec-hospital">
+      <div class="ux"><span class="eyebrow">OmicsPharm Workspace for Hospital</span><h3>AI 도입이 고민이라면, <br>쉽고 편하게 시작하세요.</h3><p>시료와 연구 목적만 알려주세요. 혈액·조직·세포주 분석부터 연구에 맞는 AI Agent 구축, 운영과 고도화까지 전문팀이 함께합니다.</p><div class="tags"><span>대학병원</span><span>연구중심병원</span><span>임상시험센터</span></div></div>
+      <h4 class="mini-h">병원 연구에 맞춘 AI Agent</h4>
+  <div class="grid4">
+    <article class="card"><div class="ic-c"><i data-i="buildings"></i></div><h3>진료과별 연구 Workspace</h3><p>각 연구팀이 자신의 시료·오믹스 데이터와 Agent를 독립적으로 사용합니다.</p></article>
+    <article class="card"><div class="ic-c"><i data-i="magnifying-glass"></i></div><h3>바이오마커 탐색 지원</h3><p>오믹스 분석 결과와 문헌 근거를 연결해 후보 바이오마커 검토를 돕습니다.</p></article>
+    <article class="card"><div class="ic-c"><i data-i="file-text"></i></div><h3>연구 근거·문헌 정리</h3><p>과제 기획과 논문 작성에 필요한 근거를 출처와 함께 정리합니다.</p></article>
+    <article class="card"><div class="ic-c"><i data-i="users-three"></i></div><h3>병원 공통 기준 공유</h3><p>기관이 공유를 허용한 연구윤리 지침과 데이터 관리 기준을 각 팀 Workspace에서 참고합니다.</p></article>
   </div>
-  <div class="shared"><div><b>Managed AI Service</b><p>별도 AI 전담팀 없이도, 바이오·헬스케어 전문 AI 팀이 운영과 고도화를 지원합니다.</p></div><div class="chips"><span>전문가 지원</span><span>AI 운영</span><span>지속 고도화</span></div></div>
+      <div class="case-mini">
+        <div class="cm-h"><span class="lab">적용 예시 · 세포주 연구</span><b>연구진은 세포주 준비, AI 구축과 운영은 Workspace에서.</b></div>
+    <div class="flow">
+      <div><span>병원 연구진</span><h3>세포주 준비 · 연구 목적 전달</h3><p>연구에 사용할 세포주와 확인하려는 질문을 전달합니다.</p></div>
+      <div><span>OmicsPharm Workspace</span><h3>분석 설계 · 데이터 생산</h3><p>연구 목적에 맞는 실험·오믹스 분석을 설계하고 데이터를 정리합니다.</p></div>
+      <div><span>OmicsPharm Workspace</span><h3>연구 전용 AI Agent 구축</h3><p>분석 결과와 문헌을 연결해 해석·후보 비교·후속 실험 제안을 지원합니다.</p></div>
+      <div><span>OmicsPharm Workspace</span><h3>AI 운영 · 지속 고도화</h3><p>전문 AI 팀이 운영과 품질 평가를 맡고, 후속 분석과 연구자의 검토를 반영해 개선합니다.</p></div>
+    </div>
+      </div>
+    </div>
+    <div class="upanel sec-panel" id="sec-bio" hidden>
+      <div class="ux"><span class="eyebrow">OmicsPharm Workspace for Biopharma</span><h3>반복 분석의 부담을 줄이고, <br>다음 연구에 집중하세요.</h3><p>흩어진 실험 결과, 반복되는 문헌 검색과 보고서 작성을 돕는 AI Agent를 구축합니다. 신약개발부터 제조·품질까지 전문팀이 함께합니다.</p><div class="tags"><span>제약사</span><span>바이오텍</span><span>CDMO</span></div></div>
+  <div data-utabs>
+    <div class="utabs" role="tablist"><button role="tab" data-use="use-drug" aria-selected="true">신약개발</button><button role="tab" data-use="use-mfg" aria-selected="false">바이오제조·품질관리</button></div>
+    <div class="upanel" id="use-drug">
+      <div class="ux"><span class="eyebrow">Drug Development</span><h3>결과는 쌓이는데, <br>후보 선정은 어려운가요?</h3><p>실험 결과와 문헌을 함께 비교해 후보별 근거와 추가 검증 방향을 제안합니다. 필요한 분석도 Workspace에서 의뢰할 수 있습니다.</p><div class="tags"><span>제약사</span><span>바이오텍</span><span>신약 연구팀</span></div></div>
+      <div class="grid2">
+        <article class="card"><h3>문헌을 찾는 시간을 줄입니다</h3><p>타깃·작용기전과 관련된 문헌과 내부 자료를 찾아 출처와 함께 정리합니다.</p></article>
+        <article class="card"><h3>흩어진 결과를 함께 비교합니다</h3><p>실험 조건과 오믹스 결과를 연결해 공통점과 차이, 검토할 항목을 제시합니다.</p></article>
+        <article class="card"><h3>다음 검증 대상을 제안합니다</h3><p>후보별 근거와 부족한 정보를 정리하고, 후속 실험과 추가 분석을 제안합니다.</p></article>
+        <article class="card"><h3>보고서 작성 부담을 줄입니다</h3><p>분석 결과와 출처를 연결한 초안을 작성해 연구자가 검토·보완할 수 있도록 돕습니다.</p></article>
+      </div>
+    </div>
+    <div class="upanel" id="use-mfg" hidden>
+      <div class="ux"><span class="eyebrow">Biomanufacturing</span><h3>배치 비교와 품질 검토에 <br>시간이 많이 드나요?</h3><p>공정 데이터, 시험 결과와 표준작업절차(SOP)를 연결합니다. 차이가 발생한 지점과 확인할 근거를 정리해 담당자의 검토를 돕습니다.</p><div class="tags"><span>CDMO</span><span>공정개발</span><span>생산·품질</span></div></div>
+      <div class="grid2">
+        <article class="card"><h3>배치별 차이를 정리합니다</h3><p>배치별 데이터와 분석 결과를 정리하고 주요 차이와 검토 항목을 제시합니다.</p></article>
+        <article class="card"><h3>확인할 품질 변화를 제시합니다</h3><p>품질 지표 변화를 비교하고 관련 기록과 확인할 근거를 연결합니다.</p></article>
+        <article class="card"><h3>필요한 절차를 바로 찾습니다</h3><p>담당자의 접근 권한에 맞는 문서에서 관련 절차와 근거를 찾습니다.</p></article>
+        <article class="card"><h3>검토 자료를 한 번에 준비합니다</h3><p>확인된 데이터를 바탕으로 보고서 초안을 만들고 담당자의 검토를 돕습니다.</p></article>
+      </div>
+    </div>
+  </div>
+
+      <h4 class="mini-h">적용 예시</h4>
+  <div class="grid3">
+    <article class="card rcase">
+      <span class="no">01 · 세포주 개발</span><h3>세포주 개발을 위한 후보 탐색</h3><small class="en">Hotspot Candidate Discovery</small>
+      <p>논문·특허와 유전체 근거를 연결해 Hotspot 후보를 탐색하고, 생산성 관련 근거를 정리합니다.</p>
+      <div class="tk"><b>연구진</b><span>개발 목표와 대상 세포주·유전체 정보 제공</span></div>
+      <div class="tk"><b>Workspace</b><span>자료 탐색, 후보 비교와 근거 정리</span></div>
+      <div class="res"><small>자료 탐색·근거 수집</small><p><s>1~2개월</s> → <strong>실시간 탐색</strong></p></div>
+    </article>
+    <article class="card rcase">
+      <span class="no">02 · 배양 데이터 분석</span><h3>배치별 차이와 이상 징후 분석</h3><small class="en">Culture Data Analysis</small>
+      <p>10개 배치의 배양 데이터를 비교해 주요 추세와 이상 징후를 찾고, 핵심 결과를 보고서로 정리합니다.</p>
+      <div class="tk"><b>연구진</b><span>배치 데이터와 배양 조건 제공</span></div>
+      <div class="tk"><b>Workspace</b><span>추세 비교, 이상 징후 분석과 보고서 생성</span></div>
+      <div class="res"><small>배치 비교·분석</small><p><s>엑셀로 수 주</s> → <strong>5분·자동 보고서</strong></p></div>
+    </article>
+    <article class="card rcase">
+      <span class="no">03 · 배양 세포 이미지 분석</span><h3>세포 상태를 정량적으로 비교</h3><small class="en">Cultured Cell Image Analysis</small>
+      <p>배양 세포 이미지에서 6개 정량 지표를 분석하고, 기준에 따른 Pass/Fail 결과를 제시해 연구자의 검토를 돕습니다.</p>
+      <div class="tk"><b>연구진</b><span>세포 이미지와 평가 기준 제공</span></div>
+      <div class="tk"><b>Workspace</b><span>이미지 정량 분석과 판정 결과 제시</span></div>
+      <div class="res"><small>세포 이미지 96장 분석</small><p><s>2~3개월</s> → <strong>5분</strong></p><span class="acc">사례 자료상 정확도 90% 이상</span></div>
+    </article>
+  </div>
+    </div>
+  </div>
+  <p class="note">연구 적용 예시이며 실제 도입 범위와 제공 범위는 프로젝트별로 협의합니다.</p>
 </div></section>
 
-<!-- 도입 방식: 원본 Private/Enterprise 2페이지를 비교표 중심으로 합침 -->
+<div data-ws="privacy"></div>
+
+<!-- 도입 방식: 원본 Private/Enterprise 2페이지를 비교표 + Enterprise 관리 기능 목록으로 압축 (도입 단위 카드·도입 절차 4단계는 비교표·운영 지원과 겹쳐 뺌, 2026-11-05) -->
 <section class="sec" id="plans"><div class="wrap">
   <div class="sec-head">
     <div><span class="eyebrow">How to Adopt · Private vs Enterprise</span><h2 class="ttl">개인 연구실에서, <br>병원·회사 전체까지.</h2></div>
@@ -120,29 +178,8 @@
     </table>
   </div>
 
-  <h3 class="sub-h"><small>Enterprise Scope</small>분야에 따라 도입 단위가 다릅니다.</h3>
-  <div class="grid2 scope">
-    <article class="card"><small class="f">for Hospital</small><h3>센터 단위 <span>→</span> 병원 전체</h3><p>암센터·임상시험센터처럼 센터 단위로 도입하거나, 병원 전체 진료과·연구실을 하나의 관리 체계로 운영합니다.</p><div class="units"><span>센터</span><span>진료과</span><span>연구실</span></div></article>
-    <article class="card"><small class="f">for Biopharma</small><h3>연구소 단위 <span>→</span> 회사 전체</h3><p>중앙연구소 단위로 도입하거나, 연구·개발·생산·품질 부서까지 회사 전체로 확장합니다.</p><div class="units"><span>연구소</span><span>부서</span><span>프로젝트팀</span></div></article>
-  </div>
-
-  <h3 class="sub-h"><small>How Enterprise Works</small>도입은 센터·회사 단위로, 운영은 연구실 단위로.</h3>
-  <div class="steps">
-    <div><small>01</small><b>도입 단위 결정·환경 구축</b><p>센터·병원 또는 연구소·회사 단위를 정하고, 전용 클라우드나 기관 내부에 환경을 구축합니다.</p></div>
-    <div><small>02</small><b>팀 Workspace 생성·배정</b><p>관리자가 콘솔에서 진료과·연구소·부서별 Workspace를 만들고 구성원을 배정합니다.</p></div>
-    <div><small>03</small><b>팀별 Agent 구성</b><p>각 팀의 연구 목적에 맞는 AI Agent를 설정하고, 활용 데이터와 접근 권한을 정합니다.</p></div>
-    <div><small>04</small><b>기관 지식으로 확장</b><p>팀 지식은 분리해 관리하고, 기관 공통 지식은 정책에 따라 여러 팀이 함께 활용합니다.</p></div>
-  </div>
-
-  <h3 class="sub-h"><small>Built for Organizations</small>기관 전체를 위한 관리 기능.</h3>
-  <div class="grid3 feat3">
-    <article class="card"><h3>팀 Workspace 생성·관리</h3><p>관리자가 필요한 팀에 Workspace를 직접 만들고, 프로젝트가 끝나면 보관하거나 정리합니다.</p></article>
-    <article class="card"><h3>팀 간 데이터 분리</h3><p>같은 기관 안에서도 팀별 데이터와 Agent 기록은 서로 보이지 않습니다. 공유는 승인된 범위에서만 이뤄집니다.</p></article>
-    <article class="card"><h3>기관 공통 지식 관리</h3><p>SOP, 가이드라인, 공통 문헌처럼 모든 팀이 참고할 자료는 한 번 등록해 여러 Workspace에서 활용합니다.</p></article>
-    <article class="card"><h3>계정·권한 정책</h3><p>기관 계정과 연동하고, 역할별 접근 권한과 외부 AI 사용 범위를 기관 단위로 정합니다.</p></article>
-    <article class="card"><h3>사용량·접근 기록</h3><p>팀별 사용량과 Agent 활용 현황, 데이터 접근 기록을 관리자가 한곳에서 확인합니다.</p></article>
-    <article class="card"><h3>기존 시스템 연계</h3><p>LIMS, ELN, 문서관리 시스템 등 기관이 사용하는 시스템과의 연계 범위를 함께 설계합니다.</p></article>
-  </div>
+  <h3 class="sub-h"><small>Enterprise · Built for Organizations</small>기관 전체를 위한 관리 기능.</h3>
+  <ul class="adm"><li><b>팀 Workspace 생성·관리</b>관리자가 필요한 팀에 Workspace를 직접 만들고, 프로젝트가 끝나면 보관하거나 정리합니다.</li><li><b>팀 간 데이터 분리</b>같은 기관 안에서도 팀별 데이터와 Agent 기록은 서로 보이지 않습니다. 공유는 승인된 범위에서만 이뤄집니다.</li><li><b>기관 공통 지식 관리</b>SOP, 가이드라인, 공통 문헌처럼 모든 팀이 참고할 자료는 한 번 등록해 여러 Workspace에서 활용합니다.</li><li><b>계정·권한 정책</b>기관 계정과 연동하고, 역할별 접근 권한과 외부 AI 사용 범위를 기관 단위로 정합니다.</li><li><b>사용량·접근 기록</b>팀별 사용량과 Agent 활용 현황, 데이터 접근 기록을 관리자가 한곳에서 확인합니다.</li><li><b>기존 시스템 연계</b>LIMS, ELN, 문서관리 시스템 등 기관이 사용하는 시스템과의 연계 범위를 함께 설계합니다.</li></ul>
   <p class="note">관리 기능과 시스템 연계의 구체적인 범위는 도입 환경과 별도 협의에 따라 정합니다.</p>
 </div></section>
 

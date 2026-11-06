@@ -150,6 +150,8 @@
       var k = el.getAttribute('data-ws'), p = k.split('-');
       el.outerHTML = p[0] === 'plan' ? B.plan(p[1]) : B[k]();
     });
+    /* 섹션 배경을 흰색·연한 녹색으로 번갈아 (한 페이지로 합치면서 순서가 바뀌어도 안 겹치게, 2026-11-05) */
+    document.querySelectorAll('main > section.sec').forEach(function (sec, i) { sec.classList.toggle('pale', i % 2 === 1); });
     document.querySelectorAll('[data-contact]').forEach(function (a) { a.setAttribute('href', CONTACT); });
     document.querySelectorAll('[data-i]').forEach(function (el) { el.outerHTML = I(el.getAttribute('data-i')); });
     document.querySelectorAll('[data-tl]').forEach(function (tl) {
@@ -161,7 +163,7 @@
       w.querySelectorAll('[data-board]').forEach(function (b) { b.addEventListener('click', function () { setBoard(w, b.dataset.board); }); });
     });
     document.querySelectorAll('[data-utabs]').forEach(function (g) {
-      var bs = g.querySelectorAll('[data-use]');
+      var bs = g.querySelectorAll(':scope > .utabs [data-use]'); /* 탭 안에 탭(분야별 > 바이오 업무)이 있어도 자기 탭만 */
       bs.forEach(function (b) { b.addEventListener('click', function () {
         bs.forEach(function (x) { var on = x === b; x.setAttribute('aria-selected', String(on)); document.getElementById(x.dataset.use).hidden = !on; });
       }); });
