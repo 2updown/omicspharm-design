@@ -70,12 +70,12 @@
           '<article class="card"><span class="k">Private Cloud</span><h3>전용 클라우드</h3><p>팀 또는 기관 전용 환경에서 AI를 활용합니다. 필요한 시스템 운영과 보안 관리는 함께 지원합니다.</p></article>' +
           '<article class="card"><span class="k">On-Premises</span><h3>기관 내부 구축</h3><p>기관 서버에 Workspace와 AI 실행 환경을 구축합니다. 내부 처리 범위와 외부 연결 정책을 기관의 보안 기준에 맞춰 설계합니다.</p></article>' +
         '</div>' +
-        '<h3 class="sub-h center"><small>How to Start</small>도입은 이렇게 진행됩니다.</h3>' +
+        '<h3 class="sub-h center">도입은 이렇게 진행됩니다.</h3>' +
         '<div class="steps">' + /* 2026-11-06 크몽 Biz 이용 4단계 참고: 점선 위 번호 원 + 가운데 글 */
-          '<div><i class="sn">01</i><small>Design</small><b>연구·데이터 진단</b><p>연구 목적, 적용 연구, 보안 요구사항 확인</p></div>' +
-          '<div><i class="sn">02</i><small>Validate</small><b>시범 적용·활용 평가</b><p>대표 연구에서 정확성과 활용 가능성 검토</p></div>' +
-          '<div><i class="sn">03</i><small>Deploy</small><b>Workspace·Agent 배포</b><p>데이터 연계, Agent 구성, 권한 설정, 교육</p></div>' +
-          '<div><i class="sn">04</i><small>Operate</small><b>운영·지속 고도화</b><p>전문 AI 팀의 품질 평가·개선, 적용 연구 확대</p></div>' +
+          '<div><i class="sn">01</i><b>연구·데이터 진단</b><p>연구 목적, 적용 연구, 보안 요구사항 확인</p></div>' +
+          '<div><i class="sn">02</i><b>시범 적용·활용 평가</b><p>대표 연구에서 정확성과 활용 가능성 검토</p></div>' +
+          '<div><i class="sn">03</i><b>Workspace·Agent 배포</b><p>데이터 연계, Agent 구성, 권한 설정, 교육</p></div>' +
+          '<div><i class="sn">04</i><b>운영·지속 고도화</b><p>전문 AI 팀의 품질 평가·개선, 적용 연구 확대</p></div>' +
         '</div>' +
         '<p class="note">분석 서비스, 시스템 운영, 전문가 지원 범위와 AI 개선 주기는 연구 목적에 맞춰 협의합니다.</p>' +
         '</div></section>';
