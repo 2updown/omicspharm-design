@@ -547,3 +547,36 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .cmp2 .mk.yes, .cmp2 .mk.no { background:none; border-radius:0; display:inline-grid; place-items:center; }
 .cmp2 .mk .ico { width:20px; height:20px; margin:0; vertical-align:0; }
 .cmp2 .mk.yes .ico { color:var(--teal-600); } .cmp2 .mk.no .ico { color:#a3a3a3; }
+
+/* 2026-11-06 도입 방식 비교표 (Figma 2417:19353): 머리 줄 높이 75(이름 20 SemiBold + 작은 둥근 버튼), 묶음마다 1px 테두리 상자(간격 24),
+   묶음 제목 줄 74, 항목 칸 280(왼쪽 12) | Private 열 #f6f9f9 | Enterprise 열 #e9f4f2, 칸 사이 세로선, 값 16 가운데 정렬. 관리 기능 줄은 64 */
+.cmp3 { --ln:#e5e5e5; }
+.cmp3 .chd, .cmp3 .cr { display:grid; grid-template-columns:280px 1fr 1fr; }
+.cmp3 .chd .cv { display:flex; justify-content:center; align-items:center; gap:10px; min-height:75px; background:#f6f9f9; }
+.cmp3 .chd .cv:not(.ent) { border-right:1px solid var(--ln); }
+.cmp3 .chd b { font-size:20px; font-weight:600; line-height:28px; color:#000; }
+.cmp3 .pill { display:inline-flex; align-items:center; height:32px; padding:0 14px; border-radius:99px; background:var(--teal-600); color:#fff; font-size:14px; font-weight:500; line-height:20px; cursor:pointer; transition:background .15s; } .cmp3 .pill:hover { background:var(--teal-700); }
+.cmp3 .pill.dark { background:#0a2a27; } .cmp3 .pill.dark:hover { background:#000; }
+.cmp3 .cbox { margin-top:24px; border:1px solid var(--ln); }
+.cmp3 .chd + .cbox { margin-top:0; }
+.cmp3 .cbox h4 { display:flex; align-items:center; min-height:74px; padding:0 12px; border-bottom:1px solid var(--ln); font-size:20px; font-weight:600; line-height:28px; color:#000; }
+.cmp3 .cr + .cr { border-top:1px solid var(--ln); }
+.cmp3 .cl, .cmp3 .cv { display:flex; align-items:center; min-height:74px; font-size:16px; line-height:22px; word-break:keep-all; }
+.cmp3 .cr .cl { padding:12px; border-right:1px solid var(--ln); font-weight:500; color:#000; }
+.cmp3 .cr .cv { justify-content:center; padding:12px 20px; text-align:center; color:#171717; background:#f6f9f9; }
+.cmp3 .cr .cv:not(.ent) { border-right:1px solid var(--ln); }
+.cmp3 .cr .cv.ent { background:#e9f4f2; }
+.cmp3 .marks .cl, .cmp3 .marks .cv { min-height:64px; }
+.cmp3 .hl { color:#00756a; } .cmp3 .hl b { font-weight:700; }
+.cmp3 .mk { display:inline-grid; place-items:center; } .cmp3 .mk .ico { width:24px; height:24px; }
+.cmp3 .mk.yes .ico { color:var(--teal-600); } .cmp3 .mk.no .ico { color:#a3a3a3; }
+@media (max-width:960px) {
+  .cmp3 .chd, .cmp3 .cr { grid-template-columns:1fr 1fr; }
+  .cmp3 .chd .cl { display:none; }
+  .cmp3 .chd .cv { flex-direction:column; gap:8px; padding:14px 8px; min-height:0; } .cmp3 .chd b { font-size:16px; line-height:22px; text-align:center; }
+  .cmp3 .cbox h4 { min-height:56px; font-size:18px; line-height:26px; }
+  .cmp3 .cr .cl { grid-column:1 / -1; min-height:0; padding:12px 12px 10px; border-right:0; border-bottom:1px solid var(--ln); background:#fff; }
+  .cmp3 .cr .cv { min-height:56px; padding:12px; font-size:15px; }
+  .cmp3 .marks .cl, .cmp3 .marks .cv { min-height:0; } .cmp3 .marks .cv { min-height:48px; }
+}
+#plans .sec-head.center { margin-bottom:48px; }
