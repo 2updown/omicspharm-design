@@ -587,3 +587,6 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .cmp3 .info .tip::after { content:""; position:absolute; left:50%; top:100%; transform:translateX(-50%); border:3px solid transparent; border-bottom:0; border-top-color:#1b1b1b; }
 .cmp3 .info:hover .tip, .cmp3 .info:focus-visible .tip { display:block; }
 .cmp3 .info .tip { max-width:none; white-space:nowrap; }
+/* 2026-11-06 Figma 수정: 항목 칸·묶음 제목 좌우 여백 12 → 18 */
+.cmp3 .cbox h4 { padding:0 18px; } .cmp3 .cr .cl { padding:12px 18px; }
+@media (max-width:960px) { .cmp3 .cr .cl { padding:12px 18px 10px; } }
