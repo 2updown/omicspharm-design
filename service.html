@@ -28,14 +28,14 @@
   /* 분석 서비스 탭 (마크로젠 NGS 페이지 참고): Overview 아래 탭 → 고른 서비스 내용만 표시 */
   .svc { padding-top:60px; scroll-margin-top:70px; } /* Overview → 분석 서비스 = 120 (Overview 아래 60 + 60) */
   .svc > h2 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; }
-  .svc-bar { display:flex; align-items:center; gap:16px; margin-top:24px; border-bottom:1px solid var(--gray-200); }
-  .tabs { flex:1; min-width:0; display:flex; gap:32px; overflow-x:auto; scrollbar-width:none; scroll-behavior:smooth; }
+  .svc-bar { display:flex; align-items:center; gap:16px; margin-top:24px; box-shadow:inset 0 -1px 0 var(--gray-200); } /* 회색 선은 안쪽 그림자로: 선택 밑줄 2px이 잘리지 않고 그 위에 겹침 */
+  .tabs { flex:1; min-width:0; display:flex; gap:0; overflow-x:auto; scrollbar-width:none; scroll-behavior:smooth; }
   .tabs::-webkit-scrollbar { display:none; }
   .tabs.drag { scroll-behavior:auto; cursor:grabbing; user-select:none; }
-  .tabs button { position:relative; flex:none; display:flex; align-items:center; height:56px; padding:0 2px; font:inherit; font-size:17px; font-weight:500; line-height:24px; color:var(--gray-400); white-space:nowrap; background:none; border:0; cursor:pointer; }
-  .tabs button:hover { color:#000; }
-  .tabs button.on { color:#000; font-weight:700; }
-  .tabs button.on::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--teal-600); }
+  .tabs button { position:relative; flex:none; display:flex; align-items:center; height:56px; padding:0 20px; font:inherit; font-size:18px; font-weight:500; line-height:24px; color:var(--gray-400); white-space:nowrap; background:none; border:0; cursor:pointer; }
+  .tabs button:hover { color:var(--gray-600); }
+  .tabs button.on { color:var(--teal-600); font-weight:700; } /* DS tab-item L(56) Checked: teal 글자 + teal 밑줄 2px (2026-11-06) */
+  .tabs button.on::after { content:""; position:absolute; left:0; right:0; bottom:0; height:2px; background:var(--teal-600); }
   .arrows { flex:none; display:flex; gap:6px; }
   .arrows button { display:flex; align-items:center; justify-content:center; width:36px; height:36px; border:1px solid var(--gray-300); border-radius:50%; background:#fff; cursor:pointer; }
   .arrows button:hover:not(:disabled) { border-color:var(--gray-500); }
@@ -181,8 +181,8 @@
     .ov-card .num { margin-bottom:-6px; font-size:28px; line-height:36px; letter-spacing:-.28px; }
     .ov-card p { font-size:16px; line-height:24px; letter-spacing:0; }
     .svc > h2 { font-size:24px; line-height:34px; }
-    .tabs { gap:20px; }
-    .tabs button { height:52px; font-size:15px; }
+    .tabs { gap:0; }
+    .tabs button { height:48px; padding:0 16px; font-size:16px; } /* 모바일: tab-item M(48) */
     .arrows { display:none; }
     /* 모바일: 탭 줄은 손으로 밀어 자유롭게 움직이고, 서비스는 탭을 눌러야 바뀜 */
     .body { padding:0 16px 64px; }
