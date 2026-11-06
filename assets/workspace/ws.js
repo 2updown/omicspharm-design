@@ -77,7 +77,6 @@
           '<div><i class="sn">03</i><b>Workspace·Agent 배포</b><p>데이터 연계, Agent 구성, 권한 설정, 교육</p></div>' +
           '<div><i class="sn">04</i><b>운영·지속 고도화</b><p>전문 AI 팀의 품질 평가·개선, 적용 연구 확대</p></div>' +
         '</div>' +
-        '<p class="note">분석 서비스, 시스템 운영, 전문가 지원 범위와 AI 개선 주기는 연구 목적에 맞춰 협의합니다.</p>' +
         '</div></section>';
     },
     faq: function () {
