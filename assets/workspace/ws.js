@@ -207,7 +207,7 @@
   });
 })();
 
-// 히어로 배경 (2026-11-06, 크몽 Biz 상단 참고): WebGL로 그리는 부드러운 빛. 빛 네 개가 화면 전체를 천천히 오가며 퍼졌다 모임, 글자 뒤는 살짝 어둡게.
+// 히어로 배경 (2026-11-06, 크몽 Biz 상단 참고): WebGL로 그리는 부드러운 빛. 빛 네 개가 왼쪽 위↔오른쪽 아래 대각선을 따라 천천히 오가며 퍼졌다 모임, 글자 뒤는 살짝 어둡게.
 // 움직임 줄이기 설정이면 한 장면만 그림. WebGL이 안 되면 CSS 빛(h2-glow)이 그대로 보임.
 document.addEventListener('DOMContentLoaded', function () {
   var hero = document.querySelector('.ws-hero2'); if (!hero) return;
@@ -219,11 +219,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // 부드러운 빛 덩어리: 중심에서 멀어질수록 가우시안으로 옅어짐
     'float L(vec2 p,vec2 c,float s){vec2 d=p-c;return exp(-dot(d,d)/(s*s));}',
     'void main(){vec2 uv=gl_FragCoord.xy/r;vec2 p=vec2(uv.x*r.x/r.y,uv.y);float a=r.x/r.y;float s=t*.32;',
-    // 빛 네 개가 화면 전체를 가로질러 천천히 오가며 커졌다 작아짐
-    'float l1=L(p,vec2(a*(.5+.45*sin(s*.35)),.15+.25*sin(s*.5)),.85+.25*sin(s*.8));',
-    'float l2=L(p,vec2(a*(.5+.45*sin(s*.29+2.4)),.75+.2*cos(s*.41)),.65+.2*sin(s*.6+1.));',
-    'float l3=L(p,vec2(a*(.5+.4*cos(s*.23+1.)),.5+.4*sin(s*.31+3.)),.55+.15*cos(s*.7));',
-    'float l4=L(p,vec2(a*(.5+.45*cos(s*.19+4.)),.9),.7);',
+    // 빛 네 개가 왼쪽 위 → 오른쪽 아래 대각선을 따라 서로 다른 때에 오가며 커졌다 작아짐 (위아래로도 움직임)
+    'vec2 A=vec2(-.1,1.15),B=vec2(a+.1,-.15),N=normalize(vec2(B.y-A.y,A.x-B.x));',
+    'float k1=.5+.5*sin(s*.33),k2=.5+.5*sin(s*.27+2.1),k3=.5+.5*sin(s*.21+4.2),k4=.5+.5*sin(s*.39+1.);',
+    'float l1=L(p,mix(A,B,k1)+N*.25*sin(s*.5),.85+.2*sin(s*.8));',
+    'float l2=L(p,mix(A,B,k2)+N*.35*cos(s*.41),.62+.18*sin(s*.6+1.));',
+    'float l3=L(p,mix(A,B,k3)-N*.30*sin(s*.37+1.),.55+.15*cos(s*.7));',
+    'float l4=L(p,mix(A,B,k4)+N*.45*cos(s*.29+2.),.6);',
     'vec3 c=vec3(.012,.07,.065);',
     'c+=vec3(.05,.42,.36)*l1*.7+vec3(.10,.58,.50)*l2*.42+vec3(.04,.34,.30)*l3*.5+vec3(.04,.12,.24)*l4*.6;',
     'vec2 d=uv-vec2(.5,.52);c*=1.-.35*exp(-dot(d*vec2(1.6,2.4),d*vec2(1.6,2.4))*3.);', // 글자 뒤 살짝 어둡게
