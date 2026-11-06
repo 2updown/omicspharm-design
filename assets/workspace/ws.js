@@ -207,7 +207,7 @@
   });
 })();
 
-// 히어로 배경 (2026-11-06, 크몽 Biz 상단 참고): WebGL로 그리는 흐르는 그라디언트. 오른쪽 아래가 밝고 왼쪽·가운데는 어둡게.
+// 히어로 배경 (2026-11-06, 크몽 Biz 상단 참고): WebGL로 그리는 부드러운 빛. 오른쪽 아래 빛 세 개가 천천히 퍼졌다 모이며 움직임, 왼쪽·가운데는 어둡게.
 // 움직임 줄이기 설정이면 한 장면만 그림. WebGL이 안 되면 CSS 빛(h2-glow)이 그대로 보임.
 document.addEventListener('DOMContentLoaded', function () {
   var hero = document.querySelector('.ws-hero2'); if (!hero) return;
@@ -216,17 +216,17 @@ document.addEventListener('DOMContentLoaded', function () {
   var vs = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
   var fs = [
     'precision mediump float;uniform vec2 r;uniform float t;',
-    'float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}',
-    'float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}',
-    'float fb(vec2 p){float v=0.,a=.5;for(int k=0;k<3;k++){v+=a*n(p);p*=2.02;a*=.5;}return v;}',
-    'void main(){vec2 uv=gl_FragCoord.xy/r;vec2 q=vec2(uv.x*r.x/r.y,uv.y);float s=t*.06;',
-    'vec2 w=vec2(fb(q*.55+vec2(s,-s*.7)),fb(q*.55+vec2(-s*.8,s)+3.1));',
-    'float f=fb(q*.6+w*1.4+vec2(s*.6,0.));',
-    'float m=smoothstep(.3,1.2,uv.x*.9+(1.-uv.y)*.35+(f-.5)*1.1);', // 오른쪽 아래로 갈수록 밝게
-    'vec3 c0=vec3(.012,.07,.065),c1=vec3(.03,.17,.15),c2=vec3(.06,.36,.31),c3=vec3(.13,.58,.5);',
-    'vec3 c=mix(c0,c1,smoothstep(0.,.45,m));c=mix(c,c2,smoothstep(.4,.8,m));c=mix(c,c3,smoothstep(.78,1.,m)*.7);',
-    'c+=vec3(.03,.06,.12)*smoothstep(.55,.0,distance(uv,vec2(.08,1.)));', // 왼쪽 위 은은한 파랑
-    'vec2 d=uv-.5;c*=1.-.45*smoothstep(.55,0.,length(d*vec2(1.,1.6)))*.6;', // 글자 뒤 살짝 어둡게
+    // 부드러운 빛 덩어리: 중심에서 멀어질수록 가우시안으로 옅어짐
+    'float L(vec2 p,vec2 c,float s){vec2 d=p-c;return exp(-dot(d,d)/(s*s));}',
+    'void main(){vec2 uv=gl_FragCoord.xy/r;vec2 p=vec2(uv.x*r.x/r.y,uv.y);float a=r.x/r.y;float s=t*.26;',
+    // 빛 세 개가 천천히 커졌다 작아지며 조금씩 자리를 옮김 (오른쪽 아래 중심)
+    'float l1=L(p,vec2(a*.92+.08*sin(s*.7),.05+.10*sin(s*.5)),.78+.20*sin(s*.9));',
+    'float l2=L(p,vec2(a*.70+.20*sin(s*.43+1.),.10+.30*cos(s*.37)),.50+.14*sin(s*.61+2.));',
+    'float l3=L(p,vec2(a*1.02+.06*cos(s*.53),.85+.10*sin(s*.47+.5)),.38+.08*cos(s*.71));',
+    'float l4=L(p,vec2(.10+.05*sin(s*.4),1.05),.55);', // 왼쪽 위 은은한 파랑
+    'vec3 c=vec3(.012,.07,.065);',
+    'c+=vec3(.05,.42,.36)*l1+vec3(.10,.62,.52)*l2*.55+vec3(.04,.36,.32)*l3*.55+vec3(.03,.07,.16)*l4*.9;',
+    'c+=(fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453)-.5)/255.;', // 띠 무늬 방지
     'gl_FragColor=vec4(c,1.);}'
   ].join('\n');
   function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; }
