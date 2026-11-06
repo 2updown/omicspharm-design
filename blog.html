@@ -8,8 +8,8 @@
 <!-- 커뮤니티 > Insight (Figma 시안 없음 — Upstage Blog 레이아웃 참고, 탭은 FAQ 탭 컴포넌트)
      글 목록은 현재 홈페이지 Insights(/newsletter) 게시글 10개 (assets/insight/posts.js). 카드 → blog-post.html?id=
      ?cat=news|insight  탭 선택 / 한 페이지 12개 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261105g">
-<script src="assets/common/site.js?v=20261105g"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261106a">
+<script src="assets/common/site.js?v=20261106a"></script>
 <script src="assets/insight/posts.js?v=20261030a"></script>
 <style>
   :root {
@@ -31,7 +31,7 @@
   .tabs { display:flex; gap:32px; }
   .tabs button { position:relative; flex:none; white-space:nowrap; height:60px; padding:0 4px; font-size:18px; font-weight:500; line-height:24px; color:var(--gray-500); }
   .tabs button:hover { color:#000; }
-  .tabs button.on { color:#000; font-weight:600; }
+  .tabs button.on { color:var(--teal-600); font-weight:700; } /* 선택 탭은 teal 글자 (2026-11-06, 사이트 탭 통일) */
   .tabs button.on::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--teal-600); }
 
   /* 검색창: 프로젝트 찾기 검색창과 같은 text-field M(40) (Figma 1371:77783) */
