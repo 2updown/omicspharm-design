@@ -591,3 +591,9 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 @media (max-width:960px) { .cmp3 .cr .cl { padding:12px 18px 10px; } }
 /* Figma: 느낌표 아이콘은 항목 칸 오른쪽 끝 */
 .cmp3 .cr .cl:has(.info) { justify-content:space-between; gap:8px; }
+
+/* 2026-11-06 비교표 머리 줄 (Figma 수정): 줄 전체 #f6f9f9 + 위·좌·우 1px 테두리, Enterprise 칸 #e9f4f2.
+   Loom 가격표처럼 스크롤하면 GNB·페이지 탭 아래에 붙어 따라오고, 표가 끝나면 함께 올라가 사라짐 (.cmp3 안에서만 sticky) */
+.cmp3 .chd { position:sticky; top:126px; z-index:6; background:#f6f9f9; border:1px solid var(--ln); border-bottom:0; box-shadow:0 1px 0 var(--ln); }
+.cmp3 .chd .cv.ent { background:#e9f4f2; }
+@media (max-width:1079px) { .cmp3 .chd { top:104px; } }
