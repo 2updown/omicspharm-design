@@ -476,3 +476,7 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 @keyframes h2Aurora2 { 0% { transform:translate(0,0) scale(1); } 50% { transform:translate(18%,12%) scale(1.1); } 100% { transform:translate(30%,-4%) scale(.9); } }
 @media (prefers-reduced-motion:reduce) { .ws-hero2 .h2-glow::before, .ws-hero2 .h2-glow::after { animation:none; } }
 @media (max-width:760px) { .ws-hero2 { padding:96px 20px 88px; } }
+
+/* 2026-11-06 히어로 타일도 페이지 진입 효과(site.css opEnter)에 맞춰 글자와 함께 올라옴 — 공통 스크립트는 절대배치 요소를 건너뛰므로 여기서 따로 */
+.ws-hero2:has(.h2-in.op-enter) .h2-tiles { animation:opEnter .8s ease both; }
+@media (prefers-reduced-motion:reduce) { .ws-hero2 .h2-tiles { animation:none !important; } }
