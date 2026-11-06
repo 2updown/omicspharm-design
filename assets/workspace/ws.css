@@ -589,3 +589,5 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 /* 2026-11-06 Figma 수정: 항목 칸·묶음 제목 좌우 여백 12 → 18 */
 .cmp3 .cbox h4 { padding:0 18px; } .cmp3 .cr .cl { padding:12px 18px; }
 @media (max-width:960px) { .cmp3 .cr .cl { padding:12px 18px 10px; } }
+/* Figma: 느낌표 아이콘은 항목 칸 오른쪽 끝 */
+.cmp3 .cr .cl:has(.info) { justify-content:space-between; gap:8px; }
