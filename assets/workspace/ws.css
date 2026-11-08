@@ -608,3 +608,90 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 /* 2026-11-06 Figma 줄 높이 조정: 항목 줄 75 → 70, 관리 기능 줄 65 → 60 (경계선 1 포함) */
 @media (min-width:961px) { .cmp3 .cr .cl, .cmp3 .cr .cv { min-height:69px; } .cmp3 .marks .cl, .cmp3 .marks .cv { min-height:59px; } }
 @media (min-width:961px) { .cmp3 .chd .cv { gap:24px; } } /* Figma: 이름과 도입 상담 버튼 사이 24 */
+
+/* ===== 2026-11-09 Figma 워크스페이스 업데이트 (2415:19250) ===== */
+/* 섹션 공통: 위아래 60, 제목 묶음 아래 60 (개요만 36) */
+.ov3, .hw, .sec2, .fld { padding-top:60px; padding-bottom:60px; }
+.ov3 .sec-head.center, .hw .sec-head.center, .sec2 .sec-head.center, .fld .sec-head.center { margin-bottom:60px; }
+.ov3 .sec-head.center { margin-bottom:36px; }
+.hw .sec-head p, .sec2 .sec-head .lead, .fld .sec-head p { font-size:18px; font-weight:500; line-height:24px; color:#404040; max-width:none; }
+.fld .sec-head p { color:#525252; }
+
+/* 개요: 옅은 초록 배경, 3열(간격 60) 아이콘 + 제목 20 SemiBold + 설명 16 */
+.ov3 { background:#f6faf9; }
+.ov3-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:60px; }
+.ov3-grid article { display:flex; flex-direction:column; gap:24px; }
+.ov3-ic { display:grid; place-items:center; width:48px; height:48px; border-radius:14px; background:#e3f4f1; }
+.ov3-ic .ico { width:30px; height:30px; color:var(--teal-600); }
+.ov3-grid h3 { font-size:20px; font-weight:600; line-height:28px; color:#12141d; }
+.ov3-grid p { margin-top:-12px; font-size:16px; line-height:22px; color:#12141d; word-break:keep-all; }
+
+/* 작동 방식: 4단계 칸(위아래 1px #d4d4d4, 안쪽 40), 번호 36 Bold teal, 제목 28/36, 설명 18 Medium #525252 + 되돌아가는 화살표 */
+.hw { background:#fff; }
+.hw-steps { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; list-style:none; }
+.hw-steps li { display:flex; flex-direction:column; padding:40px; border-top:1px solid #d4d4d4; border-bottom:1px solid #d4d4d4; }
+.hw-steps .no { font-size:36px; font-weight:700; line-height:50px; color:var(--teal-600); }
+.hw-steps b { margin-top:4px; font-size:28px; font-weight:700; line-height:36px; color:#000; word-break:keep-all; }
+.hw-steps p { margin-top:24px; font-size:18px; font-weight:500; line-height:24px; color:#525252; word-break:keep-all; }
+.hw-loop { position:relative; margin:0 calc(12.5% - 3px) 0 calc(37.5% + 1px); padding-top:52px; text-align:center; }
+.hw-arrow { position:absolute; left:0; right:0; top:4px; height:40px; border:2px solid var(--teal-600); border-top:0; border-radius:0 0 12px 12px; }
+.hw-arrow::before { content:""; position:absolute; left:-7px; top:-6px; width:8px; height:8px; border-left:2px solid var(--teal-600); border-top:2px solid var(--teal-600); transform:rotate(45deg); }
+.hw-loop p { font-size:16px; font-weight:700; line-height:22px; color:var(--teal-600); }
+
+/* 보안: 패널 아이콘 삭제, 제목 28/36 Bold, 설명 18 Regular #404040, 체크 16 #404040 */
+.sec2 .pv-txt h3 { margin-top:0; font-size:28px; line-height:36px; letter-spacing:0; }
+.sec2 .pv-txt > p { margin-top:8px; font-size:18px; line-height:24px; color:#404040; }
+.sec2 .pv-list { margin-top:24px; } .sec2 .pv-list li { font-size:16px; line-height:22px; color:#404040; } .sec2 .pv-list .ico { width:20px; height:20px; }
+.sec2 .seg button { font-size:18px; font-weight:500; color:#404040; } .sec2 .seg button[aria-selected="true"] { color:#fff; }
+
+/* 적용 분야: 카드 두 장(간격 24, 안쪽 24/28, r12, 1px #e5e5e5). Hospital #f6f9f9 / Biopharma #f5f5f5 */
+.fld { background:#fff; }
+.fld-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:stretch; }
+.fld-card { display:flex; flex-direction:column; gap:24px; padding:24px 28px; border:1px solid #e5e5e5; border-radius:12px; background:#f6f9f9; }
+.fld-card.bio { background:#f5f5f5; }
+.fld-hd { display:flex; align-items:center; gap:12px; }
+.fld-ic { display:grid; place-items:center; flex:none; width:48px; height:48px; border-radius:14px; }
+.fld-ic .ico { width:26px; height:26px; color:var(--teal-600); }
+.fld-hd h3 { font-size:24px; font-weight:600; line-height:32px; color:#000; }
+.fld-hd p { margin-top:4px; display:flex; align-items:center; font-size:16px; line-height:22px; color:#525252; }
+.fld-hd .dv { display:inline-block; width:1px; height:12px; margin:0 8px; background:#d4d4d4; }
+.fld-desc { font-size:18px; font-weight:500; line-height:24px; color:#404040; word-break:keep-all; }
+.fld-btn { display:flex; justify-content:center; align-items:center; height:40px; border-radius:99px; background:var(--teal-600); color:#fff; font-size:16px; font-weight:600; cursor:pointer; transition:background .15s; }
+.fld-btn:hover { background:var(--teal-700); }
+.fld-card.bio .fld-btn { background:#0a2a27; } .fld-card.bio .fld-btn:hover { background:#000; }
+.fld-chk { display:grid; gap:12px; padding-bottom:24px; border-bottom:1px solid #e5e5e5; }
+.fld-chk li { display:flex; align-items:center; gap:10px; font-size:16px; line-height:22px; color:#404040; }
+.fld-chk .ico { width:20px; height:20px; color:var(--teal-600); }
+.fld-ex { display:flex; gap:12px; }
+.fld-lab { flex:none; font-size:14px; font-weight:500; line-height:20px; color:var(--teal-600); }
+.fld-ex ol { display:grid; gap:12px; flex:1; list-style:none; }
+.fld-ex li { display:flex; align-items:center; gap:16px; padding-left:28px; position:relative; min-height:56px; }
+.fld-ex li::before { content:""; position:absolute; left:5px; top:0; bottom:0; width:2px; background:var(--teal-600); }
+.fld-ex li.gray::before { background:#a3a3a3; }
+.fld-ex li > div:first-child { flex:1; display:flex; flex-direction:column; gap:6px; }
+.fld-ex b { font-size:16px; font-weight:700; line-height:22px; color:#000; }
+.fld-ex li p { font-size:14px; line-height:20px; color:#525252; word-break:keep-all; }
+.fld-stat { flex:none; display:flex; flex-direction:column; align-items:center; gap:9px; width:252px; padding:10px; border:1px solid #e5e5e5; border-radius:8px; background:#fff; }
+.fld-stat small { font-size:14px; line-height:20px; color:#525252; }
+.fld-stat span { display:flex; align-items:center; gap:8px; font-size:18px; line-height:24px; color:#525252; }
+.fld-stat s { text-decoration:line-through; } .fld-stat .ico { width:18px; height:18px; color:#525252; } .fld-stat strong { font-weight:700; color:var(--teal-600); }
+
+@media (max-width:1079px) {
+  .ov3-grid { grid-template-columns:1fr; gap:36px; } .ov3-grid p br { display:none; }
+  .hw-steps { grid-template-columns:1fr 1fr; } .hw-loop { display:none; }
+  .fld-grid { grid-template-columns:1fr; }
+}
+@media (max-width:760px) {
+  .ov3, .hw, .sec2, .fld { padding-top:56px; padding-bottom:56px; }
+  .ov3 .sec-head.center, .hw .sec-head.center, .sec2 .sec-head.center, .fld .sec-head.center { margin-bottom:36px; }
+  .hw .sec-head p, .sec2 .sec-head .lead, .fld .sec-head p { font-size:16px; line-height:24px; } .sec2 .sec-head .lead br, .fld-desc br { display:none; }
+  .hw-steps { grid-template-columns:1fr; gap:0; } .hw-steps li { padding:24px 4px; border-top:0; } .hw-steps li:first-child { border-top:1px solid #d4d4d4; }
+  .hw-steps .no { font-size:28px; line-height:36px; } .hw-steps b { font-size:22px; line-height:30px; } .hw-steps p { margin-top:12px; font-size:16px; } .hw-steps p br { display:none; }
+  .hw-loop { display:block; margin:0; padding-top:20px; } .hw-arrow { display:none; } .hw-loop p::before { content:"↻ "; }
+  .fld-card { padding:20px; gap:20px; } .fld-hd h3 { font-size:20px; line-height:28px; } .fld-desc { font-size:16px; }
+  .fld-ex { flex-direction:column; } .fld-ex li { flex-direction:column; align-items:stretch; gap:10px; padding-left:20px; } .fld-ex li::before { left:0; }
+  .fld-stat { width:auto; }
+}
+/* 섹션 배경 순서 (Figma): 개요 옅은 초록 → 작동 방식 흰색 → 보안 옅은 초록 → 적용 분야 흰색 */
+#why.ov3, #security.sec2 { background:#f6faf9; } #growth.hw, #sectors.fld { background:#fff; }
+@media (min-width:1200px) { .hw-steps p { white-space:nowrap; } .fld-desc { letter-spacing:-.3px; } }

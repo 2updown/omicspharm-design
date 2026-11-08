@@ -16,24 +16,14 @@
 
   var B = {
     growth: function () {
-      return '<section class="sec pale" id="growth"><div class="wrap growth"><div>' +
-        '<span class="eyebrow">작동 방식</span>' +
-        '<h2 class="ttl">분석 결과가 쌓이고, <br>다음 연구가 정교해집니다.</h2>' +
-        '<p class="lead">분석을 의뢰하면 결과가 Workspace에 쌓입니다. 전문 AI 팀이 AI를 개선하고, AI는 결과 해석과 다음 연구 방향을 제안합니다.</p>' +
-        '<div class="loop">' +
-          '<div><span class="who-tag who-h">연구팀</span><b>01 분석 의뢰</b><p>연구 목적에 맞는 시료·데이터 분석 요청</p></div>' +
-          '<div><span class="who-tag who-a">OmicsPharm</span><b>02 데이터 축적</b><p>분석 결과와 검토 기록을 Workspace에 연결</p></div>' +
-          '<div><span class="who-tag who-a">OmicsPharm · AI</span><b>03 AI 개선·연구 제안</b><p>AI 품질을 개선하고, 결과 해석과 후속 연구 제안</p></div>' +
-          '<div><span class="who-tag who-h">연구팀</span><b>04 검토·후속 분석</b><p>제안 근거를 검토하고 다음 실험·분석 결정</p></div>' +
-        '</div>' +
-        '<p class="loop-cap"><strong>후속 분석 결과는 다시 데이터와 지식으로 축적됩니다.</strong><br>이 과정이 반복되며 AI의 분석과 제안도 개선됩니다.</p>' +
-        '</div><div class="tl" data-tl>' +
-          '<div class="tl-tabs" role="tablist"><button role="tab" data-stage="0" aria-selected="true">분석 시작</button><button role="tab" data-stage="1" aria-selected="false">지식 축적</button><button role="tab" data-stage="2" aria-selected="false">연구 확장</button></div>' +
-          '<div class="tl-panel"><h3 data-t></h3><p data-d></p>' +
-            '<div class="mem"><div><span>연구 데이터</span><strong data-m="0"></strong></div><div><span>연구 지식</span><strong data-m="1"></strong></div><div><span>검토 기준</span><strong data-m="2"></strong></div><div><span>AI 활용</span><strong data-m="3"></strong></div></div>' +
-            '<div class="ex"><small>연구 질문 예시</small><q data-q></q><p data-a></p></div>' +
-            '<p class="note">활용 예시입니다. 데이터 품질, 연구자 검토와 AI 평가·개선을 통해 발전시킵니다.</p>' +
-          '</div></div></div></section>';
+      /* 2026-11-09 Figma 2416:19304: 가운데 제목 + 4단계 칸(위아래 선, 큰 번호·제목·설명) + 04에서 02로 되돌아가는 화살표와 한 줄 설명. 오른쪽 활용 예시 패널은 삭제 */
+      var S = [['01', '분석 의뢰', '연구 목적에 맞는 <br>시료·데이터 분석을 요청합니다.'], ['02', '데이터 축적', '분석 결과와 검토 기록을 <br>연구 데이터로 축적합니다.'], ['03', 'AI 개선과 연구 제안', 'AI 품질을 개선하고, <br>결과 해석과 후속 연구를 제안합니다.'], ['04', '검토와 후속 분석', '제안 근거를 검토하고 <br>다음 실험·분석을 결정합니다.']];
+      return '<section class="sec hw" id="growth"><div class="wrap">' +
+        '<div class="sec-head center"><div><span class="eyebrow">작동 방식</span><h2 class="ttl">분석 결과가 쌓이고, <br>다음 연구가 정교해집니다.</h2></div>' +
+        '<p>분석을 의뢰하면 결과가 Workspace에 쌓입니다. 전문 AI 팀이 AI를 개선하고, AI는 결과 해석과 다음 연구 방향을 제안합니다.</p></div>' +
+        '<ol class="hw-steps">' + S.map(function (x) { return '<li><span class="no">' + x[0] + '</span><b>' + x[1] + '</b><p>' + x[2] + '</p></li>'; }).join('') + '</ol>' +
+        '<div class="hw-loop"><i class="hw-arrow" aria-hidden="true"></i><p>후속 분석 결과는 다시 데이터와 지식으로 축적됩니다.</p></div>' +
+        '</div></section>';
     },
     privacy: function () {
       /* 2026-11-06 크몽 Biz '선택하는 이유' 레이아웃: 가운데 제목 + 4칸 상자 탭 + (왼쪽 아이콘·제목·설명·체크 3개 / 오른쪽 궤도 그림) */
@@ -43,13 +33,13 @@
         ['외부 전송 통제', 'lock-key', '외부로 나가는 정보를 통제합니다', '외부 AI에 전달할 데이터와 모델 학습 활용 여부를 기관과 미리 정하고 계약에 반영합니다.', ['외부 AI에 전달할 데이터 범위 사전 협의', '모델 학습 활용 여부를 계약에 반영', '기관 내부 구축(On-Premises) 선택 가능'], ['전달 범위 제한', '학습 활용 협의', 'On-Premises']],
         ['근거와 기록', 'file-text', '근거와 기록이 남는 AI', 'AI가 참고한 자료와 연구자의 검토, 데이터 접근 기록을 확인할 수 있습니다.', ['AI가 참고한 자료와 출처 확인', '연구자의 검토 이력 기록', '데이터 접근 기록 확인'], ['참고 출처', '검토 이력', '접근 기록']]
       ];
-      return '<section class="sec" id="security"><div class="wrap">' +
+      return '<section class="sec pale sec2" id="security"><div class="wrap">' +
         '<div class="sec-head center"><span class="eyebrow">보안</span>' +
         '<h2 class="ttl">우리 팀의 전용 공간에서, <br><span class="green">연구 데이터를 안전하게.</span></h2>' +
-        '<p class="lead">연구 자료는 팀 전용 공간에 보관하고, 허용된 구성원만 활용합니다. 외부 AI에 전달할 정보도 기관이 정한 범위로 제한합니다.</p></div>' +
+        '<p class="lead">연구 자료는 팀 전용 공간에 보관하고, 허용된 구성원만 활용합니다. <br>외부 AI에 전달할 정보도 기관이 정한 범위로 제한합니다.</p></div>' +
         '<div class="seg" role="tablist">' + P.map(function (p, i) { return '<button role="tab" data-pv="' + i + '" aria-selected="' + (i === 0) + '">' + p[0] + '</button>'; }).join('') + '</div>' +
         P.map(function (p, i) {
-          return '<div class="pv-panel" data-pvp="' + i + '"' + (i ? ' hidden' : '') + '><div class="pv-txt"><span class="pv-ic">' + I(p[1]) + '</span><h3>' + p[2] + '</h3><p>' + p[3] + '</p>' +
+          return '<div class="pv-panel" data-pvp="' + i + '"' + (i ? ' hidden' : '') + '><div class="pv-txt"><h3>' + p[2] + '</h3><p>' + p[3] + '</p>' +
             '<ul class="pv-list">' + p[4].map(function (t) { return '<li>' + I('check') + t + '</li>'; }).join('') + '</ul></div>' +
             '<div class="orbit" aria-hidden="true"><i class="ring r1"></i><i class="ring r2"></i><i class="ring r3"></i><div class="core">' + I('shield-check') + '</div>' +
             p[5].map(function (t, k) { return '<span class="op o' + (k + 1) + '">' + t + '</span>'; }).join('') + '</div></div>';
