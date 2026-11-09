@@ -889,5 +889,5 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .ops2 .steps b { margin-top:0; font-size:18px; font-weight:600; line-height:24px; color:#000; }
 .ops2 .steps p { margin-top:8px; font-size:16px; line-height:22px; color:#525252; }
 @media (max-width:760px) { .ops2 .sub-h.center { margin:48px 0 24px; font-size:24px; line-height:32px; } .ops2 .steps .sn { margin:0; font-size:15px; } .ops2 .steps b { font-size:17px; } .ops2 .steps p { font-size:15px; } }
-/* 2026-11-09 적용 분야 카드 머리: 개요처럼 컬러 Fill 아이콘으로 두 분야 구분 (Hospital 파랑, Biopharma 노랑) */
-.fld-ic .ico { width:30px; height:30px; } .fld-ic.c1 .ico { color:#008eff; } .fld-ic.c2 .ico { color:#fabb18; }
+/* 2026-11-09 적용 분야 카드 머리: 개요처럼 컬러 Fill 아이콘으로 두 분야 구분 (Hospital 파랑 병원, Biopharma 보라 알약) */
+.fld-ic .ico { width:30px; height:30px; } .fld-ic.c1 .ico { color:#008eff; } .fld-ic.c2 .ico { color:#8635f6; }
