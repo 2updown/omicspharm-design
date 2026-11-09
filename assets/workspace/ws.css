@@ -805,3 +805,5 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 #security.sec2 { background:#fff; }
 #plans { padding-top:60px; padding-bottom:60px; }
 @media (max-width:760px) { #why.ov3 { padding-bottom:72px; } #plans { padding-top:56px; padding-bottom:56px; } }
+#faq { padding-top:60px; padding-bottom:60px; } /* Figma: FAQ 위아래 60 */
+@media (max-width:760px) { #faq { padding-top:56px; padding-bottom:56px; } }
