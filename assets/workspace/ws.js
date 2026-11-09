@@ -49,7 +49,7 @@ if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentE
         '</div></section>';
     },
     ops: function () {
-      /* 2026-11-09 운영 지원 시안: 새 섹션들과 같은 톤 (가운데 제목 → 지원 3가지 카드 → 구축 환경 2칸 → 도입 절차 4단계) */
+      /* 2026-11-09 운영 지원: 가운데 제목 → 지원 3가지 카드 → 도입 절차 4단계 (구축 환경은 플랜 비교 표와 겹쳐 삭제) */
       var SV = [
         ['설계·구축', '연구에 맞는 AI 도입', ['연구 목적에 맞는 AI 설계', '데이터 연결과 권한 설정', '사용자 교육']],
         ['운영·관리', '일상적인 AI 활용 지원', ['AI 실행 점검', '연구 지식 업데이트', '활용 문의와 연구 방향 변경 대응']],
@@ -59,10 +59,6 @@ if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentE
         '<div class="sec-head center"><div><span class="eyebrow">운영 지원</span><h2 class="ttl">AI 전담팀이 없어도, <br>전문가와 함께 운영하세요.</h2></div>' +
         '<p>OmicsPharm의 바이오·헬스케어 전문 AI 팀이 AI Agent를 구축하고 운영합니다. <br>새 데이터와 연구자의 검토를 반영해 AI를 계속 고도화합니다.</p></div>' +
         '<div class="ops2-sv">' + SV.map(function (x) { return '<article><span class="k">' + x[0] + '</span><h3>' + x[1] + '</h3><ul>' + x[2].map(function (t) { return '<li>' + I('check') + t + '</li>'; }).join('') + '</ul></article>'; }).join('') + '</div>' +
-        '<div class="ops2-env"><h3 class="ops2-sub">구축 환경</h3><div class="ops2-env-row">' +
-          '<article><span class="ops2-ic">' + I('cloud') + '</span><div><b>전용 클라우드</b><small>Private Cloud</small><p>팀 또는 기관 전용 환경에서 AI를 활용합니다. 시스템 운영과 보안 관리도 함께 지원합니다.</p></div></article>' +
-          '<article><span class="ops2-ic">' + I('hard-drives') + '</span><div><b>기관 내부 구축</b><small>On-Premises</small><p>기관 서버에 Workspace와 AI 실행 환경을 구축하고, 외부 연결 정책을 기관 보안 기준에 맞춥니다.</p></div></article>' +
-        '</div></div>' +
         '<h3 class="sub-h center">도입은 이렇게 진행됩니다.</h3>' +
         '<div class="steps">' + /* 이전 디자인 그대로: 점선 위 번호 원 + 가운데 글, 화면에 들어오면 순서대로 켜짐 */
           '<div><i class="sn">01</i><b>연구·데이터 진단</b><p>연구 목적, 적용 연구, 보안 요구사항 확인</p></div>' +

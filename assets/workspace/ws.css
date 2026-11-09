@@ -807,3 +807,7 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 @media (max-width:760px) { #why.ov3 { padding-bottom:72px; } #plans { padding-top:56px; padding-bottom:56px; } }
 #faq { padding-top:60px; padding-bottom:60px; } /* Figma: FAQ 위아래 60 */
 @media (max-width:760px) { #faq { padding-top:56px; padding-bottom:56px; } }
+/* 2026-11-09 플랜 비교: 관리 기능 묶음 삭제(위쪽 줄과 중복), 기존 시스템 연계는 관리와 운영 묶음으로, Managed AI Service는 두 칸 병합 */
+.cmp3 .cr .cv.span2 { grid-column:2 / -1; border-right:0; background:#f6f9f9; }
+.cmp3 .mk-row .cl, .cmp3 .mk-row .cv { min-height:69px; }
+@media (max-width:960px) { .cmp3 .cr .cv.span2 { grid-column:1 / -1; } }
