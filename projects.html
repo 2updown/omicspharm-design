@@ -346,6 +346,9 @@
     if (px) {
       if (!PARTNER || px.status === 'dec') return '';
       if (!QUOTE) return LOCKED; // 미인증이면 요청받은 프로젝트도 잠금 → 누르면 인증 안내 팝업
+      // 제출하지 않은 채 견적 접수가 끝남(마감일 지남, 최종 견적 확인, 프로젝트 삭제) = 상세와 같은 비활성 [견적 마감] (2026-11-09 업체 확인 요청 2)
+      var fs = OP.flow.state(x.rid), closed = !OP.flow.open(x.rid) || !!fs.cancel;
+      if (/^(req|draft)$/.test(px.status) ? OP.flow.dueOver(fs) || closed : px.status === 'rev' && closed) return '<span class="qbtn off" aria-disabled="true">견적 마감</span>';
       return /^(req|draft|rev)$/.test(px.status) ? '<span class="qbtn" role="button" tabindex="0" data-quote="' + x.id + '">' + (px.status === 'draft' ? '견적서 이어서 작성' : '견적서 작성') + '</span>' // 임시저장한 견적은 '이어서 작성' (2026-11-02)
         : '<span class="qbtn done" role="button" tabindex="0" data-quote="' + x.id + '">견적서 제출 완료</span>';
     }
