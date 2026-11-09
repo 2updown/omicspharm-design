@@ -278,8 +278,8 @@
     return '<div class="tip" style="--d:' + (i * 0.12) + 's"><div class="art"><img src="assets/guide/tip-' + t[0] + '.svg" alt="" loading="lazy"></div><div class="tx"><h3><em>TIP ' + (i + 1) + '.</em>' + t[1] + '</h3><p>' + t[2] + '</p></div></div>';
   }).join('');
   // 등장 효과 준비 (2026-11-09): 숨긴 상태를 먼저 그린 뒤(2프레임) 움직임을 켬 → 처음부터 보이던 내용이 사라졌다 다시 뜨는 깜빡임 없음
-  function rvReady(fn) { requestAnimationFrame(function () { requestAnimationFrame(function () { document.documentElement.classList.add('rv-ready'); void document.body.offsetHeight; rvLine = 1; fn(); rvLine = 0.9; }); }); }
-  var rvLine = 0.9; /* 페이지를 열 때는 화면에 보이는 곳까지(1), 스크롤할 때는 90% 지점 */
+  function rvReady(fn) { requestAnimationFrame(function () { requestAnimationFrame(function () { document.documentElement.classList.add('rv-ready'); void document.body.offsetHeight; fn(); }); }); }
+  var rvLine = 0.9; /* 메인과 같게: 화면 90% 지점 */
   // 하단 CTA 글자 등장 (페이지 진입 효과는 건너뛰고 스크롤 등장으로)
   var cta = document.querySelector('.cta'); // 글자·버튼에 cta-rv 클래스 (마크업)
   function revealCta() { if (!document.documentElement.classList.contains('rv-ready')) return; if (!cta.classList.contains('in') && cta.getBoundingClientRect().top < innerHeight * rvLine) cta.classList.add('in'); }

@@ -256,8 +256,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(function 
     kids.forEach(function (el, i) { if (!el || el.hidden) return; /* 숨은 탭 패널 제외 */ el.classList.remove('op-enter'); el.style.removeProperty('--op-d'); el.setAttribute('data-op-skip-enter', ''); el.classList.add('rv', 'rv-0'); el.style.setProperty('--d', Math.min(i, 2) * 0.12 + 's'); items.push(el); });
   });
   var ready = false; /* 숨긴 상태가 먼저 그려진 뒤에만 켬 (load·scroll이 먼저 오면 움직임 없이 바로 보이는 문제) */
-  var first = true; /* 페이지를 열 때는 화면에 조금이라도 보이는 섹션까지 함께 (큰 화면에서 아래 섹션 윗부분이 빈 채로 보이지 않게) */
-  function reveal() { if (!ready) return; var lim = first ? innerHeight - 1 : innerHeight * 0.9; first = false; items.forEach(function (el) { if (!el.classList.contains('rv-in') && el.getBoundingClientRect().top < lim) el.classList.add('rv-in'); }); }
+  function reveal() { if (!ready) return; var lim = innerHeight * 0.9; /* 메인과 같게: 열 때도 스크롤할 때도 화면 90% 지점 */ items.forEach(function (el) { if (!el.classList.contains('rv-in') && el.getBoundingClientRect().top < lim) el.classList.add('rv-in'); }); }
   window.addEventListener('scroll', reveal, { passive: true }); window.addEventListener('resize', reveal); window.addEventListener('load', reveal);
   requestAnimationFrame(function () { requestAnimationFrame(function () { items.forEach(function (el) { el.classList.remove('rv-0'); }); void document.body.offsetHeight; ready = true; reveal(); }); }); /* 처음부터 보이는 섹션도 숨긴 상태를 한 번 그린 뒤 떠오르게 (같은 순간에 켜면 움직임이 안 보임) */
 }, 0); });

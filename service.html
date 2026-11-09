@@ -385,8 +385,8 @@
     bar.addEventListener('click', function (e) { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
   })();
   // 등장 효과 준비 (2026-11-09): 숨긴 상태를 먼저 그린 뒤(2프레임) 움직임을 켬 → 처음부터 보이던 내용이 사라졌다 다시 뜨는 깜빡임 없음
-  function rvReady(fn) { requestAnimationFrame(function () { requestAnimationFrame(function () { document.documentElement.classList.add('rv-ready'); void document.body.offsetHeight; rvLine = 1; fn(); rvLine = 0.9; }); }); }
-  var rvLine = 0.9; /* 페이지를 열 때는 화면에 보이는 곳까지(1), 스크롤할 때는 90% 지점 */
+  function rvReady(fn) { requestAnimationFrame(function () { requestAnimationFrame(function () { document.documentElement.classList.add('rv-ready'); void document.body.offsetHeight; fn(); }); }); }
+  var rvLine = 0.9; /* 메인과 같게: 화면 90% 지점 */
   // 시료 안내 타일: 화면에 들어오면 텍스트가 차례로 떠오름 (스크롤 위치로 판단)
   var tiles = [].slice.call(document.querySelectorAll('.stile'));
   function revealTiles() { if (!document.documentElement.classList.contains('rv-ready')) return; tiles.forEach(function (t) { if (!t.classList.contains('in') && t.getBoundingClientRect().top < innerHeight * rvLine) t.classList.add('in'); }); }
