@@ -43,7 +43,7 @@
   .arrows img { width:18px; height:18px; }
   .panel[hidden] { display:none !important; }
   /* 스크롤로 화면에 들어오면 아래에서 떠오름 (이용방법 '활용 가이드' 카드와 같은 효과) — 분석 서비스 제목·탭·내용, 시료 제목 */
-  .sv-rv { opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; transition-delay:var(--d, 0s); }
+  .sv-rv { opacity:0; transform:translate3d(0,100px,0); transition:opacity .8s ease, transform .8s ease; transition-delay:var(--d, 0s); }
   .sv-rv.shown { opacity:1; transform:none; }
   @media (prefers-reduced-motion:reduce) { .sv-rv { opacity:1; transform:none; transition:none; } } /* .sec.full의 display:block보다 우선 */
   /* 탭을 누르면 새 패널의 사진·제목·설명·항목이 차례로 떠오름 */
@@ -132,7 +132,7 @@
   .stile:hover img { transform:scale(1.05); }
   .stile:hover::after { opacity:.85; }
   /* 스크롤 진입 시 텍스트만 떠오름 */
-  .stile .tx { opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; transition-delay:var(--d, 0s); }
+  .stile .tx { opacity:0; transform:translate3d(0,100px,0); transition:opacity .8s ease, transform .8s ease; transition-delay:var(--d, 0s); }
   .stile.in .tx { opacity:1; transform:none; }
   @media (prefers-reduced-motion:reduce) { .stile .tx { opacity:1; transform:none; transition:none; } .stile img { transition:none; } }
 

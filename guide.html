@@ -80,8 +80,10 @@
   .tip h3 em { font-style:normal; margin-right:4px; }
   .tip p { font-size:15px; line-height:24px; color:var(--gray-600); word-break:keep-all; }
   /* 스크롤 진입 시 텍스트만 차례로 떠오름 (분석 서비스 안내 시료 카드와 같은 인터렉션) */
-  .tip .tx { opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; transition-delay:var(--d, 0s); }
+  .tip .tx { opacity:0; transform:translate3d(0,100px,0); transition:opacity .8s ease, transform .8s ease; transition-delay:var(--d, 0s); }
   .tip.in .tx { opacity:1; transform:none; }
+  .g-rv { opacity:0; transform:translate3d(0,100px,0); transition:opacity .8s ease, transform .8s ease; transition-delay:var(--d, 0s); } .g-rv.shown { opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce) { .g-rv { opacity:1; transform:none; transition:none; } }
   @media (prefers-reduced-motion:reduce) { .tip .tx { opacity:1; transform:none; transition:none; } }
 
   /* 자주 묻는 질문 (FAQ 페이지와 같은 아코디언) */
@@ -120,7 +122,7 @@
   .btn-action:hover { border-color:var(--teal-700); color:var(--teal-700); }
 
   /* 하단 CTA: 화면에 들어오면 글자·버튼만 차례로 떠오름 (배너 배경은 그대로) */
-  .cta .cta-rv { opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; transition-delay:var(--d, 0s); }
+  .cta .cta-rv { opacity:0; transform:translate3d(0,100px,0); transition:opacity .8s ease, transform .8s ease; transition-delay:var(--d, 0s); }
   .cta.in .cta-rv { opacity:1; transform:none; }
   @media (prefers-reduced-motion:reduce) { .cta .cta-rv { opacity:1; transform:none; transition:none; } }
 
@@ -276,6 +278,11 @@
   window.addEventListener('scroll', revealCta, { passive: true }); window.addEventListener('resize', revealCta);
   window.addEventListener('load', revealCta);
   setTimeout(revealCta, 60);
+  // 섹션 제목·FAQ 목록도 스크롤해서 들어올 때 떠오름 (2026-11-09, 워크스페이스와 같은 효과: 100px, 0.8s). 페이지 진입 효과는 건너뜀
+  var gRv = [].slice.call(document.querySelectorAll('#tips .sec-head, #faq .faq-head, #faq .qa'));
+  gRv.forEach(function (el, i) { el.classList.add('g-rv'); el.setAttribute('data-op-skip-enter', ''); el.style.setProperty('--d', (el.matches('.qa') ? .1 : 0) + 's'); });
+  function revealHeads() { gRv.forEach(function (el) { if (!el.classList.contains('shown') && el.getBoundingClientRect().top < innerHeight * 0.88) el.classList.add('shown'); }); }
+  window.addEventListener('scroll', revealHeads, { passive: true }); window.addEventListener('resize', revealHeads); revealHeads();
   var tipEls = [].slice.call(document.querySelectorAll('.tip'));
   function revealTips() { tipEls.forEach(function (t) { if (!t.classList.contains('in') && t.getBoundingClientRect().top < innerHeight * 0.88) t.classList.add('in'); }); }
   window.addEventListener('scroll', revealTips, { passive: true }); window.addEventListener('resize', revealTips); revealTips();

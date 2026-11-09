@@ -758,3 +758,7 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .hw-loop.draw-ready.drawn .hw-arrow { clip-path:inset(-10px -10px -10px -10px); }
 .hw-loop.draw-ready.drawn p { opacity:1; }
 .hw-arrow::before { top:-2px; } /* 화살촉 꼭짓점을 세로선 끝에 붙임 */
+/* 2026-11-09 스크롤 등장 효과: 사이트 공통 진입 효과(opEnter)와 같은 100px·0.8s, 차례 0.1s. 분석 서비스 안내·이용방법도 이 기준으로 맞춤 */
+.rv { transform:translate3d(0,100px,0); transition:opacity .8s ease, transform .8s ease; transition-delay:var(--d, 0s); }
+.rv + .rv, .rv + .rv + .rv { transition-delay:var(--d, 0s); }
+.rv.rv-in { opacity:1; transform:none; }
