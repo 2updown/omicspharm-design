@@ -776,3 +776,11 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 /* 2026-11-09 Figma: 개요 제목과 3열 사이 다시 60, 설명은 두 문단(문단 사이 한 줄) */
 #why.ov3 .sec-head.center { margin-bottom:60px; }
 .ov3-grid p + p { margin-top:-2px; } /* 글 묶음 간격 24 → 문단 사이 22 (한 줄) */
+/* 2026-11-09 작동 방식 반응형: 좁은 화면에서도 상자 모양 그대로 2×2 (뒤에 붙인 4열 규칙이 덮던 문제) */
+@media (max-width:1079px) { .hw-steps { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; } .hw-steps li { padding:28px 24px; } .hw-steps p br { display:none; } }
+@media (max-width:760px) {
+  .hw-steps li, .hw-steps li:first-child { padding:20px 16px; border:1px solid #d4d4d4; border-radius:12px; }
+  .hw-steps li + li { border-color:var(--teal-600); }
+  .hw-steps .no { font-size:24px; line-height:32px; } .hw-steps b { margin-top:2px; font-size:17px; line-height:24px; } .hw-steps p { margin-top:10px; font-size:14px; line-height:20px; letter-spacing:0; white-space:normal; }
+}
+@media (max-width:1079px) { .hw-loop { display:block; margin:0; padding-top:24px; } .hw-arrow { display:none; } .hw-loop p::before { content:"↻ "; } } /* 태블릿에서도 화살표 대신 한 줄 설명 표시 */
