@@ -914,3 +914,8 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 @keyframes h2Core { 0% { transform:translateX(-160px); opacity:.28; } 50% { opacity:.5; } 100% { transform:translateX(160px); opacity:.3; } }
 @media (prefers-reduced-motion:reduce) { .ws-hero2 .h2-glow::before, .ws-hero2 .h2-glow::after { animation:none; } }
 @media (max-width:760px) { .ws-hero2 .h2-glow::before { width:720px; margin-left:-360px; height:280px; bottom:-170px; filter:blur(90px); } .ws-hero2 .h2-glow::after { width:300px; margin-left:-150px; } @keyframes h2Core { 0% { transform:translateX(-70px); opacity:.28; } 100% { transform:translateX(70px); opacity:.3; } } }
+/* 2026-11-09 히어로 빛: CTA처럼 빛 덩어리가 좌우로 빠르게 지나감 (9초 주기, 마우스를 올리면 따라옴). 점 없이 부드러운 빛만. 바탕 빛은 CTA처럼 고정 */
+.ws-hero2 .h2-glow::before, .ws-hero2 .h2-glow::after { animation:none; }
+.ws-hero2 .h2-glow::before { background:linear-gradient(90deg,#00bba6,#3be0c5 50%,#4f8dff); }
+.ws-hero2 .h2-spot { position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle 320px at var(--mx, -400px) var(--my, 60%), rgba(140,255,232,.30), rgba(140,255,232,.10) 45%, transparent 100%); }
+@media (prefers-reduced-motion:reduce) { .ws-hero2 .h2-spot { display:none; } }
