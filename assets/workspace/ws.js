@@ -37,7 +37,7 @@ if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentE
       ];
       return '<section class="sec pale sec2" id="security"><div class="wrap">' +
         '<div class="sec-head center"><span class="eyebrow">보안</span>' +
-        '<h2 class="ttl">우리 팀의 전용 공간에서, <br><span class="green">연구 데이터를 안전하게.</span></h2>' +
+        '<h2 class="ttl">우리 팀 전용 공간에서, <br><span class="green">연구 데이터를 안전하게 지킵니다.</span></h2>' +
         '<p class="lead">연구 자료는 팀 전용 공간에 보관하고, 허용된 구성원만 활용합니다. <br>외부 AI에 전달할 정보도 기관이 정한 범위로 제한합니다.</p></div>' +
         '<div class="seg" role="tablist">' + P.map(function (p, i) { return '<button role="tab" data-pv="' + i + '" aria-selected="' + (i === 0) + '">' + p[0] + '</button>'; }).join('') + '</div>' +
         P.map(function (p, i) {
