@@ -214,7 +214,7 @@ if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentE
 // 히어로 배경 (2026-11-06, 크몽 Biz 상단 참고): WebGL로 그리는 부드러운 빛. 화면 곳곳의 빛 다섯 개가 서로 다른 박자로 퍼졌다 모임, 글자 뒤는 살짝 어둡게.
 // 움직임 줄이기 설정이면 한 장면만 그림. WebGL이 안 되면 CSS 빛(h2-glow)이 그대로 보임.
 document.addEventListener('DOMContentLoaded', function () {
-  var hero = document.querySelector('.ws-hero2'); if (!hero) return;
+  var hero = document.querySelector('.ws-hero2'); if (!hero || hero.dataset.bg !== 'webgl') return; /* 2026-11-09 꺼 둠: 히어로는 CTA처럼 아래쪽 빛만 흐르는 CSS 배경. 되살리려면 섹션에 data-bg="webgl" */
   var cv = document.createElement('canvas'); cv.className = 'h2-canvas'; cv.setAttribute('aria-hidden', 'true');
   var gl = cv.getContext('webgl', { premultipliedAlpha: false, antialias: false }); if (!gl) return;
   var vs = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';

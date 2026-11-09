@@ -902,3 +902,15 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .fld-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .fld-card { min-width:0; }
 @media (max-width:1079px) { .fld-grid { grid-template-columns:minmax(0,1fr); } }
 @media (max-width:760px) { #security { overflow-x:clip; } .fld-hd > div { min-width:0; } .fld-hd p { flex-wrap:wrap; } } /* 궤도 바깥 점선·좁은 화면 분야 설명 줄바꿈 */
+/* 2026-11-09 히어로 배경: CTA와 같은 어두운 바탕 + 아래쪽 빛. 점(노이즈) 없이 빛만 좌우로 천천히 흐름 (WebGL 배경은 끔) */
+.ws-hero2 { background:linear-gradient(160deg, #0a2a27 0%, #04201d 55%, #031a18 100%); }
+.ws-hero2 .h2-dots { display:none; }
+.ws-hero2 .h2-glow { inset:0; overflow:hidden; }
+.ws-hero2 .h2-glow::before, .ws-hero2 .h2-glow::after { top:auto; right:auto; left:50%; border-radius:50%; will-change:transform, background-position; }
+.ws-hero2 .h2-glow::before { bottom:-210px; width:1200px; height:380px; margin-left:-600px; background:linear-gradient(90deg, #00bba6, #3be0c5 25%, #4f8dff 50%, #3be0c5 75%, #00bba6) 0 0/200% 100%; opacity:.6; filter:blur(120px); animation:h2Flow 14s linear infinite, h2Sway 11s ease-in-out infinite alternate; }
+.ws-hero2 .h2-glow::after { bottom:-110px; width:520px; height:190px; margin-left:-260px; background:#c9fff3; opacity:.4; filter:blur(70px); animation:h2Core 8s ease-in-out infinite alternate; }
+@keyframes h2Flow { to { background-position:200% 0; } }
+@keyframes h2Sway { 0% { transform:translateX(-14%) scaleX(.92); } 100% { transform:translateX(14%) scaleX(1.06); } }
+@keyframes h2Core { 0% { transform:translateX(-160px); opacity:.28; } 50% { opacity:.5; } 100% { transform:translateX(160px); opacity:.3; } }
+@media (prefers-reduced-motion:reduce) { .ws-hero2 .h2-glow::before, .ws-hero2 .h2-glow::after { animation:none; } }
+@media (max-width:760px) { .ws-hero2 .h2-glow::before { width:720px; margin-left:-360px; height:280px; bottom:-170px; filter:blur(90px); } .ws-hero2 .h2-glow::after { width:300px; margin-left:-150px; } @keyframes h2Core { 0% { transform:translateX(-70px); opacity:.28; } 100% { transform:translateX(70px); opacity:.3; } } }
