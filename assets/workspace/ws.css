@@ -734,3 +734,4 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
   .ops2-sub { font-size:20px; line-height:28px; } .ops2-sub.center { margin:48px 0 20px; }
   .ops2-steps { grid-template-columns:1fr; gap:0; } .ops2-steps li { padding:20px 4px; border-top:0; } .ops2-steps li:first-child { border-top:1px solid #d4d4d4; } .ops2-steps p br { display:none; }
 }
+.ops2 .sub-h.center { margin:72px 0 40px; }
