@@ -772,3 +772,4 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .rv-on main > section.ws-hero2 .h2-in:not(.rv), .rv-on main > section.ws-hero2 .h2-tiles:not(.rv) { opacity:0; }
 .ws-hero2 .h2-tiles { animation:none !important; }
 #why.ov3 .sec-head.center { margin-bottom:60px; } /* Figma: 개요 제목 묶음과 3열 사이 60 */
+#why.ov3 .sec-head.center { margin-bottom:80px; } /* Figma: 개요 제목 묶음과 3열 사이 80 */
