@@ -334,7 +334,7 @@
         '<div class="who"><img src="' + (acc.photo || A + 'user-icon.svg?v=2') + '" alt=""><div><b>' + nm + ' 님</b><small>' + s.email.replace(/</g, '&lt;') + '</small><span class="role">' + (ROLE_LABEL[s.role] || '') + '</span></div>' +
           '<a class="bell" href="mypage-alarm.html" aria-label="알림"><img src="' + A + 'ic-bell.svg?v=2" alt="">' + (unread ? '<i></i>' : '') + '</a></div>' +
         (st ? '<div class="um-st">' + st + '</div>' : '') +
-        '<div class="btns"><a class="op-dr-btn line" href="mypage.html">마이페이지</a><a class="op-dr-btn soft" href="mypage-account.html">내 정보 관리</a></div></div>';
+        '<div class="btns"><a class="op-dr-btn soft" href="mypage.html">마이페이지</a><a class="op-dr-btn line" href="mypage-account.html">내 정보 관리</a></div></div>';
     }
     return '<div class="op-drawer" id="opDrawer" hidden>' + me +
       '<nav class="op-dr-nav" aria-label="전체 메뉴">' +
