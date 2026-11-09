@@ -43,9 +43,10 @@
   .arrows img { width:18px; height:18px; }
   .panel[hidden] { display:none !important; }
   /* 스크롤로 화면에 들어오면 아래에서 떠오름 (이용방법 '활용 가이드' 카드와 같은 효과) — 분석 서비스 제목·탭·내용, 시료 제목 */
-  .sv-rv { opacity:0; transform:translate3d(0,100px,0); }
-  .rv-ready .sv-rv { transition:opacity .8s ease, transform .8s ease; transition-delay:var(--d, 0s); }
-  .sv-rv.shown { opacity:1; transform:none; }
+  /* 2026-11-09 메인과 같은 등장 효과: 흐림 5px + 2rem 아래에서, 0.9s */
+  .sv-rv { opacity:0; filter:blur(5px); transform:translate3d(0,2rem,0); }
+  .rv-ready .sv-rv { transition:opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1), filter .9s cubic-bezier(.2,.7,.2,1); transition-delay:var(--d, 0s); }
+  .sv-rv.shown { opacity:1; filter:none; transform:none; }
   @media (prefers-reduced-motion:reduce) { .sv-rv { opacity:1; transform:none; transition:none; } } /* .sec.full의 display:block보다 우선 */
   /* 탭을 누르면 새 패널의 사진·제목·설명·항목이 차례로 떠오름 */
   .panel.pop .rv { animation:panelUp .6s cubic-bezier(.2,.7,.2,1) both; animation-delay:var(--d, 0s); }
@@ -133,10 +134,10 @@
   .stile:hover img { transform:scale(1.05); }
   .stile:hover::after { opacity:.85; }
   /* 스크롤 진입 시 텍스트만 떠오름 */
-  .stile .tx { opacity:0; transform:translate3d(0,100px,0); }
-  .rv-ready .stile .tx { transition:opacity .8s ease, transform .8s ease; transition-delay:var(--d, 0s); }
-  .stile.in .tx { opacity:1; transform:none; }
-  @media (prefers-reduced-motion:reduce) { .stile .tx { opacity:1; transform:none; transition:none; } .stile img { transition:none; } }
+  .stile { opacity:0; filter:blur(5px); transform:translate3d(0,2rem,0); }
+  .rv-ready .stile { transition:opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1), filter .9s cubic-bezier(.2,.7,.2,1); transition-delay:var(--d, 0s); }
+  .stile.in { opacity:1; filter:none; transform:none; }
+  @media (prefers-reduced-motion:reduce) { .stile { opacity:1; filter:none; transform:none; transition:none; } .stile img { transition:none; } }
 
   /* 하단 안내 */
   .cta { display:flex; align-items:center; justify-content:space-between; gap:24px; margin-top:72px; padding:32px 40px; border:1px solid var(--gray-200); border-radius:16px; }
@@ -216,7 +217,7 @@
   }
 </style>
 </head>
-<body>
+<body data-op-no-enter>
 <div data-op-gnb="service"></div>
 
 <section class="page-head"><div class="in"><h1>분석 서비스 안내</h1></div></section>
@@ -387,14 +388,14 @@
   function rvReady(fn) { requestAnimationFrame(function () { requestAnimationFrame(function () { document.documentElement.classList.add('rv-ready'); void document.body.offsetHeight; fn(); }); }); }
   // 시료 안내 타일: 화면에 들어오면 텍스트가 차례로 떠오름 (스크롤 위치로 판단)
   var tiles = [].slice.call(document.querySelectorAll('.stile'));
-  function revealTiles() { if (!document.documentElement.classList.contains('rv-ready')) return; tiles.forEach(function (t) { if (!t.classList.contains('in') && t.getBoundingClientRect().top < innerHeight * 0.88) t.classList.add('in'); }); }
+  function revealTiles() { if (!document.documentElement.classList.contains('rv-ready')) return; tiles.forEach(function (t) { if (!t.classList.contains('in') && t.getBoundingClientRect().top < innerHeight * 0.9) t.classList.add('in'); }); }
   window.addEventListener('scroll', revealTiles, { passive: true }); window.addEventListener('resize', revealTiles);
   // 분석 서비스·시료 제목: 화면에 들어오면 차례로 떠오름. 서비스 내용(패널)은 탭으로 바뀌므로 한 번 보이면 전체 패널을 함께 표시
   var svh = document.querySelector('#service > h2'), bar = document.querySelector('.svc-bar'), panels = [].slice.call(document.querySelectorAll('.panel')), smh = document.querySelector('#samples > h2');
-  [[svh, 0], [bar, .1]].concat(panels.map(function (p) { return [p, .2]; })).concat([[smh, 0]]).forEach(function (x) { x[0].classList.add('sv-rv'); x[0].setAttribute('data-op-skip-enter', ''); x[0].style.setProperty('--d', x[1] + 's'); });
+  [[document.querySelector('.page-head h1'), 0], [document.querySelector('#overview .r1'), .12], [document.querySelector('#overview .r2'), .24], [svh, 0], [bar, .12]].concat(panels.map(function (p) { return [p, .24]; })).concat([[smh, 0]]).forEach(function (x) { x[0].classList.add('sv-rv'); x[0].setAttribute('data-op-skip-enter', ''); x[0].style.setProperty('--d', x[1] + 's'); });
   function revealSv() { if (!document.documentElement.classList.contains('rv-ready')) return;
-    var lim = innerHeight * 0.88;
-    [svh, bar, smh].forEach(function (el) { if (!el.classList.contains('shown') && el.getBoundingClientRect().top < lim) el.classList.add('shown'); });
+    var lim = innerHeight * 0.9;
+    [document.querySelector('.page-head h1'), document.querySelector('#overview .r1'), document.querySelector('#overview .r2'), svh, bar, smh].forEach(function (el) { if (!el.classList.contains('shown') && el.getBoundingClientRect().top < lim) el.classList.add('shown'); });
     var cur = panels.filter(function (p) { return !p.hidden; })[0];
     if (cur && !cur.classList.contains('shown') && cur.getBoundingClientRect().top < lim) panels.forEach(function (p) { p.classList.add('shown'); });
   }

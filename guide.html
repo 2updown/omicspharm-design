@@ -81,13 +81,14 @@
   .tip p { font-size:15px; line-height:24px; color:var(--gray-600); word-break:keep-all; }
   
   /* 2026-11-09 카드 전체(그림 + 글)가 떠오름 (글만 떠오르던 것 대신) */
-  .tip { opacity:0; transform:translate3d(0,100px,0); }
-  .rv-ready .tip { transition:opacity .8s ease, transform .8s ease; transition-delay:var(--d, 0s); }
-  .tip.in { opacity:1; transform:none; }
-  .g-rv { opacity:0; transform:translate3d(0,100px,0); }
-  .rv-ready .g-rv { transition:opacity .8s ease, transform .8s ease; transition-delay:var(--d, 0s); } .g-rv.shown { opacity:1; transform:none; }
-  @media (prefers-reduced-motion:reduce) { .g-rv { opacity:1; transform:none; transition:none; } }
-  @media (prefers-reduced-motion:reduce) { .tip { opacity:1; transform:none; transition:none; } }
+  /* 2026-11-09 메인과 같은 등장 효과: 흐림 5px + 2rem 아래에서, 0.9s */
+  .tip { opacity:0; filter:blur(5px); transform:translate3d(0,2rem,0); }
+  .rv-ready .tip { transition:opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1), filter .9s cubic-bezier(.2,.7,.2,1); transition-delay:var(--d, 0s); }
+  .tip.in { opacity:1; filter:none; transform:none; }
+  .g-rv { opacity:0; filter:blur(5px); transform:translate3d(0,2rem,0); }
+  .rv-ready .g-rv { transition:opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1), filter .9s cubic-bezier(.2,.7,.2,1); transition-delay:var(--d, 0s); } .g-rv.shown { opacity:1; filter:none; transform:none; }
+  @media (prefers-reduced-motion:reduce) { .g-rv { opacity:1; filter:none; transform:none; transition:none; } }
+  @media (prefers-reduced-motion:reduce) { .tip { opacity:1; filter:none; transform:none; transition:none; } }
 
   /* 자주 묻는 질문 (FAQ 페이지와 같은 아코디언) */
   .faq-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; }
@@ -125,9 +126,9 @@
   .btn-action:hover { border-color:var(--teal-700); color:var(--teal-700); }
 
   /* 하단 CTA: 화면에 들어오면 글자·버튼만 차례로 떠오름 (배너 배경은 그대로) */
-  .cta .cta-rv { opacity:0; transform:translate3d(0,100px,0); }
-  .rv-ready .cta .cta-rv { transition:opacity .8s ease, transform .8s ease; transition-delay:var(--d, 0s); }
-  .cta.in .cta-rv { opacity:1; transform:none; }
+  .cta .cta-rv { opacity:0; filter:blur(5px); transform:translate3d(0,2rem,0); }
+  .rv-ready .cta .cta-rv { transition:opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1), filter .9s cubic-bezier(.2,.7,.2,1); transition-delay:var(--d, 0s); }
+  .cta.in .cta-rv { opacity:1; filter:none; transform:none; }
   @media (prefers-reduced-motion:reduce) { .cta .cta-rv { opacity:1; transform:none; transition:none; } }
 
   @media (max-width:1180px) {
@@ -168,7 +169,7 @@
   }
 </style>
 </head>
-<body>
+<body data-op-no-enter>
 <div data-op-gnb="service"></div>
 
 <section class="page-head"><div class="in">
@@ -280,16 +281,16 @@
   function rvReady(fn) { requestAnimationFrame(function () { requestAnimationFrame(function () { document.documentElement.classList.add('rv-ready'); void document.body.offsetHeight; fn(); }); }); }
   // 하단 CTA 글자 등장 (페이지 진입 효과는 건너뛰고 스크롤 등장으로)
   var cta = document.querySelector('.cta'); // 글자·버튼에 cta-rv 클래스 (마크업)
-  function revealCta() { if (!document.documentElement.classList.contains('rv-ready')) return; if (!cta.classList.contains('in') && cta.getBoundingClientRect().top < innerHeight * 0.85) cta.classList.add('in'); }
+  function revealCta() { if (!document.documentElement.classList.contains('rv-ready')) return; if (!cta.classList.contains('in') && cta.getBoundingClientRect().top < innerHeight * 0.9) cta.classList.add('in'); }
   window.addEventListener('scroll', revealCta, { passive: true }); window.addEventListener('resize', revealCta);
   window.addEventListener('load', revealCta);
   // 섹션 제목·FAQ 목록도 스크롤해서 들어올 때 떠오름 (2026-11-09, 워크스페이스와 같은 효과: 100px, 0.8s). 페이지 진입 효과는 건너뜀
-  var gRv = [].slice.call(document.querySelectorAll('#tips .sec-head, #faq .faq-head, #faq .qa'));
-  gRv.forEach(function (el, i) { el.classList.add('g-rv'); el.setAttribute('data-op-skip-enter', ''); el.style.setProperty('--d', (el.matches('.qa') ? .1 : 0) + 's'); });
-  function revealHeads() { if (!document.documentElement.classList.contains('rv-ready')) return; gRv.forEach(function (el) { if (!el.classList.contains('shown') && el.getBoundingClientRect().top < innerHeight * 0.88) el.classList.add('shown'); }); }
+  var gRv = [].slice.call(document.querySelectorAll('.page-head h1, #process .sec-head, #process .flow, #tips .sec-head, #faq .faq-head, #faq .qa'));
+  gRv.forEach(function (el, i) { el.classList.add('g-rv'); el.setAttribute('data-op-skip-enter', ''); el.style.setProperty('--d', (el.matches('.qa, #process .flow') ? .12 : 0) + 's'); });
+  function revealHeads() { if (!document.documentElement.classList.contains('rv-ready')) return; gRv.forEach(function (el) { if (!el.classList.contains('shown') && el.getBoundingClientRect().top < innerHeight * 0.9) el.classList.add('shown'); }); }
   window.addEventListener('scroll', revealHeads, { passive: true }); window.addEventListener('resize', revealHeads);
   var tipEls = [].slice.call(document.querySelectorAll('.tip'));
-  function revealTips() { if (!document.documentElement.classList.contains('rv-ready')) return; tipEls.forEach(function (t) { if (!t.classList.contains('in') && t.getBoundingClientRect().top < innerHeight * 0.88) t.classList.add('in'); }); }
+  function revealTips() { if (!document.documentElement.classList.contains('rv-ready')) return; tipEls.forEach(function (t) { if (!t.classList.contains('in') && t.getBoundingClientRect().top < innerHeight * 0.9) t.classList.add('in'); }); }
   window.addEventListener('scroll', revealTips, { passive: true }); window.addEventListener('resize', revealTips);
   rvReady(function () { revealHeads(); revealTips(); revealCta(); });
   $('#qa').innerHTML = FAQ.map(function (f) {

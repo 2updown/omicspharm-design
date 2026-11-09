@@ -247,16 +247,16 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // 섹션 등장 효과 (2026-11-09): 히어로 아래 모든 섹션 내용이 화면 88% 지점에 들어오면
-// 아래에서 위로 100px, 0.8s(사이트 진입 효과와 같음)로 차례로 떠오름 (첫 화면에 보이는 것도 같은 방식). 공통 진입 효과(opEnter)는 히어로만. 움직임 줄이기는 효과 없음
+// 메인과 같은 효과(흐림 5px + 2rem 아래에서, 0.9s, 화면 90% 지점, 차례 0.12s)로 떠오름. 히어로 포함, 공통 진입 효과는 끔(data-op-no-enter). 움직임 줄이기는 효과 없음
 document.addEventListener('DOMContentLoaded', function () { setTimeout(function () { /* 블록을 그린 직후 */
   if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
   var items = [];
-  document.querySelectorAll('main > section.sec > .wrap, main > section.wcta').forEach(function (box) {
-    var kids = box.matches('.wcta') ? [box.querySelector('.wcta-in')] : [].slice.call(box.children);
-    kids.forEach(function (el, i) { if (!el || el.hidden) return; /* 숨은 탭 패널 제외 */ el.classList.remove('op-enter'); el.style.removeProperty('--op-d'); el.setAttribute('data-op-skip-enter', ''); el.classList.add('rv', 'rv-0'); el.style.setProperty('--d', Math.min(i, 2) * 0.1 + 's'); items.push(el); });
+  document.querySelectorAll('main > section.ws-hero2, main > section.sec > .wrap, main > section.wcta').forEach(function (box) {
+    var kids = box.matches('.wcta') ? [box.querySelector('.wcta-in')] : box.matches('.ws-hero2') ? [box.querySelector('.h2-in'), box.querySelector('.h2-tiles')] : [].slice.call(box.children);
+    kids.forEach(function (el, i) { if (!el || el.hidden) return; /* 숨은 탭 패널 제외 */ el.classList.remove('op-enter'); el.style.removeProperty('--op-d'); el.setAttribute('data-op-skip-enter', ''); el.classList.add('rv', 'rv-0'); el.style.setProperty('--d', Math.min(i, 2) * 0.12 + 's'); items.push(el); });
   });
   var ready = false; /* 숨긴 상태가 먼저 그려진 뒤에만 켬 (load·scroll이 먼저 오면 움직임 없이 바로 보이는 문제) */
-  function reveal() { if (!ready) return; var lim = innerHeight * 0.88; items.forEach(function (el) { if (!el.classList.contains('rv-in') && el.getBoundingClientRect().top < lim) el.classList.add('rv-in'); }); }
+  function reveal() { if (!ready) return; var lim = innerHeight * 0.9; items.forEach(function (el) { if (!el.classList.contains('rv-in') && el.getBoundingClientRect().top < lim) el.classList.add('rv-in'); }); }
   window.addEventListener('scroll', reveal, { passive: true }); window.addEventListener('resize', reveal); window.addEventListener('load', reveal);
   requestAnimationFrame(function () { requestAnimationFrame(function () { items.forEach(function (el) { el.classList.remove('rv-0'); }); void document.body.offsetHeight; ready = true; reveal(); }); }); /* 처음부터 보이는 섹션도 숨긴 상태를 한 번 그린 뒤 떠오르게 (같은 순간에 켜면 움직임이 안 보임) */
 }, 0); });
