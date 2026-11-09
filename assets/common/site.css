@@ -329,3 +329,16 @@ div.op-phone.bad input, div.op-phone.bad select { border-color:var(--op-red-600)
 .op-user-menu .um-bd.blue { background:#d7ebff; color:#0065f4; } .op-user-menu .um-bd.gray { background:#f5f5f5; color:#525252; }
 .op-user-menu .op-switch { margin:0; padding:12px 16px 14px; border-top:1px dashed #e5e5e5; border-bottom:0; background:#fafafa; } /* 프로토타입 확인용 */
 .op-user-menu .op-switch button { padding:6px 4px; font-size:12px; white-space:nowrap; } /* 메뉴 폭 252에서 한 줄 */
+/* 2026-11-09 모바일 메뉴 프로필: PC 프로필 메뉴와 같은 구성 (이름·메일 최대 2줄 → 역할 배지 → 상태 줄) */
+.op-dr-me .who > div { display:block; }
+.op-dr-me .who b, .op-dr-me .who small { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }
+.op-dr-me .who b { font-size:16px; font-weight:700; line-height:22px; color:#171717; overflow-wrap:anywhere; }
+.op-dr-me .who small { font-size:14px; line-height:20px; color:#737373; word-break:break-all; }
+.op-dr-me .who .role { display:inline-block; margin-top:6px; padding:1px 7px; line-height:18px; }
+.op-dr-me .um-st { margin:-4px 0 0; padding:4px; border:1px solid #eee; border-radius:8px; background:#fff; }
+.op-dr-me .um-st a { display:flex; align-items:center; gap:8px; padding:8px; border-radius:6px; font-size:14px; font-weight:500; line-height:20px; color:#262626; }
+.op-dr-me .um-st a span { flex:1; }
+.op-dr-me .um-ic { display:inline-block; flex:none; width:24px; height:24px; background:currentColor; -webkit-mask:var(--i) center/20px no-repeat; mask:var(--i) center/20px no-repeat; }
+.op-dr-me .um-st .off .um-ic { color:#a3a3a3; } .op-dr-me .um-st .ok .um-ic { color:#0065f4; }
+.op-dr-me .um-bd { flex:none; padding:2px 8px; border-radius:8px; font-style:normal; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; }
+.op-dr-me .um-bd.blue { background:#d7ebff; color:#0065f4; } .op-dr-me .um-bd.gray { background:#f5f5f5; color:#525252; }

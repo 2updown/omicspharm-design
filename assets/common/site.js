@@ -324,11 +324,16 @@
     var me = '';
     if (s) {
       var acc = OP.account(s.email) || {}, nm = (acc.name || s.email.split('@')[0]).replace(/</g, '&lt;');
-      var chip = !OP.mailVerified() && s.role !== 'admin' ? '<span class="op-vchip">메일 미인증</span>' : s.role === 'partner' ? '<span class="op-vchip' + (OP.partnerVerified() ? ' ok">인증' : '">미인증') + '</span>' : '';
+      var ic = function (f) { return '<i class="um-ic" style="--i:url(' + new URL(A + f, location.href).href + ')"></i>'; };
+      var row = function (href, f, cls, t, bd, bc) { return '<a class="um-row ' + cls + '" href="' + href + '">' + ic(f) + '<span>' + t + '</span><em class="um-bd ' + bc + '">' + bd + '</em></a>'; };
+      // 2026-11-09 PC 프로필 메뉴(gnb-user-menu)와 같은 구성: 이름·메일(최대 2줄)·역할 배지 → 상태 줄(메일 인증·파트너 인증)
+      var st = (!OP.mailVerified() && s.role !== 'admin' ? row('mypage-account.html#mail', 'ic-envelope-fill.svg', 'off', '메일 인증', '인증하기 ›', 'gray') : '') +
+        (s.role === 'partner' ? (OP.partnerVerified() ? row('mypage-verify.html', 'ic-seal-check-fill.svg', 'ok', '파트너 인증', '인증완료', 'blue') : row('mypage-verify.html', 'ic-seal-check-fill.svg', 'off', '파트너 인증', '인증하기 ›', 'gray')) : '');
       var unread = OP.my && OP.my.unread ? OP.my.unread() : 0;
       me = '<div class="op-dr-me">' +
-        '<div class="who"><img src="' + (acc.photo || A + 'user-icon.svg?v=2') + '" alt=""><div><b>' + nm + ' 님</b><span class="role">' + (ROLE_LABEL[s.role] || '') + '</span>' + chip + '<small>' + s.email.replace(/</g, '&lt;') + '</small></div>' +
+        '<div class="who"><img src="' + (acc.photo || A + 'user-icon.svg?v=2') + '" alt=""><div><b>' + nm + ' 님</b><small>' + s.email.replace(/</g, '&lt;') + '</small><span class="role">' + (ROLE_LABEL[s.role] || '') + '</span></div>' +
           '<a class="bell" href="mypage-alarm.html" aria-label="알림"><img src="' + A + 'ic-bell.svg?v=2" alt="">' + (unread ? '<i></i>' : '') + '</a></div>' +
+        (st ? '<div class="um-st">' + st + '</div>' : '') +
         '<div class="btns"><a class="op-dr-btn line" href="mypage.html">마이페이지</a><a class="op-dr-btn soft" href="mypage-account.html">내 정보 관리</a></div></div>';
     }
     return '<div class="op-drawer" id="opDrawer" hidden>' + me +
