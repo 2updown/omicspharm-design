@@ -894,5 +894,11 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 /* 2026-11-09 운영 지원 카드: 태그 빼고 컬러 Fill 아이콘 (개요와 다른 색: 인디고, 주황, 로즈) */
 .ops2-ic2 { display:block; } .ops2-ic2 .ico { width:32px; height:32px; }
 .ops2-sv article:nth-child(1) .ops2-ic2 { color:#5b6cff; } .ops2-sv article:nth-child(2) .ops2-ic2 { color:#ff8a00; } .ops2-sv article:nth-child(3) .ops2-ic2 { color:#f2557a; }
-.ops2-sv .ops2-ic2 + h3 { margin-top:16px; }
-@media (max-width:760px) { .ops2-ic2 .ico { width:28px; height:28px; } .ops2-sv .ops2-ic2 + h3 { margin-top:12px; } }
+.ops2-sv .ops2-ic2 + h3 { margin-top:8px; }
+@media (max-width:760px) { .ops2-ic2 .ico { width:28px; height:28px; } .ops2-sv .ops2-ic2 + h3 { margin-top:8px; } }
+/* 2026-11-09 운영 지원 아래 여백 100 (Figma) / 모바일 적용 분야 카드가 화면보다 넓어지던 문제: 칸이 내용 폭에 밀리지 않게 */
+#managed.ops2 { padding-bottom:100px; }
+@media (max-width:760px) { #managed.ops2 { padding-bottom:72px; } }
+.fld-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .fld-card { min-width:0; }
+@media (max-width:1079px) { .fld-grid { grid-template-columns:minmax(0,1fr); } }
+@media (max-width:760px) { #security { overflow-x:clip; } .fld-hd > div { min-width:0; } .fld-hd p { flex-wrap:wrap; } } /* 궤도 바깥 점선·좁은 화면 분야 설명 줄바꿈 */
