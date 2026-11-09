@@ -746,3 +746,7 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 @media (min-width:1200px) { .hw-steps p { white-space:normal; } .hw-steps li { padding:40px 32px; } }
 .hw-loop { padding-top:56px; } .hw-arrow { top:8px; }
 @media (min-width:1200px) { .hw-steps li { padding:40px 28px; } .hw-steps p { letter-spacing:-.2px; } }
+/* 스크롤 등장 효과 (ws.js): 아래에서 위로 100px, 0.8s — site.css opEnter와 같은 움직임 */
+.rv { opacity:0; transform:translate3d(0,100px,0); transition:opacity .8s ease, transform .8s ease; }
+.rv.rv-in { opacity:1; transform:none; }
+.rv + .rv { transition-delay:.1s; } .rv + .rv + .rv { transition-delay:.2s; }
