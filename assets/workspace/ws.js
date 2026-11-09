@@ -2,6 +2,8 @@
    - <nav data-ws-tabs="overview|hospital|biopharma">: 워크스페이스 안 이동 탭
    - <div data-ws="growth|privacy|ops|faq|plan-hospital|plan-biopharma">: 여러 페이지에 반복되는 섹션 (한 곳에서 고치면 다 바뀜)
    - 화면 예시(board), 지속 고도화 단계 탭(timeline), 바이오제약 업무 탭(utabs) 동작 */
+/* 등장 효과: 첫 화면에 그려지기 전에 섹션 내용을 숨겨 둠 (보였다가 사라지는 깜빡임 방지). 움직임 줄이기면 안 숨김. 3초 안에 효과가 시작 안 되면 그냥 보이게 */
+if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentElement.classList.add('rv-on'); setTimeout(function () { document.documentElement.classList.remove('rv-on'); }, 3000); }
 (function () {
   var I = function (n) { return '<span class="ico" style="--i:url(ic-' + n + '.svg)"></span>'; };
   window.WS_ICON = I;
@@ -251,10 +253,12 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(function 
   var items = [];
   document.querySelectorAll('main > section.sec > .wrap, main > section.wcta').forEach(function (box) {
     var kids = box.matches('.wcta') ? [box.querySelector('.wcta-in')] : [].slice.call(box.children);
-    kids.forEach(function (el, i) { if (!el || el.hidden) return; /* 숨은 탭 패널 제외 */ el.classList.remove('op-enter'); el.style.removeProperty('--op-d'); el.setAttribute('data-op-skip-enter', ''); el.classList.add('rv'); el.style.setProperty('--d', Math.min(i, 2) * 0.1 + 's'); items.push(el); });
+    kids.forEach(function (el, i) { if (!el || el.hidden) return; /* 숨은 탭 패널 제외 */ el.classList.remove('op-enter'); el.style.removeProperty('--op-d'); el.setAttribute('data-op-skip-enter', ''); el.classList.add('rv', 'rv-0'); el.style.setProperty('--d', Math.min(i, 2) * 0.1 + 's'); items.push(el); });
   });
-  function reveal() { var lim = innerHeight * 0.88; items.forEach(function (el) { if (!el.classList.contains('rv-in') && el.getBoundingClientRect().top < lim) el.classList.add('rv-in'); }); }
-  window.addEventListener('scroll', reveal, { passive: true }); window.addEventListener('resize', reveal); window.addEventListener('load', reveal); reveal();
+  var ready = false; /* 숨긴 상태가 먼저 그려진 뒤에만 켬 (load·scroll이 먼저 오면 움직임 없이 바로 보이는 문제) */
+  function reveal() { if (!ready) return; var lim = innerHeight * 0.88; items.forEach(function (el) { if (!el.classList.contains('rv-in') && el.getBoundingClientRect().top < lim) el.classList.add('rv-in'); }); }
+  window.addEventListener('scroll', reveal, { passive: true }); window.addEventListener('resize', reveal); window.addEventListener('load', reveal);
+  requestAnimationFrame(function () { requestAnimationFrame(function () { items.forEach(function (el) { el.classList.remove('rv-0'); }); void document.body.offsetHeight; ready = true; reveal(); }); }); /* 처음부터 보이는 섹션도 숨긴 상태를 한 번 그린 뒤 떠오르게 (같은 순간에 켜면 움직임이 안 보임) */
 }, 0); });
 
 // 작동 방식 되돌아가는 화살표 그리기 (2026-11-09): 화면에 들어오면 한 번 그려짐. 움직임 줄이기면 처음부터 다 보임

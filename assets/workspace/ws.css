@@ -762,3 +762,5 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .rv { transform:translate3d(0,100px,0); transition:opacity .8s ease, transform .8s ease; transition-delay:var(--d, 0s); }
 .rv + .rv, .rv + .rv + .rv { transition-delay:var(--d, 0s); }
 .rv.rv-in { opacity:1; transform:none; }
+.rv.rv-0 { transition:none; } /* 처음 숨길 때는 사라지는 움직임 없이 바로 */
+.rv-on main > section.sec > .wrap > :not(.rv):not([hidden]), .rv-on main > section.wcta > .wcta-in:not(.rv) { opacity:0; }

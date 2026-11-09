@@ -79,12 +79,13 @@
   .tip h3 { font-size:18px; font-weight:700; line-height:26px; letter-spacing:-.18px; color:var(--teal-700); word-break:keep-all; }
   .tip h3 em { font-style:normal; margin-right:4px; }
   .tip p { font-size:15px; line-height:24px; color:var(--gray-600); word-break:keep-all; }
-  /* 스크롤 진입 시 텍스트만 차례로 떠오름 (분석 서비스 안내 시료 카드와 같은 인터렉션) */
-  .tip .tx { opacity:0; transform:translate3d(0,100px,0); transition:opacity .8s ease, transform .8s ease; transition-delay:var(--d, 0s); }
-  .tip.in .tx { opacity:1; transform:none; }
+  
+  /* 2026-11-09 카드 전체(그림 + 글)가 떠오름 (글만 떠오르던 것 대신) */
+  .tip { opacity:0; transform:translate3d(0,100px,0); transition:opacity .8s ease, transform .8s ease; transition-delay:var(--d, 0s); }
+  .tip.in { opacity:1; transform:none; }
   .g-rv { opacity:0; transform:translate3d(0,100px,0); transition:opacity .8s ease, transform .8s ease; transition-delay:var(--d, 0s); } .g-rv.shown { opacity:1; transform:none; }
   @media (prefers-reduced-motion:reduce) { .g-rv { opacity:1; transform:none; transition:none; } }
-  @media (prefers-reduced-motion:reduce) { .tip .tx { opacity:1; transform:none; transition:none; } }
+  @media (prefers-reduced-motion:reduce) { .tip { opacity:1; transform:none; transition:none; } }
 
   /* 자주 묻는 질문 (FAQ 페이지와 같은 아코디언) */
   .faq-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; }
