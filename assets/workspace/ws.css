@@ -799,3 +799,9 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 @media (max-width:760px) { h2.ttl { font-size:26px; line-height:36px; text-wrap:balance; word-break:keep-all; } h2.ttl br { display:inline; } }
 .ov3-grid h3 { font-size:24px; line-height:32px; } /* Figma: 개요 카드 제목 Heading/Large/B 24/32 */
 @media (max-width:760px) { .ov3-grid h3 { font-size:20px; line-height:28px; } }
+/* 2026-11-09 Figma 배경·여백: 개요 흰색(아래 여백 100), 작동 방식 #f6faf9, 보안 흰색, 적용 분야·플랜 비교 흰색(위아래 60), 운영 지원 #f6faf9 */
+#why.ov3 { background:#fff; padding-bottom:100px; }
+#growth.hw { background:#f6faf9; }
+#security.sec2 { background:#fff; }
+#plans { padding-top:60px; padding-bottom:60px; }
+@media (max-width:760px) { #why.ov3 { padding-bottom:72px; } #plans { padding-top:56px; padding-bottom:56px; } }
