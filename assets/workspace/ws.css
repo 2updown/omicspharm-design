@@ -390,7 +390,7 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .seg button:first-child { border-left:0; }
 .seg button:hover { background:var(--gray-50); }
 .seg button[aria-selected="true"] { background:#0a2a27; color:#fff; border-color:#0a2a27; }
-.pv-panel { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center; margin-top:24px; padding:48px 56px; border-radius:24px; background:radial-gradient(600px 400px at 78% 50%, rgba(59,224,197,.14), transparent 70%), radial-gradient(500px 360px at 95% 90%, rgba(111,178,255,.12), transparent 70%); }
+.pv-panel { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center; margin-top:24px; padding:24px 56px; border-radius:24px; background:radial-gradient(683px 152px at 38% 50%, rgba(59,224,197,.14), rgba(59,224,197,0)); }
 .pv-panel[hidden] { display:none; }
 .pv-ic { display:grid; place-items:center; width:48px; height:48px; border-radius:14px; background:var(--teal-600); color:#fff; }
 .pv-ic .ico { width:26px; height:26px; }
