@@ -163,16 +163,16 @@ if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentE
       el.outerHTML = p[0] === 'plan' ? B.plan(p[1]) : B[k]();
     });
     /* 하단 CTA 점 빛: 마우스 주변 점이 밝아지고, 마우스가 없으면 빛이 천천히 좌우로 지나감 (메인 하단 CTA와 같음) */
-    /* 2026-11-09 히어로도 같은 빛이 지나감 (점 없이 빛만, .h2-spot) */
-    [['.wcta', '.ws-spot'], ['.ws-hero2', '.h2-spot']].forEach(function (q) { (function () {
+    /* 2026-11-09 히어로도 같은 점 빛이 지나감 (.h2-spot). 히어로는 마우스를 따라오지 않음 */
+    [['.wcta', '.ws-spot', 1], ['.ws-hero2', '.h2-spot', 0]].forEach(function (q) { (function () { /* 세 번째 값: 마우스 따라오기 (히어로는 빛만 지나감) */
       var box = document.querySelector(q[0]), spot = box && box.querySelector(q[1]);
       if (!spot || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
       var hover = false, raf = 0, t0 = performance.now();
       function set(x, y) { spot.style.setProperty('--mx', x + 'px'); spot.style.setProperty('--my', y + 'px'); }
       function idle(now) { raf = 0; if (hover) return; var r = box.getBoundingClientRect(); if (r.bottom <= 0 || r.top >= innerHeight) return; var w = box.clientWidth, h = box.clientHeight, k = (now - t0) / 9000; set(w / 2 + Math.sin(k * Math.PI * 2) * w * 0.42, h * (0.55 + Math.sin(k * Math.PI * 4) * 0.2)); raf = requestAnimationFrame(idle); }
       function start() { if (!raf) raf = requestAnimationFrame(idle); }
-      box.addEventListener('pointermove', function (e) { if (e.pointerType !== 'mouse') return; hover = true; var r = box.getBoundingClientRect(); set(e.clientX - r.left, e.clientY - r.top); });
-      box.addEventListener('pointerleave', function () { hover = false; start(); });
+      if (q[2]) box.addEventListener('pointermove', function (e) { if (e.pointerType !== 'mouse') return; hover = true; var r = box.getBoundingClientRect(); set(e.clientX - r.left, e.clientY - r.top); });
+      if (q[2]) box.addEventListener('pointerleave', function () { hover = false; start(); });
       window.addEventListener('scroll', start, { passive: true }); start();
     })(); });
     /* 섹션 배경을 흰색·연한 녹색으로 번갈아 (한 페이지로 합치면서 순서가 바뀌어도 안 겹치게, 2026-11-05) */
