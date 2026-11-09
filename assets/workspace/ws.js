@@ -246,11 +246,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // 섹션이 화면에 들어올 때 떠오르는 효과 (2026-11-09): 페이지 진입 효과(site.js opEnter)는 첫 화면에만 보이므로,
 // 아래 섹션은 스크롤해서 들어올 때 같은 효과(아래에서 위로, 0.8s)로 하나씩 나타나게. 움직임 줄이기·좁은 화면(≤960)은 효과 없음 (site.css와 같음)
-window.addEventListener('load', function () {
+document.addEventListener('DOMContentLoaded', function () { setTimeout(function () { /* 블록을 그린 직후 (load까지 기다리면 첫 화면이 한 번 보였다가 깜빡임) */
   if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion:reduce), (max-width:960px)').matches) return;
   var items = [];
   document.querySelectorAll('main > section.sec > .wrap, main > section.wcta').forEach(function (box) {
-    if (box.getBoundingClientRect().top < innerHeight) return; // 첫 화면은 진입 효과 그대로
+    if (box.getBoundingClientRect().top < innerHeight) { // 첫 화면: 진입 효과 그대로. ws.js가 나중에 그린 섹션(작동 방식 등)은 진입 효과가 빠져 있으므로 여기서 붙임
+      [].forEach.call(box.matches('.wcta') ? [box.querySelector('.wcta-in')] : box.children, function (el, i) { if (el && !el.hidden && !el.classList.contains('op-enter')) { el.classList.add('op-enter'); el.style.setProperty('--op-d', (0.3 + Math.min(i, 3) * 0.1) + 's'); } });
+      return;
+    }
     var kids = box.matches('.wcta') ? [box.querySelector('.wcta-in')] : [].slice.call(box.children);
     kids.forEach(function (el) { if (!el || el.hidden) return; /* 숨은 탭 패널은 제외 (탭을 바꿔도 바로 보이게) */ el.classList.remove('op-enter'); el.style.removeProperty('--op-d'); el.classList.add('rv'); items.push(el); });
   });
@@ -258,7 +261,7 @@ window.addEventListener('load', function () {
     es.forEach(function (e) { if (!e.isIntersecting) return; io.unobserve(e.target); e.target.classList.add('rv-in'); });
   }, { threshold: .12, rootMargin: '0px 0px -40px 0px' });
   items.forEach(function (el) { io.observe(el); });
-});
+}, 0); });
 
 // 작동 방식 되돌아가는 화살표 그리기 (2026-11-09): 화면에 들어오면 한 번 그려짐. 움직임 줄이기면 처음부터 다 보임
 window.addEventListener('load', function () {
