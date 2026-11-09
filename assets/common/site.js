@@ -360,17 +360,22 @@
           '<div class="op-user">' +
             '<button type="button" aria-haspopup="menu" aria-label="내 계정"><img src="' + ((OP.account(s.email) || {}).photo || A + 'user-icon.svg?v=2') + '" alt=""></button>' +
             '<div class="op-user-menu" role="menu">' +
-              // 프로필 (2026-10-21: 마이페이지 왼쪽 프로필 영역을 없애고 여기서 보여줌) — 사진·이름·이메일·소속·역할·인증 상태
+              // 프로필 메뉴 (2026-11-09 Figma gnb-user-menu 2553:20277): 프로필 카드(사진·이름·메일·역할 배지) → 상태 줄(메일 인증·파트너 인증) → 메뉴. 소속은 내 정보 관리에서
               (function () {
                 var acc = OP.account(s.email) || {}, e = function (t) { return String(t || '').replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
-                // 인증 배지: 사업자등록증 '인증완료' 배지와 같은 모양 (op-vchip lg, SealCheck 16)
-                var chip = !OP.mailVerified() && s.role !== 'admin' ? '<span class="op-vchip lg">메일 미인증</span>' : s.role === 'partner' ? (OP.partnerVerified() ? '<span class="op-vchip ok lg">인증완료</span>' : '<span class="op-vchip lg">인증 미완료</span>') : '';
-                var todo = !OP.mailVerified() && s.role !== 'admin' ? '<a class="who-todo" href="mypage-account.html#mail">메일 인증하기 ›</a>' : s.role === 'partner' && !OP.partnerVerified() ? '<a class="who-todo" href="mypage-verify.html">파트너 인증하기 ›</a>' : '';
-                return '<div class="who"><div class="who-top"><img src="' + e(acc.photo || A + 'user-icon.svg?v=2') + '" alt=""><div><b>' + e(acc.name || s.email.split('@')[0]) + ' 님</b><em>' + e(s.email) + '</em></div></div>' +
-                  (acc.org ? '<p class="who-org">' + e(acc.org) + '</p>' : '') +
-                  '<div class="who-chips"><span>' + (ROLE_LABEL[s.role] || '') + '</span>' + chip + '</div>' + todo + '</div>';
+                var ic = function (f) { return '<i class="um-ic" style="--i:url(' + new URL(A + f, location.href).href + ')"></i>'; }; // 절대 주소로 (CSS 변수 속 상대 주소는 site.css 기준으로 풀림)
+                var row = function (href, f, cls, t, bd, bc) { return '<a class="um-row ' + cls + '" href="' + href + '" role="menuitem">' + ic(f) + '<span>' + t + '</span><em class="um-bd ' + bc + '">' + bd + '</em></a>'; };
+                var st = (!OP.mailVerified() && s.role !== 'admin' ? row('mypage-account.html#mail', 'ic-envelope-fill.svg', 'off', '메일 인증', '인증하기 ›', 'gray') : '') +
+                  (s.role === 'partner' ? (OP.partnerVerified() ? row('mypage-verify.html', 'ic-seal-check-fill.svg', 'ok', '파트너 인증', '인증완료', 'blue') : row('mypage-verify.html', 'ic-seal-check-fill.svg', 'off', '파트너 인증', '인증하기 ›', 'gray')) : '');
+                return '<div class="um-card"><img src="' + e(acc.photo || A + 'user-icon.svg?v=2') + '" alt=""><div><b>' + e(acc.name || s.email.split('@')[0]) + ' 님</b><em>' + e(s.email) + '</em><span class="um-role">' + (ROLE_LABEL[s.role] || '') + '</span></div></div>' +
+                  (st ? '<div class="um-st">' + st + '</div>' : '') +
+                  '<div class="um-menu' + (st ? ' line' : '') + '">' +
+                    '<a href="mypage.html" role="menuitem">' + ic('ic-user-circle.svg') + '마이페이지</a>' +
+                    '<a href="mypage-account.html" role="menuitem">' + ic('ic-user-circle-gear.svg') + '내 정보 관리</a>' +
+                    '<button type="button" data-op-logout role="menuitem">' + ic('ic-sign-out.svg') + '로그아웃</button>' +
+                  '</div>';
               })() +
-              // 프로토타입 확인용: 로그아웃 없이 데모 계정으로 유형 전환
+              // 프로토타입 확인용 (실서비스에는 없음): 로그아웃 없이 데모 계정으로 유형 전환
               '<div class="op-switch"><p>화면 전환 (데모)</p><div>' +
                 [['client', '클라이언트'], ['partner', '분석파트너'], ['admin', '컨설턴트']].map(function (r) {
                   return '<button type="button" data-op-as="' + r[0] + '"' + (s.role === r[0] ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + r[1] + '</button>';
@@ -387,9 +392,6 @@
                   var on = OP.mailVerified() === !!v[0];
                   return '<button type="button" data-op-mail="' + v[0] + '"' + (on ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + v[1] + '</button>';
                 }).join('') + '</div>' : '') + '</div>' +
-              '<a href="mypage.html" role="menuitem">마이페이지</a>' +
-              '<a href="mypage-account.html" role="menuitem">내 정보 관리</a>' +
-              '<button type="button" data-op-logout role="menuitem">로그아웃</button>' +
             '</div>' +
           '</div>' +
           BURGER +

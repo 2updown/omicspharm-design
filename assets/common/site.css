@@ -309,3 +309,23 @@ div.op-phone.bad input, div.op-phone.bad select { border-color:var(--op-red-600)
 .op-file > img { flex:none; width:20px; height:20px; }
 .op-file > span { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .op-file input { display:none; }
+/* 2026-11-09 GNB 프로필 메뉴 (Figma gnb-user-menu 2553:20277): 이름·메일은 최대 2줄. 프로필 카드 → 상태 줄(메일 인증·파트너 인증, Fill 아이콘) → 메뉴(Outline 아이콘) */
+.op-user-menu { width:252px; min-width:0; padding:0; border:1px solid #e5e5e5; border-radius:12px; background:#fcfcfc; overflow:hidden; box-shadow:0 2px 5px rgba(0,0,0,.04), 0 10px 10px rgba(0,0,0,.04), 0 22px 13px rgba(0,0,0,.02), 0 39px 16px rgba(0,0,0,.01), inset 0 -1px 1.3px rgba(0,0,0,.2); }
+.op-user-menu .um-card { display:flex; align-items:center; gap:10px; margin:8px 8px 0; padding:12px 8px; border:1px solid #eee; border-radius:8px; background:#fff; }
+.op-user-menu .um-card img { flex:none; width:40px; height:40px; border-radius:50%; object-fit:cover; }
+.op-user-menu .um-card div { flex:1; min-width:0; }
+.op-user-menu .um-card b { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; word-break:keep-all; overflow-wrap:anywhere; font-size:16px; font-weight:700; line-height:22px; color:#171717; }
+.op-user-menu .um-card em { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; word-break:break-all; font-style:normal; font-size:14px; line-height:20px; color:#737373; }
+.op-user-menu .um-role { display:inline-block; margin-top:6px; padding:1px 7px; border:1px solid var(--op-teal-600); border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; color:var(--op-teal-600); }
+.op-user-menu .um-st { padding:8px; }
+.op-user-menu .um-menu { padding:14px 8px 8px; }
+.op-user-menu .um-menu.line { padding-top:14px; border-top:1px solid #f4f4f4; }
+.op-user-menu .um-st a, .op-user-menu .um-menu a, .op-user-menu .um-menu button { display:flex; align-items:center; gap:8px; width:100%; padding:8px; border-radius:6px; font-size:14px; font-weight:500; line-height:20px; color:#262626; text-align:left; }
+.op-user-menu .um-st a span { flex:1; }
+.op-user-menu .um-st a:hover, .op-user-menu .um-menu a:hover, .op-user-menu .um-menu button:hover { background:#f5f5f5; }
+.op-user-menu .um-ic { display:inline-block; flex:none; width:24px; height:24px; background:currentColor; -webkit-mask:var(--i) center/20px no-repeat; mask:var(--i) center/20px no-repeat; }
+.op-user-menu .um-st .off .um-ic { color:#a3a3a3; } .op-user-menu .um-st .ok .um-ic { color:#0065f4; }
+.op-user-menu .um-bd { flex:none; padding:2px 8px; border-radius:8px; font-style:normal; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; }
+.op-user-menu .um-bd.blue { background:#d7ebff; color:#0065f4; } .op-user-menu .um-bd.gray { background:#f5f5f5; color:#525252; }
+.op-user-menu .op-switch { margin:0; padding:12px 16px 14px; border-top:1px dashed #e5e5e5; border-bottom:0; background:#fafafa; } /* 프로토타입 확인용 */
+.op-user-menu .op-switch button { padding:6px 4px; font-size:12px; white-space:nowrap; } /* 메뉴 폭 252에서 한 줄 */
