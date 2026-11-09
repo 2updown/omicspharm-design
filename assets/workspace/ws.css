@@ -817,3 +817,40 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 @media (min-width:1200px) { .hw-steps li { padding:36px 28px; } }
 @media (min-width:1360px) { .hw-steps li { padding:36px 40px; } .hw-steps p { white-space:nowrap; } } /* Figma처럼 설명은 두 줄 (줄바꿈 위치 고정) */
 @media (max-width:760px) { .hw-steps .no { font-size:18px; line-height:24px; } .hw-steps p { margin-top:10px; } }
+/* 2026-11-09 보안 탭 2~4 오른쪽 그림 (Figma 2527:19542, 19664, 19811) */
+.pv-art { position:relative; width:100%; max-width:440px; min-height:440px; margin:0 auto; display:flex; flex-direction:column; justify-content:center; gap:16px; }
+.pv-art.pa-flow { gap:0; align-items:center; }
+.pa-ring { position:absolute; left:50%; top:50%; width:405px; height:370px; max-width:92%; translate:-50% -50%; border:1.5px dashed #00bba6; border-radius:50%; }
+.pa-card { position:relative; width:100%; padding:20px; border:1px solid #e5e5e5; border-radius:16px; background:#fff; box-shadow:0 12px 32px rgba(0,79,74,.08); }
+.pa-hd { display:flex; align-items:center; gap:8px; font-size:16px; font-weight:700; line-height:22px; color:#000; }
+.pa-hd .ico { width:20px; height:20px; color:var(--teal-600); }
+.pa-mem { margin-top:14px; } .pa-mem li { display:flex; align-items:center; gap:12px; padding:10px 0; } .pa-mem li + li { border-top:1px solid #f0f0f0; }
+.pa-av { width:32px; height:32px; flex:none; }
+.pa-nm { flex:1; min-width:0; font-size:16px; line-height:22px; color:#262626; } .pa-nm small { display:block; font-size:14px; line-height:20px; color:#737373; }
+.pa-mem li.dim .pa-nm, .pa-mem li.dim small { color:#a3a3a3; }
+.pa-bd { flex:none; padding:1px 7px; border:1px solid #009788; border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; color:#009788; white-space:nowrap; }
+.pa-bd.fill { background:#009788; color:#fff; } .pa-bd.gray { border-color:#525252; color:#525252; }
+.pa-pill { position:relative; align-self:flex-end; display:inline-flex; align-items:center; gap:6px; padding:9px 17px; border:1.5px solid #00bba6; border-radius:99px; background:#fff; box-shadow:0 8px 20px rgba(0,79,74,.10); font-size:16px; font-weight:700; line-height:22px; color:#00786e; }
+.pa-pill .ico { width:18px; height:18px; }
+.pa-chk { margin-top:14px; } .pa-chk li { display:flex; align-items:center; gap:8px; padding:8px 0; font-size:16px; line-height:22px; color:#262626; }
+.pa-chk .ico { width:18px; height:18px; color:var(--teal-600); } .pa-chk li.no { color:#a3a3a3; } .pa-chk li.no .ico { color:#a3a3a3; }
+.pa-gate { position:relative; display:flex; flex-direction:column; align-items:center; }
+.pa-gate .ln { width:2px; height:20px; background:#00bba6; opacity:.6; }
+.pa-gate .g { display:grid; place-items:center; width:56px; height:56px; border-radius:50%; background:#009788; color:#fff; box-shadow:0 0 0 8px rgba(0,151,136,.12); }
+.pa-gate .g .ico { width:26px; height:26px; }
+.pa-gate .lb { position:absolute; left:72px; top:38px; font-size:14px; font-weight:500; line-height:20px; color:#00786e; white-space:nowrap; }
+.pa-out { display:flex; align-items:center; gap:12px; font-size:14px; line-height:20px; color:#525252; }
+.pa-out .ic { display:grid; place-items:center; width:40px; height:40px; color:var(--teal-600); } .pa-out .ic .ico { width:22px; height:22px; }
+.pa-out b { display:block; font-size:16px; line-height:22px; color:#171717; }
+.pa-ans { margin-top:14px; font-size:16px; line-height:22px; color:#404040; }
+.pa-cite { display:inline-flex; align-items:center; gap:6px; height:24px; margin-top:14px; padding:0 8px; border-radius:8px; background:#f8f8f8; font-size:14px; font-weight:500; line-height:20px; color:#525252; }
+.pa-cite .ext { display:grid; place-items:center; width:24px; height:16px; border-radius:4px; background:#ff8187; box-shadow:0 0 0 2px #fff; font-size:7.3px; font-style:normal; font-weight:700; line-height:1; color:#fff; }
+.pa-log { position:relative; margin-top:14px; } .pa-log::before { content:""; position:absolute; left:3px; top:16px; bottom:16px; width:2px; background:#e5e5e5; }
+.pa-log li { position:relative; display:flex; align-items:center; gap:12px; padding:6px 0 6px 20px; font-size:14px; line-height:20px; color:#404040; }
+.pa-log li::before { content:""; position:absolute; left:0; top:12px; width:8px; height:8px; border-radius:50%; background:#00bba6; }
+.pa-log time { width:42px; flex:none; color:#737373; }
+@media (max-width:760px) {
+  .pv-art { min-height:0; max-width:360px; gap:12px; } .pa-ring { display:none; }
+  .pa-card { padding:16px; } .pa-nm { font-size:15px; } .pa-nm small { font-size:13px; } .pa-pill { padding:7px 12px; font-size:13px; }
+  .pa-chk li, .pa-ans { font-size:15px; } .pa-gate .lb { font-size:13px; left:68px; }
+}

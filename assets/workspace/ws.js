@@ -35,6 +35,21 @@ if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentE
         ['외부 전송 통제', 'lock-key', '외부로 나가는 정보를 통제합니다', '외부 AI에 전달할 데이터와 모델 학습 활용 여부를 기관과 미리 정하고 계약에 반영합니다.', ['외부 AI에 전달할 데이터 범위 사전 협의', '모델 학습 활용 여부를 계약에 반영', '기관 내부 구축(On-Premises) 선택 가능'], ['전달 범위 제한', '학습 활용 협의', 'On-Premises']],
         ['근거와 기록', 'file-text', '근거와 기록이 남는 AI', 'AI가 참고한 자료와 연구자의 검토, 데이터 접근 기록을 확인할 수 있습니다.', ['AI가 참고한 자료와 출처 확인', '연구자의 검토 이력 기록', '데이터 접근 기록 확인'], ['참고 출처', '검토 이력', '접근 기록']]
       ];
+      /* 2026-11-09 탭 2~4 오른쪽 그림 (Figma 2527:19542~): 구성원 권한 카드 / 전송 범위 흐름 / AI 답변 출처 + 활동 기록. 1번 탭은 궤도 그림 유지 */
+      var BD = function (t, c) { return '<span class="pa-bd ' + c + '">' + t + '</span>'; };
+      var ROW = function (n, s, b, dim) { return '<li' + (dim ? ' class="dim"' : '') + '><img class="pa-av" src="assets/workspace/user-icon.svg" alt=""><span class="pa-nm">' + n + '<small>' + s + '</small></span>' + b + '</li>'; };
+      var ART = [null,
+        '<div class="pv-art" aria-hidden="true"><i class="pa-ring"></i><div class="pa-card"><b class="pa-hd">단백체 분석 프로젝트 구성원</b><ul class="pa-mem">' +
+          ROW('연구책임자', '구성원 관리', BD('관리', 'fill')) + ROW('연구원', '프로젝트 참여', BD('조회', '')) + ROW('협력 연구원', '결과 열람', BD('조회', '')) + ROW('다른 팀 구성원', '권한 없음', BD('접근 불가', 'gray'), 1) +
+          '</ul></div><span class="pa-pill">' + I('buildings') + '기관 계정 연동</span></div>',
+        '<div class="pv-art pa-flow" aria-hidden="true"><div class="pa-card"><b class="pa-hd">' + I('database') + '연구 데이터</b><ul class="pa-chk">' +
+          '<li>' + I('check') + '분석 결과 요약</li><li>' + I('check') + '실험 조건</li><li class="no">' + I('x') + '환자 식별 정보</li><li class="no">' + I('x') + '원본 Raw data</li></ul></div>' +
+          '<div class="pa-gate"><i class="ln"></i><span class="g">' + I('lock-key') + '</span><i class="ln"></i><span class="lb">기관이 정한 범위만 전달</span></div>' +
+          '<div class="pa-card"><div class="pa-out"><span class="ic">' + I('robot') + '</span><span><b>외부 AI</b>모델 학습 활용은 계약에서 협의</span></div></div></div>',
+        '<div class="pv-art" aria-hidden="true"><i class="pa-ring"></i><div class="pa-card"><b class="pa-hd">' + I('sparkle') + 'AI 답변</b><p class="pa-ans">시료 B의 단백질 발현량이 대조군보다 약 2배 높습니다.</p>' +
+          '<span class="pa-cite"><i class="ext">PDF</i>출처 [A]</span></div>' +
+          '<div class="pa-card"><b class="pa-hd">' + I('shield-check') + '활동 기록</b><ul class="pa-log"><li><time>11:02</time>연구책임자 답변 검토 완료</li><li><time>10:48</time>AI 답변 생성, 출처 2건</li><li><time>10:45</time>연구원 분석 보고서 열람</li></ul></div></div>'
+      ];
       return '<section class="sec pale sec2" id="security"><div class="wrap">' +
         '<div class="sec-head center"><span class="eyebrow">보안</span>' +
         '<h2 class="ttl">우리 팀 전용 공간에서, <br><span class="green">연구 데이터를 안전하게 지킵니다.</span></h2>' +
@@ -43,8 +58,9 @@ if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentE
         P.map(function (p, i) {
           return '<div class="pv-panel" data-pvp="' + i + '"' + (i ? ' hidden' : '') + '><div class="pv-txt"><h3>' + p[2] + '</h3><p>' + p[3] + '</p>' +
             '<ul class="pv-list">' + p[4].map(function (t) { return '<li>' + I('check') + t + '</li>'; }).join('') + '</ul></div>' +
+            (ART[i] ||
             '<div class="orbit" aria-hidden="true"><i class="ring r1"></i><i class="ring r2"></i><i class="ring r3"></i><div class="core">' + I('shield-check') + '</div>' +
-            p[5].map(function (t, k) { return '<span class="op o' + (k + 1) + '">' + t + '</span>'; }).join('') + '</div></div>';
+            p[5].map(function (t, k) { return '<span class="op o' + (k + 1) + '">' + t + '</span>'; }).join('') + '</div>') + '</div>';
         }).join('') +
         '</div></section>';
     },
