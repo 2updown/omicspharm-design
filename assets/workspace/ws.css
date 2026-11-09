@@ -695,3 +695,42 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 /* 섹션 배경 순서 (Figma): 개요 옅은 초록 → 작동 방식 흰색 → 보안 옅은 초록 → 적용 분야 흰색 */
 #why.ov3, #security.sec2 { background:#f6faf9; } #growth.hw, #sectors.fld { background:#fff; }
 @media (min-width:1200px) { .hw-steps p { white-space:nowrap; } .fld-desc { letter-spacing:-.3px; } }
+
+/* 2026-11-09 개요 아이콘: 배경 칸 없이 색 있는 아이콘 40 (파랑·노랑·초록, Figma 처음 넣은 색) */
+.ov3-ic { width:40px; height:40px; border-radius:0; background:none; }
+.ov3-ic .ico { width:40px; height:40px; }
+.ov3-ic.c1 .ico { color:#008eff; } .ov3-ic.c2 .ico { color:#fabb18; } .ov3-ic.c3 .ico { color:#45c646; }
+
+/* 2026-11-09 운영 지원 시안: 옅은 초록 배경, 가운데 제목 → 지원 3가지(흰 카드) → 구축 환경 2칸 → 도입 절차 4단계(작동 방식과 같은 칸 모양) */
+#managed.ops2 { padding-top:60px; padding-bottom:60px; background:#f6faf9; }
+.ops2 .sec-head.center { margin-bottom:60px; }
+.ops2 .sec-head p { font-size:18px; font-weight:500; line-height:24px; color:#404040; max-width:none; }
+.ops2-sv { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.ops2-sv article { padding:32px; border:1px solid #e5e5e5; border-radius:12px; background:#fff; }
+.ops2-sv .k { display:inline-flex; height:28px; align-items:center; padding:0 10px; border-radius:6px; background:#e3f4f1; font-size:14px; font-weight:600; color:var(--teal-700); }
+.ops2-sv h3 { margin-top:16px; font-size:24px; font-weight:700; line-height:32px; color:#000; }
+.ops2-sv ul { display:grid; gap:12px; margin-top:24px; }
+.ops2-sv li { display:flex; align-items:center; gap:10px; font-size:16px; line-height:22px; color:#404040; }
+.ops2-sv li .ico { width:20px; height:20px; color:var(--teal-600); }
+.ops2-sub { font-size:24px; font-weight:700; line-height:32px; color:#000; }
+.ops2-sub.center { margin:72px 0 32px; text-align:center; }
+.ops2-env { margin-top:60px; }
+.ops2-env-row { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:20px; }
+.ops2-env article { display:flex; gap:20px; padding:28px 32px; border:1px solid #e5e5e5; border-radius:12px; background:#fff; }
+.ops2-ic { display:grid; place-items:center; flex:none; width:48px; height:48px; border-radius:14px; background:#e3f4f1; } .ops2-ic .ico { width:26px; height:26px; color:var(--teal-600); }
+.ops2-env b { font-size:20px; font-weight:600; line-height:28px; color:#000; }
+.ops2-env small { margin-left:8px; font-size:14px; font-weight:500; color:var(--teal-600); }
+.ops2-env p { margin-top:8px; font-size:16px; line-height:24px; color:#525252; word-break:keep-all; }
+.ops2-steps { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; list-style:none; }
+.ops2-steps li { display:flex; flex-direction:column; padding:32px; border-top:1px solid #d4d4d4; border-bottom:1px solid #d4d4d4; }
+.ops2-steps .no { font-size:28px; font-weight:700; line-height:36px; color:var(--teal-600); }
+.ops2-steps b { margin-top:4px; font-size:20px; font-weight:700; line-height:28px; color:#000; word-break:keep-all; }
+.ops2-steps p { margin-top:16px; font-size:16px; font-weight:500; line-height:22px; color:#525252; word-break:keep-all; }
+@media (max-width:1079px) { .ops2-sv, .ops2-env-row { grid-template-columns:1fr; } .ops2-steps { grid-template-columns:1fr 1fr; } }
+@media (max-width:760px) {
+  #managed.ops2 { padding-top:56px; padding-bottom:56px; } .ops2 .sec-head.center { margin-bottom:36px; } .ops2 .sec-head p { font-size:16px; } .ops2 .sec-head p br { display:none; }
+  .ops2-sv article { padding:24px; } .ops2-sv h3 { font-size:20px; line-height:28px; }
+  .ops2-env { margin-top:40px; } .ops2-env article { padding:20px; gap:14px; } .ops2-env small { display:block; margin:2px 0 0; }
+  .ops2-sub { font-size:20px; line-height:28px; } .ops2-sub.center { margin:48px 0 20px; }
+  .ops2-steps { grid-template-columns:1fr; gap:0; } .ops2-steps li { padding:20px 4px; border-top:0; } .ops2-steps li:first-child { border-top:1px solid #d4d4d4; } .ops2-steps p br { display:none; }
+}
