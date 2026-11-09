@@ -797,3 +797,5 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .rv-on main > section.sec > .wrap > .hw-loop:not(.rv):not([hidden]) { opacity:1; } /* 화살표·문장은 숨기지 않음 */
 /* 2026-11-09 모바일 섹션 제목: PC 줄바꿈 위치(쉼표 뒤)를 그대로 살리고, 긴 줄은 어절 단위로 고르게 나눔 (중간에 '연구 / 데이터를'처럼 끊기던 문제) */
 @media (max-width:760px) { h2.ttl { font-size:26px; line-height:36px; text-wrap:balance; word-break:keep-all; } h2.ttl br { display:inline; } }
+.ov3-grid h3 { font-size:24px; line-height:32px; } /* Figma: 개요 카드 제목 Heading/Large/B 24/32 */
+@media (max-width:760px) { .ov3-grid h3 { font-size:20px; line-height:28px; } }
