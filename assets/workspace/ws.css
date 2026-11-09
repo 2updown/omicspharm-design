@@ -773,3 +773,6 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .ws-hero2 .h2-tiles { animation:none !important; }
 #why.ov3 .sec-head.center { margin-bottom:60px; } /* Figma: 개요 제목 묶음과 3열 사이 60 */
 #why.ov3 .sec-head.center { margin-bottom:80px; } /* Figma: 개요 제목 묶음과 3열 사이 80 */
+/* 2026-11-09 Figma: 개요 제목과 3열 사이 다시 60, 설명은 두 문단(문단 사이 한 줄) */
+#why.ov3 .sec-head.center { margin-bottom:60px; }
+.ov3-grid p + p { margin-top:-2px; } /* 글 묶음 간격 24 → 문단 사이 22 (한 줄) */

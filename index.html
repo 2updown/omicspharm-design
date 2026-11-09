@@ -715,8 +715,9 @@
     });
   });
   // 화면 아래 10% 지점을 지나면 등장 (스크롤 위치로 계산)
+  var firstReveal = true; // 페이지를 열 때는 화면에 보이는 곳까지 함께 (큰 화면에서 아래 섹션이 빈 채로 보이지 않게, 2026-11-09 워크스페이스·이용방법·분석 서비스 안내와 같음)
   function reveal() {
-    var line = window.innerHeight * 0.9;
+    var line = window.innerHeight * (firstReveal ? 1 : 0.9); firstReveal = false;
     els = els.filter(function (el) {
       if (el.getBoundingClientRect().top < line) { el.classList.add('in'); return false; }
       return true;
