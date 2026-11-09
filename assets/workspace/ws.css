@@ -854,3 +854,29 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
   .pa-card { padding:16px; } .pa-nm { font-size:15px; } .pa-nm small { font-size:13px; } .pa-pill { padding:7px 12px; font-size:13px; }
   .pa-chk li, .pa-ans { font-size:15px; } .pa-gate .lb { font-size:13px; left:68px; }
 }
+/* 2026-11-09 보안 탭 왼쪽 글 (Figma): 제목-설명 8, 설명 20/28 SemiBold #404040, 목록 #262626, 글-목록 36 */
+.sec2 .pv-txt > p { margin-top:8px; font-size:20px; font-weight:600; line-height:28px; color:#404040; }
+.sec2 .pv-txt h3 { color:#000; }
+.sec2 .pv-list { margin-top:36px; } .sec2 .pv-list li { color:#262626; }
+@media (max-width:760px) { .sec2 .pv-txt > p { font-size:16px; line-height:24px; } .sec2 .pv-list { margin-top:24px; } }
+/* 보안 탭 2~4 그림 움직임: 탭을 열 때마다 카드 속 줄이 차례로 나타나고, 전송 흐름은 점이 자물쇠를 지나 내려가며, 최근 기록 점이 깜빡임 */
+@keyframes paIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+@keyframes paPop { 0% { opacity:0; transform:scale(.6); } 70% { transform:scale(1.08); } 100% { opacity:1; transform:none; } }
+@keyframes paDrop { 0% { top:-6px; opacity:0; } 20% { opacity:1; } 80% { opacity:1; } 100% { top:calc(100% - 2px); opacity:0; } }
+@keyframes paPulse { 0% { box-shadow:0 0 0 0 rgba(0,187,166,.45); } 100% { box-shadow:0 0 0 8px rgba(0,187,166,0); } }
+@keyframes paGate { 0%,100% { box-shadow:0 0 0 8px rgba(0,151,136,.12); } 50% { box-shadow:0 0 0 14px rgba(0,151,136,.06); } }
+@media (prefers-reduced-motion:no-preference) {
+  .pv-art .pa-card, .pa-mem li, .pa-chk li, .pa-log li, .pa-ans, .pa-out { animation:paIn .5s cubic-bezier(.2,.7,.2,1) both; }
+  .pv-art .pa-card + .pa-card, .pa-gate + .pa-card { animation-delay:.25s; }
+  .pa-mem li:nth-child(1), .pa-chk li:nth-child(1) { animation-delay:.15s; } .pa-mem li:nth-child(2), .pa-chk li:nth-child(2) { animation-delay:.25s; }
+  .pa-mem li:nth-child(3), .pa-chk li:nth-child(3) { animation-delay:.35s; } .pa-mem li:nth-child(4), .pa-chk li:nth-child(4) { animation-delay:.45s; }
+  .pa-bd, .pa-pill, .pa-cite { animation:paPop .45s cubic-bezier(.2,.7,.2,1) both; }
+  .pa-mem li:nth-child(1) .pa-bd { animation-delay:.35s; } .pa-mem li:nth-child(2) .pa-bd { animation-delay:.45s; } .pa-mem li:nth-child(3) .pa-bd { animation-delay:.55s; } .pa-mem li:nth-child(4) .pa-bd { animation-delay:.65s; }
+  .pa-pill { animation-delay:.8s; } .pa-ans { animation-delay:.15s; } .pa-cite { animation-delay:.4s; }
+  .pa-log li:nth-child(1) { animation-delay:.9s; } .pa-log li:nth-child(2) { animation-delay:.7s; } .pa-log li:nth-child(3) { animation-delay:.5s; }
+  .pa-log li:nth-child(1)::before { animation:paPulse 1.6s ease-out 1.4s infinite; }
+  .pa-gate .ln { position:relative; overflow:visible; } .pa-gate .ln::after { content:""; position:absolute; left:50%; width:6px; height:6px; margin-left:-3px; border-radius:50%; background:#00bba6; animation:paDrop 2.4s ease-in-out infinite; }
+  .pa-gate .ln + .g + .ln::after { animation-delay:1.2s; }
+  .pa-gate .g { animation:paGate 2.4s ease-in-out infinite; }
+}
+@media (min-width:1200px) { .sec2 .pv-panel { grid-template-columns:minmax(0,1fr) 440px; } } /* Figma: 글 영역 남는 폭 전부, 그림 440 */
