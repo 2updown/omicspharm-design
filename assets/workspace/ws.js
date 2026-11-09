@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(function 
   var items = [];
   document.querySelectorAll('main > section.ws-hero2, main > section.sec > .wrap, main > section.wcta').forEach(function (box) {
     var kids = box.matches('.wcta') ? [box.querySelector('.wcta-in')] : box.matches('.ws-hero2') ? [box.querySelector('.h2-in'), box.querySelector('.h2-tiles')] : [].slice.call(box.children);
-    kids.forEach(function (el, i) { if (!el || el.hidden) return; /* 숨은 탭 패널 제외 */ el.classList.remove('op-enter'); el.style.removeProperty('--op-d'); el.setAttribute('data-op-skip-enter', ''); el.classList.add('rv', 'rv-0'); el.style.setProperty('--d', Math.min(i, 2) * 0.12 + 's'); items.push(el); });
+    kids.forEach(function (el, i) { if (!el || el.hidden || el.matches('.hw-loop')) return; /* 작동 방식 화살표·문장은 떠오르는 효과 없음 */ /* 숨은 탭 패널 제외 */ el.classList.remove('op-enter'); el.style.removeProperty('--op-d'); el.setAttribute('data-op-skip-enter', ''); el.classList.add('rv', 'rv-0'); el.style.setProperty('--d', Math.min(i, 2) * 0.12 + 's'); items.push(el); });
   });
   var ready = false; /* 숨긴 상태가 먼저 그려진 뒤에만 켬 (load·scroll이 먼저 오면 움직임 없이 바로 보이는 문제) */
   function reveal() { if (!ready) return; var lim = innerHeight * 0.9; /* 메인과 같게: 열 때도 스크롤할 때도 화면 90% 지점 */ items.forEach(function (el) { if (!el.classList.contains('rv-in') && el.getBoundingClientRect().top < lim) el.classList.add('rv-in'); }); }
@@ -261,11 +261,17 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(function 
   requestAnimationFrame(function () { requestAnimationFrame(function () { items.forEach(function (el) { el.classList.remove('rv-0'); }); void document.body.offsetHeight; ready = true; reveal(); }); }); /* 처음부터 보이는 섹션도 숨긴 상태를 한 번 그린 뒤 떠오르게 (같은 순간에 켜면 움직임이 안 보임) */
 }, 0); });
 
-// 작동 방식 되돌아가는 화살표 그리기 (2026-11-09): 화면에 들어오면 한 번 그려짐. 움직임 줄이기면 처음부터 다 보임
-window.addEventListener('load', function () {
-  var lp = document.querySelector('.hw-loop');
-  if (!lp || !('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  lp.classList.add('draw-ready');
-  var io = new IntersectionObserver(function (es) { if (!es[0].isIntersecting) return; io.disconnect(); lp.classList.add('drawn'); }, { threshold: 1 });
-  io.observe(lp);
-});
+// 작동 방식 되돌아가는 화살표 (2026-11-09, 메인 Service 화살표와 같은 반복): 04 쪽에서 선이 그려지고(0~25%) 화살촉(25~37.5%),
+// 잠시 머문 뒤(~80%) 사라지기를 2초마다 반복. 화면에 보일 때만 돌고, 움직임 줄이기면 그려진 채로 멈춤. 선은 칸 너비에 맞춰 SVG로 그림
+document.addEventListener('DOMContentLoaded', function () { setTimeout(function () {
+  var lp = document.querySelector('.hw-loop'), box = lp && lp.querySelector('.hw-arrow'); if (!box) return;
+  function draw() {
+    var W = Math.round(box.offsetWidth), H = 40, r = 12;
+    box.innerHTML = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true">' +
+      '<path class="l" pathLength="1" d="M' + (W - 1) + ' 0V' + (H - 1 - r) + 'Q' + (W - 1) + ' ' + (H - 1) + ' ' + (W - 1 - r) + ' ' + (H - 1) + 'H' + (1 + r) + 'Q1 ' + (H - 1) + ' 1 ' + (H - 1 - r) + 'V1"/>' +
+      '<path class="h" pathLength="1" d="M-5 7L1 1L7 7"/></svg>';
+  }
+  draw(); window.addEventListener('resize', draw);
+  if (!('IntersectionObserver' in window)) { lp.classList.add('in'); return; }
+  new IntersectionObserver(function (es) { lp.classList.toggle('in', es[0].isIntersecting); }).observe(lp);
+}, 0); });

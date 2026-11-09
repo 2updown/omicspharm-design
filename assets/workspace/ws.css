@@ -784,3 +784,16 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
   .hw-steps .no { font-size:24px; line-height:32px; } .hw-steps b { margin-top:2px; font-size:17px; line-height:24px; } .hw-steps p { margin-top:10px; font-size:14px; line-height:20px; letter-spacing:0; white-space:normal; }
 }
 @media (max-width:1079px) { .hw-loop { display:block; margin:0; padding-top:24px; } .hw-arrow { display:none; } .hw-loop p::before { content:"↻ "; } } /* 태블릿에서도 화살표 대신 한 줄 설명 표시 */
+/* 2026-11-09 작동 방식 화살표: CSS 테두리 대신 SVG, 메인 Service 화살표(svDrawL/H)와 같은 2초 반복 */
+.hw-arrow { border:0; border-radius:0; } .hw-arrow::before { display:none; }
+.hw-arrow svg { display:block; overflow:visible; }
+.hw-arrow path { fill:none; stroke:var(--teal-600); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:1 1; stroke-dashoffset:1; opacity:0; }
+.hw-arrow .l { stroke-linecap:butt; }
+.hw-loop.in .hw-arrow .l { animation:svDrawL 2s linear .3s infinite; }
+.hw-loop.in .hw-arrow .h { animation:svDrawH 2s linear .3s infinite; }
+@keyframes svDrawL { 0% { stroke-dashoffset:1; opacity:1; animation-timing-function:cubic-bezier(.4,0,.2,1); } 25%,80% { stroke-dashoffset:0; opacity:1; } 95%,100% { stroke-dashoffset:0; opacity:0; } }
+@keyframes svDrawH { 0%,25% { stroke-dashoffset:1; opacity:1; animation-timing-function:ease-out; } 37.5%,80% { stroke-dashoffset:0; opacity:1; } 95%,100% { stroke-dashoffset:0; opacity:0; } }
+@media (prefers-reduced-motion:reduce) { .hw-arrow path { animation:none !important; opacity:1; stroke-dashoffset:0; } }
+.rv-on main > section.sec > .wrap > .hw-loop:not(.rv):not([hidden]) { opacity:1; } /* 화살표·문장은 숨기지 않음 */
+/* 2026-11-09 모바일 섹션 제목: PC 줄바꿈 위치(쉼표 뒤)를 그대로 살리고, 긴 줄은 어절 단위로 고르게 나눔 (중간에 '연구 / 데이터를'처럼 끊기던 문제) */
+@media (max-width:760px) { h2.ttl { font-size:26px; line-height:36px; text-wrap:balance; word-break:keep-all; } h2.ttl br { display:inline; } }
