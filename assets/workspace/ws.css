@@ -735,3 +735,14 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
   .ops2-steps { grid-template-columns:1fr; gap:0; } .ops2-steps li { padding:20px 4px; border-top:0; } .ops2-steps li:first-child { border-top:1px solid #d4d4d4; } .ops2-steps p br { display:none; }
 }
 .ops2 .sub-h.center { margin:72px 0 40px; }
+
+/* 2026-11-09 Figma 수정: 작동 방식 단계 칸을 테두리 상자로 (r12, 01은 회색 #d4d4d4, 반복되는 02~04는 teal) */
+.hw-steps li { border:1px solid #d4d4d4; border-radius:12px; background:#fff; }
+.hw-steps li + li { border-color:var(--teal-600); }
+/* 되돌아가는 화살표: 화살촉 가운데를 세로선(2px) 가운데에 맞춤 */
+.hw-arrow::before { left:-5px; top:-5px; width:12px; height:12px; border:0; transform:none; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M1 7l5-5 5 5' fill='none' stroke='%23009788' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat; }
+@media (max-width:760px) { .hw-steps { gap:12px; } .hw-steps li, .hw-steps li:first-child { padding:24px; border-top:1px solid; border-color:#d4d4d4; } .hw-steps li + li { border-color:var(--teal-600); } }
+.hw-steps { grid-template-columns:repeat(4,minmax(0,1fr)); }
+@media (min-width:1200px) { .hw-steps p { white-space:normal; } .hw-steps li { padding:40px 32px; } }
+.hw-loop { padding-top:56px; } .hw-arrow { top:8px; }
+@media (min-width:1200px) { .hw-steps li { padding:40px 28px; } .hw-steps p { letter-spacing:-.2px; } }
