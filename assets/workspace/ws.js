@@ -75,7 +75,7 @@ if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentE
         '<div class="sec-head center"><div><span class="eyebrow">운영 지원</span><h2 class="ttl">AI 전담팀이 없어도, <br>전문가와 함께 운영하세요.</h2></div>' +
         '<p>OmicsPharm의 바이오·헬스케어 전문 AI 팀이 AI Agent를 구축하고 운영합니다. <br>새 데이터와 연구자의 검토를 반영해 AI를 계속 고도화합니다.</p></div>' +
         '<div class="ops2-sv">' + SV.map(function (x) { return '<article><span class="k">' + x[0] + '</span><h3>' + x[1] + '</h3><ul>' + x[2].map(function (t) { return '<li>' + I('check') + t + '</li>'; }).join('') + '</ul></article>'; }).join('') + '</div>' +
-        '<h3 class="sub-h center">도입은 이렇게 진행됩니다.</h3>' +
+        '<h3 class="sub-h center">도입 프로세스</h3>' +
         '<div class="steps">' + /* 이전 디자인 그대로: 점선 위 번호 원 + 가운데 글, 화면에 들어오면 순서대로 켜짐 */
           '<div><i class="sn">01</i><b>연구·데이터 진단</b><p>연구 목적, 적용 연구, 보안 요구사항 확인</p></div>' +
           '<div><i class="sn">02</i><b>시범 적용·활용 평가</b><p>대표 연구에서 정확성과 활용 가능성 검토</p></div>' +

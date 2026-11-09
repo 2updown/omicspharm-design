@@ -880,3 +880,12 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
   .pa-gate .g { animation:paGate 2.4s ease-in-out infinite; }
 }
 @media (min-width:1200px) { .sec2 .pv-panel { grid-template-columns:minmax(0,1fr) 440px; } } /* Figma: 글 영역 남는 폭 전부, 그림 440 */
+/* 2026-11-09 운영 지원 (Figma 2420:19303): 카드 태그 Medium, 태그-제목 12, 제목 SemiBold, 제목-목록 16 / 도입 프로세스 제목 32/42, 아래 40 / 단계 글 18 SemiBold·16 */
+.ops2-sv .k { font-weight:500; color:#00756a; }
+.ops2-sv h3 { margin-top:12px; font-weight:600; }
+.ops2-sv ul { margin-top:16px; }
+.ops2 .sub-h.center { margin:60px 0 40px; font-size:32px; line-height:42px; color:#000; }
+.ops2 .steps .sn { margin-bottom:24px; font-size:18px; font-weight:600; }
+.ops2 .steps b { margin-top:0; font-size:18px; font-weight:600; line-height:24px; color:#000; }
+.ops2 .steps p { margin-top:8px; font-size:16px; line-height:22px; color:#525252; }
+@media (max-width:760px) { .ops2 .sub-h.center { margin:48px 0 24px; font-size:24px; line-height:32px; } .ops2 .steps .sn { margin:0; font-size:15px; } .ops2 .steps b { font-size:17px; } .ops2 .steps p { font-size:15px; } }
