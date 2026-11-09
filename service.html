@@ -385,16 +385,17 @@
     bar.addEventListener('click', function (e) { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
   })();
   // 등장 효과 준비 (2026-11-09): 숨긴 상태를 먼저 그린 뒤(2프레임) 움직임을 켬 → 처음부터 보이던 내용이 사라졌다 다시 뜨는 깜빡임 없음
-  function rvReady(fn) { requestAnimationFrame(function () { requestAnimationFrame(function () { document.documentElement.classList.add('rv-ready'); void document.body.offsetHeight; fn(); }); }); }
+  function rvReady(fn) { requestAnimationFrame(function () { requestAnimationFrame(function () { document.documentElement.classList.add('rv-ready'); void document.body.offsetHeight; rvLine = 1; fn(); rvLine = 0.9; }); }); }
+  var rvLine = 0.9; /* 페이지를 열 때는 화면에 보이는 곳까지(1), 스크롤할 때는 90% 지점 */
   // 시료 안내 타일: 화면에 들어오면 텍스트가 차례로 떠오름 (스크롤 위치로 판단)
   var tiles = [].slice.call(document.querySelectorAll('.stile'));
-  function revealTiles() { if (!document.documentElement.classList.contains('rv-ready')) return; tiles.forEach(function (t) { if (!t.classList.contains('in') && t.getBoundingClientRect().top < innerHeight * 0.9) t.classList.add('in'); }); }
+  function revealTiles() { if (!document.documentElement.classList.contains('rv-ready')) return; tiles.forEach(function (t) { if (!t.classList.contains('in') && t.getBoundingClientRect().top < innerHeight * rvLine) t.classList.add('in'); }); }
   window.addEventListener('scroll', revealTiles, { passive: true }); window.addEventListener('resize', revealTiles);
   // 분석 서비스·시료 제목: 화면에 들어오면 차례로 떠오름. 서비스 내용(패널)은 탭으로 바뀌므로 한 번 보이면 전체 패널을 함께 표시
   var svh = document.querySelector('#service > h2'), bar = document.querySelector('.svc-bar'), panels = [].slice.call(document.querySelectorAll('.panel')), smh = document.querySelector('#samples > h2');
   [[document.querySelector('.page-head h1'), 0], [document.querySelector('#overview .r1'), .12], [document.querySelector('#overview .r2'), .24], [svh, 0], [bar, .12]].concat(panels.map(function (p) { return [p, .24]; })).concat([[smh, 0]]).forEach(function (x) { x[0].classList.add('sv-rv'); x[0].setAttribute('data-op-skip-enter', ''); x[0].style.setProperty('--d', x[1] + 's'); });
   function revealSv() { if (!document.documentElement.classList.contains('rv-ready')) return;
-    var lim = innerHeight * 0.9;
+    var lim = innerHeight * rvLine;
     [document.querySelector('.page-head h1'), document.querySelector('#overview .r1'), document.querySelector('#overview .r2'), svh, bar, smh].forEach(function (el) { if (!el.classList.contains('shown') && el.getBoundingClientRect().top < lim) el.classList.add('shown'); });
     var cur = panels.filter(function (p) { return !p.hidden; })[0];
     if (cur && !cur.classList.contains('shown') && cur.getBoundingClientRect().top < lim) panels.forEach(function (p) { p.classList.add('shown'); });

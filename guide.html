@@ -278,19 +278,20 @@
     return '<div class="tip" style="--d:' + (i * 0.12) + 's"><div class="art"><img src="assets/guide/tip-' + t[0] + '.svg" alt="" loading="lazy"></div><div class="tx"><h3><em>TIP ' + (i + 1) + '.</em>' + t[1] + '</h3><p>' + t[2] + '</p></div></div>';
   }).join('');
   // 등장 효과 준비 (2026-11-09): 숨긴 상태를 먼저 그린 뒤(2프레임) 움직임을 켬 → 처음부터 보이던 내용이 사라졌다 다시 뜨는 깜빡임 없음
-  function rvReady(fn) { requestAnimationFrame(function () { requestAnimationFrame(function () { document.documentElement.classList.add('rv-ready'); void document.body.offsetHeight; fn(); }); }); }
+  function rvReady(fn) { requestAnimationFrame(function () { requestAnimationFrame(function () { document.documentElement.classList.add('rv-ready'); void document.body.offsetHeight; rvLine = 1; fn(); rvLine = 0.9; }); }); }
+  var rvLine = 0.9; /* 페이지를 열 때는 화면에 보이는 곳까지(1), 스크롤할 때는 90% 지점 */
   // 하단 CTA 글자 등장 (페이지 진입 효과는 건너뛰고 스크롤 등장으로)
   var cta = document.querySelector('.cta'); // 글자·버튼에 cta-rv 클래스 (마크업)
-  function revealCta() { if (!document.documentElement.classList.contains('rv-ready')) return; if (!cta.classList.contains('in') && cta.getBoundingClientRect().top < innerHeight * 0.9) cta.classList.add('in'); }
+  function revealCta() { if (!document.documentElement.classList.contains('rv-ready')) return; if (!cta.classList.contains('in') && cta.getBoundingClientRect().top < innerHeight * rvLine) cta.classList.add('in'); }
   window.addEventListener('scroll', revealCta, { passive: true }); window.addEventListener('resize', revealCta);
   window.addEventListener('load', revealCta);
   // 섹션 제목·FAQ 목록도 스크롤해서 들어올 때 떠오름 (2026-11-09, 워크스페이스와 같은 효과: 100px, 0.8s). 페이지 진입 효과는 건너뜀
   var gRv = [].slice.call(document.querySelectorAll('.page-head h1, #process .sec-head, #process .flow, #tips .sec-head, #faq .faq-head, #faq .qa'));
   gRv.forEach(function (el, i) { el.classList.add('g-rv'); el.setAttribute('data-op-skip-enter', ''); el.style.setProperty('--d', (el.matches('.qa, #process .flow') ? .12 : 0) + 's'); });
-  function revealHeads() { if (!document.documentElement.classList.contains('rv-ready')) return; gRv.forEach(function (el) { if (!el.classList.contains('shown') && el.getBoundingClientRect().top < innerHeight * 0.9) el.classList.add('shown'); }); }
+  function revealHeads() { if (!document.documentElement.classList.contains('rv-ready')) return; gRv.forEach(function (el) { if (!el.classList.contains('shown') && el.getBoundingClientRect().top < innerHeight * rvLine) el.classList.add('shown'); }); }
   window.addEventListener('scroll', revealHeads, { passive: true }); window.addEventListener('resize', revealHeads);
   var tipEls = [].slice.call(document.querySelectorAll('.tip'));
-  function revealTips() { if (!document.documentElement.classList.contains('rv-ready')) return; tipEls.forEach(function (t) { if (!t.classList.contains('in') && t.getBoundingClientRect().top < innerHeight * 0.9) t.classList.add('in'); }); }
+  function revealTips() { if (!document.documentElement.classList.contains('rv-ready')) return; tipEls.forEach(function (t) { if (!t.classList.contains('in') && t.getBoundingClientRect().top < innerHeight * rvLine) t.classList.add('in'); }); }
   window.addEventListener('scroll', revealTips, { passive: true }); window.addEventListener('resize', revealTips);
   rvReady(function () { revealHeads(); revealTips(); revealCta(); });
   $('#qa').innerHTML = FAQ.map(function (f) {
