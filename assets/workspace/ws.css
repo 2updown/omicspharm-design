@@ -750,3 +750,11 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .rv { opacity:0; transform:translate3d(0,100px,0); transition:opacity .8s ease, transform .8s ease; }
 .rv.rv-in { opacity:1; transform:none; }
 .rv + .rv { transition-delay:.1s; } .rv + .rv + .rv { transition-delay:.2s; }
+/* 2026-11-09 화살촉 위치 재조정: 절대 위치 기준이 테두리 안쪽(padding box)이라 세로선(테두리 2px) 가운데 = -1px → 화살촉 12px 칸의 가운데를 -1에 */
+.hw-arrow::before { left:-7px; top:-6px; }
+/* 화살표 그려지기: 화면에 들어오면 04 쪽(오른쪽)부터 02 쪽(왼쪽)으로 선이 그려지고, 마지막에 화살촉이 나타남. 설명은 그 뒤에 */
+.hw-loop.draw-ready .hw-arrow { clip-path:inset(-10px -10px -10px 100%); transition:clip-path 1.4s cubic-bezier(.4,0,.2,1) .2s; }
+.hw-loop.draw-ready p { opacity:0; transition:opacity .6s ease 1.4s; }
+.hw-loop.draw-ready.drawn .hw-arrow { clip-path:inset(-10px -10px -10px -10px); }
+.hw-loop.draw-ready.drawn p { opacity:1; }
+.hw-arrow::before { top:-2px; } /* 화살촉 꼭짓점을 세로선 끝에 붙임 */

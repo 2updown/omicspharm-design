@@ -259,3 +259,12 @@ window.addEventListener('load', function () {
   }, { threshold: .12, rootMargin: '0px 0px -40px 0px' });
   items.forEach(function (el) { io.observe(el); });
 });
+
+// 작동 방식 되돌아가는 화살표 그리기 (2026-11-09): 화면에 들어오면 한 번 그려짐. 움직임 줄이기면 처음부터 다 보임
+window.addEventListener('load', function () {
+  var lp = document.querySelector('.hw-loop');
+  if (!lp || !('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  lp.classList.add('draw-ready');
+  var io = new IntersectionObserver(function (es) { if (!es[0].isIntersecting) return; io.disconnect(); lp.classList.add('drawn'); }, { threshold: 1 });
+  io.observe(lp);
+});
