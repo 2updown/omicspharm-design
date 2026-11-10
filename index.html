@@ -702,7 +702,7 @@
     return '<button type="button" role="tab" class="fsd-it' + (i ? '' : ' on') + '" data-i="' + i + '"><span class="fsd-bar"><i></i></span><span class="fsd-t">' + t.querySelector('.t').innerHTML + '</span><span class="fsd-d">' + SD[i] + '</span></button>';
   }).join('') + '</div><div class="fsd-view"><img src="' + tabs[0].dataset.img + '" alt="' + tabs[0].querySelector('.tt').textContent + ' 화면 예시"></div>';
   sec.appendChild(sd);
-  var SIDE = ['interpret', 'support', 'report', 'matching'].map(function (n) { return 'assets/main/features/side/' + n + '.png'; }); // 탭 순서와 같음
+  var SIDE = ['interpret', 'support', 'report', 'matching'].map(function (n) { return 'assets/main/features/side/' + n + '.png?v=2'; }); // 탭 순서와 같음
   sd.querySelector('.fsd-view img').src = SIDE[0];
   var its = [].slice.call(sd.querySelectorAll('.fsd-it')), img = sd.querySelector('.fsd-view img'), cur = 0;
   function go(i) {
