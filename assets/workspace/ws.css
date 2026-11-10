@@ -955,3 +955,6 @@ body:has(.wcta) .op-footer { border-top-color:#edf1f0; } /* CTA와 푸터 바탕
 .ops2-sv article:nth-child(1) .ops2-ic2, .ops2-sv article:nth-child(2) .ops2-ic2, .ops2-sv article:nth-child(3) .ops2-ic2 { color:#404040; }
 /* 2026-11-10 피드백 2차 10번: 작동 방식 화살표는 움직임 없이 그려진 채로 */
 .hw-arrow path { opacity:1; stroke-dashoffset:0; animation:none; }
+
+/* 2026-11-10 피드백 2차: 적용 예시를 빼서 체크 목록 아래 구분선이 필요 없음 */
+.fld-chk { padding-bottom:0; border-bottom:0; }
