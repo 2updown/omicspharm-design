@@ -958,3 +958,9 @@ body:has(.wcta) .op-footer { border-top-color:#edf1f0; } /* CTA와 푸터 바탕
 
 /* 2026-11-10 피드백 2차: 적용 예시를 빼서 체크 목록 아래 구분선이 필요 없음 */
 .fld-chk { padding-bottom:0; border-bottom:0; }
+/* 2026-11-11 적용 분야를 플랜 비교 안으로: 분야별 구성(소제목 + 카드 2장) → 넓은 간격 → 비교표 */
+.fld-sub { margin-bottom:20px; }
+.fld-sub h3 { font-size:20px; font-weight:700; line-height:28px; color:#111; }
+.fld-sub p { margin-top:4px; font-size:16px; line-height:22px; color:var(--gray-600); }
+#plans .fld-grid { margin-bottom:80px; }
+@media (max-width:760px) { #plans .fld-grid { margin-bottom:48px; } }
