@@ -149,7 +149,7 @@
 
   /* Features 비교 시안: 좌우형 (2026-11-10, 레퍼런스 scienceexchange.com The Solution). 왼쪽 세로 목록(고른 항목만 설명 펼침, 왼쪽 선이 차오르면 다음 항목), 오른쪽 화면 교체. 토글로 전환, 확정되면 하나만 남김 */
   .features { position:relative; }
-  .feat-sd { display:none; width:var(--wrap); max-width:100%; grid-template-columns:400px minmax(0,1fr); gap:64px; align-items:center; }
+  .feat-sd { display:none; width:var(--wrap); max-width:100%; grid-template-columns:531px minmax(0,1fr); gap:64px; align-items:center; } /* Figma 2571:19449 */
   .feat-side .feat-box { display:none !important; } .feat-side .feat-sd { display:grid; }
   .fsd-list { display:flex; flex-direction:column; }
   .fsd-it { position:relative; display:flex; flex-direction:column; gap:0; padding:20px 0 20px 28px; text-align:left; color:var(--gray-400); transition:color .25s; }
@@ -158,22 +158,22 @@
   .fsd-it.on .fsd-bar i { height:100%; animation:fsdFill 6s linear; }
   .feat-sd:hover .fsd-it.on .fsd-bar i { animation-play-state:paused; }
   @keyframes fsdFill { from { height:0; } to { height:100%; } }
-  .fsd-t { display:flex; align-items:center; gap:8px; font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; }
+  .fsd-t { display:flex; align-items:center; gap:8px; font-size:24px; font-weight:600; line-height:32px; letter-spacing:-.24px; }
   .fsd-t .ic { width:24px; height:24px; }
   .fsd-it.on .fsd-t { color:var(--black); } .fsd-it.on .fsd-t .ic { color:var(--teal-600); }
   .fsd-it:not(.on):hover { color:var(--gray-500); }
   .fsd-d { display:grid; grid-template-rows:0fr; transition:grid-template-rows .35s cubic-bezier(.2,.7,.2,1), margin-top .35s; }
-  .fsd-d > span { overflow:hidden; font-size:16px; font-weight:500; line-height:24px; color:var(--gray-700); word-break:keep-all; }
+  .fsd-d > span { overflow:hidden; font-size:18px; font-weight:500; line-height:24px; color:var(--black); word-break:keep-all; }
   .fsd-it.on .fsd-d { grid-template-rows:1fr; margin-top:10px; }
-  .fsd-view { position:relative; aspect-ratio:856/520; border-radius:20px; background:#eef0f3; overflow:hidden; }
-  .fsd-view img { position:absolute; left:50%; top:50%; width:118%; max-width:none; transform:translate(-50%,-50%); transition:opacity .25s; }
+  .fsd-view { position:relative; aspect-ratio:725/420; border-radius:20px; background:#fafafa; overflow:hidden; }
+  .fsd-view img { position:absolute; inset:-3px; width:calc(100% + 6px); height:calc(100% + 6px); max-width:none; object-fit:cover; transition:opacity .25s; } /* Figma 좌우형_1~4 오른쪽 화면 (assets/main/features/side) */
   .fsd-view img.fade { opacity:0; }
   @media (prefers-reduced-motion:reduce) { .fsd-it.on .fsd-bar i { animation:none; } .fsd-d, .fsd-view img { transition:none; } }
   .feat-tgl { position:absolute; right:60px; top:60px; z-index:3; display:flex; padding:3px; border-radius:99px; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.12); }
   .feat-tgl button { height:28px; padding:0 12px; border-radius:99px; font-size:12px; font-weight:500; color:#525252; white-space:nowrap; }
   .feat-tgl button.on { background:#111; color:#fff; }
   @media (max-width:1180px) { .feat-sd { grid-template-columns:1fr; gap:24px; } .fsd-view { order:-1; } }
-  @media (max-width:760px) { .feat-tgl { right:16px; top:12px; } .fsd-t { font-size:17px; line-height:24px; } .fsd-it { padding:14px 0 14px 20px; } .fsd-d > span { font-size:15px; line-height:22px; } }
+  @media (max-width:760px) { .feat-tgl { right:16px; top:12px; } .fsd-t { font-size:18px; line-height:26px; } .fsd-it { padding:14px 0 14px 20px; } .fsd-d > span { font-size:15px; line-height:22px; } }
   .feat-view { position:relative; width:1075px; height:399.02px; border-radius:16px; }
   .feat-view .screen { position:absolute; top:2px; left:2px; right:2px; height:395.02px; border-radius:16px; background:#eef0f3; overflow:hidden; } /* 2026-11-10 초록 배경 → 밝은 회색 */
   .feat-view .screen img { position:absolute; width:888px; height:421px; left:calc(50% + .5px); top:calc(50% + 3.99px); transform:translate(-50%,-50%); transition:opacity .25s; }
@@ -702,11 +702,13 @@
     return '<button type="button" role="tab" class="fsd-it' + (i ? '' : ' on') + '" data-i="' + i + '"><span class="fsd-bar"><i></i></span><span class="fsd-t">' + t.querySelector('.t').innerHTML + '</span><span class="fsd-d"><span>' + t.querySelector('.d').innerHTML.replace(/<br\s*\/?>/g, ' ') + '</span></span></button>';
   }).join('') + '</div><div class="fsd-view"><img src="' + tabs[0].dataset.img + '" alt="' + tabs[0].querySelector('.tt').textContent + ' 화면 예시"></div>';
   sec.appendChild(sd);
+  var SIDE = ['interpret', 'support', 'report', 'matching'].map(function (n) { return 'assets/main/features/side/' + n + '.png'; }); // 탭 순서와 같음
+  sd.querySelector('.fsd-view img').src = SIDE[0];
   var its = [].slice.call(sd.querySelectorAll('.fsd-it')), img = sd.querySelector('.fsd-view img'), cur = 0;
   function go(i) {
     cur = i; its.forEach(function (b, k) { b.classList.toggle('on', k === i); b.setAttribute('aria-selected', k === i); });
-    var t = tabs[i]; if (img.getAttribute('src') === t.dataset.img) return;
-    img.classList.add('fade'); setTimeout(function () { img.src = t.dataset.img; img.alt = t.querySelector('.tt').textContent + ' 화면 예시'; img.classList.remove('fade'); }, 200);
+    var t = tabs[i]; if (img.getAttribute('src') === SIDE[i]) return;
+    img.classList.add('fade'); setTimeout(function () { img.src = SIDE[i]; img.alt = t.querySelector('.tt').textContent + ' 화면 예시'; img.classList.remove('fade'); }, 200);
   }
   its.forEach(function (b, k) {
     b.addEventListener('click', function () { go(k); });
