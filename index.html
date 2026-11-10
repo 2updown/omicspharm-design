@@ -160,20 +160,19 @@
   @keyframes fsdFill { from { height:0; } to { height:100%; } }
   .fsd-t { display:flex; align-items:center; gap:8px; font-size:24px; font-weight:600; line-height:32px; letter-spacing:-.24px; }
   .fsd-t .ic { width:24px; height:24px; }
-  .fsd-it.on .fsd-t { color:var(--black); } .fsd-it.on .fsd-t .ic { color:var(--teal-600); }
+  .fsd-it.on .fsd-t, .fsd-it.on .fsd-t .ic { color:var(--teal-600); } /* 2026-11-10 선택 제목은 teal */
   .fsd-it:not(.on):hover { color:var(--gray-500); }
-  .fsd-d { display:grid; grid-template-rows:0fr; transition:grid-template-rows .35s cubic-bezier(.2,.7,.2,1), margin-top .35s; }
-  .fsd-d > span { overflow:hidden; font-size:18px; font-weight:500; line-height:24px; color:var(--black); word-break:keep-all; }
-  .fsd-it.on .fsd-d { grid-template-rows:1fr; margin-top:10px; }
+  .fsd-d { margin-top:8px; font-size:18px; font-weight:500; line-height:24px; color:var(--gray-400); word-break:keep-all; transition:color .25s; } /* 2026-11-10 Scientist.com처럼 설명 한 줄을 항상 보임 */
+  .fsd-it.on .fsd-d { color:var(--black); }
   .fsd-view { position:relative; aspect-ratio:725/420; border-radius:20px; background:#fafafa; overflow:hidden; }
   .fsd-view img { position:absolute; inset:-3px; width:calc(100% + 6px); height:calc(100% + 6px); max-width:none; object-fit:cover; transition:opacity .25s; } /* Figma 좌우형_1~4 오른쪽 화면 (assets/main/features/side) */
   .fsd-view img.fade { opacity:0; }
-  @media (prefers-reduced-motion:reduce) { .fsd-it.on .fsd-bar i { animation:none; } .fsd-d, .fsd-view img { transition:none; } }
+  @media (prefers-reduced-motion:reduce) { .fsd-it.on .fsd-bar i { animation:none; } .fsd-view img { transition:none; } }
   .feat-tgl { position:absolute; right:60px; top:60px; z-index:3; display:flex; padding:3px; border-radius:99px; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.12); }
   .feat-tgl button { height:28px; padding:0 12px; border-radius:99px; font-size:12px; font-weight:500; color:#525252; white-space:nowrap; }
   .feat-tgl button.on { background:#111; color:#fff; }
   @media (max-width:1180px) { .feat-sd { grid-template-columns:1fr; gap:24px; } .fsd-view { order:-1; } }
-  @media (max-width:760px) { .feat-tgl { right:16px; top:12px; } .fsd-t { font-size:18px; line-height:26px; } .fsd-it { padding:14px 0 14px 20px; } .fsd-d > span { font-size:15px; line-height:22px; } }
+  @media (max-width:760px) { .feat-tgl { right:16px; top:12px; } .fsd-t { font-size:18px; line-height:26px; } .fsd-it { padding:14px 0 14px 20px; } .fsd-d { font-size:15px; line-height:22px; } }
   .feat-view { position:relative; width:1075px; height:399.02px; border-radius:16px; }
   .feat-view .screen { position:absolute; top:2px; left:2px; right:2px; height:395.02px; border-radius:16px; background:#eef0f3; overflow:hidden; } /* 2026-11-10 초록 배경 → 밝은 회색 */
   .feat-view .screen img { position:absolute; width:888px; height:421px; left:calc(50% + .5px); top:calc(50% + 3.99px); transform:translate(-50%,-50%); transition:opacity .25s; }
@@ -697,9 +696,10 @@
 (function () {
   var root = document.documentElement, sec = document.querySelector('.features'), tabs = [].slice.call(document.querySelectorAll('.feat-tab'));
   if (!sec || !tabs.length) return;
+  var SD = ['기존 결과를 검색·비교해 쉽게 해석합니다', '의뢰부터 진행 상황까지 AI가 바로 안내합니다', '분석 결과를 바탕으로 보고서 초안을 작성합니다', '요구사항에 맞는 분석 파트너를 추천합니다']; // 좌우형은 한 줄 설명 (2026-11-10)
   var sd = document.createElement('div'); sd.className = 'feat-sd';
   sd.innerHTML = '<div class="fsd-list" role="tablist">' + tabs.map(function (t, i) {
-    return '<button type="button" role="tab" class="fsd-it' + (i ? '' : ' on') + '" data-i="' + i + '"><span class="fsd-bar"><i></i></span><span class="fsd-t">' + t.querySelector('.t').innerHTML + '</span><span class="fsd-d"><span>' + t.querySelector('.d').innerHTML.replace(/<br\s*\/?>/g, ' ') + '</span></span></button>';
+    return '<button type="button" role="tab" class="fsd-it' + (i ? '' : ' on') + '" data-i="' + i + '"><span class="fsd-bar"><i></i></span><span class="fsd-t">' + t.querySelector('.t').innerHTML + '</span><span class="fsd-d">' + SD[i] + '</span></button>';
   }).join('') + '</div><div class="fsd-view"><img src="' + tabs[0].dataset.img + '" alt="' + tabs[0].querySelector('.tt').textContent + ' 화면 예시"></div>';
   sec.appendChild(sd);
   var SIDE = ['interpret', 'support', 'report', 'matching'].map(function (n) { return 'assets/main/features/side/' + n + '.png'; }); // 탭 순서와 같음
