@@ -158,11 +158,11 @@
   .fsd-it.on .fsd-bar i { height:100%; animation:fsdFill 6s linear; }
   .feat-sd:hover .fsd-it.on .fsd-bar i { animation-play-state:paused; }
   @keyframes fsdFill { from { height:0; } to { height:100%; } }
-  .fsd-t { display:flex; align-items:center; gap:8px; font-size:24px; font-weight:600; line-height:32px; letter-spacing:-.24px; }
+  .fsd-t { display:flex; align-items:center; gap:8px; font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; } /* Heading/Medium/B */
   .fsd-t .ic { width:24px; height:24px; }
   .fsd-it.on .fsd-t, .fsd-it.on .fsd-t .ic { color:var(--teal-600); } /* 2026-11-10 선택 제목은 teal */
   .fsd-it:not(.on):hover { color:var(--gray-500); }
-  .fsd-d { margin-top:8px; font-size:18px; font-weight:500; line-height:24px; color:var(--gray-400); word-break:keep-all; transition:color .25s; } /* 2026-11-10 Scientist.com처럼 설명 한 줄을 항상 보임 */
+  .fsd-d { margin-top:10px; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-400); word-break:keep-all; transition:color .25s; } /* 2026-11-10 Scientist.com처럼 설명 한 줄을 항상 보임 */
   .fsd-it.on .fsd-d { color:var(--black); }
   .fsd-view { position:relative; aspect-ratio:725/420; border-radius:20px; background:#fafafa; overflow:hidden; }
   .fsd-view img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:opacity .25s; } /* Figma 좌우형_1~4 오른쪽 화면 (assets/main/features/side) */
@@ -172,7 +172,7 @@
   .feat-tgl button { height:28px; padding:0 12px; border-radius:99px; font-size:12px; font-weight:500; color:#525252; white-space:nowrap; }
   .feat-tgl button.on { background:#111; color:#fff; }
   @media (max-width:1180px) { .feat-sd { grid-template-columns:1fr; gap:24px; } .fsd-view { order:-1; } }
-  @media (max-width:760px) { .feat-tgl { right:16px; top:12px; } .fsd-t { font-size:18px; line-height:26px; } .fsd-it { padding:14px 0 14px 20px; } .fsd-d { font-size:15px; line-height:22px; } }
+  @media (max-width:760px) { .feat-tgl { right:16px; top:12px; } .fsd-t { font-size:18px; line-height:26px; } .fsd-it { padding:14px 0 14px 20px; } .fsd-d { margin-top:6px; font-size:15px; line-height:22px; } }
   .feat-view { position:relative; width:1075px; height:399.02px; border-radius:16px; }
   .feat-view .screen { position:absolute; top:2px; left:2px; right:2px; height:395.02px; border-radius:16px; background:#eef0f3; overflow:hidden; } /* 2026-11-10 초록 배경 → 밝은 회색 */
   .feat-view .screen img { position:absolute; width:888px; height:421px; left:calc(50% + .5px); top:calc(50% + 3.99px); transform:translate(-50%,-50%); transition:opacity .25s; }
