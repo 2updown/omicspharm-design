@@ -21,7 +21,7 @@ if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentE
       /* 2026-11-09 Figma 2416:19304: 가운데 제목 + 4단계 칸(위아래 선, 큰 번호·제목·설명) + 04에서 02로 되돌아가는 화살표와 한 줄 설명. 오른쪽 활용 예시 패널은 삭제 */
       var S = [['01', '분석 의뢰', '연구 목적에 맞는 <br>시료·데이터 분석을 요청합니다.'], ['02', '데이터 축적', '분석 결과와 검토 기록을 <br>연구 데이터로 축적합니다.'], ['03', 'AI 개선과 연구 제안', 'AI 품질을 개선하고, <br>결과 해석과 후속 연구를 제안합니다.'], ['04', '검토와 후속 분석', '제안 근거를 검토하고 <br>다음 실험·분석을 결정합니다.']];
       return '<section class="sec hw" id="growth"><div class="wrap">' +
-        '<div class="sec-head center"><div><span class="eyebrow">작동 방식</span><h2 class="ttl">분석 결과가 쌓이고, <br>다음 연구가 정교해집니다.</h2></div>' +
+        '<div class="sec-head center"><div><span class="eyebrow">How It Works</span><h2 class="ttl">분석 결과가 쌓이고, <br>다음 연구가 정교해집니다.</h2></div>' +
         '<p>분석을 의뢰하면 결과가 Workspace에 쌓이고, AI는 결과 해석과 다음 연구 방향을 제안합니다.</p></div>' +
         '<ol class="hw-steps">' + S.map(function (x) { return '<li><span class="no">' + x[0] + '</span><b>' + x[1] + '</b><p>' + x[2] + '</p></li>'; }).join('') + '</ol>' +
         '<div class="hw-loop"><i class="hw-arrow" aria-hidden="true"></i><p>후속 분석 결과는 다시 데이터와 지식으로 축적됩니다.</p></div>' +
@@ -51,7 +51,7 @@ if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentE
           '<div class="pa-card"><b class="pa-hd">' + I('shield-check') + '활동 기록</b><ul class="pa-log"><li><time>11:02</time>연구책임자 답변 검토 완료</li><li><time>10:48</time>AI 답변 생성, 출처 2건</li><li><time>10:45</time>연구원 분석 보고서 열람</li></ul></div></div>'
       ];
       return '<section class="sec pale sec2" id="security"><div class="wrap">' +
-        '<div class="sec-head center"><span class="eyebrow">보안</span>' +
+        '<div class="sec-head center"><span class="eyebrow">Security</span>' +
         '<h2 class="ttl">우리 팀 전용 공간에서, <br>연구 데이터를 안전하게 지킵니다.</h2>' +
         '<p class="lead">연구 자료는 팀 전용 공간에 보관하고, 허용된 구성원만 활용합니다. <br>외부 AI에 전달할 정보도 기관이 정한 범위로 제한합니다.</p></div>' +
         '<div class="seg" role="tablist">' + P.map(function (p, i) { return '<button role="tab" data-pv="' + i + '" aria-selected="' + (i === 0) + '">' + p[0] + '</button>'; }).join('') + '</div>' +
@@ -72,7 +72,7 @@ if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentE
         ['chart-line-up-fill', '연구와 함께 지속 고도화', ['응답 품질 평가', '연구자 의견 반영', '분석·제안 절차 개선']]
       ];
       return '<section class="sec ops2" id="managed"><div class="wrap">' +
-        '<div class="sec-head center"><div><span class="eyebrow">운영 지원</span><h2 class="ttl">AI 전담팀이 없어도, <br>전문가와 함께 운영하세요.</h2></div>' +
+        '<div class="sec-head center"><div><span class="eyebrow">Managed Service</span><h2 class="ttl">AI 전담팀이 없어도, <br>전문가와 함께 운영하세요.</h2></div>' +
         '<p>OmicsPharm의 바이오·헬스케어 전문 AI 팀이 AI Agent를 구축하고 운영합니다. <br>새 데이터와 연구자의 검토를 반영해 AI를 계속 고도화합니다.</p></div>' +
         '<div class="ops2-sv">' + SV.map(function (x) { return '<article><span class="ops2-ic2">' + I(x[0]) + '</span><h3>' + x[1] + '</h3><ul>' + x[2].map(function (t) { return '<li>' + I('check') + t + '</li>'; }).join('') + '</ul></article>'; }).join('') + '</div>' +
         '<h3 class="sub-h center">도입 프로세스</h3>' +
@@ -284,6 +284,5 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(function 
       '<path class="h" pathLength="1" d="M-5 7L1 1L7 7"/></svg>';
   }
   draw(); window.addEventListener('resize', draw);
-  if (!('IntersectionObserver' in window)) { lp.classList.add('in'); return; }
-  new IntersectionObserver(function (es) { lp.classList.toggle('in', es[0].isIntersecting); }).observe(lp);
+  // 2026-11-10 피드백 2차 10번: 반복 애니메이션 없이 그려진 채로 둠 (.in 을 붙이지 않음)
 }, 0); });

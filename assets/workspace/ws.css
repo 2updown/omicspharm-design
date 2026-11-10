@@ -949,3 +949,9 @@ body:has(.wcta) .op-footer { border-top-color:#edf1f0; } /* CTA와 푸터 바탕
 .ws-hero2 h1 { font-size:50px; line-height:64px; letter-spacing:-.5px; }
 .ws-hero2 .h2-desc { margin-top:12px; font-size:16px; font-weight:400; line-height:22px; color:var(--gray-600); }
 @media (max-width:760px) { .ws-hero2 { padding:88px 16px 80px; } .ws-hero2 h1 { font-size:32px; line-height:42px; letter-spacing:-.32px; } .ws-hero2 .h2-desc { font-size:14px; line-height:20px; } }
+
+/* 2026-11-10 피드백 2차 7번: 아이콘을 메인과 같은 한 톤(gray 700)으로. 적용 분야 아이콘과 같음 */
+.ov3-ic.c1 .ico, .ov3-ic.c2 .ico, .ov3-ic.c3 .ico { color:#404040; }
+.ops2-sv article:nth-child(1) .ops2-ic2, .ops2-sv article:nth-child(2) .ops2-ic2, .ops2-sv article:nth-child(3) .ops2-ic2 { color:#404040; }
+/* 2026-11-10 피드백 2차 10번: 작동 방식 화살표는 움직임 없이 그려진 채로 */
+.hw-arrow path { opacity:1; stroke-dashoffset:0; animation:none; }
