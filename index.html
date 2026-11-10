@@ -189,7 +189,7 @@
   .badge.closed { background:var(--gray-600); color:var(--white); }
 
   /* ── 분석 서비스 안내 (962:12481) ── */
-  .analysis { display:flex; flex-direction:column; align-items:center; gap:24px; padding-top:20px; } /* 위 간격 60 → 20 (Figma, 2026-11-05) */
+  .analysis { display:flex; flex-direction:column; align-items:center; gap:24px; padding-top:20px; padding-bottom:100px; } /* 위 간격 60 → 20 (Figma, 2026-11-05), 아래 100 (Figma 2026-11-10) */
   .an-head { width:var(--wrap); max-width:100%; display:flex; align-items:flex-end; justify-content:space-between; }
   .an-head h2 { font-size:32px; font-weight:700; line-height:42px; letter-spacing:-.32px; }
   .an-head p { margin-top:12px; font-size:18px; line-height:24px; letter-spacing:-.18px; color:var(--gray-700); }
@@ -224,12 +224,12 @@
   /* 2026-11-10 피드백 C안: 3×2 낮은 가로 카드 (이름 왼쪽, 화살표 오른쪽, 카드 전체가 링크). 설명 문구는 분석 서비스 안내 페이지에서 */
   .an-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
   .acard { position:relative; padding:0; gap:0; border:0; filter:none; }
-  .acard .img { height:148px; flex-direction:row; justify-content:flex-start; padding:0 64px 0 28px; border-radius:12px; text-align:left; }
+  .acard .img { height:202px; flex-direction:row; justify-content:flex-start; padding:0 64px 0 24px; border-radius:12px; text-align:left; }
   .acard .img::after { background:linear-gradient(90deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.28) 55%, rgba(0,0,0,.12) 100%); } /* 글씨가 있는 왼쪽만 어둡게 */
-  .acard .img h3 { font-size:24px; line-height:32px; } /* DS Heading/Large/B */
+  .acard .img h3 { font-size:30px; font-weight:600; line-height:normal; } /* Figma 2026-11-10 */
   .acard .img p { display:none; }
-  .acard .foot { position:absolute; right:22px; top:50%; z-index:2; padding:0; font-size:0; color:#fff; transform:translateY(-50%); }
-  .acard .go .ic { width:22px; height:22px; }
+  .acard .foot { position:absolute; right:24px; top:50%; z-index:2; padding:0; font-size:0; color:#fff; transform:translateY(-50%); }
+  .acard .go .ic { width:28px; height:28px; }
   .acard:hover { border-color:transparent; } .acard:hover .img { box-shadow:inset 0 0 0 2px var(--teal-500); }
   .acard:hover .img::after { background:linear-gradient(90deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,.36) 55%, rgba(0,0,0,.18) 100%); }
   .acard:hover .foot { color:#fff; }
@@ -263,7 +263,7 @@
   .sol-shot .glow.blue { left:50%; top:-6%; width:44%; height:112%; } .sol-shot .glow.peach { left:6%; top:0; width:44%; height:104%; } .sol-shot .glow.green { left:24%; top:-6%; width:51%; height:112%; }
   .sol-frame { position:relative; width:880px; max-width:78%; container-type:inline-size; } /* 화면 이미지 + 특징 3개를 한 그래픽으로: 특징 위치는 이미지 기준 % (화면이 줄어도 같은 자리) */
   .sol-board { display:block; width:100%; height:auto; border-radius:20px; box-shadow:0 24px 60px rgba(0,79,74,.16), 0 2px 8px rgba(0,0,0,.05); }
-  .sol-btn { margin-top:8px; padding:0 32px; } /* 2026-11-10 설명 아래 */
+  .sol-btn { margin-top:12px; padding:0 32px; } /* 2026-11-10 설명 아래 36 (Figma) */
   .sol-cap { margin-top:-24px; font-size:14px; line-height:20px; color:var(--gray-500); text-align:center; word-break:keep-all; } /* 화면 아래 캡션 */
   .sol-feats { display:contents; }
   .sol-pill { position:absolute; display:flex; align-items:center; gap:.5em; padding:.75em 1.125em; border-radius:99px; background:#fff; box-shadow:0 10px 30px rgba(0,79,74,.14), 0 1px 3px rgba(0,0,0,.05); font-size:clamp(10px, 1.82cqw, 16px); font-weight:600; line-height:1.375; white-space:nowrap; }
@@ -309,8 +309,8 @@
     .an-head p { grid-column:1 / -1; grid-row:2; font-size:16px; line-height:22px; }
     /* 분석 서비스 카드: 모바일은 한 줄에 하나, 낮은 가로 카드 */
     .an-grid { grid-template-columns:1fr; gap:8px; }
-    .acard .img { height:88px; padding:0 52px 0 20px; }
-    .acard .img h3 { font-size:17px; line-height:24px; }
+    .acard .img { height:104px; padding:0 52px 0 20px; }
+    .acard .img h3 { font-size:20px; line-height:28px; }
     .acard .foot { right:18px; } .acard .go .ic { width:20px; height:20px; }
     .feat-view { height:220px; } .feat-view .screen { height:216px; } .feat-view .screen img { width:100%; height:auto; }
     /* Feature 모바일: 제목만 넣은 탭을 가로로 넘기고, 고른 항목의 설명·이미지만 보여줌 */
