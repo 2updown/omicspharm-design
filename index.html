@@ -246,9 +246,6 @@
   .cta h2 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; color:var(--white); }
   .cta p { font-size:18px; line-height:24px; letter-spacing:-.18px; color:#edeff6; word-break:keep-all; }
   .cta .btn-action { padding:0 32px; }
-  .cta-btns { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; }
-  .btn-ghost { display:inline-flex; align-items:center; justify-content:center; height:56px; padding:0 32px; border:1px solid rgba(255,255,255,.35); border-radius:99px; background:rgba(255,255,255,.14); color:#fff; font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; transition:background .2s; }
-  .btn-ghost:hover { background:rgba(255,255,255,.22); }
   .cta-sec.full { padding:0; }
   .cta-sec.full .cta { width:100%; min-height:400px; justify-content:center; padding:100px 24px; border-radius:0; }
   .cta-sec.full .cta > img { top:0; height:100%; }
@@ -548,7 +545,7 @@
     <img src="assets/main/cta-bg.png" alt="">
     <h2>오믹스 분석이 필요하신가요?</h2>
     <p>유전체, 전사체, 단백체, 대사체 등 다양한 분석 의뢰를 지원하고, <br>견적부터 프로젝트 관리까지 전문 컨설턴트가 함께합니다.</p>
-    <div class="cta-btns"><a class="btn-ghost" href="contact.html">문의하기</a></div><!-- 2026-11-10: 문의하기 하나만 (의뢰는 히어로) -->
+    <a class="btn-action" href="contact.html">문의하기 <span class="ic" style="--src:url(assets/main/ic-arrow-right.svg)"></span></a><!-- 2026-11-10: 문의하기 하나만, 흰 버튼 (의뢰는 히어로) -->
   </div>
 </section>
 
@@ -663,7 +660,7 @@
     ['.proj-head', '#projView'],
     ['.an-head'], ['.an-grid .acard'],
     ['.solution .sec-head', '.sol-shot'],
-    ['.cta > h2', '.cta > p', '.cta-btns']
+    ['.cta > h2', '.cta > p', '.cta > .btn-action']
   ];
   var els = [];
   groups.forEach(function (g) {
