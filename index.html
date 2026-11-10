@@ -165,7 +165,7 @@
   .fsd-d { margin-top:8px; font-size:18px; font-weight:500; line-height:24px; color:var(--gray-400); word-break:keep-all; transition:color .25s; } /* 2026-11-10 Scientist.com처럼 설명 한 줄을 항상 보임 */
   .fsd-it.on .fsd-d { color:var(--black); }
   .fsd-view { position:relative; aspect-ratio:725/420; border-radius:20px; background:#fafafa; overflow:hidden; }
-  .fsd-view img { position:absolute; inset:-3px; width:calc(100% + 6px); height:calc(100% + 6px); max-width:none; object-fit:cover; transition:opacity .25s; } /* Figma 좌우형_1~4 오른쪽 화면 (assets/main/features/side) */
+  .fsd-view img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:opacity .25s; } /* Figma 좌우형_1~4 오른쪽 화면 (assets/main/features/side) */
   .fsd-view img.fade { opacity:0; }
   @media (prefers-reduced-motion:reduce) { .fsd-it.on .fsd-bar i { animation:none; } .fsd-view img { transition:none; } }
   .feat-tgl { position:absolute; right:60px; top:60px; z-index:3; display:flex; padding:3px; border-radius:99px; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.12); }
@@ -702,7 +702,7 @@
     return '<button type="button" role="tab" class="fsd-it' + (i ? '' : ' on') + '" data-i="' + i + '"><span class="fsd-bar"><i></i></span><span class="fsd-t">' + t.querySelector('.t').innerHTML + '</span><span class="fsd-d">' + SD[i] + '</span></button>';
   }).join('') + '</div><div class="fsd-view"><img src="' + tabs[0].dataset.img + '" alt="' + tabs[0].querySelector('.tt').textContent + ' 화면 예시"></div>';
   sec.appendChild(sd);
-  var SIDE = ['interpret', 'support', 'report', 'matching'].map(function (n) { return 'assets/main/features/side/' + n + '.png?v=2'; }); // 탭 순서와 같음
+  var SIDE = ['interpret', 'support', 'report', 'matching'].map(function (n) { return 'assets/main/features/side/' + n + '.png?v=3'; }); // 탭 순서와 같음
   sd.querySelector('.fsd-view img').src = SIDE[0];
   var its = [].slice.call(sd.querySelectorAll('.fsd-it')), img = sd.querySelector('.fsd-view img'), cur = 0;
   function go(i) {
