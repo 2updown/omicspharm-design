@@ -35,7 +35,6 @@
 .op-dd.open .op-dd-btn img { transform:rotate(180deg); }
 .op-dd-menu { position:absolute; top:calc(100% + 8px); left:-1px; min-width:205px; padding:10px; background:#fff; border-radius:8px; box-shadow:var(--op-shadow2);
   display:none; flex-direction:column; z-index:60; }
-.op-dd[data-dd="solution"] .op-dd-menu { min-width:240px; } /* 솔루션만 넓게: 'OmicsPharm Workspace'가 길어서 다른 메뉴와 같은 여백이 보이도록 (2026-11-05) */
 .op-dd-menu::before { content:""; position:absolute; left:0; right:0; top:-8px; height:8px; } /* 버튼과 메뉴 사이 틈에서 hover가 끊기지 않게 */
 .op-dd.open .op-dd-menu { display:flex; }
 .op-dd-menu a { display:flex; align-items:center; height:48px; padding:0 8px; border-radius:4px; font-size:16px; font-weight:500; line-height:22px; color:#000; white-space:nowrap; } /* GNB 메뉴와 같은 16px Medium */

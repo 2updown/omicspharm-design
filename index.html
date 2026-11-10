@@ -6,8 +6,8 @@
 <link rel="icon" type="image/png" href="assets/common/favicon.png?v=2">
 <title>OmicsPharm</title>
 <!-- Figma: [OmicsPharm] Renewal / 03_디자인(작업중) / 1440_시안1 (180:5300) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261109c">
-<script src="assets/common/site.js?v=20261109d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261110a">
+<script src="assets/common/site.js?v=20261110a"></script>
 <script src="assets/common/consult.js?v=20261106b"></script>
 <script src="assets/common/mypage.js?v=20261106b"></script>
 <script src="assets/common/flow.js?v=20261106b"></script>
@@ -147,7 +147,7 @@
   .feat-tab:not(.on):hover { color:var(--gray-500); }
   .feat-desc { display:none; }
   .feat-view { position:relative; width:1075px; height:399.02px; border-radius:16px; }
-  .feat-view .screen { position:absolute; top:2px; left:2px; right:2px; height:395.02px; border-radius:25px; background:var(--teal-900); overflow:hidden; }
+  .feat-view .screen { position:absolute; top:2px; left:2px; right:2px; height:395.02px; border-radius:16px; background:#eef0f3; overflow:hidden; } /* 2026-11-10 초록 배경 → 밝은 회색 */
   .feat-view .screen img { position:absolute; width:888px; height:421px; left:calc(50% + .5px); top:calc(50% + 3.99px); transform:translate(-50%,-50%); transition:opacity .25s; }
   .feat-view .screen img.fade { opacity:0; }
 
@@ -479,17 +479,9 @@
   </div>
 </section>
 
-<section class="sec projects" id="projects">
-  <div class="proj-head">
-    <h2>최근 프로젝트</h2>
-    <div class="pager"><button type="button" class="on" data-page="0" aria-label="1페이지">1</button><button type="button" data-page="1" aria-label="2페이지">2</button><a href="projects.html">전체보기</a></div>
-  </div>
-  <div class="proj-viewport" id="projView"></div>
-</section>
-
 <!-- Feature 4개: AI 보고서 작성 / AI 결과 해석 / AI 파트너 매칭 / AI 챗봇 CS (이미지는 임시). 첫 번째 항목이 기본
      아이콘: Phosphor Icons Regular (FileText, ListMagnifyingGlass, Sparkle, ChatCircleDots) — 출처 목록 assets/ICONS.md -->
-<script>if (/[?&]feat=1\b/.test(location.search)) document.documentElement.classList.add('feat1'); if (!/[?&]cta=card\b/.test(location.search)) document.documentElement.classList.add('cta-full'); if (/[?&]cta=b\b/.test(location.search)) document.documentElement.classList.add('cta-b');</script>
+<script>if (!/[?&]feat=bento\b/.test(location.search)) document.documentElement.classList.add('feat1'); /* 2026-11-10 피드백: 탭형이 기본, 카드형은 ?feat=bento */ if (!/[?&]cta=card\b/.test(location.search)) document.documentElement.classList.add('cta-full'); if (/[?&]cta=b\b/.test(location.search)) document.documentElement.classList.add('cta-b');</script>
 <section class="sec features">
   <div class="sec-head">
     <div class="eyebrow">Features</div>
@@ -521,6 +513,14 @@
   </div>
 </section>
 
+
+<section class="sec projects" id="projects">
+  <div class="proj-head">
+    <h2>최근 프로젝트</h2>
+    <div class="pager"><button type="button" class="on" data-page="0" aria-label="1페이지">1</button><button type="button" data-page="1" aria-label="2페이지">2</button><a href="projects.html">전체보기</a></div>
+  </div>
+  <div class="proj-viewport" id="projView"></div>
+</section>
 
 <section class="sec analysis" id="analysis">
   <div class="an-head">
