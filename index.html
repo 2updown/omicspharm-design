@@ -241,14 +241,26 @@
   .cta-sec { padding:60px 60px 100px; background:var(--white); display:flex; justify-content:center; }
   .cta { position:relative; width:var(--wrap); max-width:100%; padding:60px 0; border-radius:24px; overflow:hidden; display:flex; flex-direction:column; align-items:center; gap:24px; text-align:center; }
   .cta > img { position:absolute; left:0; top:-29.72%; width:100%; height:159.45%; object-fit:cover; }
-  .cta::before { content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(22,27,34,.84) 0%, rgba(30,38,46,.76) 100%); z-index:1; } /* 2026-11-10 피드백: 딥 그린이 너무 강해서 중립 슬레이트로 */
+  .cta::before { content:""; position:absolute; inset:0; background:rgba(0,0,0,.6); z-index:1; } /* 2026-11-10 피드백: 현미경 사진 + 검정 60% (Figma 2565:19072) */
   .cta > *:not(img) { position:relative; z-index:2; }
   .cta h2 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; color:var(--white); }
   .cta p { font-size:18px; line-height:24px; letter-spacing:-.18px; color:#edeff6; word-break:keep-all; }
   .cta .btn-action { padding:0 32px; }
   .cta-sec.full { padding:0; }
   .cta-sec.full .cta { width:100%; min-height:400px; justify-content:center; padding:100px 24px; border-radius:0; }
-  .cta-sec.full .cta > img { top:0; height:100%; }
+  .cta-sec.full .cta > img { top:0; height:100%; object-position:50% 57%; }
+  /* 비교 시안 ?cta=light (2026-11-10): 예전 Workspace CTA 효과를 밝게. 연한 민트 바탕 + 점 패턴 + 지나가는 점 스포트라이트 + 아래쪽 빛 */
+  .lc-dots, .lc-spot { display:none; }
+  .cta-light .cta { background:linear-gradient(160deg,#f7fbfa 0%,#eef7f5 55%,#e9f4f2 100%); }
+  .cta-light .cta > img { display:none; }
+  .cta-light .cta::before { inset:auto; left:50%; bottom:-170px; width:960px; height:320px; margin-left:-480px; border-radius:50%; background:linear-gradient(90deg,#00bba6,#3be0c5 50%,#4f8dff); opacity:.28; filter:blur(120px); z-index:0; }
+  .cta-light .cta::after { content:""; position:absolute; left:50%; bottom:-90px; width:440px; height:160px; margin-left:-220px; border-radius:50%; background:#9ff0dd; opacity:.35; filter:blur(70px); }
+  .cta-light .lc-dots, .cta-light .lc-spot { display:block; position:absolute; inset:0; z-index:1; pointer-events:none; }
+  .cta-light .lc-dots { background:radial-gradient(circle, rgba(0,80,70,.10) .9px, transparent 1.1px) 0 0/12px 12px; }
+  .cta-light .lc-spot { background:radial-gradient(circle, rgba(0,151,136,.75) 1px, transparent 1.3px) 0 0/12px 12px;
+    -webkit-mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); }
+  .cta-light .cta h2 { color:#111; } .cta-light .cta p { color:#404040; }
+  @media (prefers-reduced-motion:reduce) { .cta-light .lc-spot { display:none; } }
 
 
   /* ── FAB (1088:33719, fixed) ── */
@@ -459,7 +471,7 @@
 
 <!-- Feature 4개: AI 보고서 작성 / AI 결과 해석 / AI 파트너 매칭 / AI 챗봇 CS (이미지는 임시). 첫 번째 항목이 기본
      아이콘: Phosphor Icons Regular (FileText, ListMagnifyingGlass, Sparkle, ChatCircleDots) — 출처 목록 assets/ICONS.md -->
-<script>if (!/[?&]feat=bento\b/.test(location.search)) document.documentElement.classList.add('feat1'); /* 2026-11-10 피드백: 탭형이 기본, 카드형은 ?feat=bento */</script>
+<script>if (!/[?&]feat=bento\b/.test(location.search)) document.documentElement.classList.add('feat1'); /* 2026-11-10 피드백: 탭형이 기본, 카드형은 ?feat=bento */ if (/[?&]cta=light\b/.test(location.search)) document.documentElement.classList.add('cta-light'); /* 하단 CTA 밝은 애니메이션 비교 시안 */</script>
 <section class="sec features">
   <div class="sec-head">
     <div class="eyebrow">Features</div>
@@ -542,7 +554,8 @@
 <!-- 하단 CTA (2026-11-10 피드백): Workspace CTA → 예전 분석 의뢰 CTA (Figma 2562:30110). 배경색만 바꿈. Workspace CTA 효과 기록은 docs/cta-animation.md -->
 <section class="cta-sec full">
   <div class="cta">
-    <img src="assets/main/cta-bg.png" alt="">
+    <img src="assets/main/cta-bg-microscope.png" alt="">
+    <div class="lc-dots" aria-hidden="true"></div><div class="lc-spot" aria-hidden="true"></div><!-- 밝은 애니메이션 시안(?cta=light)에서만 보임 -->
     <h2>오믹스 분석이 필요하신가요?</h2>
     <p>유전체, 전사체, 단백체, 대사체 등 다양한 분석 의뢰를 지원하고, <br>견적부터 프로젝트 관리까지 전문 컨설턴트가 함께합니다.</p>
     <a class="btn-action" href="contact.html">문의하기 <span class="ic" style="--src:url(assets/main/ic-arrow-right.svg)"></span></a><!-- 2026-11-10: 문의하기 하나만, 흰 버튼 (의뢰는 히어로) -->
@@ -644,6 +657,18 @@
   }));
 </script>
 <script>
+/* ?cta=light 비교 시안: 점 스포트라이트가 마우스를 따라가고, 마우스가 없으면 9초 주기로 좌우로 지나감 (docs/cta-animation.md) */
+(function () {
+  var box = document.querySelector('.cta-light .cta'), spot = box && box.querySelector('.lc-spot');
+  if (!spot || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  var hover = false, raf = 0, t0 = performance.now();
+  function set(x, y) { spot.style.setProperty('--mx', x + 'px'); spot.style.setProperty('--my', y + 'px'); }
+  function idle(now) { raf = 0; if (hover) return; var rr = box.getBoundingClientRect(); if (rr.bottom <= 0 || rr.top >= innerHeight) return; var w = box.clientWidth, h = box.clientHeight, k = (now - t0) / 9000; set(w / 2 + Math.sin(k * Math.PI * 2) * w * 0.42, h * (0.55 + Math.sin(k * Math.PI * 4) * 0.2)); raf = requestAnimationFrame(idle); }
+  function start() { if (!raf) raf = requestAnimationFrame(idle); }
+  box.addEventListener('pointermove', function (e) { if (e.pointerType !== 'mouse') return; hover = true; var r = box.getBoundingClientRect(); set(e.clientX - r.left, e.clientY - r.top); });
+  box.addEventListener('pointerleave', function () { hover = false; t0 = performance.now() - 2250; start(); });
+  window.addEventListener('scroll', start, { passive: true }); start();
+})();
 (function () { var r = document.querySelector('.service-shot > img.rep'); if (r) r.addEventListener('animationend', function () { r.classList.add('done'); }); })();
 </script>
 <script>
