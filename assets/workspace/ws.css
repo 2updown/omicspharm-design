@@ -922,3 +922,12 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 /* 2026-11-09 히어로에도 CTA와 같은 점 무늬: 바탕 점은 옅게, 지나가는 빛이 닿은 점만 밝아짐 */
 .ws-hero2 .h2-pts { position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle, rgba(255,255,255,.09) .9px, transparent 1.1px) 0 0/12px 12px; }
 .ws-hero2 .h2-spot { background:radial-gradient(circle, rgba(140,255,232,.75) 1px, transparent 1.3px) 0 0/12px 12px; -webkit-mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); }
+
+/* 2026-11-10 피드백 2차: 히어로를 밝은 톤으로, 움직임 없음. 메인 Services·Solution과 같은 3색 빛(블루·피치·그린)을 고정으로 깔고 점·스포트라이트·아이콘 타일은 뺌 */
+.ws-hero2 { color:var(--gray-900, #111); background:linear-gradient(180deg, #ffffff 0%, #f7fbfa 100%); }
+.ws-hero2 .h2-pts, .ws-hero2 .h2-spot, .ws-hero2 .h2-dots, .ws-hero2 .h2-tiles { display:none; }
+.ws-hero2 .h2-glow { inset:0; background:radial-gradient(520px 300px at 18% 70%, rgba(120,170,255,.22), transparent 70%), radial-gradient(520px 260px at 50% 105%, rgba(255,190,150,.24), transparent 70%), radial-gradient(560px 300px at 84% 40%, rgba(90,220,190,.26), transparent 70%); }
+.ws-hero2 .h2-glow::before, .ws-hero2 .h2-glow::after { content:none; animation:none; }
+.ws-hero2 h1 { color:#111; }
+.ws-hero2 .h2-grad { background:none; -webkit-background-clip:border-box; background-clip:border-box; color:var(--teal-600); }
+.ws-hero2 .h2-desc { color:var(--gray-700, #404040); }
