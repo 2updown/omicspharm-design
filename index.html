@@ -261,6 +261,11 @@
     -webkit-mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); }
   .cta-light .cta h2 { color:#111; } .cta-light .cta p { color:#404040; }
   @media (prefers-reduced-motion:reduce) { .cta-light .lc-spot { display:none; } }
+  /* 비교용 토글 (2026-11-10, 확정되면 삭제) */
+  .cta-tg { position:absolute !important; right:20px; top:20px; z-index:3 !important; display:flex; padding:3px; border-radius:99px; background:rgba(255,255,255,.88); box-shadow:0 1px 4px rgba(0,0,0,.12); }
+  @media (max-width:760px) { .cta-tg { top:12px; right:12px; } }
+  .cta-tg button { height:28px; padding:0 12px; border-radius:99px; font-size:12px; font-weight:500; color:#525252; white-space:nowrap; }
+  .cta-tg button.on { background:#111; color:#fff; }
 
 
   /* ── FAB (1088:33719, fixed) ── */
@@ -556,6 +561,7 @@
   <div class="cta">
     <img src="assets/main/cta-bg-microscope.png" alt="">
     <div class="lc-dots" aria-hidden="true"></div><div class="lc-spot" aria-hidden="true"></div><!-- 밝은 애니메이션 시안(?cta=light)에서만 보임 -->
+    <div class="cta-tg" role="group" aria-label="배경 시안 비교"><button type="button" data-cta="photo">사진</button><button type="button" data-cta="light">밝은 배경</button></div><!-- 비교용 토글 (확정되면 삭제) -->
     <h2>오믹스 분석이 필요하신가요?</h2>
     <p>유전체, 전사체, 단백체, 대사체 등 다양한 분석 의뢰를 지원하고, <br>견적부터 프로젝트 관리까지 전문 컨설턴트가 함께합니다.</p>
     <a class="btn-action" href="contact.html">문의하기 <span class="ic" style="--src:url(assets/main/ic-arrow-right.svg)"></span></a><!-- 2026-11-10: 문의하기 하나만, 흰 버튼 (의뢰는 히어로) -->
@@ -657,15 +663,19 @@
   }));
 </script>
 <script>
-/* ?cta=light 비교 시안: 점 스포트라이트가 마우스를 따라가고, 마우스가 없으면 9초 주기로 좌우로 지나감 (docs/cta-animation.md) */
+/* 하단 CTA 배경 비교: 토글(사진 / 밝은 배경) 또는 ?cta=light. 밝은 배경은 점 스포트라이트가 마우스를 따라가고, 마우스가 없으면 9초 주기로 좌우로 지나감 (docs/cta-animation.md) */
 (function () {
-  var box = document.querySelector('.cta-light .cta'), spot = box && box.querySelector('.lc-spot');
-  if (!spot || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  var hover = false, raf = 0, t0 = performance.now();
+  var root = document.documentElement, box = document.querySelector('.cta'), spot = box && box.querySelector('.lc-spot');
+  if (!box) return;
+  var tg = box.querySelectorAll('.cta-tg button');
+  function mark() { var l = root.classList.contains('cta-light'); [].forEach.call(tg, function (b) { b.classList.toggle('on', (b.dataset.cta === 'light') === l); b.setAttribute('aria-pressed', (b.dataset.cta === 'light') === l); }); }
+  [].forEach.call(tg, function (b) { b.addEventListener('click', function () { root.classList.toggle('cta-light', b.dataset.cta === 'light'); mark(); start(); }); });
+  mark();
+  var motion = !matchMedia('(prefers-reduced-motion:reduce)').matches, hover = false, raf = 0, t0 = performance.now();
   function set(x, y) { spot.style.setProperty('--mx', x + 'px'); spot.style.setProperty('--my', y + 'px'); }
-  function idle(now) { raf = 0; if (hover) return; var rr = box.getBoundingClientRect(); if (rr.bottom <= 0 || rr.top >= innerHeight) return; var w = box.clientWidth, h = box.clientHeight, k = (now - t0) / 9000; set(w / 2 + Math.sin(k * Math.PI * 2) * w * 0.42, h * (0.55 + Math.sin(k * Math.PI * 4) * 0.2)); raf = requestAnimationFrame(idle); }
-  function start() { if (!raf) raf = requestAnimationFrame(idle); }
-  box.addEventListener('pointermove', function (e) { if (e.pointerType !== 'mouse') return; hover = true; var r = box.getBoundingClientRect(); set(e.clientX - r.left, e.clientY - r.top); });
+  function idle(now) { raf = 0; if (hover || !root.classList.contains('cta-light')) return; var rr = box.getBoundingClientRect(); if (rr.bottom <= 0 || rr.top >= innerHeight) return; var w = box.clientWidth, h = box.clientHeight, k = (now - t0) / 9000; set(w / 2 + Math.sin(k * Math.PI * 2) * w * 0.42, h * (0.55 + Math.sin(k * Math.PI * 4) * 0.2)); raf = requestAnimationFrame(idle); }
+  function start() { if (motion && spot && !raf) raf = requestAnimationFrame(idle); }
+  box.addEventListener('pointermove', function (e) { if (e.pointerType !== 'mouse' || !root.classList.contains('cta-light')) return; hover = true; var r = box.getBoundingClientRect(); set(e.clientX - r.left, e.clientY - r.top); });
   box.addEventListener('pointerleave', function () { hover = false; t0 = performance.now() - 2250; start(); });
   window.addEventListener('scroll', start, { passive: true }); start();
 })();
