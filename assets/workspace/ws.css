@@ -931,3 +931,21 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .ws-hero2 h1 { color:#111; }
 .ws-hero2 .h2-grad { background:none; -webkit-background-clip:border-box; background-clip:border-box; color:var(--teal-600); }
 .ws-hero2 .h2-desc { color:var(--gray-700, #404040); }
+
+/* 2026-11-10 피드백 2차: 하단 CTA를 메인 하단 CTA 밝은 버전과 같게 (연한 바탕 + 옅은 점 + 지나가는 초록 점 스포트라이트 + 아래쪽 옅은 빛, 검정 글씨, 흰 버튼) */
+.wcta { background:linear-gradient(160deg,#ffffff 0%,#fbfdfd 55%,#f8fcfb 100%); }
+.wcta::before { opacity:.13; }
+.wcta::after { background:#9ff0dd; opacity:.16; }
+.wcta .ws-dots { background:radial-gradient(circle, rgba(0,80,70,.10) .9px, transparent 1.1px) 0 0/12px 12px; }
+.wcta .ws-spot { background:radial-gradient(circle, rgba(0,151,136,.75) 1px, transparent 1.3px) 0 0/12px 12px; }
+.wcta-eb { background:none; -webkit-background-clip:border-box; background-clip:border-box; color:var(--teal-600); }
+.wcta h2 { color:#111; }
+.wcta-desc { color:var(--gray-700, #404040); }
+.wcta-btn { border-color:var(--teal-600); background:#fff; color:var(--teal-600); }
+.wcta-btn:hover { background:#fff; border-color:var(--teal-700); color:var(--teal-700); }
+body:has(.wcta) .op-footer { border-top-color:#edf1f0; } /* CTA와 푸터 바탕이 비슷해 선을 연하게 */
+/* 2026-11-10: 제목·설명을 FAQ 히어로와 같게 (Display/XLarge/B 50, 설명 16 gray-600), 높이는 약 400 */
+.ws-hero2 { padding:140px 60px 140px; }
+.ws-hero2 h1 { font-size:50px; line-height:64px; letter-spacing:-.5px; }
+.ws-hero2 .h2-desc { margin-top:12px; font-size:16px; font-weight:400; line-height:22px; color:var(--gray-600); }
+@media (max-width:760px) { .ws-hero2 { padding:88px 16px 80px; } .ws-hero2 h1 { font-size:32px; line-height:42px; letter-spacing:-.32px; } .ws-hero2 .h2-desc { font-size:14px; line-height:20px; } }
