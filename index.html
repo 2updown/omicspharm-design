@@ -221,6 +221,18 @@
   .acard:hover .img::after { background:rgba(0,0,0,.52); }
   .acard:hover .img p { max-height:130px; margin-top:20px; opacity:1; transform:none; transition-delay:0s, 0s, .08s, .04s; }
   .acard:hover .foot { color:var(--teal-600); }
+  /* 2026-11-10 피드백 C안: 3×2 낮은 가로 카드 (이름 왼쪽, 화살표 오른쪽, 카드 전체가 링크). 설명 문구는 분석 서비스 안내 페이지에서 */
+  .an-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+  .acard { position:relative; padding:0; gap:0; border:0; filter:none; }
+  .acard .img { height:120px; flex-direction:row; justify-content:flex-start; padding:0 64px 0 28px; border-radius:12px; text-align:left; }
+  .acard .img::after { background:linear-gradient(90deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.28) 55%, rgba(0,0,0,.12) 100%); } /* 글씨가 있는 왼쪽만 어둡게 */
+  .acard .img h3 { font-size:22px; line-height:30px; }
+  .acard .img p { display:none; }
+  .acard .foot { position:absolute; right:22px; top:50%; z-index:2; padding:0; font-size:0; color:#fff; transform:translateY(-50%); }
+  .acard .go .ic { width:22px; height:22px; }
+  .acard:hover { border-color:transparent; } .acard:hover .img { box-shadow:inset 0 0 0 2px var(--teal-500); }
+  .acard:hover .img::after { background:linear-gradient(90deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,.36) 55%, rgba(0,0,0,.18) 100%); }
+  .acard:hover .foot { color:#fff; }
   .acard:hover .go { transform:translateX(4px); }
   @media (prefers-reduced-motion:reduce) { .acard .img > img, .acard .img p, .acard .go { transition:none; } }
   @media (hover:none) { .acard .img p { max-height:none; margin-top:20px; opacity:1; transform:none; } } /* 터치 기기(태블릿 포함)는 설명 항상 표시 */
@@ -229,40 +241,11 @@
   .cta-sec { padding:60px 60px 100px; background:var(--white); display:flex; justify-content:center; }
   .cta { position:relative; width:var(--wrap); max-width:100%; padding:60px 0; border-radius:24px; overflow:hidden; display:flex; flex-direction:column; align-items:center; gap:24px; text-align:center; }
   .cta > img { position:absolute; left:0; top:-29.72%; width:100%; height:159.45%; object-fit:cover; }
-  .cta::before { content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(3,34,30,.93) 0%, rgba(5,54,47,.86) 100%); z-index:1; } /* 더 짙은 딥 그린 */
+  .cta::before { content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(22,27,34,.84) 0%, rgba(30,38,46,.76) 100%); z-index:1; } /* 2026-11-10 피드백: 딥 그린이 너무 강해서 중립 슬레이트로 */
   .cta > *:not(img) { position:relative; z-index:2; }
   .cta h2 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; color:var(--white); }
-  .cta p { font-size:18px; line-height:24px; letter-spacing:-.18px; color:#edeff6; }
+  .cta p { font-size:18px; line-height:24px; letter-spacing:-.18px; color:#edeff6; word-break:keep-all; }
   .cta .btn-action { padding:0 32px; }
-  /* 하단 CTA: 카드 대신 화면 폭을 가득 채우는 띠 (상단 히어로와 맞춤). 배경은 고정, 글자만 움직임 */
-  /* 하단 CTA: Workspace (2026-11-05, Figma CTA C안 2385:19177, 레퍼런스 cloudflare.com). 콘텐츠 폭(1320) 카드, teal 그라디언트 + 점 패턴 + 아래 민트 빛 + (떠다니는 아이콘 타일은 2026-11-05 뺌) */
-  .ws-cta { position:relative; width:var(--wrap); max-width:100%; padding:96px 24px; /* 위아래 96 (높이 462 유지, 글-버튼 간격만 60으로 넓힘). B안은 110 */ border-radius:24px; overflow:hidden; display:flex; align-items:center; justify-content:center; text-align:center;
-    background:linear-gradient(160deg, #0a2a27 0%, #04201d 55%, #031a18 100%); } /* 2026-11-05 짙은 잉크 teal (중간 톤 teal은 탁해 보여서) */
-  .ws-cta::before, .ws-cta::after { content:""; position:absolute; left:50%; border-radius:50%; pointer-events:none; }
-  .ws-cta::before { bottom:-170px; width:960px; height:320px; margin-left:-480px; background:linear-gradient(90deg,#00bba6,#3be0c5 50%,#4f8dff); opacity:.6; filter:blur(120px); }
-  .ws-cta::after { bottom:-90px; width:440px; height:160px; margin-left:-220px; background:#c9fff3; opacity:.45; filter:blur(70px); }
-  /* 점 배경 (2026-11-05): 옅은 점 + 마우스 주변만 밝아지는 점(마우스가 없으면 빛이 천천히 좌우로 지나감) */
-  .ws-dots, .ws-spot { position:absolute; inset:0; pointer-events:none; }
-  .ws-dots { background:radial-gradient(circle, rgba(255,255,255,.09) .9px, transparent 1.1px) 0 0/12px 12px; }
-  .ws-spot { background:radial-gradient(circle, rgba(140,255,232,.75) 1px, transparent 1.3px) 0 0/12px 12px;
-    -webkit-mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); }
-  @media (prefers-reduced-motion:reduce) { .ws-spot { display:none; } }
-  .ws-in { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:60px; } /* 글-버튼 간격 60 (Figma, 2026-11-05) */
-  .ws-head { display:flex; flex-direction:column; align-items:center; gap:16px; }
-  .ws-eyebrow { font-size:16px; font-weight:500; line-height:22px; background:linear-gradient(90deg, #3be0c5, #6fb2ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .ws-cta h2 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; color:#fff; word-break:keep-all; }
-  .ws-cta .ws-desc { margin-top:-0px; font-size:18px; line-height:24px; letter-spacing:-.18px; color:rgba(255,255,255,.85); word-break:keep-all; }
-  .ws-btns { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; }
-  .ws-btns .btn-action { padding:0 32px; }
-  .btn-ghost { display:inline-flex; align-items:center; justify-content:center; height:56px; padding:0 32px; border:1px solid rgba(255,255,255,.35); border-radius:99px; background:rgba(255,255,255,.14); color:#fff; font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; transition:background .2s; }
-  .btn-ghost:hover { background:rgba(255,255,255,.22); }
-  /* B안 (2026-11-05, Figma 2372:33957): ?cta=b 이면 글은 왼쪽, 버튼은 오른쪽 (높이는 같음) */
-  .cta-b-only, .cta-b .cta-a-only { display:none; } .cta-b .cta-b-only { display:block; } /* A안·B안은 문구도 다름 */
-  .cta-b .ws-cta { padding-top:110px; padding-bottom:110px; }
-  .cta-b .ws-in { width:1312px; max-width:100%; flex-direction:row; justify-content:space-between; align-items:center; gap:24px; text-align:left; }
-  .cta-b .ws-head { align-items:flex-start; gap:24px; }
-  .cta-b .ws-btns { flex:none; justify-content:flex-end; }
-  .cta-full .cta-sec { padding:0; } .cta-full .ws-cta { width:100%; border-radius:0; } /* 기본은 화면 전체 폭. 카드형(1320, 둥근 모서리) 비교용은 index.html?cta=card */
   .cta-sec.full { padding:0; }
   .cta-sec.full .cta { width:100%; min-height:400px; justify-content:center; padding:100px 24px; border-radius:0; }
   .cta-sec.full .cta > img { top:0; height:100%; }
@@ -280,6 +263,7 @@
   .sol-shot .glow.blue { left:50%; top:-6%; width:44%; height:112%; } .sol-shot .glow.peach { left:6%; top:0; width:44%; height:104%; } .sol-shot .glow.green { left:24%; top:-6%; width:51%; height:112%; }
   .sol-frame { position:relative; width:880px; max-width:78%; container-type:inline-size; } /* 화면 이미지 + 특징 3개를 한 그래픽으로: 특징 위치는 이미지 기준 % (화면이 줄어도 같은 자리) */
   .sol-board { display:block; width:100%; height:auto; border-radius:20px; box-shadow:0 24px 60px rgba(0,79,74,.16), 0 2px 8px rgba(0,0,0,.05); }
+  .sol-btn { margin-top:16px; padding:0 32px; } /* 2026-11-10 */
   .sol-cap { margin-top:-24px; font-size:14px; line-height:20px; color:var(--gray-500); text-align:center; word-break:keep-all; } /* 화면 아래 캡션 */
   .sol-feats { display:contents; }
   .sol-pill { position:absolute; display:flex; align-items:center; gap:.5em; padding:.75em 1.125em; border-radius:99px; background:#fff; box-shadow:0 10px 30px rgba(0,79,74,.14), 0 1px 3px rgba(0,0,0,.05); font-size:clamp(10px, 1.82cqw, 16px); font-weight:600; line-height:1.375; white-space:nowrap; }
@@ -298,7 +282,6 @@
     .fb.interpret > img { width:99.75%; } .fb.support > img { width:63.25%; margin:0 auto; } .fb.report > img { width:50.75%; margin:0 auto; }
     .fb.matching > img { width:112.25%; margin-left:-6.125%; } .fb .fh p br { display:none; }
     .proj-grid { grid-template-columns:repeat(2,1fr); }
-    .an-grid { grid-template-columns:repeat(2,1fr); }
   }
   @media (max-width:760px) {
     .hero { height:auto; padding:170px 16px 80px; } .hero-in, .hero-copy { max-width:100%; } .hero h1 { width:auto; font-size:30px; } .hero h1 br { display:none; } .hero p { white-space:normal; }
@@ -309,9 +292,7 @@
     .proof { padding:36px 0; gap:28px; }
     .features { gap:32px; }
     .cta-sec.full .cta { min-height:0; padding:64px 16px; }
-    .cta-b .ws-in { flex-direction:column; align-items:flex-start; gap:28px; } .cta-b .ws-head { gap:16px; } .cta-b .ws-btns { justify-content:flex-start; }
     .solution { gap:24px; }
-    .ws-cta { min-height:0; padding:64px 20px 72px; } .ws-cta h2 { font-size:28px; line-height:38px; } .ws-cta .ws-desc br { display:none; } .ws-in { gap:28px; }
     .sec-head h2, .an-head h2, .cta h2 { font-size:28px; line-height:38px; }
     .sec-head .desc br, .cta p br { display:none; }
     /* 최근 프로젝트: 모바일 2열 × 4줄, 카드 글자·여백 축소 ('모집기한' 글자는 숨기고 날짜·상태만) */
@@ -326,14 +307,11 @@
     .an-head { display:grid; grid-template-columns:1fr auto; align-items:center; column-gap:12px; }
     .an-head > div { display:contents; }
     .an-head p { grid-column:1 / -1; grid-row:2; font-size:16px; line-height:22px; }
-    /* 분석 서비스 카드: 2열 × 3줄, 터치에서는 hover 설명을 항상 표시 */
-    .an-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 8px; }
-    .acard { gap:8px; padding:6px; }
-    .acard .img { height:auto; min-height:210px; justify-content:center; gap:8px; padding:20px 8px; border-radius:12px; }
-    .acard .img h3 { font-size:16px; line-height:22px; }
-    .acard .img p { max-height:none; margin-top:0; opacity:1; transform:none; font-size:12px; line-height:17px; word-break:keep-all; }
-    .acard .img p br { display:none; }
-    .acard .foot { padding:2px 4px 2px 6px; font-size:14px; line-height:20px; }
+    /* 분석 서비스 카드: 모바일은 한 줄에 하나, 낮은 가로 카드 */
+    .an-grid { grid-template-columns:1fr; gap:8px; }
+    .acard .img { height:72px; padding:0 52px 0 20px; }
+    .acard .img h3 { font-size:17px; line-height:24px; }
+    .acard .foot { right:18px; } .acard .go .ic { width:20px; height:20px; }
     .feat-view { height:220px; } .feat-view .screen { height:216px; } .feat-view .screen img { width:100%; height:auto; }
     /* Feature 모바일: 제목만 넣은 탭을 가로로 넘기고, 고른 항목의 설명·이미지만 보여줌 */
     .feat-in { gap:20px; padding:24px 20px; }
@@ -481,7 +459,7 @@
 
 <!-- Feature 4개: AI 보고서 작성 / AI 결과 해석 / AI 파트너 매칭 / AI 챗봇 CS (이미지는 임시). 첫 번째 항목이 기본
      아이콘: Phosphor Icons Regular (FileText, ListMagnifyingGlass, Sparkle, ChatCircleDots) — 출처 목록 assets/ICONS.md -->
-<script>if (!/[?&]feat=bento\b/.test(location.search)) document.documentElement.classList.add('feat1'); /* 2026-11-10 피드백: 탭형이 기본, 카드형은 ?feat=bento */ if (!/[?&]cta=card\b/.test(location.search)) document.documentElement.classList.add('cta-full'); if (/[?&]cta=b\b/.test(location.search)) document.documentElement.classList.add('cta-b');</script>
+<script>if (!/[?&]feat=bento\b/.test(location.search)) document.documentElement.classList.add('feat1'); /* 2026-11-10 피드백: 탭형이 기본, 카드형은 ?feat=bento */</script>
 <section class="sec features">
   <div class="sec-head">
     <div class="eyebrow">Features</div>
@@ -532,6 +510,7 @@
     </div>
   </div>
   <p class="sol-cap">화면은 예시이며, OmicsPharm Workspace는 현재 사전 상담을 받고 있습니다.</p>
+  <a class="btn-action sol-btn" href="workspace.html">Workspace 알아보기 <span class="ic" style="--src:url(assets/main/ic-arrow-right.svg)"></span></a><!-- 2026-11-10 피드백: 하단 CTA 대신 여기서 워크스페이스로 -->
 </section>
 
 <section class="sec projects" id="projects">
@@ -560,23 +539,13 @@
   </div>
 </section>
 
-<!-- 하단 CTA (2026-11-05): 문의하기 → Workspace 소개. 문의하기는 Hero에 있음. 도입 상담은 문의 폼 유형 'Workspace 도입 상담'(?type=workspace) -->
-<section class="cta-sec">
-  <div class="ws-cta">
-    <div class="ws-dots" aria-hidden="true"></div><div class="ws-spot" aria-hidden="true"></div>
-    <div class="ws-in">
-      <div class="ws-head">
-        <p class="ws-eyebrow">Let's Build Your Workspace</p>
-        <h2 class="cta-a-only">연구실에도 Agentic AI가 필요하신가요?</h2>
-        <p class="ws-desc cta-a-only">연구실의 데이터와 분석 이력을 바탕으로 근거 탐색부터 결과 해석까지 AI가 연결합니다. <br>연구 분야와 규모에 맞춰 필요한 구성을 함께 제안해 드립니다.</p>
-        <h2 class="cta-b-only">우리 연구에 맞는 Workspace를 설계해 보세요.</h2><!-- B안 문구 (Figma 2372:33957) -->
-        <p class="ws-desc cta-b-only">연구실의 데이터와 분석 이력을 바탕으로 Agentic AI가 근거 탐색부터 결과 해석까지 연결합니다. <br>연구 분야와 규모에 맞춰 필요한 구성을 함께 제안해 드립니다.</p>
-      </div>
-      <div class="ws-btns">
-        <a class="btn-action" href="workspace.html">Workspace 알아보기 <span class="ic" style="--src:url(assets/main/ic-arrow-right.svg)"></span></a>
-        <a class="btn-ghost" href="contact.html?type=workspace">도입 상담</a>
-      </div>
-    </div>
+<!-- 하단 CTA (2026-11-10 피드백): Workspace CTA → 예전 분석 의뢰 CTA (Figma 2562:30110). 배경색만 바꿈. Workspace CTA 효과 기록은 docs/cta-animation.md -->
+<section class="cta-sec full">
+  <div class="cta">
+    <img src="assets/main/cta-bg.png" alt="">
+    <h2>오믹스 분석이 필요하신가요?</h2>
+    <p>유전체, 전사체, 단백체, 대사체 등 다양한 분석 의뢰를 지원하고, <br>견적부터 프로젝트 관리까지 전문 컨설턴트가 함께합니다.</p>
+    <a class="btn-action" href="omicspharm-register.html" data-client-only>프로젝트 의뢰하기 <span class="ic" style="--src:url(assets/main/ic-arrow-right.svg)"></span></a>
   </div>
 </section>
 
@@ -678,18 +647,7 @@
 (function () { var r = document.querySelector('.service-shot > img.rep'); if (r) r.addEventListener('animationend', function () { r.classList.add('done'); }); })();
 </script>
 <script>
-/* 하단 CTA 점 빛 (2026-11-05): 마우스 위치를 따라 밝아짐. 마우스가 없으면(모바일 포함) 빛이 천천히 좌우로 지나감. 화면에 보일 때만 움직임 */
-(function () {
-  var box = document.querySelector('.ws-cta'), spot = box && box.querySelector('.ws-spot');
-  if (!spot || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  var hover = false, seen = false, raf = 0, t0 = performance.now();
-  function set(x, y) { spot.style.setProperty('--mx', x + 'px'); spot.style.setProperty('--my', y + 'px'); }
-  function idle(now) { raf = 0; if (hover) return; var rr = box.getBoundingClientRect(); seen = rr.bottom > 0 && rr.top < innerHeight; if (!seen) return; var w = box.clientWidth, h = box.clientHeight, k = (now - t0) / 9000; set(w / 2 + Math.sin(k * Math.PI * 2) * w * 0.42, h * (0.55 + Math.sin(k * Math.PI * 4) * 0.2)); raf = requestAnimationFrame(idle); }
-  function start() { if (!raf) raf = requestAnimationFrame(idle); }
-  box.addEventListener('pointermove', function (e) { if (e.pointerType !== 'mouse') return; hover = true; var r = box.getBoundingClientRect(); set(e.clientX - r.left, e.clientY - r.top); });
-  box.addEventListener('pointerleave', function () { hover = false; t0 = performance.now() - 2250; start(); });
-  window.addEventListener('scroll', start, { passive: true }); start(); // 화면에 들어오면 다시 시작 (밖에 있으면 멈춤)
-})();
+
 
 /* 메인 스크롤 등장 효과 (배경·배경 이미지는 고정, 글자·내용만): 요소마다 .rv를 붙이고 화면에 들어오면 .in (같은 묶음 안에서는 순서대로 조금씩 늦게) */
 (function () {
@@ -701,8 +659,8 @@
     ['.fb'], // Features 시안 2: 카드 하나씩, 왼쪽 위부터 순서대로
     ['.proj-head', '#projView'],
     ['.an-head'], ['.an-grid .acard'],
-    ['.solution .sec-head', '.sol-shot'],
-    ['.ws-head', '.ws-btns']
+    ['.solution .sec-head', '.sol-shot', '.sol-btn'],
+    ['.cta > h2', '.cta > p', '.cta > .btn-action']
   ];
   var els = [];
   groups.forEach(function (g) {
