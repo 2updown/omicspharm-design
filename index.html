@@ -114,7 +114,7 @@
   .feat-box { position:relative; width:var(--wrap); max-width:100%; height:634px; overflow:hidden; border-radius:20px; background:var(--gray-50); /* 604 → 634: 탭 위 Beta·Coming soon 줄 (2026-11-04) */
     box-shadow:0 0 0 .5px #e4e5e9, 0 0 0 1px rgba(228,229,233,.6), 0 0 0 3.5px #f9f9fb, 0 0 0 4px #f3f4f7; }
   .feat-in { position:absolute; top:36px; left:calc(50% + .5px); transform:translateX(-50%); display:flex; flex-direction:column; gap:64px; }
-  .feat-tabs { display:flex; justify-content:space-between; gap:24px; width:1075px; } /* 탭 너비는 내용대로 (배지가 제목 옆에 붙어 길이가 달라짐, 2026-11-04) */
+  .feat-tabs { display:flex; justify-content:space-between; gap:24px; width:1098px; } /* 탭 너비는 내용대로 (배지가 제목 옆에 붙어 길이가 달라짐, 2026-11-04) */
   .feat-tab { flex:none; display:flex; flex-direction:column; gap:12px; text-align:left; border-radius:12px; color:var(--gray-400); }
   .feat-tab .t { display:flex; align-items:center; gap:8px; font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.18px; }
   .feat-tab .t .ic { width:24px; height:24px; }
@@ -173,9 +173,9 @@
   .feat-tgl button.on { background:#111; color:#fff; }
   @media (max-width:1180px) { .feat-sd { grid-template-columns:1fr; gap:24px; } .fsd-view { order:-1; } }
   @media (max-width:760px) { .feat-tgl { right:16px; top:12px; } .fsd-t { font-size:18px; line-height:26px; } .fsd-it { padding:14px 0 14px 20px; } .fsd-d { margin-top:6px; font-size:15px; line-height:22px; } }
-  .feat-view { position:relative; width:1075px; height:399.02px; border-radius:16px; }
-  .feat-view .screen { position:absolute; top:2px; left:2px; right:2px; height:395.02px; border-radius:16px; background:#eef0f3; overflow:hidden; } /* 2026-11-10 초록 배경 → 밝은 회색 */
-  .feat-view .screen img { position:absolute; width:888px; height:421px; left:calc(50% + .5px); top:calc(50% + 3.99px); transform:translate(-50%,-50%); transition:opacity .25s; }
+  .feat-view { position:relative; width:1098px; height:399px; border-radius:25px; } /* Figma 2569:33077 (2026-11-10) */
+  .feat-view .screen { position:absolute; top:2px; left:2px; right:2px; height:395px; border-radius:25px; background:#f3f4f6; overflow:hidden; } /* 2026-11-10 초록 배경 → 밝은 회색 */
+  .feat-view .screen img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:opacity .25s; } /* 화면 박스 전체 이미지 (assets/main/features/tab, 좌우형과 같은 화면) */
   .feat-view .screen img.fade { opacity:0; }
 
   /* ── Recent projects (214:5466) ── */
@@ -357,7 +357,7 @@
     .acard .img { height:104px; padding:0 52px 0 20px; }
     .acard .img h3 { font-size:20px; line-height:28px; }
     .acard .foot { right:18px; } .acard .go .ic { width:20px; height:20px; }
-    .feat-view { height:220px; } .feat-view .screen { height:216px; } .feat-view .screen img { width:100%; height:auto; }
+    .feat-view { height:220px; } .feat-view .screen { height:216px; }
     /* Feature 모바일: 제목만 넣은 탭을 가로로 넘기고, 고른 항목의 설명·이미지만 보여줌 */
     .feat-in { gap:20px; padding:24px 20px; }
     .feat-tw { position:relative; margin:0 -20px; }
@@ -515,13 +515,13 @@
   <div class="feat-box">
     <div class="feat-in">
       <div class="feat-tw" id="featTw"><div class="feat-tabs" role="tablist">
-        <button class="feat-tab on" role="tab" data-img="assets/main/features/feature-interpret-v3.png"><span class="t"><span class="ic" style="--src:url(assets/main/ic-list-magnifying-glass.svg)"></span><span class="tt">AI 기반 결과 해석</span><span class="ftag beta">Beta</span></span><span class="d">기존 분석 결과를 검색·비교해<br>결과가 의미하는 바를<br>쉽게 해석할 수 있도록 돕습니다.</span></button>
-        <button class="feat-tab" role="tab" data-img="assets/main/features/feature-support.png"><span class="t"><span class="ic" style="--src:url(assets/main/ic-chats.svg?v=2)"></span><span class="tt">AI Customer Support</span></span><span class="d">프로젝트 의뢰부터 진행 상황까지<br>궁금한 점을 AI 챗봇이 언제든<br>빠르게 안내합니다.</span></button>
-        <button class="feat-tab" role="tab" data-img="assets/main/features/feature-report.png"><span class="t"><span class="ic" style="--src:url(assets/main/ic-file-text.svg?v=2)"></span><span class="tt">AI 기반 보고서 작성</span><span class="ftag soon">Coming soon</span></span><span class="d">분석 결과를 바탕으로 AI가<br>보고서 초안을 작성하고 필요한<br>부분은 바로 수정할 수 있습니다.</span></button>
-        <button class="feat-tab" role="tab" data-img="assets/main/features/feature-matching.png"><span class="t"><span class="ic" style="--src:url(assets/main/ic-sparkle.svg)"></span><span class="tt">AI 파트너 매칭</span><span class="ftag soon">Coming soon</span></span><span class="d">프로젝트의 분석 분야와 요구사항을<br>바탕으로 적합한 분석 파트너를<br>AI로 빠르게 추천합니다.</span></button>
+        <button class="feat-tab on" role="tab" data-img="assets/main/features/tab/interpret.png"><span class="t"><span class="ic" style="--src:url(assets/main/ic-list-magnifying-glass.svg)"></span><span class="tt">AI 기반 결과 해석</span><span class="ftag beta">Beta</span></span><span class="d">기존 분석 결과를 검색·비교해<br>결과가 의미하는 바를<br>쉽게 해석할 수 있도록 돕습니다.</span></button>
+        <button class="feat-tab" role="tab" data-img="assets/main/features/tab/support.png"><span class="t"><span class="ic" style="--src:url(assets/main/ic-chats.svg?v=2)"></span><span class="tt">AI Customer Support</span></span><span class="d">프로젝트 의뢰부터 진행 상황까지<br>궁금한 점을 AI 챗봇이 언제든<br>빠르게 안내합니다.</span></button>
+        <button class="feat-tab" role="tab" data-img="assets/main/features/tab/report.png"><span class="t"><span class="ic" style="--src:url(assets/main/ic-file-text.svg?v=2)"></span><span class="tt">AI 기반 보고서 작성</span><span class="ftag soon">Coming soon</span></span><span class="d">분석 결과를 바탕으로 AI가<br>보고서 초안을 작성하고 필요한<br>부분은 바로 수정할 수 있습니다.</span></button>
+        <button class="feat-tab" role="tab" data-img="assets/main/features/tab/matching.png"><span class="t"><span class="ic" style="--src:url(assets/main/ic-sparkle.svg)"></span><span class="tt">AI 파트너 매칭</span><span class="ftag soon">Coming soon</span></span><span class="d">프로젝트의 분석 분야와 요구사항을<br>바탕으로 적합한 분석 파트너를<br>AI로 빠르게 추천합니다.</span></button>
       </div></div>
       <p class="feat-desc" id="featDesc" aria-live="polite"></p><!-- 모바일: 고른 항목 설명만 -->
-      <div class="feat-view"><div class="screen"><img id="featImg" src="assets/main/features/feature-interpret-v3.png" alt="AI 기반 결과 해석 화면 예시"></div></div>
+      <div class="feat-view"><div class="screen"><img id="featImg" src="assets/main/features/tab/interpret.png" alt="AI 기반 결과 해석 화면 예시"></div></div>
     </div>
   </div>
   <!-- 시안 2 (2026-11-05, Figma 2346:31548): 카드 그리드가 기본. 위 탭형(예전)은 ?feat=1 일 때만 -->
