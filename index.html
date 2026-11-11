@@ -171,7 +171,7 @@
   .feat-tgl { position:absolute; right:60px; top:60px; z-index:3; display:flex; padding:3px; border-radius:99px; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.12); }
   .feat-tgl button { height:28px; padding:0 12px; border-radius:99px; font-size:12px; font-weight:500; color:#525252; white-space:nowrap; }
   .feat-tgl button.on { background:#111; color:#fff; }
-  @media (max-width:1180px) { .feat-sd { grid-template-columns:1fr; gap:24px; } .fsd-view { order:-1; } }
+  @media (max-width:1180px) { .feat-sd { grid-template-columns:1fr; gap:24px; } .fsd-list .fsd-view { margin:4px 0 16px; } } /* 2026-11-11 좁은 화면: 화면 이미지는 고른 항목 바로 아래 (JS가 옮김) */
   @media (max-width:760px) { .feat-tgl { right:16px; top:12px; } .fsd-t { font-size:18px; line-height:26px; } .fsd-it { padding:14px 0 14px 20px; } .fsd-d { margin-top:6px; font-size:15px; line-height:22px; } }
   .feat-view { position:relative; width:1098px; height:399px; border-radius:25px; } /* Figma 2569:33077 (2026-11-10) */
   .feat-view .screen { position:absolute; top:2px; left:2px; right:2px; height:395px; border-radius:25px; background:#f3f4f6; overflow:hidden; } /* 2026-11-10 초록 배경 → 밝은 회색 */
@@ -709,9 +709,12 @@
   sec.appendChild(sd);
   var SIDE = ['interpret', 'support', 'report', 'matching'].map(function (n) { return 'assets/main/features/side/' + n + '.png?v=3'; }); // 탭 순서와 같음
   sd.querySelector('.fsd-view img').src = SIDE[0];
-  var its = [].slice.call(sd.querySelectorAll('.fsd-it')), img = sd.querySelector('.fsd-view img'), cur = 0;
+  var its = [].slice.call(sd.querySelectorAll('.fsd-it')), img = sd.querySelector('.fsd-view img'), view = sd.querySelector('.fsd-view'), cur = 0;
+  var narrow = matchMedia('(max-width:1180px)');
+  function place() { if (narrow.matches) its[cur].after(view); else if (view.parentNode !== sd) sd.appendChild(view); } // 좁은 화면은 고른 항목 아래, 넓은 화면은 오른쪽
+  narrow.addEventListener('change', place);
   function go(i) {
-    cur = i; its.forEach(function (b, k) { b.classList.toggle('on', k === i); b.setAttribute('aria-selected', k === i); });
+    cur = i; its.forEach(function (b, k) { b.classList.toggle('on', k === i); b.setAttribute('aria-selected', k === i); }); place();
     var t = tabs[i]; if (img.getAttribute('src') === SIDE[i]) return;
     img.classList.add('fade'); setTimeout(function () { img.src = SIDE[i]; img.alt = t.querySelector('.tt').textContent + ' 화면 예시'; img.classList.remove('fade'); }, 200);
   }
@@ -722,7 +725,7 @@
   var tg = sec.querySelectorAll('.feat-tgl button');
   function mark() { var on = root.classList.contains('feat-side'); [].forEach.call(tg, function (b) { var m = (b.dataset.feat === 'side') === on; b.classList.toggle('on', m); b.setAttribute('aria-pressed', m); }); }
   [].forEach.call(tg, function (b) { b.addEventListener('click', function () { root.classList.toggle('feat-side', b.dataset.feat === 'side'); mark(); go(0); }); });
-  mark();
+  mark(); place();
 })();
 /* 하단 CTA 배경 비교: 토글(사진 / 밝은 배경) 또는 ?cta=light. 밝은 배경은 점 스포트라이트가 마우스를 따라가고, 마우스가 없으면 9초 주기로 좌우로 지나감 (docs/cta-animation.md) */
 (function () {
