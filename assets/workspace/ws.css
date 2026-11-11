@@ -1035,7 +1035,8 @@ main > section#managed.sec { background:#f6faf9; }
 .pv-feat h4 { margin:36px 0 12px; padding-left:4px; }
 .pf-r, .pf-all { margin-bottom:8px; padding:20px 28px; border-radius:14px; background:#f7f9f9; font-size:16px; line-height:24px; }
 .pf-r .n, .pf-all .n { display:flex; align-items:center; font-size:17px; font-weight:700; line-height:24px; }
-.pf-r .pv { color:var(--gray-600); word-break:keep-all; } .pf-r .ev { color:#171717; font-weight:500; word-break:keep-all; }
+.pf-r .pv, .pf-r .ev { color:#171717; font-weight:500; word-break:keep-all; } /* 특징 비교라 두 플랜 모두 검정 */
+.pf-r.key .pv, .pf-r.key .ev { color:var(--teal-600); } /* 도입 단위 줄만 teal (두 열 같게) */
 .pf-r em { display:none; }
 .pf-all { margin-top:24px; background:#0a2a27; color:#fff; }
 .pf-all .n { gap:8px; } /* 공통 배지는 제목 오른쪽 */ .pf-all .v { grid-column:2 / -1; color:#e6f2f0; } .pf-all .v b { color:#fff; }
