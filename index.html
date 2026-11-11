@@ -325,7 +325,6 @@
     .acard .img { height:104px; padding:0 52px 0 20px; }
     .acard .img h3 { font-size:20px; line-height:28px; }
     .acard .foot { right:18px; } .acard .go .ic { width:20px; height:20px; }
-    .feat-view { height:220px; } .feat-view .screen { height:216px; }
     /* Feature 모바일: 제목만 넣은 탭을 가로로 넘기고, 고른 항목의 설명·이미지만 보여줌 */
     .feat-in { gap:20px; padding:24px 20px; }
     .feat-tw { position:relative; margin:0 -20px; }
@@ -348,6 +347,12 @@
   .rv { opacity:0; filter:blur(5px); transform:translate3d(0,2rem,0); transition:opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1), filter .9s cubic-bezier(.2,.7,.2,1); transition-delay:var(--d,0s); }
   .rv.in { opacity:1; filter:none; transform:none; }
   @media (prefers-reduced-motion:reduce) { .rv { opacity:1; filter:none; transform:none; transition:none; } }
+  /* 2026-11-11 좁은 화면: 화면 이미지를 잘리지 않게 이미지 비율(2188:790)대로 줄여 전체 표시 (높이 고정 + cover라 1·4번 화면 양옆이 잘렸음) */
+  @media (max-width:1180px) {
+    .feat-view { height:auto; }
+    .feat-view .screen { position:relative; inset:auto; height:auto; margin:2px; aspect-ratio:2188 / 790; }
+    .feat-view .screen img { object-fit:contain; }
+  }
 </style>
 </head>
 <body data-op-no-enter>
