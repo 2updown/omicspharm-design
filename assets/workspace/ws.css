@@ -991,3 +991,8 @@ main > section#managed.sec { background:#f6faf9; }
 .hw-arrow path { stroke-dasharray:none; }
 .hw-arrow .l { stroke-dasharray:4 4; }
 @media (max-width:760px) { .hw-steps li + li { border-style:dashed; } }
+
+/* 2026-11-11 Figma Key Features 탭 내용: 제목-설명 12, 설명-체크 36, 체크 18/24 Regular #262626, 체크 사이 10, 줄바꿈은 Figma대로 (모바일은 줄바꿈 없음) */
+.sec2 .pv-txt > p { margin-top:12px; }
+.sec2 .pv-list { gap:10px; } .sec2 .pv-list li { font-size:18px; font-weight:400; line-height:24px; color:#262626; }
+@media (max-width:760px) { .sec2 .pv-txt > p br { display:none; } .sec2 .pv-list li { font-size:15px; line-height:22px; } }
