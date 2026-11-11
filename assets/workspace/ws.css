@@ -1077,6 +1077,9 @@ main > section#managed.sec { background:#f6faf9; }
   .pv-t .cmp3:not(.pv) .cr .cv { padding:10px 20px; }
   .pv-t .cmp3:not(.pv) .cbox h4 { min-height:56px; font-size:18px; line-height:26px; }
   .pv-t .cmp3:not(.pv) .chd .cv { min-height:64px; }
+  /* 항목 열을 좁고 가볍게: 280 → 200, 글자 15 회색 */
+  .pv-t .cmp3:not(.pv) .chd, .pv-t .cmp3:not(.pv) .cr { grid-template-columns:200px 1fr 1fr; }
+  .pv-t .cmp3:not(.pv) .cr .cl { font-size:15px; color:var(--gray-600); }
 }
 .pv-t .cmp3:not(.pv) .cbox { margin-top:16px; } .pv-t .cmp3:not(.pv) .chd + .cbox { margin-top:0; }
 @media (max-width:960px) {
