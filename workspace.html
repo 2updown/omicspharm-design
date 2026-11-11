@@ -9,7 +9,7 @@
      원본 Private/Enterprise 페이지 내용은 이 페이지의 '도입 방식'(#plans) 섹션으로 합침. 반복 섹션(고도화·보안·Managed AI Service·FAQ)은 assets/workspace/ws.js 한 곳에서 관리 -->
 <link rel="stylesheet" href="assets/common/site.css?v=20261111b">
 <script src="assets/common/site.js?v=20261111a"></script>
-<link rel="stylesheet" href="assets/workspace/ws.css?v=109">
+<link rel="stylesheet" href="assets/workspace/ws.css?v=110">
 <script src="assets/workspace/ws.js?v=58"></script>
 </head>
 <body data-op-no-enter>
@@ -73,8 +73,8 @@
       <div class="cr"><div class="cl">Managed AI Service</div><div class="cv span2"><span><b>전문 AI 팀</b>이 도입 설계, 데이터 연결과 권한 설정, 일상 운영 점검, 응답 품질 평가와 고도화까지 맡습니다.</span></div></div><!-- 2026-11-11: 운영 지원 섹션을 이 줄로 흡수 -->
     </div>
   </div>
-  <!-- 2026-11-11 비교 시안: 표 대신 플랜 카드형 / 특징 비교형. 내용은 위 표(.cmp3)에서 읽어 만듦. 토글로 전환, 고르면 하나만 남김 -->
-  <div class="pv-tgl" role="group" aria-label="플랜 비교 시안"><button type="button" data-pv="card">카드형</button><button type="button" data-pv="feat">특징 비교형</button></div>
+  <!-- 2026-11-11 비교 시안: 플랜 카드형 / 특징 비교형 / 예전 표(높이 줄임). 내용은 위 표(.cmp3)에서 읽어 만듦. 토글로 전환, 고르면 하나만 남김 -->
+  <div class="pv-tgl" role="group" aria-label="플랜 비교 시안"><button type="button" data-pv="card">카드형</button><button type="button" data-pv="feat">특징 비교형</button><button type="button" data-pv="table">표형</button></div>
   <div class="cmp3 pv pv-card"></div>
   <div class="cmp3 pv pv-feat"></div>
   <script>
@@ -102,9 +102,9 @@
     // 카드형: 두 카드의 같은 항목 높이를 맞춤
     function eq() { var its = document.querySelectorAll('.pv-card .pc-it'); its.forEach(function (e) { e.style.minHeight = ''; }); var by = {}; its.forEach(function (e) { (by[e.dataset.k] = by[e.dataset.k] || []).push(e); }); Object.keys(by).forEach(function (k) { var h = Math.max.apply(null, by[k].map(function (e) { return e.offsetHeight; })); by[k].forEach(function (e) { e.style.minHeight = h + 'px'; }); }); }
     var root = document.documentElement, tg = document.querySelectorAll('.pv-tgl button');
-    function set(v) { root.classList.toggle('pv-f', v === 'feat'); tg.forEach(function (b) { var on = b.dataset.pv === v; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); eq(); }
+    function set(v) { root.classList.toggle('pv-f', v === 'feat'); root.classList.toggle('pv-t', v === 'table'); tg.forEach(function (b) { var on = b.dataset.pv === v; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); eq(); }
     tg.forEach(function (b) { b.addEventListener('click', function () { set(b.dataset.pv); }); });
-    set(/[?&]plans=feat\b/.test(location.search) ? 'feat' : 'card');
+    var q = (location.search.match(/[?&]plans=(feat|table)\b/) || [])[1]; set(q || 'card');
     addEventListener('resize', eq); addEventListener('load', eq);
   })();
   </script>

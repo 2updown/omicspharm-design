@@ -1012,6 +1012,7 @@ main > section#managed.sec { background:#f6faf9; }
 .pv-tgl button { height:28px; padding:0 12px; border:0; border-radius:99px; background:none; font:inherit; font-size:12px; font-weight:500; color:#525252; cursor:pointer; white-space:nowrap; }
 .pv-tgl button.on { background:#111; color:#fff; }
 .pv-feat, .pv-f .pv-card { display:none; } .pv-f .pv-feat { display:block; }
+.pv-t #plans .cmp3:not(.pv) { display:block; } .pv-t .pv-card { display:none; } /* 표형 (?plans=table) */
 /* 카드형 */
 .pc-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
 .pc { padding:36px 36px 20px; border:1px solid var(--gray-200); border-radius:20px; background:#fff; }
@@ -1067,4 +1068,20 @@ main > section#managed.sec { background:#f6faf9; }
   .pf-r, .pf-all { padding:14px 14px; font-size:14px; line-height:20px; } .pf-r .n, .pf-all .n { font-size:15px; line-height:22px; }
   .pv-feat h4 { margin:22px 0 8px; }
   .pv .pill { height:26px; padding:0 10px; font-size:12px; }
+}
+
+/* 2026-11-11 표형 시안: 예전 표를 높이만 줄여서 (줄 69 → 56, 묶음 제목 74 → 56, 모바일 값 칸 여백·글자 축소) */
+@media (min-width:961px) {
+  .pv-t .cmp3:not(.pv) .cr .cl, .pv-t .cmp3:not(.pv) .cr .cv { min-height:56px; }
+  .pv-t .cmp3:not(.pv) .mk-row .cl, .pv-t .cmp3:not(.pv) .mk-row .cv { min-height:56px; }
+  .pv-t .cmp3:not(.pv) .cr .cv { padding:10px 20px; }
+  .pv-t .cmp3:not(.pv) .cbox h4 { min-height:56px; font-size:18px; line-height:26px; }
+  .pv-t .cmp3:not(.pv) .chd .cv { min-height:64px; }
+}
+.pv-t .cmp3:not(.pv) .cbox { margin-top:16px; } .pv-t .cmp3:not(.pv) .chd + .cbox { margin-top:0; }
+@media (max-width:960px) {
+  .pv-t .cmp3:not(.pv) .cbox h4 { min-height:44px; font-size:16px; line-height:22px; }
+  .pv-t .cmp3:not(.pv) .cr .cl { padding:8px 14px 6px; font-size:14px; line-height:20px; }
+  .pv-t .cmp3:not(.pv) .cr .cv { min-height:0; padding:10px; font-size:14px; line-height:20px; }
+  .pv-t .cmp3:not(.pv) .mk-row .cv { min-height:44px; }
 }
