@@ -1033,7 +1033,7 @@ main > section#managed.sec { background:#f6faf9; }
 .pf-hd { padding:0 28px 16px; border-bottom:2px solid #111; }
 .pf-hd .p { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .pf-hd b { font-size:20px; font-weight:700; line-height:28px; }
-.pv-feat h4 { margin:36px 0 12px; padding-left:4px; }
+.pv-feat h4 { margin:36px 0 12px; padding-left:4px; } .pf-hd + h4 { margin-top:12px; } /* 플랜 이름 줄 바로 아래 첫 묶음은 12 */
 .pf-r, .pf-all { margin-bottom:8px; padding:20px 28px; border-radius:14px; background:#f7f9f9; font-size:16px; line-height:24px; }
 .pf-r .n, .pf-all .n { display:flex; align-items:center; font-size:17px; font-weight:700; line-height:24px; }
 .pf-r .pv, .pf-r .ev { color:#171717; font-weight:500; word-break:keep-all; } /* 특징 비교라 두 플랜 모두 검정 */
@@ -1090,3 +1090,4 @@ main > section#managed.sec { background:#f6faf9; }
   .pv-t .cmp3:not(.pv) .cr .cv { min-height:0; padding:4px 10px 10px; font-size:14px; line-height:20px; }
   .pv-t .cmp3:not(.pv) .mk-row .cv { min-height:36px; }
 }
+@media (max-width:640px) { .pv-feat .pf-hd + h4 { margin-top:12px; } }
