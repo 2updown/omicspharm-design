@@ -1121,3 +1121,5 @@ main > section#managed.sec { background:#f6faf9; }
 .pc-all, .pf-all { background:var(--teal-600); color:#fff; }
 .pc-all .l { color:#fff; border-right-color:rgba(255,255,255,.3); } .pc-all .v, .pf-all .v { color:#fff; } .pc-all .v b, .pf-all .v b { color:#fff; }
 .pc-all .tag, .pf-all .tag { background:rgba(255,255,255,.2); color:#fff; }
+/* 2026-11-11 표형 도입 단위: Private 값도 Enterprise처럼 teal (두 플랜 같게) */
+.cmp3:not(.pv) .chd + .cbox .cr:first-of-type .cv { color:#00756a; }
