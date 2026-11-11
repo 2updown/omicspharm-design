@@ -1117,9 +1117,7 @@ main > section#managed.sec { background:#f6faf9; }
 .pc-all .l { display:flex; align-items:center; gap:8px; color:#fff; border-right-color:rgba(255,255,255,.2); }
 .pc-all .v b { color:#fff; }
 .pc-all .tag { height:24px; padding:0 9px; border-radius:99px; background:rgba(255,255,255,.14); font-size:12px; font-weight:600; display:inline-flex; align-items:center; }
-/* 2026-11-11 Managed AI Service 색 비교: 카드형 = A (회민트 #dff3ee + teal 테두리), 특징 비교형 = C (Teal 600 + 흰 글씨). 고르면 둘을 같게 */
-.pc-all { background:#dff3ee; border:1.5px solid var(--teal-600); color:#171717; }
-.pc-all .l { color:var(--teal-700); border-right-color:#b5ddd5; } .pc-all .v b { color:#171717; }
-.pc-all .tag { background:var(--teal-600); color:#fff; }
-.pf-all { background:var(--teal-600); }
-.pf-all .v { color:#fff; } .pf-all .tag { background:rgba(255,255,255,.2); color:#fff; }
+/* 2026-11-11 Managed AI Service는 두 탭 모두 Teal 600 + 흰 글씨 (진한 초록은 너무 튀어서) */
+.pc-all, .pf-all { background:var(--teal-600); color:#fff; }
+.pc-all .l { color:#fff; border-right-color:rgba(255,255,255,.3); } .pc-all .v, .pf-all .v { color:#fff; } .pc-all .v b, .pf-all .v b { color:#fff; }
+.pc-all .tag, .pf-all .tag { background:rgba(255,255,255,.2); color:#fff; }
