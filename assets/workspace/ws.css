@@ -1081,7 +1081,9 @@ main > section#managed.sec { background:#f6faf9; }
 .pv-t .cmp3:not(.pv) .cbox { margin-top:16px; } .pv-t .cmp3:not(.pv) .chd + .cbox { margin-top:0; }
 @media (max-width:960px) {
   .pv-t .cmp3:not(.pv) .cbox h4 { min-height:44px; font-size:16px; line-height:22px; }
-  .pv-t .cmp3:not(.pv) .cr .cl { padding:8px 14px 6px; font-size:14px; line-height:20px; }
-  .pv-t .cmp3:not(.pv) .cr .cv { min-height:0; padding:10px; font-size:14px; line-height:20px; }
-  .pv-t .cmp3:not(.pv) .mk-row .cv { min-height:44px; }
+  /* 항목 이름을 따로 한 줄(흰 칸 + 선)로 두지 않고, 값 칸 위에 붙은 작은 캡션으로 */
+  .pv-t .cmp3:not(.pv) .cr .cl { padding:10px 12px 0; border-bottom:0; background:linear-gradient(90deg, #f6f9f9 50%, #e9f4f2 50%); font-size:12px; font-weight:600; line-height:16px; color:var(--gray-500); }
+  .pv-t .cmp3:not(.pv) .cr .cl .info .ico { width:16px; height:16px; }
+  .pv-t .cmp3:not(.pv) .cr .cv { min-height:0; padding:4px 10px 10px; font-size:14px; line-height:20px; }
+  .pv-t .cmp3:not(.pv) .mk-row .cv { min-height:36px; }
 }
