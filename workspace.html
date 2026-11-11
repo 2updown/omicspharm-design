@@ -80,6 +80,7 @@
   <script>
   (function () {
     var src = document.querySelector('.cmp3:not(.pv)'), sec = document.getElementById('plans');
+    src.parentNode.insertBefore(document.querySelector('.pv-tgl'), src); // 토글은 표보다 위 (표형일 때도 같은 자리)
     var hd = src.querySelectorAll('.chd .cv'), names = [].map.call(hd, function (c) { return c.querySelector('b').textContent; }), pills = [].map.call(hd, function (c) { return c.querySelector('.pill').outerHTML; });
     var groups = [].map.call(src.querySelectorAll('.cbox'), function (b) {
       return { t: b.querySelector('h4').textContent, rows: [].map.call(b.querySelectorAll('.cr'), function (r) { var v = r.querySelectorAll('.cv'); return { l: r.querySelector('.cl').innerHTML, v: [].map.call(v, function (c) { return c.innerHTML; }), all: v.length === 1 }; }) };
