@@ -1091,3 +1091,6 @@ main > section#managed.sec { background:#f6faf9; }
   .pv-t .cmp3:not(.pv) .mk-row .cv { min-height:36px; }
 }
 @media (max-width:640px) { .pv-feat .pf-hd + h4 { margin-top:12px; } }
+/* 2026-11-11 분야별 구성을 비교 아래로: 위 간격 72 (모바일 48), 아래 여백은 섹션 여백으로 */
+#plans .fld-sub { margin-top:72px; } #plans .fld-grid { margin-bottom:0; }
+@media (max-width:760px) { #plans .fld-sub { margin-top:48px; } }
