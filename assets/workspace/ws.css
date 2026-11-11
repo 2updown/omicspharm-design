@@ -968,10 +968,12 @@ body:has(.wcta) .op-footer { border-top-color:#edf1f0; } /* CTA와 푸터 바탕
 #plans.sec, #faq.sec { background:#fff; }
 
 /* 2026-11-11 개요 섹션 삭제 + 도입 프로세스 섹션 추가: 번갈아 칠하는 순서(pale)가 바뀌므로 섹션별 배경을 고정. How It Works는 흰색 */
-main > section#growth.sec, main > section#plans.sec, main > section#process.sec, main > section#faq.sec { background:#fff; }
+main > section#growth.sec, main > section#plans.sec, main > section#faq.sec { background:#fff; }
+main > section#process.sec { background:#f6faf9; } /* 2026-11-11 Figma: 도입 프로세스 배경 연한 민트 */
 main > section#security.sec { background:#f6faf9; } /* 2026-11-11 Figma: 보안 배경 연한 민트 */
 main > section#managed.sec { background:#f6faf9; }
-#process { padding-top:60px; } /* 2026-11-11 Figma: 위 여백 60 */
+#process { padding-top:80px; padding-bottom:100px; } /* 2026-11-11 Figma: 위 80, 아래 100 */
+@media (max-width:760px) { #process { padding-top:56px; padding-bottom:64px; } }
 #process .sec-head.center { margin-bottom:56px; }
 
 /* 2026-11-11 Figma: 작동 방식 02~04(되돌아가는 단계) 카드 배경 연한 민트 */
