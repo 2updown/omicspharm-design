@@ -117,10 +117,9 @@
 .op-dr-group.open .op-dr-toggle img { transform:rotate(180deg); }
 .op-dr-sub { display:none; flex-direction:column; background:var(--op-gray-50); border-bottom:1px solid var(--op-gray-200); }
 .op-dr-group.open .op-dr-sub { display:flex; }
-.op-dr-sub a { display:flex; align-items:center; height:48px; padding:0 32px; font-size:15px; font-weight:400; line-height:22px; color:var(--op-gray-700); }
+.op-dr-sub a { display:flex; align-items:center; height:48px; padding:0 32px; font-size:16px; font-weight:400; line-height:22px; color:var(--op-gray-700); }
 .op-dr-sub a + a { border-top:1px solid var(--op-gray-200); }
 .op-dr-sub a:active { background:var(--op-gray-100); }
-.op-dr-auth { display:flex; gap:8px; padding:20px; }
 .op-dr-btn { flex:1; display:flex; align-items:center; justify-content:center; height:48px; border-radius:8px; background:#000; color:#fff !important; font-size:16px; font-weight:500; }
 .op-dr-btn.line { background:#fff; color:#000 !important; border:1px solid var(--op-gray-300); }
 /* 모바일 메뉴 맨 위 내 정보 (로그인) */
@@ -136,8 +135,13 @@
 .op-dr-me .bell img { width:24px; height:24px; }
 .op-dr-me .bell i { position:absolute; top:8px; right:9px; width:6px; height:6px; border-radius:50%; background:#f00011; }
 .op-dr-me .btns { display:flex; flex-direction:column; gap:8px; }
-.op-dr-me .op-dr-btn { flex:none; height:44px; font-size:15px; }
-.op-dr-btn.soft { background:var(--op-teal-50, #edfefa); color:var(--op-teal-700, #00786e) !important; border:1px solid #a6e3d9; }
+.op-dr-me .op-dr-btn { flex:none; height:48px; font-size:16px; line-height:22px; }
+/* 2026-11-11 Figma 모바일 메뉴(2612:19489, 2612:19545): DS button_outline primary / tertiary */
+.op-dr-btn.soft { background:#fff; color:var(--op-teal-600) !important; border:1px solid var(--op-teal-600); }
+.op-dr-me .op-dr-btn.line { color:var(--op-gray-500) !important; }
+/* 비로그인: 프로필 자리에 [로그인 >] + [회원가입] */
+.op-dr-me.guest .who .login { display:flex; align-items:center; gap:2px; height:48px; font-size:16px; font-weight:500; line-height:22px; color:var(--op-gray-500); }
+.op-dr-me.guest .who .login img { width:16px; height:16px; }
 /* 맨 아래 작은 로그아웃 */
 .op-dr-foot { padding:20px; }
 .op-drawer .op-dr-foot button { font-size:13px; line-height:18px; color:var(--op-gray-500); }

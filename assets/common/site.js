@@ -334,6 +334,11 @@
           '<a class="bell" href="mypage-alarm.html" aria-label="알림"><img src="' + A + 'ic-bell.svg?v=2" alt="">' + (unread ? '<i></i>' : '') + '</a></div>' +
         (st ? '<div class="um-st">' + st + '</div>' : '') +
         '<div class="btns"><a class="op-dr-btn soft" href="mypage.html">마이페이지</a><a class="op-dr-btn line" href="mypage-account.html">내 정보 관리</a></div></div>';
+    } else {
+      // 2026-11-11 Figma 모바일 메뉴_비로그인(2612:19489): 로그인·회원가입을 목록 아래가 아니라 맨 위 프로필 자리에
+      me = '<div class="op-dr-me guest">' +
+        '<div class="who"><img src="' + A + 'user-icon.svg?v=2" alt=""><a class="login" href="login.html">로그인<img src="' + A + 'ic-caret-right-gray.svg" alt=""></a></div>' +
+        '<div class="btns"><a class="op-dr-btn line" href="signup.html">회원가입</a></div></div>';
     }
     return '<div class="op-drawer" id="opDrawer" hidden>' + me +
       '<nav class="op-dr-nav" aria-label="전체 메뉴">' +
@@ -342,8 +347,7 @@
         '<a class="op-dr-link" href="workspace.html">Workspace</a>' +
         groups +
       '</nav>' +
-      (s ? '<div class="op-dr-foot"><button type="button" data-op-logout>로그아웃</button></div>'
-         : '<div class="op-dr-auth"><a class="op-dr-btn line" href="login.html">로그인</a><a class="op-dr-btn" href="signup.html">가입하기</a></div>') +
+      (s ? '<div class="op-dr-foot"><button type="button" data-op-logout>로그아웃</button></div>' : '') +
     '</div>';
   }
   var BURGER = '<button type="button" class="op-burger" aria-controls="opDrawer" aria-expanded="false" aria-label="메뉴 열기"><img class="i-open" src="' + A + 'ic-list.svg" alt=""><img class="i-close" src="' + A + 'ic-x.svg" alt=""></button>';
