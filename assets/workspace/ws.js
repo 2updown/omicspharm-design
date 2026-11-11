@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(function 
   var items = [];
   document.querySelectorAll('main > section.ws-hero2, main > section.sec > .wrap, main > section.wcta').forEach(function (box) {
     var kids = box.matches('.wcta') ? [box.querySelector('.wcta-in')] : box.matches('.ws-hero2') ? [box.querySelector('.h2-in'), box.querySelector('.h2-tiles')] : [].slice.call(box.children);
-    kids.forEach(function (el, i) { if (!el || el.hidden || el.matches('.hw-loop')) return; /* 작동 방식 화살표·문장은 떠오르는 효과 없음 */ /* 숨은 탭 패널 제외 */ el.classList.remove('op-enter'); el.style.removeProperty('--op-d'); el.setAttribute('data-op-skip-enter', ''); el.classList.add('rv', 'rv-0'); el.style.setProperty('--d', Math.min(i, 2) * 0.12 + 's'); items.push(el); });
+    kids.forEach(function (el, i) { if (!el || el.hidden) return; /* 숨은 탭 패널 제외. 2026-11-11 작동 방식 화살표·문장도 다른 요소처럼 떠오름 (화살표 반복 애니메이션은 없앰) */ el.classList.remove('op-enter'); el.style.removeProperty('--op-d'); el.setAttribute('data-op-skip-enter', ''); el.classList.add('rv', 'rv-0'); el.style.setProperty('--d', Math.min(i, 2) * 0.12 + 's'); items.push(el); });
   });
   var ready = false; /* 숨긴 상태가 먼저 그려진 뒤에만 켬 (load·scroll이 먼저 오면 움직임 없이 바로 보이는 문제) */
   function reveal() { if (!ready) return; var lim = innerHeight * 0.9; /* 메인과 같게: 열 때도 스크롤할 때도 화면 90% 지점 */ items.forEach(function (el) { if (!el.classList.contains('rv-in') && el.getBoundingClientRect().top < lim) el.classList.add('rv-in'); }); }
