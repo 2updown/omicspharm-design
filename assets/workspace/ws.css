@@ -983,8 +983,8 @@ main > section#managed.sec { background:#f6faf9; }
 .pa-hd .pa-mo { margin-left:auto; }
 .pa-kpi { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
 .pa-kpi > div { padding:14px; border-radius:12px; background:#f6faf9; }
-.pa-kpi small { display:block; font-size:13px; line-height:18px; color:#737373; }
-.pa-kpi b { display:block; margin-top:4px; font-size:22px; font-weight:700; line-height:28px; color:#111; }
+.pa-kpi small { display:block; font-size:12px; line-height:18px; color:#737373; } /* Figma Caption/Medium/R */
+.pa-kpi b { display:block; margin-top:4px; font-size:20px; font-weight:600; line-height:28px; color:#000; } /* Figma Heading/Medium/B */
 .pa-kpi em { margin-left:6px; font-size:14px; font-style:normal; font-weight:600; color:#009788; }
 .pa-kpi span { margin-left:4px; font-size:14px; font-weight:500; color:#525252; }
 
