@@ -1094,9 +1094,8 @@ main > section#managed.sec { background:#f6faf9; }
 /* 2026-11-11 분야별 구성을 비교 아래로: 위 간격 72 (모바일 48), 아래 여백은 섹션 여백으로 */
 #plans .fld-sub { margin-top:72px; } #plans .fld-grid { margin-bottom:0; }
 @media (max-width:760px) { #plans .fld-sub { margin-top:48px; } }
-/* 2026-11-11 표형 모바일: 두 플랜 공통 줄(Managed AI Service)은 칸이 하나라 위 캡션의 두 색 배경이 깨져 보임 → 캡션·값 모두 흰색, 아래 선 */
+/* 2026-11-11 표형 모바일: 항목 이름 캡션은 모두 흰 바탕 + 아래 선 (가운데 세로선이 캡션에서 끊겨 보이지 않게, 묶음 안 항목 구분이 보이게) */
 @media (max-width:960px) {
-  .pv-t .cmp3:not(.pv) .cr:has(.span2) .cl, .pv-t .cmp3:not(.pv) .cr .cv.span2 { background:#fff; }
-  .pv-t .cmp3:not(.pv) .cr:has(.span2) { border-bottom:1px solid var(--ln); }
-  .pv-t .cmp3:not(.pv) .cbox:has(.span2) { border-bottom:0; }
+  .pv-t .cmp3:not(.pv) .cr .cl { padding:8px 12px 6px; background:#fff; border-bottom:1px solid var(--ln); }
+  .pv-t .cmp3:not(.pv) .cr .cv { padding:10px; }
 }
