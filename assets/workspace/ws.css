@@ -1038,7 +1038,7 @@ main > section#managed.sec { background:#f6faf9; }
 .pf-r .pv { color:var(--gray-600); word-break:keep-all; } .pf-r .ev { color:#171717; font-weight:500; word-break:keep-all; }
 .pf-r em { display:none; }
 .pf-all { margin-top:24px; background:#0a2a27; color:#fff; }
-.pf-all .n { flex-direction:column; align-items:flex-start; gap:8px; } .pf-all .v { grid-column:2 / -1; color:#e6f2f0; } .pf-all .v b { color:#fff; }
+.pf-all .n { gap:8px; } /* 공통 배지는 제목 오른쪽 */ .pf-all .v { grid-column:2 / -1; color:#e6f2f0; } .pf-all .v b { color:#fff; }
 .pf-all .tag { height:24px; padding:0 9px; border-radius:99px; background:rgba(255,255,255,.14); font-size:12px; font-weight:600; display:inline-flex; align-items:center; }
 @media (max-width:960px) {
   .pc-grid { grid-template-columns:1fr; }
@@ -1047,6 +1047,6 @@ main > section#managed.sec { background:#f6faf9; }
   .pf-row { grid-template-columns:1fr; row-gap:10px; }
   .pf-hd { padding:0 0 16px; } .pf-hd > div:first-child { display:none; } .pf-hd b { font-size:18px; line-height:26px; }
   .pf-r, .pf-all { padding:18px 20px; } .pf-r em { display:block; margin-bottom:2px; font-style:normal; font-size:12px; font-weight:600; line-height:16px; color:var(--gray-500); }
-  .pf-all .n { flex-direction:row; } .pf-all .v { grid-column:auto; }
+  .pf-all .v { grid-column:auto; }
 }
 @media (max-width:640px) { .pc-top b { font-size:20px; line-height:28px; } }
