@@ -941,7 +941,7 @@ table.cmp { width:100%; min-width:760px; border-collapse:collapse; font-size:15p
 .wcta-eb { background:none; -webkit-background-clip:border-box; background-clip:border-box; color:var(--teal-600); }
 .wcta h2 { color:#111; }
 .wcta-desc { color:var(--gray-700, #404040); }
-.wcta-btn { border-color:var(--teal-600); background:#fff; color:var(--teal-600); }
+.wcta-btn { width:204px; border-color:var(--teal-600); background:#fff; color:var(--teal-600); } /* 2026-11-11 Figma: 폭 204 (메인 CTA와 같게) */
 .wcta-btn:hover { background:#fff; border-color:var(--teal-700); color:var(--teal-700); }
 body:has(.wcta) .op-footer { border-top-color:#edf1f0; } /* CTA와 푸터 바탕이 비슷해 선을 연하게 */
 /* 2026-11-10: 제목·설명을 FAQ 히어로와 같게 (Display/XLarge/B 50, 설명 16 gray-600), 높이는 약 400 */

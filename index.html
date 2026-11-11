@@ -245,7 +245,7 @@
   .cta > * { position:relative; z-index:2; }
   .cta h2 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; color:var(--white); }
   .cta p { font-size:18px; line-height:24px; letter-spacing:-.18px; color:#edeff6; word-break:keep-all; }
-  .cta .btn-action { padding:0 32px; }
+  .cta .btn-action { width:204px; padding:0 32px; } /* 2026-11-11 Figma: CTA 버튼 폭 204 (워크스페이스와 같게) */
   .cta-sec.full { padding:0; }
   .cta-sec.full .cta { width:100%; min-height:400px; justify-content:center; padding:100px 24px; border-radius:0; }
   /* 2026-11-11 밝은 배경으로 확정 (사진 버전 삭제): 예전 Workspace CTA 효과를 밝게. 연한 민트 바탕 + 점 패턴 + 지나가는 점 스포트라이트 + 아래쪽 빛 */
@@ -261,6 +261,7 @@
   .cta-light .cta h2 { color:#111; } .cta-light .cta p { color:#404040; }
   @media (prefers-reduced-motion:reduce) { .cta-light .lc-spot { display:none; } }
   .cta h2 { word-break:keep-all; }
+  .cta .eyebrow { margin-bottom:-8px; } /* 영문 소제목-제목 16 (다른 섹션과 같게) */
 
 
   /* ── FAB (1088:33719, fixed) ── */
@@ -555,9 +556,10 @@
 <section class="cta-sec full">
   <div class="cta">
     <div class="lc-dots" aria-hidden="true"></div><div class="lc-spot" aria-hidden="true"></div>
+    <div class="eyebrow">Start Your Omics Analysis</div><!-- 2026-11-11 워크스페이스 CTA(Let's Build Your Workspace)와 짝 -->
     <h2>오믹스 분석이 필요하신가요?</h2>
     <p>유전체, 전사체, 단백체, 대사체 등 다양한 분석 의뢰를 지원하고, <br>견적부터 프로젝트 관리까지 전문 컨설턴트가 함께합니다.</p>
-    <a class="btn-action" href="contact.html">문의하기 <span class="ic" style="--src:url(assets/main/ic-arrow-right.svg)"></span></a><!-- 2026-11-10: 문의하기 하나만, 흰 버튼 (의뢰는 히어로) -->
+    <a class="btn-action" href="contact.html">문의하기</a><!-- 2026-11-10: 문의하기 하나만 (의뢰는 히어로). 2026-11-11 Figma: 화살표 없음, 폭 204 -->
   </div>
 </section>
 
@@ -684,7 +686,7 @@
     ['.proj-head', '#projView'],
     ['.an-head'], ['.an-grid .acard'],
     ['.solution .sec-head', '.sol-shot'],
-    ['.cta > h2', '.cta > p', '.cta > .btn-action']
+    ['.cta > .eyebrow', '.cta > h2', '.cta > p', '.cta > .btn-action']
   ];
   var els = [];
   groups.forEach(function (g) {
