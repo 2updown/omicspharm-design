@@ -1112,3 +1112,8 @@ main > section#managed.sec { background:#f6faf9; }
   .pc-it:not(.mkr) .l { display:none; }
   .pc.ent .pc-it.mkr .l { visibility:visible; }
 }
+/* 2026-11-11 카드형 Managed AI Service도 특징 비교형과 같게: 진한 초록 + 공통 배지 */
+.pc-all { background:#0a2a27; color:#e6f2f0; }
+.pc-all .l { display:flex; align-items:center; gap:8px; color:#fff; border-right-color:rgba(255,255,255,.2); }
+.pc-all .v b { color:#fff; }
+.pc-all .tag { height:24px; padding:0 9px; border-radius:99px; background:rgba(255,255,255,.14); font-size:12px; font-weight:600; display:inline-flex; align-items:center; }
