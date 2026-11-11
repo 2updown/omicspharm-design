@@ -1037,17 +1037,34 @@ main > section#managed.sec { background:#f6faf9; }
 .pf-r .n, .pf-all .n { display:flex; align-items:center; font-size:17px; font-weight:700; line-height:24px; }
 .pf-r .pv, .pf-r .ev { color:#171717; font-weight:500; word-break:keep-all; } /* 특징 비교라 두 플랜 모두 검정 */
 .pf-r.key .pv, .pf-r.key .ev { color:var(--teal-600); } /* 도입 단위 줄만 teal (두 열 같게) */
-.pf-r em { display:none; }
+.pf-r em { display:none; } /* 플랜 이름은 맨 위 줄에서 한 번만 */
 .pf-all { margin-top:24px; background:#0a2a27; color:#fff; }
 .pf-all .n { gap:8px; } /* 공통 배지는 제목 오른쪽 */ .pf-all .v { grid-column:2 / -1; color:#e6f2f0; } .pf-all .v b { color:#fff; }
 .pf-all .tag { height:24px; padding:0 9px; border-radius:99px; background:rgba(255,255,255,.14); font-size:12px; font-weight:600; display:inline-flex; align-items:center; }
+/* 좁은 화면에서도 두 플랜을 나란히 (위아래로 쌓으면 비교가 어려움) */
 @media (max-width:960px) {
-  .pc-grid { grid-template-columns:1fr; }
-  .pc { padding:28px 20px 12px; } .pc-it { grid-template-columns:110px 1fr; gap:12px; }
+  .pc { padding:28px 20px 12px; } .pc-it { grid-template-columns:100px 1fr; gap:12px; }
   .pc-all { flex-direction:column; align-items:flex-start; gap:8px; padding:20px; } .pc-all .l { padding:0; border:0; }
-  .pf-row { grid-template-columns:1fr; row-gap:10px; }
-  .pf-hd { padding:0 0 16px; } .pf-hd > div:first-child { display:none; } .pf-hd b { font-size:18px; line-height:26px; }
-  .pf-r, .pf-all { padding:18px 20px; } .pf-r em { display:block; margin-bottom:2px; font-style:normal; font-size:12px; font-weight:600; line-height:16px; color:var(--gray-500); }
-  .pf-all .v { grid-column:auto; }
+  .pf-row { grid-template-columns:140px 1fr 1fr; column-gap:20px; }
+  .pf-r, .pf-all { padding:18px 20px; }
 }
-@media (max-width:640px) { .pc-top b { font-size:20px; line-height:28px; } }
+@media (max-width:640px) {
+  /* 카드형: 두 카드 나란히, 항목 이름은 Private 카드에만 (Enterprise는 같은 자리 비움) */
+  .pc-grid { gap:8px; }
+  .pc { padding:16px 12px 6px; border-radius:14px; }
+  .pc-top { flex-direction:column; align-items:flex-start; gap:8px; padding-bottom:14px; }
+  .pc-top b { font-size:16px; line-height:22px; }
+  .pv h4 { margin:18px 0 2px; font-size:12px; line-height:18px; }
+  .pc-it { grid-template-columns:1fr; gap:2px; padding:10px 0; font-size:14px; line-height:20px; }
+  .pc-it .l { font-size:12px; line-height:18px; }
+  .pc.ent .pc-it .l { visibility:hidden; }
+  .pc-all { margin-top:8px; padding:16px; font-size:14px; line-height:20px; }
+  /* 특징 비교형: 항목 이름 한 줄, 아래 두 값 나란히. 플랜 이름 줄은 위에 붙어 따라옴 */
+  .pf-row { grid-template-columns:1fr 1fr; column-gap:12px; row-gap:8px; }
+  .pf-r .n, .pf-all .n, .pf-all .v { grid-column:1 / -1; }
+  .pf-hd { position:sticky; top:104px; z-index:2; padding:10px 0 12px; background:#fff; } .pf-hd > div:first-child { display:none; }
+  .pf-hd .p { flex-direction:column; align-items:flex-start; gap:6px; } .pf-hd b { font-size:15px; line-height:20px; }
+  .pf-r, .pf-all { padding:14px 14px; font-size:14px; line-height:20px; } .pf-r .n, .pf-all .n { font-size:15px; line-height:22px; }
+  .pv-feat h4 { margin:22px 0 8px; }
+  .pv .pill { height:26px; padding:0 10px; font-size:12px; }
+}
