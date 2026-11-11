@@ -1123,3 +1123,6 @@ main > section#managed.sec { background:#f6faf9; }
 .pc-all .tag, .pf-all .tag { background:rgba(255,255,255,.2); color:#fff; }
 /* 2026-11-11 표형 도입 단위: Private 값도 Enterprise처럼 teal (두 플랜 같게) */
 .cmp3:not(.pv) .chd + .cbox .cr:first-of-type .cv { color:#00756a; }
+/* 2026-11-11 카드형: 두 플랜이 위계가 아니라 같은 무게로 보이게, 두 카드 모두 회색 테두리 + 같은 민트 그라디언트 */
+.pc, .pc.ent { border:1px solid var(--gray-200); background:linear-gradient(180deg, #f2fbf9 0, #fff 220px); }
+.pc .pc-intro, .pc.ent .pc-intro { border-bottom-color:#d9ece8; }
