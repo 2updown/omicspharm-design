@@ -147,32 +147,6 @@
   .feat-tab:not(.on):hover { color:var(--gray-500); }
   .feat-desc { display:none; }
 
-  /* Features 비교 시안: 좌우형 (2026-11-10, 레퍼런스 scienceexchange.com The Solution). 왼쪽 세로 목록(고른 항목만 설명 펼침, 왼쪽 선이 차오르면 다음 항목), 오른쪽 화면 교체. 토글로 전환, 확정되면 하나만 남김 */
-  .features { position:relative; }
-  .feat-sd { display:none; width:var(--wrap); max-width:100%; grid-template-columns:531px minmax(0,1fr); gap:64px; align-items:center; } /* Figma 2571:19449 */
-  .feat-side .feat-box { display:none !important; } .feat-side .feat-sd { display:grid; }
-  .fsd-list { display:flex; flex-direction:column; }
-  .fsd-it { position:relative; display:flex; flex-direction:column; gap:0; padding:20px 0 20px 28px; text-align:left; color:var(--gray-400); transition:color .25s; }
-  .fsd-bar { position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--gray-200); overflow:hidden; }
-  .fsd-bar i { position:absolute; left:0; top:0; width:100%; height:0; background:var(--teal-600); }
-  .fsd-it.on .fsd-bar i { height:100%; animation:fsdFill 6s linear; }
-  .feat-sd:hover .fsd-it.on .fsd-bar i { animation-play-state:paused; }
-  @keyframes fsdFill { from { height:0; } to { height:100%; } }
-  .fsd-t { display:flex; align-items:center; gap:8px; font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; } /* Heading/Medium/B */
-  .fsd-t .ic { width:24px; height:24px; }
-  .fsd-it.on .fsd-t, .fsd-it.on .fsd-t .ic { color:var(--teal-600); } /* 2026-11-10 선택 제목은 teal */
-  .fsd-it:not(.on):hover { color:var(--gray-500); }
-  .fsd-d { margin-top:10px; font-size:16px; font-weight:500; line-height:22px; color:var(--gray-400); word-break:keep-all; transition:color .25s; } /* 2026-11-10 Scientist.com처럼 설명 한 줄을 항상 보임 */
-  .fsd-it.on .fsd-d { color:var(--black); }
-  .fsd-view { position:relative; aspect-ratio:725/420; border-radius:20px; background:#fafafa; overflow:hidden; }
-  .fsd-view img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:opacity .25s; } /* Figma 좌우형_1~4 오른쪽 화면 (assets/main/features/side) */
-  .fsd-view img.fade { opacity:0; }
-  @media (prefers-reduced-motion:reduce) { .fsd-it.on .fsd-bar i { animation:none; } .fsd-view img { transition:none; } }
-  .feat-tgl { position:absolute; right:60px; top:60px; z-index:3; display:flex; padding:3px; border-radius:99px; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.12); }
-  .feat-tgl button { height:28px; padding:0 12px; border-radius:99px; font-size:12px; font-weight:500; color:#525252; white-space:nowrap; }
-  .feat-tgl button.on { background:#111; color:#fff; }
-  @media (max-width:1180px) { .feat-sd { grid-template-columns:1fr; gap:24px; } .fsd-list .fsd-view { margin:4px 0 16px; } } /* 2026-11-11 좁은 화면: 화면 이미지는 고른 항목 바로 아래 (JS가 옮김) */
-  @media (max-width:760px) { .feat-tgl { right:16px; top:12px; } .fsd-t { font-size:18px; line-height:26px; } .fsd-it { padding:14px 0 14px 20px; } .fsd-d { margin-top:6px; font-size:15px; line-height:22px; } }
   .feat-view { position:relative; width:1098px; height:399px; border-radius:25px; } /* Figma 2569:33077 (2026-11-10) */
   .feat-view .screen { position:absolute; top:2px; left:2px; right:2px; height:395px; border-radius:25px; background:#f3f4f6; overflow:hidden; } /* 2026-11-10 초록 배경 → 밝은 회색 */
   .feat-view .screen img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:opacity .25s; } /* 화면 박스 전체 이미지 (assets/main/features/tab, 좌우형과 같은 화면) */
@@ -267,20 +241,17 @@
   /* ── CTA (959:12321) ── */
   .cta-sec { padding:60px 60px 100px; background:var(--white); display:flex; justify-content:center; }
   .cta { position:relative; width:var(--wrap); max-width:100%; padding:60px 0; border-radius:24px; overflow:hidden; display:flex; flex-direction:column; align-items:center; gap:24px; text-align:center; }
-  .cta > img { position:absolute; left:0; top:-29.72%; width:100%; height:159.45%; object-fit:cover; }
   .cta::before { content:""; position:absolute; inset:0; background:rgba(0,0,0,.6); z-index:1; } /* 2026-11-10 피드백: 현미경 사진 + 검정 60% (Figma 2565:19072) */
-  .cta > *:not(img) { position:relative; z-index:2; }
+  .cta > * { position:relative; z-index:2; }
   .cta h2 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; color:var(--white); }
   .cta p { font-size:18px; line-height:24px; letter-spacing:-.18px; color:#edeff6; word-break:keep-all; }
   .cta .btn-action { padding:0 32px; }
   .cta-sec.full { padding:0; }
   .cta-sec.full .cta { width:100%; min-height:400px; justify-content:center; padding:100px 24px; border-radius:0; }
-  .cta-sec.full .cta > img { top:0; height:100%; object-position:50% 57%; }
-  /* 비교 시안 ?cta=light (2026-11-10): 예전 Workspace CTA 효과를 밝게. 연한 민트 바탕 + 점 패턴 + 지나가는 점 스포트라이트 + 아래쪽 빛 */
+  /* 2026-11-11 밝은 배경으로 확정 (사진 버전 삭제): 예전 Workspace CTA 효과를 밝게. 연한 민트 바탕 + 점 패턴 + 지나가는 점 스포트라이트 + 아래쪽 빛 */
   .lc-dots, .lc-spot { display:none; }
   .cta-light .cta { background:linear-gradient(160deg,#ffffff 0%,#fbfdfd 55%,#f8fcfb 100%); } /* 2026-11-10 더 밝게 */
   .cta-light .op-footer { border-top-color:#edf1f0; } /* 밝은 배경일 때 푸터 위 선을 연하게 (CTA와 푸터 바탕이 거의 같아 선은 남김) */
-  .cta-light .cta > img { display:none; }
   .cta-light .cta::before { inset:auto; left:50%; bottom:-170px; width:960px; height:320px; margin-left:-480px; border-radius:50%; background:linear-gradient(90deg,#00bba6,#3be0c5 50%,#4f8dff); opacity:.13; filter:blur(120px); z-index:0; }
   .cta-light .cta::after { content:""; position:absolute; left:50%; bottom:-90px; width:440px; height:160px; margin-left:-220px; border-radius:50%; background:#9ff0dd; opacity:.16; filter:blur(70px); }
   .cta-light .lc-dots, .cta-light .lc-spot { display:block; position:absolute; inset:0; z-index:1; pointer-events:none; }
@@ -289,16 +260,7 @@
     -webkit-mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); }
   .cta-light .cta h2 { color:#111; } .cta-light .cta p { color:#404040; }
   @media (prefers-reduced-motion:reduce) { .cta-light .lc-spot { display:none; } }
-  /* 2026-11-11 사진 버전은 1320 카드형 (Figma 2605:39397: 위 0, 좌우 60, 아래 60 / 카드 모서리 24, 위아래 60). 밝은 버전은 풀사이즈 그대로 */
-  html:not(.cta-light) .cta-sec.full { padding:0 60px 60px; }
-  html:not(.cta-light) .cta-sec.full .cta { width:var(--wrap); max-width:100%; min-height:0; padding:60px 24px; border-radius:24px; }
-  @media (max-width:760px) { html:not(.cta-light) .cta-sec.full { padding:0 16px 40px; } html:not(.cta-light) .cta-sec.full .cta { padding:60px 16px 48px; border-radius:16px; } }
   .cta h2 { word-break:keep-all; }
-  /* 비교용 토글 (2026-11-10, 확정되면 삭제) */
-  .cta-tg { position:absolute !important; right:20px; top:20px; z-index:3 !important; display:flex; padding:3px; border-radius:99px; background:rgba(255,255,255,.88); box-shadow:0 1px 4px rgba(0,0,0,.12); }
-  @media (max-width:760px) { .cta-tg { top:12px; right:12px; } }
-  .cta-tg button { height:28px; padding:0 12px; border-radius:99px; font-size:12px; font-weight:500; color:#525252; white-space:nowrap; }
-  .cta-tg button.on { background:#111; color:#fff; }
 
 
   /* ── FAB (1088:33719, fixed) ── */
@@ -509,9 +471,8 @@
 
 <!-- Feature 4개: AI 보고서 작성 / AI 결과 해석 / AI 파트너 매칭 / AI 챗봇 CS (이미지는 임시). 첫 번째 항목이 기본
      아이콘: Phosphor Icons Regular (FileText, ListMagnifyingGlass, Sparkle, ChatCircleDots) — 출처 목록 assets/ICONS.md -->
-<script>if (!/[?&]feat=bento\b/.test(location.search)) document.documentElement.classList.add('feat1'); /* 2026-11-10 피드백: 탭형이 기본, 카드형은 ?feat=bento */ if (/[?&]feat=side\b/.test(location.search)) document.documentElement.classList.add('feat-side'); if (/[?&]cta=light\b/.test(location.search)) document.documentElement.classList.add('cta-light'); /* 하단 CTA 밝은 애니메이션 비교 시안 */</script>
+<script>if (!/[?&]feat=bento\b/.test(location.search)) document.documentElement.classList.add('feat1'); /* 2026-11-10 피드백: 탭형이 기본, 카드형은 ?feat=bento (2026-11-11 탭형 확정) */ document.documentElement.classList.add('cta-light'); /* 2026-11-11 하단 CTA 밝은 배경 확정 */</script>
 <section class="sec features">
-  <div class="feat-tgl" role="group" aria-label="Features 시안 비교"><button type="button" data-feat="tab">탭형</button><button type="button" data-feat="side">좌우형</button></div><!-- 비교용 토글 (확정되면 삭제) -->
   <div class="sec-head">
     <div class="eyebrow">Features</div>
     <h2>의뢰부터 결과 해석까지,<br>Agentic AI가 함께합니다.</h2>
@@ -593,9 +554,7 @@
 <!-- 하단 CTA (2026-11-10 피드백): Workspace CTA → 예전 분석 의뢰 CTA (Figma 2562:30110). 배경색만 바꿈. Workspace CTA 효과 기록은 docs/cta-animation.md -->
 <section class="cta-sec full">
   <div class="cta">
-    <img src="assets/main/cta-bg-microscope.png" alt="">
-    <div class="lc-dots" aria-hidden="true"></div><div class="lc-spot" aria-hidden="true"></div><!-- 밝은 애니메이션 시안(?cta=light)에서만 보임 -->
-    <div class="cta-tg" role="group" aria-label="배경 시안 비교"><button type="button" data-cta="photo">사진</button><button type="button" data-cta="light">밝은 배경</button></div><!-- 비교용 토글 (확정되면 삭제) -->
+    <div class="lc-dots" aria-hidden="true"></div><div class="lc-spot" aria-hidden="true"></div>
     <h2>오믹스 분석이 필요하신가요?</h2>
     <p>유전체, 전사체, 단백체, 대사체 등 다양한 분석 의뢰를 지원하고, <br>견적부터 프로젝트 관리까지 전문 컨설턴트가 함께합니다.</p>
     <a class="btn-action" href="contact.html">문의하기 <span class="ic" style="--src:url(assets/main/ic-arrow-right.svg)"></span></a><!-- 2026-11-10: 문의하기 하나만, 흰 버튼 (의뢰는 히어로) -->
@@ -697,44 +656,10 @@
   }));
 </script>
 <script>
-/* Features 좌우형 비교 시안: 탭 데이터(.feat-tab)로 왼쪽 목록을 만들고, 6초마다 다음 항목 (마우스를 올리면 멈춤) */
-(function () {
-  var root = document.documentElement, sec = document.querySelector('.features'), tabs = [].slice.call(document.querySelectorAll('.feat-tab'));
-  if (!sec || !tabs.length) return;
-  var SD = ['기존 결과를 검색·비교해 쉽게 해석합니다', '의뢰부터 진행 상황까지 AI가 바로 안내합니다', '분석 결과를 바탕으로 보고서 초안을 작성합니다', '요구사항에 맞는 분석 파트너를 추천합니다']; // 좌우형은 한 줄 설명 (2026-11-10)
-  var sd = document.createElement('div'); sd.className = 'feat-sd';
-  sd.innerHTML = '<div class="fsd-list" role="tablist">' + tabs.map(function (t, i) {
-    return '<button type="button" role="tab" class="fsd-it' + (i ? '' : ' on') + '" data-i="' + i + '"><span class="fsd-bar"><i></i></span><span class="fsd-t">' + t.querySelector('.t').innerHTML + '</span><span class="fsd-d">' + SD[i] + '</span></button>';
-  }).join('') + '</div><div class="fsd-view"><img src="' + tabs[0].dataset.img + '" alt="' + tabs[0].querySelector('.tt').textContent + ' 화면 예시"></div>';
-  sec.appendChild(sd);
-  var SIDE = ['interpret', 'support', 'report', 'matching'].map(function (n) { return 'assets/main/features/side/' + n + '.png?v=3'; }); // 탭 순서와 같음
-  sd.querySelector('.fsd-view img').src = SIDE[0];
-  var its = [].slice.call(sd.querySelectorAll('.fsd-it')), img = sd.querySelector('.fsd-view img'), view = sd.querySelector('.fsd-view'), cur = 0;
-  var narrow = matchMedia('(max-width:1180px)');
-  function place() { if (narrow.matches) its[cur].after(view); else if (view.parentNode !== sd) sd.appendChild(view); } // 좁은 화면은 고른 항목 아래, 넓은 화면은 오른쪽
-  narrow.addEventListener('change', place);
-  function go(i) {
-    cur = i; its.forEach(function (b, k) { b.classList.toggle('on', k === i); b.setAttribute('aria-selected', k === i); }); place();
-    var t = tabs[i]; if (img.getAttribute('src') === SIDE[i]) return;
-    img.classList.add('fade'); setTimeout(function () { img.src = SIDE[i]; img.alt = t.querySelector('.tt').textContent + ' 화면 예시'; img.classList.remove('fade'); }, 200);
-  }
-  its.forEach(function (b, k) {
-    b.addEventListener('click', function () { go(k); });
-    b.querySelector('.fsd-bar i').addEventListener('animationend', function () { if (b.classList.contains('on')) go((k + 1) % its.length); });
-  });
-  var tg = sec.querySelectorAll('.feat-tgl button');
-  function mark() { var on = root.classList.contains('feat-side'); [].forEach.call(tg, function (b) { var m = (b.dataset.feat === 'side') === on; b.classList.toggle('on', m); b.setAttribute('aria-pressed', m); }); }
-  [].forEach.call(tg, function (b) { b.addEventListener('click', function () { root.classList.toggle('feat-side', b.dataset.feat === 'side'); mark(); go(0); }); });
-  mark(); place();
-})();
-/* 하단 CTA 배경 비교: 토글(사진 / 밝은 배경) 또는 ?cta=light. 밝은 배경은 점 스포트라이트가 마우스를 따라가고, 마우스가 없으면 9초 주기로 좌우로 지나감 (docs/cta-animation.md) */
+/* 하단 CTA 밝은 배경: 점 스포트라이트가 마우스를 따라가고, 마우스가 없으면 9초 주기로 좌우로 지나감 (docs/cta-animation.md) */
 (function () {
   var root = document.documentElement, box = document.querySelector('.cta'), spot = box && box.querySelector('.lc-spot');
   if (!box) return;
-  var tg = box.querySelectorAll('.cta-tg button');
-  function mark() { var l = root.classList.contains('cta-light'); [].forEach.call(tg, function (b) { b.classList.toggle('on', (b.dataset.cta === 'light') === l); b.setAttribute('aria-pressed', (b.dataset.cta === 'light') === l); }); }
-  [].forEach.call(tg, function (b) { b.addEventListener('click', function () { root.classList.toggle('cta-light', b.dataset.cta === 'light'); mark(); start(); }); });
-  mark();
   var motion = !matchMedia('(prefers-reduced-motion:reduce)').matches, hover = false, raf = 0, t0 = performance.now();
   function set(x, y) { spot.style.setProperty('--mx', x + 'px'); spot.style.setProperty('--my', y + 'px'); }
   function idle(now) { raf = 0; if (hover || !root.classList.contains('cta-light')) return; var rr = box.getBoundingClientRect(); if (rr.bottom <= 0 || rr.top >= innerHeight) return; var w = box.clientWidth, h = box.clientHeight, k = (now - t0) / 9000; set(w / 2 + Math.sin(k * Math.PI * 2) * w * 0.42, h * (0.55 + Math.sin(k * Math.PI * 4) * 0.2)); raf = requestAnimationFrame(idle); }
