@@ -986,10 +986,10 @@ main > section#managed.sec { background:#f6faf9; }
 .pa-kpi em { margin-left:6px; font-size:14px; font-style:normal; font-weight:600; color:#009788; }
 .pa-kpi span { margin-left:4px; font-size:14px; font-weight:500; color:#525252; }
 
-/* 2026-11-11 Figma: 작동 방식 02~04 카드 테두리와 되돌아가는 화살표를 점선으로 */
+/* 2026-11-11 Figma: 작동 방식 02~04 카드 테두리 점선 */
 .hw-steps li + li { border-style:dashed; }
 .hw-arrow path { stroke-dasharray:none; }
-.hw-arrow .l { stroke-dasharray:4 4; }
+.hw-arrow .l { stroke-dasharray:none; } /* 2026-11-11 화살표 선은 다시 실선 (카드 점선과 겹쳐 산만) */
 @media (max-width:760px) { .hw-steps li + li { border-style:dashed; } }
 
 /* 2026-11-11 Figma Key Features 탭 내용: 제목-설명 12, 설명-체크 36, 체크 18/24 Regular #262626, 체크 사이 10, 줄바꿈은 Figma대로 (모바일은 줄바꿈 없음) */
