@@ -285,8 +285,8 @@ document.addEventListener('DOMContentLoaded', function () { setTimeout(function 
   function draw() {
     var W = Math.round(box.offsetWidth), H = 40, r = 12;
     box.innerHTML = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true">' +
-      '<path class="l" pathLength="1" d="M' + (W - 1) + ' 0V' + (H - 1 - r) + 'Q' + (W - 1) + ' ' + (H - 1) + ' ' + (W - 1 - r) + ' ' + (H - 1) + 'H' + (1 + r) + 'Q1 ' + (H - 1) + ' 1 ' + (H - 1 - r) + 'V1"/>' +
-      '<path class="h" pathLength="1" d="M-5 7L1 1L7 7"/></svg>';
+      '<path class="l" d="M' + (W - 1) + ' 0V' + (H - 1 - r) + 'Q' + (W - 1) + ' ' + (H - 1) + ' ' + (W - 1 - r) + ' ' + (H - 1) + 'H' + (1 + r) + 'Q1 ' + (H - 1) + ' 1 ' + (H - 1 - r) + 'V1"/>' +
+      '<path class="h" d="M-5 7L1 1L7 7"/></svg>'; /* 2026-11-11 그리기 애니메이션이 없어져 pathLength 뺌 (점선 간격을 px로) */
   }
   draw(); window.addEventListener('resize', draw);
   // 2026-11-10 피드백 2차 10번: 반복 애니메이션 없이 그려진 채로 둠 (.in 을 붙이지 않음)

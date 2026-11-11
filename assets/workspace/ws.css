@@ -985,3 +985,9 @@ main > section#managed.sec { background:#f6faf9; }
 .pa-kpi b { display:block; margin-top:4px; font-size:22px; font-weight:700; line-height:28px; color:#111; }
 .pa-kpi em { margin-left:6px; font-size:14px; font-style:normal; font-weight:600; color:#009788; }
 .pa-kpi span { margin-left:4px; font-size:14px; font-weight:500; color:#525252; }
+
+/* 2026-11-11 Figma: 작동 방식 02~04 카드 테두리와 되돌아가는 화살표를 점선으로 */
+.hw-steps li + li { border-style:dashed; }
+.hw-arrow path { stroke-dasharray:none; }
+.hw-arrow .l { stroke-dasharray:4 4; }
+@media (max-width:760px) { .hw-steps li + li { border-style:dashed; } }
