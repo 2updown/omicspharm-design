@@ -289,6 +289,11 @@
     -webkit-mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); }
   .cta-light .cta h2 { color:#111; } .cta-light .cta p { color:#404040; }
   @media (prefers-reduced-motion:reduce) { .cta-light .lc-spot { display:none; } }
+  /* 2026-11-11 사진 버전은 1320 카드형 (Figma 2605:39397: 위 0, 좌우 60, 아래 60 / 카드 모서리 24, 위아래 60). 밝은 버전은 풀사이즈 그대로 */
+  html:not(.cta-light) .cta-sec.full { padding:0 60px 60px; }
+  html:not(.cta-light) .cta-sec.full .cta { width:var(--wrap); max-width:100%; min-height:0; padding:60px 24px; border-radius:24px; }
+  @media (max-width:760px) { html:not(.cta-light) .cta-sec.full { padding:0 16px 40px; } html:not(.cta-light) .cta-sec.full .cta { padding:60px 16px 48px; border-radius:16px; } }
+  .cta h2 { word-break:keep-all; }
   /* 비교용 토글 (2026-11-10, 확정되면 삭제) */
   .cta-tg { position:absolute !important; right:20px; top:20px; z-index:3 !important; display:flex; padding:3px; border-radius:99px; background:rgba(255,255,255,.88); box-shadow:0 1px 4px rgba(0,0,0,.12); }
   @media (max-width:760px) { .cta-tg { top:12px; right:12px; } }
