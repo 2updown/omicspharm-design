@@ -1004,3 +1004,53 @@ main > section#managed.sec { background:#f6faf9; }
   .ws-tabs, .ws-anchors, .ws-hero, .sec, .ws-hero2, .wcta { padding-left:16px; padding-right:16px; }
   .cta { padding-left:16px; padding-right:16px; }
 }
+
+/* 2026-11-11 플랜 비교 시안 (표 대신): 카드형 / 특징 비교형. 토글로 비교, 고르면 하나만 남김 */
+#plans .wrap { position:relative; }
+#plans .cmp3:not(.pv) { display:none; }
+.pv-tgl { display:flex; width:max-content; margin:0 0 20px auto; padding:3px; border-radius:99px; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.12); }
+.pv-tgl button { height:28px; padding:0 12px; border:0; border-radius:99px; background:none; font:inherit; font-size:12px; font-weight:500; color:#525252; cursor:pointer; white-space:nowrap; }
+.pv-tgl button.on { background:#111; color:#fff; }
+.pv-feat, .pv-f .pv-card { display:none; } .pv-f .pv-feat { display:block; }
+/* 카드형 */
+.pc-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.pc { padding:36px 36px 20px; border:1px solid var(--gray-200); border-radius:20px; background:#fff; }
+.pc.ent { border:1.5px solid var(--teal-600); background:linear-gradient(180deg, #f2fbf9 0, #fff 220px); }
+.pc-top { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-bottom:24px; border-bottom:1px solid var(--gray-200); }
+.pc.ent .pc-top { border-bottom-color:#cfe9e4; }
+.pc-top b { font-size:24px; font-weight:700; line-height:32px; }
+.pv h4 { margin:28px 0 4px; font-size:14px; font-weight:600; line-height:20px; color:var(--teal-600); }
+.pc-it { display:grid; grid-template-columns:140px 1fr; gap:16px; align-items:start; padding:12px 0; border-bottom:1px dashed #ececec; font-size:16px; line-height:24px; }
+.pc-it:last-child, .pc-it:has(+ h4) { border-bottom:0; }
+.pc-it .l { display:flex; align-items:center; font-size:15px; color:var(--gray-500); }
+.pc-it .v, .pf-c .s > div, .pc-all .v, .pf-c p { word-break:keep-all; }
+.pv .hl b { color:var(--teal-600); }
+.pc-all { display:flex; align-items:center; gap:24px; margin-top:24px; padding:24px 36px; border-radius:20px; background:#f6f9f9; font-size:16px; line-height:24px; }
+.pc-all .l { flex:none; padding-right:24px; border-right:1px solid #d4d4d4; font-weight:700; }
+/* 특징 비교형 */
+.pf-leg { display:flex; justify-content:flex-end; gap:12px; margin-bottom:20px; }
+.pf-lg { display:flex; align-items:center; gap:10px; height:44px; padding:0 6px 0 16px; border:1px solid var(--gray-200); border-radius:99px; font-size:15px; font-weight:600; }
+.pf-lg i, .pf-c .s em i { width:10px; height:10px; border-radius:50%; background:#a3a3a3; }
+.pf-lg.ent i, .pf-c .s.ent em i { background:var(--teal-600); }
+.pf-grp { display:grid; grid-template-columns:200px 1fr; gap:24px; padding:28px 0; border-top:1px solid var(--gray-200); }
+.pf-grp h4 { margin:0; padding-top:6px; font-size:18px; font-weight:700; line-height:26px; color:#171717; }
+.pf-cards { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.pf-c { padding:24px 24px 20px; border-radius:16px; background:#f7f9f9; }
+.pf-c h5 { display:flex; align-items:center; gap:4px; margin-bottom:16px; font-size:17px; font-weight:700; line-height:24px; }
+.pf-vs { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.pf-c .s { padding:14px 16px; border:1px solid #ececec; border-radius:12px; background:#fff; font-size:15px; line-height:22px; }
+.pf-c .s.ent { border-color:#bfe5de; }
+.pf-c .s em { display:flex; align-items:center; gap:6px; margin-bottom:6px; font-style:normal; font-size:12px; font-weight:600; line-height:16px; color:var(--gray-500); }
+.pf-c .s em i { width:6px; height:6px; }
+.pf-c .s.ent em { color:var(--teal-600); }
+.pf-c.all { background:#0d3b36; color:#fff; }
+.pf-c.all h5 { gap:10px; } .pf-c.all .tag { height:26px; padding:0 10px; border-radius:99px; background:rgba(255,255,255,.14); font-size:12px; font-weight:600; display:inline-flex; align-items:center; }
+.pf-c.all p { font-size:16px; line-height:24px; color:#e6f2f0; } .pf-c.all p b { color:#fff; }
+@media (max-width:960px) {
+  .pc-grid, .pf-cards, .pf-grp { grid-template-columns:1fr; }
+  .pf-grp { gap:16px; }
+  .pc { padding:28px 20px 12px; } .pc-it { grid-template-columns:110px 1fr; gap:12px; }
+  .pc-all { flex-direction:column; align-items:flex-start; gap:8px; padding:20px; } .pc-all .l { padding:0; border:0; }
+  .pf-leg { flex-direction:column; align-items:stretch; } .pf-lg { justify-content:space-between; }
+}
+@media (max-width:640px) { .pf-vs { grid-template-columns:1fr; } .pf-c { padding:20px 16px 16px; } .pc-top b { font-size:20px; line-height:28px; } }
