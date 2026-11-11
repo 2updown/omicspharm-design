@@ -9,7 +9,7 @@
      원본 Private/Enterprise 페이지 내용은 이 페이지의 '도입 방식'(#plans) 섹션으로 합침. 반복 섹션(고도화·보안·Managed AI Service·FAQ)은 assets/workspace/ws.js 한 곳에서 관리 -->
 <link rel="stylesheet" href="assets/common/site.css?v=20261111b">
 <script src="assets/common/site.js?v=20261111a"></script>
-<link rel="stylesheet" href="assets/workspace/ws.css?v=118">
+<link rel="stylesheet" href="assets/workspace/ws.css?v=119">
 <script src="assets/workspace/ws.js?v=58"></script>
 </head>
 <body data-op-no-enter>
@@ -71,10 +71,14 @@
     var groups = [].map.call(src.querySelectorAll('.cbox'), function (b) {
       return { t: b.querySelector('h4').textContent, rows: [].map.call(b.querySelectorAll('.cr'), function (r) { var v = r.querySelectorAll('.cv'); return { l: r.querySelector('.cl').innerHTML, v: [].map.call(v, function (c) { return c.innerHTML; }), all: v.length === 1 }; }) };
     });
+    // 카드형 (2026-11-11): 도입 대상은 묶음 대신 플랜 이름 아래 소개(도입 단위 강조 + 적합한 곳 회색)로. 기존 시스템 연계처럼 값이 아이콘뿐인 줄은 .mkr (좁은 화면에서도 이름 표시)
+    var intro = groups.filter(function (g) { return g.t === '도입 대상'; })[0], rest = groups.filter(function (g) { return g !== intro; });
     var shared = [], card = [0, 1].map(function (k) {
-      return '<div class="pc' + (k ? ' ent' : '') + '"><div class="pc-top"><b>' + names[k] + '</b>' + pills[k] + '</div>' + groups.map(function (g) {
+      return '<div class="pc' + (k ? ' ent' : '') + '"><div class="pc-top"><b>' + names[k] + '</b>' + pills[k] + '</div>' +
+        (intro ? '<div class="pc-intro" data-k="intro"><p class="a">' + intro.rows[0].v[k] + '</p>' + (intro.rows[1] ? '<p class="b">' + intro.rows[1].v[k] + '</p>' : '') + '</div>' : '') +
+        rest.map(function (g) {
         var rows = g.rows.filter(function (r) { if (r.all && !k) shared.push(r); return !r.all; });
-        return rows.length ? '<h4>' + g.t + '</h4>' + rows.map(function (r, i) { return '<div class="pc-it" data-k="' + g.t + i + '"><div class="l">' + r.l + '</div><div class="v">' + r.v[k] + '</div></div>'; }).join('') : '';
+        return rows.length ? '<h4>' + g.t + '</h4>' + rows.map(function (r, i) { return '<div class="pc-it' + (/class="mk/.test(r.v[k]) ? ' mkr' : '') + '" data-k="' + g.t + i + '"><div class="l">' + r.l + '</div><div class="v">' + r.v[k] + '</div></div>'; }).join('') : '';
       }).join('') + '</div>';
     }).join('');
     document.querySelector('.pv-card').innerHTML = '<div class="pc-grid">' + card + '</div>' + shared.map(function (r) { return '<div class="pc-all"><div class="l">' + r.l + '</div><div class="v">' + r.v[0] + '</div></div>'; }).join('');
@@ -87,7 +91,7 @@
         }).join('');
       }).join('');
     // 카드형: 두 카드의 같은 항목 높이를 맞춤
-    function eq() { var its = document.querySelectorAll('.pv-card .pc-it'); its.forEach(function (e) { e.style.minHeight = ''; }); var by = {}; its.forEach(function (e) { (by[e.dataset.k] = by[e.dataset.k] || []).push(e); }); Object.keys(by).forEach(function (k) { var h = Math.max.apply(null, by[k].map(function (e) { return e.offsetHeight; })); by[k].forEach(function (e) { e.style.minHeight = h + 'px'; }); }); }
+    function eq() { var its = document.querySelectorAll('.pv-card .pc-it, .pv-card .pc-intro'); its.forEach(function (e) { e.style.minHeight = ''; }); var by = {}; its.forEach(function (e) { (by[e.dataset.k] = by[e.dataset.k] || []).push(e); }); Object.keys(by).forEach(function (k) { var h = Math.max.apply(null, by[k].map(function (e) { return e.offsetHeight; })); by[k].forEach(function (e) { e.style.minHeight = h + 'px'; }); }); }
     var root = document.documentElement, tg = document.querySelectorAll('.pv-tgl button');
     function set(v) { root.classList.toggle('pv-f', v === 'feat'); root.classList.toggle('pv-t', v === 'table'); tg.forEach(function (b) { var on = b.dataset.pv === v; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); eq(); }
     tg.forEach(function (b) { b.addEventListener('click', function () { set(b.dataset.pv); }); });

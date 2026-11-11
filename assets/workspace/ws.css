@@ -1100,3 +1100,15 @@ main > section#managed.sec { background:#f6faf9; }
   .pv-t .cmp3:not(.pv) .cr .cv { padding:10px; }
   .pv-t .cmp3:not(.pv) .cbox h4 { padding:0 12px; } /* 묶음 제목도 항목 이름과 같은 왼쪽 12 */
 }
+/* 2026-11-11 카드형: 플랜 이름 아래 소개(도입 대상), 모바일은 항목 이름 숨김 (아이콘뿐인 줄 .mkr은 남김) */
+.pc .pc-top { padding-bottom:0; border-bottom:0; }
+.pc-intro { padding:14px 0 24px; border-bottom:1px solid var(--gray-200); }
+.pc.ent .pc-intro { border-bottom-color:#cfe9e4; }
+.pc-intro .a { font-size:18px; font-weight:700; line-height:26px; color:#171717; word-break:keep-all; }
+.pc-intro .a .hl { color:inherit; } .pc-intro .a .hl b { color:var(--teal-600); }
+.pc-intro .b { margin-top:6px; font-size:15px; line-height:22px; color:var(--gray-500); word-break:keep-all; }
+@media (max-width:640px) {
+  .pc-intro { padding:10px 0 14px; } .pc-intro .a { font-size:14px; line-height:20px; } .pc-intro .b { margin-top:4px; font-size:12px; line-height:18px; }
+  .pc-it:not(.mkr) .l { display:none; }
+  .pc.ent .pc-it.mkr .l { visibility:visible; }
+}
