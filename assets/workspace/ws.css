@@ -998,3 +998,9 @@ main > section#managed.sec { background:#f6faf9; }
 .sec2 .pv-txt > p { margin-top:12px; }
 .sec2 .pv-list { gap:10px; } .sec2 .pv-list li { font-size:18px; font-weight:400; line-height:24px; color:#262626; }
 @media (max-width:760px) { .sec2 .pv-txt > p br { display:none; } .sec2 .pv-list li { font-size:15px; line-height:22px; } }
+
+/* 2026-11-11 모바일 좌우 여백 16으로 통일 (다른 페이지·GNB·Figma Mobile 그리드와 같게) */
+@media (max-width:767px) {
+  .ws-tabs, .ws-anchors, .ws-hero, .sec, .ws-hero2, .wcta { padding-left:16px; padding-right:16px; }
+  .cta { padding-left:16px; padding-right:16px; }
+}

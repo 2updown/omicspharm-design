@@ -345,3 +345,9 @@ div.op-phone.bad input, div.op-phone.bad select { border-color:var(--op-red-600)
 .op-dr-me .um-st .off .um-ic { color:#a3a3a3; } .op-dr-me .um-st .ok .um-ic { color:#0065f4; }
 .op-dr-me .um-bd { flex:none; padding:2px 8px; border-radius:8px; font-style:normal; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; }
 .op-dr-me .um-bd.blue { background:#d7ebff; color:#0065f4; } .op-dr-me .um-bd.gray { background:#f5f5f5; color:#525252; }
+
+/* 2026-11-11 모바일 메뉴 좌우 여백 16 (모바일 그리드와 같게) */
+@media (max-width:640px) {
+  .op-drawer .op-dr-link, .op-drawer .op-dr-toggle { padding:0 16px; }
+  .op-dr-me, .op-dr-foot { padding-left:16px; padding-right:16px; }
+}
