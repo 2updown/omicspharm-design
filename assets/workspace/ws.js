@@ -64,6 +64,18 @@ if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentE
         }).join('') +
         '</div></section>';
     },
+    process: function () {
+      /* 2026-11-11 피드백 2차: 운영 지원 안에 있던 도입 절차 4단계를 별도 섹션으로 (플랜 비교 다음) */
+      return '<section class="sec" id="process"><div class="wrap">' +
+        '<div class="sec-head center"><div><span class="eyebrow">Onboarding</span><h2 class="ttl">도입 프로세스</h2></div></div>' +
+        '<div class="steps">' + /* 이전 디자인 그대로: 점선 위 번호 원 + 가운데 글, 화면에 들어오면 순서대로 켜짐 */
+          '<div><i class="sn">01</i><b>연구·데이터 진단</b><p>연구 목적, 적용 연구, 보안 요구사항 확인</p></div>' +
+          '<div><i class="sn">02</i><b>시범 적용·활용 평가</b><p>대표 연구에서 정확성과 활용 가능성 검토</p></div>' +
+          '<div><i class="sn">03</i><b>Workspace·Agent 배포</b><p>데이터 연계, Agent 구성, 권한 설정, 교육</p></div>' +
+          '<div><i class="sn">04</i><b>운영·지속 고도화</b><p>전문 AI 팀의 품질 평가·개선, 적용 연구 확대</p></div>' +
+        '</div>' +
+        '</div></section>';
+    },
     ops: function () {
       /* 2026-11-09 운영 지원 (카드는 태그 대신 컬러 Fill 아이콘, 개요와 같은 방식): 가운데 제목 → 지원 3가지 카드 → 도입 절차 4단계 (구축 환경은 플랜 비교 표와 겹쳐 삭제) */
       var SV = [
@@ -75,13 +87,6 @@ if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentE
         '<div class="sec-head center"><div><span class="eyebrow">Managed Service</span><h2 class="ttl">AI 전담팀이 없어도, <br>전문가와 함께 운영하세요.</h2></div>' +
         '<p>OmicsPharm의 바이오·헬스케어 전문 AI 팀이 AI Agent를 구축하고 운영합니다. <br>새 데이터와 연구자의 검토를 반영해 AI를 계속 고도화합니다.</p></div>' +
         '<div class="ops2-sv">' + SV.map(function (x) { return '<article><span class="ops2-ic2">' + I(x[0]) + '</span><h3>' + x[1] + '</h3><ul>' + x[2].map(function (t) { return '<li>' + I('check') + t + '</li>'; }).join('') + '</ul></article>'; }).join('') + '</div>' +
-        '<h3 class="sub-h center">도입 프로세스</h3>' +
-        '<div class="steps">' + /* 이전 디자인 그대로: 점선 위 번호 원 + 가운데 글, 화면에 들어오면 순서대로 켜짐 */
-          '<div><i class="sn">01</i><b>연구·데이터 진단</b><p>연구 목적, 적용 연구, 보안 요구사항 확인</p></div>' +
-          '<div><i class="sn">02</i><b>시범 적용·활용 평가</b><p>대표 연구에서 정확성과 활용 가능성 검토</p></div>' +
-          '<div><i class="sn">03</i><b>Workspace·Agent 배포</b><p>데이터 연계, Agent 구성, 권한 설정, 교육</p></div>' +
-          '<div><i class="sn">04</i><b>운영·지속 고도화</b><p>전문 AI 팀의 품질 평가·개선, 적용 연구 확대</p></div>' +
-        '</div>' +
         '</div></section>';
     },
     faq: function () {
