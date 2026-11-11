@@ -1098,4 +1098,5 @@ main > section#managed.sec { background:#f6faf9; }
 @media (max-width:960px) {
   .pv-t .cmp3:not(.pv) .cr .cl { padding:8px 12px 6px; background:#fff; border-bottom:1px solid var(--ln); }
   .pv-t .cmp3:not(.pv) .cr .cv { padding:10px; }
+  .pv-t .cmp3:not(.pv) .cbox h4 { padding:0 12px; } /* 묶음 제목도 항목 이름과 같은 왼쪽 12 */
 }
