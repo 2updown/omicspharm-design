@@ -7,9 +7,9 @@
 <title>OmicsPharm Workspace</title>
 <!-- 워크스페이스 개요 (2026-11-04, 아직 GNB 미연결). 원본 OmicsPharm_Workspace.html 5페이지를 이 한 페이지로 합침 (2026-11-05: for Hospital·for Biopharma는 '분야별' 탭, Private·Enterprise는 '도입 방식').
      원본 Private/Enterprise 페이지 내용은 이 페이지의 '도입 방식'(#plans) 섹션으로 합침. 반복 섹션(고도화·보안·Managed AI Service·FAQ)은 assets/workspace/ws.js 한 곳에서 관리 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261111b">
-<script src="assets/common/site.js?v=20261111a"></script>
-<link rel="stylesheet" href="assets/workspace/ws.css?v=125">
+<link rel="stylesheet" href="assets/common/site.css?v=20261112a">
+<script src="assets/common/site.js?v=20261112a"></script>
+<link rel="stylesheet" href="assets/workspace/ws.css?v=126">
 <script src="assets/workspace/ws.js?v=58"></script>
 </head>
 <body data-op-no-enter>
@@ -20,7 +20,7 @@
 <section class="ws-hero2" aria-labelledby="h2ttl"><div class="h2-glow" aria-hidden="true"></div><div class="h2-pts" aria-hidden="true"></div><div class="h2-spot" aria-hidden="true"></div><div class="h2-dots" aria-hidden="true"></div><div class="h2-tiles" aria-hidden="true"><span class="h2-tile t1" style="--x:calc(50% - 555px);--y:calc(50% - 143px);--s:80px;--r:-8deg"><i data-i="cpu"></i></span><span class="h2-tile t2" style="--x:calc(50% - 504px);--y:calc(50% - 4px);--s:68px;--r:6deg"><i data-i="database"></i></span><span class="h2-tile t3" style="--x:calc(50% + 473px);--y:calc(50% - 140px);--s:76px;--r:10deg"><i data-i="sparkle"></i></span><span class="h2-tile t4" style="--x:calc(50% + 443px);--y:calc(50% - 28px);--s:64px;--r:-6deg"><i data-i="share-network"></i></span></div>
   <div class="h2-in">
     <h1 id="h2ttl">OmicsPharm <span class="h2-grad">Workspace</span></h1>
-    <p class="h2-desc">분석 결과와 연구 자료를 모으는 우리 팀 전용 공간. <br>Agentic AI가 쌓인 자료를 바탕으로 결과 해석을 돕고, 다음 연구 방향을 제안합니다.</p>
+    <p class="h2-desc">분석 결과와 연구 자료를 모으는 우리 팀 전용 AI Workspace. <br>Agentic AI가 쌓인 자료를 바탕으로 결과 해석을 돕고, 다음 연구 방향을 제안합니다.</p>
   </div>
 </section>
 <!-- 페이지 안 이동 탭 (2026-11-05, 레퍼런스 IBM watsonx.ai·Azure AI Foundry): 히어로 아래, 스크롤하면 위에 붙음. 누르면 해당 섹션으로 이동 -->
@@ -59,30 +59,16 @@
       <div class="cr"><div class="cl">Managed AI Service</div><div class="cv span2"><span><b>전문 AI 팀</b>이 도입 설계, 데이터 연결과 권한 설정, 일상 운영 점검, 응답 품질 평가와 고도화까지 맡습니다.</span></div></div><!-- 2026-11-11: 운영 지원 섹션을 이 줄로 흡수 -->
     </div>
   </div>
-  <!-- 2026-11-11 비교 시안: 플랜 카드형 / 특징 비교형 / 예전 표(높이 줄임). 내용은 위 표(.cmp3)에서 읽어 만듦. 토글로 전환, 고르면 하나만 남김 -->
-  <div class="pv-tgl" role="group" aria-label="플랜 비교 시안"><button type="button" data-pv="card">카드형</button><button type="button" data-pv="feat">특징 비교형</button><button type="button" data-pv="table">표형</button></div>
-  <div class="cmp3 pv pv-card"></div>
+  <!-- 2026-11-12 플랜 비교는 특징 비교형(2안)으로 확정. 카드형(1안)·표형(3안)은 피그마에만 기록. 내용은 위 표(.cmp3, 숨김)에서 읽어 만듦 -->
   <div class="cmp3 pv pv-feat"></div>
   <script>
   (function () {
-    var src = document.querySelector('.cmp3:not(.pv)'), sec = document.getElementById('plans');
-    src.parentNode.insertBefore(document.querySelector('.pv-tgl'), src); // 토글은 표보다 위 (표형일 때도 같은 자리)
+    var src = document.querySelector('.cmp3:not(.pv)');
     var hd = src.querySelectorAll('.chd .cv'), names = [].map.call(hd, function (c) { return c.querySelector('b').textContent; }), pills = [].map.call(hd, function (c) { return c.querySelector('.pill').outerHTML; });
     var groups = [].map.call(src.querySelectorAll('.cbox'), function (b) {
       return { t: b.querySelector('h4').textContent, rows: [].map.call(b.querySelectorAll('.cr'), function (r) { var v = r.querySelectorAll('.cv'); return { l: r.querySelector('.cl').innerHTML, v: [].map.call(v, function (c) { return c.innerHTML; }), all: v.length === 1 }; }) };
     });
-    // 카드형 (2026-11-11): 도입 대상은 묶음 대신 플랜 이름 아래 소개(도입 단위 강조 + 적합한 곳 회색)로. 기존 시스템 연계처럼 값이 아이콘뿐인 줄은 .mkr (좁은 화면에서도 이름 표시)
-    var intro = groups.filter(function (g) { return g.t === '도입 대상'; })[0], rest = groups.filter(function (g) { return g !== intro; });
-    var shared = [], card = [0, 1].map(function (k) {
-      return '<div class="pc' + (k ? ' ent' : '') + '"><div class="pc-top"><b>' + names[k] + '</b>' + pills[k] + '</div>' +
-        (intro ? '<div class="pc-intro" data-k="intro"><p class="a">' + intro.rows[0].v[k] + '</p>' + (intro.rows[1] ? '<p class="b">' + intro.rows[1].v[k] + '</p>' : '') + '</div>' : '') +
-        rest.map(function (g) {
-        var rows = g.rows.filter(function (r) { if (r.all && !k) shared.push(r); return !r.all; });
-        return rows.length ? '<h4>' + g.t + '</h4>' + rows.map(function (r, i) { return '<div class="pc-it' + (/class="mk/.test(r.v[k]) ? ' mkr' : '') + '" data-k="' + g.t + i + '"><div class="l">' + r.l + '</div><div class="v">' + r.v[k] + '</div></div>'; }).join('') : '';
-      }).join('') + '</div>';
-    }).join('');
-    document.querySelector('.pv-card').innerHTML = '<div class="pc-grid">' + card + '</div>' + shared.map(function (r) { return '<div class="pc-all"><div class="l">' + r.l + '<span class="tag">공통</span></div><div class="v">' + r.v[0] + '</div></div>'; }).join('');
-    // 특징 비교형 (2026-11-11 개선): 줄 하나 = 항목 이름 / Private / Enterprise. 플랜 이름은 맨 위에 한 번만 (좁은 화면은 줄마다 작은 표시)
+    // 줄 하나 = 항목 이름 / Private / Enterprise. 플랜 이름은 맨 위에 한 번만 (좁은 화면은 위에 붙어 따라옴)
     document.querySelector('.pv-feat').innerHTML = '<div class="pf-row pf-hd"><div></div>' + [0, 1].map(function (k) { return '<div class="p"><b>' + names[k] + '</b>' + pills[k] + '</div>'; }).join('') + '</div>' +
       groups.map(function (g) {
         return '<h4>' + g.t + '</h4>' + g.rows.map(function (r) {
@@ -90,13 +76,6 @@
           return '<div class="pf-row pf-r' + (/^도입 단위/.test(r.l) ? ' key' : '') + '"><div class="n">' + r.l + '</div>' + [0, 1].map(function (k) { return '<div class="' + (k ? 'ev' : 'pv') + '"><em>' + (k ? 'Enterprise' : 'Private') + '</em>' + r.v[k] + '</div>'; }).join('') + '</div>';
         }).join('');
       }).join('');
-    // 카드형: 두 카드의 같은 항목 높이를 맞춤
-    function eq() { var its = document.querySelectorAll('.pv-card .pc-it, .pv-card .pc-intro'); its.forEach(function (e) { e.style.minHeight = ''; }); var by = {}; its.forEach(function (e) { (by[e.dataset.k] = by[e.dataset.k] || []).push(e); }); Object.keys(by).forEach(function (k) { var h = Math.max.apply(null, by[k].map(function (e) { return e.offsetHeight; })); by[k].forEach(function (e) { e.style.minHeight = h + 'px'; }); }); }
-    var root = document.documentElement, tg = document.querySelectorAll('.pv-tgl button');
-    function set(v) { root.classList.toggle('pv-f', v === 'feat'); root.classList.toggle('pv-t', v === 'table'); tg.forEach(function (b) { var on = b.dataset.pv === v; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); eq(); }
-    tg.forEach(function (b) { b.addEventListener('click', function () { set(b.dataset.pv); }); });
-    var q = (location.search.match(/[?&]plans=(feat|table)\b/) || [])[1]; set(q || 'card');
-    addEventListener('resize', eq); addEventListener('load', eq);
   })();
   </script>
   <!-- 2026-11-11 분야별 구성은 플랜 비교 아래로 (비교 먼저, 분야별 설명은 보충). 피드백 2차 8번: 적용 분야 섹션을 플랜 비교 안으로 합침 (Figma 2417:19353). 표의 두 열과 짝으로 보이지 않게 '분야별 구성' 소제목 + 간격으로 구분 -->

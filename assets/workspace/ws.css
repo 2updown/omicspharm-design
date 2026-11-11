@@ -1005,29 +1005,11 @@ main > section#managed.sec { background:#f6faf9; }
   .cta { padding-left:16px; padding-right:16px; }
 }
 
-/* 2026-11-11 플랜 비교 시안 (표 대신): 카드형 / 특징 비교형. 토글로 비교, 고르면 하나만 남김 */
+/* 2026-11-12 플랜 비교: 특징 비교형(2안) 확정. 원본 표(.cmp3)는 숨기고 내용만 읽어 씀 */
 #plans .wrap { position:relative; }
 #plans .cmp3:not(.pv) { display:none; }
-.pv-tgl { display:flex; width:max-content; margin:0 0 20px auto; padding:3px; border-radius:99px; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.12); }
-.pv-tgl button { height:28px; padding:0 12px; border:0; border-radius:99px; background:none; font:inherit; font-size:12px; font-weight:500; color:#525252; cursor:pointer; white-space:nowrap; }
-.pv-tgl button.on { background:#111; color:#fff; }
-.pv-feat, .pv-f .pv-card { display:none; } .pv-f .pv-feat { display:block; }
-.pv-t #plans .cmp3:not(.pv) { display:block; } .pv-t .pv-card { display:none; } /* 표형 (?plans=table) */
-/* 카드형 */
-.pc-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
-.pc { padding:36px 36px 20px; border:1px solid var(--gray-200); border-radius:20px; background:#fff; }
-.pc.ent { border:1.5px solid var(--teal-600); background:linear-gradient(180deg, #f2fbf9 0, #fff 220px); }
-.pc-top { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-bottom:24px; border-bottom:1px solid var(--gray-200); }
-.pc.ent .pc-top { border-bottom-color:#cfe9e4; }
-.pc-top b { font-size:24px; font-weight:700; line-height:32px; }
 .pv h4 { margin:28px 0 4px; font-size:16px; font-weight:600; line-height:22px; color:var(--teal-600); }
-.pc-it { display:grid; grid-template-columns:140px 1fr; gap:16px; align-items:start; padding:12px 0; border-bottom:1px dashed #ececec; font-size:16px; line-height:24px; }
-.pc-it:last-child, .pc-it:has(+ h4) { border-bottom:0; }
-.pc-it .l { display:flex; align-items:center; font-size:15px; color:var(--gray-500); }
-.pc-it .v, .pc-all .v { word-break:keep-all; }
 .pv .hl b { color:var(--teal-600); }
-.pc-all { display:flex; align-items:center; gap:24px; margin-top:24px; padding:24px 36px; border-radius:20px; background:#f6f9f9; font-size:16px; line-height:24px; }
-.pc-all .l { flex:none; padding-right:24px; border-right:1px solid #d4d4d4; font-weight:700; }
 /* 특징 비교형 (개선): 둥근 가로 줄, 플랜 이름은 맨 위 한 번, Private 회색 / Enterprise 검정 */
 .pf-row { display:grid; grid-template-columns:240px 1fr 1fr; column-gap:32px; align-items:center; }
 .pf-hd { padding:0 28px 16px; border-bottom:2px solid #111; }
@@ -1044,22 +1026,11 @@ main > section#managed.sec { background:#f6faf9; }
 .pf-all .tag { height:24px; padding:0 9px; border-radius:99px; background:rgba(255,255,255,.14); font-size:12px; font-weight:600; display:inline-flex; align-items:center; }
 /* 좁은 화면에서도 두 플랜을 나란히 (위아래로 쌓으면 비교가 어려움) */
 @media (max-width:960px) {
-  .pc { padding:28px 20px 12px; } .pc-it { grid-template-columns:100px 1fr; gap:12px; }
-  .pc-all { flex-direction:column; align-items:flex-start; gap:8px; padding:20px; } .pc-all .l { padding:0; border:0; }
   .pf-row { grid-template-columns:140px 1fr 1fr; column-gap:20px; }
   .pf-r, .pf-all { padding:18px 20px; }
 }
 @media (max-width:640px) {
-  /* 카드형: 두 카드 나란히, 항목 이름은 Private 카드에만 (Enterprise는 같은 자리 비움) */
-  .pc-grid { gap:8px; }
-  .pc { padding:16px 12px 6px; border-radius:14px; }
-  .pc-top { flex-direction:column; align-items:flex-start; gap:8px; padding-bottom:14px; }
-  .pc-top b { font-size:16px; line-height:22px; }
   .pv h4 { margin:18px 0 2px; font-size:14px; line-height:20px; }
-  .pc-it { grid-template-columns:1fr; gap:2px; padding:10px 0; font-size:14px; line-height:20px; }
-  .pc-it .l { font-size:12px; line-height:18px; }
-  .pc.ent .pc-it .l { visibility:hidden; }
-  .pc-all { margin-top:8px; padding:16px; font-size:14px; line-height:20px; }
   /* 특징 비교형: 항목 이름 한 줄, 아래 두 값 나란히. 플랜 이름 줄은 위에 붙어 따라옴 */
   .pf-row { grid-template-columns:1fr 1fr; column-gap:12px; row-gap:8px; }
   .pf-r .n, .pf-all .n, .pf-all .v { grid-column:1 / -1; }
@@ -1070,62 +1041,13 @@ main > section#managed.sec { background:#f6faf9; }
   .pv .pill { height:26px; padding:0 10px; font-size:12px; }
 }
 
-/* 2026-11-11 표형 시안: 예전 표를 높이만 줄여서 (줄 69 → 56, 묶음 제목 74 → 56, 모바일 값 칸 여백·글자 축소) */
-@media (min-width:961px) {
-  .pv-t .cmp3:not(.pv) .cr .cl, .pv-t .cmp3:not(.pv) .cr .cv { min-height:56px; }
-  .pv-t .cmp3:not(.pv) .mk-row .cl, .pv-t .cmp3:not(.pv) .mk-row .cv { min-height:56px; }
-  .pv-t .cmp3:not(.pv) .cr .cv { padding:10px 20px; }
-  .pv-t .cmp3:not(.pv) .cbox h4 { min-height:56px; font-size:18px; line-height:26px; }
-  .pv-t .cmp3:not(.pv) .chd .cv { min-height:64px; }
-  /* 항목 열을 좁고 가볍게: 280 → 200, 글자 15 회색 */
-  .pv-t .cmp3:not(.pv) .chd, .pv-t .cmp3:not(.pv) .cr { grid-template-columns:200px 1fr 1fr; }
-  .pv-t .cmp3:not(.pv) .cr .cl { font-size:15px; color:var(--gray-600); }
-}
-.pv-t .cmp3:not(.pv) .cbox { margin-top:16px; } .pv-t .cmp3:not(.pv) .chd + .cbox { margin-top:0; }
-@media (max-width:960px) {
-  .pv-t .cmp3:not(.pv) .cbox h4 { min-height:44px; font-size:16px; line-height:22px; }
-  /* 항목 이름을 따로 한 줄(흰 칸 + 선)로 두지 않고, 값 칸 위에 붙은 작은 캡션으로 */
-  .pv-t .cmp3:not(.pv) .cr .cl { padding:10px 12px 0; border-bottom:0; background:linear-gradient(90deg, #f6f9f9 50%, #e9f4f2 50%); font-size:12px; font-weight:600; line-height:16px; color:var(--gray-500); }
-  .pv-t .cmp3:not(.pv) .cr .cl .info .ico { width:16px; height:16px; }
-  .pv-t .cmp3:not(.pv) .cr .cv { min-height:0; padding:4px 10px 10px; font-size:14px; line-height:20px; }
-  .pv-t .cmp3:not(.pv) .mk-row .cv { min-height:36px; }
-}
 @media (max-width:640px) { .pv-feat .pf-hd + h4 { margin-top:12px; } }
 /* 2026-11-11 분야별 구성을 비교 아래로: 위 간격 72 (모바일 48), 아래 여백은 섹션 여백으로 */
 #plans .fld-sub { margin-top:72px; } #plans .fld-grid { margin-bottom:0; }
 @media (max-width:760px) { #plans .fld-sub { margin-top:48px; } }
-/* 2026-11-11 표형 모바일: 항목 이름 캡션은 모두 흰 바탕 + 아래 선 (가운데 세로선이 캡션에서 끊겨 보이지 않게, 묶음 안 항목 구분이 보이게) */
-@media (max-width:960px) {
-  .pv-t .cmp3:not(.pv) .cr .cl { padding:8px 12px 6px; background:#fff; border-bottom:1px solid var(--ln); }
-  .pv-t .cmp3:not(.pv) .cr .cv { padding:10px; }
-  .pv-t .cmp3:not(.pv) .cbox h4 { padding:0 12px; } /* 묶음 제목도 항목 이름과 같은 왼쪽 12 */
-}
-/* 2026-11-11 카드형: 플랜 이름 아래 소개(도입 대상), 모바일은 항목 이름 숨김 (아이콘뿐인 줄 .mkr은 남김) */
-.pc .pc-top { padding-bottom:0; border-bottom:0; }
-.pc-intro { padding:14px 0 24px; border-bottom:1px solid var(--gray-200); }
-.pc.ent .pc-intro { border-bottom-color:#cfe9e4; }
-.pc-intro .a { font-size:18px; font-weight:700; line-height:26px; color:#171717; word-break:keep-all; }
-.pc-intro .a .hl { color:inherit; } .pc-intro .a .hl b { color:var(--teal-600); }
-.pc-intro .b { margin-top:6px; font-size:15px; line-height:22px; color:var(--gray-500); word-break:keep-all; }
-@media (max-width:640px) {
-  .pc-intro { padding:10px 0 14px; } .pc-intro .a { font-size:14px; line-height:20px; } .pc-intro .b { margin-top:4px; font-size:12px; line-height:18px; }
-  .pc-it:not(.mkr) .l { display:none; }
-  .pc.ent .pc-it.mkr .l { visibility:visible; }
-}
-/* 2026-11-11 카드형 Managed AI Service도 특징 비교형과 같게: 진한 초록 + 공통 배지 */
-.pc-all { background:#0a2a27; color:#e6f2f0; }
-.pc-all .l { display:flex; align-items:center; gap:8px; color:#fff; border-right-color:rgba(255,255,255,.2); }
-.pc-all .v b { color:#fff; }
-.pc-all .tag { height:24px; padding:0 9px; border-radius:99px; background:rgba(255,255,255,.14); font-size:12px; font-weight:600; display:inline-flex; align-items:center; }
-/* 2026-11-11 Managed AI Service는 두 탭 모두 Teal 600 + 흰 글씨 (진한 초록은 너무 튀어서) */
-.pc-all, .pf-all { background:var(--teal-600); color:#fff; }
-.pc-all .l { color:#fff; border-right-color:rgba(255,255,255,.3); } .pc-all .v, .pf-all .v { color:#fff; } .pc-all .v b, .pf-all .v b { color:#fff; }
-.pc-all .tag, .pf-all .tag { background:rgba(255,255,255,.2); color:#fff; }
-/* 2026-11-11 표형 도입 단위: Private 값도 Enterprise처럼 teal (두 플랜 같게) */
-.cmp3:not(.pv) .chd + .cbox .cr:first-of-type .cv { color:#00756a; }
-/* 2026-11-11 카드형: 두 플랜이 위계가 아니라 같은 무게로 보이게, 두 카드 모두 회색 테두리 + 같은 민트 그라디언트 */
-.pc, .pc.ent { border:1px solid var(--gray-200); background:linear-gradient(180deg, #f2fbf9 0, #fff 220px); }
-.pc .pc-intro, .pc.ent .pc-intro { border-bottom-color:#d9ece8; }
+.pf-all { background:var(--teal-600); color:#fff; } /* 2026-11-11 Managed AI Service는 Teal 600 + 흰 글씨 */
+.pf-all .v, .pf-all .v b { color:#fff; }
+.pf-all .tag { background:rgba(255,255,255,.2); color:#fff; }
 /* 2026-11-11 분야별 구성을 비교에 더 붙임: 위 간격 72 → 48 (모바일 48 → 32) */
 #plans .fld-sub { margin-top:48px; }
 @media (max-width:760px) { #plans .fld-sub { margin-top:32px; } }

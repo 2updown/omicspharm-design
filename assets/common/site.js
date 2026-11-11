@@ -344,7 +344,7 @@
       '<nav class="op-dr-nav" aria-label="전체 메뉴">' +
         '<a class="op-dr-link" href="omicspharm-register.html?from=gnb" data-client-only>프로젝트 의뢰</a>' +
         '<a class="op-dr-link" href="projects.html">프로젝트 찾기</a>' +
-        '<a class="op-dr-link" href="workspace.html">Workspace</a>' +
+        '<a class="op-dr-link" href="workspace.html">AI Workspace</a>' +
         groups +
       '</nav>' +
       (s ? '<div class="op-dr-foot"><button type="button" data-op-logout>로그아웃</button></div>' : '') +
@@ -360,7 +360,7 @@
       '<nav class="op-gnb-menu">' +
         '<a href="omicspharm-register.html?from=gnb" data-client-only' + on('register') + '>프로젝트 의뢰</a>' /* GNB에서 들어오면 [이전으로] 숨김 */ +
         '<a href="projects.html"' + on('find') + '>프로젝트 찾기</a>' +
-        '<a href="workspace.html"' + on('workspace') + '>Workspace</a>' /* 2026-11-10 피드백: 하위 메뉴가 하나뿐이라 솔루션 드롭다운 대신 바로 가는 메뉴 */ +
+        '<a href="workspace.html"' + on('workspace') + '>AI Workspace</a>' /* 2026-11-12 메뉴는 AI Workspace, 제품명은 OmicsPharm Workspace. 2026-11-10 피드백: 하위 메뉴가 하나뿐이라 솔루션 드롭다운 대신 바로 가는 메뉴 */ +
         dropdown('community') + dropdown('service') + dropdown('support') +
       '</nav>';
     var cta = s
