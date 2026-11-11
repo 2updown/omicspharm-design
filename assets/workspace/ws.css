@@ -976,3 +976,12 @@ main > section#managed.sec { background:#f6faf9; }
 
 /* 2026-11-11 Figma: 작동 방식 02~04(되돌아가는 단계) 카드 배경 연한 민트 */
 .hw-steps li + li { background:#f6faf9; }
+
+/* 2026-11-11 Key Features 4번 그림: 운영 리포트 지표 */
+.pa-hd .pa-mo { margin-left:auto; }
+.pa-kpi { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
+.pa-kpi > div { padding:14px; border-radius:12px; background:#f6faf9; }
+.pa-kpi small { display:block; font-size:13px; line-height:18px; color:#737373; }
+.pa-kpi b { display:block; margin-top:4px; font-size:22px; font-weight:700; line-height:28px; color:#111; }
+.pa-kpi em { margin-left:6px; font-size:14px; font-style:normal; font-weight:600; color:#009788; }
+.pa-kpi span { margin-left:4px; font-size:14px; font-weight:500; color:#525252; }

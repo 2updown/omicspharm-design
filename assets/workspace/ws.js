@@ -31,9 +31,9 @@ if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentE
       /* 2026-11-06 크몽 Biz '선택하는 이유' 레이아웃: 가운데 제목 + 4칸 상자 탭 + (왼쪽 아이콘·제목·설명·체크 3개 / 오른쪽 궤도 그림) */
       var P = [
         ['분리된 공간', 'buildings', '다른 기관과 분리된 우리 팀 공간', '다른 기관과 분리해 보관하고, 같은 기관 안에서도 팀별 공유 범위를 정합니다.', ['GPU·데이터 저장소·AI 모델·네트워크를 독립적으로 사용', '팀별 데이터와 Agent 기록 분리', '기관 공통 지식은 승인된 범위에서만 공유'], ['전용 GPU', '데이터 저장소', 'AI 모델']],
-        ['허용된 사람만 접근', 'users-three', '허용된 사람만 자료에 접근합니다', '연구팀과 프로젝트별로 자료를 조회·활용할 수 있는 사람과 권한을 정합니다.', ['연구팀·프로젝트별 조회·활용 권한 설정', '연구책임자 또는 관리자가 구성원 관리', 'Enterprise는 기관 계정과 연동'], ['역할별 권한', '구성원 관리', '기관 계정 연동']],
-        ['외부 전송 통제', 'lock-key', '외부로 나가는 정보를 통제합니다', '외부 AI에 전달할 데이터와 모델 학습 활용 여부를 기관과 미리 정하고 계약에 반영합니다.', ['외부 AI에 전달할 데이터 범위 사전 협의', '모델 학습 활용 여부를 계약에 반영', '기관 내부 구축(On-Premises) 선택 가능'], ['전달 범위 제한', '학습 활용 협의', 'On-Premises']],
-        ['근거와 기록', 'file-text', '근거와 기록이 남는 AI', 'AI가 참고한 자료와 연구자의 검토, 데이터 접근 기록을 확인할 수 있습니다.', ['AI가 참고한 자료와 출처 확인', '연구자의 검토 이력 기록', '데이터 접근 기록 확인'], ['참고 출처', '검토 이력', '접근 기록']]
+        ['권한·전송 통제', 'users-three', '허용된 사람과 범위만 활용합니다', '자료를 볼 수 있는 사람과 권한을 정하고, 외부 AI로 나가는 정보도 기관이 정한 범위로 제한합니다.', ['연구팀·프로젝트별 조회·활용 권한 설정', '외부 AI에 전달할 데이터 범위와 학습 활용 여부를 계약에 반영', '기관 내부 구축(On-Premises) 선택 가능'], []],
+        ['근거와 기록', 'file-text', '근거와 기록이 남는 AI', 'AI가 참고한 자료와 연구자의 검토, 데이터 접근 기록을 확인할 수 있습니다.', ['AI가 참고한 자료와 출처 확인', '연구자의 검토 이력 기록', '데이터 접근 기록 확인'], []],
+        ['전문가 운영 지원', 'robot', 'AI 전담팀이 없어도 운영할 수 있습니다', 'OmicsPharm의 바이오·헬스케어 전문 AI 팀이 AI Agent를 구축하고 운영합니다. 새 데이터와 연구자의 검토를 반영해 계속 고도화합니다.', ['연구 목적에 맞는 AI 설계와 사용자 교육', 'AI 실행 점검과 연구 지식 업데이트', '응답 품질 평가와 연구자 의견 반영'], []]
       ];
       /* 2026-11-09 탭 2~4 오른쪽 그림 (Figma 2527:19542~): 구성원 권한 카드 / 전송 범위 흐름 / AI 답변 출처 + 활동 기록. 1번 탭은 궤도 그림 유지 */
       var BD = function (t, c) { return '<span class="pa-bd ' + c + '">' + t + '</span>'; };
@@ -41,19 +41,19 @@ if (!matchMedia('(prefers-reduced-motion:reduce)').matches) { document.documentE
       var ART = [null,
         '<div class="pv-art" aria-hidden="true"><i class="pa-ring"></i><div class="pa-card"><b class="pa-hd">단백체 분석 프로젝트 구성원</b><ul class="pa-mem">' +
           ROW('연구책임자', '구성원 관리', BD('관리', 'fill')) + ROW('연구원', '프로젝트 참여', BD('조회', '')) + ROW('협력 연구원', '결과 열람', BD('조회', '')) + ROW('다른 팀 구성원', '권한 없음', BD('접근 불가', 'gray'), 1) +
-          '</ul></div><span class="pa-pill">' + I('buildings') + '기관 계정 연동</span></div>',
-        '<div class="pv-art pa-flow" aria-hidden="true"><div class="pa-card"><b class="pa-hd">' + I('database') + '연구 데이터</b><ul class="pa-chk">' +
-          '<li>' + I('check') + '분석 결과 요약</li><li>' + I('check') + '실험 조건</li><li class="no">' + I('x') + '환자 식별 정보</li><li class="no">' + I('x') + '원본 Raw data</li></ul></div>' +
-          '<div class="pa-gate"><i class="ln"></i><span class="g">' + I('lock-key') + '</span><i class="ln"></i><span class="lb">기관이 정한 범위만 전달</span></div>' +
-          '<div class="pa-card"><div class="pa-out"><span class="ic">' + I('robot') + '</span><span><b>외부 AI</b>모델 학습 활용은 계약에서 협의</span></div></div></div>',
+          '</ul></div><span class="pa-pill">' + I('lock-key') + '외부 전송 범위 제한</span></div>', /* 2026-11-11 Key Features 2번(권한·전송 통제) A안 */
         '<div class="pv-art" aria-hidden="true"><i class="pa-ring"></i><div class="pa-card"><b class="pa-hd">' + I('sparkle') + 'AI 답변</b><p class="pa-ans">시료 B의 단백질 발현량이 대조군보다 약 2배 높습니다.</p>' +
           '<span class="pa-cite"><i class="ext">PDF</i>출처 [A]</span></div>' +
-          '<div class="pa-card"><b class="pa-hd">' + I('shield-check') + '활동 기록</b><ul class="pa-log"><li><time>11:02</time>연구책임자 답변 검토 완료</li><li><time>10:48</time>AI 답변 생성, 출처 2건</li><li><time>10:45</time>연구원 분석 보고서 열람</li></ul></div></div>'
+          '<div class="pa-card"><b class="pa-hd">' + I('shield-check') + '활동 기록</b><ul class="pa-log"><li><time>11:02</time>연구책임자 답변 검토 완료</li><li><time>10:48</time>AI 답변 생성, 출처 2건</li><li><time>10:45</time>연구원 분석 보고서 열람</li></ul></div></div>',
+        /* 2026-11-11 Key Features 4번(전문가 운영 지원) 새 그림: 운영 리포트 + AI 팀 운영 기록 (숫자는 예시) */
+        '<div class="pv-art" aria-hidden="true"><i class="pa-ring"></i><div class="pa-card"><b class="pa-hd">' + I('chart-line-up') + '운영 리포트' + BD('11월', 'fill pa-mo') + '</b>' +
+          '<div class="pa-kpi"><div><small>응답 품질</small><b>96<em>▲4</em></b></div><div><small>지식 업데이트</small><b>12<span>건</span></b></div></div></div>' +
+          '<div class="pa-card"><b class="pa-hd">' + I('robot') + 'OmicsPharm AI 팀</b><ul class="pa-log"><li><time>11:20</time>응답 품질 평가 완료</li><li><time>10:05</time>연구 지식 3건 반영</li><li><time>09:40</time>연구자 의견 반영 개선</li></ul></div></div>'
       ];
       return '<section class="sec pale sec2" id="security"><div class="wrap">' +
-        '<div class="sec-head center"><span class="eyebrow">Security</span>' +
-        '<h2 class="ttl">우리 팀 전용 공간에서, <br>연구 데이터를 안전하게 지킵니다.</h2>' +
-        '<p class="lead">연구 자료는 팀 전용 공간에 보관하고, 허용된 구성원만 활용합니다. <br>외부 AI에 전달할 정보도 기관이 정한 범위로 제한합니다.</p></div>' +
+        '<div class="sec-head center"><span class="eyebrow">Key Features</span>' + /* 2026-11-11 보안 → Key Features (운영 지원을 탭으로) */
+        '<h2 class="ttl">안전하게 쓰고, <br>전문가와 함께 운영합니다.</h2>' +
+        '<p class="lead">연구 자료는 팀 전용 공간에 보관하고, 허용된 사람과 범위만 활용합니다. <br>바이오·헬스케어 전문 AI 팀이 운영과 고도화를 함께합니다.</p></div>' +
         '<div class="seg" role="tablist">' + P.map(function (p, i) { return '<button role="tab" data-pv="' + i + '" aria-selected="' + (i === 0) + '">' + p[0] + '</button>'; }).join('') + '</div>' +
         P.map(function (p, i) {
           return '<div class="pv-panel" data-pvp="' + i + '"' + (i ? ' hidden' : '') + '><div class="pv-txt"><h3>' + p[2] + '</h3><p>' + p[3] + '</p>' +
