@@ -198,6 +198,8 @@ input { font:inherit; color:inherit; }
   .auth { flex-direction:column; }
   .m-logo { display:block; flex:none; align-self:flex-start; margin:24px 0 8px 24px; width:152px; height:16px; }
   .m-logo img { display:block; width:100%; height:100%; }
+  /* 2026-11-11 좁은 화면에서 폼을 세로 가운데 두면 위가 비어 보여서 위로 붙임 */
+  .auth-main:not(.stepped) { align-items:flex-start; padding-top:40px; }
 }
 @media (max-width:560px) {
   .m-logo { margin:20px 0 8px 16px; }
