@@ -340,6 +340,8 @@
     },
     // 견적 마감일 변경 (2026-10-28, 컨설턴트). 마감일이 지나면 분석파트너는 새 견적을 제출할 수 없음 (수정 요청받은 견적은 제출 가능)
     setDue: function (id, v) { return put(id, function (s) { s.due = v; s.dueChg = Date.now(); }); },
+    // 모집 종료일 (2026-11-12): 의뢰의 모집기한 끝과 견적 마감일은 같은 날짜라 둘 중 나중에 바뀐 쪽. 관리 카드 세 역할 모두 이 날짜로 기간·D-day 표시
+    recTo: function (r) { var s = state(r.id); if (!s.due) return r.to; return (r.updatedAt || 0) > (s.dueChg || s.reqAt || 0) && r.to ? r.to : s.due; },
     dueOver: function (s) { return !!s.due && new Date(s.due + 'T23:59:59') < new Date(); },
     // 분석파트너 화면용: 삭제된 프로젝트는 견적 상태와 상관없이 '프로젝트 삭제' (2026-10-28, 견적은 기록으로 남고 더 진행할 수 없음)
     pstMe: function (s, k) { return s.cancel && s.P[k] ? '프로젝트 삭제' : F.pst(s, k); },

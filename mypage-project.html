@@ -12,7 +12,7 @@
 <script src="assets/common/site.js?v=20261112d"></script>
 <script src="assets/common/consult.js?v=20261106b"></script>
 <script src="assets/common/mypage.js?v=20261112b"></script>
-<script src="assets/common/flow.js?v=20261106b"></script>
+<script src="assets/common/flow.js?v=20261112a"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -346,7 +346,7 @@
     .lcard .row1 { flex-wrap:wrap; row-gap:8px; }
     .lcard .row1 .nx, .lcard .row1 .nxb { white-space:nowrap; }
     .lcard .row1 .nxb { margin-left:auto; }
-    .lcard .row1 .dv { display:none; } /* 2026-11-12 줄바꿈되면 '모집 마감 D-12 |'처럼 구분선이 줄 끝에 남아 모바일은 구분선 없앰 */
+    .lcard .row1 .dv { display:block; flex-basis:100%; width:0; height:0; margin:0; border:0; background:none; } /* 구분선 대신 줄바꿈: 윗줄 배지·종료 D-n, 아랫줄 임시저장 날짜·버튼 */ /* 2026-11-12 줄바꿈되면 '모집 마감 D-12 |'처럼 구분선이 줄 끝에 남아 모바일은 구분선 없앰 */
   }
   /* 2026-11-12 필터·정렬 드롭다운을 프로젝트 찾기 정렬과 같은 DS dropdown 모양으로 (높이 40, 회색 테두리, 모서리 8, 글자 14 Regular) */
   .sort select { height:40px; padding:0 40px 0 16px; border:1px solid var(--gray-300); border-radius:8px; background:#fff url(assets/find/ic-chevron-down.svg) right 16px center/16px no-repeat; font:inherit; font-size:14px; font-weight:400; line-height:20px; color:#000; appearance:none; -webkit-appearance:none; cursor:pointer; }
@@ -460,7 +460,7 @@
     var QL = !ADM && OP.canQuote() ? OP.flow.inbox(OP.session().email).map(function (o) {
       // 삭제된 프로젝트 (2026-10-28): 원래 탭(견적 요청·견적 제출)에 그대로 두고 '프로젝트 삭제' 표시 → 누르면 목록에서 제거할지 묻는 모달
       var t = OP.flow.pstMe(o.s, OP.session().email), t0 = OP.flow.pst(o.s, OP.session().email); if (!Q_ST[t0] || o.x.hidden) return null;
-      return { kind: 'q', id: o.r.id, href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, title: o.r.title, client: o.r.org || '-', samples: o.r.samples || '-', stage: Q_ST[t0], pst: !o.s.cancel && /작성 대기|임시저장/.test(t) && OP.flow.dueOver(o.s) ? '모집 마감' : t, del: !!o.s.cancel, sub: !!o.x.subAt, due: o.s.due, at: o.x.at || o.r.at, self: o.x.self, savedAt: o.x.status === 'draft' ? (o.x.savedAt || o.x.at) : 0 };
+      return { kind: 'q', id: o.r.id, href: 'mypage-quote.html?rid=' + encodeURIComponent(o.r.id), svc: o.r.svc, title: o.r.title, client: o.r.org || '-', samples: o.r.samples || '-', stage: Q_ST[t0], pst: !o.s.cancel && /작성 대기|임시저장/.test(t) && OP.flow.dueOver(o.s) ? '모집 마감' : t, del: !!o.s.cancel, sub: !!o.x.subAt, due: o.s.due, from: o.r.from, to: OP.flow.recTo(o.r), at: o.x.at || o.r.at, self: o.x.self, savedAt: o.x.status === 'draft' ? (o.x.savedAt || o.x.at) : 0 };
     }).filter(Boolean) : [];
     var routeOf = function (x) { var p = x.flow && OP.flow.state(x.id).P[OP.session().email]; return !!(p && p.self); }; // 직접 신청 = 프로젝트 찾기에서 직접 견적을 보낸 건
     var LIST_ST = ADM ? STAGES : ['견적 요청', '견적 제출'].concat(STAGES).concat(['미선정·거절']);
@@ -581,13 +581,13 @@
       $('#pTotal').innerHTML = '총 <b>' + L.length + '</b>건';
       $('#pList').innerHTML = OP.my.paged($('#pPager'), L.map(function (x) {
         if (x.kind === 'q') { // 견적 단계 카드: 견적 상태 + 제출 전이면 견적 마감일
-          var open = x.stage === '견적 요청' && !x.del, dl = Math.round((new Date(x.due + 'T00:00:00') - new Date(new Date().toDateString())) / 864e5); // 날짜끼리 비교 (다른 화면과 같은 D-day, 2026-11-04)
+          var open = !x.del && !!x.to && (dl = Math.round((new Date(x.to + 'T00:00:00') - new Date(new Date().toDateString())) / 864e5)) >= 0, dl; // 2026-11-12 세 역할 같게: 모집 종료일까지 '종료 D-n', 지나면 표시 없음 (프로젝트 찾기와 같음)
           return '<a class="lcard' + (x.del ? ' gone' : '') + '" href="' + x.href + '"' + (x.del ? ' data-gone="' + esc(x.id) + '" data-title="' + esc(x.title) + '"' + (x.sub ? ' data-sub' : '') : '') + '><div class="head">' +
             '<div class="row1"><div class="badges"><span class="badge tag">' + esc(x.svc) + '</span><span class="badge ' + Q_SB[x.stage] + '">' + x.stage + '</span></div>' +
-              '<span class="dday">' + (open && x.due ? (dl < 0 ? '모집 마감' : '모집 마감 D-' + String(dl).padStart(2, '0')) : '') + '</span>' + (x.pst === '임시저장' && x.savedAt ? (open && x.due ? '<i class="dv" aria-hidden="true"></i>' : '') + '<span class="nx">임시저장 ' + OP.flow.ymd(x.savedAt) + '</span>' : '') + nextHTML(Q_NX[x.pst]) + // 임시저장한 견적: 할 일 버튼 왼쪽에 저장일 (배지 대신 글자, 2026-11-02)
+              '<span class="dday">' + (open ? '종료 D-' + String(dl).padStart(2, '0') : '') + '</span>' + (x.pst === '임시저장' && x.savedAt ? (open ? '<i class="dv" aria-hidden="true"></i>' : '') + '<span class="nx">임시저장 ' + OP.flow.ymd(x.savedAt) + '</span>' : '') + nextHTML(Q_NX[x.pst]) + // 임시저장한 견적: 할 일 버튼 왼쪽에 저장일 (배지 대신 글자, 2026-11-02)
               '</div>' +
             '<h3>' + esc(x.title) + '</h3></div>' +
-            '<div class="info"><div class="meta"><span class="route">' + (x.self ? '직접 신청' : 'OmicsPharm 매칭 요청') + '</span><span>' + esc(x.client) + '</span><span><em>샘플</em>' + esc(x.samples) + '개</span>' + (x.due ? '<span><em>모집기한</em>~' + dotd(x.due) + '</span>' : '') + '</div>' +
+            '<div class="info"><div class="meta"><span class="route">' + (x.self ? '직접 신청' : 'OmicsPharm 매칭 요청') + '</span><span>' + esc(x.client) + '</span><span><em>샘플</em>' + esc(x.samples) + '개</span>' + (x.from || x.to ? '<span><em>모집기한</em>' + dotd(x.from) + ' ~ ' + dotd(x.to) + '</span>' : '') + '</div>' +
             '<p class="reg">견적 요청일 ' + (x.at ? OP.my.ymd(x.at) : '-') + '</p></div></a>';
         }
         return '<a class="lcard" href="mypage-project.html?id=' + x.id + '"><div class="head">' +
@@ -644,7 +644,7 @@
   // ?id 없으면 프로젝트 관리 목록 (최근 제출 순). 클라이언트는 분석파트너 목록처럼 검색 + 총 건수 + 단계 칩(맨 끝 '임시저장')
   if (!id && (list.length || drafts.length)) {
     var card = function (x) {
-      var days = x.to ? Math.round((new Date(x.to) - new Date(new Date().toDateString())) / 864e5) : null;
+      var to = OP.flow.recTo(x), days = to ? Math.round((new Date(to + 'T00:00:00') - new Date(new Date().toDateString())) / 864e5) : null; // 모집 종료일 = 의뢰 모집기한과 견적 마감일 중 나중에 바뀐 것 (2026-11-12)
       return '<a class="lcard" href="mypage-project.html?id=' + encodeURIComponent(x.id) + '"><div class="head">' +
         '<div class="row1"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stB(x.id) + '</div>' +
           (days === null || days < 0 ? '' : '<span class="dday">종료 D-' + String(days).padStart(2, '0') + '</span>') + cNext(x.id) + '</div>' +
@@ -653,7 +653,7 @@
           '<span>' + esc((x.org || '-') + (x.manager ? '(' + x.manager + ')' : '')) + '</span>' +
           '<span><em>샘플</em>' + (x.samples ? esc(x.samples) + '개' : '-') + '</span>' +
           '<span><em>희망완료일</em>' + dot(x.due) + '</span>' +
-          '<span><em>모집기한</em>' + (x.from || x.to ? dot(x.from) + ' ~ ' + dot(x.to) : '-') + '</span>' +
+          '<span><em>모집기한</em>' + (x.from || to ? dot(x.from) + ' ~ ' + dot(to) : '-') + '</span>' +
         '</div><p class="reg">등록일 ' + ymd(x.at) + '</p></div></a>';
     };
     $('.toprow').hidden = true; // 탭·문의하기는 프로젝트 상세에서만

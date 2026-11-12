@@ -18,7 +18,7 @@
 <script src="assets/common/consult.js?v=20261106b"></script>
 <script src="assets/common/mypage.js?v=20261112b"></script>
 <script src="assets/common/svc-spec.js?v=20261030a"></script>
-<script src="assets/common/flow.js?v=20261106b"></script>
+<script src="assets/common/flow.js?v=20261112a"></script>
 <style>
   /* 목록 */
   .meta { display:flex; flex-wrap:wrap; align-items:center; gap:12px; font-size:14px; line-height:20px; }
@@ -298,6 +298,7 @@
   .lc .head { display:flex; flex-direction:column; gap:16px; padding-bottom:12px; border-bottom:1px solid var(--gray-200); }
   .lc .row1 { display:flex; align-items:center; justify-content:space-between; gap:12px; }
   .lc .badge.open { border:0; background:var(--orange-600); color:#fff; } .lc .badge.closed { border:0; background:var(--gray-600); color:#fff; }
+  .lc .row1 .dday { margin-left:auto; flex:none; font-size:12px; line-height:18px; letter-spacing:-.12px; color:var(--gray-500); white-space:nowrap; } /* 2026-11-12 종료 D-n (분석파트너·클라이언트 카드와 같음) */
   .lc .nx { flex:none; font-size:13px; font-weight:500; color:var(--gray-500); white-space:nowrap; }
   .lc .nxb { flex:none; height:32px; padding:0 12px; font-size:13px; line-height:18px; } /* 할 일 버튼 (대시보드와 같음) */
   .lc h3 { font-size:20px; font-weight:600; line-height:28px; letter-spacing:-.2px; }
@@ -517,6 +518,8 @@
   var F = OP.flow, esc = F.esc, $ = function (s, r) { return (r || document).querySelector(s); };
   var card = $('#card'), id = new URLSearchParams(location.search).get('id');
   var dot = function (v) { return v ? String(v).replace(/-/g, '.') : '-'; };
+  // 2026-11-12 모집 상태는 다른 역할 카드·프로젝트 찾기처럼 윗줄 오른쪽 '종료 D-n' (예전 모집기한 뒤 '(모집중)·(모집완료)' 대신), 종료일 지나면 표시 없음
+  var dday = function (o) { if (!o.recTo || o.st === '삭제') return ''; var n = Math.round((new Date(o.recTo + 'T00:00:00') - new Date(new Date().toDateString())) / 864e5); return n < 0 ? '' : '<span class="dday">종료 D-' + String(n).padStart(2, '0') + '</span>'; };
   var md = function (t) { var d = new Date(t); return ('0' + (d.getMonth() + 1)).slice(-2) + '.' + ('0' + d.getDate()).slice(-2); };
   // 상세 단계 배지 = 프로젝트 상태값 (2026-10-27, docs/status-badges.md 3-1 컨설턴트 열: 의뢰접수 주황 · 완료 회색 · 삭제 빨강 · 나머지 파랑)
   var stBadge = function (s) { var t = F.adminStage(s.id || id); return '<span class="badge ' + (t === '의뢰접수' ? 'wait' : t === '프로젝트 완료' ? 'done' : t === '삭제' ? 'red' : 'state') + '">' + t + '</span>'; };
@@ -541,7 +544,7 @@
       var repWait = function (x) { return (x.raw || []).some(function (v) { return !v.sent; }); }; // 분석파트너가 올린 결과 중 아직 클라이언트에 전달하지 않은 것
       var s = F.state(r.id), c = cnt(s), st = F.adminStage(r.id);
       return { href: 'mypage-request.html?id=' + encodeURIComponent(r.id), id: r.id, title: r.title, cat: CATS.indexOf(r.svc) > -1 ? r.svc : '기타 분석', st: st, open: F.open(r.id), at: r.at,
-        who: (r.org || '-') + (r.manager ? '(' + r.manager + ')' : ''), partner: s.pick ? F.partner(s.pick).org : '', samples: r.samples, due: r.due, period: (r.from || r.to) ? dot(r.from) + ' ~ ' + dot(r.to) : '-', priv: r.open === '비공개',
+        who: (r.org || '-') + (r.manager ? '(' + r.manager + ')' : ''), partner: s.pick ? F.partner(s.pick).org : '', samples: r.samples, due: r.due, period: (r.from || r.to) ? dot(r.from) + ' ~ ' + dot(F.recTo(r)) : '-', recTo: F.recTo(r), priv: r.open === '비공개',
         quotes: c.sub, all: c.all,
         noQuote: !!s.ok && s.st !== 'matched' && !c.sub && now - s.ok > DAY * 3, // 장기 견적 미수신: 게시 후 3일 넘게 견적 0건
         waitPick: s.st === 'sent', // 견적 채택 대기: 클라이언트에게 전달 후 선택 전
@@ -608,10 +611,10 @@
       var L = base().sort(f.sort === 'due' ? function (a, b) { return new Date(a.due || '2100-01-01') - new Date(b.due || '2100-01-01'); } : function (a, b) { return b.at - a.at; });
       $('#bTotal').innerHTML = '총 <b>' + L.length + '</b>건';
       $('#bList').innerHTML = OP.my.paged($('#bPager'), L.map(function (o) {
-        return '<a class="lc" href="' + o.href + '"><div class="head"><div class="row1"><div class="badges"><span class="badge tag">' + esc(o.cat) + '</span><span class="badge ' + (o.st === '의뢰접수' ? 'wait' : o.st === '프로젝트 완료' ? 'done' : o.st === '삭제' ? 'red' : 'stg') + '">' + o.st + '</span></div>' +
+        return '<a class="lc" href="' + o.href + '"><div class="head"><div class="row1"><div class="badges"><span class="badge tag">' + esc(o.cat) + '</span><span class="badge ' + (o.st === '의뢰접수' ? 'wait' : o.st === '프로젝트 완료' ? 'done' : o.st === '삭제' ? 'red' : 'stg') + '">' + o.st + '</span></div>' + dday(o) +
             (o.next ? (/(필요|가능)$/.test(o.next) ? '<span class="btn line nxb">' + o.next.replace(/^견적 (\d+)건 도착 · 전달 가능$/, '견적 $1건 전달').replace(/ (필요|가능)$/, '') + '</span>' : '<span class="nx">' + o.next + '</span>') : '') + '</div>' + // 배지 = 분석 서비스 + 단계만, 할 일은 오른쪽 (2026-10-27)
           '<h3>' + esc(o.title) + '</h3></div>' +
-          '<div class="info"><div class="meta"><span><em>클라이언트</em>' + esc(o.who) + '</span>' + (o.partner ? '<span><em>분석파트너</em>' + esc(o.partner) + '</span>' : '') + '<span><em>샘플</em>' + (o.samples ? esc(o.samples) + '개' : '-') + '</span><span><em>희망완료일</em>' + dot(o.due) + '</span>' + (o.period !== '-' ? '<span><em>모집기한</em>' + o.period + ' (' + (o.open ? '모집중' : '모집완료') + ')</span>' : '') + (o.priv ? '<span><em>공개</em>비공개</span>' : '') + '</div>' + // 모집·공개 여부는 배지 대신 글자
+          '<div class="info"><div class="meta"><span><em>클라이언트</em>' + esc(o.who) + '</span>' + (o.partner ? '<span><em>분석파트너</em>' + esc(o.partner) + '</span>' : '') + '<span><em>샘플</em>' + (o.samples ? esc(o.samples) + '개' : '-') + '</span><span><em>희망완료일</em>' + dot(o.due) + '</span>' + (o.period !== '-' ? '<span><em>모집기한</em>' + o.period + '</span>' : '') + (o.priv ? '<span><em>공개</em>비공개</span>' : '') + '</div>' + // 모집·공개 여부는 배지 대신 글자
           '<div class="foot"><p class="reg">등록일 ' + F.ymd(o.at) + '</p><span class="cbtns"><span class="qb">견적서 (' + o.quotes + ')</span></span></div></div></a>';
       }), JSON.stringify(f), draw) || '<div class="empty"><b>조건에 맞는 프로젝트가 없습니다</b><p>필터를 바꾸거나 초기화해보세요.</p></div>';
     }
