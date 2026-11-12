@@ -225,8 +225,12 @@ button { background:none; border:0; cursor:pointer; }
 .pv .doc .sign { display:flex; justify-content:flex-end; align-items:center; gap:12px; margin-top:28px; font-size:14px; }
 .pv .doc .sign b { font-size:15px; }
 .pv .doc .demo { color:#999; }
+/* 2026-11-13 좁은 화면(모바일)에서도 A4 문서 모양 그대로: 폭 794 고정, flow.js가 화면 폭에 맞춰 --pvz로 줄임 (칸이 찌그러지지 않게, 손가락으로 확대해서 봄) */
+.pv-scroll > .doc, .pv-scroll > .attach-t { max-width:none; zoom:var(--pvz, 1); }
+@media (max-width:640px) { .pv-scroll { padding:16px; } .pv-bar { padding:10px 16px; } }
 @media print {
   body > *:not(.pv) { display:none !important; }
+  .pv-scroll > .doc, .pv-scroll > .attach-t { zoom:1; }
   .pv { position:static; background:none; }
   .pv-bar { display:none; }
   .pv-scroll { padding:0; overflow:visible; }

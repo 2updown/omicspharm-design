@@ -776,6 +776,10 @@
     document.addEventListener('keydown', key);
     document.body.appendChild(pv); document.body.style.overflow = 'hidden'; pv.querySelector('[data-close]').focus();
   };
+  // 2026-11-13 문서 미리보기(견적서·계약서): 화면이 A4(794px)보다 좁으면 문서 전체를 비율대로 줄임 (모바일에서 표 칸이 찌그러지지 않고 A4 모양 그대로)
+  var pvFit = function () { [].forEach.call(document.querySelectorAll('.pv .pv-scroll'), function (sc) { var cs = getComputedStyle(sc), w = sc.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight); sc.style.setProperty('--pvz', Math.min(1, w / 794)); }); };
+  var pvWatch = function () { new MutationObserver(pvFit).observe(document.body, { childList: true }); window.addEventListener('resize', pvFit); };
+  if (document.body) pvWatch(); else document.addEventListener('DOMContentLoaded', pvWatch);
   // 계약서 줄 파일명 링크: 계약서 보기를 거치지 않고 바로 받음 (2026-11-05, 프로토타입은 안내만)
   document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-ctdl]'); if (b) OP.toast('데모: ' + b.dataset.ctdl + ' 파일이 내려받아집니다.'); });
   // 계약서 목록 (클라이언트·파트너·컨설턴트 화면 공통)
