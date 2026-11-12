@@ -261,6 +261,7 @@
   .meta > span { display:inline-flex; align-items:center; gap:8px; white-space:nowrap; }
   .meta > span + span::before { content:""; width:0; height:14px; border-left:1px solid var(--gray-300); margin-right:4px; }
   .meta em { font-style:normal; color:var(--gray-500); }
+  .lcard .mfoot { display:flex; align-items:center; justify-content:space-between; gap:12px; } .lcard .mnx { display:none; } /* 할 일(버튼·상태 글자) 모바일 자리 (2026-11-12) */
   .lcard .reg { font-size:12px; line-height:18px; letter-spacing:-.12px; color:#9b9b9b; }
 
   .empty { padding:80px 24px; text-align:center; }
@@ -346,7 +347,12 @@
     .lcard .row1 { flex-wrap:wrap; row-gap:8px; }
     .lcard .row1 .nx, .lcard .row1 .nxb { white-space:nowrap; }
     .lcard .row1 .nxb { margin-left:auto; }
-    .lcard .row1 .dv { display:block; flex-basis:100%; width:0; height:0; margin:0; border:0; background:none; } /* 구분선 대신 줄바꿈: 윗줄 배지·종료 D-n, 아랫줄 임시저장 날짜·버튼 */ /* 2026-11-12 줄바꿈되면 '모집 마감 D-12 |'처럼 구분선이 줄 끝에 남아 모바일은 구분선 없앰 */
+    /* 2026-11-12 모바일: 할 일(버튼·상태 글자·임시저장 날짜)은 카드 맨 아래 오른쪽으로. 윗줄은 배지와 종료 D-n만 */
+    .lcard .row1 .dv, .lcard .row1 .nx, .lcard .row1 .nxb { display:none; }
+    .lcard .mfoot { flex-wrap:wrap; row-gap:8px; } .lcard .mfoot .reg { white-space:nowrap; }
+    .lcard .mnx { display:flex; align-items:center; gap:12px; flex:none; margin-left:auto; }
+    .lcard .mnx .nx { font-size:13px; font-weight:500; line-height:18px; color:var(--gray-500); white-space:nowrap; }
+    .lcard .mnx .nxb { height:32px; padding:0 12px; font-size:13px; line-height:18px; white-space:nowrap; } /* 2026-11-12 줄바꿈되면 '모집 마감 D-12 |'처럼 구분선이 줄 끝에 남아 모바일은 구분선 없앰 */
   }
   /* 2026-11-12 필터·정렬 드롭다운을 프로젝트 찾기 정렬과 같은 DS dropdown 모양으로 (높이 40, 회색 테두리, 모서리 8, 글자 14 Regular) */
   .sort select { height:40px; padding:0 40px 0 16px; border:1px solid var(--gray-300); border-radius:8px; background:#fff url(assets/find/ic-chevron-down.svg) right 16px center/16px no-repeat; font:inherit; font-size:14px; font-weight:400; line-height:20px; color:#000; appearance:none; -webkit-appearance:none; cursor:pointer; }
@@ -588,7 +594,7 @@
               '</div>' +
             '<h3>' + esc(x.title) + '</h3></div>' +
             '<div class="info"><div class="meta"><span class="route">' + (x.self ? '직접 신청' : 'OmicsPharm 매칭 요청') + '</span><span>' + esc(x.client) + '</span><span><em>샘플</em>' + esc(x.samples) + '개</span>' + (x.from || x.to ? '<span><em>모집기한</em>' + dotd(x.from) + ' ~ ' + dotd(x.to) + '</span>' : '') + '</div>' +
-            '<p class="reg">견적 요청일 ' + (x.at ? OP.my.ymd(x.at) : '-') + '</p></div></a>';
+            '<div class="mfoot"><p class="reg">견적 요청일 ' + (x.at ? OP.my.ymd(x.at) : '-') + '</p><span class="mnx">' + (x.pst === '임시저장' && x.savedAt ? '<span class="nx">임시저장 ' + OP.flow.ymd(x.savedAt) + '</span>' : '') + nextHTML(Q_NX[x.pst]) + '</span></div></div></a>'; // 모바일은 할 일을 카드 아래로 (윗줄 것은 숨김, 2026-11-12)
         }
         return '<a class="lcard" href="mypage-project.html?id=' + x.id + '"><div class="head">' +
           '<div class="row1"><div class="badges"><span class="badge tag">' + esc(OP.my.svcKo(x.svc)) + '</span>' + stBadge(x) +
@@ -596,7 +602,7 @@
             (ADM ? '' : nextHTML(pNext(x))) + '</div>' + // 계약 후 카드는 납기 D-n 안 보임 (납기일은 정보 줄에)
           '<h3>' + esc(x.title) + '</h3></div>' +
           '<div class="info"><div class="meta">' + (ADM ? '' : '<span class="route">' + (routeOf(x) ? '직접 신청' : 'OmicsPharm 매칭 요청') + '</span>') + '<span>' + esc(x.client) + '</span><span><em>샘플</em>' + x.samples + '개</span><span><em>계약금액</em>' + esc(x.amount) + '</span><span><em>납기일</em>' + dotd(x.due) + '</span></div>' +
-          '<p class="reg">' + (PRE(x) ? '선정일 ' : '계약일 ') + dotd(x.contract) + '</p></div></a>'; // 계약서 등록 전에는 선정일
+          '<div class="mfoot"><p class="reg">' + (PRE(x) ? '선정일 ' : '계약일 ') + dotd(x.contract) + '</p><span class="mnx">' + (ADM ? '' : nextHTML(pNext(x))) + '</span></div></div></a>'; // 계약서 등록 전에는 선정일
       }), JSON.stringify(st), draw) || '<div class="empty"><b>' + (st.q || st.route ? '조건에 맞는 프로젝트가 없습니다' : '진행 중인 프로젝트가 없습니다') + '</b><p>OmicsPharm의 매칭을 거쳐 계약된 프로젝트가 여기에 표시됩니다.</p></div>';
     }
     $('#pq').addEventListener('submit', function (e) { e.preventDefault(); st.q = $('#pqIn').value; draw(); });
@@ -654,7 +660,7 @@
           '<span><em>샘플</em>' + (x.samples ? esc(x.samples) + '개' : '-') + '</span>' +
           '<span><em>희망완료일</em>' + dot(x.due) + '</span>' +
           '<span><em>모집기한</em>' + (x.from || to ? dot(x.from) + ' ~ ' + dot(to) : '-') + '</span>' +
-        '</div><p class="reg">등록일 ' + ymd(x.at) + '</p></div></a>';
+        '</div><div class="mfoot"><p class="reg">등록일 ' + ymd(x.at) + '</p><span class="mnx">' + cNext(x.id) + '</span></div></div></a>';
     };
     $('.toprow').hidden = true; // 탭·문의하기는 프로젝트 상세에서만
     // 단계 필터 (대시보드 진행 현황에서 ?stage=단계 로 들어오면 그 단계만)

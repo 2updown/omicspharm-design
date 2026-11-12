@@ -305,7 +305,7 @@
   .lc .info { display:flex; flex-direction:column; gap:10px; }
   .lc .foot { display:flex; align-items:center; justify-content:space-between; gap:12px; }
   .lc .reg { font-size:12px; line-height:18px; color:#9b9b9b; }
-  .lc .cbtns { display:flex; gap:6px; } .lc .qb { display:inline-flex; align-items:center; height:32px; padding:0 12px; border:1px solid var(--gray-400); border-radius:8px; background:#f3f2f2; font-size:13px; font-weight:500; color:var(--gray-700); white-space:nowrap; }
+  .lc .cbtns { display:flex; align-items:center; gap:6px; } .lc .cbtns .nx, .lc .cbtns .nxb { display:none; } .lc .qb { display:inline-flex; align-items:center; height:32px; padding:0 12px; border:1px solid var(--gray-400); border-radius:8px; background:#f3f2f2; font-size:13px; font-weight:500; color:var(--gray-700); white-space:nowrap; }
   @media (max-width:640px) {
     .b-tabw { margin:0 -16px; } .b-tabs { padding:0 16px; }
     .b-arr { width:28px; height:28px; margin-top:-14px; } .b-arr.l { left:6px; } .b-arr.r { right:6px; }
@@ -313,6 +313,7 @@
     .b-bar { flex-wrap:nowrap; overflow-x:auto; margin:0 -16px; padding:0 16px 4px; scrollbar-width:none; } .b-bar::-webkit-scrollbar { display:none; }
     .b-pop { position:fixed; left:16px; right:16px; top:auto; bottom:16px; }
     .lc h3 { font-size:17px; line-height:24px; } .lc .row1 { flex-wrap:wrap; } .lc .foot { flex-direction:column; align-items:flex-start; }
+    .lc .row1 .nx, .lc .row1 .nxb { display:none; } .lc .cbtns { flex-wrap:wrap; } .lc .cbtns .nx, .lc .cbtns .nxb { display:inline-flex; align-items:center; } /* 2026-11-12 모바일: 할 일은 아래 [견적서 (N)] 옆으로 */
   }
   details.req > summary { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; font-size:16px; font-weight:600; cursor:pointer; list-style:none; }
   details.req > summary::-webkit-details-marker { display:none; }
@@ -520,6 +521,8 @@
   var dot = function (v) { return v ? String(v).replace(/-/g, '.') : '-'; };
   // 2026-11-12 모집 상태는 다른 역할 카드·프로젝트 찾기처럼 윗줄 오른쪽 '종료 D-n' (예전 모집기한 뒤 '(모집중)·(모집완료)' 대신), 종료일 지나면 표시 없음
   var recLeft = function (o) { if (!o.recTo || o.st === '삭제') return -1; return Math.round((new Date(o.recTo + 'T00:00:00') - new Date(new Date().toDateString())) / 864e5); };
+  // 할 일: 버튼(…필요/가능) 또는 상태 글자. PC는 윗줄 오른쪽, 모바일은 아래 [견적서 (N)] 옆 (2026-11-12)
+  var nxt = function (o) { return o.next ? (/(필요|가능)$/.test(o.next) ? '<span class="btn line nxb">' + o.next.replace(/^견적 (\d+)건 도착 · 전달 가능$/, '견적 $1건 전달').replace(/ (필요|가능)$/, '') + '</span>' : '<span class="nx">' + o.next + '</span>') : ''; };
   var dday = function (o) { var n = recLeft(o); return n < 0 ? '' : '<span class="dday">종료 D-' + String(n).padStart(2, '0') + '</span>'; };
   var md = function (t) { var d = new Date(t); return ('0' + (d.getMonth() + 1)).slice(-2) + '.' + ('0' + d.getDate()).slice(-2); };
   // 상세 단계 배지 = 프로젝트 상태값 (2026-10-27, docs/status-badges.md 3-1 컨설턴트 열: 의뢰접수 주황 · 완료 회색 · 삭제 빨강 · 나머지 파랑)
@@ -613,10 +616,10 @@
       $('#bTotal').innerHTML = '총 <b>' + L.length + '</b>건';
       $('#bList').innerHTML = OP.my.paged($('#bPager'), L.map(function (o) {
         return '<a class="lc" href="' + o.href + '"><div class="head"><div class="row1"><div class="badges"><span class="badge tag">' + esc(o.cat) + '</span><span class="badge ' + (o.st === '의뢰접수' ? 'wait' : o.st === '프로젝트 완료' ? 'done' : o.st === '삭제' ? 'red' : 'stg') + '">' + o.st + '</span></div>' + dday(o) +
-            (o.next ? (/(필요|가능)$/.test(o.next) ? '<span class="btn line nxb">' + o.next.replace(/^견적 (\d+)건 도착 · 전달 가능$/, '견적 $1건 전달').replace(/ (필요|가능)$/, '') + '</span>' : '<span class="nx">' + o.next + '</span>') : '') + '</div>' + // 배지 = 분석 서비스 + 단계만, 할 일은 오른쪽 (2026-10-27)
+            nxt(o) + '</div>' + // 배지 = 분석 서비스 + 단계만, 할 일은 오른쪽 (2026-10-27)
           '<h3>' + esc(o.title) + '</h3></div>' +
           '<div class="info"><div class="meta"><span><em>클라이언트</em>' + esc(o.who) + '</span>' + (o.partner ? '<span><em>분석파트너</em>' + esc(o.partner) + '</span>' : '') + '<span><em>샘플</em>' + (o.samples ? esc(o.samples) + '개' : '-') + '</span><span><em>희망완료일</em>' + dot(o.due) + '</span>' + (o.period !== '-' ? '<span><em>모집기한</em>' + o.period + '</span>' : '') + (o.priv ? '<span><em>공개</em>비공개</span>' : '') + '</div>' + // 모집·공개 여부는 배지 대신 글자
-          '<div class="foot"><p class="reg">등록일 ' + F.ymd(o.at) + '</p><span class="cbtns"><span class="qb">견적서 (' + o.quotes + ')</span></span></div></div></a>';
+          '<div class="foot"><p class="reg">등록일 ' + F.ymd(o.at) + '</p><span class="cbtns"><span class="qb">견적서 (' + o.quotes + ')</span>' + nxt(o) + '</span></div></div></a>';
       }), JSON.stringify(f), draw) || '<div class="empty"><b>조건에 맞는 프로젝트가 없습니다</b><p>필터를 바꾸거나 초기화해보세요.</p></div>';
     }
     var closePops = function (except) { [].forEach.call(card.querySelectorAll('.b-pop'), function (p) { if (p !== except) p.hidden = true; }); };
