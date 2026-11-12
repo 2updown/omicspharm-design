@@ -347,8 +347,13 @@
         '<a class="op-dr-link" href="workspace.html">AI Workspace</a>' +
         groups +
       '</nav>' +
+      // 2026-11-12 언어가 늘어날 수 있어 토글 대신 현재 언어 한 줄 → 누르면 하단 시트 목록. 로그아웃은 그 아래 맨 끝
+      '<button type="button" class="op-dr-link op-dr-lang" aria-haspopup="dialog"><span><img src="' + A + 'ic-globe.svg" alt="">언어</span><em>한국어<img src="' + A + 'ic-caret-right-gray.svg" alt=""></em></button>' +
       (s ? '<div class="op-dr-foot"><button type="button" data-op-logout>로그아웃</button></div>' : '') +
-    '</div>';
+    '</div>' +
+    '<div class="op-lang-sheet" id="opLangSheet" hidden><div class="dim" data-lang-close></div>' +
+      '<div class="sheet" role="dialog" aria-modal="true" aria-label="언어 선택"><div class="hd"><b>언어 선택</b><button type="button" data-lang-close aria-label="닫기"><img src="' + A + 'ic-x.svg" alt=""></button></div>' +
+        '<a href="#" class="on" data-lang="ko">한국어</a><a href="#" data-soon="영문(ENG)">English</a></div></div>';
   }
   var BURGER = '<button type="button" class="op-burger" aria-controls="opDrawer" aria-expanded="false" aria-label="메뉴 열기"><img class="i-open" src="' + A + 'ic-list.svg" alt=""><img class="i-close" src="' + A + 'ic-x.svg" alt=""></button>';
 
@@ -570,7 +575,9 @@
       else location.reload();
       return;
     }
-    if (e.target.closest('[data-lang="ko"]')) { e.preventDefault(); closeDropdowns(); return; }
+    if (e.target.closest('[data-lang="ko"]')) { e.preventDefault(); closeDropdowns(); setLangSheet(false); return; }
+    if (e.target.closest('.op-dr-lang')) { setLangSheet(true); return; }
+    if (e.target.closest('[data-lang-close]')) { setLangSheet(false); return; }
     if (e.target.closest('.op-top')) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
     if (e.target.closest('.op-burger')) { setDrawer(document.getElementById('opDrawer').hidden); return; }
     var tg = e.target.closest('.op-dr-toggle');
@@ -594,9 +601,14 @@
     var d = document.getElementById('opDrawer'), b = document.querySelector('.op-burger');
     if (!d || !b) return;
     d.hidden = !open;
+    if (!open) setLangSheet(false);
     b.setAttribute('aria-expanded', open ? 'true' : 'false');
     b.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
     document.documentElement.classList.toggle('op-drawer-open', open);
+  }
+  function setLangSheet(open) {
+    var sh = document.getElementById('opLangSheet');
+    if (sh) sh.hidden = !open;
   }
   // 넓은 화면으로 돌아가면 햄버거 메뉴 닫기
   window.addEventListener('resize', function () { if (window.innerWidth >= 900) setDrawer(false); });

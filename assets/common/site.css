@@ -142,6 +142,23 @@
 /* 비로그인: 프로필 자리에 [로그인 >] + [회원가입] */
 .op-dr-me.guest .who .login { display:flex; align-items:center; gap:2px; height:48px; font-size:16px; font-weight:500; line-height:22px; color:var(--op-gray-500); }
 .op-dr-me.guest .who .login img { width:16px; height:16px; }
+/* 2026-11-12 언어: 메뉴 목록 아래 한 줄 → 하단 시트 */
+.op-drawer .op-dr-lang span, .op-drawer .op-dr-lang em { display:flex; align-items:center; gap:8px; font-style:normal; }
+.op-drawer .op-dr-lang span { font-weight:400; color:var(--op-gray-700); }
+.op-drawer .op-dr-lang span img { width:20px; height:20px; }
+.op-drawer .op-dr-lang em { gap:4px; font-weight:600; }
+.op-drawer .op-dr-lang em img { width:16px; height:16px; }
+.op-lang-sheet { position:fixed; inset:0; z-index:200; font-family:var(--op-font); }
+.op-lang-sheet[hidden] { display:none; }
+.op-lang-sheet .dim { position:absolute; inset:0; background:rgba(0,0,0,.45); }
+.op-lang-sheet .sheet { position:absolute; left:0; right:0; bottom:0; padding:20px 16px 32px; border-radius:16px 16px 0 0; background:#fff; }
+.op-lang-sheet .hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.op-lang-sheet .hd b { font-size:18px; font-weight:700; line-height:26px; }
+.op-lang-sheet .hd button { display:flex; padding:0; border:0; background:none; cursor:pointer; }
+.op-lang-sheet .hd img { width:24px; height:24px; }
+.op-lang-sheet a { display:flex; align-items:center; justify-content:space-between; height:52px; font-size:16px; line-height:22px; color:var(--op-gray-700); text-decoration:none; }
+.op-lang-sheet a.on { color:var(--op-teal-600); font-weight:700; }
+.op-lang-sheet a.on::after { content:""; width:20px; height:20px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M40 144l56 56L216 72' fill='none' stroke='%23009788' stroke-width='20' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center/contain; }
 /* 맨 아래 작은 로그아웃 */
 .op-dr-foot { padding:20px; }
 .op-drawer .op-dr-foot button { font-size:13px; line-height:18px; color:var(--op-gray-500); }
