@@ -342,7 +342,7 @@
     .feat-tab.on { border-color:var(--teal-600); background:var(--teal-50); }
     .feat-desc { display:block; font-size:15px; font-weight:500; line-height:22px; color:var(--black); word-break:keep-all; }
     /* 2026-11-12 모바일 이미지 확대: 375에서 이미지 안 글자가 안 보여 내용 있는 가운데를 크게 (원본 2배 해상도라 선명) */
-    .service-shot { width:145%; max-width:none; align-self:flex-start; margin-left:-3%; } /* 오른쪽 빈 여백을 잘라 1.45배 */
+    .service-shot { width:calc(100% + 32px); max-width:none; } /* 그래픽은 자르지 않고 전체 표시, 화면 양끝까지 (그래픽 자체에 좌우 여백 있음) */
     .sol-frame { width:100%; max-width:100%; } .sol-pill { font-size:12px; } /* 화면 폭 꽉 채움, 특징은 화면 안쪽으로 */
     .sol-pill.p1 { left:-2%; top:-7%; } .sol-pill.p2 { right:-2%; top:40%; } .sol-pill.p3 { left:2%; bottom:-8%; }
   }
