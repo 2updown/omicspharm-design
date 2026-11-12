@@ -468,7 +468,7 @@
     /* 2026-11-13 펼치기 쉐브론은 모바일에서도 카드 오른쪽 위 (아래로 내려가지 않게) */
     .qm2 .qr { position:relative; } .qm2 .qr > .qm-chev { position:absolute; top:10px; right:10px; margin:0; } .qm2 .qr:has(> .qm-chev) .nm { padding-right:28px; }
     .qm-f2 .qm-s { flex:none; } /* 세로로 쌓일 때 검색칸도 위 필터와 같은 높이 40 */
-    .qm2 .qr > .qm-ask { grid-column:2; justify-self:start; } /* 2026-11-13 정보 부족 [입력 요청]: 체크박스 칸(20px)이 아니라 내용 왼쪽 선에 맞춤 */ }
+    .qm2 .qr > .qm-ask { grid-column:2; justify-self:start; } .qm2 .qr.join > .badge { justify-self:start; } /* 참여 중 상태 배지도 글자 폭만큼 (칸 전체로 늘어나지 않게) */ /* 2026-11-13 정보 부족 [입력 요청]: 체크박스 칸(20px)이 아니라 내용 왼쪽 선에 맞춤 */ }
   /* 2026-11-13 실적 줄: 항목마다 끊기지 않게(평균 7주 등), 줄바꿈되면 다음 줄 맨 앞 구분선은 잘림 (카드 meta와 같은 방식) */
   .qr .rec { display:flex; flex-wrap:wrap; overflow:hidden; column-gap:17px; } .qr .rec > span { position:relative; white-space:nowrap; }
   .qr .rec > span + span::before { content:""; position:absolute; left:-9px; top:4px; bottom:4px; width:1px; background:var(--gray-300); }
