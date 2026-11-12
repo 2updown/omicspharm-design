@@ -360,7 +360,7 @@
   /* 2026-11-12 모바일: Features 화면 양옆 여백을 잘라 1.7배 (위 1180 규칙보다 뒤에 둬야 적용) */
   @media (max-width:760px) {
     .feat-view .screen { aspect-ratio:1.6; } .feat-view .screen img { object-fit:cover; object-position:50% 0; }
-    .feat-view .screen img[src*="interpret"] { object-position:65% 0; } /* 결과 해석: 왼쪽 사이드바가 조금 걸려서 대화 영역만 */
+    .feat-view .screen:has(img[src*="interpret"]) { aspect-ratio:2.4; } .feat-view .screen:has(img[src*="matching"]) { aspect-ratio:1.9; } /* 1·4번은 화면이 넓어 좌우 여백이 조금 남게 덜 확대 */
   }
 </style>
 </head>
