@@ -9,9 +9,9 @@
      ?rid=프로젝트 번호 → 컨설턴트가 보낸 견적 요청: 의뢰내용 + 견적서 작성(고객사 / 공급자 / 제안가 / 소요 기간 / Notice) · 견적 거절 · 수정 요청 반영
      ?id=프로젝트번호 → 프로젝트 찾기에서 직접 쓰는 견적 (예전 방식, op.quotes2)
      ?id 없음 → 받은 견적 요청 목록. 데이터: assets/common/flow.js -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261112c">
+<link rel="stylesheet" href="assets/common/site.css?v=20261112d">
 <link rel="stylesheet" href="assets/common/mypage.css?v=20261106b">
-<script src="assets/common/site.js?v=20261112a"></script>
+<script src="assets/common/site.js?v=20261112b"></script>
 <script src="assets/common/consult.js?v=20261106b"></script>
 <script src="assets/common/mypage.js?v=20261106b"></script>
 <script src="assets/common/flow.js?v=20261106b"></script>
@@ -141,6 +141,10 @@
     .acts { flex-direction:column-reverse; align-items:stretch; }
     .acts .btn { min-width:0; } .acts .right .btn { flex:1; }
     .qrow { flex-wrap:wrap; gap:4px 12px; } .qrow .t { flex-basis:100%; } .qrow .x { width:auto; margin-left:auto; }
+    /* 2026-11-12 모바일: 주소칸은 한 줄 전체 폭(검색 버튼은 아래), 견적 항목 표의 시험명 칸은 예시 문구가 다 보이게 넓힘 (표는 가로 스크롤) */
+    .grid2 > * { padding:6px 10px; }
+    .addr { display:flex; flex-wrap:wrap; gap:8px; } .addr .inp { flex:1 1 100%; } .addr .btn { margin-left:auto; }
+    .items { min-width:820px; } .items td.name { width:220px; }
   }
   @media (max-width:960px) { .prow:has(.pright) { flex-direction:column; align-items:flex-start; } .prow:has(.pright) .ptitle { flex:none; width:100%; } } /* 세로 배치일 때 제목 너비 기준(360px)이 높이로 잡히지 않게 */
 </style>

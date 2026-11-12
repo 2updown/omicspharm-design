@@ -645,5 +645,17 @@
   };
   function init() { render(); syncGnb(); showFlash(); if (OP.session()) OP.syncBell(); }
   function initAll() { init(); watchFooter(); }
+  // 2026-11-12 좁은 화면에서 긴 플레이스홀더가 잘리지 않게: input[data-ph-wrap]에 줄바꿈되는 안내 글을 겹쳐 둠 (모양은 site.css .phw, 640px 이하에서만 보임)
+  function phWrap() {
+    document.querySelectorAll('input[data-ph-wrap]:not([data-ph-done])').forEach(function (inp) {
+      inp.setAttribute('data-ph-done', '');
+      var w = document.createElement('span'); w.className = 'phw';
+      inp.parentNode.insertBefore(w, inp); w.appendChild(inp);
+      var o = document.createElement('span'); o.className = 'ph-ov'; o.setAttribute('aria-hidden', 'true'); o.textContent = inp.getAttribute('placeholder');
+      var c = getComputedStyle(inp); o.style.fontSize = c.fontSize; o.style.lineHeight = c.lineHeight;
+      w.appendChild(o); w.parentNode.classList.add('ph-host');
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', phWrap); else phWrap();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll); else initAll();
 })();
