@@ -341,6 +341,10 @@
     .feat-tab .ftag, .feat-tab .tt br { display:none; } .feat-desc .ftag { margin:0 6px 0 0; vertical-align:1px; } /* 모바일: 배지는 아래 설명 앞에 */
     .feat-tab.on { border-color:var(--teal-600); background:var(--teal-50); }
     .feat-desc { display:block; font-size:15px; font-weight:500; line-height:22px; color:var(--black); word-break:keep-all; }
+    /* 2026-11-12 모바일 이미지 확대: 375에서 이미지 안 글자가 안 보여 내용 있는 가운데를 크게 (원본 2배 해상도라 선명) */
+    .service-shot { width:145%; max-width:none; align-self:flex-start; margin-left:-3%; } /* 오른쪽 빈 여백을 잘라 1.45배 */
+    .sol-frame { width:100%; max-width:100%; } .sol-pill { font-size:12px; } /* 화면 폭 꽉 채움, 특징은 화면 안쪽으로 */
+    .sol-pill.p1 { left:-2%; top:-7%; } .sol-pill.p2 { right:-2%; top:40%; } .sol-pill.p3 { left:2%; bottom:-8%; }
   }
 
   /* 스크롤 등장 효과 (Conicorn 참고): 흐림+투명 상태에서 아래→위로 떠오르며 나타남 */
@@ -352,6 +356,11 @@
     .feat-view { height:auto; }
     .feat-view .screen { position:relative; inset:auto; height:auto; margin:2px; aspect-ratio:2188 / 790; }
     .feat-view .screen img { object-fit:contain; }
+  }
+  /* 2026-11-12 모바일: Features 화면 양옆 여백을 잘라 1.7배 (위 1180 규칙보다 뒤에 둬야 적용) */
+  @media (max-width:760px) {
+    .feat-view .screen { aspect-ratio:1.6; } .feat-view .screen img { object-fit:cover; object-position:50% 0; }
+    .feat-view .screen img[src*="interpret"] { object-position:65% 0; } /* 결과 해석: 왼쪽 사이드바가 조금 걸려서 대화 영역만 */
   }
 </style>
 </head>
