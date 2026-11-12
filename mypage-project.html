@@ -344,6 +344,18 @@
     .lcard .row1 .nx, .lcard .row1 .nxb { white-space:nowrap; }
     .lcard .row1 .nxb { margin-left:auto; }
   }
+  /* 2026-11-12 필터·정렬 드롭다운을 프로젝트 찾기 정렬과 같은 DS dropdown 모양으로 (높이 40, 회색 테두리, 모서리 8, 글자 14 Regular) */
+  .sort select { height:40px; padding:0 40px 0 16px; border:1px solid var(--gray-300); border-radius:8px; background:#fff url(assets/find/ic-chevron-down.svg) right 16px center/16px no-repeat; font:inherit; font-size:14px; font-weight:400; line-height:20px; color:#000; appearance:none; -webkit-appearance:none; cursor:pointer; }
+  .sort select:focus-visible { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
+  .sort::after { display:none; }
+  .pbar .sort[style] { margin-right:0 !important; } .pbar { gap:8px; } .pbar .total { margin-right:auto; }
+  /* 모바일: 필터가 두 개면 한 줄에 안 들어가서 '총 N건' 아래 줄에 반반으로 */
+  @media (max-width:640px) {
+    .pbar:has(.sort + .sort) { flex-wrap:wrap; row-gap:12px; }
+    .pbar:has(.sort + .sort) .total { flex-basis:100%; }
+    .pbar:has(.sort + .sort) .sort { flex:1; min-width:0; margin-left:0 !important; }
+    .pbar .sort select { width:100%; }
+  }
 </style>
 </head>
 <body>
