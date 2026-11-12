@@ -9,6 +9,10 @@
 var OP_UI_GRAY = /[?&]ui=gray\b/.test(location.search);
 try { sessionStorage.removeItem('op.ui'); } catch (e) {} // 잠시 '계속 유지'로 했을 때 남은 값 정리
 if (!OP_UI_GRAY && !/mypage-ai\.html/.test(location.pathname)) document.documentElement.classList.add('ui-white');
+// 2026-11-12 AI Agent는 PC 전용: 모바일·태블릿(960 이하)에서 주소로 바로 들어와도 대시보드로 돌려보내고 같은 안내 (버튼은 OP.openAI에서 토스트)
+if (/mypage-ai\.html/.test(location.pathname) && !/[?&]embed=/.test(location.search) && window.matchMedia('(max-width:960px)').matches) {
+  OP.flash('AI Agent는 PC에서 이용할 수 있습니다.\n모바일 버전은 준비 중입니다.'); location.replace('mypage.html');
+}
 // 상단 (2026-10-23 시안 C를 기본으로): '마이페이지' 제목 줄 없앰 → 본문 맨 위에 메뉴 이름, 왼쪽 메뉴 아래에 AI Agent 카드·역할별 바로가기
 // 예전 제목 줄 디자인은 ?head=a (Figma 1646:7138에 시안 A·B로 비교용)
 if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.contains('ui-white')) document.documentElement.classList.add('ui-headc');

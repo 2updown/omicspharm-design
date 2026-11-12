@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="assets/common/consult.css?v=20261106b">
 <script src="assets/common/site.js?v=20261112d"></script>
 <script src="assets/common/consult.js?v=20261106b"></script>
-<script src="assets/common/mypage.js?v=20261106b"></script>
+<script src="assets/common/mypage.js?v=20261112a"></script>
 <script src="assets/common/svc-spec.js?v=20261030a"></script>
 <script src="assets/common/flow.js?v=20261106b"></script>
 <style>
@@ -484,6 +484,9 @@
     .lc h3 { font-size:18px; line-height:26px; white-space:normal; word-break:keep-all; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
     .lc .meta { font-size:14px; line-height:20px; column-gap:10px; }
     .lc .meta > span + span::before { margin-right:10px; }
+    /* 2026-11-12 줄바꿈되면 다음 줄 맨 앞에 구분선이 남아서: 구분선을 칸 사이(gap)로 빼고, 줄 맨 앞 것은 잘리게 (간격은 전과 같게) */
+    .lc .meta { overflow:hidden; column-gap:21px; } .lc .meta > span { position:relative; }
+    .lc .meta > span + span::before { position:absolute; left:-11px; top:3px; bottom:3px; margin:0; }
   }
   @media (max-width:960px) { .prow:has(.pright) { flex-direction:column; align-items:flex-start; } .prow:has(.pright) .ptitle { flex:none; width:100%; } } /* 세로 배치일 때 제목 너비 기준(360px)이 높이로 잡히지 않게 */
   .adm-acts { display:flex; align-items:center; justify-content:space-between; gap:16px; padding-top:24px; border-top:1px solid var(--gray-200); }
