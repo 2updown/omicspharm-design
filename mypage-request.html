@@ -500,6 +500,8 @@
   }
   @media (max-width:960px) { .prow:has(.pright) { flex-direction:column; align-items:flex-start; } .prow:has(.pright) .ptitle { flex:none; width:100%; } } /* 세로 배치일 때 제목 너비 기준(360px)이 높이로 잡히지 않게 */
   .adm-acts { display:flex; align-items:center; justify-content:space-between; gap:16px; padding-top:24px; border-top:1px solid var(--gray-200); }
+  .adm-acts > div:only-child { margin-left:auto; } /* 문구 없이 버튼만: 오른쪽 */
+  @media (max-width:640px) { .adm-acts > div:only-child { flex:1; } .adm-acts > div:only-child .btn { flex:1; } } /* 모바일: 두 버튼 반씩 */
   .adm-acts p { font-size:14px; line-height:20px; color:var(--gray-500); }
   .adm-acts div { display:flex; gap:8px; flex:none; }
   .adm-acts .btn.del { border-color:var(--red-600); color:var(--red-600); background:#fff; }
@@ -869,7 +871,7 @@
       '<details class="req"' + (s.st === 'review' ? ' open' : '') + '><summary>의뢰 내용</summary><div class="in">' + F.reqHTML(r) + '</div></details>' +
       preHTML(r) + // 의뢰 전 상담 (Contact Us 상담 연결, 2026-10-27)
       // 컨설턴트 수정·삭제 (2026-10-21): 수정은 의뢰서 화면(?edit=)으로, 삭제는 계약서 등록 전까지 (기록은 남고 클라이언트·분석파트너에게 알림)
-      (s.cancel ? '' : '<div class="adm-acts"><p>' + (s.ct ? '계약서 등록 후에는 의뢰 내용을 수정하거나 프로젝트를 삭제할 수 없습니다.' : '의뢰 내용을 수정하거나 프로젝트를 삭제할 수 있습니다. 삭제하면 클라이언트와 견적을 요청받은 분석파트너에게 알림이 갑니다.') + '</p>' +
+      (s.cancel ? '' : '<div class="adm-acts">' + (s.ct ? '<p>계약서 등록 후에는 의뢰 내용을 수정하거나 프로젝트를 삭제할 수 없습니다.</p>' : '') + /* 2026-11-13 수정·삭제 가능할 때 안내 문구는 뺌 (삭제 확인 모달에 같은 안내) */
         (s.ct ? '' : '<div><button type="button" class="btn del" id="aDel">삭제</button>' + (r.form || r.demo ? '<a class="btn primary" href="omicspharm-register.html?edit=' + encodeURIComponent(r.id) + '&t=' + Date.now() + '">수정하기</a>' : '<button type="button" class="btn" disabled title="예시 의뢰는 수정할 수 없습니다 (직접 제출한 의뢰만)">수정하기</button>') + '</div>') + '</div>');
     bind(s);
     // 견적 선택(라디오) → 표 아래 버튼이 그 견적에 적용됨
