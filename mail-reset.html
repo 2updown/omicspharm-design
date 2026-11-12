@@ -11,10 +11,10 @@
 <script src="assets/common/site.js?v=20261112f"></script>
 <style>
   body { background:#eef1f4; }
-  .bar { display:flex; align-items:center; justify-content:space-between; gap:12px; max-width:680px; margin:24px auto 12px; padding:0 16px; font-size:13px; color:var(--gray-500, #737373); }
-  .bar a { color:var(--gray-600, #525252); text-decoration:underline; }
+  .bar { word-break:keep-all; display:flex; align-items:center; justify-content:space-between; gap:12px; max-width:680px; margin:24px auto 12px; padding:0 16px; font-size:13px; color:var(--gray-500, #737373); }
+  .bar a { flex:none; white-space:nowrap; color:var(--gray-600, #525252); text-decoration:underline; }
   .head { max-width:680px; margin:0 auto; padding:16px 20px; border-radius:12px 12px 0 0; background:#fff; border-bottom:1px solid #e5e5e5; font-size:13px; line-height:20px; color:#525252; }
-  .head b { display:block; margin-bottom:6px; font-size:18px; line-height:26px; color:#0a0a0c; }
+  .head b { display:block; margin-bottom:6px; font-size:18px; line-height:26px; color:#0a0a0c; word-break:keep-all; }
   .head span { display:inline-block; min-width:72px; color:#a3a3a3; }
   .mail { max-width:680px; margin:0 auto 40px; padding:40px 20px; border-radius:0 0 12px 12px; background:#fff; }
   .card { max-width:520px; margin:0 auto; text-align:center; }
