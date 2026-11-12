@@ -247,6 +247,14 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     var ids = D.alarms().filter(function (a) { if (a.read || !a.href) return false; var m = /[?&](?:id|rid|key|q)=([^&#]+)/.exec(a.href); return m && decodeURIComponent(m[1]) === v; }).map(function (a) { return a.id; });
     if (ids.length) D.markRead(ids);
   });
+  // 2026-11-12 넓은 표(.mg-wrap): 왼쪽·오른쪽에 더 있으면 그쪽 끝을 흐리게 (표는 필터마다 다시 그려져서 바뀔 때마다 다시 계산)
+  (function () {
+    function upd(w) { var x = w.scrollLeft, m = w.scrollWidth - w.clientWidth; w.classList.toggle('fl', x > 2); w.classList.toggle('fr', m - x > 2); }
+    function all() { document.querySelectorAll('.mg-wrap').forEach(upd); }
+    document.addEventListener('scroll', function (e) { if (e.target.classList && e.target.classList.contains('mg-wrap')) upd(e.target); }, true);
+    window.addEventListener('resize', all); window.addEventListener('load', all);
+    new MutationObserver(function () { all(); }).observe(document.documentElement, { childList: true, subtree: true });
+  })();
   // AI Agent 띄우기 (2026-10-21: 전체 화면 페이지보다 지금 화면 위에 띄우는 쪽으로). 내용은 mypage-ai.html을 그대로 iframe으로
   OP.openAI = function (mode, opts) {
     // 모바일·태블릿(960 이하)은 아직 지원 안 함 (2026-11-04): 버튼에 'PC 전용' 배지 + 누르면 안내 토스트

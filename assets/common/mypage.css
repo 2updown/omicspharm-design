@@ -317,6 +317,12 @@ span.tbtn { cursor:default; }
 .mg-q:focus-within, .mg-sel:focus { outline:0; border-color:var(--teal-700); box-shadow:0 0 0 3px #00786e33; }
 .mg-total { font-size:14px; color:var(--gray-600); } .mg-total b { color:#000; }
 .mg-wrap { overflow-x:auto; }
+/* 2026-11-12 표가 화면보다 넓으면 옆으로 넘길 수 있게 보이도록: 넘길 쪽 끝을 흐리게 (mypage.js가 .fl/.fr 붙임) */
+.mg-wrap { display:flex; } .mg-wrap > .mg-tbl { flex:none; }
+.mg-wrap::before, .mg-wrap::after { content:""; flex:none; width:40px; position:sticky; z-index:2; pointer-events:none; opacity:0; transition:opacity .15s; }
+.mg-wrap::before { order:-1; left:0; margin-right:-40px; background:linear-gradient(90deg, #fff 15%, rgba(255,255,255,0)); }
+.mg-wrap::after { right:0; margin-left:-40px; background:linear-gradient(270deg, #fff 15%, rgba(255,255,255,0)); }
+.mg-wrap.fl::before, .mg-wrap.fr::after { opacity:1; }
 .mg-tbl { width:100%; min-width:760px; border-collapse:collapse; border-top:2px solid #000; font-size:13px; line-height:18px; }
 .mg-tbl th { height:44px; padding:0 8px; background:var(--gray-100); border-bottom:1px solid var(--gray-200); font-weight:500; text-align:left; white-space:nowrap; }
 .mg-tbl td { padding:12px 8px; border-bottom:1px solid var(--gray-200); vertical-align:middle; word-break:keep-all; }
