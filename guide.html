@@ -109,18 +109,23 @@
   .qa .a > b { flex:none; font-size:18px; font-weight:700; line-height:24px; color:var(--gray-400); }
   .qa .a a { color:var(--teal-600); font-weight:500; text-decoration:underline; text-underline-offset:3px; }
 
-  /* 하단 CTA 배너 — 메인 하단 배너와 동일 */
-  .cta-sec { padding:60px 60px 100px; background:var(--white); display:flex; justify-content:center; }
-  .cta { position:relative; width:1320px; max-width:100%; padding:60px 0; border-radius:24px; overflow:hidden; display:flex; flex-direction:column; align-items:center; gap:24px; text-align:center; }
-  .cta > img { position:absolute; left:0; top:-29.72%; width:100%; height:159.45%; object-fit:cover; }
-  .cta::before { content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(3,34,30,.93) 0%, rgba(5,54,47,.86) 100%); z-index:1; } /* 더 짙은 딥 그린 */
-  .cta > *:not(img) { position:relative; z-index:2; }
-  /* 하단 CTA: 화면 폭을 가득 채우는 띠 (메인과 동일) */
-  .cta-sec.full { padding:0; }
-  .cta-sec.full .cta { width:100%; min-height:400px; justify-content:center; padding:100px 24px; border-radius:0; }
-  .cta-sec.full .cta > img { top:0; height:100%; }
-  .cta h2 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; color:var(--white); }
-  .cta p { font-size:18px; line-height:24px; letter-spacing:-.18px; color:#edeff6; word-break:keep-all; }
+  /* 하단 CTA 배너 — 메인 하단 CTA와 같게 (2026-11-13: 밝은 배경 + 점 스포트라이트, 영문 소제목, [문의하기] 폭 204) */
+  .cta-sec { padding:0; background:var(--white); display:flex; justify-content:center; }
+  .cta { position:relative; width:100%; max-width:none; margin:0; min-height:400px; padding:100px 24px; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; text-align:center;
+    background:linear-gradient(160deg,#ffffff 0%,#fbfdfd 55%,#f8fcfb 100%); }
+  .cta::before { content:""; position:absolute; left:50%; bottom:-170px; width:960px; height:320px; margin-left:-480px; border-radius:50%; background:linear-gradient(90deg,#00bba6,#3be0c5 50%,#4f8dff); opacity:.13; filter:blur(120px); z-index:0; }
+  .cta::after { content:""; position:absolute; left:50%; bottom:-90px; width:440px; height:160px; margin-left:-220px; border-radius:50%; background:#9ff0dd; opacity:.16; filter:blur(70px); }
+  .cta > * { position:relative; z-index:2; }
+  .cta .lc-dots, .cta .lc-spot { position:absolute; inset:0; z-index:1; pointer-events:none; }
+  .cta .lc-dots { background:radial-gradient(circle, rgba(0,80,70,.10) .9px, transparent 1.1px) 0 0/12px 12px; }
+  .cta .lc-spot { background:radial-gradient(circle, rgba(0,151,136,.75) 1px, transparent 1.3px) 0 0/12px 12px;
+    -webkit-mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); mask-image:radial-gradient(circle 220px at var(--mx, -300px) var(--my, 50%), #000 0%, rgba(0,0,0,.35) 45%, transparent 100%); }
+  @media (prefers-reduced-motion:reduce) { .cta .lc-spot { display:none; } }
+  .op-footer { border-top-color:#edf1f0; } /* CTA와 푸터 바탕이 거의 같아 위 선을 연하게 (메인과 같게) */
+  .cta .eyebrow { margin-bottom:-8px; font-size:16px; font-weight:500; line-height:22px; color:var(--teal-600); }
+  .cta h2 { font-size:40px; font-weight:700; line-height:52px; letter-spacing:-.4px; color:#111; word-break:keep-all; }
+  .cta p { font-size:18px; line-height:24px; letter-spacing:-.18px; color:#404040; word-break:keep-all; }
+  .cta .btn-action { width:204px; }
   .btn-action { display:inline-flex; align-items:center; justify-content:center; gap:4px; height:56px; min-width:78px; padding:0 32px; border:1px solid var(--teal-600); border-radius:99px; background:var(--white); color:var(--teal-600); font-size:16px; font-weight:500; line-height:22px; white-space:nowrap; }
   .btn-action .ico { width:20px; height:20px; }
   .btn-action:hover { border-color:var(--teal-700); color:var(--teal-700); }
@@ -132,7 +137,7 @@
   @media (prefers-reduced-motion:reduce) { .cta .cta-rv { opacity:1; transform:none; transition:none; } }
 
   @media (max-width:1180px) {
-    .page-head, .sec, .cta-sec { padding-left:24px; padding-right:24px; }
+    .page-head, .sec { padding-left:24px; padding-right:24px; }
     .tips { grid-template-columns:repeat(2, minmax(0,1fr)); }
   }
   @media (max-width:760px) {
@@ -160,11 +165,8 @@
     .qa summary { gap:10px; padding:16px; align-items:flex-start; }
     .qa .t { font-size:15px; line-height:22px; }
     .qa .a { gap:10px; padding:16px; font-size:14px; line-height:22px; }
-    .cta-sec { padding:40px 16px 64px; }
-    .cta { padding:44px 20px; }
-    .cta-sec.full .cta { min-height:0; padding:64px 16px; }
+    .cta { min-height:0; padding:64px 16px; }
     .cta h2 { font-size:28px; line-height:38px; }
-    .cta p { font-size:15px; line-height:22px; }
     .cta p br { display:none; }
   }
 </style>
@@ -203,12 +205,13 @@
   <div class="qa" id="qa"></div>
 </div></section>
 
-<section class="cta-sec full">
+<section class="cta-sec">
   <div class="cta">
-    <img src="assets/main/cta-bg.png" alt="">
-    <h2 class="cta-rv" data-op-skip-enter>오믹스 분석이 필요하신가요?</h2>
-    <p class="cta-rv" data-op-skip-enter style="--d:.12s">유전체, 전사체, 단백체, 대사체 등 다양한 분석 의뢰를 지원하고, <br>견적부터 프로젝트 관리까지 전문 컨설턴트가 함께합니다.</p>
-    <a class="btn-action cta-rv" data-op-skip-enter style="--d:.24s" href="omicspharm-register.html" data-client-only>프로젝트 의뢰하기 <span class="ico" style="--i:url(assets/main/ic-arrow-right.svg)"></span></a>
+    <div class="lc-dots" aria-hidden="true"></div><div class="lc-spot" aria-hidden="true"></div>
+    <div class="eyebrow cta-rv" data-op-skip-enter>Start Your Omics Analysis</div>
+    <h2 class="cta-rv" data-op-skip-enter style="--d:.12s">오믹스 분석이 필요하신가요?</h2>
+    <p class="cta-rv" data-op-skip-enter style="--d:.24s">유전체, 전사체, 단백체, 대사체 등 다양한 분석 의뢰를 지원하고, <br>견적부터 프로젝트 관리까지 전문 컨설턴트가 함께합니다.</p>
+    <a class="btn-action cta-rv" data-op-skip-enter style="--d:.36s" href="contact.html">문의하기</a>
   </div>
 </section>
 
@@ -285,6 +288,16 @@
   function revealCta() { if (!document.documentElement.classList.contains('rv-ready')) return; if (!cta.classList.contains('in') && cta.getBoundingClientRect().top < innerHeight * rvLine) cta.classList.add('in'); }
   window.addEventListener('scroll', revealCta, { passive: true }); window.addEventListener('resize', revealCta);
   window.addEventListener('load', revealCta);
+  // 하단 CTA 점 스포트라이트 (메인과 같음): 마우스를 따라가고, 마우스가 없으면 9초 주기로 좌우로 지나감
+  (function () {
+    var spot = cta.querySelector('.lc-spot'), motion = !matchMedia('(prefers-reduced-motion:reduce)').matches, hover = false, raf = 0, t0 = performance.now();
+    function set(x, y) { spot.style.setProperty('--mx', x + 'px'); spot.style.setProperty('--my', y + 'px'); }
+    function idle(now) { raf = 0; if (hover) return; var rr = cta.getBoundingClientRect(); if (rr.bottom <= 0 || rr.top >= innerHeight) return; var w = cta.clientWidth, h = cta.clientHeight, k = (now - t0) / 9000; set(w / 2 + Math.sin(k * Math.PI * 2) * w * 0.42, h * (0.55 + Math.sin(k * Math.PI * 4) * 0.2)); raf = requestAnimationFrame(idle); }
+    function start() { if (motion && spot && !raf) raf = requestAnimationFrame(idle); }
+    cta.addEventListener('pointermove', function (e) { if (e.pointerType !== 'mouse') return; hover = true; var r = cta.getBoundingClientRect(); set(e.clientX - r.left, e.clientY - r.top); });
+    cta.addEventListener('pointerleave', function () { hover = false; t0 = performance.now() - 2250; start(); });
+    window.addEventListener('scroll', start, { passive: true }); start();
+  })();
   // 섹션 제목·FAQ 목록도 스크롤해서 들어올 때 떠오름 (2026-11-09, 워크스페이스와 같은 효과: 100px, 0.8s). 페이지 진입 효과는 건너뜀
   var gRv = [].slice.call(document.querySelectorAll('.page-head h1, #process .sec-head, #process .flow, #tips .sec-head, #faq .faq-head, #faq .qa'));
   gRv.forEach(function (el, i) { el.classList.add('g-rv'); el.setAttribute('data-op-skip-enter', ''); el.style.setProperty('--d', (el.matches('.qa, #process .flow') ? .12 : 0) + 's'); });
