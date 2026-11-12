@@ -58,7 +58,7 @@
     .price-hidden .tip::after { right:auto; left:50%; top:100%; transform:translateX(-50%); border:3px solid transparent; border-bottom:0; border-top-color:#1b1b1b; }
   }
   .price-hidden:focus:not(:focus-visible) { outline:none; }
-  .summary .dday { color:var(--orange-600); }
+  .summary .dday { color:var(--orange-600); } .summary .dday::before { content:"・"; }
 
   /* 탭 */
   /* 탭은 스크롤해도 GNB 바로 아래에 고정 */
@@ -211,7 +211,7 @@
     .grp span:nth-child(1) { width:80px; }
     .grp span:nth-child(3) { width:70px; }
     /* 2026-11-12 모바일 점검: 요약 칸 이름('모집 기한')이 두 줄로 꺾이지 않게, 안쪽 여백 24 → 16 */
-    .summary { padding:16px; } .summary em, .summary .dday { flex:none; white-space:nowrap; } .summary [data-f="period"], .summary .dday { display:inline-block; white-space:nowrap; } .summary div > span { min-width:0; } /* 기간은 한 줄, '· 마감'만 다음 줄로 */
+    .summary { padding:16px; } .summary em, .summary .dday { flex:none; white-space:nowrap; } .summary [data-f="period"], .summary .dday { display:inline-block; white-space:nowrap; } .summary div > span { min-width:0; } /* 기간은 한 줄, '· 마감'만 다음 줄로 */ .summary .dday::before { content:none; } .summary [data-f="period"] { margin-right:6px; } /* 모바일은 점 없이 상태만 (간격은 기간 오른쪽에 둬서 줄이 바뀌어도 들여쓰기 없음) */
     .note { padding:16px; } .panel { padding:20px; }
   }
 </style>
@@ -235,7 +235,7 @@
       </div>
       <div class="summary">
         <div><img src="assets/find/ic-user.svg" alt=""><span data-f="owner">*****(user01)</span></div>
-        <div><img src="assets/find/ic-calendar.svg" alt=""><em>모집 기한</em><span><span data-f="period">2026.12.31 ~ 2027.03.01</span><span class="dday" data-f="dday">・D-14</span></span></div>
+        <div><img src="assets/find/ic-calendar.svg" alt=""><em>모집 기한</em><span><span data-f="period">2026.12.31 ~ 2027.03.01</span><span class="dday" data-f="dday">D-14</span></span></div>
         <div><img src="assets/find/ic-flask.svg" alt=""><em>샘플</em><span data-f="samples">24개</span></div>
         <div><img src="assets/find/ic-timer.svg" alt=""><em>희망완료일</em><span data-f="due">2026.11.20</span></div>
         <div><img src="assets/detail/ic-currency-krw.svg" alt=""><em>희망가격</em><span data-f="price">500만~1,000만원</span></div>
@@ -383,7 +383,7 @@
   var lo = x.id === 0 ? 500 : Math.max(50, Math.round(x.price * 0.7 / 50) * 50), hi = x.id === 0 ? 1000 : Math.round(x.price * 1.3 / 50) * 50;
   var F = {
     reg: x.reg, no: OP_PROJECTS.no(x), cat: x.cat, title: x.title, owner: x.owner,
-    status: x.open ? '모집중' : '모집마감', period: x.from + ' ~ ' + x.to, dday: x.open ? '・D-' + x.days : '・마감',
+    status: x.open ? '모집중' : '모집마감', period: x.from + ' ~ ' + x.to, dday: x.open ? 'D-' + x.days : '마감', /* 앞 점(・)은 CSS ::before (모바일에서는 뺌) */
     samples: x.samples + '개', due: x.due, dueDash: x.due.replace(/\./g, '-'), price: won(lo) + '~' + won(hi) + '원', priceSp: won(lo) + ' ~ ' + won(hi) + '원'
   };
   // 가격 공개 범위 밖이면 희망가격·예상금액을 가림 (OP_PROJECTS.canSeePrice)
