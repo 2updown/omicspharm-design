@@ -367,14 +367,3 @@ textarea { resize:none !important; }
 /* 2026-11-12 스크롤한 뒤 모바일 메뉴를 열면 GNB가 사라지던 문제: 메뉴가 열리면 페이지 스크롤을 막느라(overflow:hidden) sticky가 풀려서, 열려 있는 동안은 화면 맨 위에 고정 */
 .op-drawer-open .op-gnb { position:fixed; top:0; left:0; right:0; }
 
-/* 2026-11-12 긴 플레이스홀더 줄바꿈 (input[data-ph-wrap], site.js phWrap): 넓은 화면은 그대로, 640px 이하만 안내 글을 두 줄로 겹쳐 보여주고 칸 높이를 늘림 */
-.phw { display:contents; } .ph-ov { display:none; }
-@media (max-width:640px) {
-  .ph-host { height:auto !important; padding-top:10px !important; padding-bottom:10px !important; }
-  .phw { display:grid; flex:1; min-width:0; align-items:center; }
-  .phw > * { grid-area:1 / 1; }
-  .phw input { align-self:stretch; height:auto; }
-  .phw input::placeholder { color:transparent !important; }
-  .ph-ov { display:block; pointer-events:none; color:var(--op-gray-400); text-align:left; word-break:keep-all; }
-  .phw input:not(:placeholder-shown) + .ph-ov { visibility:hidden; }
-}
