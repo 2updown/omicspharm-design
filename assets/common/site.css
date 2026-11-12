@@ -364,3 +364,5 @@ div.op-phone.bad input, div.op-phone.bad select { border-color:var(--op-red-600)
 }
 /* 2026-11-12 모든 입력 상자: 마우스로 끌어서 크기 바꾸는 손잡이 없앰 (글자 수 제한은 나중에) */
 textarea { resize:none !important; }
+/* 2026-11-12 스크롤한 뒤 모바일 메뉴를 열면 GNB가 사라지던 문제: 메뉴가 열리면 페이지 스크롤을 막느라(overflow:hidden) sticky가 풀려서, 열려 있는 동안은 화면 맨 위에 고정 */
+.op-drawer-open .op-gnb { position:fixed; top:0; left:0; right:0; }
