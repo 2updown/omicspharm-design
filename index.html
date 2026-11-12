@@ -360,9 +360,7 @@
   /* 2026-11-12 모바일: Features 화면 양옆 여백을 잘라 1.7배 (위 1180 규칙보다 뒤에 둬야 적용) */
   @media (max-width:760px) {
     .feat-view .screen { aspect-ratio:1.6; } .feat-view .screen img { object-fit:cover; object-position:50% 0; }
-    /* 박스 높이는 네 탭 모두 같게(가장 긴 2·3번 기준). 1·4번은 폭 기준으로 놓고 남는 아래는 이미지 배경색과 같은 회색 */
-    .feat-view .screen img[src*="interpret"] { top:16px; bottom:auto; height:auto; } /* 1번: 원본 폭 그대로, 위 16 띄움 */
-    .feat-view .screen img[src*="matching"] { left:-23%; right:auto; bottom:auto; width:146%; height:auto; } /* 4번: 카드 양옆 여백만 남게 1.46배 */
+    .feat-view .screen:has(img[src*="interpret"]) { aspect-ratio:2.5; } .feat-view .screen img[src*="interpret"] { top:16px; bottom:auto; height:auto; } /* 1번: 원본 폭 그대로, 위 16 띄우고 아래는 잘림 (4번처럼 위·좌우 여백) */ .feat-view .screen:has(img[src*="matching"]) { aspect-ratio:1.9; } /* 1·4번은 화면이 넓어 좌우 여백이 조금 남게 덜 확대 */
   }
 </style>
 </head>
