@@ -30,7 +30,7 @@
     host.classList.add('mg-proj');
     host.innerHTML =
       '<div class="mg-filter"><select class="mg-sel" data-f="svc"><option value="">분석 서비스</option>' + SVCS.map(function (v) { return '<option>' + v + '</option>'; }).join('') + '</select>' +
-        '<select class="mg-sel" data-f="open"><option value="">모집상태</option><option value="1">모집중</option><option value="0">모집완료</option></select>' +
+        '<select class="mg-sel" data-f="open"><option value="">모집상태</option><option value="1">모집중</option><option value="0">모집마감</option></select>' +
         '<select class="mg-sel" data-f="stage"><option value="">진행상태</option>' + STAGES.map(function (v) { return '<option>' + v + '</option>'; }).join('') + '</select>' +
         '<form class="mg-q" role="search" data-go><input type="search" placeholder="의뢰명 검색" data-f="q" autocomplete="off" aria-label="의뢰명 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form></div>' +
       '<p class="mg-total">총 <b data-n>0</b>건</p>' +
@@ -44,7 +44,7 @@
       $('[data-n]').textContent = L.length;
       $('[data-b]').innerHTML = L.length ? L.map(function (r, i) {
         return '<tr><td class="c">' + (L.length - i) + '</td><td>' + esc(r.svc) + '</td><td class="t">' + esc(r.title) + '</td>' +
-          '<td>' + dot(r.from) + ' ~ ' + dot(r.to) + '<br><small>(' + (r.open ? '모집중' : '모집완료') + ')</small></td><td>' + dot(r.due) + '</td><td>' + esc(r.price) + '</td><td>' + dot(r.reg) + '</td>' +
+          '<td>' + dot(r.from) + ' ~ ' + dot(r.to) + '<br><small>(' + (r.open ? '모집중' : '모집마감') + ')</small></td><td>' + dot(r.due) + '</td><td>' + esc(r.price) + '</td><td>' + dot(r.reg) + '</td>' +
           '<td class="c">' + esc(r.report) + '</td><td>' + esc(r.stage) + '</td><td class="c"><a class="mg-view" href="' + r.href + '">상세보기</a></td></tr>';
       }).join('') : '<tr><td colspan="10" class="mg-empty">등록된 프로젝트가 없습니다.</td></tr>';
     };

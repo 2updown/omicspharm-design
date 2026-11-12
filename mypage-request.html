@@ -519,7 +519,8 @@
   var card = $('#card'), id = new URLSearchParams(location.search).get('id');
   var dot = function (v) { return v ? String(v).replace(/-/g, '.') : '-'; };
   // 2026-11-12 모집 상태는 다른 역할 카드·프로젝트 찾기처럼 윗줄 오른쪽 '종료 D-n' (예전 모집기한 뒤 '(모집중)·(모집완료)' 대신), 종료일 지나면 표시 없음
-  var dday = function (o) { if (!o.recTo || o.st === '삭제') return ''; var n = Math.round((new Date(o.recTo + 'T00:00:00') - new Date(new Date().toDateString())) / 864e5); return n < 0 ? '' : '<span class="dday">종료 D-' + String(n).padStart(2, '0') + '</span>'; };
+  var recLeft = function (o) { if (!o.recTo || o.st === '삭제') return -1; return Math.round((new Date(o.recTo + 'T00:00:00') - new Date(new Date().toDateString())) / 864e5); };
+  var dday = function (o) { var n = recLeft(o); return n < 0 ? '' : '<span class="dday">종료 D-' + String(n).padStart(2, '0') + '</span>'; };
   var md = function (t) { var d = new Date(t); return ('0' + (d.getMonth() + 1)).slice(-2) + '.' + ('0' + d.getDate()).slice(-2); };
   // 상세 단계 배지 = 프로젝트 상태값 (2026-10-27, docs/status-badges.md 3-1 컨설턴트 열: 의뢰접수 주황 · 완료 회색 · 삭제 빨강 · 나머지 파랑)
   var stBadge = function (s) { var t = F.adminStage(s.id || id); return '<span class="badge ' + (t === '의뢰접수' ? 'wait' : t === '프로젝트 완료' ? 'done' : t === '삭제' ? 'red' : 'state') + '">' + t + '</span>'; };
@@ -562,7 +563,7 @@
       '<form class="b-search" id="bq" role="search"><input type="search" id="bqIn" placeholder="클라이언트/분석파트너명, 의뢰명, 키워드 입력" autocomplete="off" aria-label="프로젝트 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
       '<div class="b-tabw" id="bTabW"><button type="button" class="b-arr l" data-arr="-1" aria-label="이전 단계 보기" hidden><img src="assets/find/ic-caret-left.svg" alt=""></button><div class="b-tabs" id="bTabs" role="tablist"></div><button type="button" class="b-arr r" data-arr="1" aria-label="다음 단계 보기" hidden><img src="assets/find/ic-caret-right.svg" alt=""></button></div>' +
       '<div class="b-bar"><div class="b-dd" data-dd="cat"><button type="button" class="b-btn" id="ddCat">분석 서비스<i></i></button><div class="b-pop" hidden>' + CATS.map(function (c) { return '<label><input type="checkbox" value="' + c + '">' + c + '<span class="n" data-cn="' + c + '"></span></label>'; }).join('') + '</div></div>' +
-        '<div class="b-dd" data-dd="rec"><button type="button" class="b-btn" id="ddRec">모집상태<i></i></button><div class="b-pop" hidden>' + [['', '전체'], ['open', '모집중'], ['closed', '모집완료']].map(function (o) { return '<label><input type="radio" name="rec" value="' + o[0] + '"' + (o[0] ? '' : ' checked') + '>' + o[1] + '</label>'; }).join('') + '</div></div>' +
+        '<div class="b-dd" data-dd="rec"><button type="button" class="b-btn" id="ddRec">모집상태<i></i></button><div class="b-pop" hidden>' + [['', '전체'], ['open', '모집중'], ['closed', '모집마감']].map(function (o) { return '<label><input type="radio" name="rec" value="' + o[0] + '"' + (o[0] ? '' : ' checked') + '>' + o[1] + '</label>'; }).join('') + '</div></div>' +
         '<div class="b-dd" data-dd="date"><button type="button" class="b-btn" id="ddDate">등록일<i></i></button><div class="b-pop wide" hidden><div class="dr"><input type="date" id="dFrom"><span>~</span><input type="date" id="dTo"></div><div class="qd">' + [[7, '최근 1주'], [30, '최근 1개월'], [90, '최근 3개월']].map(function (d) { return '<button type="button" data-days="' + d[0] + '">' + d[1] + '</button>'; }).join('') + '</div></div></div>' +
         '<span class="b-sep"></span>' +
         '<button type="button" class="b-flag" data-flag="noQuote">장기 견적 미수신<b id="fnq"></b></button>' +
@@ -578,7 +579,7 @@
         if (q && [o.title, o.who, o.partner, o.id].join(' ').toLowerCase().indexOf(q) < 0) return false;
         if (skip !== 'st' && f.st !== '전체' && o.st !== f.st) return false;
         if (skip !== 'cat' && f.cat.length && f.cat.indexOf(o.cat) < 0) return false;
-        if (skip !== 'rec' && f.rec && (f.rec === 'open') !== o.open) return false;
+        if (skip !== 'rec' && f.rec && (f.rec === 'open') !== (recLeft(o) >= 0)) return false; // 모집중 = 카드에 '종료 D-n'이 보이는 것 (2026-11-12)
         if (f.from && o.at < new Date(f.from).getTime()) return false;
         if (f.to && o.at > new Date(f.to).getTime() + DAY) return false;
         if (skip !== 'flag' && f.noQuote && !o.noQuote) return false;
@@ -600,11 +601,11 @@
       card.querySelector('[data-flag="noQuote"]').classList.toggle('hot', +$('#fnq').textContent > 0); card.querySelector('[data-flag="waitPick"]').classList.toggle('hot', +$('#fwp').textContent > 0);
       // 드롭다운 버튼에 고른 값 표시
       $('#ddCat').firstChild.textContent = f.cat.length ? (f.cat.length === 1 ? f.cat[0] : '분석 서비스 ' + f.cat.length) : '분석 서비스';
-      $('#ddRec').firstChild.textContent = f.rec ? (f.rec === 'open' ? '모집중' : '모집완료') : '모집상태';
+      $('#ddRec').firstChild.textContent = f.rec ? (f.rec === 'open' ? '모집중' : '모집마감') : '모집상태';
       $('#ddDate').firstChild.textContent = f.from || f.to ? dot(f.from) + ' ~ ' + dot(f.to) : '등록일';
       $('#ddCat').classList.toggle('set', !!f.cat.length); $('#ddRec').classList.toggle('set', !!f.rec); $('#ddDate').classList.toggle('set', !!(f.from || f.to));
       // 적용된 조건
-      var A = f.cat.map(function (c) { return ['cat', c, c]; }).concat(f.rec ? [['rec', '', f.rec === 'open' ? '모집중' : '모집완료']] : []).concat(f.from || f.to ? [['date', '', '등록일 ' + dot(f.from) + ' ~ ' + dot(f.to)]] : [])
+      var A = f.cat.map(function (c) { return ['cat', c, c]; }).concat(f.rec ? [['rec', '', f.rec === 'open' ? '모집중' : '모집마감']] : []).concat(f.from || f.to ? [['date', '', '등록일 ' + dot(f.from) + ' ~ ' + dot(f.to)]] : [])
         .concat(f.noQuote ? [['noQuote', '', '장기 견적 미수신']] : []).concat(f.waitPick ? [['waitPick', '', '견적 채택 대기']] : []).concat(f.q ? [['q', '', '"' + f.q + '"']] : []);
       $('#bApplied').hidden = !A.length;
       $('#bApplied').innerHTML = A.map(function (a) { return '<button type="button" class="chip" data-rm="' + a[0] + '" data-v="' + esc(a[1]) + '">' + esc(a[2]) + '<i aria-label="삭제">✕</i></button>'; }).join('') + '<button type="button" class="tbtn xs" id="bReset">필터 초기화</button>';
