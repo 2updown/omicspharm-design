@@ -419,7 +419,7 @@
         '</div>';
     return '<header class="op-gnb' + (s ? ' is-login' : '') + '" data-role="' + (s ? s.role : 'guest') + '">' +
       '<div class="op-gnb-in">' +
-        '<a class="op-gnb-logo" href="index.html" aria-label="OmicsPharm 홈"><img src="' + A + 'logo.svg" alt="OmicsPharm"></a>' +
+        '<a class="op-gnb-logo" href="index.html" aria-label="OmicsPharm 홈"><img src="' + A + 'logo.svg?v=20261112" alt="OmicsPharm"></a>' +
         menu + cta +
       '</div></header>' + drawer(s);
   }
@@ -428,7 +428,7 @@
     return '<div class="op-footer"><div class="op-footer-in">' +
       '<div class="op-f-top">' +
         '<div class="op-f-left">' +
-          '<img src="' + A + 'logo.svg" alt="OmicsPharm">' +
+          '<img src="' + A + 'logo.svg?v=20261112" alt="OmicsPharm">' +
           '<div class="op-f-info">' +
             '<div><b>사업자등록번호</b><span>695-87-01297</span></div>' +
             '<div><b>본사</b><span>28160 충북 청주시 흥덕구 오송읍 오송생명1로 194-41, 408호(기업연구관2)</span></div>' +

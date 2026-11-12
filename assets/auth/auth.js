@@ -2,7 +2,7 @@
 (function () {
   var BG =
     '<div class="auth-card">' +
-      '<a class="logo" href="index.html" aria-label="OmicsPharm 홈"><img src="assets/auth/logo-bg.svg" alt="OmicsPharm"></a>' +
+      '<a class="logo" href="index.html" aria-label="OmicsPharm 홈"><img src="assets/auth/logo-bg.svg?v=20261112" alt="OmicsPharm"></a>' +
       '<div class="tagline">' +
         '<h1>All Your Omics Research<br><b>In One Place</b></h1>' +
         '<p>Explore analysis projects, get matched with the right experts,<br>and generate AI-powered research reports<br>all on one integrated platform.</p>' +
@@ -18,7 +18,7 @@
     document.querySelectorAll('[data-auth-bg]').forEach(function (el) {
       el.classList.add('auth-bg'); el.innerHTML = BG;
       // 좁은 화면(좌측 패널 숨김)에서 보이는 홈 로고
-      el.insertAdjacentHTML('afterend', '<a class="m-logo" href="index.html" aria-label="OmicsPharm 홈"><img src="assets/auth/logo-bg.svg" alt="OmicsPharm"></a>');
+      el.insertAdjacentHTML('afterend', '<a class="m-logo" href="index.html" aria-label="OmicsPharm 홈"><img src="assets/auth/logo-bg.svg?v=20261112" alt="OmicsPharm"></a>');
       var card = el.querySelector('.auth-card');
       // 배경: 블루 계열로 확정 (그린 비교 스위치 삭제)
       try { localStorage.removeItem('op.authBg'); } catch (e) {}

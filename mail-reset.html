@@ -7,8 +7,8 @@
 <title>받은 메일 · 비밀번호 재설정 · OmicsPharm</title>
 <!-- [데모] 비밀번호 재설정 메일 미리보기. 실제 서비스에서는 이 내용이 회원 메일함으로 감 (메일 템플릿 참고용)
      ?t=재설정 토큰 (find-password.html에서 발급, localStorage op.pwReset) -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261112f">
-<script src="assets/common/site.js?v=20261112d"></script>
+<link rel="stylesheet" href="assets/common/site.css?v=20261112g">
+<script src="assets/common/site.js?v=20261112e"></script>
 <style>
   body { background:#eef1f4; }
   .bar { display:flex; align-items:center; justify-content:space-between; gap:12px; max-width:680px; margin:24px auto 12px; padding:0 16px; font-size:13px; color:var(--gray-500, #737373); }
@@ -18,7 +18,7 @@
   .head span { display:inline-block; min-width:72px; color:#a3a3a3; }
   .mail { max-width:680px; margin:0 auto 40px; padding:40px 20px; border-radius:0 0 12px 12px; background:#fff; }
   .card { max-width:520px; margin:0 auto; text-align:center; }
-  .card .logo { height:16px; margin-bottom:32px; }
+  .card .logo { height:18px; margin-bottom:32px; }
   .card h1 { font-size:24px; font-weight:700; line-height:34px; color:#0a0a0c; }
   .card p { margin-top:12px; font-size:15px; line-height:24px; color:#414143; word-break:keep-all; }
   .card .go { text-decoration:none; display:inline-flex; align-items:center; justify-content:center; height:52px; margin-top:28px; padding:0 32px; border-radius:99px; background:#009788; color:#fff; font-size:16px; font-weight:500; }
@@ -42,7 +42,7 @@
     '<div class="bar"><span>데모 · 받은 메일 미리보기 (실제로는 회원 메일함으로 발송)</span><a href="find-password.html">비밀번호 찾기로</a></div>' +
     '<div class="head"><b>[OmicsPharm] 비밀번호 재설정 안내</b><span>보낸 사람</span>OmicsPharm &lt;no-reply@omicspharm.test&gt;<br><span>받는 사람</span>' + esc(x.email) + '<br><span>받은 시각</span>' + ts + '</div>' +
     '<div class="mail"><div class="card">' +
-      '<img class="logo" src="assets/auth/logo-bg.svg" alt="OmicsPharm">' +
+      '<img class="logo" src="assets/auth/logo-bg.svg?v=20261112" alt="OmicsPharm">' +
       '<h1>비밀번호 재설정</h1>' +
       '<p>' + esc(a.name || '회원') + '님, 비밀번호 재설정을 요청하셨습니다.<br>아래 버튼을 눌러 새 비밀번호를 설정해주세요.</p>' +
       '<a class="go" href="reset-password.html?t=' + encodeURIComponent(t) + '">비밀번호 재설정하기</a>' +

@@ -648,7 +648,7 @@
     }).join('');
     var d = ymd(q.subAt || q.at || Date.now());
     return '<article class="doc">' +
-      '<div class="doc-head"><img src="assets/main/logo.svg" alt="OmicsPharm"><h1>견 적 서</h1></div>' +
+      '<div class="doc-head"><img src="assets/main/logo.svg?v=20261112" alt="OmicsPharm"><h1>견 적 서</h1></div>' +
       '<div class="doc-meta"><span>견적번호 Q-' + esc(String(r.id).replace(/^(PRJ|REQ)-/, '')) + '-' + esc(String(k || '').replace(/@.*/, '').toUpperCase()) + '</span><span>견적일자 ' + d + '</span></div>' +
       '<table><tr><th style="width:18%">프로젝트명</th><td>' + esc(r.title) + '</td></tr><tr><th>분석 분야</th><td>' + esc(r.svc) + ', 시료 ' + esc(r.samples || '-') + '개' + (q.weeks ? ', 소요 기간 ' + esc(q.weeks) + '주' : '') + '</td></tr></table>' +
       '<div class="parties" style="margin-top:16px">' +
