@@ -282,7 +282,7 @@
   /* 약관 모달 */
   var modal = $('#modal'), openTerm = null;
   var TITLES = { tos: '[필수] 서비스 이용약관', privacy: '[필수] 개인정보 처리방침' };
-  var LINKS = { tos: 'https://www.omicspharm.com/policy/terms', privacy: 'https://www.omicspharm.com/policy/privacy' };
+  var LINKS = { tos: 'policy-terms.html', privacy: 'policy-privacy.html' }; // 2026-11-12 기존 사이트 대신 새 약관 페이지
   $$('[data-open]').forEach(function (b) { b.addEventListener('click', function () { openTerm = b.dataset.open; $('#modalTitle').textContent = TITLES[openTerm]; loadPolicy(openTerm); modal.hidden = false; }); });
   // 약관 전문: assets/policy/ 에 복사해 둔 오믹스팜 약관 본문을 불러온다 (실패 시 원문 링크)
   var FILES = { tos: 'assets/policy/terms.html', privacy: 'assets/policy/privacy.html' }, cache = {};
