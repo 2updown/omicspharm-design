@@ -65,6 +65,12 @@
     .flabel { padding:10px 12px; }
     .fbody { padding:10px 0 14px; }
     .actions .btn { width:100%; }
+    /* 2026-11-12 서비스명이 길면 배지가 두 줄로 깨지고 [복사][삭제]가 밀려서: 배지는 한 줄 그대로 다음 줄로, 버튼은 고정 */
+    .item-head { align-items:flex-start; gap:8px; }
+    .item-head .tg { flex-wrap:wrap; row-gap:4px; position:relative; padding-left:26px; }
+    .item-head .tg img { position:absolute; left:0; top:1px; } /* 줄바꿈된 배지가 제목 시작선에 맞게 */
+    .item-head .tg .op-vchip { white-space:nowrap; }
+    .item-head .acts { flex:none; min-height:22px; }
   }
   .item .item-act { display:flex; justify-content:flex-end; padding:16px 0 8px; } /* 서비스마다 [저장] */
 </style>
