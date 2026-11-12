@@ -386,3 +386,10 @@ textarea { resize:none !important; }
 /* 2026-11-12 스크롤한 뒤 모바일 메뉴를 열면 GNB가 사라지던 문제: 메뉴가 열리면 페이지 스크롤을 막느라(overflow:hidden) sticky가 풀려서, 열려 있는 동안은 화면 맨 위에 고정 */
 .op-drawer-open .op-gnb { position:fixed; top:0; left:0; right:0; }
 
+
+/* 2026-11-13 모바일 페이지네이션: 버튼 9개(처음·이전·숫자 5·다음·끝)도 한 줄에 들어가게 32px로. 모든 목록 공통 */
+@media (max-width:640px) {
+  body .pager { flex-wrap:nowrap; }
+  body .pager button { width:32px; height:32px; padding:6px; font-size:14px; }
+  body .pager img { width:16px; height:16px; }
+}

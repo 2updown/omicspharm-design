@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<!-- 메인 Solution 섹션 이미지 원본 (2026-11-05). 워크스페이스 화면 예시(.board)의 상단바·메뉴는 그대로, 안쪽만 '자료 → 연구 인사이트' 구성으로.
+     헤드리스 Chrome으로 .board 를 3배 캡처해 assets/main/solution-board.png 로 저장 -->
+<link rel="stylesheet" href="/assets/common/site.css">
+<link rel="stylesheet" href="/assets/workspace/ws.css">
+<style>
+  body { margin:0; padding:60px; background:transparent; }
+  .board { width:880px; }
+  .board-body { min-height:0; }
+  .bm { position:relative; display:flex; align-items:center; gap:44px; padding:24px; }
+  .cards { width:220px; flex:none; display:flex; flex-direction:column; gap:12px; }
+  .card2 { display:flex; align-items:center; gap:12px; padding:14px; border-radius:12px; border:1px solid var(--gray-200); background:#fff; }
+  .card2 .tile { width:40px; height:40px; flex:none; border-radius:10px; background:var(--gray-100); display:grid; place-items:center; color:var(--gray-500); } .card2 .tile .ico { width:22px; height:22px; }
+  .card2 > div { flex:1; min-width:0; }
+  .card2 b { display:block; font-size:15px; font-weight:600; line-height:20px; }
+  .card2 i { display:block; height:6px; margin-top:7px; border-radius:3px; background:var(--gray-200); } .card2 i + i { width:60%; margin-top:5px; }
+  svg.links { position:absolute; left:244px; top:0; width:44px; height:100%; overflow:visible; }
+  .panel { flex:1; padding:20px; border-radius:14px; border:1px solid var(--gray-200); background:#fff; }
+  .panel h4 { display:flex; align-items:center; gap:8px; font-size:18px; font-weight:700; line-height:26px; } .panel h4 .ico { width:22px; height:22px; color:var(--teal-600); }
+  .viz { display:flex; gap:16px; margin-top:16px; }
+  .chart { width:180px; height:112px; flex:none; border-radius:10px; background:var(--gray-50); position:relative; overflow:hidden; }
+  .chart .bars { position:absolute; left:14px; right:14px; bottom:12px; display:flex; align-items:flex-end; gap:11px; height:78px; }
+  .chart .bars i { flex:1; border-radius:4px 4px 0 0; background:#e9f4f2; }
+  .chart svg { position:absolute; inset:0; }
+  .lines { flex:1; display:flex; flex-direction:column; gap:10px; padding-top:6px; }
+  .lines i { display:block; height:7px; border-radius:4px; background:var(--gray-200); } .lines i:first-child { width:70%; background:var(--gray-300); } .lines i:nth-child(3) { width:85%; } .lines i:last-child { width:60%; }
+  .chips2 { display:flex; gap:8px; margin-top:16px; } .chips2 span { padding:4px 10px; border-radius:8px; border:1px solid var(--gray-200); font-size:13px; font-weight:500; line-height:18px; color:var(--gray-500); }
+  .acts { display:flex; gap:10px; margin-top:16px; } .acts span { flex:1; display:grid; place-items:center; height:44px; border-radius:8px; font-size:15px; font-weight:600; }
+  .acts .p { background:var(--teal-600); color:#fff; } .acts .s { background:#e9f4f2; color:var(--teal-700); }
+</style></head><body>
+<div class="board">
+  <div class="board-top"><div class="dots"><i></i><i></i><i></i></div><b>OmicsPharm Workspace</b><span class="tag">독립 보안 공간</span></div>
+  <div class="board-body">
+    <div class="board-side">
+      <div class="st">우리 팀 Workspace</div>
+      <button class="on"><span class="ico" style="--i:url(ic-sparkle.svg)"></span>AI Agents</button>
+      <button><span class="ico" style="--i:url(ic-flask.svg)"></span>분석 의뢰</button>
+      <button><span class="ico" style="--i:url(ic-folders.svg)"></span>연구 데이터</button>
+      <button><span class="ico" style="--i:url(ic-books.svg)"></span>연구 지식</button>
+      <button><span class="ico" style="--i:url(ic-chart-line-up.svg)"></span>운영 현황</button>
+    </div>
+    <div class="bm">
+      <div class="cards">
+        <div class="card2"><span class="tile"><span class="ico" style="--i:url(ic-chart-line-up.svg)"></span></span><div><b>분석 결과</b><i></i><i></i></div></div>
+        <div class="card2"><span class="tile"><span class="ico" style="--i:url(ic-books.svg)"></span></span><div><b>연구 문헌</b><i></i><i></i></div></div>
+        <div class="card2"><span class="tile"><span class="ico" style="--i:url(ic-check.svg)"></span></span><div><b>검토 이력</b><i></i><i></i></div></div>
+      </div>
+      <svg class="links" viewBox="0 0 44 100" preserveAspectRatio="none"><path d="M0 27 C22 27 22 50 44 50 M0 50 L44 50 M0 73 C22 73 22 50 44 50" fill="none" stroke="#9fd8cf" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>
+      <div class="panel">
+        <h4><span class="ico" style="--i:url(../main/ic-sparkle-fill.svg)"></span>연구 인사이트</h4>
+        <div class="viz">
+          <div class="chart"><div class="bars"><i style="height:22%"></i><i style="height:38%"></i><i style="height:46%"></i><i style="height:66%"></i><i style="height:58%"></i><i style="height:86%"></i></div>
+            <svg viewBox="0 0 180 112"><polyline points="23,80 48,64 73,70 98,46 123,54 148,28" fill="none" stroke="#009788" stroke-width="2" stroke-linejoin="round"/><g fill="#009788"><circle cx="23" cy="80" r="2.8"/><circle cx="48" cy="64" r="2.8"/><circle cx="73" cy="70" r="2.8"/><circle cx="98" cy="46" r="2.8"/><circle cx="123" cy="54" r="2.8"/><circle cx="148" cy="28" r="2.8"/></g></svg></div>
+          <div class="lines"><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="chips2"><span>연구 문헌 A</span><span>연구 문헌 B</span><span>연구 문헌 C</span></div>
+        <div class="acts"><span class="p">결과 해석</span><span class="s">후속 연구 제안</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="board-foot" style="height:39px"></div>
+</div>
+</body></html>
