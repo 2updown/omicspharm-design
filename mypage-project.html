@@ -7,7 +7,7 @@
 <title>마이페이지 · 프로젝트 관리 · OmicsPharm</title>
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
-<link rel="stylesheet" href="assets/common/site.css?v=20261112a">
+<link rel="stylesheet" href="assets/common/site.css?v=20261112b">
 <link rel="stylesheet" href="assets/common/mypage.css?v=20261106b">
 <script src="assets/common/site.js?v=20261112a"></script>
 <script src="assets/common/consult.js?v=20261106b"></script>
@@ -337,6 +337,13 @@
   .cx-r input:checked + span { border-color:var(--teal-600); background:var(--teal-50); color:var(--teal-700); font-weight:600; }
   .cx-r textarea { min-height:72px; padding:10px 12px; border:1px solid var(--gray-300); border-radius:8px; font:inherit; font-size:14px; resize:vertical; }
   .op-confirm .yes.del { background:var(--red-600); border-color:var(--red-600); }
+  /* 2026-11-12 모바일 점검: '총 N건'이 세로로 꺾이고, 카드 윗줄(배지 + 마감 + 임시저장 + 버튼)이 화면 밖으로 넘쳐서 */
+  @media (max-width:640px) {
+    .pbar .total, .list-head .total { flex:none; white-space:nowrap; }
+    .lcard .row1 { flex-wrap:wrap; row-gap:8px; }
+    .lcard .row1 .nx, .lcard .row1 .nxb { white-space:nowrap; }
+    .lcard .row1 .nxb { margin-left:auto; }
+  }
 </style>
 </head>
 <body>

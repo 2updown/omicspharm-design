@@ -356,3 +356,11 @@ div.op-phone.bad input, div.op-phone.bad select { border-color:var(--op-red-600)
 @media (max-width:1359px) { .op-gnb-menu { gap:32px; } }
 @media (max-width:1279px) { .op-gnb-menu { gap:24px; } }
 @media (max-width:1180px) { .op-gnb-menu { gap:16px; } }
+
+/* 2026-11-12 모바일 점검: 푸터 정보는 항목 이름이 좁아져 '본/사'처럼 세로로 깨져서, 좁은 화면에서는 이름 위·내용 아래로 */
+@media (max-width:640px) {
+  .op-f-info div { flex-direction:column; gap:2px; }
+  .op-f-info b { white-space:nowrap; }
+}
+/* 2026-11-12 모든 입력 상자: 마우스로 끌어서 크기 바꾸는 손잡이 없앰 (글자 수 제한은 나중에) */
+textarea { resize:none !important; }
