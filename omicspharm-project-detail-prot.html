@@ -211,7 +211,7 @@
     .grp span:nth-child(1) { width:80px; }
     .grp span:nth-child(3) { width:70px; }
     /* 2026-11-12 모바일 점검: 요약 칸 이름('모집 기한')이 두 줄로 꺾이지 않게, 안쪽 여백 24 → 16 */
-    .summary { padding:16px; } .summary em, .summary .dday { flex:none; white-space:nowrap; }
+    .summary { padding:16px; } .summary em, .summary .dday { flex:none; white-space:nowrap; } .summary [data-f="period"], .summary .dday { display:inline-block; white-space:nowrap; } .summary div > span { min-width:0; } /* 기간은 한 줄, '· 마감'만 다음 줄로 */
     .note { padding:16px; } .panel { padding:20px; }
   }
 </style>
