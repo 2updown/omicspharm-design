@@ -573,7 +573,7 @@
     .field,.rev .field{grid-template-columns:1fr} /* 2026-11-12 입력 내용 확인 표도 제목 위·값 아래 (270px 고정이 덮어써 값이 한 글자씩 세로로 깨졌음) */
     .flabel{padding:10px 14px}
     .svc{grid-template-columns:repeat(2,1fr)}
-    .st:not(:last-child)::after{display:block;top:16px;bottom:auto;left:calc(50% + 20px);right:calc(-50% + 16px);width:auto;height:1.5px} /* 2026-11-12 가로 단계: 숫자 사이 연결선 (원 양옆 4 띄움, 단계 사이 gap 4 포함) */
+    .st:not(:last-child)::after{display:block;top:16px;bottom:auto;left:calc(50% + 16px);right:calc(-50% + 12px);width:auto;height:1.5px} /* 2026-11-12 가로 단계: 숫자 사이 연결선, 원에 바로 붙음 (단계 사이 gap 4 포함) */
     .st .ds{display:none} /* 좁은 화면은 단계가 가로로 놓여 설명은 숨김 (제목만) */
     .st{flex:1;min-width:0;flex-direction:column;align-items:center;gap:6px;text-align:center}
     .st b{padding-top:0;font-size:13px;line-height:18px;word-break:keep-all}
