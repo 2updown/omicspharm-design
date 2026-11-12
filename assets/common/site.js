@@ -443,7 +443,7 @@
       '<div class="op-f-line"></div>' +
       '<div class="op-f-bottom">' +
         '<span>© 2026 CellKey AI Co., Ltd. | All rights reserved.</span>' +
-        '<nav><a href="https://www.omicspharm.com/policy/privacy" target="_blank" rel="noopener">개인정보처리방침</a><a href="https://www.omicspharm.com/policy/terms" target="_blank" rel="noopener">이용약관</a></nav>' +
+        '<nav><a href="policy-privacy.html">개인정보처리방침</a><a href="policy-terms.html">이용약관</a></nav>' +
       '</div>' +
     '</div></div>';
   }
