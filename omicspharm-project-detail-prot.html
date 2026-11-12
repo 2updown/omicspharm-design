@@ -47,7 +47,7 @@
   .summary { display:flex; flex-direction:column; gap:8px; padding:24px; border:1px solid var(--gray-200); border-radius:8px; }
   .summary div { display:flex; align-items:center; gap:8px; font-size:14px; line-height:20px; }
   .summary img { width:20px; height:20px; filter:brightness(0); } /* 아이콘 색 검정으로 통일 */
-  .summary em { font-style:normal; color:var(--gray-500); }
+  .summary em { flex:none; width:61px; font-style:normal; color:var(--gray-500); white-space:nowrap; } /* 2026-11-12 Figma 1538:17465: 가장 긴 이름(희망완료일) 폭에 맞춰 값 시작 위치를 한 줄로 */
   .price-hidden { position:relative; color:inherit; cursor:help; } /* 가격 공개 범위 밖 */
   /* 툴팁 (Figma tooltip 1424:14012): 위에 띄우고 꼬리는 아래 */
   .price-hidden .tip { display:none; position:absolute; left:calc(100% + 8px); top:50%; transform:translateY(-50%); z-index:5; width:max-content; min-width:102px; max-width:none; padding:4px 8px; border-radius:4px; background:#1b1b1b; color:#fff; font-size:14px; font-weight:500; line-height:20px; white-space:nowrap; text-align:center; word-break:keep-all; }
