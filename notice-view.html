@@ -9,7 +9,7 @@
      ?id= (assets/common/notices.js) -->
 <link rel="stylesheet" href="assets/common/site.css?v=20261113a">
 <script src="assets/common/site.js?v=20261113b"></script>
-<script src="assets/common/notices.js?v=20261113b"></script>
+<script src="assets/common/notices.js?v=20261113d"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -46,6 +46,9 @@
   .content { min-height:280px; padding:48px 24px 64px; font-size:16px; line-height:1.8; color:var(--gray-700); word-break:keep-all; overflow-wrap:break-word; }
   .content p + p { margin-top:16px; }
   .content b { color:#000; font-weight:600; }
+  /* 2026-11-13 시안: 첨부파일이 이미지면 본문 아래에도 그대로 보여 줌 (원본 비율, 본문 폭 맞춤) */
+  .content .att-img { margin:32px 0 0; } .content .att-img + .att-img { margin-top:16px; }
+  .content .att-img img { display:block; width:100%; height:auto; border:1px solid var(--gray-200); border-radius:8px; }
 
   /* 이전글 · 다음글 */
   .pn { border-top:1px solid var(--gray-300); }
@@ -116,11 +119,15 @@
   document.title = n.t + ' · 공지사항 · OmicsPharm';
   $('#title').innerHTML = (n.pin ? '<span class="pin-badge">공지</span>' : '') + '<span>' + esc(n.t) + '</span>';
   $('#date').textContent = n.d;
-  if (n.file) {
+  // 첨부: file(이름 하나) 또는 files([{ name, src }]). 이미지(png·jpg·gif·webp)는 본문 아래에도 보여 줌 (2026-11-13 시안)
+  var F = n.files || (n.file ? [{ name: n.file, src: n.src }] : []);
+  var isImg = function (f) { return /\.(png|jpe?g|gif|webp)$/i.test(f.name) && f.src; };
+  if (F.length) {
     $('#files').hidden = false;
-    $('#files').insertAdjacentHTML('beforeend', '<a href="#" data-soon="첨부파일 다운로드"><i class="clip"></i><b>' + esc(n.file) + '</b></a>');
+    $('#files').insertAdjacentHTML('beforeend', F.map(function (f) { return '<a href="#" data-soon="첨부파일 다운로드"><i class="clip"></i><b>' + esc(f.name) + '</b></a>'; }).join(''));
   }
-  $('#content').innerHTML = n.body.map(function (p) { return '<p>' + p + '</p>'; }).join('');
+  $('#content').innerHTML = n.body.map(function (p) { return '<p>' + p + '</p>'; }).join('') +
+    F.filter(isImg).map(function (f) { return '<figure class="att-img"><img src="' + f.src + '" alt="' + esc(f.name) + '"></figure>'; }).join('');
 
   // 이전글 = 목록에서 한 칸 위, 다음글 = 한 칸 아래
   var row = function (x, label, icon) {

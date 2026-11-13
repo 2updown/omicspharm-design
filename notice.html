@@ -9,7 +9,7 @@
      공지 데이터: assets/common/notices.js (예시). 한 페이지 10개, 제목 → notice-view.html?id= -->
 <link rel="stylesheet" href="assets/common/site.css?v=20261113a">
 <script src="assets/common/site.js?v=20261113b"></script>
-<script src="assets/common/notices.js?v=20261113b"></script>
+<script src="assets/common/notices.js?v=20261113d"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-100:#d1faf1; --teal-500:#00bba6; --teal-600:#009788; --teal-700:#00786e;
@@ -147,8 +147,8 @@
     return '<tr' + (n.pin ? ' class="pin"' : '') + '>' +
       '<td class="no">' + (n.pin ? '<span class="pin-badge">공지</span>' : n.no) + '</td>' +
       '<td class="t"><a href="notice-view.html?id=' + n.id + '&r=2">' + (n.pin ? badge : '') + '<span>' + esc(n.t) + '</span>' + nw + '</a>' +
-        '<p class="m-meta"><span>' + n.d + '</span>' + (n.file ? '<i class="clip" aria-label="첨부파일"></i>' : '') + '</p></td>' +
-      '<td class="file">' + (n.file ? '<i class="clip" aria-label="첨부파일 있음"></i>' : '') + '</td>' +
+        '<p class="m-meta"><span>' + n.d + '</span>' + ((n.file || (n.files && n.files.length)) ? '<i class="clip" aria-label="첨부파일"></i>' : '') + '</p></td>' +
+      '<td class="file">' + ((n.file || (n.files && n.files.length)) ? '<i class="clip" aria-label="첨부파일 있음"></i>' : '') + '</td>' +
       '<td class="date">' + n.d + '</td></tr>';
   }
   function render() {
