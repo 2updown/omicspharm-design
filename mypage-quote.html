@@ -86,7 +86,7 @@
   .items tr.sub td { background:var(--gray-50); font-weight:500; }
   .totals { width:100%; border-collapse:collapse; font-size:14px; line-height:20px; }
   .totals td { height:44px; padding:0 14px; border-bottom:1px solid var(--gray-200); }
-  .totals td:first-child { text-align:center; color:var(--gray-700); }
+  .totals td:first-child { text-align:center; color:var(--gray-700); white-space:nowrap; } /* 2026-11-13 항목명 한 줄 */
   .totals td:last-child { width:220px; text-align:right; font-weight:500; white-space:nowrap; }
   .totals tr.minus td { color:var(--red-600); }
   .totals tr.minus .inp { width:130px; margin-left:6px; }
@@ -137,7 +137,7 @@
     .ptitle { font-size:18px; line-height:26px; }
     .summary { grid-template-columns:1fr; }
     .kv dt { width:40%; }
-    .totals td:last-child { width:auto; }
+    .totals td:last-child { width:auto; } .totals td { padding:0 10px; } .totals tr.minus .inp { width:110px; }
     .acts { flex-direction:column-reverse; align-items:stretch; }
     .acts .btn { min-width:0; } .acts .right .btn { flex:1; }
     .qrow { flex-wrap:wrap; gap:4px 12px; } .qrow .t { flex-basis:100%; } .qrow .x { width:auto; margin-left:auto; }
