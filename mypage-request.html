@@ -123,7 +123,7 @@
   .ctf .help { font-size:12px; line-height:18px; color:var(--gray-500); }
   .ctside { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
   .ctside > h4 { font-size:15px; font-weight:600; line-height:22px; }
-  .ctside > .note { padding:12px 16px; border-radius:8px; background:var(--teal-50, #f2fbf9); font-size:13px; line-height:20px; color:var(--gray-700); text-align:center; }
+  .ctside > .note { padding:12px 16px; border-radius:8px; background:var(--teal-50, #f2fbf9); font-size:13px; line-height:20px; color:var(--gray-700); text-align:center; word-break:keep-all; }
   .ctside > .note b { color:#000; }
   .ctside .opt { display:flex; gap:16px; font-size:14px; }
   .ctside .opt label { display:inline-flex; align-items:center; gap:6px; cursor:pointer; white-space:nowrap; }
@@ -135,7 +135,7 @@
   .ctlog { margin-top:16px; padding:14px 16px; border-radius:8px; background:var(--gray-50); font-size:13px; line-height:20px; } /* 계약 정보 수정 이력 (2026-10-30) */
   .ctlog b { display:block; margin-bottom:6px; font-size:14px; } .ctlog li { list-style:none; display:flex; flex-wrap:wrap; align-items:center; color:var(--gray-700); } .ctlog li + li { margin-top:4px; } .ctlog em { margin-right:10px; font-style:normal; color:var(--gray-500); }
   .ctsaved { font-size:12px; color:var(--gray-500); align-self:center; margin-right:auto; }
-  @media (max-width:640px) { .ctf .r { grid-template-columns:1fr; } .ctf .r > b { padding:10px 12px; } .ctacts { flex-wrap:wrap; } .ctacts .btn { flex:1; } }
+  @media (max-width:640px) { .ctf .r { grid-template-columns:1fr; } .ctf .r > b { padding:10px 12px; } .ctf .row:has(> .amt) { flex-wrap:nowrap; } .ctf input.amt { flex:1; min-width:0; max-width:none; } .ctf .row:has(> .amt) select { flex:none; } .ctf input[type=date] { width:100%; } /* 2026-11-13 금액+통화 한 줄, 계약일·납기일 칸 전체 폭 */ .ctacts { flex-wrap:wrap; } .ctacts .btn { flex:1; } }
   .ctl { display:flex; flex-direction:column; border-top:2px solid #000; }
   .ctrow { display:grid; grid-template-columns:minmax(0,1fr) auto 230px; align-items:center; gap:16px; padding:16px 12px; border-bottom:1px solid var(--gray-200); }
   .ctrow .who b { display:block; font-size:15px; font-weight:600; line-height:22px; }
