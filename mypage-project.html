@@ -8,7 +8,7 @@
 <!-- 마이페이지 > 프로젝트 관리 > 의뢰내용. 현행 사이트 구성을 새 디자인 체계(Figma 토큰·컴포넌트)로 옮긴 임시 화면.
      분석 의뢰 제출 시 omicspharm-register.html이 localStorage 'op.submitted'에 저장한 내용을 보여준다 -->
 <link rel="stylesheet" href="assets/common/site.css?v=20261113a">
-<link rel="stylesheet" href="assets/common/mypage.css?v=20261113d">
+<link rel="stylesheet" href="assets/common/mypage.css?v=20261113e">
 <script src="assets/common/site.js?v=20261112f"></script>
 <script src="assets/common/consult.js?v=20261106b"></script>
 <script src="assets/common/mypage.js?v=20261112b"></script>
@@ -106,7 +106,7 @@
   /* 수정·삭제 */
   .pacts { display:flex; align-items:center; justify-content:space-between; gap:16px; padding-top:24px; border-top:1px solid var(--gray-200); }
   .pacts p { font-size:14px; line-height:20px; color:var(--gray-500); }
-  .pacts div { display:flex; gap:8px; flex:none; }
+  .pacts div { display:flex; gap:8px; flex:none; } .pacts > div:only-child { margin-left:auto; } /* 2026-11-13 문구 없이 버튼만: 오른쪽 (모바일은 전체 폭) */
   .pacts .del { color:#f00011; }
   .pacts .del:hover { background:#fff1f2; border-color:#f00011; }
   .note { padding:24px; border-radius:8px; background:var(--bg-green); font-size:16px; line-height:22px; white-space:pre-line; }
@@ -288,7 +288,7 @@
     .unread { flex-direction:column; align-items:flex-start; }
     .stages { grid-template-columns:repeat(3, minmax(0,1fr)); row-gap:12px; }
     .todo { flex-direction:column; align-items:stretch; }
-    .pacts div .btn { flex:1; }
+    .pacts div .btn { flex:1; } .pacts > div:only-child { margin-left:0; }
   }
   /* 프로젝트 찾기 목록 카드(projects.html .lrow)와 같은 본문: 제목 아래 구분선 없음, 정보는 16px·'항목 :' 형식 */
   .lcard { padding:16px 24px; }
@@ -891,7 +891,7 @@
     '</div>' +
     // 의뢰접수(컨설턴트 확인 중)에는 수정·삭제 없음 (2026-11-02). 의뢰확인부터 수정은 컨설턴트, 삭제는 계약 전까지 아래 [삭제]
     '</details>' +
-    (F.canCancel(d.id) ? '<div class="pacts"><p>계약 전까지 프로젝트를 삭제할 수 있습니다. 삭제하면 견적을 요청받은 분석파트너에게 알림이 가고 프로젝트 찾기에서 내려갑니다.</p><div><button type="button" class="btn del" id="pCancel">삭제</button></div></div>'
+    (F.canCancel(d.id) ? '<div class="pacts"><div><button type="button" class="btn del" id="pCancel">삭제</button></div></div>'
       : FS.st === 'matched' && !FS.ct && !FS.cancel ? '<div class="pacts"><p>계약 진행 중에는 직접 삭제할 수 없습니다. 삭제가 필요하면 OmicsPharm 컨설턴트에게 문의해 주세요.</p><div>' + OP.askBtn({ key: d.id, cat: d.svc, no: d.id, title: d.title }) + '</div></div>' : '');
   $('#project').outerHTML = html;
   drawQuotes();
@@ -938,7 +938,7 @@
     m.className = 'op-confirm fask'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
     m.innerHTML = '<div class="box"><h3>프로젝트를 삭제하시겠습니까?</h3><p>"' + esc(d.title) + '" 프로젝트가 삭제되며 다시 진행할 수 없습니다. 견적을 요청받은 분석파트너에게 알림이 갑니다.</p>' +
       '<div class="cx-r"><b>삭제 사유 (선택)</b><div>' + R.map(function (r) { return '<label><input type="radio" name="cxr" value="' + r + '"><span>' + r + '</span></label>'; }).join('') + '</div>' +
-      '<textarea placeholder="자세한 사유가 있다면 적어 주세요 (선택)"></textarea></div>' +
+      '<textarea placeholder="자세한 사유가 있다면 적어 주세요"></textarea></div>' +
       '<div class="btns"><button type="button" class="no">닫기</button><button type="button" class="yes go del">삭제</button></div></div>';
     var close = function () { m.remove(); document.removeEventListener('keydown', key); }, key = function (e) { if (e.key === 'Escape') close(); };
     m.addEventListener('click', function (e) {

@@ -184,6 +184,7 @@ button { background:none; border:0; cursor:pointer; }
 /* 입력 모달 */
 .fask .yes.go { background:var(--teal-600); }
 .fask .yes.go:hover { background:var(--teal-700); }
+.fask .yes.go.del { background:#f00011; } .fask .yes.go.del:hover { background:#ca0008; } /* 2026-11-13 삭제 확인 버튼은 hover해도 빨강 (초록으로 바뀌던 문제) */
 .fask .yes:disabled { background:var(--gray-200); color:var(--gray-400); cursor:not-allowed; }
 .fask-l { display:flex; flex-direction:column; gap:8px; margin-top:16px; font-size:14px; font-weight:500; color:var(--gray-700); }
 .fask textarea { height:120px; padding:12px; border:1px solid var(--gray-300); border-radius:8px; font:inherit; font-size:14px; line-height:22px; resize:vertical; }
