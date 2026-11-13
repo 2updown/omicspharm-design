@@ -140,7 +140,7 @@
 
   var state = { q: '', scope: 'all', page: 1 };
   function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
-  function isNew(d) { var p = d.split('.'); return (TODAY - new Date(+p[0], p[1] - 1, +p[2])) / 864e5 <= 14; }
+  function isNew(d) { var p = d.split('.'); return (TODAY - new Date(+p[0], p[1] - 1, +p[2])) / 864e5 <= 7; } // N 배지: 등록일부터 7일 (2026-11-13 정책, 읽음과 무관)
   function row(n) {
     var badge = n.pin ? '<span class="pin-badge">공지</span>' : '';
     var nw = isNew(n.d) ? '<i class="new" aria-label="새 글">N</i>' : '';
