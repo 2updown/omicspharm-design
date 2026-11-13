@@ -115,7 +115,7 @@
   .ctf .r > div { display:flex; flex-direction:column; justify-content:center; gap:6px; padding:8px 12px; min-width:0; }
   .ctf .row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .ctf input[type=text], .ctf input[type=date], .ctf select, .ctf textarea { height:40px; padding:0 12px; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font:inherit; font-size:14px; }
-  .ctf select { padding:0 40px 0 16px; appearance:none; -webkit-appearance:none; background:#fff url(assets/find/ic-chevron-down.svg) right 16px center/16px no-repeat; color:#000; cursor:pointer; } /* 2026-11-13 통화 선택도 DS dropdown 모양 (브라우저 기본 화살표 대신) */
+  .ctf select { min-width:96px; padding:0 40px 0 16px; appearance:none; -webkit-appearance:none; background:#fff url(assets/find/ic-chevron-down.svg) right 16px center/16px no-repeat; color:#000; cursor:pointer; } /* 2026-11-13 통화 선택도 DS dropdown 모양 (브라우저 기본 화살표 대신) */
   .ctf input[type=text] { width:100%; max-width:420px; }
   .ctf input.amt { max-width:200px; text-align:right; }
   .ctf textarea { width:100%; height:72px; padding:10px 12px; line-height:20px; resize:vertical; }
@@ -958,7 +958,8 @@
   // - 클라이언트·분석파트너 각각: 계약서(기본 양식 또는 기관 양식 업로드), 대금 지급 방법, 기타
   // - [임시저장] = ctDraft, [계약서 최종 저장] = 양쪽 알림 + 분석 진행 단계
   // 미리 채움(제안): 금액 = 확정된 클라이언트 견적 공급가, 통화 = 견적 통화, 계약일 = 오늘, 납기일 = 계약일 + 견적 소요 기간
-  var CURS = [['KRW', '원화, 공급가 (VAT 별도)'], ['USD', '달러'], ['JPY', '엔화']];
+  document.addEventListener('change', function (e) { var t = e.target, h = t && t.id && document.querySelector('[data-vat="' + t.id + '"]'); if (h) h.hidden = t.value !== 'KRW'; }); // 통화가 원화일 때만 '공급가 (VAT 별도)'
+  var CURS = [['KRW', '원화'], ['USD', '달러'], ['JPY', '엔화']]; // 2026-11-13 선택지는 통화 이름만, 원화일 때 칸 아래에 '공급가 (VAT 별도)'
   function ctBase(s) {
     var q = (F.cqLast(s) || {}).quote || s.P[s.pick].quote, wk = +q.weeks || +(s.P[s.pick].quote || {}).weeks || 6;
     var pq0 = s.P[s.pick].quote || q, cc = function (x) { return CURS.some(function (c) { return c[0] === x; }) ? x : 'KRW'; };
@@ -993,8 +994,8 @@
     };
     return '<div class="blk" id="ctBlk"><div class="blk-h"><h3>계약 정보</h3></div>' +
       '<div class="ctf">' +
-        '<div class="r"><b>클라이언트 최종 계약 금액<i>*</i></b><div><div class="row"><input type="text" class="amt" id="ctAmt" inputmode="numeric" value="' + Number(v('amt')).toLocaleString('ko-KR') + '"><select id="ctCur" aria-label="클라이언트 계약 통화">' + CURS.map(function (c) { return '<option value="' + c[0] + '"' + (v('cur') === c[0] ? ' selected' : '') + '>' + c[1] + '</option>'; }).join('') + '</select></div></div></div>' +
-        '<div class="r"><b>분석파트너 최종 계약 금액<i>*</i></b><div><div class="row"><input type="text" class="amt" id="ctPAmt" inputmode="numeric" value="' + Number(v('pAmt')).toLocaleString('ko-KR') + '"><select id="ctPCur" aria-label="분석파트너 계약 통화">' + CURS.map(function (c) { return '<option value="' + c[0] + '"' + (v('pCur') === c[0] ? ' selected' : '') + '>' + c[1] + '</option>'; }).join('') + '</select></div></div></div>' +
+        '<div class="r"><b>클라이언트 최종 계약 금액<i>*</i></b><div><div class="row"><input type="text" class="amt" id="ctAmt" inputmode="numeric" value="' + Number(v('amt')).toLocaleString('ko-KR') + '"><select id="ctCur" aria-label="클라이언트 계약 통화">' + CURS.map(function (c) { return '<option value="' + c[0] + '"' + (v('cur') === c[0] ? ' selected' : '') + '>' + c[1] + '</option>'; }).join('') + '</select></div><p class="help" data-vat="ctCur"' + ((v('cur') || 'KRW') === 'KRW' ? '' : ' hidden') + '>공급가 (VAT 별도)</p></div></div>' +
+        '<div class="r"><b>분석파트너 최종 계약 금액<i>*</i></b><div><div class="row"><input type="text" class="amt" id="ctPAmt" inputmode="numeric" value="' + Number(v('pAmt')).toLocaleString('ko-KR') + '"><select id="ctPCur" aria-label="분석파트너 계약 통화">' + CURS.map(function (c) { return '<option value="' + c[0] + '"' + (v('pCur') === c[0] ? ' selected' : '') + '>' + c[1] + '</option>'; }).join('') + '</select></div><p class="help" data-vat="ctPCur"' + ((v('pCur') || 'KRW') === 'KRW' ? '' : ' hidden') + '>공급가 (VAT 별도)</p></div></div>' +
         '<div class="r"><b>계약일<i>*</i></b><div><div class="row"><input type="date" id="ctDate" value="' + v('date') + '"></div></div></div>' +
         '<div class="r"><b>납기일<i>*</i></b><div><div class="row"><input type="date" id="ctDue" value="' + v('due') + '"></div></div></div>' +
       '</div>' +

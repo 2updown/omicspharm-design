@@ -70,6 +70,7 @@
 
   /* 제안가 */
   .unit { display:flex; align-items:center; justify-content:flex-end; gap:8px; font-size:13px; color:var(--gray-600); }
+  .unit .vat[hidden] { display:none; }
   .unit select { height:36px; padding:0 32px 0 12px; border:1px solid var(--gray-300); border-radius:8px; background:#fff url(assets/find/ic-chevron-down.svg) right 10px center/16px no-repeat; appearance:none; -webkit-appearance:none; font-size:14px; }
   .tblwrap { max-width:100%; overflow-x:auto; }
   .items { width:100%; min-width:760px; border-collapse:collapse; border-top:2px solid #000; font-size:14px; line-height:20px; }
@@ -303,7 +304,7 @@
         '<div class="k">연락처</div><div><input class="inp" name="s_tel"></div><div class="k">사업자등록번호</div><div><input class="inp" name="s_biz" inputmode="numeric" placeholder="000-00-00000"></div>' +
         '<div class="k">담당자</div><div><input class="inp" name="s_mgr"></div><div class="k">이메일</div><div><input class="inp" name="s_mail" type="email"></div>' +
         '<div class="k">주소</div><div class="wide"><div class="addr" data-addr-box><input class="inp" name="s_addr" placeholder="예) 세화로 168, 도산대로 33" readonly data-addr><button type="button" class="btn line" data-addr>검색</button></div></div></div>' +
-      '<div class="prow"><h4>제안가</h4><label class="unit">금액 단위 <select id="cur"><option value="KRW">원화, 공급가 (VAT 별도)</option><option value="USD">달러</option><option value="JPY">엔화</option></select></label></div>' +
+      '<div class="prow"><h4>제안가</h4><label class="unit">금액 단위 <select id="cur"><option value="KRW">원화</option><option value="USD">달러</option><option value="JPY">엔화</option></select><span class="vat" id="curVat">공급가 (VAT 별도)</span></label></div>' +
       '<div class="tblwrap"><table class="items"><thead><tr><th>시험명<button type="button" class="add" id="addGroup">추가</button></th><th>세부내용</th><th class="c-qty">수량</th><th class="c-unit">Unit</th><th class="c-price">단가</th><th>금액</th><th class="c-del"></th></tr></thead><tbody id="rows"></tbody></table></div>' +
       '<table class="totals"><tbody>' +
         '<tr><td>분석료 합계</td><td id="tSum"></td></tr>' +
@@ -373,9 +374,11 @@
   });
   $('#addGroup').addEventListener('click', function () { G.push({ name: '', lines: [{ d: '', q: 1, u: 'EA', p: '' }] }); drawRows(); });
   ['#sale', '#addSale', '#weeks'].forEach(function (s) { $(s).addEventListener('input', function () { this.value = this.value.replace(/\D/g, ''); calc(); }); });
-  $('#cur').addEventListener('change', calc);
+  var vatSync = function () { $('#curVat').hidden = $('#cur').value !== 'KRW'; }; // 2026-11-13 원화일 때만 '공급가 (VAT 별도)' (선택지는 통화 이름만)
+  $('#cur').addEventListener('change', function () { vatSync(); calc(); });
 
   if (saved) { $('#cur').value = saved.cur || 'KRW'; $('#sale').value = saved.sale || ''; $('#addSale').value = saved.addSale || ''; $('#memo').value = saved.memo || ''; $('#weeks').value = saved.weeks || ''; }
+  vatSync();
   drawRows();
 
   function collect(submitted) {
