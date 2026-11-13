@@ -462,7 +462,7 @@ span.tbtn { cursor:default; }
 .rp-steps li.cur > div:first-child::before { background:var(--teal-600); color:#fff; }
 .rp-steps li.done > div:first-child::before { content:"✓"; background:var(--teal-600); color:#fff; } /* 완료: 초록 채움 + 흰 체크 (2026-10-29) */
 .rp-steps b { font-size:14px; font-weight:600; line-height:20px; }
-.rp-steps p { font-size:12px; line-height:18px; color:var(--gray-500); }
+.rp-steps p { font-size:12px; line-height:18px; color:var(--gray-500); word-break:keep-all; }
 .rp-more { font-size:13px; line-height:20px; color:var(--gray-500); }
 .rp-sent { display:flex; align-items:center; gap:8px; padding:12px 16px; border-radius:10px; background:var(--gray-50); font-size:13px; line-height:20px; color:var(--gray-600); }
 .rp-sent b { color:#000; }
@@ -476,7 +476,7 @@ span.tbtn { cursor:default; }
 .rp-req { margin-top:8px; padding:10px 14px; border-radius:8px; background:var(--gray-50); font-size:13px; line-height:20px; color:var(--gray-700); }
 .rp-req em { font-style:normal; font-weight:600; color:var(--gray-900); }
 @media (max-width:767px) { .rp-next { flex-direction:column; align-items:stretch; } .rp-next .rp-act .btn, .rp-creq .rp-act .btn { flex:1; } }
-@media (max-width:640px) { .rp-up { grid-template-columns:1fr; } .rp-steps li, .rp-empty { flex-direction:column; align-items:flex-start; } .rp-ih .badge { margin-left:0; } }
+@media (max-width:640px) { .rp-up { grid-template-columns:1fr; } .rp-steps li, .rp-empty { flex-direction:column; align-items:flex-start; } .rp-ih .badge { margin-left:0; } .rp-upf { flex-direction:row-reverse; justify-content:flex-end; } } /* 2026-11-13 모바일 PDF 등록: [파일 선택]을 다른 단계 버튼처럼 왼쪽, 파일 이름은 그 오른쪽 */
 
 /* AI Agent 메뉴의 beta 표시 */
 .menu a .beta { padding:0 6px; border-radius:6px; background:var(--teal-50); color:var(--teal-700); font-size:11px; font-weight:600; line-height:18px; }
