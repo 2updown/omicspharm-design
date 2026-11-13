@@ -134,6 +134,9 @@ button { background:none; border:0; cursor:pointer; }
   .m-tabs a.on { font-weight:600; color:var(--teal-600); } /* 메뉴와 같이 기본 Medium, 선택 SemiBold */
   .m-tabs a.on::after { content:""; position:absolute; left:0; right:0; bottom:0; height:2px; background:var(--teal-600); }
   .m-tabs .nb { flex:none; display:grid; place-items:center; width:16px; height:16px; border-radius:50%; background:#f00011; color:#fff; font-size:10px; font-weight:600; line-height:16px; }
+  /* 2026-11-13 상세 화면 (mypage.js가 body.mp-detail): 탭·큰 제목·본문 [‹] 숨김, 맨 위 '‹ 상위 목록' 하나만 */
+  body.mp-detail .m-tabs, body.mp-detail .main > .mtitle, body.mp-detail .main a.back, body.mp-detail .main .mg-head > a { display:none; }
+  body.mp-detail .page-head { padding-bottom:16px; }
 }
 @media (max-width:640px) {
   .page-head { padding:24px 16px; }

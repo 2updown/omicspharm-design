@@ -20,7 +20,7 @@
 .pq-m { display:flex; gap:8px; max-width:86%; animation:pqIn .35s ease both; }
 .pq-m .av { flex:none; width:32px; height:32px; border-radius:50%; border:1px solid var(--gray-200); background:#fff url(favicon.png) center / 20px no-repeat; }
 .pq-m .who { display:block; margin-bottom:4px; font-size:12px; font-weight:600; line-height:16px; color:var(--gray-600); }
-.pq-m .bb { padding:10px 14px; border-radius:4px 14px 14px 14px; background:var(--gray-100); font-size:15px; line-height:22px; color:#000; white-space:pre-wrap; word-break:break-word; }
+.pq-m .bb { padding:10px 14px; border-radius:4px 14px 14px 14px; background:var(--gray-100); font-size:15px; line-height:22px; color:#000; white-space:pre-wrap; word-break:keep-all; overflow-wrap:anywhere; }
 .pq-m time { align-self:flex-end; flex:none; font-size:11px; line-height:16px; color:var(--gray-400); }
 .pq-m.me { align-self:flex-end; flex-direction:row-reverse; }
 .pq-m.me .bb { border-radius:14px 4px 14px 14px; background:var(--teal-600); color:#fff; }

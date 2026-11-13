@@ -427,6 +427,23 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
         var mt = document.querySelector('.m-tabs > div'), on = mt.querySelector('.on');
         if (on) mt.scrollLeft = on.offsetLeft - (mt.clientWidth - on.offsetWidth) / 2; // 지금 메뉴를 가운데로
       }
+      // 2026-11-13 모바일 상세 화면: 탭·큰 제목·본문 제목 앞 [‹]를 숨기고, 맨 위 '‹ 마이페이지' 자리를 '‹ 상위 목록 이름'(목록으로) 하나로 (뒤로가기 중복 방지).
+      // 상세 = 본문에 목록으로 가는 [‹](a.back · .mg-head > a)가 있는 화면. PC는 그대로
+      var mb = ph && ph.querySelector('.m-back');
+      if (mb && !dash) {
+        var syncDetail = function () {
+          var bk = document.querySelector('.main a.back, .main .mg-head > a'), det = !!bk;
+          document.body.classList.toggle('mp-detail', det);
+          var h = det ? bk.getAttribute('href') : 'mypage.html';
+          var m = det ? MENU.filter(function (x) { return x[2] === h || (/mypage-request\.html/.test(h) && x[0] === 'project'); })[0] : null;
+          var t = det ? (m ? m[1] : (MENU.filter(function (x) { return x[0] === key; })[0] || [])[1] || '목록') : '마이페이지';
+          if (mb.getAttribute('href') !== h) mb.setAttribute('href', h);
+          if (mb.lastChild.nodeValue !== t) mb.lastChild.nodeValue = t;
+          mb.classList.toggle('back', det); // a.back 공통 처리: 원래 왔던 화면으로
+        };
+        syncDetail();
+        var mn2 = document.querySelector('.main'); if (mn2 && window.MutationObserver) new MutationObserver(syncDetail).observe(mn2, { childList: true, subtree: true });
+      }
     }
     // AI Agent를 연 채로 새로고침하면 다시 열어 둠 (같은 화면에서만, 2026-10-27)
     // AI 화면(iframe) 안에서도 이 함수가 불리므로 바깥 화면에서만 처리 (안에서 지우면 새로고침 때 안 열리던 문제, 2026-10-27)
