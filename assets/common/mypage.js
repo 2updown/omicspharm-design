@@ -222,7 +222,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
   D.confirm = function (title, desc, yes, cb) {
     var m = document.createElement('div');
     m.className = 'op-confirm'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
-    m.innerHTML = '<div class="box"><h3>' + esc(title) + '</h3><p>' + esc(desc) + '</p><div class="btns"><button type="button" class="no">취소</button><button type="button" class="yes">' + esc(yes) + '</button></div></div>';
+    m.innerHTML = '<div class="box"><h3>' + esc(title) + '</h3><p>' + esc(desc) + '</p><div class="btns"><button type="button" class="no">취소</button><button type="button" class="yes' + (/삭제|지우기|탈퇴|초기화|나가기/.test(yes) ? '' : ' go') + '">' + esc(yes) + '</button></div></div>';
     var close = function () { m.remove(); document.removeEventListener('keydown', key); };
     var key = function (e) { if (e.key === 'Escape') close(); };
     m.addEventListener('click', function (e) {

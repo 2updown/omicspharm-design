@@ -188,6 +188,8 @@ button { background:none; border:0; cursor:pointer; }
 .fask .yes.go { background:var(--teal-600); }
 .fask .yes.go:hover { background:var(--teal-700); }
 .fask .yes.go.del { background:#f00011; } .fask .yes.go.del:hover { background:#ca0008; } /* 2026-11-13 삭제 확인 버튼은 hover해도 빨강 (초록으로 바뀌던 문제) */
+.op-confirm .yes.go { background:var(--teal-600); } .op-confirm .yes.go:hover:not(:disabled) { background:var(--teal-700); }
+.op-confirm .yes.go.del { background:#f00011; } .op-confirm .yes.go.del:hover:not(:disabled) { background:#ca0008; } /* 2026-11-13 확인 모달 공통: 되돌릴 수 없는 동작(삭제·탈퇴·지우기·초기화·나가기)만 빨강, 나머지는 초록 */
 .fask .yes:disabled { background:var(--gray-200); color:var(--gray-400); cursor:not-allowed; }
 .fask-l { display:flex; flex-direction:column; gap:8px; margin-top:16px; font-size:14px; font-weight:500; color:var(--gray-700); }
 .fask textarea { height:120px; padding:12px; border:1px solid var(--gray-300); border-radius:8px; font:inherit; font-size:14px; line-height:22px; resize:vertical; }

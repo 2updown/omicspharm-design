@@ -711,7 +711,7 @@
     if (o.html) m.classList.add('wide'); // o.html: 설명 아래 참고 내용 (예: 수정 요청할 견적의 시험 항목 표)
     m.innerHTML = '<div class="box"><h3>' + esc(o.title) + '</h3>' + (o.desc ? '<p>' + esc(o.desc) + '</p>' : '') + (o.html || '') +
       (o.label !== false ? '<label class="fask-l">' + esc(o.label || '') + (o.input ? '<input type="' + o.input + '" value="' + esc(o.value || '') + '"' + (o.min ? ' min="' + o.min + '"' : '') + '>' : '<textarea placeholder="' + esc(o.ph || '') + '">' + esc(o.value || '') + '</textarea>') + '</label>' : '') + // o.input: 글 대신 한 줄 입력 (예: 'date')
-      '<div class="btns"><button type="button" class="no">' + esc(o.no || '취소') + '</button><button type="button" class="yes go">' + esc(o.yes || '확인') + '</button></div></div>';
+      '<div class="btns"><button type="button" class="no">' + esc(o.no || '취소') + '</button><button type="button" class="yes go' + (o.danger || /삭제|지우기|탈퇴|초기화/.test(o.yes || '') ? ' del' : '') + '">' + esc(o.yes || '확인') + '</button></div></div>';
     var ta = m.querySelector('textarea, .fask-l input'), yes = m.querySelector('.yes');
     var sync = function () { if (o.required && ta) yes.disabled = !ta.value.trim(); };
     var close = function () { m.remove(); document.removeEventListener('keydown', key); };
