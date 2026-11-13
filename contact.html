@@ -189,7 +189,7 @@
 
     <div class="actions">
       <a class="btn line" href="index.html">취소</a>
-      <button class="btn pri" type="submit" id="send" disabled>문의 보내기</button>
+      <button class="btn pri" type="submit" id="send" disabled>문의하기</button>
     </div>
   </form>
 
@@ -282,7 +282,7 @@
   [['name', 'f-name'], ['email', 'f-email'], ['title', 'f-title'], ['body', 'f-body']].forEach(function (p) {
     document.getElementById(p[0]).addEventListener('input', function () { setErr(p[1], ''); });
   });
-  // 개인정보 수집·이용에 동의해야 [문의 보내기] 활성화
+  // 개인정보 수집·이용에 동의해야 [문의하기] 활성화 (2026-11-13 버튼 이름 문의 보내기 → 문의하기)
   function syncSend() { $('#send').disabled = !$('#agree').checked; }
   $('#agree').addEventListener('change', function () { setErr('f-agree', ''); syncSend(); });
   syncSend();
