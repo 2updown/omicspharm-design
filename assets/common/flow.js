@@ -135,7 +135,7 @@
     return { sum: sum, net: net, vat: vat, final: net + vat };
   }
   var CUR = { KRW: '₩', USD: '$', JPY: '¥' };
-  var money = function (n, c) { return (CUR[c] || '₩') + ' ' + Math.round(n || 0).toLocaleString('ko-KR'); };
+  var money = function (n, c) { return (CUR[c] || '₩') + '\u00a0' + Math.round(n || 0).toLocaleString('ko-KR'); }; // 통화 기호와 숫자 사이는 줄바꿈 안 되는 공백 (2026-11-13)
   var man = function (n) { return n >= 1e4 ? Math.round(n / 1e4).toLocaleString('ko-KR') + '만원' : Math.round(n).toLocaleString('ko-KR') + '원'; };
 
   // ── 상태 저장 ──

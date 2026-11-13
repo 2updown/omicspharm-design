@@ -12,7 +12,7 @@
 <script src="assets/common/site.js?v=20261112f"></script>
 <script src="assets/common/consult.js?v=20261106b"></script>
 <script src="assets/common/mypage.js?v=20261112b"></script>
-<script src="assets/common/flow.js?v=20261113b"></script>
+<script src="assets/common/flow.js?v=20261113c"></script>
 <style>
   :root {
     --teal-50:#edfefa; --teal-600:#009788; --teal-700:#00786e; --bg-green:#f6faf9;
@@ -178,7 +178,7 @@
   .qc-price .pl span { font-size:13px; }
   .qc-tbl .r > div { font-size:14px; line-height:20px; padding:10px 12px; }
   .qc-tbl .memo { white-space:pre-line; color:var(--gray-700); }
-  @media (max-width:640px) { .qv summary { flex-wrap:wrap; padding:14px 16px; } .qv summary .dt { width:auto; } .qv-in { padding:0 16px 16px; } .qv-in .qc-acts { flex-wrap:wrap; } .qv-in .qc-acts .btn { flex:1; min-width:0; } }
+  @media (max-width:640px) { .qv summary { flex-wrap:wrap; padding:14px 40px 14px 16px; position:relative; } .qv summary img { position:absolute; right:16px; top:17px; } .qv.cur[open] summary { padding:14px 40px 14px 16px; } .qv summary { row-gap:2px; } .qv summary .amt { order:3; flex:1 0 100%; margin-left:0; } .qv summary .dt { order:4; position:absolute; right:40px; bottom:14px; } /* 모바일: 1줄 차수·배지, 2줄 금액(왼쪽)·날짜(오른쪽) */ /* 2026-11-13 펼침 화살표는 항상 오른쪽 위 (혼자 다음 줄로 떨어지지 않게) */ .qv summary .dt { width:auto; } .qv-in { padding:0 16px 16px; } .qv-in .qc-acts { flex-wrap:wrap; } .qv-in .qc-acts .btn { flex:1; min-width:0; } }
   .qc-hist { border-top:1px solid var(--gray-200); padding-top:12px; font-size:13px; line-height:20px; }
   .qc-hist summary { display:flex; align-items:center; justify-content:space-between; list-style:none; cursor:pointer; font-weight:600; color:var(--gray-700); }
   .qc-hist summary::-webkit-details-marker { display:none; }
