@@ -5,7 +5,7 @@
   --orange-600:#fd4900; --blue-50:#edf6ff; --blue-600:#0065f4; --red-600:#e5281f;
 }
 * { box-sizing:border-box; margin:0; padding:0; }
-body { background:var(--gray-50); color:#000; font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+body { background:var(--gray-50); color:#000; font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; -webkit-font-smoothing:antialiased; word-break:keep-all; overflow-wrap:break-word; } /* 2026-11-13 한글이 단어 중간에서 줄바꿈되지 않게 (긴 영문·주소는 넘치면 끊음) */
 a { color:inherit; text-decoration:none; }
 button, input, select, textarea { font:inherit; color:inherit; }
 button { background:none; border:0; cursor:pointer; }
@@ -385,6 +385,8 @@ span.tbtn { cursor:default; }
 .rp-fb { display:flex; flex-direction:column; gap:16px; padding:20px; }
 .rp-item.rp-form { gap:0; padding:0; border-color:var(--teal-600); } /* 컨설턴트: 전달 전 결과 (2026-10-29) */
 .rp-fh .dv { background:rgba(255,255,255,.5); }
+.rp-fh .mis { display:flex; flex-wrap:wrap; justify-content:flex-end; column-gap:17px; overflow:hidden; } .rp-fh .mi { position:relative; white-space:nowrap; }
+.rp-fh .mi + .mi::before { content:""; position:absolute; left:-9px; top:4px; bottom:4px; width:1px; background:rgba(255,255,255,.5); } /* 2026-11-13 항목 단위 줄바꿈, 줄 앞 구분선은 잘림 */
 .rp-fh .tbtn { color:#fff; }
 /* 그라데이션 AI 텍스트 버튼 (컨설턴트 매칭, 분석파트너 AI 보고서 생성 공통, 2026-10-29) */
 .ai-tx { display:inline-flex; align-items:center; gap:6px; height:40px; padding:0 10px; border-radius:8px; font-size:16px; font-weight:700; line-height:22px; white-space:nowrap; }
@@ -476,7 +478,8 @@ span.tbtn { cursor:default; }
 .rp-req { margin-top:8px; padding:10px 14px; border-radius:8px; background:var(--gray-50); font-size:13px; line-height:20px; color:var(--gray-700); }
 .rp-req em { font-style:normal; font-weight:600; color:var(--gray-900); }
 @media (max-width:767px) { .rp-next { flex-direction:column; align-items:stretch; } .rp-next .rp-act .btn, .rp-creq .rp-act .btn { flex:1; } }
-@media (max-width:640px) { .rp-up { grid-template-columns:1fr; } .rp-steps li, .rp-empty { flex-direction:column; align-items:flex-start; } .rp-ih .badge { margin-left:0; } .rp-upf { flex-direction:row-reverse; justify-content:flex-end; } } /* 2026-11-13 모바일 PDF 등록: [파일 선택]을 다른 단계 버튼처럼 왼쪽, 파일 이름은 그 오른쪽 */
+@media (max-width:640px) { .rp-fh { flex-direction:column; align-items:flex-start; gap:2px; padding:12px 16px; } .rp-fh span { margin-left:0; text-align:left; } .rp-fh .mis { justify-content:flex-start; } .rp-steps .rp-act .btn { max-width:100%; height:auto; min-height:40px; padding-top:8px; padding-bottom:8px; white-space:normal; overflow-wrap:anywhere; text-align:left; } } /* 2026-11-13 결과보고서 머리: 모바일은 제목 아래 정보 줄 (오른쪽 3줄 쪼개짐 방지) */
+@media (max-width:640px) { .rp-up { grid-template-columns:1fr; } .rp-steps li, .rp-empty { flex-direction:column; align-items:flex-start; } .rp-ih .badge { margin-left:0; } .rp-upf { flex-direction:row-reverse; justify-content:flex-end; } .rp-steps li > .rp-act { padding-left:30px; } } /* 2026-11-13 모바일 PDF 등록: [파일 선택]을 다른 단계 버튼처럼 왼쪽, 파일 이름은 그 오른쪽 */
 
 /* AI Agent 메뉴의 beta 표시 */
 .menu a .beta { padding:0 6px; border-radius:6px; background:var(--teal-50); color:var(--teal-700); font-size:11px; font-weight:600; line-height:18px; }

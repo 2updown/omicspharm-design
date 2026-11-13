@@ -882,12 +882,14 @@
     h += raw.map(function (x, i) {
       var step = x.sent ? 3 : x.pdf ? 2 : 1;
       var pdfK = x.kind === 'pdf' && x.by !== 'admin', nm = F.repName(x.sent ? x.repN - 1 : rep.length), who = (x.by === 'admin' ? '컨설턴트 직접 수정<i class="dv" aria-hidden="true"></i>' : esc(partner(s.pick).org) + '<i class="dv" aria-hidden="true"></i>') + ymd(x.at) + (x.by === 'admin' ? ' 시작' : ' 등록') + (x.by === 'admin' ? '' : '<i class="dv" aria-hidden="true"></i>' + (pdfK ? '완성 PDF' : 'AI 보고서 생성'));
+      // 2026-11-13 정보 줄을 항목 단위로 묶음: 줄바꿈돼도 '1차 결과보고서 전달 완료' 같은 항목이 쪼개지지 않고, 줄 앞뒤에 구분선이 남지 않음
+      var mi = function (h) { return '<span class="mi">' + h.split('<i class="dv" aria-hidden="true"></i>').join('</span><span class="mi">') + '</span>'; };
       // 아직 전달 전인 결과는 분석파트너 등록 칸과 같은 초록 머리 박스 (2026-10-29)
       // 최신 결과는 전달 후에도 초록 머리 박스 (분석파트너 화면과 같게, 2026-10-29). 이전 결과는 회색
       var gr = i === raw.length - 1;
       if (gr && x.sent) who += '<i class="dv" aria-hidden="true"></i>' + F.repName(x.repN - 1) + ' 전달 완료';
       var hd = !gr ? '<div class="rp-item" data-rp-i="' + i + '"><div class="rp-ih"><b>' + nm + '</b><em>' + who + '</em>' + (x.sent ? '<span class="badge done">' + F.repName(x.repN - 1) + ' 전달 완료</span>' : '') + '</div>'
-        : '<div class="rp-item rp-form" data-rp-i="' + i + '"><div class="rp-fh"><b>' + nm + '</b><span>' + who + '</span></div><div class="rp-fb">';
+        : '<div class="rp-item rp-form" data-rp-i="' + i + '"><div class="rp-fh"><b>' + nm + '</b><span class="mis">' + mi(who) + '</span></div><div class="rp-fb">';
       // 직접 수정 취소: 머리 대신 박스 안 맨 아래 (2026-10-29)
       var undo = x.by === 'admin' && !x.sent ? '<div class="rp-undo-row"><button type="button" class="tbtn xs" data-rp="undo">직접 수정 취소</button></div>' : '';
       var rq = x.req ? '<p class="rp-req"><em>재등록 요청 (' + ymd(x.req.at) + '):</em> ' + esc(x.req.note) + '</p>' : '';
@@ -900,7 +902,7 @@
         (x.by === 'admin' ? '<div class="rp-agent"><div class="rp-ah"><b>보고서 수정</b></div>' : '<div class="rp-agent"><div class="rp-ah"><img src="assets/common/ic-sparkle-fill.svg" alt=""><b>AI 보고서 초안</b><span class="badge state">생성 완료</span></div>') +
         '<ol class="rp-steps">' +
           // 1단계: 초안(워드)을 내려받아 고친 뒤 PDF로 저장 → 2단계에서 PDF 등록. 고친 워드를 따로 올리는 [수정본 업로드]는 뺌 (2026-10-29)
-          '<li class="' + (step > 1 ? 'done' : 'cur') + '"><div><b>' + (x.by === 'admin' ? '보고서 수정' : '초안 검토, 수정') + '</b><p>' + (x.by === 'admin' ? '지난 보고서 원본을 내려받아 고친 뒤 PDF로 저장해 주세요.' : '초안을 내려받아 검토하고 고친 뒤 PDF로 저장해 주세요.') + '</p></div><div class="rp-act"><button type="button" class="btn" data-rp="dl">' + esc(x.ai) + '</button></div></li>' +
+          '<li class="' + (step > 1 ? 'done' : 'cur') + '"><div><b>' + (x.by === 'admin' ? '보고서 수정' : '초안 검토, 수정') + '</b><p>' + (x.by === 'admin' ? '지난 보고서 원본을 내려받아 고친 뒤 PDF로 저장해 주세요.' : '초안을 내려받아 검토하고 고친 뒤 PDF로 저장해 주세요.') + '</p></div><div class="rp-act"><button type="button" class="btn" data-rp="dl">' + esc(x.ai).replace(/_/g, '_<wbr>') + '</button></div></li>' +
           '<li class="' + (step > 2 ? 'done' : step === 2 ? 'cur' : '') + '"><div><b>PDF 등록</b><p>클라이언트에게 전달할 최종본은 PDF로 올려 주세요.</p></div><div class="rp-act">' + (x.sent ? (x.pdf ? '<span class="rp-fn">' + esc(x.pdf) + '</span>' : '') : '<div class="rp-upf"><span class="fn' + (x.pdf ? ' on' : '') + '">' + esc(x.pdf || '선택된 파일 없음') + '</span><label class="btn up">파일 선택<input type="file" accept=".pdf,application/pdf" hidden data-rp-file="pdf"></label></div>') + '</div></li>' + // PDF 등록: 파일 업로드 컴포넌트 (2026-10-29)
           // 추가 파일 (선택, 형식 상관없이): 클라이언트가 Raw data 등 추가 자료를 요청한 경우 PDF와 함께 전달 (2026-10-29)
           (x.sent && !(x.extra || []).length ? '' : '<li class="' + (step > 2 ? 'done' : '') + '"><div><b>추가 파일 (선택)</b><p>Raw data 등 함께 보낼 파일이 있으면 올려 주세요. 형식 상관없이 여러 개</p>' + ((x.extra || []).length ? '<ul class="rp-xl">' + x.extra.map(function (n, j) { return '<li><span>' + esc(n) + '</span>' + (x.sent ? '' : '<button type="button" class="rp-x op-fx" data-rp="rmextra" data-j="' + j + '" aria-label="' + esc(n) + ' 빼기"></button>') + '</li>'; }).join('') + '</ul>' : '') + '</div><div class="rp-act">' + (x.sent ? '' : '<label class="btn up">파일 선택<input type="file" multiple hidden data-rp-extra></label>') + '</div></li>') +
