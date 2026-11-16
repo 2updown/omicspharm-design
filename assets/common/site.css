@@ -235,6 +235,7 @@
 @media (max-width:640px) { /* 본문 여백과 같은 기준 (2026-11-02, 760에서 변경) */
   .op-gnb, .op-footer { padding-left:16px; padding-right:16px; }
   .op-f-top { flex-direction:column; align-items:flex-start; gap:20px; }
+  .op-f-social { gap:12px; } /* 2026-11-16 모바일: 두 아이콘 간격 20 → 12 */
   .op-f-bottom { flex-direction:column; align-items:flex-start; height:auto; gap:8px; }
 }
 
