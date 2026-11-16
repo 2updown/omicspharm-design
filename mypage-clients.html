@@ -59,7 +59,7 @@
     var orgs = CL.map(function (c) { return c.org; });
     $('#card').innerHTML = '<div class="card-head"><h3>클라이언트 관리</h3></div>' +
       '<div class="mg-filter"><select class="mg-sel" id="fOrg"><option value="">소속</option>' + orgs.map(function (o) { return '<option>' + esc(o) + '</option>'; }).join('') + '</select>' +
-        '<form class="mg-q" id="fF" role="search"><input type="search" id="fQ" placeholder="부서, 성함, 닉네임, 연락처 검색" autocomplete="off" aria-label="클라이언트 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form></div>' +
+        '<form class="mg-q" id="fF" role="search"><input type="search" id="fQ" placeholder="부서, 성함, 닉네임, 연락처로 검색해보세요." autocomplete="off" aria-label="클라이언트 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form></div>' +
       '<p class="mg-total">총 <b id="n">0</b>건</p>' +
       '<div class="mg-wrap"><table class="mg-tbl"><thead><tr><th class="c">No</th><th>소속</th><th>부서</th><th>성함</th><th>닉네임</th><th>이메일</th><th>연락처</th><th class="c">의뢰 프로젝트</th><th class="c">프로젝트 관리</th></tr></thead><tbody id="tb"></tbody></table></div>';
     var draw = function () {

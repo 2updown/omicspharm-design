@@ -775,7 +775,7 @@
       <div class="svcblk cond" data-svc="etc">
       <div class="sec">
         <h2>분석 서비스 : 기타 분석</h2>
-        <div class="tbl"><div class="field" data-req="text"><div class="flabel">요청 내용<span class="req">*</span></div><div class="fbody"><textarea data-v placeholder="원하시는 분석 내용과 목적을 자유롭게 작성해 주세요. 담당 매니저가 확인 후 적합한 분석 방법을 안내해 드립니다." style="min-height:140px"></textarea></div></div><div class="field"><div class="flabel">요청 기술·장비 (아는 경우)</div><div class="fbody"><input type="text" placeholder="알고 있는 경우 입력해 주세요 (선택)"></div></div></div>
+        <div class="tbl"><div class="field" data-req="text"><div class="flabel">요청 내용<span class="req">*</span></div><div class="fbody"><textarea data-v placeholder="원하시는 분석 내용과 목적을 자유롭게 작성해 주세요. 담당 컨설턴트가 확인 후 적합한 분석 방법을 안내해 드립니다." style="min-height:140px"></textarea></div></div><div class="field"><div class="flabel">요청 기술·장비 (아는 경우)</div><div class="fbody"><input type="text" placeholder="알고 있는 경우 입력해 주세요 (선택)"></div></div></div>
       </div>
       </div>
     </div>
@@ -887,7 +887,7 @@
           <div class="field"><div class="flabel">모집기한</div><div class="fbody" id="rvRecruit">-</div></div>
           <div class="field"><div class="flabel">예상금액</div><div class="fbody" id="rvBud">-</div></div>
         </div>
-        <p class="fhelp">제출하면 담당 매니저가 검토한 뒤 적합한 분석기관 후보를 안내해 드립니다.</p>
+        <p class="fhelp">제출하면 담당 컨설턴트가 검토한 뒤 적합한 분석기관 후보를 안내해 드립니다.</p>
       </div>
     </div>
 
@@ -942,29 +942,6 @@
     <button type="button" class="mload" id="loadDraft" disabled>의뢰서 불러오기</button>
   </div>
 </div></div>
-<div class="modal" id="phoneModal"><div class="cbox pbox">
-  <h3>휴대폰 인증</h3>
-  <p id="pDesc">분석 의뢰 등록에는 담당 매니저 연락을 위해 휴대폰 인증이 필요합니다.</p>
-
-  <div class="pf">
-    <label>휴대폰 번호</label>
-    <div class="prow"><input type="text" id="pPhone" placeholder="010-0000-0000" maxlength="13">
-      <button type="button" class="vbtn" id="sendCode">인증번호 받기</button></div>
-  </div>
-
-  <div class="pf" id="codeRow" style="display:none">
-    <label>인증번호</label>
-    <div class="prow"><input type="text" id="pCode" placeholder="6자리 숫자" maxlength="6">
-      <span class="ptimer" id="pTimer">03:00</span></div>
-    <p class="perr" id="pErr"></p>
-  </div>
-
-  <div class="cbtns">
-    <button type="button" class="cno" id="pCancel">취소</button>
-    <button type="button" class="pok" id="pOk" disabled>인증 완료</button>
-  </div>
-</div></div>
-
 <div class="modal confirm" id="confirmModal"><div class="cbox">
   <h3 id="cTitle">작성을 취소하시겠습니까?</h3>
   <p id="cDesc">지금 나가면 저장되지 않은 내용이 사라집니다.</p>
@@ -1374,8 +1351,7 @@
   })();
 
   /* ── 휴대폰 인증 ── */
-  var VERIFIED=false, PHONE='', tick=null, code='';
-  var pModal=$('#phoneModal');
+  var VERIFIED=false, PHONE='';
   // 의뢰자 정보: 회원 정보(담당자·소속·회원가입 때 입력한 휴대폰 번호)를 그대로 표시. 휴대폰 인증 절차 없음
   function markPhone(){
     var ss=OP.session(), acc=ss?(OP.account(ss.email)||{}):{};
@@ -1384,49 +1360,6 @@
     if(acc.name) $('#mgrVal').value=acc.name;
     if(acc.org) $('#orgVal').value=acc.org;
   }
-  function openPhone(){
-    $('#pDesc').textContent='담당 매니저 연락을 위해 휴대폰 인증이 필요합니다. 인증한 번호는 계정에 저장됩니다.';
-    $('#pPhone').value=PHONE||'010-1234-5678'; $('#pCode').value=''; $('#pErr').textContent='';
-    $('#codeRow').style.display='none'; $('#pOk').disabled=true;
-    clearInterval(tick); pModal.classList.add('on'); $('#pPhone').focus();
-  }
-  function closePhone(){ pModal.classList.remove('on'); clearInterval(tick) }
-  $('#pCancel').onclick=closePhone;
-  pModal.onclick=function(e){ if(e.target===pModal) closePhone() };
-
-  $('#pPhone').addEventListener('input',function(){
-    var v=this.value.replace(/[^0-9]/g,'').slice(0,11);
-    this.value = v.length>7 ? v.replace(/(\d{3})(\d{4})(\d+)/,'$1-$2-$3')
-               : v.length>3 ? v.replace(/(\d{3})(\d+)/,'$1-$2') : v;
-  });
-  $('#sendCode').onclick=function(){
-    var v=$('#pPhone').value.replace(/[^0-9]/g,'');
-    if(v.length<10){ $('#codeRow').style.display='block'; $('#pErr').textContent='휴대폰 번호를 정확히 입력해 주세요.'; return }
-    code=String(Math.floor(100000+Math.random()*900000));
-    $('#codeRow').style.display='block'; $('#pErr').textContent='';
-    $('#pCode').value=code; $('#pOk').disabled=false; $('#pCode').focus();
-    this.textContent='재발송';
-    var left=180;
-    clearInterval(tick);
-    (function run(){ $('#pTimer').textContent=('0'+Math.floor(left/60)).slice(-2)+':'+('0'+left%60).slice(-2) })();
-    tick=setInterval(function(){
-      left--; if(left<=0){ clearInterval(tick); $('#pTimer').textContent='00:00'; $('#pErr').textContent='인증 시간이 지났습니다. 재발송해 주세요.'; $('#pOk').disabled=true; return }
-      $('#pTimer').textContent=('0'+Math.floor(left/60)).slice(-2)+':'+('0'+left%60).slice(-2);
-    },1000);
-    toast('인증번호를 발송했습니다');
-  };
-  $('#pCode').addEventListener('input',function(){
-    this.value=this.value.replace(/[^0-9]/g,'').slice(0,6);
-    $('#pOk').disabled = this.value.length===0;
-    $('#pErr').textContent='';
-  });
-  $('#pOk').onclick=function(){
-    if(!$('#pCode').value.trim()){ $('#pErr').textContent='인증번호를 입력해 주세요.'; return }
-    VERIFIED=true; PHONE=$('#pPhone').value; markPhone();
-    $('#phoneField').classList.remove('invalid'); updateProg();
-    closePhone();
-    toast('휴대폰 인증이 완료되었습니다');
-  };
 
   /* ── 권장 샘플 요구량 ── */
   // 권장 샘플 요구량: Figma 등록 화면 기준 4개 서비스만 (Olink·전사체·기타는 표 없음)
