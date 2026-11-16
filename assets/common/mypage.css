@@ -248,7 +248,7 @@ button { background:none; border:0; cursor:pointer; }
   .fsum { grid-template-columns:1fr; }
   .fkv > div { flex-direction:column; } .fkv dt { width:100%; }
   .fsteps { grid-template-columns:repeat(3, minmax(0,1fr)); row-gap:12px; }
-  .ftodo { flex-direction:column; align-items:stretch; } .ftodo .acts .btn { flex:1; }
+  .ftodo { flex-direction:column; align-items:stretch; } .ftodo .acts { flex-direction:row; } .ftodo .acts .btn { flex:1; } /* 2026-11-16 견적서 작성의 .acts(세로) 규칙이 겹쳐 [견적 거절]이 22px로 눌리던 것 */
   .pv .doc { padding:28px 20px; min-height:0; font-size:12px; } .doc-head h1 { font-size:22px; } .pv-scroll { padding:16px 8px; }
 }
 /* 계약서 (셀키 분석서비스 의뢰서) */
