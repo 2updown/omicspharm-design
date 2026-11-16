@@ -574,7 +574,7 @@
     card.classList.add('pmb');
     card.innerHTML =
       '<div class="card-head"><h3>프로젝트 관리</h3></div>' +
-      '<form class="b-search" id="bq" role="search"><input type="search" id="bqIn" placeholder="클라이언트/분석파트너명, 의뢰명, 키워드 입력" autocomplete="off" aria-label="프로젝트 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
+      '<form class="b-search" id="bq" role="search"><input type="search" id="bqIn" placeholder="프로젝트명, 번호, 기관명으로 검색해보세요." autocomplete="off" aria-label="프로젝트 검색"><button type="submit" aria-label="검색"><img src="assets/find/ic-search.svg" alt=""></button></form>' +
       '<div class="b-tabw" id="bTabW"><button type="button" class="b-arr l" data-arr="-1" aria-label="이전 단계 보기" hidden><img src="assets/find/ic-caret-left.svg" alt=""></button><div class="b-tabs" id="bTabs" role="tablist"></div><button type="button" class="b-arr r" data-arr="1" aria-label="다음 단계 보기" hidden><img src="assets/find/ic-caret-right.svg" alt=""></button></div>' +
       '<div class="b-bar"><div class="b-dd" data-dd="cat"><button type="button" class="b-btn" id="ddCat">분석 서비스<i></i></button><div class="b-pop" hidden>' + CATS.map(function (c) { return '<label><input type="checkbox" value="' + c + '">' + c + '<span class="n" data-cn="' + c + '"></span></label>'; }).join('') + '</div></div>' +
         '<div class="b-dd" data-dd="rec"><button type="button" class="b-btn" id="ddRec">모집상태<i></i></button><div class="b-pop" hidden>' + [['', '전체'], ['open', '모집중'], ['closed', '모집마감']].map(function (o) { return '<label><input type="radio" name="rec" value="' + o[0] + '"' + (o[0] ? '' : ' checked') + '>' + o[1] + '</label>'; }).join('') + '</div></div>' +
