@@ -168,8 +168,8 @@
 .op-footer-in { max-width:1320px; margin:0 auto; display:flex; flex-direction:column; gap:24px; padding:40px 0; }
 .op-f-top { display:flex; align-items:flex-end; justify-content:space-between; }
 .op-f-left { display:flex; flex-direction:column; gap:32px; }
-.op-f-left > img { display:block; width:211px; height:26px; }
-@media (max-width:640px) { .op-f-left > img { width:146px; height:18px; } } /* 2026-11-16 모바일 푸터 로고 = 모바일 GNB 로고 크기 */
+.op-f-left > img { display:block; width:154px; height:19px; } /* 2026-11-16 푸터 로고 = GNB 로고 크기 (전 211×26) */
+@media (max-width:640px) { .op-f-left > img { width:146px; height:18px; } } 
 .op-f-info { display:flex; flex-direction:column; gap:8px; font-size:14px; line-height:20px; }
 .op-f-info div { display:flex; gap:8px; }
 .op-f-info b { font-weight:500; }
