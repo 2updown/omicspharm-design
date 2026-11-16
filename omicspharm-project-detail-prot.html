@@ -38,7 +38,7 @@
   .titles { display:flex; flex-direction:column; gap:12px; }
   .badges { display:flex; gap:8px; }
   .badge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; }
-  .badge.tag { border:1px solid var(--teal-600); color:var(--teal-600); }
+  .badge.tag { box-shadow:inset 0 0 0 1px var(--teal-600); color:var(--teal-600); } /* 2026-11-16 테두리를 안쪽에 그려 높이 22 (프로젝트 찾기와 같게) */
   .badge.open { background:var(--orange-600); color:#fff; }
   .title-row { display:flex; align-items:center; justify-content:space-between; gap:16px; }
   .title-row h1 { font-size:24px; font-weight:600; line-height:32px; letter-spacing:-.24px; }

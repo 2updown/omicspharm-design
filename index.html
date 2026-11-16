@@ -185,7 +185,7 @@
   .pcard.private { cursor:pointer; } /* 비공개(열람 불가): 누르면 인증 안내 팝업 또는 토스트 */
   .pcard:not(.private):hover .top { background:linear-gradient(99.06deg, #f6f9f8 0%, #dcf6ee 100%); }
   .badge { display:inline-flex; align-items:center; justify-content:center; padding:2px 8px; border-radius:8px; font-size:12px; font-weight:500; line-height:18px; letter-spacing:-.12px; white-space:nowrap; }
-  .badge.outline { border:1px solid var(--teal-600); color:var(--teal-600); }
+  .badge.outline { box-shadow:inset 0 0 0 1px var(--teal-600); color:var(--teal-600); } /* 2026-11-16 테두리를 안쪽에 그려 높이 22 (프로젝트 찾기와 같게) */
   .badge.open { background:var(--orange-600); color:var(--white); }
   .badge.closed { background:var(--gray-600); color:var(--white); }
 
