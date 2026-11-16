@@ -78,7 +78,7 @@
 - **푸터**: [공통] 정보 값 Gray/500, 라벨 검정, 정책 링크 밑줄, 링크 순서 이용약관 → 개인정보처리방침(정책 페이지 탭 순서와 같게). [모바일] 라벨 위, 값 아래. 네이버 블로그·링크드인 아이콘 간격 12.
 - **[공통] 정책 페이지 신설**: policy-privacy.html, policy-terms.html (기존 사이트 2026-04-01 시행본과 같은 내용). 푸터 링크와 회원가입 약관 모달의 불러오기 실패 링크가 이 페이지로 연결.
 - **[공통] 로고**: 새 로고로 교체. GNB·푸터 PC 154×19, 모바일 146×18.
-- **[공통] 파비콘**: 새 심볼(초록 사각 + 열린 O + 점)로 교체. `favicon.ico`(16·32·48), `favicon.svg`, `favicon.png`(32), `apple-touch-icon.png`(180). 피그마 04_Resource/Component > favicon.
+- **[공통] 파비콘**: 새 심볼(초록 사각 + 열린 O + 점)로 교체. `favicon.ico`(16·32·48), `favicon.svg`, `favicon.png`(32), `apple-touch-icon.png`(180). 피그마 04_Resource/Component > favicon-final.
 - **[모바일] 모바일 메뉴(드로어)** (피그마 02_개발 전달본 > 모바일 메뉴)
   - 로그인 상태 프로필: PC 프로필 메뉴와 같은 구성(이름·메일 최대 2줄 → 역할 배지 → 메일 인증·파트너 인증 상태 줄).
   - 프로필 아래 버튼: [마이페이지] = button_outline primary(흰 바탕, 초록 글자·테두리)로 강조, [내 정보 관리] = button_outline tertiary(회색). 높이 48.
