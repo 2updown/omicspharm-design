@@ -114,6 +114,8 @@
   .gbtn.on { background:#fff; }
   .opop { position:absolute; top:44px; left:48px; z-index:10; overflow-y:auto; display:flex; flex-direction:column; align-items:center; gap:2px; width:220px; padding:8px 4px 12px; border-radius:8px; background:rgba(255,255,255,.95); box-shadow:var(--glass); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
   .opop.up { top:auto; bottom:44px; }
+  /* 낮은 화면(노트북에서 마이페이지 안 박스로 열 때, 높이 654 미만): 첫 화면 입력칸을 가운데보다 조금 위로 올려 옵션 팝오버(271)가 아래로 열릴 자리 확보 (2026-11-17) */
+  @media (max-height:653px) { .content:has(> .prompt) { justify-content:flex-end; padding-bottom:224px; } }
   .opop .row { display:flex; align-items:center; justify-content:space-between; width:100%; height:36px; padding:0 16px; font-size:14px; line-height:20px; color:var(--g20); }
   .opop .row.last { height:auto; padding-bottom:12px; } /* 2026-11-17 노트북(마이페이지 안 박스)에서 아래로 열리게 시안보다 조금 줄임: 줄 40→36, 위아래 여백 12·16→8·12 */
   .opop .hr { width:100%; padding:6px 16px; } .opop .hr i { display:block; height:1px; background:var(--g90); }
