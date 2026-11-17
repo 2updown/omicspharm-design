@@ -117,7 +117,7 @@
   .opop .row { display:flex; align-items:center; justify-content:space-between; width:100%; height:36px; padding:0 16px; font-size:14px; line-height:20px; color:var(--g20); }
   .opop .row.last { height:auto; padding-bottom:12px; } /* 2026-11-17 노트북(마이페이지 안 박스)에서 아래로 열리게 시안보다 조금 줄임: 줄 40→36, 위아래 여백 12·16→8·12 */
   .opop .hr { width:100%; padding:6px 16px; } .opop .hr i { display:block; height:1px; background:var(--g90); }
-  .opop h5 { width:100%; padding:0 16px; font-size:18px; font-weight:600; line-height:28px; letter-spacing:.15px; color:var(--g20); }
+  .opop h5 { width:100%; padding:0 16px; font-size:18px; font-weight:600; line-height:30px; letter-spacing:.15px; color:var(--g20); }
   .sw { position:relative; width:48px; height:36px; flex:none; }
   .sw::before { content:""; position:absolute; inset:4px 0; border-radius:100px; background:#ccc; transition:background .15s; }
   .sw::after { content:""; position:absolute; top:8px; left:4px; width:20px; height:20px; border-radius:100px; background:#fff; transition:left .15s; }
@@ -131,7 +131,7 @@
   .pbox.has-sel .psel { margin-bottom:-26px; } .pbox.has-sel textarea { padding-top:4px; } /* 칩 ↔ 입력칸 간격 10 (pbox gap 32 상쇄) */
   /* Project list / Report list 모달 (Figma 2734:20558 A안, 2742:20636 B안). 단일 선택 */
   .pl-dim { position:fixed; inset:0; z-index:40; display:flex; align-items:center; justify-content:center; padding:64px 24px 24px; background:rgba(0,0,0,.3); } /* 위 64 = 시안 전환 토글 자리 */
-  .pl > * { flex:none; } /* 낮은 화면에서는 표만 따로 스크롤되지 않고 모달 전체가 스크롤 */
+  .pl > * { flex:none; } .pl > .pl-tbl { flex:0 1 auto; min-height:200px; overflow:auto; } /* 낮은 화면: 표만 스크롤(제목·버튼·검색·페이지 번호 고정), 표가 200보다 작아질 만큼 낮으면 모달 전체 스크롤 */
   .pl { display:flex; flex-direction:column; gap:24px; width:1190px; max-width:100%; max-height:100%; overflow:auto; padding:8px 0 24px; border-radius:10px; background:#fff; box-shadow:0 8px 32px rgba(0,0,0,.12); font-weight:500; }
   .pl-head { display:flex; justify-content:space-between; align-items:flex-start; padding:24px 36px 8px; }
   .pl-head h3 { font-size:22px; font-weight:800; line-height:28px; color:#000; }
@@ -145,9 +145,9 @@
   .pl-search label:focus-within { border-color:var(--p30); }
   .pl-search input { flex:1; min-width:0; border:0; outline:0; font:inherit; font-size:14px; font-weight:600; color:var(--g20); }
   .pl-search input::placeholder { color:var(--g60); }
-  .pl-tbl { padding:0 36px; overflow-x:auto; }
+  .pl-tbl { margin:0 36px; overflow-x:auto; }
   .pl table { width:100%; min-width:760px; border-collapse:collapse; font-size:14px; line-height:20px; color:var(--g20); }
-  .pl th { height:50px; padding:0 8px; border-bottom:1px solid #b9e6e1; font-weight:500; font-size:15px; color:var(--g40); text-align:left; white-space:nowrap; }
+  .pl th { position:sticky; top:0; z-index:1; height:50px; padding:0 8px; background:#fff; box-shadow:inset 0 -1px #b9e6e1; font-weight:500; font-size:15px; color:var(--g40); text-align:left; white-space:nowrap; }
   .pl td { height:50px; padding:0 8px; white-space:nowrap; }
   .pl th:first-child, .pl td:first-child { width:72px; padding-left:24px; }
   .pl tbody tr:nth-child(even) { background:#fafafa; }
