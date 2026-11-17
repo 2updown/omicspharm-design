@@ -635,8 +635,17 @@
   function syncGnb() {
     var g = document.querySelector('.op-gnb'); if (g) g.classList.toggle('is-scrolled', window.scrollY > 0);
     var t = document.querySelector('.op-top'); if (t) t.classList.toggle('show', window.scrollY > 400); // 어느 정도 내려야 맨 위로 버튼 표시
+    syncFloat();
+  }
+  // 플로팅 버튼(맨 위로·CS봇): 푸터가 화면에 들어오면 푸터 위에 멈춤 (2026-11-17, 노트북에서 푸터 아이콘·링크를 가리던 것)
+  // 평소 bottom PC 40 / 모바일 16, 푸터와 간격 PC 24 / 모바일 16
+  function syncFloat() {
+    var fl = document.querySelector('.op-float'), ft = document.querySelector('.op-footer'); if (!fl || !ft) return;
+    var m = window.innerWidth <= 640, over = window.innerHeight - ft.getBoundingClientRect().top;
+    fl.style.bottom = Math.max(m ? 16 : 40, over + (m ? 16 : 24)) + 'px';
   }
   window.addEventListener('scroll', syncGnb, { passive: true });
+  window.addEventListener('resize', syncFloat);
   // GNB 알림 빨간 점: 읽지 않은 알림이 있을 때만. 알림 목록은 mypage.js가 만들므로 없는 페이지에서는 불러와서 계산
   var SITE_SRC = (document.currentScript || {}).src || '';
   OP.syncBell = function () {
