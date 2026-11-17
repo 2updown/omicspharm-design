@@ -65,7 +65,7 @@
   /* Content */
   .content { position:relative; flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 24px 56px; }
   .foot { position:absolute; left:0; right:0; bottom:0; padding-bottom:16px; font-size:14px; line-height:23px; letter-spacing:.25px; color:var(--g60); text-align:center; }
-  .prompt { display:flex; flex-direction:column; align-items:center; gap:28px; width:100%; }
+  .prompt { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:28px; width:100%; } /* 옵션 팝오버가 아래 안내 문구(.foot) 위로 (2026-11-17) */
   .prompt h1 { font-size:32px; font-weight:600; line-height:40px; color:var(--g20); text-align:center; }
   .pbox-wrap { display:flex; flex-direction:column; align-items:center; gap:16px; width:100%; }
   .pbox { display:flex; flex-direction:column; gap:32px; width:724px; max-width:100%; padding:0 4px 4px; border-radius:16px; background:rgba(255,255,255,.5); box-shadow:var(--glass); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
@@ -81,7 +81,7 @@
   .chips button { padding:10px 16px; border-radius:8px; background:rgba(255,255,255,.5); box-shadow:var(--glass); font-size:14px; line-height:23px; letter-spacing:.25px; color:var(--g20); }
   .chips button:hover { background:#fff; }
   /* 대화 (Figma 시안 없음 · 프로토타입용) */
-  .chat { display:flex; flex-direction:column; width:100%; height:100%; padding:40px 0 56px; }
+  .chat { position:relative; z-index:1; display:flex; flex-direction:column; width:100%; height:100%; padding:40px 0 56px; }
   .msgs { flex:1; overflow:auto; display:flex; flex-direction:column; gap:16px; width:724px; max-width:100%; margin:0 auto; padding-bottom:24px; }
   .msg { max-width:85%; padding:12px 16px; border-radius:16px; font-weight:500; font-size:15px; line-height:24px; white-space:pre-line; }
   .msg.me { align-self:flex-end; background:var(--p30); color:#fff; }
@@ -114,8 +114,6 @@
   .gbtn.on { background:#fff; }
   .opop { position:absolute; top:44px; left:48px; z-index:10; overflow-y:auto; display:flex; flex-direction:column; align-items:center; gap:2px; width:220px; padding:8px 4px 12px; border-radius:8px; background:rgba(255,255,255,.95); box-shadow:var(--glass); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
   .opop.up { top:auto; bottom:44px; }
-  /* 낮은 화면(노트북에서 마이페이지 안 박스로 열 때, 높이 654 미만): 첫 화면 입력칸을 가운데보다 조금 위로 올려 옵션 팝오버(271)가 아래로 열릴 자리 확보 (2026-11-17) */
-  @media (max-height:653px) { .content:has(> .prompt) { justify-content:flex-end; padding-bottom:224px; } }
   .opop .row { display:flex; align-items:center; justify-content:space-between; width:100%; height:36px; padding:0 16px; font-size:14px; line-height:20px; color:var(--g20); }
   .opop .row.last { height:auto; padding-bottom:12px; } /* 2026-11-17 노트북(마이페이지 안 박스)에서 아래로 열리게 시안보다 조금 줄임: 줄 40→36, 위아래 여백 12·16→8·12 */
   .opop .hr { width:100%; padding:6px 16px; } .opop .hr i { display:block; height:1px; background:var(--g90); }
@@ -262,9 +260,11 @@
     if (p) p.remove(); b.classList.toggle('on', on); b.setAttribute('aria-expanded', on);
     if (!on) return;
     b.parentNode.insertAdjacentHTML('beforeend', popHTML());
-    // 열 방향: 아래 공간이 되면 아래(시안), 모자라면 위, 둘 다 모자라면 넓은 쪽 + 화면 안에서 스크롤 (노트북 inline 박스처럼 높이가 낮을 때)
+    // 열 방향: 아래 공간이 되면 아래(시안), 모자라면 위 (가운데 띄우기·입력칸 옮기기 없음, 2026-11-17)
     var pp = $('#opop'), r = b.getBoundingClientRect(), h = pp.offsetHeight, M = 16, dn = innerHeight - r.bottom - 4 - M, upS = r.top - 4 - M;
-    var up = dn < h && (upS >= h || upS > dn); pp.classList.toggle('up', up); pp.style.maxHeight = Math.max(160, up ? upS : dn) + 'px';
+    var up = dn < h && (upS >= h || upS > dn); pp.classList.toggle('up', up);
+    if (up && upS < h) { pp.style.top = (8 - b.parentNode.getBoundingClientRect().top) + 'px'; pp.style.bottom = 'auto'; } // 위로도 모자라면 잘리지 않게 화면 맨 위(8)부터 (스크롤 없이, 버튼과 조금 겹칠 수 있음)
+    pp.style.maxHeight = (innerHeight - 16) + 'px';
   }
   var plPage = 1, plPick = -1, plQ = '';
   function plRows() {
