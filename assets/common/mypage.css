@@ -509,7 +509,7 @@ span.tbtn { cursor:default; }
 .op-ai.inline .op-ai-fit { display:grid; }
 .op-ai-fit img { width:24px; height:24px; } /* Material 아이콘은 24 안에 여백이 있어 24로 (20이면 닫기보다 작아 보임) */ .op-ai-fit .i, .op-ai.full .op-ai-fit .o { display:none; } .op-ai.full .op-ai-fit .i { display:block; }
 .op-ai-fit:hover { background:rgba(0,0,0,.05); }
-.op-ai.drawer .op-ai-x, .op-ai.drawer .op-ai-fit { display:none !important; } /* 모바일 AI 메뉴(drawer)가 열린 동안 */
+.op-ai.drawer .op-ai-x, .op-ai.drawer .op-ai-fit { display:none !important; } /* 모바일 AI 메뉴(drawer)·Project list 모달이 열린 동안 */
 .op-ai.inline.full { right:0; bottom:0; } .op-ai.inline.full .op-ai-win { border:0; border-left:1px solid #e5e5e5; border-top:1px solid #e5e5e5; border-radius:0; } /* ?aifit=full 비교용: 오른쪽·아래 끝까지 */
 .op-ai-inline [data-op-footer], .op-ai-inline .op-footer, .op-ai-inline .main { visibility:hidden; } /* 박스 아래·옆으로 본문이 비치지 않게 */
 .ui-headc .side-ai.on:not(:hover) { background:linear-gradient(#fcfcfc, #fcfcfc) padding-box, var(--ai-grad) border-box; } /* hover·선택 배경 = 메뉴 선택 회색(gray-50)보다 한 단계 연한 #FCFCFC (2026-10-27) */

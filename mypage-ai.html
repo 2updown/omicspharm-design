@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <script src="assets/common/site.js?v=20261117a"></script>
 <script src="assets/common/consult.js?v=20261106b"></script>
-<script src="assets/common/mypage.js?v=20261113b"></script>
+<script src="assets/common/mypage.js?v=20261117a"></script>
 <style>
   :root { --p30:#1db3a4; --p40:#0ac4b2; --g0:#000; --g20:#333; --g30:#4d4d4d; --g40:#666; --g50:#808080; --g60:#999; --g90:#e5e5e5; --g95:#f2f2f2; --glass:0 4px 10px rgba(55,55,55,.05); }
   * { box-sizing:border-box; margin:0; padding:0; }
@@ -112,15 +112,15 @@
   /* 답변 옵션 팝오버 (Figma 2206:32572, 2026-11-17): SDF Job → Project list */
   .ptools .l { position:relative; }
   .gbtn.on { background:#fff; }
-  .opop { position:absolute; top:44px; left:48px; z-index:10; display:flex; flex-direction:column; align-items:center; gap:2px; width:220px; padding:12px 4px 16px; border-radius:8px; background:rgba(255,255,255,.95); box-shadow:var(--glass); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
+  .opop { position:absolute; top:44px; left:48px; z-index:10; overflow-y:auto; display:flex; flex-direction:column; align-items:center; gap:2px; width:220px; padding:8px 4px 12px; border-radius:8px; background:rgba(255,255,255,.95); box-shadow:var(--glass); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
   .opop.up { top:auto; bottom:44px; }
-  .opop .row { display:flex; align-items:center; justify-content:space-between; width:100%; height:40px; padding:0 16px; font-size:14px; line-height:20px; color:var(--g20); }
-  .opop .row.last { height:auto; padding-bottom:16px; }
-  .opop .hr { width:100%; padding:8px 16px; } .opop .hr i { display:block; height:1px; background:var(--g90); }
-  .opop h5 { width:100%; padding:0 16px; font-size:18px; font-weight:600; line-height:30px; letter-spacing:.15px; color:var(--g20); }
-  .sw { position:relative; width:48px; height:40px; flex:none; }
-  .sw::before { content:""; position:absolute; inset:6px 0; border-radius:100px; background:#ccc; transition:background .15s; }
-  .sw::after { content:""; position:absolute; top:10px; left:4px; width:20px; height:20px; border-radius:100px; background:#fff; transition:left .15s; }
+  .opop .row { display:flex; align-items:center; justify-content:space-between; width:100%; height:36px; padding:0 16px; font-size:14px; line-height:20px; color:var(--g20); }
+  .opop .row.last { height:auto; padding-bottom:12px; } /* 2026-11-17 노트북(마이페이지 안 박스)에서 아래로 열리게 시안보다 조금 줄임: 줄 40→36, 위아래 여백 12·16→8·12 */
+  .opop .hr { width:100%; padding:6px 16px; } .opop .hr i { display:block; height:1px; background:var(--g90); }
+  .opop h5 { width:100%; padding:0 16px; font-size:18px; font-weight:600; line-height:28px; letter-spacing:.15px; color:var(--g20); }
+  .sw { position:relative; width:48px; height:36px; flex:none; }
+  .sw::before { content:""; position:absolute; inset:4px 0; border-radius:100px; background:#ccc; transition:background .15s; }
+  .sw::after { content:""; position:absolute; top:8px; left:4px; width:20px; height:20px; border-radius:100px; background:#fff; transition:left .15s; }
   .sw[aria-checked="true"]::before { background:var(--p30); } .sw[aria-checked="true"]::after { left:24px; }
   .plist { display:flex; align-items:center; justify-content:space-between; width:180px; height:40px; padding:0 4px 0 16px; border:1px solid #3fd8c9; border-radius:8px; background:linear-gradient(171deg, #ecfcfa 14%, #fef9f7 50%, #fff 86%); font-size:14px; line-height:20px; color:var(--g20); }
   .plist:hover { background:#ecfcfa; }
@@ -130,7 +130,8 @@
   .psel button { display:grid; place-items:center; width:18px; height:18px; color:#18988b; }
   .pbox.has-sel .psel { margin-bottom:-26px; } .pbox.has-sel textarea { padding-top:4px; } /* 칩 ↔ 입력칸 간격 10 (pbox gap 32 상쇄) */
   /* Project list / Report list 모달 (Figma 2734:20558 A안, 2742:20636 B안). 단일 선택 */
-  .pl-dim { position:fixed; inset:0; z-index:40; display:flex; align-items:center; justify-content:center; padding:24px; background:rgba(0,0,0,.3); }
+  .pl-dim { position:fixed; inset:0; z-index:40; display:flex; align-items:center; justify-content:center; padding:64px 24px 24px; background:rgba(0,0,0,.3); } /* 위 64 = 시안 전환 토글 자리 */
+  .pl > * { flex:none; } /* 낮은 화면에서는 표만 따로 스크롤되지 않고 모달 전체가 스크롤 */
   .pl { display:flex; flex-direction:column; gap:24px; width:1190px; max-width:100%; max-height:100%; overflow:auto; padding:8px 0 24px; border-radius:10px; background:#fff; box-shadow:0 8px 32px rgba(0,0,0,.12); font-weight:500; }
   .pl-head { display:flex; justify-content:space-between; align-items:flex-start; padding:24px 36px 8px; }
   .pl-head h3 { font-size:22px; font-weight:800; line-height:28px; color:#000; }
@@ -145,7 +146,7 @@
   .pl-search input { flex:1; min-width:0; border:0; outline:0; font:inherit; font-size:14px; font-weight:600; color:var(--g20); }
   .pl-search input::placeholder { color:var(--g60); }
   .pl-tbl { padding:0 36px; overflow-x:auto; }
-  .pl table { width:100%; min-width:900px; border-collapse:collapse; font-size:14px; line-height:20px; color:var(--g20); }
+  .pl table { width:100%; min-width:760px; border-collapse:collapse; font-size:14px; line-height:20px; color:var(--g20); }
   .pl th { height:50px; padding:0 8px; border-bottom:1px solid #b9e6e1; font-weight:500; font-size:15px; color:var(--g40); text-align:left; white-space:nowrap; }
   .pl td { height:50px; padding:0 8px; white-space:nowrap; }
   .pl th:first-child, .pl td:first-child { width:72px; padding-left:24px; }
@@ -259,7 +260,9 @@
     if (p) p.remove(); b.classList.toggle('on', on); b.setAttribute('aria-expanded', on);
     if (!on) return;
     b.parentNode.insertAdjacentHTML('beforeend', popHTML());
-    if (b.getBoundingClientRect().bottom + 320 > innerHeight) $('#opop').classList.add('up'); // 대화 중(입력칸이 아래)이면 위로 열림
+    // 열 방향: 아래 공간이 되면 아래(시안), 모자라면 위, 둘 다 모자라면 넓은 쪽 + 화면 안에서 스크롤 (노트북 inline 박스처럼 높이가 낮을 때)
+    var pp = $('#opop'), r = b.getBoundingClientRect(), h = pp.offsetHeight, M = 16, dn = innerHeight - r.bottom - 4 - M, upS = r.top - 4 - M;
+    var up = dn < h && (upS >= h || upS > dn); pp.classList.toggle('up', up); pp.style.maxHeight = Math.max(160, up ? upS : dn) + 'px';
   }
   var plPage = 1, plPick = -1, plQ = '';
   function plRows() {
@@ -289,10 +292,12 @@
       '<div class="pl-search"><label><img src="assets/ai/ic-search.svg" width="24" height="24" alt=""><input type="search" id="plQ" placeholder="' + ph + '" aria-label="' + ph + '"></label></div>' +
       '<div class="pl-tbl"><table><thead id="plHead"></thead><tbody id="plBody"></tbody></table></div><div class="pl-pg" id="plPg"></div></div>' +
       '<div class="pl-var" role="group" aria-label="시안 전환 (프로토타입)"><em>시안</em><button type="button" data-var="a"' + (VAR === 'a' ? ' class="on"' : '') + '>A 프로젝트 목록</button><button type="button" data-var="b"' + (VAR === 'b' ? ' class="on"' : '') + '>B 보고서 목록</button></div></div>');
+    outer(true);
     $('#plQ').addEventListener('input', function () { plQ = this.value.trim(); plPage = 1; plDraw(); });
     plDraw();
   }
-  function plClose() { var d = $('#plDim'); if (d) d.remove(); }
+  var outer = function (on) { try { if (parent !== window) parent.postMessage(on ? 'op-ai-modal-on' : 'op-ai-modal-off', '*'); } catch (e) {} }; // 마이페이지 안에 띄운 경우 바깥 넓게 보기·닫기 버튼 숨김 (모달 뒤로)
+  function plClose() { var d = $('#plDim'); if (d) { d.remove(); outer(false); } }
   function fpopClose() { var f = $('#fpop'); if (f) f.remove(); }
   function boxHTML() {
     return '<div class="pbox' + (sel ? ' has-sel' : '') + '">' + (sel ? '<div class="psel"><span>' + esc(sel) + '<button type="button" id="selX" aria-label="선택 해제"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></span></div>' : '') + '<textarea id="q" rows="1" placeholder="Enter \'@\' for KB project explore or \'/\' for command."></textarea>' +
