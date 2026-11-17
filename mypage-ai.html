@@ -109,6 +109,70 @@
   @keyframes drawIn { from { transform:translateX(-100%); } to { transform:none; } }
   @media (prefers-reduced-motion:reduce) { html.drawer .bar { animation:none; } } /* 메뉴를 펼치면 메뉴에 로고가 있으니 위 로고 줄 숨김 */
   @media (max-width:900px) { .bar { display:none; } .prompt h1 { font-size:26px; line-height:34px; } .emb-panel .bar, .emb-inline .bar { display:flex; } }
+  /* 답변 옵션 팝오버 (Figma 2206:32572, 2026-11-17): SDF Job → Project list */
+  .ptools .l { position:relative; }
+  .gbtn.on { background:#fff; }
+  .opop { position:absolute; top:44px; left:48px; z-index:10; display:flex; flex-direction:column; align-items:center; gap:2px; width:220px; padding:12px 4px 16px; border-radius:8px; background:rgba(255,255,255,.95); box-shadow:var(--glass); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
+  .opop.up { top:auto; bottom:44px; }
+  .opop .row { display:flex; align-items:center; justify-content:space-between; width:100%; height:40px; padding:0 16px; font-size:14px; line-height:20px; color:var(--g20); }
+  .opop .row.last { height:auto; padding-bottom:16px; }
+  .opop .hr { width:100%; padding:8px 16px; } .opop .hr i { display:block; height:1px; background:var(--g90); }
+  .opop h5 { width:100%; padding:0 16px; font-size:18px; font-weight:600; line-height:30px; letter-spacing:.15px; color:var(--g20); }
+  .sw { position:relative; width:48px; height:40px; flex:none; }
+  .sw::before { content:""; position:absolute; inset:6px 0; border-radius:100px; background:#ccc; transition:background .15s; }
+  .sw::after { content:""; position:absolute; top:10px; left:4px; width:20px; height:20px; border-radius:100px; background:#fff; transition:left .15s; }
+  .sw[aria-checked="true"]::before { background:var(--p30); } .sw[aria-checked="true"]::after { left:24px; }
+  .plist { display:flex; align-items:center; justify-content:space-between; width:180px; height:40px; padding:0 4px 0 16px; border:1px solid #3fd8c9; border-radius:8px; background:linear-gradient(171deg, #ecfcfa 14%, #fef9f7 50%, #fff 86%); font-size:14px; line-height:20px; color:var(--g20); }
+  .plist:hover { background:#ecfcfa; }
+  /* 선택한 프로젝트·보고서: 입력칸 위 청록 글자 + X (Figma 2736:21650) */
+  .psel { display:flex; flex-wrap:wrap; gap:10px; padding:16px 20px 0; }
+  .psel span { display:inline-flex; align-items:center; gap:2px; font-size:16px; line-height:23px; color:#18988b; }
+  .psel button { display:grid; place-items:center; width:18px; height:18px; color:#18988b; }
+  .pbox.has-sel .psel { margin-bottom:-26px; } .pbox.has-sel textarea { padding-top:4px; } /* 칩 ↔ 입력칸 간격 10 (pbox gap 32 상쇄) */
+  /* Project list / Report list 모달 (Figma 2734:20558 A안, 2742:20636 B안). 단일 선택 */
+  .pl-dim { position:fixed; inset:0; z-index:40; display:flex; align-items:center; justify-content:center; padding:24px; background:rgba(0,0,0,.3); }
+  .pl { display:flex; flex-direction:column; gap:24px; width:1190px; max-width:100%; max-height:100%; overflow:auto; padding:8px 0 24px; border-radius:10px; background:#fff; box-shadow:0 8px 32px rgba(0,0,0,.12); font-weight:500; }
+  .pl-head { display:flex; justify-content:space-between; align-items:flex-start; padding:24px 36px 8px; }
+  .pl-head h3 { font-size:22px; font-weight:800; line-height:28px; color:#000; }
+  .pl-head .acts { display:flex; gap:8px; }
+  .pl-btn { height:40px; padding:0 24px; border-radius:4px; font-size:14px; font-weight:600; }
+  .pl-btn.c { background:var(--g95); color:var(--g20); } .pl-btn.c:hover { background:var(--g90); }
+  .pl-btn.s { background:var(--p40); color:#fff; } .pl-btn.s:hover { background:var(--p30); }
+  .pl-btn.s:disabled { background:var(--g90); color:var(--g60); cursor:default; }
+  .pl-search { padding:0 36px; }
+  .pl-search label { display:flex; align-items:center; gap:8px; width:360px; max-width:100%; height:40px; padding:0 12px; border:1px solid #ccc; border-radius:4px; }
+  .pl-search label:focus-within { border-color:var(--p30); }
+  .pl-search input { flex:1; min-width:0; border:0; outline:0; font:inherit; font-size:14px; font-weight:600; color:var(--g20); }
+  .pl-search input::placeholder { color:var(--g60); }
+  .pl-tbl { padding:0 36px; overflow-x:auto; }
+  .pl table { width:100%; min-width:900px; border-collapse:collapse; font-size:14px; line-height:20px; color:var(--g20); }
+  .pl th { height:50px; padding:0 8px; border-bottom:1px solid #b9e6e1; font-weight:500; font-size:15px; color:var(--g40); text-align:left; white-space:nowrap; }
+  .pl td { height:50px; padding:0 8px; white-space:nowrap; }
+  .pl th:first-child, .pl td:first-child { width:72px; padding-left:24px; }
+  .pl tbody tr:nth-child(even) { background:#fafafa; }
+  .pl tbody tr { cursor:pointer; }
+  .pl tbody tr:hover, .pl tbody tr.on { background:#dff4f0; } /* SpAC9 SDF Job 모달과 같은 hover·선택 색 */
+  .pl .empty td { height:120px; text-align:center; color:var(--g60); cursor:default; } .pl .empty:hover { background:none; }
+  .ck { display:inline-grid; place-items:center; width:18px; height:18px; border:1.5px solid #999; border-radius:2px; background:#fff; vertical-align:middle; }
+  tr.on .ck { border-color:#808080; background:#808080; }
+  tr.on .ck::after { content:""; width:5px; height:9px; margin-top:-2px; border:solid #fff; border-width:0 2px 2px 0; transform:rotate(45deg); }
+  .clip { position:relative; display:grid; place-items:center; width:32px; height:32px; margin-left:-4px; border-radius:4px; }
+  .clip:hover { background:rgba(255,255,255,.7); }
+  .ftype { display:inline-block; padding:0 6px; border:1px solid var(--g90); border-radius:4px; font-size:11px; font-weight:600; line-height:18px; color:var(--g40); }
+  .fpop { position:absolute; z-index:50; width:320px; padding:8px; border-radius:8px; background:#fff; box-shadow:0 4px 16px rgba(0,0,0,.12); }
+  .fpop a { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 12px; border-radius:4px; font-size:14px; line-height:20px; color:var(--g20); }
+  .fpop a:hover { background:#dff4f0; }
+  .fpop a span:first-child { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pl-pg { display:flex; justify-content:center; }
+  .pl-pg button { width:40px; height:40px; display:grid; place-items:center; font-size:14px; color:var(--g40); }
+  .pl-pg button i { display:grid; place-items:center; min-width:24px; height:24px; padding:0 4px; border-radius:4px; font-style:normal; }
+  .pl-pg button.on i { background:var(--g90); color:var(--g20); font-weight:600; }
+  .pl-pg button:disabled { color:#ccc; cursor:default; }
+  /* 프로토타입 전용: A안·B안 전환 (내일 미팅에서 하나로 결정) */
+  .pl-var { position:fixed; top:16px; left:50%; z-index:60; transform:translateX(-50%); display:flex; align-items:center; gap:4px; padding:4px; border-radius:999px; background:rgba(51,51,51,.92); box-shadow:0 4px 12px rgba(0,0,0,.2); }
+  .pl-var em { padding:0 8px 0 12px; font-style:normal; font-size:12px; color:#bbb; }
+  .pl-var button { height:32px; padding:0 14px; border-radius:999px; font-size:13px; color:#ddd; }
+  .pl-var button.on { background:#fff; color:#111; }
 </style>
 </head>
 <body>
@@ -161,10 +225,79 @@
   ];
   var cur = -1, live = [];
   var toast = function (t) { var el = document.createElement('div'); el.className = 'toast'; el.textContent = t; document.body.appendChild(el); setTimeout(function () { el.remove(); }, 2200); };
+  // 답변 옵션 · Project list (2026-11-17, Figma 1665:7045). A안 = 프로젝트 목록, B안 = 보고서 목록. 단일 선택, 내일(11-18) 미팅에서 하나로 결정
+  var OPTS = [['deep', 'Deep Research', false], ['journal', 'Academic Journal', false], ['kb', 'Knowledge Base', false], ['web', 'Web Search', true]];
+  var sel = null; // 선택한 프로젝트·보고서 {label}
+  var VAR = (location.search.match(/[?&]list=(a|b)/) || [])[1];
+  try { VAR = VAR || localStorage.getItem('op.aiListVar') || 'a'; } catch (e) { VAR = VAR || 'a'; }
+  var PRJ = [
+    ['PRJ-2026-0049', '대장암 환자 혈청 대사체 프로파일링', '대사체', '완료', '2026-11-12', 1],
+    ['PRJ-2026-0048', '마우스 간 조직 RNA-seq 발현 차이 분석', '유전체', '보고서 검토', '2026-11-10', 1],
+    ['PRJ-2026-0047', '혈장 Olink Target 96 염증 패널 분석', '단백체', '완료', '2026-11-05', 1],
+    ['PRJ-2026-0046', '세포주 전장 유전체 변이 분석 (WGS)', '유전체', '분석 진행 중', '2026-11-03', 0],
+    ['PRJ-2026-0045', '항체 의약품 N-glycan 당쇄 프로파일링', '바이오', '완료', '2026-10-28', 1],
+    ['PRJ-2026-0044', '인슐린 유사체 LC-MS 펩타이드 매핑', '단백체', '완료', '2026-10-21', 1],
+    ['PRJ-2026-0043', '혈장 시료 TMT 정량 단백체 분석', '단백체', '계약 진행 중', '2026-10-15', 0],
+    ['PRJ-2026-0042', '세포 배양액 분비 단백질 분석', '단백체', '완료', '2026-10-08', 1],
+    ['PRJ-2026-0041', '혈청 아미노산 표적 대사체 분석', '대사체', '완료', '2026-09-30', 1],
+    ['PRJ-2026-0040', '종양 조직 단일세포 RNA-seq', '유전체', '완료', '2026-09-22', 1]
+  ];
+  var REP = [
+    ['결과보고서 v2 (최종)', 0, '2026-11-12', 'PDF'], ['결과보고서 v1', 0, '2026-11-06', 'PDF'],
+    ['결과보고서', 1, '2026-11-10', 'PDF'], ['추가 분석 보고서', 1, '2026-11-11', 'DOCX'],
+    ['결과보고서', 2, '2026-11-05', 'PDF'], ['결과보고서', 4, '2026-10-28', 'PDF'], ['결과보고서', 5, '2026-10-21', 'PDF'],
+    ['결과보고서', 7, '2026-10-08', 'PDF'], ['결과보고서', 8, '2026-09-30', 'PDF'], ['결과보고서', 9, '2026-09-22', 'PDF']
+  ];
+  function popHTML() {
+    var sw = function (o) { return '<div class="row"><span>' + o[1] + '</span><button type="button" class="sw" role="switch" aria-checked="' + o[2] + '" aria-label="' + o[1] + '" data-sw="' + o[0] + '"></button></div>'; };
+    return '<div class="opop" id="opop" role="dialog" aria-label="답변 옵션">' + sw(OPTS[0]) + '<div class="hr"><i></i></div><h5>Source</h5>' + sw(OPTS[1]) + sw(OPTS[2]) + sw(OPTS[3]).replace('class="row"', 'class="row last"') +
+      '<button type="button" class="plist" id="plist">Project list<img src="assets/ai/ic-chevron.svg" width="24" height="24" alt=""></button></div>';
+  }
+  function togglePop(on) {
+    var p = $('#opop'), b = $('#opt'); if (!b) return;
+    if (on === undefined) on = !p;
+    if (p) p.remove(); b.classList.toggle('on', on); b.setAttribute('aria-expanded', on);
+    if (!on) return;
+    b.parentNode.insertAdjacentHTML('beforeend', popHTML());
+    if (b.getBoundingClientRect().bottom + 320 > innerHeight) $('#opop').classList.add('up'); // 대화 중(입력칸이 아래)이면 위로 열림
+  }
+  var plPage = 1, plPick = -1, plQ = '';
+  function plRows() {
+    var q = plQ.toLowerCase();
+    var rows = VAR === 'a' ? PRJ.map(function (r, i) { return { i: i, key: r[0] + r[1], cells: [r[0], r[1], r[2], r[3], r[4], r[5] ? '<button type="button" class="clip" data-files="' + i + '" aria-label="보고서 파일"><img src="assets/ai/ic-clip.svg" width="24" height="24" alt=""></button>' : '-'], label: r[0] }; })
+      : REP.map(function (r, i) { var p = PRJ[r[1]]; return { i: i, key: r[0] + p[1] + p[0], cells: [r[0], p[1], r[2], '<span class="ftype">' + r[3] + '</span>'], label: p[0] + ' ' + r[0] }; });
+    return rows.filter(function (r) { return !q || r.key.toLowerCase().indexOf(q) > -1; });
+  }
+  function plDraw() {
+    var head = VAR === 'a' ? ['No.', 'Project name', 'Category', 'Status', 'Date', 'Report'] : ['Report name', 'Project name', 'Date', 'File'];
+    var rows = plRows(), n = head.length + 1;
+    $('#plBody').innerHTML = rows.length ? rows.map(function (r) {
+      return '<tr data-pick="' + r.i + '"' + (r.i === plPick ? ' class="on"' : '') + '><td><span class="ck" role="checkbox" aria-checked="' + (r.i === plPick) + '"></span></td>' + r.cells.map(function (c, k) { return '<td>' + (/^</.test(c) ? c : esc(c)) + '</td>'; }).join('') + '</tr>';
+    }).join('') : '<tr class="empty"><td colspan="' + n + '">검색 결과가 없습니다.</td></tr>';
+    $('#plHead').innerHTML = '<tr><th></th>' + head.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr>';
+    $('#plSel').disabled = plPick < 0;
+    var pg = '<button type="button" disabled aria-label="처음">«</button><button type="button" disabled aria-label="이전">‹</button>';
+    for (var i = 1; i <= 10; i++) pg += '<button type="button" data-pg="' + i + '"' + (i === plPage ? ' class="on"' : '') + '><i>' + i + '</i></button>';
+    $('#plPg').innerHTML = pg + '<button type="button" aria-label="다음" data-pg="+">›</button><button type="button" aria-label="끝" data-pg="10">»</button>';
+  }
+  function plOpen() {
+    togglePop(false); plPage = 1; plQ = ''; plPick = -1; // 열 때마다 처음 상태 (Cancel = 선택 취소)
+    var title = VAR === 'a' ? 'Project list' : 'Report list', ph = VAR === 'a' ? 'Search by project name or number' : 'Search by report or project name';
+    var old = $('#plDim'); if (old) old.remove();
+    document.body.insertAdjacentHTML('beforeend', '<div class="pl-dim" id="plDim"><div class="pl" role="dialog" aria-modal="true" aria-labelledby="plTitle">' +
+      '<div class="pl-head"><h3 id="plTitle">' + title + '</h3><div class="acts"><button type="button" class="pl-btn c" id="plCancel">Cancel</button><button type="button" class="pl-btn s" id="plSel" disabled>Select</button></div></div>' +
+      '<div class="pl-search"><label><img src="assets/ai/ic-search.svg" width="24" height="24" alt=""><input type="search" id="plQ" placeholder="' + ph + '" aria-label="' + ph + '"></label></div>' +
+      '<div class="pl-tbl"><table><thead id="plHead"></thead><tbody id="plBody"></tbody></table></div><div class="pl-pg" id="plPg"></div></div>' +
+      '<div class="pl-var" role="group" aria-label="시안 전환 (프로토타입)"><em>시안</em><button type="button" data-var="a"' + (VAR === 'a' ? ' class="on"' : '') + '>A 프로젝트 목록</button><button type="button" data-var="b"' + (VAR === 'b' ? ' class="on"' : '') + '>B 보고서 목록</button></div></div>');
+    $('#plQ').addEventListener('input', function () { plQ = this.value.trim(); plPage = 1; plDraw(); });
+    plDraw();
+  }
+  function plClose() { var d = $('#plDim'); if (d) d.remove(); }
+  function fpopClose() { var f = $('#fpop'); if (f) f.remove(); }
   function boxHTML() {
-    return '<div class="pbox"><textarea id="q" rows="1" placeholder="Enter \'@\' for KB project explore or \'/\' for command."></textarea>' +
+    return '<div class="pbox' + (sel ? ' has-sel' : '') + '">' + (sel ? '<div class="psel"><span>' + esc(sel) + '<button type="button" id="selX" aria-label="선택 해제"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></span></div>' : '') + '<textarea id="q" rows="1" placeholder="Enter \'@\' for KB project explore or \'/\' for command."></textarea>' +
       '<div class="ptools"><div class="l"><button type="button" class="gbtn" id="att" aria-label="파일 첨부"><img src="assets/ai/ic-attach.svg" width="24" height="24" alt=""></button>' +
-      '<button type="button" class="gbtn" id="opt" aria-label="옵션"><img src="assets/ai/ic-options.svg" width="24" height="24" alt=""></button></div>' +
+      '<button type="button" class="gbtn" id="opt" aria-label="답변 옵션" aria-haspopup="dialog" aria-expanded="false"><img src="assets/ai/ic-options.svg" width="24" height="24" alt=""></button></div>' +
       '<button type="button" class="send" id="send" aria-label="보내기" disabled><img src="assets/ai/ic-enter.svg" width="40" height="40" alt=""></button></div></div>';
   }
   function draw() {
@@ -197,6 +330,7 @@
     $('#mMenu').setAttribute('aria-expanded', on); $('#mMenu').setAttribute('aria-label', on ? '메뉴 닫기' : '메뉴 열기');
   };
   window.addEventListener('resize', function () { if (getComputedStyle($('#mMenu')).display === 'none') drawer(false); }); // 넓어져서 메뉴 버튼이 사라지면 닫기
+  document.addEventListener('keydown', function (e) { if (e.key !== 'Escape') return; if ($('#fpop')) fpopClose(); else if ($('#plDim')) plClose(); else if ($('#opop')) togglePop(false); else return; e.stopImmediatePropagation(); }, true); // Esc: 파일 목록 → 모달 → 옵션 순서로 닫기
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && document.documentElement.classList.contains('drawer')) { e.stopImmediatePropagation(); drawer(false); } }, true);
   document.addEventListener('click', function (e) {
     if (e.target.closest('#mMenu')) { drawer(!document.documentElement.classList.contains('drawer')); return; }
@@ -207,7 +341,26 @@
     var ch = e.target.closest('[data-chip]'); if (ch) { var v = CHIPS[+ch.dataset.chip][1]; if (!v) { toast('베타: Smart prompt는 준비 중입니다.'); return; } var q = $('#q'); q.value = v; q.dispatchEvent(new Event('input')); q.focus(); return; }
     if (e.target.closest('#newChat')) { cur = -1; live = []; draw(); $('#q').focus(); return; }
     if (e.target.closest('#att')) { toast('베타: 파일·KB 프로젝트 첨부는 준비 중입니다.'); return; }
-    if (e.target.closest('#opt')) { toast('베타: 답변 옵션은 준비 중입니다.'); return; }
+    // 답변 옵션 팝오버 · Project list 모달
+    if (!e.target.closest('.fpop, .clip')) fpopClose();
+    if (e.target.closest('#opt')) { togglePop(); return; }
+    var sw = e.target.closest('[data-sw]'); if (sw) { var o = OPTS.filter(function (x) { return x[0] === sw.dataset.sw; })[0]; o[2] = !o[2]; sw.setAttribute('aria-checked', o[2]); return; }
+    if (e.target.closest('#plist')) { plOpen(); return; }
+    if ($('#opop') && !e.target.closest('#opop')) togglePop(false);
+    if (e.target.closest('#selX')) { sel = null; draw(); $('#q').focus(); return; }
+    var vb = e.target.closest('[data-var]'); if (vb) { VAR = vb.dataset.var; try { localStorage.setItem('op.aiListVar', VAR); } catch (er) {} plOpen(); return; }
+    if ($('#plDim')) {
+      var cf = e.target.closest('[data-files]');
+      if (cf) { var had = $('#fpop'); fpopClose(); if (had && had.dataset.for === cf.dataset.files) return; var p = PRJ[+cf.dataset.files], rc = cf.getBoundingClientRect();
+        document.body.insertAdjacentHTML('beforeend', '<div class="fpop" id="fpop" data-for="' + cf.dataset.files + '" style="top:' + (rc.bottom + 4) + 'px;left:' + Math.max(8, rc.right - 320) + 'px"><a href="#" data-dl>' + '<span>결과보고서_' + p[0] + '.pdf</span><span class="ftype">PDF</span></a><a href="#" data-dl><span>추가자료_정량결과_' + p[0] + '.xlsx</span><span class="ftype">XLSX</span></a></div>');
+        return; }
+      if (e.target.closest('[data-dl]')) { e.preventDefault(); fpopClose(); toast('프로토타입: 파일 다운로드는 연결되지 않았습니다.'); return; }
+      var tr = e.target.closest('[data-pick]'); if (tr) { var k = +tr.dataset.pick; plPick = plPick === k ? -1 : k; plDraw(); return; } // 단일 선택: 다른 줄을 고르면 바뀜, 같은 줄을 다시 누르면 해제
+      var pg = e.target.closest('[data-pg]'); if (pg) { plPage = pg.dataset.pg === '+' ? Math.min(10, plPage + 1) : +pg.dataset.pg; plDraw(); return; }
+      if (e.target.closest('#plSel')) { plQ = ''; var r = plRows().filter(function (x) { return x.i === plPick; })[0]; if (r) sel = r.label; plClose(); draw(); $('#q').focus(); return; }
+      if (e.target.closest('#plCancel') || e.target.id === 'plDim') { plClose(); return; }
+      return;
+    }
     if (e.target.closest('#fold')) { var f = document.documentElement.classList.toggle('folded'); e.target.closest('#fold').setAttribute('aria-expanded', !f); e.target.closest('#fold').setAttribute('aria-label', f ? '메뉴 펼치기' : '메뉴 접기'); if (!RAIL) try { localStorage.setItem('op.aiFold', f ? '1' : ''); } catch (er) {} return; }
     if (e.target.closest('#credit')) { toast('베타: 크레딧은 준비 중입니다.'); return; }
     if (e.target.closest('#setting')) { toast('베타: 설정은 준비 중입니다.'); return; }
