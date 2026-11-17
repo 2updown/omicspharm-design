@@ -154,7 +154,7 @@
   .pl tbody tr:hover, .pl tbody tr.on { background:#dff4f0; } /* SpAC9 SDF Job 모달과 같은 hover·선택 색 */
   .pl .empty td { height:120px; text-align:center; color:var(--g60); cursor:default; } .pl .empty:hover { background:none; }
   .ck { display:inline-grid; place-items:center; width:18px; height:18px; border:1.5px solid #999; border-radius:2px; background:#fff; vertical-align:middle; }
-  tr.on .ck { border-color:#808080; background:#808080; }
+  tr.on .ck { border-color:var(--p30); background:var(--p30); } /* 선택 = Primary (legacy)/30 (2026-11-17 회색 → 초록) */
   tr.on .ck::after { content:""; width:5px; height:9px; margin-top:-2px; border:solid #fff; border-width:0 2px 2px 0; transform:rotate(45deg); }
   .clip { position:relative; display:grid; place-items:center; width:32px; height:32px; margin-left:-4px; border-radius:4px; }
   .clip:hover { background:rgba(255,255,255,.7); }
