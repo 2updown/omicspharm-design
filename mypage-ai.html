@@ -261,7 +261,7 @@
     if (!on) return;
     b.parentNode.insertAdjacentHTML('beforeend', popHTML());
     // 열 방향: 아래 공간이 되면 아래(시안), 모자라면 위 (가운데 띄우기·입력칸 옮기기 없음, 2026-11-17)
-    var pp = $('#opop'), r = b.getBoundingClientRect(), h = pp.offsetHeight, M = 16, dn = innerHeight - r.bottom - 4 - M, upS = r.top - 4 - M;
+    var pp = $('#opop'), r = b.getBoundingClientRect(), h = pp.offsetHeight, M = 8, dn = innerHeight - r.bottom - 4 - M, upS = r.top - 4 - M;
     var up = dn < h && (upS >= h || upS > dn); pp.classList.toggle('up', up);
     if (up && upS < h) { pp.style.top = (8 - b.parentNode.getBoundingClientRect().top) + 'px'; pp.style.bottom = 'auto'; } // 위로도 모자라면 잘리지 않게 화면 맨 위(8)부터 (스크롤 없이, 버튼과 조금 겹칠 수 있음)
     pp.style.maxHeight = (innerHeight - 16) + 'px';
