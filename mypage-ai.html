@@ -303,7 +303,7 @@
   function plClose() { var d = $('#plDim'); if (d) { d.remove(); outer(false); } }
   function fpopClose() { var f = $('#fpop'); if (f) f.remove(); }
   function boxHTML() {
-    return '<div class="pbox' + (sel ? ' has-sel' : '') + '">' + (sel ? '<div class="psel"><span>' + esc(sel) + '<button type="button" id="selX" aria-label="선택 해제"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></span></div>' : '') + '<textarea id="q" rows="1" placeholder="Enter \'@\' for KB project explore or \'/\' for command."></textarea>' +
+    return '<div class="pbox' + (sel ? ' has-sel' : '') + '">' + (sel ? '<div class="psel"><span>' + esc(sel) + '<button type="button" id="selX" aria-label="선택 해제"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></span></div>' : '') + '<textarea id="q" rows="1" placeholder="Ask CellKey AI"></textarea>' +
       '<div class="ptools"><div class="l"><button type="button" class="gbtn" id="att" aria-label="파일 첨부"><img src="assets/ai/ic-attach.svg" width="24" height="24" alt=""></button>' +
       '<button type="button" class="gbtn" id="opt" aria-label="답변 옵션" aria-haspopup="dialog" aria-expanded="false"><img src="assets/ai/ic-options.svg" width="24" height="24" alt=""></button></div>' +
       '<button type="button" class="send" id="send" aria-label="보내기" disabled><img src="assets/ai/ic-enter.svg" width="40" height="40" alt=""></button></div></div>';
