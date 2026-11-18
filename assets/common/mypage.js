@@ -268,7 +268,8 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     var w = document.createElement('div');
     w.setAttribute('role', 'dialog'); w.setAttribute('aria-modal', 'true'); w.setAttribute('aria-label', 'AI Agent');
     w.innerHTML = '<div class="op-ai-dim" data-ai-close></div><div class="op-ai-win">' +
-      (WANT === 'inline' ? '<button type="button" class="op-ai-fit" aria-label="넓게 보기" title="넓게 보기"><img class="o" src="assets/common/menu/expand_content.svg?v=' + AV + '" alt=""><img class="i" src="assets/common/menu/collapse_content.svg?v=' + AV + '" alt=""></button>' : '') +
+      // 넓게 보기 버튼(닫기 옆) 2026-11-18 일단 뺌. 다시 쓰려면 여기 op-ai-fit 버튼 복원 (expand_content.svg / collapse_content.svg, ?aifit=full은 그대로 동작)
+
       '<button type="button" class="op-ai-x" data-ai-close aria-label="닫기"></button><iframe src="mypage-ai.html?embed=' + WANT + '&v=' + Date.now() + '" title="AI Agent"></iframe></div>';
     var KEEP = 'op.aiOpen', keep = function (on) { try { if (on) sessionStorage.setItem(KEEP, JSON.stringify({ p: location.pathname, m: WANT, full: FULL })); else sessionStorage.removeItem(KEEP); } catch (e) {} }; // 새로고침해도 열린 채로 (같은 화면일 때만)
     var close = function () { keep(false); w.remove(); document.body.style.overflow = ''; document.body.classList.remove('op-ai-open', 'op-ai-inline'); document.removeEventListener('keydown', key); window.removeEventListener('message', msg); window.removeEventListener('resize', place);
