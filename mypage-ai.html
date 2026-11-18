@@ -157,12 +157,12 @@
   .ck { display:inline-grid; place-items:center; width:18px; height:18px; border:1.5px solid #999; border-radius:2px; background:#fff; vertical-align:middle; }
   tr.on .ck { border-color:var(--p30); background:var(--p30); } /* 선택 = Primary (legacy)/30 (2026-11-17 회색 → 초록) */
   tr.on .ck::after { content:""; width:5px; height:9px; margin-top:-2px; border:solid #fff; border-width:0 2px 2px 0; transform:rotate(45deg); }
-  /* 보고서 드롭다운 = [Core] Select (default · open), 라벨 없이 폭 240. 1건이면 화살표 없는 상자 */
-  .dd { position:relative; display:flex; align-items:center; width:240px; height:40px; padding:0 34px 0 12px; border:1px solid var(--g90); border-radius:8px; background:#fff; font-size:14px; font-weight:400; color:var(--g20); text-align:left; }
+  /* 보고서 드롭다운 = [Core] Select (default · open), 라벨 없이 폭 224(피그마 보고서 칸 256 − 여백 16·16). 1건이면 화살표 없는 상자 */
+  .dd { position:relative; display:flex; align-items:center; width:224px; height:40px; padding:0 34px 0 12px; border:1px solid var(--g90); border-radius:8px; background:#fff; font-size:14px; font-weight:400; color:var(--g20); text-align:left; }
   .dd span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .dd::after { content:""; position:absolute; right:14px; top:17px; border:5px solid transparent; border-top:6px solid var(--g50); border-bottom:0; }
   .dd.open { border:2px solid var(--p30); padding-left:11px; }
-  .dd-one { display:flex; align-items:center; width:240px; height:40px; padding:0 12px; border:1px solid var(--g90); border-radius:8px; background:#fff; font-size:14px; font-weight:400; color:var(--g20); } .dd-one span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } /* 1건: 드롭다운과 같은 상자, 화살표만 없음 */
+  .dd-one { display:flex; align-items:center; width:224px; height:40px; padding:0 12px; border:1px solid var(--g90); border-radius:8px; background:#fff; font-size:14px; font-weight:400; color:var(--g20); } .dd-one span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } /* 1건: 드롭다운과 같은 상자, 화살표만 없음 */
   .fpop { position:fixed; z-index:50; display:flex; flex-direction:column; padding:4px 0; border:1px solid var(--g90); border-radius:8px; background:#fff; box-shadow:0 4px 16px rgba(0,0,0,.08); }
   .fpop button { padding:8px 12px; font-size:14px; font-weight:400; line-height:20px; color:var(--g20); text-align:left; }
   .fpop button:hover, .fpop button.on { background:#dff4f0; }
