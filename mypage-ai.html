@@ -69,7 +69,8 @@
   .prompt h1 { font-size:32px; font-weight:600; line-height:40px; color:var(--g20); text-align:center; }
   .pbox-wrap { display:flex; flex-direction:column; align-items:center; gap:16px; width:100%; }
   .pbox { display:flex; flex-direction:column; gap:32px; width:724px; max-width:100%; padding:0 4px 4px; border-radius:16px; background:rgba(255,255,255,.5); box-shadow:var(--glass); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
-  .pbox textarea { display:block; width:100%; min-height:39px; max-height:200px; padding:16px 20px 0; border:0; background:none; resize:none; outline:0; font:inherit; font-size:16px; line-height:23px; letter-spacing:.15px; color:var(--g20); }
+  .qrow { position:relative; display:flex; align-items:flex-start; gap:8px; padding:16px 20px 0; }
+  .pbox textarea { display:block; flex:1; min-width:0; width:100%; min-height:23px; max-height:184px; padding:0; border:0; background:none; resize:none; outline:0; font:inherit; font-size:16px; line-height:23px; letter-spacing:.15px; color:var(--g20); }
   .pbox textarea::placeholder { color:var(--g50); }
   .ptools { display:flex; align-items:flex-start; justify-content:space-between; padding:0 8px 4px; }
   .ptools .l { display:flex; gap:8px; }
@@ -128,7 +129,17 @@
   .psel { display:flex; flex-wrap:wrap; gap:10px; padding:16px 20px 0; }
   .psel span { display:inline-flex; align-items:center; gap:2px; font-size:16px; line-height:23px; color:#18988b; }
   .psel button { display:grid; place-items:center; width:18px; height:18px; color:#18988b; }
-  .pbox.has-sel .psel { margin-bottom:-26px; } .pbox.has-sel textarea { padding-top:4px; } /* 칩 ↔ 입력칸 간격 10 (pbox gap 32 상쇄) */
+  .pbox.has-sel .psel { margin-bottom:-26px; } .pbox.has-sel .qrow { padding-top:4px; } /* 칩 ↔ 입력칸 간격 10 (pbox gap 32 상쇄) */
+  /* @ 프로젝트 불러오기 (2026-11-18, Figma 2785:23512 · BioEOS @ 목록 참고): 입력칸에 @ → 위로 목록, 고르면 파란 칩 */
+  .atchip { flex:none; padding:1px 10px; border:1px solid #b9d1ff; border-radius:16px; background:#e8f0ff; font-size:16px; font-weight:600; line-height:23px; letter-spacing:.15px; color:#276df4; white-space:nowrap; }
+  .atpop { position:absolute; left:20px; bottom:calc(100% + 4px); z-index:12; display:flex; flex-direction:column; width:280px; max-height:260px; padding-bottom:4px; border-radius:8px; background:#fff; box-shadow:0 4px 16px rgba(0,0,0,.1); }
+  .atpop h6 { flex:none; padding:12px 16px 6px; font-size:14px; font-weight:600; line-height:20px; color:var(--g40); }
+  .atpop ul { list-style:none; overflow-y:auto; border-top:1px solid var(--g95); }
+  .atpop li { display:flex; flex-direction:column; justify-content:center; min-height:44px; padding:4px 16px; cursor:pointer; }
+  .atpop li b { font-size:14px; font-weight:500; line-height:20px; color:var(--g20); }
+  .atpop li small { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; font-weight:500; line-height:18px; color:var(--g60); }
+  .atpop li.on { background:var(--g95); }
+  .atpop .none { padding:12px 16px; font-size:14px; font-weight:500; color:var(--g60); cursor:default; }
   /* Project list / Report list 모달 (Figma 2734:20558 A안, 2742:20636 B안). 단일 선택 */
   .pl-dim { position:fixed; inset:0; z-index:40; display:flex; align-items:center; justify-content:center; padding:24px; background:rgba(0,0,0,.3); }
   .pl > * { flex:none; } .pl > .pl-tbl { flex:0 1 auto; height:550px; min-height:200px; overflow:auto; } /* 표 칸 높이 고정(머리 50 + 10줄 × 50): 검색 결과가 적거나 없어도 모달 높이 그대로 */ /* 낮은 화면: 표만 스크롤(제목·버튼·검색·페이지 번호 고정), 표가 200보다 작아질 만큼 낮으면 모달 전체 스크롤 */
@@ -226,6 +237,7 @@
   // 답변 옵션 · Project list (2026-11-17, Figma 1665:7045). A안 = 프로젝트 목록, B안 = 보고서 목록. 단일 선택, 내일(11-18) 미팅에서 하나로 결정
   var OPTS = [['deep', 'Deep Research', false], ['journal', 'Academic Journal', false], ['kb', 'Knowledge Base', false], ['web', 'Web Search', true]];
   var sel = null; // 선택한 프로젝트·보고서 {label}
+  var at = null; // @로 고른 프로젝트 번호 (모달 선택과 하나만: 하나를 고르면 다른 쪽은 지움)
   // A안 (2026-11-18): Status 칸 삭제(완료된 보고서가 있는 프로젝트만 나옴), 보고서 칸 = 드롭다운(기본 = 최신 보고서, 1건이면 화살표 없는 상자)
   var PRJ = [
     ['PRJ-2026-0049', '대장암 환자 혈청 대사체 프로파일링', '대사체', '2026-11-12', ['결과보고서 v2 (최종)', '추가 분석 보고서', '결과보고서 v1']],
@@ -294,8 +306,22 @@
   function plClose() { var d = $('#plDim'); if (d) { d.remove(); outer(false); } }
   function fpopClose() { var f = $('#fpop'); if (f) f.remove(); var o = $('.dd.open'); if (o) o.classList.remove('open'); }
   document.addEventListener('scroll', function () { fpopClose(); }, true); // 표를 스크롤하면 드롭다운 닫기
+  // @ 프로젝트 목록: 커서 앞이 '@검색어'(맨 앞 또는 공백 뒤)이면 열고, 프로젝트 번호·이름으로 거름
+  function atClose() { var p = $('#atpop'); if (p) p.remove(); }
+  function atCheck() {
+    var q = $('#q'); if (!q) return; var m = q.value.slice(0, q.selectionStart).match(/(^|\s)@([^\s@]*)$/);
+    if (!m) { atClose(); return; }
+    var t = m[2].toLowerCase(), list = PRJ.filter(function (r) { return !t || (r[0] + ' ' + r[1]).toLowerCase().indexOf(t) > -1; });
+    var html = '<h6>Project</h6><ul role="listbox">' + (list.length ? list.map(function (r, j) { return '<li role="option" data-at="' + r[0] + '"' + (j === 0 ? ' class="on"' : '') + '><b>' + r[0] + '</b><small>' + esc(r[1]) + '</small></li>'; }).join('') : '<li class="none">검색 결과가 없습니다.</li>') + '</ul>';
+    var p = $('#atpop'); if (!p) { q.parentNode.insertAdjacentHTML('beforeend', '<div class="atpop" id="atpop"></div>'); p = $('#atpop'); }
+    p.innerHTML = html;
+  }
+  function atPick(no) { // '@검색어'를 지우고 칩으로
+    var q = $('#q'), c = q.selectionStart, before = q.value.slice(0, c).replace(/(^|\s)@[^\s@]*$/, '$1'), rest = before + q.value.slice(c);
+    at = no; sel = null; atClose(); draw(); q = $('#q'); q.value = rest.replace(/^\s+/, ''); q.dispatchEvent(new Event('input')); q.focus(); q.selectionStart = q.selectionEnd = before.replace(/^\s+/, '').length;
+  }
   function boxHTML() {
-    return '<div class="pbox' + (sel ? ' has-sel' : '') + '">' + (sel ? '<div class="psel"><span>' + esc(sel) + '<button type="button" id="selX" aria-label="선택 해제"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></span></div>' : '') + '<textarea id="q" rows="1" placeholder="Ask CellKey AI"></textarea>' +
+    return '<div class="pbox' + (sel ? ' has-sel' : '') + '">' + (sel ? '<div class="psel"><span>' + esc(sel) + '<button type="button" id="selX" aria-label="선택 해제"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></span></div>' : '') + '<div class="qrow">' + (at ? '<span class="atchip" title="@ 프로젝트 (지우려면 칩 바로 뒤에서 Backspace)">@' + esc(at) + '</span>' : '') + '<textarea id="q" rows="1" placeholder="Ask CellKey AI"></textarea></div>' +
       '<div class="ptools"><div class="l"><button type="button" class="gbtn" id="att" aria-label="파일 첨부"><img src="assets/ai/ic-attach.svg" width="24" height="24" alt=""></button>' +
       '<button type="button" class="gbtn" id="opt" aria-label="답변 옵션" aria-haspopup="dialog" aria-expanded="false"><img src="assets/ai/ic-options.svg" width="24" height="24" alt=""></button></div>' +
       '<button type="button" class="send" id="send" aria-label="보내기" disabled><img src="assets/ai/ic-enter.svg" width="40" height="40" alt=""></button></div></div>';
@@ -309,13 +335,25 @@
       '<p class="foot">CellKey AI can make mistakes. Check again for important information.</p>';
     var box = $('#msgs'); if (box) box.scrollTop = 1e6;
     var q = $('#q'), send = $('#send');
-    q.addEventListener('input', function () { send.disabled = !q.value.trim(); q.style.height = 'auto'; q.style.height = Math.min(q.scrollHeight, 200) + 'px'; });
-    q.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); go(q.value.trim()); } });
+    q.addEventListener('input', function () { send.disabled = !q.value.trim(); q.style.height = 'auto'; q.style.height = Math.min(q.scrollHeight, 184) + 'px'; atCheck(); });
+    q.addEventListener('click', atCheck);
+    q.addEventListener('keydown', function (e) {
+      var ap = $('#atpop');
+      if (ap && !e.isComposing) { // @ 목록: ↑↓ 이동, Enter·Tab 선택, Esc 닫기
+        var li = ap.querySelectorAll('li[data-at]'), k = [].indexOf.call(li, ap.querySelector('li.on'));
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (!li.length) return; k = (k + (e.key === 'ArrowDown' ? 1 : -1) + li.length) % li.length; li.forEach(function (x, j) { x.classList.toggle('on', j === k); }); li[k].scrollIntoView({ block: 'nearest' }); return; }
+        if ((e.key === 'Enter' || e.key === 'Tab') && li.length) { e.preventDefault(); atPick(li[Math.max(0, k)].dataset.at); return; }
+        if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); atClose(); return; }
+      }
+      if (e.key === 'Backspace' && at && q.selectionStart === 0 && q.selectionEnd === 0) { e.preventDefault(); at = null; var v = q.value; draw(); $('#q').value = v; $('#q').focus(); return; } // 칩 바로 뒤에서 Backspace = 칩 지우기
+      if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); go(q.value.trim()); }
+    });
     send.addEventListener('click', function () { go(q.value.trim()); });
   }
   function go(text) {
     if (!text) return;
     var msgs = cur > -1 ? CHATS[cur].m : live;
+    if (at) text = '@' + at + ' ' + text;
     msgs.push(['me', text], ['bot', '베타 화면이라 실제 답변은 아직 연결되지 않았습니다. 연결되면 논문과 분석 결과를 근거로 답변합니다.']);
     if (cur < 0) { CHATS.unshift({ t: text.slice(0, 22), m: live }); cur = 0; live = []; }
     draw(); $('#q').focus();
@@ -347,6 +385,8 @@
     var sw = e.target.closest('[data-sw]'); if (sw) { var o = OPTS.filter(function (x) { return x[0] === sw.dataset.sw; })[0]; o[2] = !o[2]; sw.setAttribute('aria-checked', o[2]); return; }
     if (e.target.closest('#plist')) { plOpen(); return; }
     if ($('#opop') && !e.target.closest('#opop')) togglePop(false);
+    var ai = e.target.closest('[data-at]'); if (ai) { atPick(ai.dataset.at); return; }
+    if (!e.target.closest('#atpop, #q')) atClose();
     if (e.target.closest('#selX')) { sel = null; draw(); $('#q').focus(); return; }
     if ($('#plDim')) {
       var dd = e.target.closest('[data-dd]'); // 보고서 드롭다운: 열기 · 닫기
@@ -357,7 +397,7 @@
       var ro = e.target.closest('[data-ro]'); if (ro) { var v = ro.dataset.ro.split(':'); repPick[+v[0]] = +v[1]; plPick = +v[0]; fpopClose(); plDraw(); return; } // 보고서를 고르면 그 줄도 선택
       var tr = e.target.closest('[data-pick]'); if (tr) { var k = +tr.dataset.pick; plPick = plPick === k ? -1 : k; plDraw(); return; } // 단일 선택: 다른 줄을 고르면 바뀜, 같은 줄을 다시 누르면 해제
       var pg = e.target.closest('[data-pg]'); if (pg) { plPage = pg.dataset.pg === '+' ? Math.min(10, plPage + 1) : +pg.dataset.pg; plDraw(); return; }
-      if (e.target.closest('#plSel')) { plQ = ''; var r = plRows().filter(function (x) { return x.i === plPick; })[0]; if (r) sel = r.label; plClose(); draw(); $('#q').focus(); return; }
+      if (e.target.closest('#plSel')) { plQ = ''; var r = plRows().filter(function (x) { return x.i === plPick; })[0]; if (r) { sel = r.label; at = null; } plClose(); draw(); $('#q').focus(); return; }
       if (e.target.closest('#plCancel') || e.target.id === 'plDim') { plClose(); return; }
       return;
     }
