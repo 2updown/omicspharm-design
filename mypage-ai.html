@@ -167,9 +167,9 @@
   .fpop button { padding:8px 12px; font-size:14px; font-weight:400; line-height:20px; color:var(--g20); text-align:left; }
   .fpop button:hover, .fpop button.on { background:#dff4f0; }
   .pl-pg { display:flex; justify-content:center; }
-  .pl-pg button { width:40px; height:40px; display:grid; place-items:center; font-size:14px; color:var(--g40); }
-  .pl-pg button i { display:grid; place-items:center; min-width:24px; height:24px; padding:0 4px; border-radius:4px; font-style:normal; }
-  .pl-pg button.on i { background:var(--g90); color:var(--g20); font-weight:600; }
+  .pl-pg button { width:40px; height:40px; display:grid; place-items:center; font-size:14px; font-weight:600; color:var(--g40); } /* Figma pagination: 40 버튼, 화살표 24 아이콘(선 1.5), 숫자 14 SemiBold #666 */
+  .pl-pg button i { display:grid; place-items:center; min-width:27px; height:24px; padding:0 4px; border-radius:8px; font-style:normal; }
+  .pl-pg button.on i { background:var(--g90); color:var(--g30); }
   .pl-pg button:disabled { color:#ccc; cursor:default; }
 </style>
 </head>
@@ -273,9 +273,10 @@
     $('#plBody').closest('.pl-tbl').classList.toggle('is-empty', !rows.length); // 결과 없음: 표 칸 높이에 맞춰 가운데 문구 (스크롤 없음)
     $('#plHead').innerHTML = '<tr><th></th>' + head.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr>';
     $('#plSel').disabled = plPick < 0;
-    var pg = '<button type="button" disabled aria-label="처음">«</button><button type="button" disabled aria-label="이전">‹</button>';
+    var ic = function (d) { return '<svg width="40" height="40" viewBox="0 0 40 40" fill="none">' + d.map(function (x) { return '<path d="' + x + '" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'; }).join('') + '</svg>'; };
+    var pg = '<button type="button" disabled aria-label="처음">' + ic(['M25 15L20 20L25 25', 'M20 15L15 20L20 25']) + '</button><button type="button" disabled aria-label="이전">' + ic(['M22 15L17 20L22 25']) + '</button>';
     for (var i = 1; i <= 10; i++) pg += '<button type="button" data-pg="' + i + '"' + (i === plPage ? ' class="on"' : '') + '><i>' + i + '</i></button>';
-    $('#plPg').innerHTML = pg + '<button type="button" aria-label="다음" data-pg="+">›</button><button type="button" aria-label="끝" data-pg="10">»</button>';
+    $('#plPg').innerHTML = pg + '<button type="button" aria-label="다음" data-pg="+">' + ic(['M17 25L22 20L17 15']) + '</button><button type="button" aria-label="끝" data-pg="10">' + ic(['M15 25L20 20L15 15', 'M20 25L25 20L20 15']) + '</button>';
   }
   function plOpen() {
     togglePop(false); plPage = 1; plQ = ''; plPick = -1; repPick = {}; // 열 때마다 처음 상태 (Cancel = 선택 취소)
