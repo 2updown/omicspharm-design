@@ -157,12 +157,12 @@
   .ck { display:inline-grid; place-items:center; width:18px; height:18px; border:1.5px solid #999; border-radius:2px; background:#fff; vertical-align:middle; }
   tr.on .ck { border-color:var(--p30); background:var(--p30); } /* 선택 = Primary (legacy)/30 (2026-11-17 회색 → 초록) */
   tr.on .ck::after { content:""; width:5px; height:9px; margin-top:-2px; border:solid #fff; border-width:0 2px 2px 0; transform:rotate(45deg); }
-  /* 보고서 드롭다운 = [Core] Select (default · open · disabled), 라벨 없이 폭 240 */
+  /* 보고서 드롭다운 = [Core] Select (default · open), 라벨 없이 폭 240. 1건이면 화살표 없는 상자 */
   .dd { position:relative; display:flex; align-items:center; width:240px; height:40px; padding:0 34px 0 12px; border:1px solid var(--g90); border-radius:8px; background:#fff; font-size:14px; font-weight:400; color:var(--g20); text-align:left; }
   .dd span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .dd::after { content:""; position:absolute; right:14px; top:17px; border:5px solid transparent; border-top:6px solid var(--g50); border-bottom:0; }
   .dd.open { border:2px solid var(--p30); padding-left:11px; }
-  .dd:disabled { background:var(--g95); color:#b2b2b2; cursor:default; } .dd:disabled::after { border-top-color:#b2b2b2; }
+  .dd-one { display:flex; align-items:center; width:240px; height:40px; padding:0 12px; border:1px solid var(--g90); border-radius:8px; background:#fff; font-size:14px; font-weight:400; color:var(--g20); } .dd-one span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } /* 1건: 드롭다운과 같은 상자, 화살표만 없음 */
   .fpop { position:fixed; z-index:50; display:flex; flex-direction:column; padding:4px 0; border:1px solid var(--g90); border-radius:8px; background:#fff; box-shadow:0 4px 16px rgba(0,0,0,.08); }
   .fpop button { padding:8px 12px; font-size:14px; font-weight:400; line-height:20px; color:var(--g20); text-align:left; }
   .fpop button:hover, .fpop button.on { background:#dff4f0; }
@@ -226,7 +226,7 @@
   // 답변 옵션 · Project list (2026-11-17, Figma 1665:7045). A안 = 프로젝트 목록, B안 = 보고서 목록. 단일 선택, 내일(11-18) 미팅에서 하나로 결정
   var OPTS = [['deep', 'Deep Research', false], ['journal', 'Academic Journal', false], ['kb', 'Knowledge Base', false], ['web', 'Web Search', true]];
   var sel = null; // 선택한 프로젝트·보고서 {label}
-  // A안 (2026-11-18): Status 칸 삭제(완료된 보고서가 있는 프로젝트만 나옴), 보고서 칸 = 드롭다운(기본 = 최신 보고서, 1건이면 비활성)
+  // A안 (2026-11-18): Status 칸 삭제(완료된 보고서가 있는 프로젝트만 나옴), 보고서 칸 = 드롭다운(기본 = 최신 보고서, 1건이면 화살표 없는 상자)
   var PRJ = [
     ['PRJ-2026-0049', '대장암 환자 혈청 대사체 프로파일링', '대사체', '2026-11-12', ['결과보고서 v2 (최종)', '추가 분석 보고서', '결과보고서 v1']],
     ['PRJ-2026-0048', '마우스 간 조직 RNA-seq 발현 차이 분석', '유전체', '2026-11-10', ['추가 분석 보고서', '결과보고서']],
@@ -258,7 +258,7 @@
     pp.style.maxHeight = (innerHeight - 16) + 'px';
   }
   var plPage = 1, plPick = -1, plQ = '';
-  var ddHTML = function (i) { var r = PRJ[i][4], j = repPick[i] || 0; return '<button type="button" class="dd' + (r.length < 2 ? '" disabled' : '" data-dd="' + i + '" aria-haspopup="listbox"') + '><span>' + esc(r[j]) + '</span></button>'; };
+  var ddHTML = function (i) { var r = PRJ[i][4], j = repPick[i] || 0; return r.length < 2 ? '<div class="dd-one"><span>' + esc(r[0]) + '</span></div>' : '<button type="button" class="dd" data-dd="' + i + '" aria-haspopup="listbox"><span>' + esc(r[j]) + '</span></button>'; }; // 보고서 1건이면 같은 상자에 화살표만 없음 (2026-11-18: 비활성 회색은 선택 못 하는 줄로 보임)
   function plRows() {
     var q = plQ.toLowerCase();
     var rows = PRJ.map(function (r, i) { return { i: i, key: r[0] + r[1], cells: [r[0], r[1], r[2], r[3], ddHTML(i)], label: r[0] + ' ' + r[4][repPick[i] || 0] }; });
