@@ -85,8 +85,12 @@
   .chat { position:relative; z-index:1; display:flex; flex-direction:column; width:100%; height:100%; padding:40px 0 56px; }
   .msgs { flex:1; overflow:auto; display:flex; flex-direction:column; gap:16px; width:724px; max-width:100%; margin:0 auto; padding-bottom:24px; }
   .msg { max-width:85%; padding:12px 16px; border-radius:16px; font-weight:500; font-size:15px; line-height:24px; white-space:pre-line; }
-  .msg.me { align-self:flex-end; background:var(--p30); color:#fff; }
-  .msg.bot { align-self:flex-start; background:rgba(255,255,255,.7); box-shadow:var(--glass); color:var(--g20); }
+  .msg.me { align-self:flex-end; display:flex; flex-direction:column; align-items:flex-start; gap:6px; min-width:260px; border-radius:12px; background:rgba(255,255,255,.7); box-shadow:var(--glass); color:var(--g20); font-size:16px; } /* 2026-11-19 Figma Report_process 말풍선: 흰 카드, 위에 @칩·선택 표시 */
+  .msg.me .atchip { font-size:14px; line-height:20px; } .msg.me .seltag { font-size:14px; font-weight:600; color:#18988b; }
+  .msg.bot, .msg.proc { align-self:flex-start; max-width:100%; padding:0; font-size:16px; font-weight:400; line-height:26px; color:var(--g20); } /* 답변: 말풍선 없이 글자 */
+  .msg b { font-weight:600; } .msg .off { color:var(--g60); }
+  .msg hr { margin:20px 0; border:0; border-top:1px solid var(--g90); }
+  .msg h4 { margin-bottom:8px; font-size:18px; font-weight:600; line-height:28px; } .msg .sum p + p { margin-top:8px; }
   .chat .pbox { margin:0 auto; }
   .toast { position:fixed; left:50%; bottom:64px; transform:translateX(-50%); padding:10px 16px; border-radius:8px; background:rgba(51,51,51,.92); color:#fff; font-size:14px; line-height:20px; }
   /* 오른쪽 패널로 띄운 경우: 왼쪽 메뉴는 접힌 상태(아이콘 줄)로 시작 + 위에 로고 줄 (오른쪽 위 X는 바깥 창에 있음, 2026-10-26 메뉴 추가) */
@@ -326,11 +330,30 @@
       '<button type="button" class="gbtn" id="opt" aria-label="답변 옵션" aria-haspopup="dialog" aria-expanded="false"><img src="assets/ai/ic-options.svg" width="24" height="24" alt=""></button></div>' +
       '<button type="button" class="send" id="send" aria-label="보내기" disabled><img src="assets/ai/ic-enter.svg" width="40" height="40" alt=""></button></div></div>';
   }
+  // 보고서 해석 (2026-11-19, Figma 1665:7045 Report_process 4종): 진행 4단계 → 완료 요약. 보고서 여러 건 = 번호로 묻기, Project 없음 = @ 안내
+  var STEPS = [['프로젝트 및 보고서 확인', function (c) { return c.no + '의 분석 정보와 결과보고서를 확인합니다.'; }], ['보고서 내용 읽기', function () { return '분석 방법, 시료 정보, 결과 표와 그림을 읽고 있습니다.'; }], ['주요 결과 해석', function () { return '의미 있는 변화와 핵심 지표를 찾아 해석합니다.'; }], ['해석 결과 정리', function () { return '해석 결과를 보기 쉽게 정리합니다.'; }]];
+  var pending = null; // 보고서 번호를 기다리는 프로젝트 번호
+  var repsOf = function (no) { var r = PRJ.filter(function (x) { return x[0] === no; })[0]; return r ? r[4] : []; };
+  function msgHTML(m, k) {
+    if (m[0] === 'me') return '<div class="msg me">' + (m[2] ? (m[2].charAt(0) === '@' ? '<span class="atchip">' + esc(m[2]) + '</span>' : '<span class="seltag">' + esc(m[2]) + '</span>') : '') + '<span>' + esc(m[1]) + '</span></div>';
+    if (m[0] === 'proc') { var c = m[1]; return '<div class="msg proc" id="proc' + k + '">' + esc(c.no) + '의 결과보고서를 해석하고 있습니다.<br><br><b>[보고서 해석 중...]</b><br><br>' + STEPS.map(function (st, j) { return '<div' + (j + 1 > c.step ? ' class="off"' : '') + '><b>' + (j + 1) + '/4 ' + st[0] + '</b><br>' + esc(st[1](c)) + '</div>'; }).join('<br>') + '</div>'; }
+    if (m[0] === 'done') { var d = m[1]; return '<div class="msg proc">' + esc(d.no) + '의 결과보고서를 해석하고 있습니다.<br><br><b>[보고서 해석 완료]</b><br><br>' + esc(d.rep) + '를 기준으로 해석했습니다.<hr><div class="sum"><h4>Summary</h4>' +
+      '<p>환자군 24명, 대조군 24명의 혈청 시료에서 대사체 312종을 정량했고, 두 군 사이에 유의하게 차이 나는 대사체 18종을 확인했습니다.</p><p>환자군에서 담즙산과 아실카르니틴 계열은 높게, 글루타민과 트립토판 등 일부 아미노산은 낮게 나타났습니다.</p><p>시료 수가 많지 않고 별도 검증 코호트가 없으므로, 바이오마커 후보로 활용하려면 추가 검증을 권장합니다.</p><p class="off">(프로토타입 예시 답변)</p></div></div>'; }
+    return '<div class="msg ' + m[0] + '">' + esc(m[1]) + '</div>';
+  }
+  function runProc(msgs, no, rep) { // 1/4 → 4/4 (단계마다 0.9초) → 완료 요약
+    var m = ['proc', { no: no, rep: rep, step: 1 }]; msgs.push(m);
+    var t = setInterval(function () {
+      var k = msgs.indexOf(m); if (k < 0) { clearInterval(t); return; }
+      if (m[1].step < 4) m[1].step++; else { clearInterval(t); msgs[k] = ['done', m[1]]; }
+      var el = document.getElementById('proc' + k); if (el && (cur > -1 ? CHATS[cur].m : live) === msgs) { el.outerHTML = msgHTML(msgs[k], k); var b = $('#msgs'); if (b) b.scrollTop = 1e6; }
+    }, 900);
+  }
   function draw() {
     $('#recent').innerHTML = CHATS.map(function (c, i) { return '<li><button type="button" data-c="' + i + '"' + (i === cur ? ' class="on"' : '') + '>' + esc(c.t) + '</button></li>'; }).join('');
     var msgs = cur > -1 ? CHATS[cur].m : live;
     $('#content').innerHTML = (msgs.length
-      ? '<div class="chat"><div class="msgs" id="msgs">' + msgs.map(function (m) { return '<div class="msg ' + m[0] + '">' + esc(m[1]) + '</div>'; }).join('') + '</div>' + boxHTML() + '</div>'
+      ? '<div class="chat"><div class="msgs" id="msgs">' + msgs.map(msgHTML).join('') + '</div>' + boxHTML() + '</div>'
       : '<div class="prompt"><h1>How can I help you?</h1><div class="pbox-wrap">' + boxHTML() + '<div class="chips">' + CHIPS.map(function (c, i) { return '<button type="button" data-chip="' + i + '">' + c[0] + '</button>'; }).join('') + '</div></div></div>') +
       '<p class="foot">CellKey AI can make mistakes. Check again for important information.</p>';
     var box = $('#msgs'); if (box) box.scrollTop = 1e6;
@@ -353,9 +376,21 @@
   function go(text) {
     if (!text) return;
     var msgs = cur > -1 ? CHATS[cur].m : live;
-    if (at) text = '@' + at + ' ' + text;
-    msgs.push(['me', text], ['bot', '베타 화면이라 실제 답변은 아직 연결되지 않았습니다. 연결되면 논문과 분석 결과를 근거로 답변합니다.']);
-    if (cur < 0) { CHATS.unshift({ t: text.slice(0, 22), m: live }); cur = 0; live = []; }
+    var chip = at ? '@' + at : (sel || ''), ctx = sel ? { no: sel.split(' ')[0], rep: sel.slice(sel.indexOf(' ') + 1) } : at ? { no: at } : null;
+    msgs.push(['me', text, chip]);
+    if (cur < 0) { CHATS.unshift({ t: (ctx ? ctx.no + ' ' : '') + text.slice(0, 16), m: live }); cur = 0; live = []; msgs = CHATS[0].m; }
+    at = null; sel = null; // 보낸 뒤 입력칸의 칩·선택 표시는 비움 (Figma Report_process 입력칸)
+    if (pending) { // 번호 답변 기다리는 중
+      var rs = repsOf(pending), n = parseInt(text, 10);
+      if (n >= 1 && n <= rs.length) { var pno = pending; pending = null; runProc(msgs, pno, rs[n - 1]); }
+      else msgs.push(['bot', '목록에 있는 번호를 입력해 주세요. (1~' + rs.length + ')']);
+    } else if (/보고서|해석|report|interpret/i.test(text)) {
+      if (!ctx) msgs.push(['bot', '사용할 Project를 선택해주세요.\n@를 입력해 KB Project를 검색할 수 있습니다.']);
+      else if (ctx.rep) runProc(msgs, ctx.no, ctx.rep);
+      else { var r = repsOf(ctx.no);
+        if (r.length > 1) { pending = ctx.no; msgs.push(['bot', '이 프로젝트에는 보고서가 ' + r.length + '건 있습니다. 어떤 보고서를 해석할까요?\n번호를 입력해 주세요.\n\n' + r.map(function (x, k) { return (k + 1) + '. ' + x; }).join('\n')]); }
+        else runProc(msgs, ctx.no, r[0]); }
+    } else msgs.push(['bot', '베타 화면이라 실제 답변은 아직 연결되지 않았습니다. 연결되면 논문과 분석 결과를 근거로 답변합니다.']);
     draw(); $('#q').focus();
   }
   // 모바일 메뉴 (drawer): 열 때는 접힘 상태를 잠시 풀어 전체 메뉴(새 대화·최근 대화·프로필)를 보여주고, 닫으면 원래대로
