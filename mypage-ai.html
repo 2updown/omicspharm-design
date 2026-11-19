@@ -339,7 +339,7 @@
   function msgHTML(m, k) {
     if (m[0] === 'me') return '<div class="msg me">' + (m[2] ? (m[2].charAt(0) === '@' ? '<span class="atchip">' + esc(m[2]) + '</span>' : '<span class="seltag">' + esc(m[2]) + '</span>') : '') + (m[1] ? '<span>' + esc(m[1]) + '</span>' : '') + '</div>';
     if (m[0] === 'proc') { var c = m[1]; return '<div class="msg proc" id="proc' + k + '">' + esc(c.no) + '의 결과보고서를 확인하고 있습니다.<br><br><b>[답변 작성 중...]</b><br><br>' + STEPS.map(function (st, j) { return '<div' + (j + 1 > c.step ? ' class="off"' : '') + '><b>' + (j + 1) + '/4 ' + st[0] + '</b><br>' + esc(st[1](c)) + '</div>'; }).join('<br>') + '</div>'; }
-    if (m[0] === 'done') { var d = m[1]; return '<div class="msg proc"><b>[답변 완료]</b><br><br>' + esc(d.rep) + '를 기준으로 답변했습니다.<hr><div class="sum"><p>아니요, 본문은 QC 시료의 동정 단백질 수가 Table 6에 있다고 적었지만 실제 QC 결과 표는 \'Table 1. Number of proteins identified in the QC sample\'입니다. 이 표에서 QC 시료의 단백질은 4048개로 기준(3,500개 초과)을 넘었습니다. 본문의 표 번호가 잘못 적혀 있습니다.</p></div></div>'; }
+    if (m[0] === 'done') { var d = m[1]; return '<div class="msg proc"><b>[답변 완료]</b><br>' + esc(d.rep) + '를 기준으로 답변했습니다.<hr><div class="sum"><p>아니요, 본문은 QC 시료의 동정 단백질 수가 Table 6에 있다고 적었지만 실제 QC 결과 표는 \'Table 1. Number of proteins identified in the QC sample\'입니다. 이 표에서 QC 시료의 단백질은 4048개로 기준(3,500개 초과)을 넘었습니다. 본문의 표 번호가 잘못 적혀 있습니다.</p></div></div>'; }
     return '<div class="msg ' + m[0] + '">' + esc(m[1]) + '</div>';
   }
   function runProc(msgs, no, rep) { // 1/4 → 4/4 (단계마다 0.9초) → 완료 요약
