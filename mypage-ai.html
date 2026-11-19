@@ -330,16 +330,16 @@
       '<button type="button" class="gbtn" id="opt" aria-label="답변 옵션" aria-haspopup="dialog" aria-expanded="false"><img src="assets/ai/ic-options.svg" width="24" height="24" alt=""></button></div>' +
       '<button type="button" class="send" id="send" aria-label="보내기"' + (at || sel ? '' : ' disabled') + '><img src="assets/ai/ic-enter.svg" width="40" height="40" alt=""></button></div></div>';
   }
-  // 보고서 해석 (2026-11-19, Figma 1665:7045 Report_process 4종): 진행 4단계 → 끝나면 상황보고 대신 [보고서 해석 완료] + 기준 보고서 + Summary (2026-11-19). 보고서 여러 건 = 번호로 묻기, Project 없음 = @ 안내
-  var STEPS = [['프로젝트 및 보고서 확인', function (c) { return c.no + '의 분석 정보와 결과보고서를 확인합니다.'; }], ['보고서 내용 읽기', function () { return '분석 방법, 시료 정보, 결과 표와 그림을 읽고 있습니다.'; }], ['주요 결과 해석', function () { return '의미 있는 변화와 핵심 지표를 찾아 해석합니다.'; }], ['해석 결과 정리', function () { return '해석 결과를 보기 쉽게 정리합니다.'; }]];
+  // 보고서 질문 답변 (2026-11-19, Figma 1665:7045 Report_process): 진행 4단계(확인, 질문 확인, 근거 찾기, 답변 작성) → 끝나면 [답변 완료] + 기준 보고서 + 답변. 보고서 여러 건 = 번호로 묻기, Project 없음 = @ 안내
+  var STEPS = [['프로젝트 및 보고서 확인', function (c) { return c.no + '의 분석 정보와 결과보고서를 확인합니다.'; }], ['질문 확인', function () { return '질문에서 확인할 항목과 핵심 키워드를 정리합니다.'; }], ['근거 찾기', function () { return '보고서 본문, 표와 그림에서 관련 내용을 찾습니다.'; }], ['답변 작성', function () { return '찾은 근거를 바탕으로 답변을 작성합니다.'; }]];
   var pending = null; // 보고서 번호를 기다리는 프로젝트 번호
   var REPMETA = { '결과보고서 v2 (최종)': ['PDF', '2026-11-12'], '추가 분석 보고서': ['DOCX', '2026-11-11'], '결과보고서 v1': ['PDF', '2026-11-06'] }; // 파일 종류 | 날짜 (그 밖은 PDF | 프로젝트 날짜)
   var repLine = function (no, name) { var m = REPMETA[name] || ['PDF', (PRJ.filter(function (x) { return x[0] === no; })[0] || [])[3]]; if (no === 'PRJ-2026-0048' && name === '결과보고서') m = ['PDF', '2026-11-10']; return name + '  |  ' + m[0] + '  |  ' + m[1]; };
   var repsOf = function (no) { var r = PRJ.filter(function (x) { return x[0] === no; })[0]; return r ? r[4] : []; };
   function msgHTML(m, k) {
     if (m[0] === 'me') return '<div class="msg me">' + (m[2] ? (m[2].charAt(0) === '@' ? '<span class="atchip">' + esc(m[2]) + '</span>' : '<span class="seltag">' + esc(m[2]) + '</span>') : '') + (m[1] ? '<span>' + esc(m[1]) + '</span>' : '') + '</div>';
-    if (m[0] === 'proc') { var c = m[1]; return '<div class="msg proc" id="proc' + k + '">' + esc(c.no) + '의 결과보고서를 해석하고 있습니다.<br><br><b>[보고서 해석 중...]</b><br><br>' + STEPS.map(function (st, j) { return '<div' + (j + 1 > c.step ? ' class="off"' : '') + '><b>' + (j + 1) + '/4 ' + st[0] + '</b><br>' + esc(st[1](c)) + '</div>'; }).join('<br>') + '</div>'; }
-    if (m[0] === 'done') { var d = m[1]; return '<div class="msg proc"><b>[보고서 해석 완료]</b><br><br>' + esc(d.rep) + '를 기준으로 해석했습니다.<hr><div class="sum"><p>아니요, 본문은 QC 시료의 동정 단백질 수가 Table 6에 있다고 적었지만 실제 QC 결과 표는 \'Table 1. Number of proteins identified in the QC sample\'입니다. 이 표에서 QC 시료의 단백질은 4048개로 기준(3,500개 초과)을 넘었습니다. 본문의 표 번호가 잘못 적혀 있습니다.</p></div></div>'; }
+    if (m[0] === 'proc') { var c = m[1]; return '<div class="msg proc" id="proc' + k + '">' + esc(c.no) + '의 결과보고서에서 답을 찾고 있습니다.<br><br><b>[답변 작성 중...]</b><br><br>' + STEPS.map(function (st, j) { return '<div' + (j + 1 > c.step ? ' class="off"' : '') + '><b>' + (j + 1) + '/4 ' + st[0] + '</b><br>' + esc(st[1](c)) + '</div>'; }).join('<br>') + '</div>'; }
+    if (m[0] === 'done') { var d = m[1]; return '<div class="msg proc"><b>[답변 완료]</b><br><br>' + esc(d.rep) + '를 기준으로 답변했습니다.<hr><div class="sum"><p>아니요, 본문은 QC 시료의 동정 단백질 수가 Table 6에 있다고 적었지만 실제 QC 결과 표는 \'Table 1. Number of proteins identified in the QC sample\'입니다. 이 표에서 QC 시료의 단백질은 4048개로 기준(3,500개 초과)을 넘었습니다. 본문의 표 번호가 잘못 적혀 있습니다.</p></div></div>'; }
     return '<div class="msg ' + m[0] + '">' + esc(m[1]) + '</div>';
   }
   function runProc(msgs, no, rep) { // 1/4 → 4/4 (단계마다 0.9초) → 완료 요약
@@ -375,12 +375,12 @@
     send.addEventListener('click', function () { go(q.value.trim()); });
   }
   function go(text) {
-    if (!text && !at && !sel) return; // 칩이나 선택 표시만 있어도 보낼 수 있음 (프롬프트 없이 = 보고서 해석으로 진행)
+    if (!text && !at && !sel) return; // 칩이나 선택 표시만 있어도 보낼 수 있음 (프롬프트 없이 = 보고서 답변으로 진행)
     var chipOnly = !text;
     var msgs = cur > -1 ? CHATS[cur].m : live;
     var chip = at ? '@' + at : (sel || ''), ctx = sel ? { no: sel.split(' ')[0], rep: sel.slice(sel.indexOf(' ') + 1) } : at ? { no: at } : null;
     msgs.push(['me', text, chip]);
-    if (cur < 0) { CHATS.unshift({ t: (ctx ? ctx.no + ' ' : '') + (text ? text.slice(0, 16) : '보고서 해석'), m: live }); cur = 0; live = []; msgs = CHATS[0].m; }
+    if (cur < 0) { CHATS.unshift({ t: (ctx ? ctx.no + ' ' : '') + (text ? text.slice(0, 16) : '보고서 질문'), m: live }); cur = 0; live = []; msgs = CHATS[0].m; }
     at = null; sel = null; // 보낸 뒤 입력칸의 칩·선택 표시는 비움 (Figma Report_process 입력칸)
     if (pending) { // 번호 답변 기다리는 중
       var rs = repsOf(pending), n = parseInt(text, 10), nz = function (x) { return String(x).toLowerCase().replace(/[\s()]/g, ''); }, tq = nz(text).replace(/(보고서|로|으로|요|해줘|번)$/g, '');
@@ -391,7 +391,7 @@
       if (!ctx) msgs.push(['bot', '사용할 Project를 선택해주세요.\n@를 입력해 KB Project를 검색할 수 있습니다.']);
       else if (ctx.rep) runProc(msgs, ctx.no, ctx.rep);
       else { var r = repsOf(ctx.no);
-        if (r.length > 1) { pending = ctx.no; msgs.push(['bot', '이 프로젝트에는 보고서가 ' + r.length + '건 있습니다. 어떤 보고서를 해석할까요?\n\n' + r.map(function (x, k) { return (k + 1) + '. ' + repLine(ctx.no, x); }).join('\n')]); }
+        if (r.length > 1) { pending = ctx.no; msgs.push(['bot', '이 프로젝트에는 보고서가 ' + r.length + '건 있습니다. 어떤 보고서를 기준으로 답변할까요?\n\n' + r.map(function (x, k) { return (k + 1) + '. ' + repLine(ctx.no, x); }).join('\n')]); }
         else runProc(msgs, ctx.no, r[0]); }
     } else msgs.push(['bot', '베타 화면이라 실제 답변은 아직 연결되지 않았습니다. 연결되면 논문과 분석 결과를 근거로 답변합니다.']);
     draw(); $('#q').focus();
