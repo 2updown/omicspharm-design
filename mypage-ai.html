@@ -333,6 +333,8 @@
   // 보고서 해석 (2026-11-19, Figma 1665:7045 Report_process 4종): 진행 4단계 → 완료 요약. 보고서 여러 건 = 번호로 묻기, Project 없음 = @ 안내
   var STEPS = [['프로젝트 및 보고서 확인', function (c) { return c.no + '의 분석 정보와 결과보고서를 확인합니다.'; }], ['보고서 내용 읽기', function () { return '분석 방법, 시료 정보, 결과 표와 그림을 읽고 있습니다.'; }], ['주요 결과 해석', function () { return '의미 있는 변화와 핵심 지표를 찾아 해석합니다.'; }], ['해석 결과 정리', function () { return '해석 결과를 보기 쉽게 정리합니다.'; }]];
   var pending = null; // 보고서 번호를 기다리는 프로젝트 번호
+  var REPMETA = { '결과보고서 v2 (최종)': ['PDF', '2026-11-12'], '추가 분석 보고서': ['DOCX', '2026-11-11'], '결과보고서 v1': ['PDF', '2026-11-06'] }; // 파일 종류 | 날짜 (그 밖은 PDF | 프로젝트 날짜)
+  var repLine = function (no, name) { var m = REPMETA[name] || ['PDF', (PRJ.filter(function (x) { return x[0] === no; })[0] || [])[3]]; if (no === 'PRJ-2026-0048' && name === '결과보고서') m = ['PDF', '2026-11-10']; return name + '  |  ' + m[0] + '  |  ' + m[1]; };
   var repsOf = function (no) { var r = PRJ.filter(function (x) { return x[0] === no; })[0]; return r ? r[4] : []; };
   function msgHTML(m, k) {
     if (m[0] === 'me') return '<div class="msg me">' + (m[2] ? (m[2].charAt(0) === '@' ? '<span class="atchip">' + esc(m[2]) + '</span>' : '<span class="seltag">' + esc(m[2]) + '</span>') : '') + '<span>' + esc(m[1]) + '</span></div>';
@@ -388,7 +390,7 @@
       if (!ctx) msgs.push(['bot', '사용할 Project를 선택해주세요.\n@를 입력해 KB Project를 검색할 수 있습니다.']);
       else if (ctx.rep) runProc(msgs, ctx.no, ctx.rep);
       else { var r = repsOf(ctx.no);
-        if (r.length > 1) { pending = ctx.no; msgs.push(['bot', '이 프로젝트에는 보고서가 ' + r.length + '건 있습니다. 어떤 보고서를 해석할까요?\n번호를 입력해 주세요.\n\n' + r.map(function (x, k) { return (k + 1) + '. ' + x; }).join('\n')]); }
+        if (r.length > 1) { pending = ctx.no; msgs.push(['bot', '이 프로젝트에는 보고서가 ' + r.length + '건 있습니다. 어떤 보고서를 해석할까요?\n\n' + r.map(function (x, k) { return (k + 1) + '. ' + repLine(ctx.no, x); }).join('\n')]); }
         else runProc(msgs, ctx.no, r[0]); }
     } else msgs.push(['bot', '베타 화면이라 실제 답변은 아직 연결되지 않았습니다. 연결되면 논문과 분석 결과를 근거로 답변합니다.']);
     draw(); $('#q').focus();
