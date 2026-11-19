@@ -330,7 +330,7 @@
       '<button type="button" class="gbtn" id="opt" aria-label="답변 옵션" aria-haspopup="dialog" aria-expanded="false"><img src="assets/ai/ic-options.svg" width="24" height="24" alt=""></button></div>' +
       '<button type="button" class="send" id="send" aria-label="보내기"' + (at || sel ? '' : ' disabled') + '><img src="assets/ai/ic-enter.svg" width="40" height="40" alt=""></button></div></div>';
   }
-  // 보고서 해석 (2026-11-19, Figma 1665:7045 Report_process 4종): 진행 4단계 → 끝나면 상황보고는 사라지고 Summary만. 보고서 여러 건 = 번호로 묻기, Project 없음 = @ 안내
+  // 보고서 해석 (2026-11-19, Figma 1665:7045 Report_process 4종): 진행 4단계 → 끝나면 상황보고 대신 [보고서 해석 완료] + 기준 보고서 + Summary (2026-11-19). 보고서 여러 건 = 번호로 묻기, Project 없음 = @ 안내
   var STEPS = [['프로젝트 및 보고서 확인', function (c) { return c.no + '의 분석 정보와 결과보고서를 확인합니다.'; }], ['보고서 내용 읽기', function () { return '분석 방법, 시료 정보, 결과 표와 그림을 읽고 있습니다.'; }], ['주요 결과 해석', function () { return '의미 있는 변화와 핵심 지표를 찾아 해석합니다.'; }], ['해석 결과 정리', function () { return '해석 결과를 보기 쉽게 정리합니다.'; }]];
   var pending = null; // 보고서 번호를 기다리는 프로젝트 번호
   var REPMETA = { '결과보고서 v2 (최종)': ['PDF', '2026-11-12'], '추가 분석 보고서': ['DOCX', '2026-11-11'], '결과보고서 v1': ['PDF', '2026-11-06'] }; // 파일 종류 | 날짜 (그 밖은 PDF | 프로젝트 날짜)
@@ -339,7 +339,7 @@
   function msgHTML(m, k) {
     if (m[0] === 'me') return '<div class="msg me">' + (m[2] ? (m[2].charAt(0) === '@' ? '<span class="atchip">' + esc(m[2]) + '</span>' : '<span class="seltag">' + esc(m[2]) + '</span>') : '') + (m[1] ? '<span>' + esc(m[1]) + '</span>' : '') + '</div>';
     if (m[0] === 'proc') { var c = m[1]; return '<div class="msg proc" id="proc' + k + '">' + esc(c.no) + '의 결과보고서를 해석하고 있습니다.<br><br><b>[보고서 해석 중...]</b><br><br>' + STEPS.map(function (st, j) { return '<div' + (j + 1 > c.step ? ' class="off"' : '') + '><b>' + (j + 1) + '/4 ' + st[0] + '</b><br>' + esc(st[1](c)) + '</div>'; }).join('<br>') + '</div>'; }
-    if (m[0] === 'done') { var d = m[1]; return '<div class="msg proc"><div class="sum"><h4>Summary</h4>' +
+    if (m[0] === 'done') { var d = m[1]; return '<div class="msg proc"><b>[보고서 해석 완료]</b><br><br>' + esc(d.rep) + '를 기준으로 해석했습니다.<hr><div class="sum"><h4>Summary</h4>' +
       '<p>환자군 24명, 대조군 24명의 혈청 시료에서 대사체 312종을 정량했고, 두 군 사이에 유의하게 차이 나는 대사체 18종을 확인했습니다.</p><p>환자군에서 담즙산과 아실카르니틴 계열은 높게, 글루타민과 트립토판 등 일부 아미노산은 낮게 나타났습니다.</p><p>시료 수가 많지 않고 별도 검증 코호트가 없으므로, 바이오마커 후보로 활용하려면 추가 검증을 권장합니다.</p><p class="off">(프로토타입 예시 답변)</p></div></div>'; }
     return '<div class="msg ' + m[0] + '">' + esc(m[1]) + '</div>';
   }
