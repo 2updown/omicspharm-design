@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <script src="assets/common/site.js?v=20261117a"></script>
 <script src="assets/common/consult.js?v=20261106b"></script>
-<script src="assets/common/mypage.js?v=20261118a"></script>
+<script src="assets/common/mypage.js?v=20261120a"></script>
 <style>
   :root { --p30:#1db3a4; --p40:#0ac4b2; --g0:#000; --g20:#333; --g30:#4d4d4d; --g40:#666; --g50:#808080; --g60:#999; --g90:#e5e5e5; --g95:#f2f2f2; --glass:0 4px 10px rgba(55,55,55,.05); }
   * { box-sizing:border-box; margin:0; padding:0; }
@@ -37,7 +37,8 @@
   .logo img { display:block; }
   .ai-title { display:none; align-items:center; gap:6px; width:132px; padding-left:8px; font-size:18px; font-weight:700; line-height:26px; color:var(--g0); }
   .ai-title span { padding:0 6px; border-radius:6px; border:1px solid #cdeee8; background:#f4fbfa; font-size:11px; font-weight:600; line-height:18px; color:#00786e; }
-  .emb-under .logo, .emb-inline .logo { display:none; } .emb-under .ai-title, .emb-inline .ai-title { display:flex; }
+  .emb-under .logo, .emb-inline .logo { display:none; } .emb-under .ai-title { display:flex; } /* inline은 제목이 바깥 상단 바에 있음 (2026-11-20) */
+  .emb-inline .brand { justify-content:flex-end; }
   .folded .ai-title { display:none !important; }
   /* 접힌 메뉴 (Figma 1700:18104): 폭 72, 위 = 메뉴 버튼(회색 배경·청록 아이콘) + 새 대화(+), 아래 = 크레딧·설정 */
   .rail-foot { display:none; flex-direction:column; align-items:center; gap:16px; }
@@ -434,7 +435,7 @@
       '<div class="cite-body"><p class="cite-db">Vector DB</p><h6>Documents used:</h6><ul>' + docs.map(function (d) { return '<li><p><b>[' + d[0] + ']</b><i>PDF</i>' + esc(d[1]) + '</p><span>' + esc(d[2]) + '</span></li>'; }).join('') + '</ul></div>';
   }
   var panel = 'memo'; // 오른쪽 패널 종류: memo | cite
-  function memoOpen(on) { var h = document.documentElement, was = h.classList.contains('memo-on'); h.classList.toggle('memo-on', on); if (was !== on) outer(on); if (!on) { h.classList.remove('memo-over'); return; } if (panel === 'cite') citeDraw(); else memoDraw(); memoMode(); memoFit(); } // 마이페이지 안 박스면 패널이 열린 동안 바깥 닫기(X) 숨김 (패널 X와 겹침)
+  function memoOpen(on) { var h = document.documentElement, was = h.classList.contains('memo-on'); h.classList.toggle('memo-on', on); if (!on) { h.classList.remove('memo-over'); return; } if (panel === 'cite') citeDraw(); else memoDraw(); memoMode(); memoFit(); } // 2026-11-20 바깥 닫기는 상단 바로 옮겨 숨기지 않음
   window.addEventListener('resize', memoMode);
   document.addEventListener('mouseover', function (e) { var t = e.target.closest('[data-tip]'), old = $('#rtip'); if (!t) { if (old) old.remove(); return; } if (old && old.dataset.for === t.dataset.c) return; if (old) old.remove(); var r = t.getBoundingClientRect(); var d = document.createElement('div'); d.className = 'rtip'; d.id = 'rtip'; d.dataset.for = t.dataset.c; d.textContent = t.dataset.tip; d.style.left = (r.right + 8) + 'px'; d.style.top = (r.top + r.height / 2 - 19) + 'px'; document.body.appendChild(d); }); // Recent hover: 오른쪽에 전체 제목 카드
   document.addEventListener('input', function (e) { var t = e.target.closest('[data-memo]'); if (t && cur > -1) { CHATS[cur].memo[+t.dataset.memo].t = t.value; memoFit(); } });

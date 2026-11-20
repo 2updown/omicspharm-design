@@ -497,6 +497,12 @@ span.tbtn { cursor:default; }
 .op-ai-x { position:absolute; top:16px; right:20px; z-index:2; width:36px; height:36px; border-radius:8px; }
 .op-ai-x { background:url(../ai/ic-close.svg?v=2) center/24px no-repeat; } /* AI Agent 디자인 시스템 아이콘 (Figma 2016:22105 Icons/medium/close, #000) */
 .op-ai-x:hover { background-color:rgba(0,0,0,.05); }
+.op-ai-bar { display:none; }
+.op-ai.inline .op-ai-bar { position:absolute; left:0; right:0; top:0; z-index:2; display:flex; align-items:center; justify-content:space-between; height:48px; padding:0 10px 0 20px; border-bottom:1px solid #e5e5e5; background:#fff; } /* 2026-11-20 상단 바: 제목 + 닫기 */
+.op-ai.inline .op-ai-bar .op-ai-x { position:static; }
+.op-ai-title { display:flex; align-items:center; gap:6px; margin:0; font-size:16px; font-weight:700; line-height:24px; color:#000; }
+.op-ai-title span { padding:0 6px; border:1px solid #cdeee8; border-radius:6px; background:#f4fbfa; font-size:11px; font-weight:600; line-height:18px; color:#00786e; }
+.op-ai.inline .op-ai-win iframe { position:absolute; top:48px; left:0; width:100%; height:calc(100% - 48px); }
 .op-ai.overlay .op-ai-win { inset:0; }
 .op-ai.overlay .op-ai-dim { display:none; }
 .op-ai.under { top:70px; z-index:40; } .op-ai.under .op-ai-win { inset:0; border-top:1px solid #e5e5e5; } .op-ai.under .op-ai-dim { display:none; } /* GNB 아래로 열기 (?ai=under, 검토용) */
@@ -509,7 +515,7 @@ span.tbtn { cursor:default; }
 .op-ai.inline .op-ai-fit { display:grid; }
 .op-ai-fit img { width:24px; height:24px; } /* Material 아이콘은 24 안에 여백이 있어 24로 (20이면 닫기보다 작아 보임) */ .op-ai-fit .i, .op-ai.full .op-ai-fit .o { display:none; } .op-ai.full .op-ai-fit .i { display:block; }
 .op-ai-fit:hover { background:rgba(0,0,0,.05); }
-.op-ai.drawer .op-ai-x, .op-ai.drawer .op-ai-fit { display:none !important; } /* 모바일 AI 메뉴(drawer)·Project list 모달이 열린 동안 */
+.op-ai:not(.inline).drawer .op-ai-x, .op-ai.drawer .op-ai-fit { display:none !important; } /* 모바일 AI 메뉴(drawer)·Project list 모달이 열린 동안 */
 .op-ai.inline.full { right:0; bottom:0; } .op-ai.inline.full .op-ai-win { border:0; border-left:1px solid #e5e5e5; border-top:1px solid #e5e5e5; border-radius:0; } /* ?aifit=full 비교용: 오른쪽·아래 끝까지 */
 .op-ai-inline [data-op-footer], .op-ai-inline .op-footer, .op-ai-inline .main { visibility:hidden; } /* 박스 아래·옆으로 본문이 비치지 않게 */
 .ui-headc .side-ai.on:not(:hover) { background:linear-gradient(#fcfcfc, #fcfcfc) padding-box, var(--ai-grad) border-box; } /* hover·선택 배경 = 메뉴 선택 회색(gray-50)보다 한 단계 연한 #FCFCFC (2026-10-27) */
