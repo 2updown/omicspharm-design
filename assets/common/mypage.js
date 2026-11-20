@@ -271,7 +271,7 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
       // 넓게 보기 버튼(닫기 옆) 2026-11-18 일단 뺌. 다시 쓰려면 여기 op-ai-fit 버튼 복원 (expand_content.svg / collapse_content.svg, ?aifit=full은 그대로 동작)
 
       // 2026-11-20 상단 바(48): 제목 + 닫기를 iframe 밖 고정 영역에 둠 → AI 안 패널(메모·Citation) X와 간섭 없음 (내부 의견)
-      '<div class="op-ai-bar"><p class="op-ai-title">AI Agent<span>beta</span></p><button type="button" class="op-ai-x" data-ai-close aria-label="닫기"></button></div><iframe src="mypage-ai.html?embed=' + WANT + '&v=' + Date.now() + '" title="AI Agent"></iframe></div>';
+      '<div class="op-ai-bar"><div class="op-ai-lt"><button type="button" class="op-ai-fold on" aria-label="메뉴 펼치기" aria-expanded="false"><img class="i-off" src="assets/ai/ic-sidebar.svg" width="24" height="18" alt=""><img class="i-on" src="assets/ai/ic-sidebar-on.svg" width="24" height="18" alt=""></button><p class="op-ai-title">AI Agent<span>beta</span></p></div><button type="button" class="op-ai-x" data-ai-close aria-label="닫기"></button></div><iframe src="mypage-ai.html?embed=' + WANT + '&v=' + Date.now() + '" title="AI Agent"></iframe></div>';
     var KEEP = 'op.aiOpen', keep = function (on) { try { if (on) sessionStorage.setItem(KEEP, JSON.stringify({ p: location.pathname, m: WANT, full: FULL })); else sessionStorage.removeItem(KEEP); } catch (e) {} }; // 새로고침해도 열린 채로 (같은 화면일 때만)
     var close = function () { keep(false); w.remove(); document.body.style.overflow = ''; document.body.classList.remove('op-ai-open', 'op-ai-inline'); document.removeEventListener('keydown', key); window.removeEventListener('message', msg); window.removeEventListener('resize', place);
       if (aiBtn) aiBtn.classList.remove('on'); if (onA) onA.classList.add('on'); };
@@ -280,6 +280,8 @@ if (!/[?&]head=a\b/.test(location.search) && document.documentElement.classList.
     w.addEventListener('click', function (e) {
       if (e.target.closest('[data-ai-close]')) { close(); return; }
       var fb = e.target.closest('.op-ai-fit'); if (fb) { FULL = !FULL; place(); keep(true); }
+      // 2026-11-20 접기 버튼을 바 제목 왼쪽에 (SpAC9 SDF AI Agent 구조): 누르면 AI 화면에 'op-ai-fold' 신호만 보냄 (한 방향). 버튼 상태는 바가 스스로 기억 (AI 화면은 접힌 채로 시작)
+      var fo = e.target.closest('.op-ai-fold'); if (fo) { var f = !fo.classList.contains('on'); fo.classList.toggle('on', f); fo.setAttribute('aria-expanded', !f); fo.setAttribute('aria-label', f ? '메뉴 펼치기' : '메뉴 접기'); var fr = w.querySelector('iframe'); if (fr && fr.contentWindow) fr.contentWindow.postMessage(f ? 'op-ai-fold-on' : 'op-ai-fold-off', '*'); }
     });
     document.addEventListener('keydown', key); window.addEventListener('message', msg);
     // 자리 잡기 (창 크기가 바뀔 때마다 다시):

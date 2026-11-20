@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <script src="assets/common/site.js?v=20261117a"></script>
 <script src="assets/common/consult.js?v=20261106b"></script>
-<script src="assets/common/mypage.js?v=20261120a"></script>
+<script src="assets/common/mypage.js?v=20261120b"></script>
 <style>
   :root { --p30:#1db3a4; --p40:#0ac4b2; --g0:#000; --g20:#333; --g30:#4d4d4d; --g40:#666; --g50:#808080; --g60:#999; --g90:#e5e5e5; --g95:#f2f2f2; --glass:0 4px 10px rgba(55,55,55,.05); }
   * { box-sizing:border-box; margin:0; padding:0; }
@@ -38,7 +38,7 @@
   .ai-title { display:none; align-items:center; gap:6px; width:132px; padding-left:8px; font-size:18px; font-weight:700; line-height:26px; color:var(--g0); }
   .ai-title span { padding:0 6px; border-radius:6px; border:1px solid #cdeee8; background:#f4fbfa; font-size:11px; font-weight:600; line-height:18px; color:#00786e; }
   .emb-under .logo, .emb-inline .logo { display:none; } .emb-under .ai-title { display:flex; } /* inline은 제목이 바깥 상단 바에 있음 (2026-11-20) */
-  .emb-inline .brand { justify-content:flex-end; }
+  .emb-inline:not(.emb-mob) .brand { display:none; } /* inline: 제목·접기 버튼은 바깥 상단 바에 (2026-11-20) */
   .folded .ai-title { display:none !important; }
   /* 접힌 메뉴 (Figma 1700:18104): 폭 72, 위 = 메뉴 버튼(회색 배경·청록 아이콘) + 새 대화(+), 아래 = 크레딧·설정 */
   .rail-foot { display:none; flex-direction:column; align-items:center; gap:16px; }
@@ -282,6 +282,7 @@
   // inline으로 열었는데 창을 960 이하로 줄여 전체 화면이 된 경우: 모바일처럼 왼쪽 메뉴 숨김 (모바일 전용 화면은 아직 없음 → Copilot식 접기 예정)
   var mob = function () { try { document.documentElement.classList.toggle('emb-mob', EMB === 'inline' && parent !== window && parent.innerWidth <= 960); } catch (e) {} };
   if (EMB === 'inline') { mob(); window.addEventListener('resize', mob); }
+  if (EMB === 'inline') window.addEventListener('message', function (e) { if (e.data !== 'op-ai-fold-on' && e.data !== 'op-ai-fold-off') return; document.documentElement.classList.toggle('folded', e.data === 'op-ai-fold-on'); }); // 바깥 바의 접기 버튼 신호 (2026-11-20)
   if (EMB) {
     document.documentElement.classList.add('emb', 'emb-' + EMB);
     document.querySelector('.logo').addEventListener('click', function (e) { e.preventDefault(); parent.postMessage('op-ai-close', '*'); });
