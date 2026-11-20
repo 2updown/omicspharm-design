@@ -92,6 +92,15 @@
   .msg hr { margin:20px 0; border:0; border-top:1px solid var(--g90); }
   .msg h4 { margin-bottom:8px; font-size:18px; font-weight:600; line-height:28px; } .msg .sum p + p { margin-top:8px; }
   .chat .pbox { margin:0 auto; }
+  /* 대화 중 입력칸은 한 줄 (2026-11-20, BioEOS 대화 화면·Figma Report_process): [첨부][옵션] 입력 [보내기], 선택 표시는 그 위 */
+  .chat .pbox { display:grid; grid-template-columns:auto 1fr auto; grid-template-areas:"sel sel sel" "tools q send"; align-items:center; gap:0 12px; padding:8px 8px 8px 12px; }
+  .chat .ptools { display:contents; }
+  .chat .ptools .l { grid-area:tools; }
+  .chat .pbox .qrow { grid-area:q; padding:0; align-items:center; }
+  .chat .pbox .send { grid-area:send; }
+  .chat .pbox .psel { grid-area:sel; margin:0; padding:6px 4px 8px; }
+  .chat .pbox.has-sel .qrow { padding-top:0; }
+  .chat .pbox textarea { padding:8px 0; }
   .toast { position:fixed; left:50%; bottom:64px; transform:translateX(-50%); padding:10px 16px; border-radius:8px; background:rgba(51,51,51,.92); color:#fff; font-size:14px; line-height:20px; }
   /* 오른쪽 패널로 띄운 경우: 왼쪽 메뉴는 접힌 상태(아이콘 줄)로 시작 + 위에 로고 줄 (오른쪽 위 X는 바깥 창에 있음, 2026-10-26 메뉴 추가) */
   .emb-panel .content { padding:56px 20px 56px; }
