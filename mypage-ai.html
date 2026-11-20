@@ -205,9 +205,9 @@
   .memo { display:none; flex:none; flex-direction:column; width:400px; max-width:100%; height:100%; border-left:1px solid var(--g90); background:#fff; font-weight:500; }
   html.memo-on .memo { display:flex; }
   html.memo-over .memo { position:absolute; top:0; right:0; bottom:0; z-index:15; box-shadow:-8px 0 24px rgba(0,0,0,.08); } /* 좁을 때: 대화 위에 겹침 */
-  .memo-head { display:flex; align-items:center; justify-content:space-between; height:72px; padding:0 20px 0 24px; }
+  .memo-head { display:flex; align-items:center; justify-content:space-between; height:68px; padding:0 20px 0 24px; } /* X = 마이페이지 모달 X와 같은 자리·크기 (위 16, 오른쪽 20, 36, 아이콘 24) */
   .memo-head h3 { font-size:18px; font-weight:700; color:var(--g0); }
-  .memo-head button { display:grid; place-items:center; width:32px; height:32px; border-radius:6px; } .memo-head button:hover { background:var(--g95); }
+  .memo-head button { display:grid; place-items:center; width:36px; height:36px; border-radius:8px; } .memo-head button:hover { background:rgba(0,0,0,.05); }
   .memo-title { padding:4px 24px 16px; font-size:15px; font-weight:600; color:var(--g20); text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .memo-body { flex:1; min-height:0; overflow:auto; display:flex; flex-direction:column; gap:12px; padding:16px; background:#fafafa; }
   .memo-empty { margin:auto; font-size:14px; color:var(--g60); }
@@ -231,6 +231,19 @@
   .qnav button span { display:none; position:absolute; right:20px; top:50%; transform:translateY(-50%); max-width:280px; padding:12px 20px; overflow:hidden; text-overflow:ellipsis; border:1px solid var(--g90); border-radius:10px; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.08); font-size:15px; font-weight:600; line-height:22px; color:var(--g20); white-space:nowrap; }
   .qnav button:hover span { display:block; }
   html.memo-on:not(.memo-over) .qnav { right:16px; }
+  /* Citation 패널 (2026-11-20, BioEOS 출처 패널): 메모 패널과 같은 자리·규칙 */
+  .cite-tabs { display:flex; gap:32px; margin:0 24px; border-bottom:1px solid var(--g90); }
+  .cite-tabs button { padding:8px 0 10px; font-size:14px; font-weight:500; color:var(--g40); }
+  .cite-tabs button.on { margin-bottom:-1px; border-bottom:2px solid var(--g20); color:var(--g0); font-weight:600; }
+  .cite-sub { display:flex; gap:20px; padding:16px 24px 8px; font-size:13px; color:var(--g40); } .cite-sub b { color:var(--g0); }
+  .cite-body { flex:1; min-height:0; overflow:auto; padding:8px 24px 24px; }
+  .cite-db { display:flex; align-items:center; gap:6px; padding:12px 0 14px; border-bottom:1px solid var(--g90); font-size:13px; font-weight:600; color:#00786e; }
+  .cite-body h6 { margin:16px 0 10px; font-size:14px; font-weight:700; color:var(--g0); }
+  .cite-body ul { list-style:none; display:flex; flex-direction:column; gap:14px; }
+  .cite-body li { display:flex; flex-direction:column; gap:4px; padding-left:8px; }
+  .cite-body li > p { display:flex; align-items:center; gap:6px; font-size:14px; font-weight:500; color:var(--g20); }
+  .cite-body li > p b { font-weight:700; } .cite-body li > p i { padding:0 4px; border-radius:3px; background:#fde2e2; font-style:normal; font-size:10px; font-weight:700; color:#d64545; }
+  .cite-body li > span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-left:22px; font-size:13px; color:var(--g40); }
 </style>
 </head>
 <body>
@@ -408,12 +421,20 @@
   function memoMode() { var h = document.documentElement; if (!h.classList.contains('memo-on')) return; h.classList.remove('memo-over'); var cw = $('#content').getBoundingClientRect().width; h.classList.toggle('memo-over', cw < 720); } // 패널을 연 뒤 남은 대화 영역이 720보다 좁으면 겹치기
   function memoDraw() {
     var c = cur > -1 ? CHATS[cur] : null, list = c ? (c.memo || (c.memo = [])) : [];
-    $('#memo').innerHTML = '<div class="memo-head"><h3>Chat Memo</h3><button type="button" id="memoX" aria-label="메모 닫기"><img src="assets/ai/ic-close.svg" width="20" height="20" alt=""></button></div>' +
+    $('#memo').innerHTML = '<div class="memo-head"><h3>Chat Memo</h3><button type="button" id="memoX" aria-label="메모 닫기"><img src="assets/ai/ic-close.svg?v=2" width="24" height="24" alt=""></button></div>' +
       '<p class="memo-title">' + esc(c ? c.t : '') + '</p><div class="memo-body" id="memoBody">' + '<p class="memo-empty">메모가 없습니다</p>' + '</div>' +
       '<div class="memo-foot"><button type="button" class="memo-new" id="memoNew"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>New Memo</button><button type="button" class="memo-search" id="memoSearch" aria-label="메모 검색"><img src="assets/ai/ic-search.svg?v=2" width="22" height="22" alt=""></button></div>';
   }
   function memoFit() { document.querySelectorAll('[data-memo]').forEach(function (t) { t.style.height = 'auto'; t.style.height = Math.max(72, t.scrollHeight) + 'px'; }); } // 메모 칸 높이 = 내용
-  function memoOpen(on) { var h = document.documentElement, was = h.classList.contains('memo-on'); h.classList.toggle('memo-on', on); if (was !== on) outer(on); if (!on) { h.classList.remove('memo-over'); return; } memoDraw(); memoMode(); memoFit(); } // 마이페이지 안 박스면 패널이 열린 동안 바깥 닫기(X) 숨김 (패널 X와 겹침)
+  function citeDraw() {
+    var c = cur > -1 ? CHATS[cur] : null, no = c && c.t ? c.t.split(' ')[0] : 'PRJ-2026-0049';
+    var docs = [['A', '결과보고서_' + no + '_v2.pdf', 'Table 1. Number of proteins identified in the QC sample: 4048'], ['B', '결과보고서_' + no + '_v2.pdf', 'Table 6. Differentially expressed proteins between groups'], ['C', '분석의뢰서_' + no + '.pdf', 'QC criteria: more than 3,500 proteins identified per QC sample']];
+    $('#memo').innerHTML = '<div class="memo-head"><h3>Citation</h3><button type="button" id="memoX" aria-label="출처 닫기"><img src="assets/ai/ic-close.svg?v=2" width="24" height="24" alt=""></button></div>' +
+      '<div class="cite-tabs"><button type="button">External Ref.</button><button type="button" class="on">Knowledge Base</button></div><div class="cite-sub"><span>Structured</span><b>Unstructured</b></div>' +
+      '<div class="cite-body"><p class="cite-db">Vector DB</p><h6>Documents used:</h6><ul>' + docs.map(function (d) { return '<li><p><b>[' + d[0] + ']</b><i>PDF</i>' + esc(d[1]) + '</p><span>' + esc(d[2]) + '</span></li>'; }).join('') + '</ul></div>';
+  }
+  var panel = 'memo'; // 오른쪽 패널 종류: memo | cite
+  function memoOpen(on) { var h = document.documentElement, was = h.classList.contains('memo-on'); h.classList.toggle('memo-on', on); if (was !== on) outer(on); if (!on) { h.classList.remove('memo-over'); return; } if (panel === 'cite') citeDraw(); else memoDraw(); memoMode(); memoFit(); } // 마이페이지 안 박스면 패널이 열린 동안 바깥 닫기(X) 숨김 (패널 X와 겹침)
   window.addEventListener('resize', memoMode);
   document.addEventListener('mouseover', function (e) { var t = e.target.closest('[data-tip]'), old = $('#rtip'); if (!t) { if (old) old.remove(); return; } if (old && old.dataset.for === t.dataset.c) return; if (old) old.remove(); var r = t.getBoundingClientRect(); var d = document.createElement('div'); d.className = 'rtip'; d.id = 'rtip'; d.dataset.for = t.dataset.c; d.textContent = t.dataset.tip; d.style.left = (r.right + 8) + 'px'; d.style.top = (r.top + r.height / 2 - 19) + 'px'; document.body.appendChild(d); }); // Recent hover: 오른쪽에 전체 제목 카드
   document.addEventListener('input', function (e) { var t = e.target.closest('[data-memo]'); if (t && cur > -1) { CHATS[cur].memo[+t.dataset.memo].t = t.value; memoFit(); } });
@@ -425,7 +446,7 @@
       : '<div class="prompt"><h1>How can I help you?</h1><div class="pbox-wrap">' + boxHTML() + '<div class="chips">' + CHIPS.map(function (c, i) { return '<button type="button" data-chip="' + i + '">' + c[0] + '</button>'; }).join('') + '</div></div></div>') +
       (msgs.length ? '' : '<p class="foot">CellKey AI can make mistakes. Check again for important information.</p>') + // 대화 중에는 안내 문구 없음, 입력칸만 아래 (BioEOS, 2026-11-20)
       (msgs.length ? '<button type="button" class="memo-fab" id="memoFab" aria-label="대화 메모" title="대화 메모"><svg width="18" height="18" viewBox="65 61 18 18" fill="none"><path d="M67 77H76V72H81V63H67V77ZM67 79C66.45 79 65.9792 78.8042 65.5875 78.4125C65.1958 78.0208 65 77.55 65 77V63C65 62.45 65.1958 61.9792 65.5875 61.5875C65.9792 61.1958 66.45 61 67 61H81C81.55 61 82.0208 61.1958 82.4125 61.5875C82.8042 61.9792 83 62.45 83 63V73L77 79H67ZM69 72V70H74V72H69ZM69 68V66H79V68H69Z" fill="#333"/></svg></button>' : '');
-    if (!msgs.length) memoOpen(false); else if (document.documentElement.classList.contains('memo-on')) memoDraw();
+    if (!msgs.length) memoOpen(false); else if (document.documentElement.classList.contains('memo-on')) { if (panel === 'cite') citeDraw(); else memoDraw(); }
     var box = $('#msgs'); if (box) box.scrollTop = 1e6;
     var q = $('#q'), send = $('#send');
     q.addEventListener('input', function () { send.disabled = !q.value.trim() && !at && !sel; q.style.height = 'auto'; q.style.height = Math.min(q.scrollHeight, 184) + 'px'; atCheck(); });
@@ -516,11 +537,11 @@
       if (ab.dataset.act === 'copy') { try { navigator.clipboard.writeText(at0 || ''); } catch (er) {} toast('답변을 복사했습니다.'); return; }
       if (ab.dataset.act === 'regen') { toast('베타: 다시 생성은 준비 중입니다.'); return; }
       if (ab.dataset.act === 'up' || ab.dataset.act === 'down') { var on2 = !ab.classList.contains('on'); ab.parentNode.querySelectorAll('[data-act="up"],[data-act="down"]').forEach(function (x) { x.classList.remove('on'); }); ab.classList.toggle('on', on2); return; }
-      if (ab.dataset.act === 'src') return; // 디자인만 (동작 없음)
+      if (ab.dataset.act === 'src') { panel = 'cite'; if (document.documentElement.classList.contains('memo-on')) citeDraw(); else memoOpen(true); return; } // 출처 → Citation 패널 (메모 패널 자리)
     }
     var qb = e.target.closest('[data-q]'); if (qb) { var tm = document.querySelector('.msg.me[data-mi="' + qb.dataset.q + '"]'); if (tm) tm.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; } // 질문 목차 점
     if (e.target.closest('.recent .more')) { toast('베타: 대화 이름 변경·삭제는 준비 중입니다.'); return; }
-    if (e.target.closest('#memoFab')) { memoOpen(true); return; }
+    if (e.target.closest('#memoFab')) { panel = 'memo'; memoOpen(true); return; }
     if (e.target.closest('#memoX')) { memoOpen(false); return; }
     if (e.target.closest('#memoNew')) return; // 2026-11-20 디자인만 옮김: 동작 없음
     if (false) { var mc = CHATS[cur]; if (!mc) return; var dt = new Date(); mc.memo.unshift({ d: dt.getFullYear() + '-' + ('0' + (dt.getMonth() + 1)).slice(-2) + '-' + ('0' + dt.getDate()).slice(-2) + ' ' + ('0' + dt.getHours()).slice(-2) + ':' + ('0' + dt.getMinutes()).slice(-2), t: '' }); memoDraw(); var ta = document.querySelector('[data-memo="0"]'); if (ta) ta.focus(); return; }
