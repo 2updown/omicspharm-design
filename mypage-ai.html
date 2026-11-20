@@ -200,7 +200,7 @@
   .pl-pg button.on i { background:var(--g90); color:var(--g30); }
   .pl-pg button:disabled { color:#ccc; cursor:default; }
   /* 대화 메모 (2026-11-20): 메모 버튼 = Figma Report 프레임 Group 26086265 (48, 민트 그라데이션, 테두리 #3fd8c9) */
-  .memo-fab { position:absolute; right:40px; bottom:20px; z-index:6; display:grid; place-items:center; width:48px; height:48px; border:1px solid #3fd8c9; border-radius:50%; background:linear-gradient(145deg, #9ff0e8 0%, #fff9f3 100%); box-shadow:2px 6px 50px rgba(142,142,142,.25); }
+  .memo-fab { position:absolute; right:40px; bottom:96px; /* 2026-11-20 입력창 줄(바닥 20 + 높이 52)보다 위: 좁아져도 보내기 버튼과 겹치지 않게 */ z-index:6; display:grid; place-items:center; width:48px; height:48px; border:1px solid #3fd8c9; border-radius:50%; background:linear-gradient(145deg, #9ff0e8 0%, #fff9f3 100%); box-shadow:2px 6px 50px rgba(142,142,142,.25); }
   html.memo-on .memo-fab { display:none; }
   .memo { display:none; flex:none; flex-direction:column; width:400px; max-width:100%; height:100%; border-left:1px solid var(--g90); background:#fff; font-weight:500; }
   html.memo-on .memo { display:flex; }
