@@ -22,7 +22,7 @@
   a { color:inherit; text-decoration:none; }
   [hidden] { display:none !important; }
   /* Main Container: 가운데 연한 민트 원형 그라데이션 (Gradient/primary_05) */
-  .app { display:flex; height:100vh; min-height:560px; background:radial-gradient(ellipse 51% 64% at 50.9% 49.2%, #c7efeb 0%, #fff 100%); }
+  .app { position:relative; display:flex; height:100vh; min-height:560px; background:radial-gradient(ellipse 51% 64% at 50.9% 49.2%, #c7efeb 0%, #fff 100%); }
   /* MenuBar */
   .bar { flex:none; display:flex; flex-direction:column; justify-content:space-between; height:100%; padding:24px 16px; border-right:1px solid var(--g90); background:rgba(252,252,252,.7); backdrop-filter:blur(2.5px); -webkit-backdrop-filter:blur(2.5px); }
   .bar-top { display:flex; flex-direction:column; gap:48px; }
@@ -186,6 +186,25 @@
   .pl-pg button i { display:grid; place-items:center; min-width:27px; height:24px; padding:0 4px; border-radius:8px; font-style:normal; }
   .pl-pg button.on i { background:var(--g90); color:var(--g30); }
   .pl-pg button:disabled { color:#ccc; cursor:default; }
+  /* 대화 메모 (2026-11-20): 메모 버튼 = Figma Report 프레임 Group 26086265 (48, 민트 그라데이션, 테두리 #3fd8c9) */
+  .memo-fab { position:absolute; right:40px; bottom:20px; z-index:6; display:grid; place-items:center; width:48px; height:48px; border:1px solid #3fd8c9; border-radius:50%; background:linear-gradient(145deg, #9ff0e8 0%, #fff9f3 100%); box-shadow:2px 6px 50px rgba(142,142,142,.25); }
+  .memo-fab:hover { box-shadow:2px 6px 24px rgba(29,179,164,.3); }
+  html.memo-on .memo-fab { display:none; }
+  .memo { display:none; flex:none; flex-direction:column; width:400px; max-width:100%; height:100%; border-left:1px solid var(--g90); background:#fff; font-weight:500; }
+  html.memo-on .memo { display:flex; }
+  html.memo-over .memo { position:absolute; top:0; right:0; bottom:0; z-index:15; box-shadow:-8px 0 24px rgba(0,0,0,.08); } /* 좁을 때: 대화 위에 겹침 */
+  .memo-head { display:flex; align-items:center; justify-content:space-between; height:72px; padding:0 20px 0 24px; }
+  .memo-head h3 { font-size:18px; font-weight:700; color:var(--g0); }
+  .memo-head button { display:grid; place-items:center; width:32px; height:32px; border-radius:6px; } .memo-head button:hover { background:var(--g95); }
+  .memo-title { padding:4px 24px 16px; font-size:15px; font-weight:600; color:var(--g20); text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .memo-body { flex:1; min-height:0; overflow:auto; display:flex; flex-direction:column; gap:12px; padding:16px; background:#fafafa; }
+  .memo-empty { margin:auto; font-size:14px; color:var(--g60); }
+  .memo-card { display:flex; flex-direction:column; gap:6px; padding:12px 14px; border:1px solid var(--g90); border-radius:8px; background:#fff; }
+  .memo-card time { font-size:12px; color:var(--g60); }
+  .memo-card textarea { width:100%; min-height:72px; border:0; outline:0; resize:none; font:inherit; font-size:14px; line-height:22px; color:var(--g20); background:none; }
+  .memo-foot { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 16px 24px; border-top:1px solid var(--g90); }
+  .memo-new { display:flex; align-items:center; gap:6px; height:36px; padding:0 14px; border-radius:6px; background:var(--g95); font-size:14px; font-weight:600; color:var(--g20); } .memo-new:hover { background:var(--g90); }
+  .memo-search { display:grid; place-items:center; width:32px; height:32px; border-radius:6px; } .memo-search:hover { background:var(--g95); }
 </style>
 </head>
 <body>
@@ -211,6 +230,8 @@
   <div class="mdim" id="mDim"></div>
   <div class="pnl-head"><img src="assets/ai/logo-omicspharm.svg?v=20261112" width="110" height="14" alt="OmicsPharm"></div>
   <main class="content" id="content"></main>
+  <!-- 대화 메모 (2026-11-20, BioEOS Chat Memo 참고): 대화가 있을 때만 오른쪽 아래 메모 버튼. 패널을 열어도 대화 영역이 720 이상 남으면 옆으로 밀고, 좁으면 대화 위에 겹쳐 열림 -->
+  <aside class="memo" id="memo" aria-label="Chat Memo"></aside>
 </div>
 <script>
 (function () {
@@ -350,13 +371,26 @@
       var el = document.getElementById('proc' + k); if (el && (cur > -1 ? CHATS[cur].m : live) === msgs) { el.outerHTML = msgHTML(msgs[k], k); var b = $('#msgs'); if (b) b.scrollTop = 1e6; }
     }, 900);
   }
+  // 대화 메모 패널
+  function memoMode() { var h = document.documentElement; if (!h.classList.contains('memo-on')) return; h.classList.remove('memo-over'); var cw = $('#content').getBoundingClientRect().width; h.classList.toggle('memo-over', cw < 720); } // 패널을 연 뒤 남은 대화 영역이 720보다 좁으면 겹치기
+  function memoDraw() {
+    var c = cur > -1 ? CHATS[cur] : null, list = c ? (c.memo || (c.memo = [])) : [];
+    $('#memo').innerHTML = '<div class="memo-head"><h3>Chat Memo</h3><button type="button" id="memoX" aria-label="메모 닫기"><img src="assets/ai/ic-close.svg" width="20" height="20" alt=""></button></div>' +
+      '<p class="memo-title">' + esc(c ? c.t : '') + '</p><div class="memo-body" id="memoBody">' + (list.length ? list.map(function (m, k) { return '<div class="memo-card"><time>' + m.d + '</time><textarea data-memo="' + k + '" aria-label="메모 ' + (k + 1) + '" placeholder="메모를 입력하세요">' + esc(m.t) + '</textarea></div>'; }).join('') : '<p class="memo-empty">메모가 없습니다</p>') + '</div>' +
+      '<div class="memo-foot"><button type="button" class="memo-new" id="memoNew"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>New Memo</button><button type="button" class="memo-search" id="memoSearch" aria-label="메모 검색"><img src="assets/ai/ic-search.svg?v=2" width="22" height="22" alt=""></button></div>';
+  }
+  function memoOpen(on) { var h = document.documentElement, was = h.classList.contains('memo-on'); h.classList.toggle('memo-on', on); if (was !== on) outer(on); if (!on) { h.classList.remove('memo-over'); return; } memoDraw(); memoMode(); } // 마이페이지 안 박스면 패널이 열린 동안 바깥 닫기(X) 숨김 (패널 X와 겹침)
+  window.addEventListener('resize', memoMode);
+  document.addEventListener('input', function (e) { var t = e.target.closest('[data-memo]'); if (t && cur > -1) CHATS[cur].memo[+t.dataset.memo].t = t.value; });
   function draw() {
     $('#recent').innerHTML = CHATS.map(function (c, i) { return '<li><button type="button" data-c="' + i + '"' + (i === cur ? ' class="on"' : '') + '>' + esc(c.t) + '</button></li>'; }).join('');
     var msgs = cur > -1 ? CHATS[cur].m : live;
     $('#content').innerHTML = (msgs.length
       ? '<div class="chat"><div class="msgs" id="msgs">' + msgs.map(msgHTML).join('') + '</div>' + boxHTML() + '</div>'
       : '<div class="prompt"><h1>How can I help you?</h1><div class="pbox-wrap">' + boxHTML() + '<div class="chips">' + CHIPS.map(function (c, i) { return '<button type="button" data-chip="' + i + '">' + c[0] + '</button>'; }).join('') + '</div></div></div>') +
-      '<p class="foot">CellKey AI can make mistakes. Check again for important information.</p>';
+      '<p class="foot">CellKey AI can make mistakes. Check again for important information.</p>' +
+      (msgs.length ? '<button type="button" class="memo-fab" id="memoFab" aria-label="대화 메모" title="대화 메모"><svg width="18" height="18" viewBox="65 61 18 18" fill="none"><path d="M67 77H76V72H81V63H67V77ZM67 79C66.45 79 65.9792 78.8042 65.5875 78.4125C65.1958 78.0208 65 77.55 65 77V63C65 62.45 65.1958 61.9792 65.5875 61.5875C65.9792 61.1958 66.45 61 67 61H81C81.55 61 82.0208 61.1958 82.4125 61.5875C82.8042 61.9792 83 62.45 83 63V73L77 79H67ZM69 72V70H74V72H69ZM69 68V66H79V68H69Z" fill="#333"/></svg></button>' : '');
+    if (!msgs.length) memoOpen(false); else if (document.documentElement.classList.contains('memo-on')) memoDraw();
     var box = $('#msgs'); if (box) box.scrollTop = 1e6;
     var q = $('#q'), send = $('#send');
     q.addEventListener('input', function () { send.disabled = !q.value.trim() && !at && !sel; q.style.height = 'auto'; q.style.height = Math.min(q.scrollHeight, 184) + 'px'; atCheck(); });
@@ -406,7 +440,7 @@
     $('#mMenu').setAttribute('aria-expanded', on); $('#mMenu').setAttribute('aria-label', on ? '메뉴 닫기' : '메뉴 열기');
   };
   window.addEventListener('resize', function () { if (getComputedStyle($('#mMenu')).display === 'none') drawer(false); }); // 넓어져서 메뉴 버튼이 사라지면 닫기
-  document.addEventListener('keydown', function (e) { if (e.key !== 'Escape') return; if ($('#fpop')) fpopClose(); else if ($('#plDim')) plClose(); else if ($('#opop')) togglePop(false); else return; e.stopImmediatePropagation(); }, true); // Esc: 드롭다운 → 모달 → 옵션 순서로 닫기
+  document.addEventListener('keydown', function (e) { if (e.key !== 'Escape') return; if ($('#fpop')) fpopClose(); else if ($('#plDim')) plClose(); else if ($('#opop')) togglePop(false); else if (document.documentElement.classList.contains('memo-on')) memoOpen(false); else return; e.stopImmediatePropagation(); }, true); // Esc: 드롭다운 → 모달 → 옵션 순서로 닫기
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && document.documentElement.classList.contains('drawer')) { e.stopImmediatePropagation(); drawer(false); } }, true);
   document.addEventListener('click', function (e) {
     if (e.target.closest('#mMenu')) { drawer(!document.documentElement.classList.contains('drawer')); return; }
@@ -440,6 +474,10 @@
       return;
     }
     if (e.target.closest('#fold')) { var f = document.documentElement.classList.toggle('folded'); e.target.closest('#fold').setAttribute('aria-expanded', !f); e.target.closest('#fold').setAttribute('aria-label', f ? '메뉴 펼치기' : '메뉴 접기'); if (!RAIL) try { localStorage.setItem('op.aiFold', f ? '1' : ''); } catch (er) {} return; }
+    if (e.target.closest('#memoFab')) { memoOpen(true); return; }
+    if (e.target.closest('#memoX')) { memoOpen(false); return; }
+    if (e.target.closest('#memoNew')) { var mc = CHATS[cur]; if (!mc) return; var dt = new Date(); mc.memo.unshift({ d: dt.getFullYear() + '-' + ('0' + (dt.getMonth() + 1)).slice(-2) + '-' + ('0' + dt.getDate()).slice(-2) + ' ' + ('0' + dt.getHours()).slice(-2) + ':' + ('0' + dt.getMinutes()).slice(-2), t: '' }); memoDraw(); var ta = document.querySelector('[data-memo="0"]'); if (ta) ta.focus(); return; }
+    if (e.target.closest('#memoSearch')) { toast('베타: 메모 검색은 준비 중입니다.'); return; }
     if (e.target.closest('#credit')) { toast('베타: 크레딧은 준비 중입니다.'); return; }
     if (e.target.closest('#setting')) { toast('베타: 설정은 준비 중입니다.'); return; }
   });
