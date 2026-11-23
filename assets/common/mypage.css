@@ -498,15 +498,9 @@ span.tbtn { cursor:default; }
 .op-ai-x { background:url(../ai/ic-close.svg?v=2) center/24px no-repeat; } /* AI Agent 디자인 시스템 아이콘 (Figma 2016:22105 Icons/medium/close, #000) */
 .op-ai-x:hover { background-color:rgba(0,0,0,.05); }
 .op-ai-bar { display:none; }
-.op-ai.inline .op-ai-bar { position:absolute; left:0; right:0; top:0; z-index:2; display:flex; align-items:center; justify-content:space-between; height:56px; padding:0 10px 0 16px; border-bottom:1px solid #e5e5e5; background:#fff; } /* 2026-11-20 상단 바: 접기 + 제목 / 닫기 (SpAC9 SDF 구조) */
-.op-ai.inline .op-ai-bar .op-ai-x { position:static; }
-.op-ai-lt { display:flex; align-items:center; gap:8px; }
-.op-ai-fold { position:relative; width:40px; height:40px; border-radius:4px; }
-.op-ai-fold img { position:absolute; left:8px; top:11px; } .op-ai-fold .i-on { display:none; }
-.op-ai-fold:hover, .op-ai-fold.on { background:#f2f2f2; } .op-ai-fold.on .i-off { display:none; } .op-ai-fold.on .i-on { display:block; } /* 2026-11-20 AI 사이드바 접기 (AI 화면 안 버튼과 같은 모양) */
-.op-ai-title { display:flex; align-items:center; gap:6px; margin:0; font-size:18px; font-weight:700; line-height:24px; color:#000; } /* Figma Body/Large/B */
-.op-ai-title span { padding:2px 8px; border-radius:8px; background:#edfefa; font-size:12px; font-weight:500; line-height:18px; color:#009788; } /* badge_basic tertiary teal (사이드 메뉴 beta와 같음) */
-.op-ai.inline .op-ai-win iframe { position:absolute; top:56px; left:0; width:100%; height:calc(100% - 56px); }
+.op-ai.inline .op-ai-bar { position:absolute; left:0; right:0; top:0; z-index:2; display:flex; align-items:center; justify-content:flex-end; height:36px; padding:0 8px; border-bottom:1px solid #e5e5e5; background:#f7f7f7; } /* 2026-11-23 상단 바: 닫기만 (제목·접기는 AI 화면 사이드바) */
+.op-ai.inline .op-ai-bar .op-ai-x { position:static; width:28px; height:28px; border-radius:6px; background-size:20px; }
+.op-ai.inline .op-ai-win iframe { position:absolute; top:36px; left:0; width:100%; height:calc(100% - 36px); }
 .op-ai.overlay .op-ai-win { inset:0; }
 .op-ai.overlay .op-ai-dim { display:none; }
 .op-ai.under { top:70px; z-index:40; } .op-ai.under .op-ai-win { inset:0; border-top:1px solid #e5e5e5; } .op-ai.under .op-ai-dim { display:none; } /* GNB 아래로 열기 (?ai=under, 검토용) */
