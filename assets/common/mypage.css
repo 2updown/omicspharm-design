@@ -498,7 +498,7 @@ span.tbtn { cursor:default; }
 .op-ai-x { background:url(../ai/ic-close.svg?v=2) center/24px no-repeat; } /* AI Agent 디자인 시스템 아이콘 (Figma 2016:22105 Icons/medium/close, #000) */
 .op-ai-x:hover { background-color:rgba(0,0,0,.05); }
 .op-ai-bar { display:none; }
-.op-ai.inline .op-ai-bar { position:absolute; left:0; right:0; top:0; z-index:2; display:flex; align-items:center; justify-content:flex-end; height:36px; padding:0 8px; border-bottom:1px solid #e5e5e5; background:#f7f7f7; } /* 2026-11-23 상단 바: 닫기만 (제목·접기는 AI 화면 사이드바) */
+.op-ai.inline .op-ai-bar { position:absolute; left:0; right:0; top:0; z-index:2; display:flex; align-items:center; justify-content:flex-end; height:36px; padding:0 8px; border-bottom:1px solid #e5e5e5; background:#f5f5f5; } /* Gray/100 */ /* 2026-11-23 상단 바: 닫기만 (제목·접기는 AI 화면 사이드바) */
 .op-ai.inline .op-ai-bar .op-ai-x { position:static; width:28px; height:28px; border-radius:6px; background-size:20px; }
 .op-ai.inline .op-ai-win iframe { position:absolute; top:36px; left:0; width:100%; height:calc(100% - 36px); }
 .op-ai.overlay .op-ai-win { inset:0; }
