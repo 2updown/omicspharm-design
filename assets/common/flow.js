@@ -260,10 +260,15 @@
   // 분석파트너 예시 0040~0042도 단계에 맞는 결과보고서 기록 (2026-11-02): 0040 보고서 등록 = AI 초안 검토 대기, 0041 보고서 검토 = 1차 전달 후 클라이언트 확인 중, 0042 완료 = 전달 + 최종 승인 + 만족도
   function partDemo(S) {
     var ch = false, at = function (k) { if (!S[k]) S[k] = { st: 'demo', P: {} }; if (!S[k].pick) S[k].pick = ME_PARTNER; return S[k]; };
-    var a = at('PRJ-2026-0040'), b = at('PRJ-2026-0041'), c = at('PRJ-2026-0042');
-    if (!a.raw) { a.raw = [{ at: T0 - DAY * 1, kind: 'ai', files: ['Olink_NPX_Data.xlsx', 'Olink_QC_Summary.csv'], ai: '결과보고서_AI초안_2026-0040_v1.docx' }]; ch = true; }
+    var a = at('PRJ-2026-0040'), b = at('PRJ-2026-0041'), c = at('PRJ-2026-0042'), d = at('PRJ-2026-0039');
+    // AI 초안 생성 상태 예시 (2026-11-26): 0039 = 생성 중, 0040 = 생성 실패(파일 문제), 0041 2차 = 생성 실패(서버 오류). 생성 완료 예시는 0036
+    [a, b].forEach(function (x) { if (!x.g26) { delete x.raw; delete x.rep; x.g26 = 1; } }); // 이미 저장된 0040·0041 기록도 한 번 새 예시로 바꿈
+    if (!d.raw) { d.raw = [{ at: T0 - DAY * 0.02, kind: 'ai', gen: 'ing', files: ['RNAseq_ReadCount.csv', 'DEG_Summary.xlsx'], ai: '결과보고서_AI초안_2026-0039_v1.docx' }]; ch = true; }
+    if (!a.raw) { a.raw = [{ at: T0 - DAY * 1, kind: 'ai', gen: 'file', genAt: T0 - DAY * 0.98, files: ['Olink_NPX_Data.xlsx', 'Olink_QC_Summary.csv'], ai: '결과보고서_AI초안_2026-0040_v1.docx' }]; ch = true; }
     if (!b.raw) { var bf = ['WGS_변이분석_결과보고서_국문.pdf', 'WGS_Variant_Report_EN.pdf'];
-      b.raw = [{ at: T0 - DAY * 23, kind: 'pdf', files: bf, labs: ['국문 리포트', '영문 리포트'], sent: T0 - DAY * 21, repN: 1 }]; b.rep = [{ at: T0 - DAY * 21, files: bf.slice(), note: '' }]; ch = true; }
+      b.raw = [{ at: T0 - DAY * 23, kind: 'pdf', files: bf, labs: ['국문 리포트', '영문 리포트'], sent: T0 - DAY * 21, repN: 1 },
+        { at: T0 - DAY * 2, kind: 'ai', gen: 'srv', genAt: T0 - DAY * 1.98, files: ['WGS_CNV_Summary.xlsx', 'WGS_SV_List.csv'], ai: '결과보고서_AI초안_2026-0041_v2.docx', req: { at: T0 - DAY * 6, note: '클라이언트가 CNV, 구조 변이 분석 결과를 추가로 요청했습니다. 올려 주세요.' } }];
+      b.rep = [{ at: T0 - DAY * 21, files: bf.slice(), note: '' }]; ch = true; }
     if (!c.raw) { var cf = ['펩타이드매핑_결과보고서_국문.pdf', 'Peptide_Mapping_Report_EN.pdf'];
       c.raw = [{ at: T0 - DAY * 72, kind: 'pdf', files: cf, labs: ['국문 리포트', '영문 리포트'], sent: T0 - DAY * 70, repN: 1 }]; c.rep = [{ at: T0 - DAY * 70, files: cf.slice(), note: '' }];
       c.fin = T0 - DAY * 66; c.rate = { star: 5, text: '시퀀스 커버리지 정리가 깔끔해서 내부 보고에 바로 쓸 수 있었습니다.', at: T0 - DAY * 66 }; ch = true; }
