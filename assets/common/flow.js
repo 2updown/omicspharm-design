@@ -840,7 +840,7 @@
   var RP_FILES = {}; // 고른 파일 이름 (등록 전), 프로젝트별. 형식 제한 없이 여러 개 (보고서 에이전트가 raw 데이터로도 초안을 만듦, 2026-10-29)
   var pdfL = function (id) { var o = RP_PDF[id] || {}; return [o.ko, o.en].filter(Boolean).concat(o.ex || []); };
   var pdfLab = function (id) { var o = RP_PDF[id] || {}; return [o.ko && '국문 리포트', o.en && '영문 리포트'].filter(Boolean).concat((o.ex || []).map(function () { return '추가 파일'; })); };
-  var GEN = { ing: 'AI가 보고서 초안을 생성하고 있습니다. 완료되면 알림으로 알려드립니다.', file: '등록된 파일로 보고서 초안을 만들 수 없습니다. 분석파트너에게 결과 재등록을 요청해 주세요.', srv: '일시적인 오류로 보고서 초안을 생성하지 못했습니다. 다시 생성해 주세요.' };
+  var GEN = { ing: 'AI가 보고서 초안을 생성하고 있습니다. 완료되면 알림으로 알려드립니다.', file: '등록된 파일에 오류가 있어 보고서 초안을 만들 수 없습니다. 분석파트너에게 결과 재등록을 요청해 주세요.', srv: '일시적인 오류로 보고서 초안을 생성하지 못했습니다. 다시 생성해 주세요.' };
   F.repSec = function (id, role) {
     var s = state(id), raw = s.raw || [], rep = s.rep || [], adm = role === 'admin', fin = !!s.fin, ask = !fin && s.reReq;
     var pn = function (i) { return raw.slice(0, i + 1).filter(function (v) { return v.by !== 'admin'; }).length; }; // 분석파트너 결과 차수 (컨설턴트 직접 수정은 세지 않음)
@@ -991,7 +991,7 @@
     if (a === 'dl') OP.toast('데모: 보고서 워드 파일이 내려받아집니다.');
     if (a === 'undo') { F.repUndo(id, i); OP.toast('직접 수정을 취소했습니다.'); if (F.repRedraw) F.repRedraw(); return; }
     if (a === 'self') { F.repSelf(id); OP.toast('보고서 수정 항목을 만들었습니다. 고친 PDF를 등록해 전달해주세요.'); if (F.repRedraw) F.repRedraw(); }
-    if (a === 'ask') F.ask({ title: '분석파트너에게 결과 재등록을 요청할까요?', desc: partner(state(id).pick).org + '에 알림이 가고, 분석파트너 화면에 결과 등록 칸이 다시 열립니다.', label: '요청 내용', ph: '예) 클라이언트가 원본 데이터(Raw data) 파일을 추가로 요청했습니다. 올려 주세요.', value: b.dataset.why === 'file' ? '등록하신 파일로 AI 보고서 초안을 만들 수 없습니다. 파일을 확인해 다시 올려 주세요.' : (F.cReqOpen(state(id)) || {}).note ? '클라이언트 요청: ' + F.cReqOpen(state(id)).note : '', required: true, yes: '요청하기' }, function (v) { F.repAsk(id, v); OP.toast('분석파트너에게 결과 재등록을 요청했습니다.'); if (F.repRedraw) F.repRedraw(); });
+    if (a === 'ask') F.ask({ title: '분석파트너에게 결과 재등록을 요청할까요?', desc: partner(state(id).pick).org + '에 알림이 가고, 분석파트너 화면에 결과 등록 칸이 다시 열립니다.', label: '요청 내용', ph: '예) 클라이언트가 원본 데이터(Raw data) 파일을 추가로 요청했습니다. 올려 주세요.', value: b.dataset.why === 'file' ? '등록하신 파일에 오류가 있어 AI 보고서를 생성할 수 없습니다. 파일을 확인 후 다시 올려 주세요.' : (F.cReqOpen(state(id)) || {}).note ? '클라이언트 요청: ' + F.cReqOpen(state(id)).note : '', required: true, yes: '요청하기' }, function (v) { F.repAsk(id, v); OP.toast('분석파트너에게 결과 재등록을 요청했습니다.'); if (F.repRedraw) F.repRedraw(); });
     // 2차부터는 변경 내용 필수: 차수 이름만으로는 추가 자료인지 수정인지 알 수 없어서 클라이언트 화면에 '변경 내용'으로 보임 (2026-10-29)
     var nx = (state(id).rep || []).length;
     if (a === 'send') F.ask({ title: F.repName(nx) + '를 클라이언트에게 전달할까요?', desc: '등록한 PDF가 클라이언트 결과보고서에 등록되고 알림이 갑니다.', label: nx ? '변경 내용 (클라이언트에게 보임)' : '클라이언트에게 남길 메모 (선택)', ph: nx ? '예) 요청하신 Raw data 파일을 추가했습니다.' : '예) 분석 결과 요약을 첫 장에 정리했습니다.', required: !!nx, yes: '전달하기' }, function (v) { F.repSend(id, i, v); OP.toast('클라이언트에게 결과보고서를 전달했습니다.'); if (F.repRedraw) F.repRedraw(); });
