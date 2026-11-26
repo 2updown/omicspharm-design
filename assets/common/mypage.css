@@ -471,6 +471,13 @@ span.tbtn { cursor:default; }
 .rp-steps li.done > div:first-child::before { content:"✓"; background:var(--teal-600); color:#fff; } /* 완료: 초록 채움 + 흰 체크 (2026-10-29) */
 .rp-steps b { font-size:14px; font-weight:600; line-height:20px; }
 .rp-steps p { font-size:12px; line-height:18px; color:var(--gray-500); word-break:keep-all; }
+/* AI 보고서 초안 생성 중, 실패 (2026-11-26): 1단계 안내 자리에 아이콘 + 문구 */
+.rp-steps p.rp-gen { display:flex; align-items:flex-start; gap:4px; color:var(--gray-600); }
+.rp-steps p.rp-gen.file, .rp-steps p.rp-gen.srv { color:#ca0008; }
+.rp-gi { flex:none; width:14px; height:14px; margin-top:2px; background:currentColor; -webkit-mask:url(ic-warning.svg) center/14px no-repeat; mask:url(ic-warning.svg) center/14px no-repeat; }
+.rp-gen.ing .rp-gi { -webkit-mask-image:url(ic-circle-notch.svg); mask-image:url(ic-circle-notch.svg); animation:rp-spin 1s linear infinite; }
+@keyframes rp-spin { to { transform:rotate(360deg); } }
+.rp-demo { display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:6px; }
 .rp-more { font-size:13px; line-height:20px; color:var(--gray-500); }
 .rp-sent { display:flex; align-items:center; gap:8px; padding:12px 16px; border-radius:10px; background:var(--gray-50); font-size:13px; line-height:20px; color:var(--gray-600); }
 .rp-sent b { color:#000; }

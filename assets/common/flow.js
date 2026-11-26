@@ -539,7 +539,11 @@
         if (r.updatedAt) L.push({ id: 'f-ed-' + r.id + r.updatedAt, k: '의뢰수정', cat: 'project', at: r.updatedAt, t: cl + '의 ' + nm + ' 의뢰서가 수정되었습니다. 변경 내용을 확인해주세요.', href: href });
         if (s.biz && s.biz.reAt) L.push({ id: 'f-biz-re-' + r.id + s.biz.reAt, k: '사업자등록증재제출', cat: 'project', at: s.biz.reAt, t: cl + '의 ' + nm + ' 의뢰 사업자등록증이 다시 제출되었습니다. 확인 후 승인처리 해주세요.', href: href });
         if (s.pick) L.push({ id: 'f-pick-' + r.id, k: '견적확정', cat: 'project', at: s.pickAt, t: josa(cl, '이', '가') + ' ' + nm + ' 프로젝트의 최종 견적을 확정했습니다.', sub: '공급사: ' + partner(s.pick).org + ' · 클라이언트 견적금액: ' + won(total((F.cqLast(s) || {}).quote || s.P[s.pick].quote).final), href: href });
-        (s.raw || []).filter(function (x) { return x.by !== 'admin'; }).forEach(function (x, i) { L.push({ id: 'f-raw-' + r.id + i, k: '결과등록', cat: 'project', at: x.at, t: josa(partner(s.pick).org, '이', '가') + ' ' + nm + ' 프로젝트의 ' + (i + 1) + '차 분석 결과를 등록했습니다. ' + (x.kind === 'pdf' ? '결과보고서 PDF를 확인해주세요.' : 'AI 보고서 초안을 검토해주세요.'), href: href }); });
+        (s.raw || []).filter(function (x) { return x.by !== 'admin'; }).forEach(function (x, i) {
+          // AI 보고서 생성 (2026-11-26): 초안이 다 만들어졌을 때 알림. 생성 중엔 알림 없음, 실패하면 실패 알림
+          if (x.kind !== 'pdf' && x.gen === 'ing') return;
+          if (x.kind !== 'pdf' && (x.gen === 'file' || x.gen === 'srv')) { L.push({ id: 'f-genx-' + r.id + i + (x.genAt || 0), k: '초안생성실패', cat: 'project', at: x.genAt || x.at, t: nm + ' 프로젝트의 AI 보고서 초안을 생성하지 못했습니다. ' + (x.gen === 'file' ? '분석파트너에게 결과 재등록을 요청해주세요.' : '다시 생성해주세요.'), href: href }); return; }
+          L.push({ id: 'f-raw-' + r.id + i, k: '결과등록', cat: 'project', at: x.kind === 'pdf' ? x.at : x.genAt || x.at, t: josa(partner(s.pick).org, '이', '가') + ' ' + nm + ' 프로젝트의 ' + (i + 1) + '차 분석 결과를 등록했습니다. ' + (x.kind === 'pdf' ? '결과보고서 PDF를 확인해주세요.' : 'AI 보고서 초안을 검토해주세요.'), href: href }); });
         if (s.cancel) L.push({ id: 'f-cancel-' + r.id, k: '의뢰취소', cat: 'project', at: s.cancel.at, t: s.cancel.by === 'admin' ? nm + ' 프로젝트를 삭제했습니다.' : cl + '의 ' + nm + ' 프로젝트가 삭제되었습니다.', sub: s.cancel.reason ? '사유: ' + s.cancel.reason : '', href: href });
         (s.cReq || []).forEach(function (q, i) { L.push({ id: 'f-creq-' + r.id + i, k: '보고서수정요청', cat: 'project', at: q.at, t: cl + '의 ' + nm + ' 결과보고서 수정 요청이 등록되었습니다.', sub: q.note, href: href }); });
         if (s.rate) L.push({ id: 'f-rate-' + r.id, k: '리뷰등록', cat: 'project', at: s.rate.at, t: cl + '의 ' + nm + ' 프로젝트에 만족도 평가(별점 ' + s.rate.star + '점)가 등록되었습니다.', href: href });
@@ -801,7 +805,10 @@
   // kind: 'pdf' = 완성 보고서 PDF (기존 방식, AI 없음) / 'ai' = AI 보고서 생성 (xlsx, csv, txt → AI 초안). 예전 데이터는 'ai'로 봄 (2026-10-29 미팅)
   // 결과보고서 이름 (2026-10-29): 차수로 통일 (1차, 2차 결과보고서). 추가 자료든 수정이든 받은 순서대로. 무엇이 바뀌었는지는 전달 메모(변경 내용)로. 세 화면 공통 (예전: 수정본 n, 팀 의견 받는 중)
   F.repName = function (i) { return (i + 1) + '차 결과보고서'; };
-  F.repRaw = function (id, files, kind, labs) { return put(id, function (s) { var x = kind === 'pdf' ? { at: Date.now(), files: files, kind: 'pdf', labs: labs || null } : { at: Date.now(), files: files, kind: 'ai', ai: '결과보고서_AI초안_' + String(id).replace(/^PRJ-/, '') + '_v' + ((s.raw || []).length + 1) + '.docx' }; if (s.reReq) { x.req = s.reReq; delete s.reReq; } s.raw = (s.raw || []).concat([x]); }); };
+  F.repRaw = function (id, files, kind, labs) { return put(id, function (s) { var x = kind === 'pdf' ? { at: Date.now(), files: files, kind: 'pdf', labs: labs || null } : { at: Date.now(), files: files, kind: 'ai', gen: 'ing', ai: '결과보고서_AI초안_' + String(id).replace(/^PRJ-/, '') + '_v' + ((s.raw || []).length + 1) + '.docx' }; if (s.reReq) { x.req = s.reReq; delete s.reReq; } s.raw = (s.raw || []).concat([x]); }); };
+  // AI 보고서 초안 생성 상태 (2026-11-26): gen 'ing' 생성 중 / 'file' 실패(파일 문제 → 분석파트너 재등록) / 'srv' 실패(서버 오류 → 다시 생성) / 없음 = 생성 완료. genAt = 완료·실패 시각 (알림)
+  F.repGen = function (id, i, v) { return put(id, function (s) { var x = s.raw[i]; if (v === 'done') delete x.gen; else x.gen = v; x.genAt = Date.now(); }); };
+  F.genLabel = function (x) { return x && x.kind !== 'pdf' && x.by !== 'admin' ? ({ ing: 'AI 보고서 초안 생성 중', file: 'AI 보고서 초안 생성 실패', srv: 'AI 보고서 초안 생성 실패' }[x.gen] || 'AI 보고서 초안 검토 필요') : 'AI 보고서 초안 검토 필요'; };
   // 2차 이후 결과보고서 (2026-10-28): 클라이언트 [최종 승인] 전까지 횟수 제한 없음. 클라이언트 수정 요청은 [문의하기]로 컨설턴트에게
   // ① 컨설턴트가 직접 수정 → by:'admin' 항목(파트너 파일 없음)을 만들어 같은 순서(수정본 → PDF → 전달)로 보냄. 분석파트너에게는 보이지 않음
   // ② 분석을 다시 해야 하면 분석파트너에게 결과 재등록 요청(s.reReq) → 파트너 결과 등록 칸이 다시 열림 → 올리면 새 AI 초안
@@ -828,6 +835,7 @@
   var RP_FILES = {}; // 고른 파일 이름 (등록 전), 프로젝트별. 형식 제한 없이 여러 개 (보고서 에이전트가 raw 데이터로도 초안을 만듦, 2026-10-29)
   var pdfL = function (id) { var o = RP_PDF[id] || {}; return [o.ko, o.en].filter(Boolean).concat(o.ex || []); };
   var pdfLab = function (id) { var o = RP_PDF[id] || {}; return [o.ko && '국문 리포트', o.en && '영문 리포트'].filter(Boolean).concat((o.ex || []).map(function () { return '추가 파일'; })); };
+  var GEN = { ing: 'AI가 보고서 초안을 생성하고 있습니다. 완료되면 알림으로 알려드립니다.', file: '등록된 파일로 보고서 초안을 만들 수 없습니다. 분석파트너에게 결과 재등록을 요청해 주세요.', srv: '일시적인 오류로 보고서 초안을 생성하지 못했습니다. 다시 생성해 주세요.' };
   F.repSec = function (id, role) {
     var s = state(id), raw = s.raw || [], rep = s.rep || [], adm = role === 'admin', fin = !!s.fin, ask = !fin && s.reReq;
     var pn = function (i) { return raw.slice(0, i + 1).filter(function (v) { return v.by !== 'admin'; }).length; }; // 분석파트너 결과 차수 (컨설턴트 직접 수정은 세지 않음)
@@ -881,6 +889,7 @@
     if (!raw.length) h += '<div class="rp-empty">분석파트너가 결과보고서를 등록하면 여기에 보여 드립니다.<br>AI 보고서 생성으로 올린 결과는 AI 초안(워드)도 함께 만들어집니다.' + (fin ? '' : '<span><button type="button" class="tbtn primary" data-rp="demo">데모: AI 보고서 생성으로 등록</button><button type="button" class="tbtn primary" data-rp="demo" data-k="pdf">데모: 완성 PDF로 등록</button></span>') + '</div>';
     h += raw.map(function (x, i) {
       var step = x.sent ? 3 : x.pdf ? 2 : 1;
+      var g = x.kind !== 'pdf' && x.by !== 'admin' && !x.sent ? x.gen || '' : ''; // AI 초안 생성 중·실패 (2026-11-26): 1단계 문구와 버튼만 바뀜
       var pdfK = x.kind === 'pdf' && x.by !== 'admin', nm = F.repName(x.sent ? x.repN - 1 : rep.length), who = (x.by === 'admin' ? '컨설턴트 직접 수정<i class="dv" aria-hidden="true"></i>' : esc(partner(s.pick).org) + '<i class="dv" aria-hidden="true"></i>') + ymd(x.at) + (x.by === 'admin' ? ' 시작' : ' 등록') + (x.by === 'admin' ? '' : '<i class="dv" aria-hidden="true"></i>' + (pdfK ? '완성 PDF' : 'AI 보고서 생성'));
       // 2026-11-13 정보 줄을 항목 단위로 묶음: 줄바꿈돼도 '1차 결과보고서 전달 완료' 같은 항목이 쪼개지지 않고, 줄 앞뒤에 구분선이 남지 않음
       var mi = function (h) { return '<span class="mi">' + h.split('<i class="dv" aria-hidden="true"></i>').join('</span><span class="mi">') + '</span>'; };
@@ -899,10 +908,11 @@
           '<li class="' + (x.sent ? 'done' : '') + '"><div><b>클라이언트에 전달</b><p>전달하면 클라이언트 결과보고서에 등록되고 알림이 갑니다. (' + F.repName(x.sent ? x.repN - 1 : rep.length) + ')</p></div><div class="rp-act">' + (x.sent ? '<span class="rp-fn">' + ymd(x.sent) + ' 전달</span>' : '<button type="button" class="btn primary" data-rp="send">클라이언트에 전달</button>') + '</div></li>' +
         '</ol></div>' + (gr ? '</div>' : '') + '</div>';
       return hd + (x.files.length ? files(x.files) : '') + rq +
-        (x.by === 'admin' ? '<div class="rp-agent"><div class="rp-ah"><b>보고서 수정</b></div>' : '<div class="rp-agent"><div class="rp-ah"><img src="assets/common/ic-sparkle-fill.svg" alt=""><b>AI 보고서 초안</b><span class="badge state">생성 완료</span></div>') +
+        (x.by === 'admin' ? '<div class="rp-agent"><div class="rp-ah"><b>보고서 수정</b></div>' : '<div class="rp-agent"><div class="rp-ah"><img src="assets/common/ic-sparkle-fill.svg" alt=""><b>AI 보고서 초안</b><span class="badge ' + ({ ing: 'done">생성 중', file: 'red">생성 실패', srv: 'red">생성 실패' }[x.gen] || 'state">생성 완료') + '</span></div>') +
         '<ol class="rp-steps">' +
           // 1단계: 초안(워드)을 내려받아 고친 뒤 PDF로 저장 → 2단계에서 PDF 등록. 고친 워드를 따로 올리는 [수정본 업로드]는 뺌 (2026-10-29)
-          '<li class="' + (step > 1 ? 'done' : 'cur') + '"><div><b>' + (x.by === 'admin' ? '보고서 수정' : '초안 검토, 수정') + '</b><p>' + (x.by === 'admin' ? '지난 보고서 원본을 내려받아 고친 뒤 PDF로 저장해 주세요.' : '초안을 내려받아 검토하고 고친 뒤 PDF로 저장해 주세요.') + '</p></div><div class="rp-act"><button type="button" class="btn" data-rp="dl">' + esc(x.ai).replace(/_/g, '_<wbr>') + '</button></div></li>' +
+          (g ? '<li class="cur"><div><b>초안 검토, 수정</b><p class="rp-gen ' + g + '"><i class="rp-gi" aria-hidden="true"></i><span>' + GEN[g] + '</span></p>' + (g === 'ing' && !fin ? '<span class="rp-demo"><button type="button" class="tbtn xs primary" data-rp="gen" data-v="done">데모: 생성 완료</button><button type="button" class="tbtn xs primary" data-rp="gen" data-v="file">데모: 실패 (파일 문제)</button><button type="button" class="tbtn xs primary" data-rp="gen" data-v="srv">데모: 실패 (서버 오류)</button></span>' : '') + '</div><div class="rp-act">' + (g === 'ing' ? '<button type="button" class="btn" disabled>초안 생성 중</button>' : g === 'srv' ? '<button type="button" class="btn" data-rp="regen">다시 생성</button>' : ask || i < raw.length - 1 ? '<span class="rp-fn">재등록 요청함</span>' : '<button type="button" class="btn" data-rp="ask" data-why="file">결과 재등록 요청</button>') + '</div></li>'
+          : '<li class="' + (step > 1 ? 'done' : 'cur') + '"><div><b>' + (x.by === 'admin' ? '보고서 수정' : '초안 검토, 수정') + '</b><p>' + (x.by === 'admin' ? '지난 보고서 원본을 내려받아 고친 뒤 PDF로 저장해 주세요.' : '초안을 내려받아 검토하고 고친 뒤 PDF로 저장해 주세요.') + '</p></div><div class="rp-act"><button type="button" class="btn" data-rp="dl">' + esc(x.ai).replace(/_/g, '_<wbr>') + '</button></div></li>') +
           '<li class="' + (step > 2 ? 'done' : step === 2 ? 'cur' : '') + '"><div><b>PDF 등록</b><p>클라이언트에게 전달할 최종본은 PDF로 올려 주세요.</p></div><div class="rp-act">' + (x.sent ? (x.pdf ? '<span class="rp-fn">' + esc(x.pdf) + '</span>' : '') : '<div class="rp-upf"><span class="fn' + (x.pdf ? ' on' : '') + '">' + esc(x.pdf || '선택된 파일 없음') + '</span><label class="btn up">파일 선택<input type="file" accept=".pdf,application/pdf" hidden data-rp-file="pdf"></label></div>') + '</div></li>' + // PDF 등록: 파일 업로드 컴포넌트 (2026-10-29)
           // 추가 파일 (선택, 형식 상관없이): 클라이언트가 Raw data 등 추가 자료를 요청한 경우 PDF와 함께 전달 (2026-10-29)
           (x.sent && !(x.extra || []).length ? '' : '<li class="' + (step > 2 ? 'done' : '') + '"><div><b>추가 파일 (선택)</b><p>Raw data 등 함께 보낼 파일이 있으면 올려 주세요. 형식 상관없이 여러 개</p>' + ((x.extra || []).length ? '<ul class="rp-xl">' + x.extra.map(function (n, j) { return '<li><span>' + esc(n) + '</span>' + (x.sent ? '' : '<button type="button" class="rp-x op-fx" data-rp="rmextra" data-j="' + j + '" aria-label="' + esc(n) + ' 빼기"></button>') + '</li>'; }).join('') + '</ul>' : '') + '</div><div class="rp-act">' + (x.sent ? '' : '<label class="btn up">파일 선택<input type="file" multiple hidden data-rp-extra></label>') + '</div></li>') +
@@ -969,12 +979,14 @@
       });
       return;
     }
-    if (a === 'demo') { var pk = b.dataset.k === 'pdf'; F.repRaw(id, pk ? ['분석결과보고서_국문_v1.pdf', '분석결과보고서_영문_v1.pdf'] : ['RawData_' + String(id).replace(/^PRJ-/, '') + '.xlsx', '분석결과_정리.txt'], pk ? 'pdf' : 'ai'); OP.toast(pk ? '데모: 분석파트너가 완성 보고서(PDF)를 등록했습니다.' : '데모: 분석파트너가 AI 보고서 생성으로 등록했습니다. AI 보고서 초안이 생성되었습니다.'); if (F.repRedraw) F.repRedraw(); }
+    if (a === 'gen') { F.repGen(id, i, b.dataset.v); OP.toast({ done: '데모: AI 보고서 초안이 생성되었습니다.', file: '데모: 파일 문제로 AI 보고서 초안을 생성하지 못했습니다.', srv: '데모: 서버 오류로 AI 보고서 초안을 생성하지 못했습니다.' }[b.dataset.v]); if (F.repRedraw) F.repRedraw(); return; }
+    if (a === 'regen') { F.repGen(id, i, 'ing'); OP.toast('AI 보고서 초안을 다시 생성합니다.'); if (F.repRedraw) F.repRedraw(); return; }
+    if (a === 'demo') { var pk = b.dataset.k === 'pdf'; F.repRaw(id, pk ? ['분석결과보고서_국문_v1.pdf', '분석결과보고서_영문_v1.pdf'] : ['RawData_' + String(id).replace(/^PRJ-/, '') + '.xlsx', '분석결과_정리.txt'], pk ? 'pdf' : 'ai'); OP.toast(pk ? '데모: 분석파트너가 완성 보고서(PDF)를 등록했습니다.' : '데모: 분석파트너가 AI 보고서 생성으로 등록했습니다. AI 보고서 초안을 생성하고 있습니다.'); if (F.repRedraw) F.repRedraw(); }
     if (a === 'file') { OP.toast('데모: ' + b.dataset.name + ' 파일이 내려받아집니다.'); return; } // 누르면 다운로드 (2026-10-29)
     if (a === 'dl') OP.toast('데모: 보고서 워드 파일이 내려받아집니다.');
     if (a === 'undo') { F.repUndo(id, i); OP.toast('직접 수정을 취소했습니다.'); if (F.repRedraw) F.repRedraw(); return; }
     if (a === 'self') { F.repSelf(id); OP.toast('보고서 수정 항목을 만들었습니다. 고친 PDF를 등록해 전달해주세요.'); if (F.repRedraw) F.repRedraw(); }
-    if (a === 'ask') F.ask({ title: '분석파트너에게 결과 재등록을 요청할까요?', desc: partner(state(id).pick).org + '에 알림이 가고, 분석파트너 화면에 결과 등록 칸이 다시 열립니다.', label: '요청 내용', ph: '예) 클라이언트가 원본 데이터(Raw data) 파일을 추가로 요청했습니다. 올려 주세요.', value: (F.cReqOpen(state(id)) || {}).note ? '클라이언트 요청: ' + F.cReqOpen(state(id)).note : '', required: true, yes: '요청하기' }, function (v) { F.repAsk(id, v); OP.toast('분석파트너에게 결과 재등록을 요청했습니다.'); if (F.repRedraw) F.repRedraw(); });
+    if (a === 'ask') F.ask({ title: '분석파트너에게 결과 재등록을 요청할까요?', desc: partner(state(id).pick).org + '에 알림이 가고, 분석파트너 화면에 결과 등록 칸이 다시 열립니다.', label: '요청 내용', ph: '예) 클라이언트가 원본 데이터(Raw data) 파일을 추가로 요청했습니다. 올려 주세요.', value: b.dataset.why === 'file' ? '등록하신 파일로 AI 보고서 초안을 만들 수 없습니다. 파일을 확인해 다시 올려 주세요.' : (F.cReqOpen(state(id)) || {}).note ? '클라이언트 요청: ' + F.cReqOpen(state(id)).note : '', required: true, yes: '요청하기' }, function (v) { F.repAsk(id, v); OP.toast('분석파트너에게 결과 재등록을 요청했습니다.'); if (F.repRedraw) F.repRedraw(); });
     // 2차부터는 변경 내용 필수: 차수 이름만으로는 추가 자료인지 수정인지 알 수 없어서 클라이언트 화면에 '변경 내용'으로 보임 (2026-10-29)
     var nx = (state(id).rep || []).length;
     if (a === 'send') F.ask({ title: F.repName(nx) + '를 클라이언트에게 전달할까요?', desc: '등록한 PDF가 클라이언트 결과보고서에 등록되고 알림이 갑니다.', label: nx ? '변경 내용 (클라이언트에게 보임)' : '클라이언트에게 남길 메모 (선택)', ph: nx ? '예) 요청하신 Raw data 파일을 추가했습니다.' : '예) 분석 결과 요약을 첫 장에 정리했습니다.', required: !!nx, yes: '전달하기' }, function (v) { F.repSend(id, i, v); OP.toast('클라이언트에게 결과보고서를 전달했습니다.'); if (F.repRedraw) F.repRedraw(); });
