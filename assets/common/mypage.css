@@ -478,6 +478,8 @@ span.tbtn { cursor:default; }
 .rp-gen.ing .rp-gi { -webkit-mask-image:url(ic-circle-notch.svg); mask-image:url(ic-circle-notch.svg); animation:rp-spin 1s linear infinite; }
 @keyframes rp-spin { to { transform:rotate(360deg); } }
 .rp-demo { display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:6px; }
+.rp-steps.wait li:not(:first-child) b, .rp-steps.wait li:not(:first-child) p, .rp-steps.wait li:not(:first-child) .rp-upf .fn { color:var(--gray-400); } /* 생성 중·실패: 2~4단계 흐리게, 버튼 비활성 */
+.rp-steps.wait li:not(:first-child) > div:first-child::before { color:var(--gray-400); }
 .rp-more { font-size:13px; line-height:20px; color:var(--gray-500); }
 .rp-sent { display:flex; align-items:center; gap:8px; padding:12px 16px; border-radius:10px; background:var(--gray-50); font-size:13px; line-height:20px; color:var(--gray-600); }
 .rp-sent b { color:#000; }
